@@ -40,11 +40,17 @@ from django.http import HttpResponseRedirect
 
 def insert_machining_of_air_box(request):
     from .models import MachiningAirBox
-    print("hi")
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
     obj2=MachiningAirBox.objects.all().order_by('sno')
 
     my_context={
        'object':obj2,
+       'nav':nav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
        }
     if request.method=="POST":
         print("partly working")
@@ -74,6 +80,9 @@ def insert_machining_of_air_box(request):
 
             my_context={
             'object':obj2,
+            'nav':nav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
             }
 
         if submit=='save':
@@ -94,6 +103,11 @@ def insert_machining_of_air_box(request):
             sno=int(request.POST.get('dissno'))
             dislocos=request.POST.get('dislocos')
             MachiningAirBox.objects.filter(sno=sno).update(dispatch_to=dislocos)
+        
+        if submit=='Delete':
+
+            sno=int(request.POST.get('delsno'))
+            MachiningAirBox.objects.filter(sno=sno).delete()
 
         
         return HttpResponseRedirect("/machining_of_air_box/")
