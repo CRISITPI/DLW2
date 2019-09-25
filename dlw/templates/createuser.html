@@ -1,0 +1,143 @@
+{% extends 'base.html' %} {% block content %}
+
+<br>
+<center>
+    <h3>Add User</h3>
+</center>
+<center>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <font size="3">
+            <li>
+                {{ message }}
+            </li>
+        </font>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</center>
+<center>
+    <form method="POST">{%csrf_token%}
+
+        <div class="col-4">
+
+
+
+
+
+            <label>Select Employee Id</label>
+            <select class="form-control" id="users" name="emp_id" required>
+     <option selected disabled hidden>Select Employee Id</option>
+   		{% for uname in emp %}
+   			<option value = {{uname.emp_id}}>{{uname.emp_id}}</option>
+   		{% endfor %}
+   	</select><br>
+
+
+
+
+
+            <label>Select Parent</label>
+            <select class="form-control" name="role" id="role" required>
+	   <option id="roleop" selected disabled hidden>Select Parent</option>
+   	</select><br>
+
+
+
+
+            <label>Select Permission</label>
+            <select class="form-control" name="sublevel" id="sublevel" required multiple>
+	   <option selected disabled hidden>Select Permission/s</option>
+			<script>
+			$(document).ready(function(){
+   $("#role").change(function(e){
+   	e.preventDefault();
+   	var username = $(this).val();
+   	var data = {username};
+       	$.ajax({
+   		type : 'GET',
+   		url :  "{% url 'get_permission_info' %}",
+        dataType : 'json',
+   		data : data,
+   		success : function(response){
+			   $('#sublevel').html('');
+   				for(var i=0;i<response.permission_info.sub.length;i++){
+				$("#sublevel").append(`<option>${response.permission_info.sub[i].role}</option>`);
+				}
+   		},
+   		error : function(response){
+   		}
+   	})
+})
+})
+			</script>
+   	</select><br> Email
+
+
+
+            <input type="email" id="email" name="email" class="form-control" readonly><br>
+        </div>
+        <div class="col-12" id="user_info">
+            <hr>
+            <table class="table table-stripped table-fixed">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Designation</td>
+                        <td>Department</td>
+                        <td>Contact-no</td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <center><button type="submit" class="btn btn-primary">Create</button></center>
+    </form>
+</center>
+<br>
+<script type="text/javascript">
+    $("#users").change(function(e) {
+        e.preventDefault();
+        var username = $(this).val();
+        var data = {
+            username
+        };
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'get_emp_info' %}",
+            dataType: 'json',
+            data: data,
+            success: function(response) {
+                var elementsadded = document.querySelectorAll(".newparent");
+                if (elementsadded.length > 0) {
+                    var elementsaddedarr = Array.from(elementsadded);
+                    elementsaddedarr.forEach((el) => el.remove());
+                    document.querySelector("#roleop").selected = true;
+                }
+                var brarr, mystr, html;
+                parentarr = response.emp_info.uniqparent.map((ele) => ele.parent);
+                mystr = "";
+                parentarr.forEach((el, index) => {
+                    html = `<option class="newparent">${parentarr[index]}</option>`
+                    mystr = html.concat(mystr);
+                });
+                html = "";
+                document.querySelector("#role").insertAdjacentHTML('beforeend', mystr);
+                mystr = "";
+                $("#user_info table tbody").html(`<tr>
+   				<td name="name">${response.emp_info.name}</td>
+   				<td name="designation">${response.emp_info.designation}</td>
+   				<td name="department">${response.emp_info.department}</td>
+   				<td name="contactno">${response.emp_info.contactno}</td>
+   				</tr>`);
+                $("#email").val(`${response.emp_info.email}`);
+            },
+            error: function(response) {}
+        })
+    })
+</script>
+
+{% endblock content %}

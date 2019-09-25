@@ -1,0 +1,122 @@
+{% extends 'base.html' %} {% block content %}
+<br>
+<center>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <font size="3">
+            <li>
+                {{ message }}
+            </li>
+        </font>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</center>
+
+
+<form method="POST" style="margin:0 auto;width:80%;">{%csrf_token%}
+    <br>
+    <div class="row">
+        <div class="col">
+            <input type="text" id="myInput" style="width:100%;" onkeyup="myFunction()" placeholder="Search for Employee ID.." class="form-control">
+        </div>
+        <div class="col">
+            <input type="date" max="{{future}}" id="datepic" style="width:50%;" class="form-control" onchange="TDate()" required>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <table class="table table-striped" id="myTable">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Employee Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Shift</th>
+            </thead>
+            <tbody>
+                {% for emp in users %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+
+                    <td id='emp_id{{forloop.counter}}' name="emp_id" value={{emp.emp_id}}>{{ emp.emp_id }}</td>
+                    <td>{{ emp.name }}</td>
+                    <td>
+                        General Day &nbsp;<input type="radio" disabled name="radio{{forloop.counter}}" value="General Day" id="input1">&nbsp; &nbsp; General Night &nbsp;<input type="radio" disabled name="radio{{forloop.counter}}" value="General Night"
+                            id="input2">&nbsp; &nbsp; Shift 1 &nbsp;<input type="radio" disabled name="radio{{forloop.counter}}" value="Shift 1" id="input3">&nbsp; &nbsp; Shift 2 &nbsp;<input type="radio" disabled name="radio{{forloop.counter}}" value="Shift 2"
+                            id="input4">&nbsp; &nbsp; Shift 3 &nbsp;<input type="radio" disabled name="radio{{forloop.counter}}" value="Shift 3" id="input5">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% comment %}
+    <div class="row">
+        <div class="col-md-6 offset-5">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div> {% endcomment %}
+</form>
+
+<script type="text/javascript">
+    function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function TDate() {
+        var UserDate = document.getElementById("datepic").value;
+        var ToDate = new Date();
+
+        if (new Date(UserDate).getTime() > ToDate.getTime()) {
+            $("#input1,#input2,#input3,#input4,#input5").removeAttr('disabled');
+            return true;
+        }
+        if (new Date(UserDate).getTime() <= ToDate.getTime()) {
+            continue;
+        }
+    }
+
+    $(document).ready(function() {
+
+
+        $("#input1,#input2,#input3,#input4,#input5").change(function(e) {
+            e.preventDefault();
+            var shift = $(this).val();
+            var shiftnameattr = $(this).attr("name")
+            var res = shiftnameattr.split("radio")
+            var emp = $("#emp_id" + res[1]).text();
+            var seldate = $("#datepic").val();
+            var data = {
+                shift,
+                emp,
+                seldate
+            };
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'shiftsave' %}",
+                dataType: 'json',
+                data: data,
+                success: function(response) {},
+                error: function(response) {}
+            })
+        })
+    })
+</script>
+
+{% endblock content %}

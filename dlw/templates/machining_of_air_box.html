@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% block content %}
+<html lang="en">
+   
+<head>
+    <style>
+        #customers {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        
+        #customers td,
+        #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+    </style>
+
+    <script type="text/javascript" >
+        console.log("man");
+       // document.getElementById("savebtn").onclick = myFunction;
+
+
+       // function myFunction()
+       // {
+       //   console.log("partly");
+       //   document.getElementById('once').value="1";
+//
+        //  document.getElementById("myForm").submit();
+
+
+     //   }
+
+     $(document).ready(function(){
+      console.log("jq working");
+     // $('#myForm').off('submit').on('submit',function(e){
+      //  e.preventDefault();
+      //});
+    //  $('#savebtn').onclick()
+    });
+    </script>
+    
+</head>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    height:100%;
+    margin:0;
+}
+html{
+    height:100%;
+    margin:0;
+}
+.page-content{
+    min-height:100%;
+    margin-bottom:-40px;
+}
+.page-content::after{
+    content:"";
+    display:block;
+}
+footer, .page-content::after{
+    height:40px;
+}
+.content_section{
+    width:60%;
+}
+</style>
+
+<body style="background-color:white;">
+    <form action="." id="myForm" method="POST" novalidate>{% csrf_token %}
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">MachiningAirBox <span class="sr-only">(current)</span></a>
+            </li>
+            
+            <!--li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li-->
+          </ul>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" style="margin-left:-20%;" data-toggle="modal" data-target="#exampleModal2">
+                            Dispatch
+                          </button>
+                        </li>
+                              <!--li class="nav-item">
+                                    <a class="nav-link" href="/inspect medium/">Inspect</a>
+                                  </li-->
+                                  <li class="nav-item">
+                                      <button type="button" class="btn btn-primary" style="margin-left:-10%;" data-toggle="modal" data-target="#exampleModal1">
+                                          EditRecord
+                                        </button>
+                                      </li>
+                              <li class="nav-item">
+                                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                      AddRecord
+                                    </button>
+                                  </li>
+                </ul>
+            </div>
+      </nav>
+    
+      <table id="customers">
+          <tbody>
+              <th>Serial No. &nbsp; </th>
+              <th>Batch order No. &nbsp; </th>
+              <th>Batch Order Date &nbsp; </th>
+              <th>Loco Type</th>
+              <th>AirBox Sr. No. &nbsp;</th>
+              <th>AirBox Make &nbsp;</th>
+              <th>In Quantity &nbsp; </th>
+              <th>Out Quantity &nbsp; </th>
+              <th>Date &nbsp; </th>
+              <th>Dispatch To &nbsp; </th>
+              
+    {% for objec in object %}
+    <tr> 
+            <td>{{objec.sno}} <br><br></td>
+            <td>{{objec.bo_no}} <br><br></td>
+            <td>{{objec.bo_date}} <br><br></td>
+            <td>{{objec.loco_type}} <br><br></td>
+            <td>{{objec.airbox_sno}} <br><br></td>
+            <td>{{objec.airbox_make}} <br><br></td>
+            <td>{{objec.in_qty}} <br><br></td>
+            <td>{{objec.out_qty}} <br><br></td>
+            <td>{{objec.date}} <br><br></td>
+            <td>{{objec.dispatch_to}} <br><br></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<input type="hidden" name="once" id="once" value="0">
+<!--a class="btn btn-primary" style="margin-left: 33%" href="/axle & wheel machining section" role="button" input type='submit' value='save'>Submit</a>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+  Launch demo modal
+</button-->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">AirBoxMachining</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <div class="modal-body">
+              <table class="table table-bordered">
+                    <main role="main" class="container">       
+                                    <form class="needs-validation" novalidate>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                              <label for="">Batch Order No.</label>
+                                              <input type="number" class="form-control" name="bo_no" id="bo_no" placeholder="" value="" required>
+                                          </div>
+                                          <div class="col-md-6 mb-3">
+                    
+                                            <label for="">Batch Order Date</label>
+                                            <input type="date" class="form-control" name="bo_date" id="bo_date" placeholder="" value="" required>
+                                        </div>
+                                        </div>
+                                      <div class="row">
+                                          <div class="col-md-6 mb-3">
+                                              <label for="Axle">AirBox Serial No.</label>
+                                              <input type="text" class="form-control" name="airbox_sno" id="airbox_sno" placeholder="" value="" required>
+                                              <div class="invalid-feedback">
+                                                  Air Box Sr. no. 
+                                              </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="Axle">AirBox Serial Make</label>
+                                                <input type="text" class="form-control" name="airbox_make" id="airbox_make" placeholder="" value="" required>
+                                                <div class="invalid-feedback">
+                                                    Air Box Sr. Make 
+                                                </div>
+                                              </div>
+                                            <div class="col-md-6 mb-3">
+                                              <label for="">In Quantity</label>
+                                              <input type="number" class="form-control" name="in_qty" id="in_qty" placeholder="" value="" required>
+                                              <div class="invalid-feedback">
+                                                Valid Quantity is required.
+                                              </div>
+                            
+                                            </div>
+                                            <!-- <div class="col-md-8 order-md-1"> -->
+                                            <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                              <label for="">Out Quantity</label>
+                                              <input type="number" class="form-control" name="out_qty" id="out_qty" placeholder="" value="" required>
+                                          </div>
+                                          <div class="col-md-6 mb-3">
+                                            <label for="">Date</label>
+                                            <input type="date" class="form-control" name="date" id="date" placeholder="" value="" required>
+                                        </div>
+                                        </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="dropdown">
+                                              <select name="locos" type="form-control ll" style="margin-left:20%;" required>
+                                                <option value="" hidden selected>Loco Type</option>
+                                                <option value="wap7">WAP7</option>
+                                                <option value="wag9">WAG9</option>
+                                                <option value="hhp">HHP</option>
+                                              </select>
+                                              </div>
+                                            </div>  
+                    
+                            </div>
+                                          </main>
+                                        </table>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save"  />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+ <!--EditRecord-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">AxleWheelMachining</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <div class="modal-body">
+              <table class="table table-bordered">
+                    <main role="main" class="container">       
+                                    <form class="needs-validation" novalidate>
+                                      <div class="row">
+                                          <div class="col-md-6 mb-4">
+                                        <label for="">Serial No.</label>
+                                        <input type="number" class="form-control" id="editsno" name="editsno" placeholder="" value="" required>
+                                        <div class="invalid-feedback">
+                                        </div>
+                                      </div> 
+                                            <div class="col-md-8 mb-4">
+                                            <label for="">Batch Order No.</label>
+                                            <input type="number" class="form-control" name="editbo_no" id="editbo_no" placeholder="" required>
+                                          </div>
+                                       
+                                      </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                           <label for="">Batch Order Date</label>
+                                           <input type="date" class="form-control" name="editbo_date" id="editbo_date" placeholder="" value="" required>
+                                       </div>
+                                       <div class="col">
+                                          <div class="dropdown">
+                                            <select name="editlocos" type="form-control ll" style="margin-left:20%;" required>
+                                              <option value="" hidden selected>Loco Type</option>
+                                              <option value="wap7">WAP7</option>
+                                              <option value="wag9">WAG9</option>
+                                              <option value="hhp">HHP</option>
+                                            </select>
+                                            </div>
+                                          </div>  
+                                   </div>
+                                        <!-- <div class="col-md-8 order-md-1"> -->
+                                        <div class="row">
+                                         <div class="col-md-6 mb-3">
+                                        <label for="">Date</label>
+                                        <input type="date" class="form-control" name="editdate" id="editdate" placeholder="" value="" required>
+                                    </div>
+                                   
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Axle">AirBox Serial No.</label>
+                                        <input type="text" class="form-control" name="editairbox_sno" id="editairbox_sno" placeholder="" value="" required>
+                                        <div class="invalid-feedback">
+                                            Air Box Sr. no. 
+                                        </div>
+                                </div>
+                                  <!-- </div> -->
+                                  <!-- <div class="col-md-8 order-md-1"> -->
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="Axle">AirBox Serial Make</label>
+                                            <input type="text" class="form-control" name="editairbox_make" id="editairbox_make" placeholder="" value="" required>
+                                            <div class="invalid-feedback">
+                                                Air Box Sr. Make 
+                                            </div>
+                                          </div>
+                                        <div class="col-md-6 mb-3">
+                                          <label for="">In Quantity</label>
+                                          <input type="number" class="form-control" name="editin_qty" id="editin_qty" placeholder="" value="" required>
+                                          <div class="invalid-feedback">
+                                            Valid Quantity is required.
+                                          </div>  
+                                </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">Out Quantity</label>
+                                        <input type="number" class="form-control" name="editout_qty" id="editout_qty" placeholder="" value="" required>
+                                    </div> 
+                                    </div>
+                                      </main>                 
+        </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="save" >
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!--Dispatch-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">MachiningAirBox</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <div class="modal-body">
+          <table class="table table-bordered">
+              <main role="main" class="container">       
+                              <form class="needs-validation" novalidate>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="">Serial No.</label>
+                                        <input type="number" class="form-control" id="dissno" name="dissno" placeholder="" value="" required>
+                                        <div class="invalid-feedback">
+                                        </div>
+                                      </div>
+
+                               <div class="col">
+                                <div class="dropdown">
+                                  <select name="dislocos" type="form-control ll" required>
+                                    <option value="" hidden selected>Dispatch To</option>
+                                    <option value="AxleWheelMachining">Axle & Wheel Machining Section</option>
+                                  </select>
+                                  </div>
+                                </div>  
+                                </div>
+                              </main>
+                              </table>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
+                                </div>
+                              </div>
+                              </div>
+                              </div>
+                                
+
+
+  </form>
+    </body>
+    </html>  
+{% endblock content %}

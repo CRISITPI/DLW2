@@ -1,0 +1,82 @@
+{% extends 'base.html' %} {% block content %}
+<br>
+<center>
+    <h3>Delete User</h3>
+</center>
+<center>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <font size="3">
+            <li>
+                {{ message }}
+            </li>
+        </font>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</center>
+<center>
+    <form method="POST">{%csrf_token%}
+        <div class="col-4">
+            <label>Select Employee-Id to Delete</label>
+
+            <select class="form-control" id="users" name="emp_id">
+     <option selected disabled hidden>Select Employee Id</option>
+   		{% for uname in users %}
+   			<option value = {{uname.username}}>{{uname.username}}</option>
+   		{% endfor %}
+   	</select><br>
+        </div><br>
+        <div class="col-12" id="user_info">
+            <hr>
+            <table class="table table-stripped table-fixed">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Designation</td>
+                        <td>Department</td>
+                        <td>Contact-no</td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <center><button type="submit" class="btn btn-primary">Delete</button><br></center>
+
+    </form>
+
+    <br>
+
+</center>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#users").change(function(e) {
+            e.preventDefault();
+            var username = $(this).val();
+            var data = {
+                username
+            };
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'get_emp_info' %}",
+                dataType: 'json',
+                data: data,
+                success: function(response) {
+                    $("#user_info table tbody").html(`<tr>
+   				<td name="name">${response.emp_info.name}</td>
+   				<td name="designation">${response.emp_info.designation}</td>
+   				<td name="department">${response.emp_info.department}</td>
+   				<td name="contactno">${response.emp_info.contactno}</td>
+   				</tr>`);
+                },
+                error: function(response) {}
+            })
+        })
+    })
+</script>
+
+{% endblock content %}

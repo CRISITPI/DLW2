@@ -1,0 +1,103 @@
+{% load static %}
+
+<div class="page-header navbar-dark bg-dark">
+    <center><font color="white"><h3 style="margin:0 auto;">Diesel Locomotive Works, Varanasi</h3></font></center>
+    </div>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+    
+    <button class="navbar-toggler" data-toggle="collapse" data-target="#collapse_target">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapse_target">
+    
+    <ul class="navbar nav" style="width:100%;">
+        <li class="navbar-item dropdown">
+            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+            Add
+            <span class="caret"></span>
+            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+                {% for menu in nav %}
+            {% if menu.navmenu in "Add" %}
+                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% endif %}
+            {% endfor %}
+            </div>
+            </a>
+        </li>
+    <li class="navbar-item dropdown">
+            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+            Report
+            <span class="caret"></span>
+            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+                {% for menu in nav %}
+            {% if menu.navmenu in "Report" %}
+                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% endif %}
+            {% endfor %}
+            </div>
+            </a>
+        </li>
+
+
+
+
+        <li class="navbar-item dropdown">
+            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+            Dashboard
+            <span class="caret"></span>
+            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+                  {% for menu in nav %}
+            {% if menu.navmenu in "Dashboard" %}
+                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% endif %}
+            {% endfor %}
+            </div>
+            </a>
+        </li>
+        <li class="navbar-item dropdown">
+            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+            Production
+            <span class="caret"></span>
+            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+                {% for menu in nav %}
+            {% if menu.navmenu in "Production" %}
+                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% endif %}
+            {% endfor %}
+            </div>
+            </a>
+        </li>
+        <li class="navbar-item dropdown">
+            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+            Manpower
+            <span class="caret"></span>
+            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+            {% if menu.navmenu in "Manpower" %}
+                <a class="dropdown-item">{{menu.navitem}}</a>
+            {% endif %}
+            {% endfor %}
+            </div>
+            </a>
+        </li>
+        <li class="navbar-item dropdown">
+            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+            Account
+            <span class="caret"></span>
+            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+            {% if menu.navmenu in "Account" %}
+                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% endif %}
+            {% endfor %}
+            </div>
+            </a>
+        </li>
+        <li>
+            <a class="btn" onclick="foo()"><i class="glyphicon glyphicon-log-in"></i>
+                <font color="#FFFFFF" size="4.5pt">Logout</font>
+            </a>
+        </li>
+    </ul>
+</div>
+</nav>

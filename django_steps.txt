@@ -1,0 +1,9 @@
+1. pip install virtualenv
+2. virtualenv env
+3. ./env/scripts/activate
+4. pip install django==2.0.7
+5. pip install psycopg2==2.7.7
+6. pip install djangorestframework
+7. pip install django-session-timeout
+8. pip install django-session-idle-timeout
+9. pip install django-crispy-forms

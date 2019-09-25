@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+       
+{% block content %}
+<style>
+    #divdata{
+    display: none;
+}
+        #customers {
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          
+        }
+        
+        #customers td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        #customers tr:nth-child(even){background-color: #f2f2f2;}
+        
+        #customers tr:hover {background-color: #ddd;}
+        
+        #customers th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          /*background-color: #4CAF50;*/
+          background-color: #808080;
+          
+          color: white;
+        }
+        #custo {
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          
+        }
+        
+        #custo td, #custoth {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        #custo tr:nth-child(even){background-color: #f2f2f2;}
+        
+        #custo tr:hover {background-color: #ddd;}
+        
+        #custo th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #4CAF50;
+          color: white;
+        }
+    
+    </style>
+<form action="." method="POST">{%csrf_token%}  
+    <center><h2>DPO</h2></center>
+<div class="containers">
+<table align="center" id="customers">
+    <tr>
+        <td><b>Role:</b></td><td>{{Role}}</td>
+        <td><b>Financial Year:</b></td><td>{{cyear}}</td>
+    </tr>
+    <tr><td>Select required values:</td>
+   
+    <td><div class="dropdown">
+        <select name="loco" class="form-control ll" id="loco" required>
+            <div class="dropdown-content">
+            <option selected="selected" disabled>Loco Name:</option>
+            {% for l in locolist %}
+            <option value="{{l}}">{{l}}</option>
+            {% endfor %}
+            <!-- <option value="wap7">WAP7</option> -->
+        </select></div></td>
+       
+        <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" /></td>
+        <!-- <td><input type="text" id="cumi" name="cumi" placeholder="Start Cumilative No" /></td> -->
+
+    </tr>
+    <tr>
+       
+
+    </tr>
+</table>
+            <input type="hidden" name="cm" id="cm" value={{cm}} id="cm"/>
+            <input type="hidden" name="b1" value={{b1}} id="b1"/>
+            <input type="hidden" name="b2" value={{b2}} id="b2"/>
+            <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
+
+
+
+<table  align="center">
+  <tr>
+  <td><input type="submit" name ='submit' value='Proceed' id="submit"/></td>
+</tr>
+      </table>
+      {% if add == 1 %}
+
+<table id="custo" align="center">
+        <tr>
+            <td><input type="button" id="add" value="Add Batch"/></td>
+            <input type="hidden" name="num" value="THE OUTPUT OF BATCH FUNCTION" id="myvalue"/>
+        </tr></table>
+<table id="customers" align="center">
+  
+
+<div id="items"></div>
+</table>
+
+
+  <table id="custo" align="center"><tr><td><input type="submit" name ='submit' value='Save' id="save"/></td></tr>
+</table>
+{% endif %}
+</div>
+
+</form>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script language="javascript">
+var j=0;
+$(document).ready(function(){
+    $("#add").click(function(e){
+        event.preventDefault()
+
+
+
+        j++;
+        console.log(j);
+        assign();
+
+        var bnoname="bno"+String(j);
+        var qtyname="qty"+String(j);
+        var typname="typ"+String(j);
+        var cuminoname="cumino"+String(j);
+        
+        var sno=j;
+        
+        var b1= document.getElementById("b1").value;
+        var cm= document.getElementById("cm").value;
+        var b2= document.getElementById('b2').value;
+        var loconame=document.getElementById('lcname').value;
+        if(j<10){
+        var bn=String(b1)+'/'+String(b2)+'/00'+String(sno);
+      }
+      else if(j<100)
+      {
+        var bn=String(b1)+'/'+String(b2)+'/0'+String(sno);
+
+      }
+      else{
+        var bn=String(b1)+'/'+String(b2)+'/'+String(sno);
+      }
+        if(j==1)
+        {
+            var happ='<div><table id="customers">'+'<tr><th>Batch Order NO:</th><th>QTY. of Batch</th><th>Type of Loco</th>'+
+            '<th>Cumilative No. of Loco</th>';
+
+    happ=happ+'</tr></table></div>';
+        $('#items').append(happ);
+
+        }
+var htAppend='<div><table id="customers"><tr>'+'<td>'+bn+'</td>'+'<td><input type="text" id="'+qtyname+'" name="'+qtyname+'" pattern="[0-9]*" title="only numbers smart guy" onkeyup="myFunction(this)"> </td>'+'<td>'+loconame+'</td>'+'<td><input type="text" id='+cuminoname+' name='+cuminoname+'></td>';
+       
+
+     $("#totdiv").remove();
+
+
+
+   
+   var tot=0;
+   for(var i=1;i<=j-1;i++)
+   {
+    if(document.getElementById('qty'+String(i)).value)
+    {
+      tot=tot+parseInt(document.getElementById('qty'+String(i)).value);
+    }
+    else
+    {
+      tot=tot+0;
+    }
+   }
+
+
+     htAppend=htAppend+'</tr>'+'<tr id="totdiv"><td>Total</td><td id="totval">'+tot+'</td>'
+     
+ htAppend=htAppend+'</tr></table>'+'</div>';
+     $('#items').append(htAppend);
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+});
+
+
+function myFunction(elem){
+    var id = elem.id;
+    var name=elem.name;
+    var txt = document.getElementById(id).value; 
+    console.log('area element value = ' + name);
+    var array = name.split("qty");
+
+    var cuminoname="cumino"+String(array[1]);
+    if(array[1]==1)
+    {
+    var cm= parseInt(document.getElementById("cm").value);
+    var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+    document.getElementById(cuminoname).value=cuminoval;
+    }
+
+    else
+    {
+
+
+    var i;
+    var p
+    for(i=array[1];i<=j;i++)
+    {
+      if(document.getElementById('qty'+String(i)).value)
+      {
+          var qval=document.getElementById('qty'+String(i)).value;
+          cuminoname="cumino"+String(i-1);
+
+          var cuminoval=document.getElementById(cuminoname).value;
+          p=i-1;
+          if(cuminoval)
+          {
+          var cval=cuminoval.split('-');
+          }
+
+          
+
+          else
+          {
+           while(p>=1)
+           {
+            p=p-1;
+            cuminoname="cumino"+String(p);
+            var cuminoval=document.getElementById(cuminoname).value;
+            if(cuminoval)
+            {
+           var cval=cuminoval.split('-');
+            break;
+            }
+           }
+          }
+
+          cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
+          cuminoname="cumino"+String(i);
+          document.getElementById(cuminoname).value=cuminoval;
+      }
+
+    }
+     
+      
+    //   var val=document.getElementById("cumino"+String(parseInt(array[1])-1)).value;
+    //   console.log("cumino"+String(parseInt(array[1])-1));
+    //     var spl=val.split("-");
+     
+    // var cm= parseInt(spl[1])+1;
+    // var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+    // document.getElementById(cuminoname).value=cuminoval;
+    }
+
+
+   var num=array[1];
+   var tot=0;
+   for(var i=1;i<=j;i++)
+   {
+      if(document.getElementById('qty'+String(i)).value)
+    {
+      tot=tot+parseInt(document.getElementById('qty'+String(i)).value);
+    }
+    else
+    {
+      tot=tot+0;
+    }
+   }
+   $('#totval').text(tot);
+
+    }
+function assign(){
+        function operation()
+        {
+        console.log(j);
+        return j;
+        }
+       document.getElementById('myvalue').value =operation();
+    }
+  </script>
+{% endblock content %}

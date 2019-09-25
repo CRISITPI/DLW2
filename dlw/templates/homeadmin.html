@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<center><h3>Welcome {{usermaster.name}}</h3></center>
+
+<div class="container">
+        <div class='col-sm-6'>
+            <canvas id="myChart" width="400" height="400"></canvas>
+        </div>
+</div>
+{% block jquery %}
+
+<script>
+    var endpoint='/api/chart/data/'
+        $.ajax({
+            method:"GET",
+            url:endpoint,
+            success:function(data){
+                console.log(data)
+                console.log(data.length)
+                var i=0
+                var label=new Array(data.length)
+                var targetone=new Array(data.length)
+                var targettwo=new Array(data.length)
+                for(i;i<data.length;i++){
+                    label[i]=data[i].subject
+                    targetone[i]=data[i].targetone
+                    targettwo[i]=data[i].targettwo
+                }
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart2 = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: label,
+                        datasets: [{
+                            label: '# target one',
+                            data: targetone,
+                            backgroundColor: [
+                                'rgba(0, 0, 0, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(0, 0, 0, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
+                            ],
+                            borderWidth: 1
+                        },{
+                            label: '# target two',
+                            data: targettwo,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+
+            },
+            error:function(error_data){
+                console.log("error")
+                console.log(data)
+            }
+        })
+</script>
+{% endblock jquery %}
+{% endblock content %}
+

@@ -1,0 +1,937 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+    #customers {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+    
+    #customers td,
+    #customers th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    
+    #customers tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    
+    #customers tr:hover {
+        background-color: #ddd;
+    }
+    
+    #customers th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    #custo {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+    
+    #custo td,
+    #custoth {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    
+    #custo tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    
+    #custo tr:hover {
+        background-color: #ddd;
+    }
+    
+    #custo th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .dropselect {
+        width: 100px;
+    }
+    
+    .dropselect option {
+        width: 100px;
+    }
+</style>
+<form action="." method="POST">{%csrf_token%}
+    <br>
+    <center>
+        <h2>Annual Production Plan</h2>
+    </center><br>
+    <div class="containers">
+        <table align="center" id="customers">
+            <tr>
+                <td style="width: 15%"><b>Role:</b></td>
+                <td style="width: 10%">{{Role}}</td>
+                <td style="width: 15%"><b>Financial Year:</b></td>
+                <td style="width: 10%">{{cyear}}</td>
+                <td style="width: 12%"><b>Revision:</b></td>
+                <td style="width: 10%">{{revex}}</td>
+                <input type="hidden" name="rev" value={{revex}} class="form-control" />
+            </tr>
+            <tr>
+                {% if "Dy_CME/Plg" in Role %}
+                <td>
+                    <div class="dropdown">
+                        <select name="type" class="form-control ll" id="type" required>
+            <div class="dropdown-content">
+            <option selected="selected" disabled>Type:</option>
+            <option value="ind-rail">Indian Railway Loco</option>
+            <option value="zr">ZR</option>
+            <option value="nrc">NRC</option>
+            <option value="export">Export</option>
+            <option value="nrcdgset">NRC DG Set</option>
+            <option value="zrover">ZR Overhauling</option>
+            <option value="zrasstn">ZR Assistance</option>
+            <option value="rspitm">RSP Items</option>
+            <option value="rspm">RSP Manufacturing</option>
+            </div>
+            </select>
+                    </div>
+                </td>
+                <td style="width: 15%"><b>Num Of FY's:</b></td>
+                <td><input type="text" id="numfy" name="numfy" class="form-control" value={{numfy}} pattern="[1-9]" title="Cannot have alphabets and Financial years  cannot be 'Zero' " required/></td>
+                <td style="width: 15%"><b>No. of Designated Persons: </b></td>
+                <td><input type="text" id="dgp" name="dgp" value={{dgp}} class="form-control" pattern="[0-9]" title="Cannot have alphabets" required/></td>
+                <input type="hidden" id="lmtype" value={{typec}} class="form-control" />
+                <td><input type="submit" name='proceed' value='Proceed' id="submit" class="btn btn-primary" /></td>
+            </tr>
+            {% if flag == 1 %}
+            <tr>
+                <td><b>No.</b></td>
+                <td><textarea name="number" class="form-control" style="overflow:hidden; resize:none;width: 100%" cols="30">{{number}}</textarea></td>
+                {% if iammain == 1 %}
+                <td style="width: 10%"><b>Form No.</b></td>
+                <td><textarea name="formno" class="form-control" style="overflow:hidden; resize:none;width: 100%;" cols="30">{{formno}}</textarea></td>
+                {% endif %}
+                <td><b>Date:</b></td>
+                <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
+            <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 100%;width: 100%;">
+            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 90%;" tabindex="-1"><span style="display: inline-block;width: 0px;z-index: 2;float:center;padding-top: 3px;" tabindex="-1">&#9660;</span>
+                    </span>
+                </td>
+                {% endif %} {% endif %} {% if "Dy_CMgm" in Role %}
+                <tr>
+                    <td>Select required values:</td>
+                    <td>
+                        <div class="dropdown">
+                            <select name="type" class="form-control ll">
+            <div class="dropdown-content">
+            <option selected="selected" disabled>Type:</option>
+            <option value="export">Export</option>
+            <option value="nrc">NRC</option>
+            <option value="nrcdgset">NRC DG Set</option>
+            </div>
+            </select>
+                        </div>
+                    </td>
+                    <td><b>Num Of FY's:</b></td>
+                    <td><input type="text" id="numfy" name="numfy" value={{numfy}} class="form-control" /></td>
+                </tr>
+                {% endif %} {% if "Dy_CME_Spares" in Role %}
+                <tr>
+                    <td>Select required values:</td>
+                    <td>
+                        <div class="dropdown">
+                            <select name="type" class="form-control ll">
+            <div class="dropdown-content">
+            <option selected="selected" disabled>Type:</option>
+            <option value="zr">ZR</option>
+            <option value="rspitm">RSP Items</option>
+            </div>
+            </select>
+                        </div>
+                    </td>
+                    <td><b>Num Of FY's:</b></td>
+                    <td><input type="text" id="numfy" name="numfy" value={{numfy}} class="form-control" /></td>
+                    <td colspan="2"><input type="submit" name='proceed' value='Proceed' id="submit" class="button button2" /></td>
+                </tr>
+                {% endif %} {% if flag == 1%}
+                <!-- <td><b>Type:</b></td><td>{{typed}}</td> -->
+                <input type="hidden" name="typec" id="typec" value={{typec}} class="form-control" /></tr>
+            {% endif %} {% if "Dy_CME/Plg" in Role %}
+            <tr>
+                {% if flag == 1%}
+                <td><b>Subject:</b></td>
+                <td><textarea name="sub" placeholder="subject" wrap="soft" cols="50" rows="5" class="form-control" required>{{sub}}</textarea></td>
+                <!-- </tr>
+<tr> -->
+                {% if typec == "nrc" or typec == "nrcdgset" or typec == "export" or typec == "ind-rail" or typec == 'zr' or typec == 'zrasstn' %}
+                <td><b>Reference:</b></td>
+                <td colspan="3">
+                    <textarea name="refrn" placeholder="reference" wrap="soft" class="form-controll" style="width: 80%" rows="5" required>{{ref}}</textarea>
+                </td>
+            </tr>
+            {% endif %} {% endif %} {% endif %}
+        </table>
+    </div>
+    <table id="customers" align="center">
+        <input type="hidden" name="bufcspan" id="bufcspan" value={{bufcspan}}>
+        <input type="hidden" name="cspan" id="cspan" value={{bufcspan}}> {% if typec == "nrc" or typec == "export" or typec == "ind-rail" %}
+    </table>
+
+    <div id="divdata">
+
+        <table id="custo" align="center">
+            <h3><b>Existing Data</b></h3>
+
+
+            {% if typec == "nrc" or typec == "export" or typec == "ind-rail" %}
+            <tr>
+
+                <td colspan={{cspan}}></td>
+                <td colspan={{bufcspan}}>Buffer</td>
+            </tr>
+
+            <tr>
+                <td>
+                    Description
+                </td>
+                {% for key, values in years.items %}
+                <td>
+                    {{values.yrs}}
+                </td>
+                {% endfor %} {% for key, values in years.items %}
+                <td>
+                    {{values.yrs}}
+                </td>
+                {% endfor %}
+            </tr>
+
+            {% for key, values in dictemper.items %}
+
+            <tr>
+
+
+                <td>{{values.loty}}</td>
+
+                <textarea name="editloco{{forloop.counter}}" style="display:none;">{{values.loty}}</textarea> {% for key,value in values.dict.items %}
+                <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} />
+
+                <input type="hidden" name="num_of_numfy" value={{forloop.counter}} />
+
+
+                <td><input type="text" name="edit{{forloop.parentloop.counter0}}{{forloop.counter}}" value="{{value.yrtq}}" pattern="[^a-z,^A-Z]*" title="cannot have alphabets" class="form-control" /></td>
+                {% endfor %} {% for key,value in values.dict.items %}
+                <td><input type="text" name="editbf{{forloop.parentloop.counter0}}{{forloop.counter}}" value="{{value.yrbq}}" pattern="[^a-z,^A-Z]*" title="cannot have alphabets" class="form-control" /></td>
+                {% endfor %}
+
+            </tr>
+            {% endfor %}
+
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+    <!-- for adding new loco -->
+    <table id="custo" align="center">
+        <tr>
+            <td><input type="button" id="add" value="Add Loco" /></td>
+            <input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" />
+        </tr>
+        <div id="divid" style="display: none"><input type="text" class="form-control" value="" id="msg" /></div>
+    </table>
+    <table id="customers" align="center">
+        <div id="items"> </div>
+    </table>
+
+    <!-- for deleting the locos -->
+    <table id="custo" align="center">
+        <tr>
+            <td><input type="button" id="delloco" value="Delete a Loco" /></td>
+            <input type="hidden" name="num_del" value="THE OUTPUT OF DEL FUNCTION" id="delmyvalue" />
+        </tr>
+    </table>
+    <table id="custo" align="center">
+        <div id="delitems"> </div>
+    </table>
+    <datalist id="lcname">
+                {% for lc in loconame %}
+                <option value="{{lc}}"></option>
+                {% endfor %}
+            </datalist>
+    <datalist id="delnm">
+        {% for lc in delcname %}
+        <option value="{{lc}}"></option>
+        {% endfor %}
+            </datalist>
+    <table id="customers" align="center">
+        <tr>
+            <td><b>Name</b></td>
+            <td><b>Designation</b></td>
+        </tr>
+        {% for k,v in namedg.items %}
+        <tr>
+            <td style="width: 10%"><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
+            <td style="width: 10%"><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <table id="customers">
+        <tr>
+            <td style="width: 20%">
+                <h5><b>Heading of Major Alterations:</b></h5>
+            </td>
+            <td><textarea name="headalt" placeholder="alterations" style="width: 80%" rows="2" required>{{headalt}}</textarea></td>
+        </tr>
+        <tr>
+            <td>
+                <h5><b>Major Alterations:</b></h5>
+            </td>
+            <td><textarea name="mjalt" placeholder="alterations" style="width: 80%" rows="5">{{mjalt}}</textarea></td>
+        </tr>
+        <tr>
+            <td>
+                <h5><b>Remarks:</b></h5>
+            </td>
+            <td><textarea name="remk" placeholder="remark" style="width: 80%" rows="5">{{remk}}</textarea></td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        {% if typec == "rspm" or typec == "zrover" or typec == "zrasstn" or typec == "rspitm" or typec == "zr" or typec == "nrcdgset" %}
+        <!-- <tr>
+            <td>
+                <input type="button" name="dispdata" id="dispdata" Value="Display Data" onclick="showmydiv()" />
+            </td>
+            <td>
+                <input type="button" name="hidedata" id="hidedata" Value="Hide Data" onclick="hidemydiv()" />
+            </td>
+        </tr> -->
+    </table>
+
+    <div id="divdata">
+        <table id="custo" align="center">
+            <h1><b>Existing Data
+            </b></h1>
+            {% if typec == "rspm" or typec == "zrover" or typec == "rspitm" or typec == "zr" or typec == 'zrasstn' or typec == "nrcdgset" %}
+            <tr>
+
+                <td colspan={{cspan}}></td>
+                {% if typec == "zrover" or typec == "zr" or typec == 'zrasstn' or typec == "nrcdgset" %}
+
+                <td colspan={{bufcspan}}>Buffer</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td>
+                    Description
+                </td>
+                {% for key, values in years.items %}
+                <td>
+                    {{values.yrs}}
+                </td>
+                {% endfor %} {% if typec == "zrover" or typec == "zr" or typec == 'zrasstn' or typec == "nrcdgset" %} {% for key, values in years.items %}
+                <td>
+                    {{values.yrs}}
+                </td>
+                {% endfor %} {% endif %}
+            </tr>
+
+
+            {% for key, values in dictemper.items %}
+
+            <tr>
+
+
+                <td>{{values.loty}}</td>
+
+                <textarea name="editloco{{forloop.counter}}" style="display:none;">{{values.loty}}</textarea> {% for key,value in values.dict.items %}
+                <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} />
+
+                <input type="hidden" name="num_of_numfy" value={{forloop.counter}} />
+
+
+                <td><input type="text" name="edit{{forloop.parentloop.counter0}}{{forloop.counter}}" value={{value.yrtq}} pattern="[^a-z,^A-Z]*" title="cannot have alphabets" class="form-control" /></td>
+                {% endfor %} {% if typec == "zrover" or typec == "zr" or typec == 'zrasstn' or typec == "nrcdgset" %} {% for key,value in values.dict.items %}
+                <td><input type="text" name="editbf{{forloop.parentloop.counter0}}{{forloop.counter}}" value={{value.yrbq}} pattern="[^a-z,^A-Z]*" title="cannot have alphabets" class="form-control" /></td>
+                {% endfor %} {% endif %}
+
+            </tr>
+            {% endfor %}
+
+
+
+            </tr>
+
+            {% endif %}
+
+
+            <tr>
+                <td></td>
+            </tr>
+
+        </table>
+    </div>
+
+
+
+    <table id="custo" align="center">
+
+
+        <tr>
+            <!-- <td><input type="button" id="uploco" value="Update a Material"/></td> -->
+            <td><input type="hidden" name="num_up" value="THE OUTPUT OF UPDATE FUNCTION" id="upmyvalue" /></td>
+        </tr>
+
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+
+        <table id="custo" align="center">
+
+
+            <div id="upitems"> </div>
+        </table>
+
+
+
+        <table id="custo" align="center">
+
+
+            <tr>
+                <td><input type="button" id="delloco" value="Delete a Material" /></td>
+                <td><input type="hidden" name="num_del" value="THE OUTPUT OF DEL FUNCTION" id="delmyvalue" /></td>
+            </tr>
+
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+
+            <table id="custo" align="center">
+                <div id="delitems"> </div>
+            </table>
+            <table id="customers" align="center">
+                <tr>
+                    <td><input type="button" id="add" value="Add Material" /></td>
+
+
+                    <td><input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" /></td>
+
+                    <td><datalist id="lcname">
+        {% for mt in matrname %}
+        <!-- <td>abc</td> -->
+            <option value="{{mt}}"></option>
+        {% endfor %}
+        </datalist></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                <table id="customers" align="center">
+
+
+                    <div id="items"> </div>
+                </table>
+                <tr>
+                    <td>
+                        <h5><b>Remarks:</b></h5>
+                    </td>
+                    <textarea name="remk" placeholder="remark" style="width: 50%" rows="5">{{remk}}</textarea>
+                </tr>
+                {% endif %}
+                <table id="customers" align="center">
+                    </tr>
+                    <div id="items"></div>
+                </table>
+                {% if flag == 1%}
+                <tr>
+                    <br>
+                    <center>
+                        <td><input type="submit" name="save" value="Save" class="btn btn-primary" /></td>
+                    </center>
+                    <br>
+                </tr>
+                {% endif %}
+            </table>
+</form>
+<!-- <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet"/> -->
+
+
+
+<script language="javascript">
+    var locolist = []
+    var mydict = {}
+    var matchEnterdDate = 0;
+    //function to set back date opacity for non supported browsers
+    window.onload = function() {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'date');
+            input.setAttribute('value', 'some text');
+            if (input.value === "some text") {
+                allDates = document.getElementsByClassName("xDateContainer");
+                console.log(allDates);
+                matchEnterdDate = 1;
+                for (var i = 0; i < allDates.length; i++) {
+                    allDates[i].style.opacity = "1";
+                }
+            }
+        }
+        //function to convert enterd date to any format
+    function setCorrect(xObj, xTraget) {
+        var date = new Date(xObj.value);
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var year = date.getFullYear();
+        if (month != 'NaN') {
+            document.getElementById(xTraget).value = day + "-" + month + "-" + year;
+        } else {
+            if (matchEnterdDate == 1) {
+                document.getElementById(xTraget).value = xObj.value;
+            }
+        }
+
+    }
+
+
+    var typecd = document.getElementById('lmtype').value;
+    console.log(typecd);
+    $(document).ready(() => {
+        $("#type").val(typecd);
+    });
+
+    var j = 0;
+    $(document).ready(function() {
+        $("#type").change(function(e) {
+            e.preventDefault();
+            var username = $(this).val();
+            var data = {
+                username
+            };
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'get_yr_dgp' %}",
+                dataType: 'json',
+                data: data,
+                success: function(response) {
+                    document.getElementById('numfy').value = response.jpo_info.numfy,
+                        document.getElementById('dgp').value = response.jpo_info.dgp;
+                },
+                error: function(response) {}
+            });
+        });
+
+
+        $("#add").click(function(e) {
+            event.preventDefault()
+            var name = "name";
+            j++;
+            console.log(j);
+            assign();
+            var typec = document.getElementById("typec").value;
+            var cspan = parseInt(document.getElementById("cspan").value) + 1;
+            var bufcspan = document.getElementById("bufcspan").value;
+            console.log("cspan" + String(cspan));
+            console.log("bufcspan" + String(bufcspan));
+
+            var loconame = name + String(j);
+            var qaunt = "quantity";
+            var qauntb = "quantityb";
+            var numf = $('#numfy').val();
+            // console.log(numf);
+
+            if (j == 1) {
+                var happ = '<div id="hello"><table id="customers"><tr><td colspan="' + cspan + '"></td><td colspan="' + bufcspan + '">Buffer</td></tr><tr>' + '<td>Description</td>';
+            }
+            // var htAppend='<div><table id="customers"><tr>'+'<td><input type="text" name="'+loconame+'" placeholder="loco/material name" list="lcname" required onchange="checkv()" /></td>';
+
+            var htAppend = '<div id=' + loconame + '><table id="customers"><tr>' + '<td><select class="dropselect" name="' + loconame + '" style="width:100%;" onchange="updatelist(this.name)" required><option value="" selected hidden>Loco/Material</option><option></option></select></td>';
+            var q = numf;
+            console.log("q" + String(q));
+            var qname1;
+            var qnameb1;
+            var yrname;
+            var i = 1,
+                bi = 1;
+            for (i = 1; i <= q; i++) {
+                qname1 = qaunt + String(j) + String(i);
+                console.log(qname1);
+                htAppend = htAppend + '<td><input type="text" name="' + qname1 + '" pattern="[^a-z,^A-Z]*" title="cannot have alphabets" class="form-control"/></td>';
+
+
+            }
+
+            if (typec == "nrc" || typec == "nrcdgset" || typec == "export" || typec == "ind-rail" || typec == 'zr' || typec == 'zrasstn' || typec == "zrover") {
+                for (bi = 1; bi <= q; bi++) {
+                    qnameb1 = qauntb + String(j) + String(bi);
+                    htAppend = htAppend + '<td><input type="text" name="' + qnameb1 + '" pattern="[^a-z,^A-Z]*" title="cannot have alphabets" class="form-control"/></td>';
+
+                }
+            }
+            // htAppend=htAppend+'</tr></table></div>';
+            htAppend = htAppend + '</tr></table>' + '<input type="button" value="Remove" id="del"/>' + '</div>';
+
+            if (j == 1)
+
+            {
+                var yr = new Date().getFullYear();
+                var yrname;
+                if (typec == "rspitm" || typec == "rspm") {
+                    var happ = '<div><table id="customers"><tr>' + '<td>Description</td>';
+
+                } else {
+                    var happ = '<div><table id="customers"><tr><td colspan="' + cspan + '"></td><td colspan="' + bufcspan + '">Buffer</td></tr><tr>' + '<td>Description</td>';
+                }
+
+                for (pq = 1; pq <= q; pq++) {
+
+                    yr2 = yr + 1;
+                    yrname = String(yr) + '-' + String(yr2);
+                    yr = yr + 1;
+                    yr2 = yr2 + 1;
+                    happ = happ + '<td>' + yrname + '</td>';
+
+                }
+                if (typec == "nrc" || typec == "nrcdgset" || typec == "export" || typec == "ind-rail" || typec == 'zr' || typec == 'zrasstn' || typec == "zrover") {
+                    var yr = new Date().getFullYear();
+
+                    for (pq = 1; pq <= q; pq++) {
+
+                        yr2 = yr + 1;
+                        yrname = String(yr) + '-' + String(yr2);
+                        yr = yr + 1;
+                        yr2 = yr2 + 1;
+                        happ = happ + '<td>' + yrname + '</td>';
+
+                    }
+                }
+
+                happ = happ + '</tr></table></div>';
+                $('#items').append(happ);
+
+            }
+
+
+            $('#items').append(htAppend);
+            if (locolist.length === 0) {
+                assignlocos();
+            }
+            $(".dropselect").select2({
+                data: locolist
+            });
+            console.log(locolist);
+
+        });
+
+        $('body').on('click', '#del', function(e) {
+            var tst = (this).parentNode.id;
+            var abc = mydict[tst];
+            locolist.push(abc);
+            delete mydict[tst];
+            $(this).parent('div').remove();
+        });
+
+    });
+
+    function updatelist(val) {
+        var vdp = document.getElementsByName(val)[0].value;
+        mydict[val] = vdp;
+        console.log(mydict);
+        var indx = locolist.indexOf(vdp)
+        locolist.splice(indx, 1);
+    }
+
+    function assignlocos() {
+        var x = document.getElementById("lcname");
+        var y = document.getElementById("delnm");
+        if (y != null)
+        {
+            var pp, rr, flag;
+            for (pp = 0; pp < x.options.length; pp++) {
+            flag = 0;
+            for (rr = 0; rr < y.options.length; rr++) {
+                if (x.options[pp].value == y.options[rr].value) {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag == 0) {
+                locolist.push(x.options[pp].value);
+            }
+            }
+
+        }
+        else
+        {
+            var pp, rr, flag=0;
+            for (pp = 0; pp < x.options.length; pp++) {
+            // for (rr = 0; rr < y.options.length; rr++) {
+            //     if (x.options[pp].value == y.options[rr].value) {
+            //         flag = 1;
+            //         break;
+            //     }
+            //}
+            if (flag == 0) {
+                locolist.push(x.options[pp].value);
+            }
+        }
+        }
+
+
+    }
+
+    function assign() {
+        function product() {
+            console.log(j);
+            return j;
+        }
+        document.getElementById('myvalue').value = product();
+    }
+
+    var r = 0;
+
+    $(document).ready(function() {
+
+        $("#newr").click(function(e) {
+            event.preventDefault()
+            var name = "rem";
+            r++;
+            console.log(r);
+            rema();
+            var remname = name + String(r);
+            var htmlAppend = '<div><table id=""><tr>' +
+                '<td><textarea name="' + remname + '" placeholder="remark" wrap="soft" style="overflow:hidden; resize:none;width: 200%"></textarea></td>' +
+                '</tr></table></div>'
+            $('#remarks').append(htmlAppend);
+        });
+        $('body').on('click', '#del', function(e) {
+            $(this).parent('div').remove();
+        });
+
+    });
+
+    function rema() {
+        function remark() {
+            console.log(r);
+            return r;
+        }
+        document.getElementById('rem').value = remark();
+    }
+
+    $(document).ready(function() {
+        $("#newrf").click(function(e) {
+            event.preventDefault()
+            var name = "refn";
+            r++;
+            console.log(r);
+            remfa();
+            var refname = name + String(r);
+            var htmlAppend = '<div><table id=""><tr>' +
+                '<td><textarea name="' + refname + '" placeholder="reference" wrap="soft" style="overflow:hidden; resize:none;width: 200%"></textarea></td>' +
+                '</tr></table></div>'
+            $('#reference').append(htmlAppend);
+        });
+        $('body').on('click', '#del', function(e) {
+            $(this).parent('div').remove();
+        });
+
+    });
+
+    function remfa() {
+        function refnc() {
+            console.log(r);
+            return r;
+        }
+        document.getElementById('ref').value = refnc();
+    }
+    var l = 0;
+    $(document).ready(function() {
+        $("#uploco").click(function(e) {
+            event.preventDefault()
+
+
+
+            var name = "upname";
+            l++;
+            9037
+            console.log(l);
+            upassign();
+            var loconame = name + String(l);
+            var qaunt = "upquantity";
+            var qauntb = "upquantityb";
+            var numf = $('#numfy').val();
+            console.log(numf);
+
+
+            if (l == 1) {
+                var uphapp = '<div><table id="custo"><tr>' + '<td>Description</td>';
+            }
+
+
+            var uphtAppend = '<div><table id="custo"><tr>' + '<td><input type="text" name="' + loconame + '" placeholder="update loco" list="lcname"/></td>';
+
+            var q = numf;
+            var qname1;
+            var qnameb1;
+            var yrname;
+            var i = 1,
+                bi = 1;
+            for (i = 1; i <= q; i++) {
+                qname1 = qaunt + String(l) + String(i);
+                uphtAppend = uphtAppend + '<td><input type="text" name="' + qname1 + '" maxlength="4" class="form-control"/></td>';
+
+
+            }
+
+            for (bi = 1; bi <= q; bi++) {
+                qnameb1 = qauntb + String(l) + String(bi);
+                uphtAppend = uphtAppend + '<td><input type="text" name="' + qnameb1 + '" class="form-control"/></td>';
+
+            }
+            // +'</tr></table></div>'
+            uphtAppend = uphtAppend + '</tr></table></div>';
+
+            if (l == 1)
+
+            {
+                var yr = new Date().getFullYear();
+                var yrname;
+                var uphapp = '<div><table id="custo"><tr>' + '<td>Description</td>';
+                for (pq = 1; pq <= q; pq++) {
+
+                    yr2 = yr + 1;
+                    yrname = String(yr) + '-' + String(yr2);
+                    yr = yr + 1;
+                    yr2 = yr2 + 1;
+                    uphapp = uphapp + '<td>' + yrname + '</td>';
+
+                }
+
+                var yr = new Date().getFullYear();
+
+                for (pq = 1; pq <= q; pq++) {
+
+                    yr2 = yr + 1;
+                    yrname = String(yr) + '-' + String(yr2);
+                    yr = yr + 1;
+                    yr2 = yr2 + 1;
+                    uphapp = uphapp + '<td>' + yrname + '</td>';
+
+                }
+
+                uphapp = uphapp + '</tr></table></div>';
+                $('#upitems').append(uphapp);
+
+            }
+
+
+            $('#upitems').append(uphtAppend);
+
+        });
+        $('body').on('click', '#del', function(e) {
+            $(this).parent('div').remove();
+        });
+
+    });
+
+    function upassign() {
+        function update() {
+            console.log(l);
+            return l;
+        }
+        document.getElementById('upmyvalue').value = update();
+    }
+
+    var d = 0;
+    $(document).ready(function() {
+        $("#delloco").click(function(e) {
+            event.preventDefault()
+            var name = "delname";
+            d++;
+            // console.log(d);
+            delassign();
+            var loconame = name + String(d);
+
+            var numf = $('#numfy').val();
+            // console.log(numf);
+
+
+            if (d == 1) {
+                var delhapp = '<div><table id="custo"><tr>' + '<td>Description</td>';
+            }
+
+
+            var delhtAppend = '<div><table id="custo"><tr>' + '<td><select class="deldropselect" name="' + loconame + '" style="width:30%;" required><option value="" selected hidden>Loco/Material</option><option></option></select></td>';
+
+
+
+            // delhtAppend=delhtAppend+'</tr></table></div>';
+
+            if (d == 1)
+
+            {
+
+                var delhapp = '<div><table id="custo"><tr>' + '<td>Description</td>';
+                delhapp = delhapp + '</tr></table></div>';
+                $('#delitems').append(delhapp);
+
+
+            }
+
+            delhtAppend = delhtAppend + '</tr></table>' + '<input type="button" value="Remove" id="deldel"/>' + '</div>';
+
+
+            $('#delitems').append(delhtAppend);
+
+            var locolist = []
+
+            var x = document.getElementById("delnm");
+            var pp;
+            for (pp = 0; pp < x.options.length; pp++) {
+                locolist.push(x.options[pp].value);
+            }
+
+            $(".deldropselect").select2({
+                data: locolist
+            });
+            console.log(locolist);
+
+        });
+
+        $('body').on('click', '#deldel', function(e) {
+            $(this).parent('div').remove();
+        });
+
+
+    });
+
+    function delassign() {
+        function del() {
+            console.log(d);
+            return d;
+        }
+        document.getElementById('delmyvalue').value = del();
+    }
+</script>
+{% endblock content %}
