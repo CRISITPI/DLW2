@@ -821,9 +821,15 @@ def m2view(request):
             assembly_no = request.POST.get('assm_no')
             doc_no = request.POST.get('doc_no')
 
-
+            kkk=Oprn.objects.all()
+            print("kkk",kkk)
+            # print()
+            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec, part_no=part_no)
+            print(shop_sec,part_no)
+            print(check_obj)
             obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
             date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
+            print("obj",obj)
             leng = obj.count()
             context = {
                 'nav':nav,
