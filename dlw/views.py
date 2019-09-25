@@ -12,7 +12,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import testc,navbar,user_master,roles,shift_history,shift,M2Doc,Batch,Hwm5,Part,Oprn,testing_purpose
+from dlw.models import testc,navbar,user_master,roles,shift_history,shift,M2Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -736,14 +736,30 @@ class ChartData(APIView):
 
 
 @login_required
-@role_required(allowed_roles=["2301","2302"])
+@role_required(allowed_roles=["Superuser","2301","2302"])
 def m2view(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     wo_no = user_master.objects.none()
-    if(len(rolelist)==1):
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+
+        # for on in tm.values():
+        #     tmp.append(on['section_code'])
+        print(tmp)
+        context={
+            'sub':0,
+            'len' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
             wo_no =wo_no | req

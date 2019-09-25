@@ -61,7 +61,9 @@
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
             {% if len == 1 %}
-                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+            {% for role in roles %}
+                <option selected readonly>{{role}}</option>
+                {% endfor %}
             {% endif %}
             {% if len > 1 %}
             {% for role in roles %}
