@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'ppnc_dlw_1',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
+        'HOST': '13.71.87.115',
         'PORT': '5432',
     }
 }
