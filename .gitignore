@@ -3,3 +3,4 @@ env
 DLWEMPDATA.xls
 dlw/__pycache__
 dlw_integrate/__pycache__
+dlw/migrations/__pycache__
