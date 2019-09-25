@@ -76,7 +76,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dlw_integrate.wsgi.application'
 
 
-
+#Datbase connectivity config
 
 DATABASES = {
     'default': {
