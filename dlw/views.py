@@ -37,7 +37,8 @@ from django.http import HttpResponseRedirect
 #
 #
 
-
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
 def insert_machining_of_air_box(request):
     from .models import MachiningAirBox
     cuser=request.user

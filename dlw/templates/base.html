@@ -68,7 +68,7 @@
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function(json) {
-                        window.location = '/logout/';
+                        window.location = '/login/';
                     },
                     error: function(data, err) {}
                 });
@@ -81,7 +81,7 @@
 
             function myFunc() {
                 alert('Session Over: Login Again!');
-                window.location = '/logout/';
+                window.location = '/login/';
             }
 
             function mfunc() {
