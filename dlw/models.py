@@ -1966,6 +1966,7 @@ class Oprn(models.Model):
     qty_prod = models.IntegerField(db_column='QTY_PROD', blank=True, null=True)  # Field name made lowercase.
     work_rej = models.IntegerField(db_column='WORK_REJ', blank=True, null=True)  # Field name made lowercase.
     class Meta:
+        managed = False
         db_table = 'OPRN'
 
 

@@ -824,7 +824,7 @@ def m2view(request):
             kkk=Oprn.objects.all()
             print("kkk",kkk)
             # print()
-            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec, part_no=part_no)
+            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
             print(shop_sec,part_no)
             print(check_obj)
             obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
