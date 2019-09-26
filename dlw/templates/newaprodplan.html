@@ -449,6 +449,18 @@
 
                     <div id="items"> </div>
                 </table>
+                <table id="customers" align="center">
+                    <tr>
+                        <td><b>Name</b></td>
+                        <td><b>Designation</b></td>
+                    </tr>
+                    {% for k,v in namedg.items %}
+                    <tr>
+                        <td style="width: 10%"><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
+                        <td style="width: 10%"><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
+                    </tr>
+                    {% endfor %}
+                </table>
                 <tr>
                     <td>
                         <h5><b>Remarks:</b></h5>

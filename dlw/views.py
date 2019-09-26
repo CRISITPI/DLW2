@@ -1183,6 +1183,8 @@ def bprodplan(request):
                     namedg.update(copy.deepcopy(temp))
             flag=1
             # print("namedg",namedg)
+            # print(dictemper)
+            exilen=(len(dictemper))
             context={
                         'user':cuser,
                         'ruser':ruser,
@@ -1201,7 +1203,7 @@ def bprodplan(request):
                         'usermaster':usermaster,'cnt':range(cnt),
                         'ip':get_client_ip(request),
                         'loconame':lcname,'matrname':mtname,'flag':flag,
-                        'delcname':lcname2,
+                        'delcname':lcname2,'exilen':exilen,
                         'rcnt':rcnt,'dictemper':dictemper,'rev':revex,
                         'formno':formno,'number':number,'sub':sub,'dt':dt,'namedg':namedg,
                         "years":years,"cspan":int(cspan)+1,"bufcspan":cspan,
