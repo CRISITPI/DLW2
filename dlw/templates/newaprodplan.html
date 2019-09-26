@@ -223,7 +223,7 @@
                 <td><select class="dropselect" id="editloconame{{forloop.counter}}"  name="editloconame{{forloop.counter}}" onchange="updatelist(this.name)"  style="width: 250px" required><option value="" selected hidden></option></select></td>
 
                 <textarea name="editloco{{forloop.counter}}" id="editloco{{forloop.counter}}" style="display:none;">{{values.loty}}</textarea> {% for key,value in values.dict.items %}
-                <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} />
+                <!-- <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} /> -->
 
                 <input type="hidden" name="num_of_numfy" value={{forloop.counter}} />
 
@@ -358,7 +358,7 @@
                 <textarea name="editloco{{forloop.counter}}" id="editloco{{forloop.counter}}" style="display:none;">{{values.loty}}</textarea>
  
                 {% for key,value in values.dict.items %}
-                <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} />
+                <!-- <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} /> -->
 
                 <input type="hidden" name="num_of_numfy" value={{forloop.counter}} />
 
@@ -402,7 +402,7 @@
 
 
             <tr>
-                <!-- <td><input type="button" id="delloco" value="Delete a Material" /></td> -->
+               <td><input type="button" id="delloco" value="Delete a Material" /></td> -->
                 <td><input type="hidden" name="num_del" value="THE OUTPUT OF DEL FUNCTION" id="delmyvalue" /></td>
             </tr>
 
@@ -559,7 +559,7 @@
 else { 
     
     var newOption = new Option(locon, locon, true, true);
-    
+    console.log("working");
     $('#editloconame'+String(p)).append(newOption).trigger('change');
 } 
     }
