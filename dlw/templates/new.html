@@ -18,9 +18,9 @@
         background-color: #f2f2f2;
     }
     
-    /* #customers tr:hover {
+    #customers tr:hover {
         background-color: #ddd;
-    } */
+    }
     
     #customers th {
         padding-top: 12px;
@@ -104,12 +104,13 @@
             </select>
                     </div>
                 </td>
+
                 <td style="width: 15%"><b>Num Of FY's:</b></td>
-                <td><input type="text" id="numfy" name="numfy" class="form-control" value={{numfy}} onkeyup="displaydatafun()" pattern="[1-9]" title="Cannot have alphabets and Financial years  cannot be 'Zero' " required/></td>
+                <td><input type="text" id="numfy" name="numfy" class="form-control" value={{numfy}} onkeyup="displaydatafun()" pattern="[0-9]" title="Cannot have alphabets" required/></td>
                 <td style="width: 15%"><b>No. of Designated Persons: </b></td>
-                <td><input type="text" id="dgp" name="dgp" value={{dgp}} class="form-control" onkeyup="displaydatafun()" pattern="[0-9]" title="Cannot have alphabets" required/></td>
+                <td><input type="text" id="dgp" name="dgp" value={{dgp}} onkeyup="displaydatafun()" class="form-control" pattern="[0-9]" title="Cannot have alphabets" required/></td>
                 <input type="hidden" id="lmtype" value={{typec}} class="form-control" />
-                <td><input type="submit" name='proceed' value='Proceed' id="proceed" style="display: none" class="btn btn-primary" /></td>
+                <td><input type="submit" name='proceed' value='Proceed' id="proceed" style="display:none" class="btn btn-primary" /></td>
             </tr>
             <input type="hidden" name="flag" id="flag" value="{{flag}}">
             {% if flag == 1 %}
@@ -123,7 +124,7 @@
                 <td><b>Date:</b></td>
                 <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
             <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 100%;width: 100%;">
-            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 90%;" tabindex="-1"><span style="display: inline-block;width: 0px;z-index: 2;float:center;padding-top: 3px;" tabindex="-1">&#9660;</span>
+            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 90%;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 3px;" tabindex="-1">&#9660;</span>
                     </span>
                 </td>
                 {% endif %} {% endif %} {% if "Dy_CMgm" in Role %}
@@ -160,7 +161,7 @@
                     </td>
                     <td><b>Num Of FY's:</b></td>
                     <td><input type="text" id="numfy" name="numfy" value={{numfy}} onkeyup="displaydatafun()" class="form-control" /></td>
-                    <td colspan="2"><input type="submit" name='proceed' value='Proceed' id="proceed" class="button button2" style="display: none" /></td>
+                    <td colspan="2"><input type="submit" name='proceed' value='Proceed' id="proceed" class="button button2" /></td>
                 </tr>
                 {% endif %} {% if flag == 1%}
                 <!-- <td><b>Type:</b></td><td>{{typed}}</td> -->
@@ -213,7 +214,12 @@
                 </td>
                 {% endfor %}
             </tr>
-            <input type="hidden" name="num_of_loco" id="num_of_loco" value={{existlen}} />
+                <!-- <input type="button" name="buttonexist" id="buttonexist"  > -->
+
+                <input type="hidden" name="num_of_loco" id="num_of_loco" value={{existlen}} />
+
+
+
             {% for key, values in dictemper.items %}
 
             <tr>
@@ -221,9 +227,12 @@
 
                 <!-- <td>{{values.loty}}</td> -->
                 <td><select class="dropselect" id="editloconame{{forloop.counter}}"  name="editloconame{{forloop.counter}}" onchange="updatelist(this.name)"  style="width: 250px" required><option value="" selected hidden></option></select></td>
+                
 
-                <textarea name="editloco{{forloop.counter}}" id="editloco{{forloop.counter}}" style="display:none;">{{values.loty}}</textarea> {% for key,value in values.dict.items %}
-                <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} />
+
+                <textarea name="editloco{{forloop.counter}}" id="editloco{{forloop.counter}}" style="display:none;">{{values.loty}}</textarea> 
+
+                {% for key,value in values.dict.items %}
 
                 <input type="hidden" name="num_of_numfy" value={{forloop.counter}} />
 
@@ -269,9 +278,9 @@
                 {% endfor %}
             </datalist>
     <datalist id="delnm">
-        {% for lc in delcname %}
-        <option value="{{lc}}"></option>
-        {% endfor %}
+                    {% for lc in delcname %}
+                    <option value="{{lc}}"></option>
+                    {% endfor %}
             </datalist>
     <table id="customers" align="center">
         <tr>
@@ -280,8 +289,8 @@
         </tr>
         {% for k,v in namedg.items %}
         <tr>
-            <td style="width: 10%"><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
-            <td style="width: 10%"><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
+            <td style="width: 10%"><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;"  value="{{v.name}}" /></td>
+            <td style="width: 10%"><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" value="{{v.dgn}}" /></td>
         </tr>
         {% endfor %}
     </table>
@@ -305,10 +314,10 @@
             <td><textarea name="remk" placeholder="remark" style="width: 80%" rows="5">{{remk}}</textarea></td>
         </tr>
         {% endif %}
-        <!-- <tr>
+        <tr>
             <td></td>
             <td></td>
-        </tr> -->
+        </tr>
         {% if typec == "rspm" or typec == "zrover" or typec == "zrasstn" or typec == "rspitm" or typec == "zr" or typec == "nrcdgset" %}
         <!-- <tr>
             <td>
@@ -322,12 +331,14 @@
 
     <div id="divdata">
         <table id="custo" align="center">
-            <h1><b>Existing Data</b></h1>
+            <h1><b>Existing Data
+            </b></h1>
             {% if typec == "rspm" or typec == "zrover" or typec == "rspitm" or typec == "zr" or typec == 'zrasstn' or typec == "nrcdgset" %}
             <tr>
 
                 <td colspan={{cspan}}></td>
                 {% if typec == "zrover" or typec == "zr" or typec == 'zrasstn' or typec == "nrcdgset" %}
+
                 <td colspan={{bufcspan}}>Buffer</td>
                 {% endif %}
             </tr>
@@ -346,19 +357,23 @@
                 </td>
                 {% endfor %} {% endif %}
             </tr>
-            <input type="hidden" name="num_of_loco" id="num_of_loco" value={{existlen}} />
+
+
+                <input type="hidden" name="num_of_loco" id="num_of_loco" value={{existlen}} />
 
             {% for key, values in dictemper.items %}
 
             <tr>
 
 
+                <!-- <td>{{values.loty}}</td> -->
                 <td><select class="dropselect" id="editloconame{{forloop.counter}}"  name="editloconame{{forloop.counter}}" onchange="updatelist(this.name)" style="width: 250px" required><option value="" selected hidden></option></select></td>
 
                 <textarea name="editloco{{forloop.counter}}" id="editloco{{forloop.counter}}" style="display:none;">{{values.loty}}</textarea>
- 
-                {% for key,value in values.dict.items %}
-                <input type="hidden" name="num_of_loco" value={{forloop.parentloop.counter}} />
+
+                 {% for key,value in values.dict.items %}
+                <!-- <input type="hidden" name="num_of_loco" id="num_of_loco" value={{forloop.parentloop.counter}} /> -->
+
 
                 <input type="hidden" name="num_of_numfy" value={{forloop.counter}} />
 
@@ -369,53 +384,70 @@
                 {% endfor %} {% endif %}
                 <td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
 
+
             </tr>
             {% endfor %}
+
+
+
             </tr>
+            
+
 
             {% endif %}
 
+
+            <!-- <tr>
+                <td></td>
+            </tr> -->
+
         </table>
+        <div id="existdata"></div>
     </div>
 
 
 
-    <table id="custo" align="center">
+    <!-- <table id="custo" align="center">
 
 
         <tr>
-            <!-- <td><input type="button" id="uploco" value="Update a Material"/></td> -->
+            <td><input type="button" id="uploco" value="Update a Material"/></td>
             <td><input type="hidden" name="num_up" value="THE OUTPUT OF UPDATE FUNCTION" id="upmyvalue" /></td>
-        </tr>
+        </tr> -->
 
-        <!-- 
-            
-        <table id="custo" align="center">
+        <!-- <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr> -->
+
+        <!-- <table id="custo" align="center">
 
 
             <div id="upitems"> </div>
-        </table>
+        </table> -->
 
 
 
-        <table id="custo" align="center">
+        <!-- <table id="custo" align="center">
 
 
             <tr>
-                <!-- <td><input type="button" id="delloco" value="Delete a Material" /></td> -->
+                <td><input type="button" id="delloco" value="Delete a Material" /></td>
                 <td><input type="hidden" name="num_del" value="THE OUTPUT OF DEL FUNCTION" id="delmyvalue" /></td>
             </tr>
 
-            <!-- <tr>
+            <tr>
                 <td>
                 </td>
                 <td>
                 </td>
-            </tr> -->
+            </tr>
 
             <table id="custo" align="center">
                 <div id="delitems"> </div>
-            </table>
+            </table> -->
             <table id="customers" align="center">
                 <tr>
                     <td><input type="button" id="add" value="Add Material" /></td>
@@ -424,28 +456,20 @@
                     <td><input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" /></td>
 
                     <td><datalist id="lcname">
-        {% for mt in matrname %}
+        {% for mt in materialname %}
             <option value="{{mt}}"></option>
         {% endfor %}
         </datalist></td>
                 </tr>
+                <!-- <tr>
+                    <td></td>
+                    <td></td>
+                </tr> -->
 
                 <table id="customers" align="center">
 
 
                     <div id="items"> </div>
-                </table>
-                <table id="customers" align="center">
-                    <tr>
-                        <td><b>Name</b></td>
-                        <td><b>Designation</b></td>
-                    </tr>
-                    {% for k,v in namedg.items %}
-                    <tr>
-                        <td style="width: 10%"><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
-                        <td style="width: 10%"><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
-                    </tr>
-                    {% endfor %}
                 </table>
                 <tr>
                     <td>
@@ -475,7 +499,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet"/> -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+ <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 
 
 <script language="javascript">
@@ -528,7 +553,10 @@
 
     var j = 0;
     $(document).ready(function() {
-        var ff=parseInt(document.getElementById('flag').value);
+
+
+// $('#buttonexist').click(function (e) {
+    var ff=parseInt(document.getElementById('flag').value);
     if(ff==1)
     {
     var num_loco=document.getElementById("num_of_loco").value;
@@ -561,12 +589,29 @@ else {
     var newOption = new Option(locon, locon, true, true);
     
     $('#editloconame'+String(p)).append(newOption).trigger('change');
+        
+
 } 
+
     }
 
-}
 
-$(document).on("click", ".delete", function(){
+
+}
+// });
+    
+
+
+
+
+
+
+
+
+
+
+
+     $(document).on("click", ".delete", function(){
 
 // var user_choice = window.confirm('Are you sure you want to delete the Record??');
 $(this).parents("tr").remove();
@@ -574,13 +619,22 @@ $(this).parents("tr").remove();
 
 var user_choice=false;
 if(user_choice==true) {
+
 // $(this).parents("tr").remove();
 //     $(".add-new").removeAttr("disabled");
 // window.location='your url';  // you can also use element.submit() if your input type='submit' 
+
+
 } else {
+
+
 return false;
 
-}   
+
+}
+
+
+        
     });
 
 
@@ -600,8 +654,9 @@ return false;
                 data: data,
                 success: function(response) {
                     document.getElementById('numfy').value = response.jpo_info.numfy,
-                    document.getElementById('dgp').value = response.jpo_info.dgp;
+                        document.getElementById('dgp').value = response.jpo_info.dgp;
                     document.getElementById("proceed").click();
+
                 },
                 error: function(response) {}
             });
@@ -631,7 +686,7 @@ return false;
             }
             // var htAppend='<div><table id="customers"><tr>'+'<td><input type="text" name="'+loconame+'" placeholder="loco/material name" list="lcname" required onchange="checkv()" /></td>';
 
-            var htAppend = '<div id=' + loconame + '><table id="customers"><tr>' + '<td><select class="dropselect" name="' + loconame + '" style="width:100%;" onchange="updatelist(this.name)" required><option value="" selected hidden>Loco/Material</option><option></option></select></td>';
+            var htAppend = '<div id=' + loconame + '><table id="customers"><tr>' + '<td ><select class="dropselect" name="' + loconame + '" style="width:100%;" onchange="updatelist(this.name)" required><option value="" selected hidden>Loco/Material</option><option></option></select></td>';
             var q = numf;
             console.log("q" + String(q));
             var qname1;
@@ -694,7 +749,7 @@ return false;
                 }
 
                 happ = happ + '</tr></table></div>';
-                // $('#items').append(happ);
+                // $('#divdata').append(happ);
 
             }
 
@@ -731,10 +786,11 @@ return false;
     function assignlocos() {
         var x = document.getElementById("lcname");
         var y = document.getElementById("delnm");
-        if (y != null)
+        if(y!=null)
         {
-            var pp, rr, flag;
-            for (pp = 0; pp < x.options.length; pp++) {
+        var pp, rr, flag;
+
+        for (pp = 0; pp < x.options.length; pp++) {
             flag = 0;
             for (rr = 0; rr < y.options.length; rr++) {
                 if (x.options[pp].value == y.options[rr].value) {
@@ -745,27 +801,32 @@ return false;
             if (flag == 0) {
                 locolist.push(x.options[pp].value);
             }
-            }
-
         }
-        else
-        {
-            var pp, rr, flag=0;
-            for (pp = 0; pp < x.options.length; pp++) {
+
+
+    }
+
+    else
+    {
+
+        var pp, rr, flag=0;
+
+        for (pp = 0; pp < x.options.length; pp++) {
+            flag = 0;
             // for (rr = 0; rr < y.options.length; rr++) {
             //     if (x.options[pp].value == y.options[rr].value) {
             //         flag = 1;
             //         break;
             //     }
-            //}
+            
             if (flag == 0) {
                 locolist.push(x.options[pp].value);
             }
         }
         }
 
-
-    }
+    
+}
 
     function assign() {
         function product() {

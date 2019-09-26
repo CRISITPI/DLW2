@@ -943,6 +943,7 @@ def m2getdoc_no(request):
 def bprodplan(request):
     from .models import annual_production,jpo,namedgn,loconame,materialname
     from datetime import date
+    existlen=0
     context={}
     dictemper={}
     yearlist=[]
@@ -1009,11 +1010,12 @@ def bprodplan(request):
               'Add':"Add",
               'Role':rolelist[0],
               'cyear':ctp,
-              'numfy':num,'dgp':dgp,'flag':flag,
+              'numfy':'-','dgp':'-','flag':flag,'existlen':0,
             }
     lcname=loco(request)
     mtname=material(request)
     if request.method=="POST":
+        flag=0
         dicn={}
         bval=request.POST.get('proceed')
         save=request.POST.get('save')
@@ -1184,7 +1186,7 @@ def bprodplan(request):
             flag=1
             # print("namedg",namedg)
             # print(dictemper)
-            exilen=(len(dictemper))
+            existlen=(len(dictemper))
             context={
                         'user':cuser,
                         'ruser':ruser,
@@ -1203,7 +1205,7 @@ def bprodplan(request):
                         'usermaster':usermaster,'cnt':range(cnt),
                         'ip':get_client_ip(request),
                         'loconame':lcname,'matrname':mtname,'flag':flag,
-                        'delcname':lcname2,'exilen':exilen,
+                        'delcname':lcname2,'existlen':existlen,
                         'rcnt':rcnt,'dictemper':dictemper,'rev':revex,
                         'formno':formno,'number':number,'sub':sub,'dt':dt,'namedg':namedg,
                         "years":years,"cspan":int(cspan)+1,"bufcspan":cspan,
@@ -1287,7 +1289,7 @@ def bprodplan(request):
 
             delm=request.POST.get("num_del")
             del_num=0
-            if delm!='THE OUTPUT OF DEL FUNCTION':
+            if delm!='THE OUTPUT OF DEL FUNCTION' and delm!=None:
                 del_num=int(request.POST.get("num_del"))     
 
             tod = date.today()
@@ -1319,21 +1321,24 @@ def bprodplan(request):
                     yearr.append(ctp)
                     ft=ft+1
                     ft2=ft2+1
-
+                deledit=annual_production.objects.filter(customer=typ,revisionid=rev).delete()
                 for lo in range(0,int(num_loco)):
-                    deledit=annual_production.objects.filter(customer=typ,loco_type=request.POST.get("editloco"+str(lo+1)),revisionid=rev).delete()
-                    print(" For Loco: "+request.POST.get("editloco"+str(lo+1)))
+                    # deledit=annual_production.objects.filter(customer=typ,loco_type=request.POST.get("editloco"+str(lo+1)),revisionid=rev).delete()
+                    # print(" For Loco: "+request.POST.get("editloconame"+str(lo+1)))
+
                     for nf in range(1,int(num_fy)+1):
-                        print("target_quantity for "+yearr[nf-1]+" = "+request.POST.get("edit"+str(lo)+str(nf)))
-                        print("buffer_quantity for "+yearr[nf-1]+" = "+request.POST.get("editbf"+str(lo)+str(nf)))
-                        credit=annual_production.objects.create()
-                        credit.financial_year=yearr[nf-1]
-                        credit.revisionid=rev
-                        credit.customer=typ
-                        credit.loco_type=request.POST.get("editloco"+str(lo+1))
-                        credit.target_quantity=request.POST.get("edit"+str(lo)+str(nf))
-                        credit.buffer_quantity=request.POST.get("editbf"+str(lo)+str(nf))
-                        credit.save()
+                        if(request.POST.get("edit"+str(lo)+str(1))!=None):
+                            if len(request.POST.get("edit"+str(lo)+str(1))) and (request.POST.get("edit"+str(lo)+str(1))) is not None:
+                                # print("target_quantity for "+yearr[nf-1]+" = "+request.POST.get("edit"+str(lo)+str(nf)))
+                                # print("buffer_quantity for "+yearr[nf-1]+" = "+request.POST.get("editbf"+str(lo)+str(nf)))
+                                credit=annual_production.objects.create()
+                                credit.financial_year=yearr[nf-1]
+                                credit.revisionid=rev
+                                credit.customer=typ
+                                credit.loco_type=request.POST.get("editloconame"+str(lo+1))
+                                credit.target_quantity=request.POST.get("edit"+str(lo)+str(nf))
+                                credit.buffer_quantity=request.POST.get("editbf"+str(lo)+str(nf))
+                                credit.save()
 
 
                 loconame="delname"
@@ -1386,9 +1391,9 @@ def bprodplan(request):
             elif typ=='rspm' or typ=='rspitm':
 
                 num_loco=request.POST.get('num_of_loco')
-                print("num of loco = "+num_loco)
+                # print("num of loco = "+num_loco)
                 num_fy=request.POST.get('num_of_numfy')
-                print("num_fy = "+num_fy)
+                # print("num_fy = "+num_fy)
 
 
                 tod = date.today()
@@ -1402,25 +1407,29 @@ def bprodplan(request):
                     ft=ft+1
                     ft2=ft2+1
 
-                for lo in range(0,int(num_loco)):
-                    deledit=annual_production.objects.filter(customer=typ,loco_type=request.POST.get("editloco"+str(lo+1)),revisionid=rev).delete()
-                    print(" For Loco: "+request.POST.get("editloco"+str(lo+1)))
-                    for nf in range(1,int(num_fy)+1):
-               
-                        credit=annual_production.objects.create()
-                        credit.financial_year=yearr[nf-1]
-                        credit.revisionid=rev
-                        credit.customer=typ
-                        credit.loco_type=request.POST.get("editloco"+str(lo+1))
-                        
-                        if(request.POST.get("edit"+str(lo)+str(nf))==None):
-                            credit.target_quantity='-'
-                        else:
-                            credit.target_quantity=request.POST.get("edit"+str(lo)+str(nf))
-                        credit.buffer_quantity='-'
-                        
+                deledit=annual_production.objects.filter(customer=typ,revisionid=rev).delete()
+                
 
-                        credit.save()
+                for lo in range(0,int(num_loco)):
+                    # print(" For Loco: "+request.POST.get("editloco"+str(lo+1)))
+                    for nf in range(1,int(num_fy)+1):
+                        if(request.POST.get("edit"+str(lo)+str(1))!=None):
+                            if len(request.POST.get("edit"+str(lo)+str(1))) and (request.POST.get("edit"+str(lo)+str(1))) is not None:
+               
+                                credit=annual_production.objects.create()
+                                credit.financial_year=yearr[nf-1]
+                                credit.revisionid=rev
+                                credit.customer=typ
+                                credit.loco_type=request.POST.get("editloco"+str(lo+1))
+                                
+                                if(request.POST.get("edit"+str(lo)+str(nf))==None):
+                                    credit.target_quantity='-'
+                                else:
+                                    credit.target_quantity=request.POST.get("edit"+str(lo)+str(nf))
+                                credit.buffer_quantity='-'
+                                
+
+                                credit.save()
            
 
 
