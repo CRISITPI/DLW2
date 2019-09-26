@@ -1187,6 +1187,7 @@ def bprodplan(request):
             # print("namedg",namedg)
             # print(dictemper)
             existlen=(len(dictemper))
+            # print("hi",existlen,"hello")
             context={
                         'user':cuser,
                         'ruser':ruser,
@@ -1392,7 +1393,9 @@ def bprodplan(request):
 
                 num_loco=request.POST.get('num_of_loco')
                 # print("num of loco = "+num_loco)
-                num_fy=request.POST.get('num_of_numfy')
+                # num_fy=request.POST.get('num_of_numfy')
+                num_fy=request.POST.get('numfy')
+                print("num_fy",num_fy)
                 # print("num_fy = "+num_fy)
 
 
@@ -1420,7 +1423,7 @@ def bprodplan(request):
                                 credit.financial_year=yearr[nf-1]
                                 credit.revisionid=rev
                                 credit.customer=typ
-                                credit.loco_type=request.POST.get("editloco"+str(lo+1))
+                                credit.loco_type=request.POST.get("editloconame"+str(lo+1))
                                 
                                 if(request.POST.get("edit"+str(lo)+str(nf))==None):
                                     credit.target_quantity='-'
@@ -1448,8 +1451,9 @@ def bprodplan(request):
                 ft2=ft+1
                 ctp=str(ft)+'-'+str(ft2)
                 subobj=jpo.objects.filter(financial_year=ctp,revisionid=rev,jpo='rsp')
+                # print(subobj)
 
-                if len(subobj)==0 and (sub is not None) and (ref is not None):
+                if len(subobj)==0 and (sub is not None):
                     sobj=jpo.objects.create()
                     sobj.financial_year=ctp
                     sobj.revisionid=rev
