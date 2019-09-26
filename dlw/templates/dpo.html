@@ -125,7 +125,7 @@
             {% endfor %}
 
             {% if mod %}
-            {{mod}}
+            
             <tr><td>{{bno}}0{{two}}</td><td><input type="text" onkeyup="myFunction(this)" name="bqt{{two}}" id="bqt{{two}}" value="{{mod}}"></td><td>{{lcname}}</td><td><input type="text" name="cumino{{two}}" id="cumino{{two}}" ></td></td> <td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td></tr>
             {% endif %}
 
@@ -232,7 +232,7 @@ console.log(cumi);
 
 var cumi1=parseInt(cumi);
 
-for(i=1;i<tbnum;i++)
+for(i=1;i<=tbnum;i++)
 {
   
   var bqtval=parseInt(document.getElementById('bqt'+String(i)).value);
