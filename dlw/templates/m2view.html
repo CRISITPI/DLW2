@@ -223,7 +223,7 @@
     </table>
     <br><br>
     <center>
-        <input type="submit" name="proceed" value="Submit">
+        <input type="submit" name="proceed" value="Save" id="submitted">
     </center>
     <br><br> {% endif %}
 
@@ -398,7 +398,9 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
                         })
               })
   
-  
+document.querySelector("#submitted").addEventListener('click',()=>{
+    alert("Saved Successfully");
+})
   
   </script>
   
