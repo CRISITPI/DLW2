@@ -766,7 +766,7 @@ def m2view(request):
             tmp.append(on.section_code)
         context={
             'sub':0,
-            'lenm' :len(rolelist),
+            'lenm' :2,
             'nav':nav,
             'ip':get_client_ip(request),
             'roles':tmp
@@ -816,7 +816,7 @@ def m2view(request):
                     tmp.append(on.section_code)
                 context = {
                     'roles':tmp,
-                    'lenm' :len(rolelist),
+                    'lenm' :2,
                     'nav':nav,
                     'ip':get_client_ip(request),
                     'obj': obj,
