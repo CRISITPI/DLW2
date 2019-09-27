@@ -60,12 +60,12 @@
                     <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-            {% if len == 1 %}
+            {% if lenm == 1 %}
             {% for role in roles %}
                 <option selected readonly>{{role}}</option>
                 {% endfor %}
             {% endif %}
-            {% if len > 1 %}
+            {% if lenm > 1 %}
             {% for role in roles %}
               <option>{{role}}</option>
             {% endfor %}
@@ -76,8 +76,8 @@
                     <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
                     <select class="form-control" id="wno" name="wo_no" required>
         <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
-        {% if len == 1 %}
-        {% for i in wo_no %}
+        {% if lenm == 1 %}
+        {% for i in wo_nop %}
           <option>{{i.batch_no}}</option>
         {% endfor %}
         {% endif %}
@@ -190,16 +190,33 @@
                 {{i.lot}}
             </td>
             <td>
+            {% if i.qty_prod %}
                 <input type="text" id="qtypr" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                {% else %}
+                <input type="text" id="qtypr" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                {% endif %}
+                
             </td>
             <td>
+            {% if i.qtr_accep %}
                 <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                {% else %}
+                <input type="text" id="qtyac" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+            {% endif %}
             </td>
             <td>
+            {% if i.work_rej %}
                 <input type="text" id="wrrej" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                {% else %}
+                <input type="text" id="wrrej" value="0" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+            {% endif %}
             </td>
             <td>
+            {% if i.mat_rej %}
                 <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                {% else %}
+                 <input type="text" id="matrej" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+            {% endif %}
             </td>
         </tr>
         {% endfor %}
