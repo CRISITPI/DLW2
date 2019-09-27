@@ -122,10 +122,11 @@
                 {% endif %}
                 <td><b>Date:</b></td>
                 <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
-            <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 100%;width: 100%;">
-            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 90%;" tabindex="-1"><span style="display: inline-block;width: 0px;z-index: 2;float:center;padding-top: 3px;" tabindex="-1">&#9660;</span>
+            <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
+            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 90%;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:center;padding-top: 0px;" tabindex="-1">&#9660;</span>
                     </span>
                 </td>
+                
                 {% endif %} {% endif %} {% if "Dy_CMgm" in Role %}
                 <tr>
                     <td>Select required values:</td>
@@ -214,6 +215,7 @@
                 {% endfor %}
             </tr>
             <input type="hidden" name="num_of_loco" id="num_of_loco" value={{existlen}} />
+            <!-- <p>hi</p>{{existlen}}<p>hello</p> -->
             {% for key, values in dictemper.items %}
 
             <tr>
@@ -380,13 +382,13 @@
 
 
 
-    <table id="custo" align="center">
+    <!-- <table id="custo" align="center"> -->
 
 
-        <tr>
+        <!-- <tr> -->
             <!-- <td><input type="button" id="uploco" value="Update a Material"/></td> -->
-            <td><input type="hidden" name="num_up" value="THE OUTPUT OF UPDATE FUNCTION" id="upmyvalue" /></td>
-        </tr>
+            <!-- <td><input type="hidden" name="num_up" value="THE OUTPUT OF UPDATE FUNCTION" id="upmyvalue" /></td> -->
+        <!-- </tr> -->
 
         <!-- 
             
@@ -403,8 +405,8 @@
 
             <tr>
                <td><input type="button" id="delloco" value="Delete a Material" /></td> -->
-                <td><input type="hidden" name="num_del" value="THE OUTPUT OF DEL FUNCTION" id="delmyvalue" /></td>
-            </tr>
+                <!-- <td><input type="hidden" name="num_del" value="THE OUTPUT OF DEL FUNCTION" id="delmyvalue" /></td> -->
+            <!-- </tr> -->
 
             <!-- <tr>
                 <td>

@@ -758,19 +758,15 @@ def m2view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
-    wo_no = user_master.objects.none()
+    wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
         for on in tm:
             tmp.append(on.section_code)
-
-        # for on in tm.values():
-        #     tmp.append(on['section_code'])
-        print(tmp)
         context={
             'sub':0,
-            'len' :len(rolelist),
+            'lenm' :len(rolelist),
             'nav':nav,
             'ip':get_client_ip(request),
             'roles':tmp
@@ -778,77 +774,102 @@ def m2view(request):
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-            wo_no =wo_no | req
+            wo_nop =wo_nop | req
         context = {
             'sub':0,
-            'len' :len(rolelist),
-            'wo_no':wo_no,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
             'nav':nav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
         }
-        # return render(request,"m2view.html",context)
     elif(len(rolelist)>1):
         context = {
             'sub':0,
-            'len' :len(rolelist),
+            'lenm' :len(rolelist),
             'nav':nav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
         }
-
-
-    # context={}
-    
-
-    # cuser=request.user
-    # usermaster=user_master.objects.filter(emp_id=cuser).first()
-    # rolelist=usermaster.role.split(", ")
-    # nav=dynamicnavbar(request,rolelist)
-    # wo_no=M2Doc.objects.all().values('batch_no').distinct()
-    # context={'nav':nav,
-    #         'ip':get_client_ip(request),
-	# 		'wo_no':wo_no}
-    # print(wo_no)
     if request.method == "POST":
-        print("hi")
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = user_master.objects.none()
             shop_sec = request.POST.get('shop_sec')
             part_no = request.POST.get('part_nop')
             wo_no = request.POST.get('wo_no')
             brn_no = request.POST.get('br_no')
             assembly_no = request.POST.get('assm_no')
             doc_no = request.POST.get('doc_no')
-
             kkk=Oprn.objects.all()
-            print("kkk",kkk)
-            # print()
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-            print(shop_sec,part_no)
-            print(check_obj)
             obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
             date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
-            print("obj",obj)
             leng = obj.count()
-            context = {
-                'nav':nav,
-                'ip':get_client_ip(request),
-                'obj': obj,
-                'sub': 1,
-                'len': leng,
-                'date': date,
-                'shop_sec': shop_sec,
-                'part_no': part_no,
-                'wo_no': wo_no,
-                'brn_no': brn_no,
-                'assembly_no': assembly_no,
-                'doc_no': doc_no,
-            }
-
-
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context = {
+                    'roles':tmp,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'wo_nop':wo_nop,
+                    'roles' :rolelist,
+                    'usermaster':usermaster,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj': obj,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
         if submitvalue=='Submit':
             leng=request.POST.get('len')
             shopsec= request.POST.get('shopsec')
@@ -859,25 +880,8 @@ def m2view(request):
                 wrrej = request.POST.get('wrrej'+str(i))
                 matrej = request.POST.get('matrej'+str(i))
                 opn=request.POST.get('opn'+str(i))
-
                 Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
                 wo_no=M2Doc.objects.all().values('batch_no').distinct()
-
-            # context={
-            #     'nav':nav,
-            #     'ip':get_client_ip(request),
-			# 	'wo_no':wo_no,
-
-            #     'len' :len(rolelist),
-               
-            #     'usermaster':usermaster,
-            #     'roles' :rolelist,
-            #     'sub':0
-            #     }
-
-    
-
-
     return render(request,"m2view.html",context)
 
 
@@ -1186,7 +1190,11 @@ def bprodplan(request):
                     namedg.update(copy.deepcopy(temp))
             flag=1
             existlen=(len(dictemper))
+<<<<<<< HEAD
             print("existlen",existlen)
+=======
+            # print("hi",existlen,"hello")
+>>>>>>> 517a8986b4550d627a12a561fcaf50a7cf4f33d2
             context={
                         'user':cuser,
                         'ruser':ruser,
@@ -1391,7 +1399,9 @@ def bprodplan(request):
 
                 num_loco=request.POST.get('num_of_loco')
                 # print("num of loco = "+num_loco)
-                num_fy=request.POST.get('num_of_numfy')
+                # num_fy=request.POST.get('num_of_numfy')
+                num_fy=request.POST.get('numfy')
+                print("num_fy",num_fy)
                 # print("num_fy = "+num_fy)
 
 
@@ -1419,7 +1429,7 @@ def bprodplan(request):
                                 credit.financial_year=yearr[nf-1]
                                 credit.revisionid=rev
                                 credit.customer=typ
-                                credit.loco_type=request.POST.get("editloco"+str(lo+1))
+                                credit.loco_type=request.POST.get("editloconame"+str(lo+1))
                                 
                                 if(request.POST.get("edit"+str(lo)+str(nf))==None):
                                     credit.target_quantity='-'
@@ -1447,8 +1457,9 @@ def bprodplan(request):
                 ft2=ft+1
                 ctp=str(ft)+'-'+str(ft2)
                 subobj=jpo.objects.filter(financial_year=ctp,revisionid=rev,jpo='rsp')
+                # print(subobj)
 
-                if len(subobj)==0 and (sub is not None) and (ref is not None):
+                if len(subobj)==0 and (sub is not None):
                     sobj=jpo.objects.create()
                     sobj.financial_year=ctp
                     sobj.revisionid=rev
