@@ -116,7 +116,8 @@
 
         </table>
         
-        <center><input type="submit" value="Proceed" name="proceed" /></center>
+        
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
 
 
     </div>
@@ -398,10 +399,16 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
                         })
               })
   
+
+document.querySelector("#doc_no").addEventListener('change',(e)=>{
+    console.log("this is doc");
+    document.querySelector("#myproceed").click();
+})
+
 document.querySelector("#submitted").addEventListener('click',()=>{
     alert("Saved Successfully");
 })
-  
+
   </script>
   
 
