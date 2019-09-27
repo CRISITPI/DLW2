@@ -1190,11 +1190,7 @@ def bprodplan(request):
                     namedg.update(copy.deepcopy(temp))
             flag=1
             existlen=(len(dictemper))
-<<<<<<< HEAD
             print("existlen",existlen)
-=======
-            # print("hi",existlen,"hello")
->>>>>>> 517a8986b4550d627a12a561fcaf50a7cf4f33d2
             context={
                         'user':cuser,
                         'ruser':ruser,
