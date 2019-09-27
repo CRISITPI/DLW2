@@ -50,7 +50,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">JOB CARD</h3>
+<h3 align="center">M5 Card</h3>
 <br><br>
 <form action="{% url 'm5view' %}" method="POST"> {% csrf_token %}
     <div class="container">
@@ -81,7 +81,7 @@
         {% endif %}
     </select>
                 </td>
-                
+
                 <td>
                     <label for="br_no"><b>BR NO/बी.आर.नंबर</b></label>
                     <select class="form-control" id="br_no" name="br_no" required>
@@ -90,7 +90,7 @@
               </select>
                 </td>
 
-             
+
             </tr>
             <tr>
                 <td>
@@ -109,7 +109,7 @@
 
 
         </table>
-        
+
         <center><input type="submit" value="Proceed" name="proceed" /></center>
 
 
@@ -118,45 +118,45 @@
     <input type="hidden" name="len" value="{{len}}">
     <table border="2" align="center">
         <tr>
-          <th>Work Order NO</th>
-          <th>BRN NO</th>
-          <th>Shop Section</th>
-          <th>Part NO</th>
-          <!--<th>Part Description</th>-->
-          <th>Document NO</th>
-      </tr>
-      <tr>
-          {% for i in date %}
-          <td>{{i.m2prtdt}}</td>{% endfor %}
-          <td>{{wo_no}}</td>
-          <td>{{brn_no}}</td>
-          <td>{{shop_sec}}</td>
-          <input type="hidden" name="shopsec" value="{{shop_sec}}">
-          <td>{{part_no}}</td>
-          <input type="hidden" name="partno" value="{{part_no}}">
-          <!--<td>{{obj1}}</td>-->
-          <td>{{doc_no}}</td>
-      </tr>
-  </table>
-  </br>
+            <th>Work Order NO</th>
+            <th>BRN NO</th>
+            <th>Shop Section</th>
+            <th>Part NO</th>
+            <!--<th>Part Description</th>-->
+            <th>Document NO</th>
+        </tr>
+        <tr>
+            {% for i in date %}
+            <td>{{i.m2prtdt}}</td>{% endfor %}
+            <td>{{wo_no}}</td>
+            <td>{{brn_no}}</td>
+            <td>{{shop_sec}}</td>
+            <input type="hidden" name="shopsec" value="{{shop_sec}}">
+            <td>{{part_no}}</td>
+            <input type="hidden" name="partno" value="{{part_no}}">
+            <!--<td>{{obj1}}</td>-->
+            <td>{{doc_no}}</td>
+        </tr>
+    </table>
+    </br>
 
- 
+
 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
-        <table border="2" align="center">
-            <tr>
-               <th>QTY Accepted:</th>
-           </tr>
-            {% for i in obj %}
-            <tr>
-                
-               
-                <td>
-                    <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
-                </td>
-           </tr>
-            {% endfor %}
-        </table>
+    <table border="2" align="center">
+        <tr>
+            <th>QTY Accepted:</th>
+        </tr>
+        {% for i in obj %}
+        <tr>
+
+
+            <td>
+                <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
     <br><br>
     <center>
         <input type="submit" name="proceed" value="Submit">
@@ -167,148 +167,23 @@
 
 
 <script type="text/javaScript">
-  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-    //console.log("hi");
-                    e.preventDefault();
-                    var shop_sec = $("#shop_sec").val()
-                    var data = {shop_sec};
-                      $.ajax({
-                        type : 'GET',
-                        url : "{% url 'm5getwono' %}",
-                        dataType : 'json',
-                        data : data,
-                        success : function(response){
-                          var elementsadded = document.querySelectorAll(".newelewono");
-                              if(elementsadded.length>0){
-                                  var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#op_wo").selected=true;
-                                  document.querySelector("#op_br").selected=true;
-                                  //document.querySelector("#op_assm").selected = true;
-                                  document.querySelector("#op_part").selected = true;
-                                  document.querySelector("#op_doc").selected = true; 
-                               }
-                              var brarr,mystr,html;
-                              brarr = response.map((el)=>el.batch_no);
-                              mystr = "";
-                              brarr.forEach((el,index)=>{
-                                html = `<option class="newelewono">${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                              });
-                              html = "";
-                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
-                              mystr=""; 
-                        }
-                          })
-                })
-  $("#wno").change(function(e){
-      e.preventDefault();
-      var wo_no = $(this).val();
-      var shop_sec = $("#shop_sec").val();
-      var data = {wo_no,shop_sec};
-        $.ajax({
-          type : 'GET',
-          url : "{% url 'm5getbr' %}",
-          dataType : 'json',
-          data : data,
-          success : function(response){
-                var elementsadded = document.querySelectorAll(".newelebr");
-                if(elementsadded.length>0){
-                  var elementsaddedarr = Array.from(elementsadded);
-                elementsaddedarr.forEach((el)=> el.remove());
-                document.querySelector("#op_br").selected = true;
-              //  document.querySelector("#op_assm").selected = true;
-                document.querySelector("#op_part").selected = true;
-                document.querySelector("#op_doc").selected = true; 
-                }
-                var brarr,mystr,html;
-                brarr = response.map((el)=>el.brn_no);
-                mystr = "";
-                brarr.forEach((el,index)=>{
-                  html = `<option class="newelebr">${brarr[index]}</option>`
-                  mystr = html.concat(mystr);
-                });
-                html = "";
-                document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr);
-                mystr="";
-          }
-             })
-             }) 
- 
-    
-  document.querySelector("#br_no").addEventListener('change',(e)=>{
-                    e.preventDefault();
-                    var wo_no = $("#wno").val();
-                    var brn_no = $("#br_no").val();
-                    var shop_sec = $("#shop_sec").val()
-                   // var assm_no = $('#assm_no').val()
-                    var data = {wo_no,brn_no,shop_sec};
-                      $.ajax({
-                        type : 'GET',
-                        url : "{% url 'm5getpart_no' %}",
-                        dataType : 'json',
-                        data : data,
-                        success : function(response){
-                          var elementsadded = document.querySelectorAll(".newelepart");
-                              if(elementsadded.length>0){
-                                  var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#op_part").selected = true;
-                                  document.querySelector("#op_doc").selected = true; 
-                               }
-                              var brarr,mystr,html;
-                              brarr = response.map((el)=>el.part_no);
-                              mystr = "";
-                              brarr.forEach((el,index)=>{
-                                html = `<option class="newelepart">${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                              });
-                              html = "";
-                              document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
-                              mystr=""; 
-                        }
-                          })
-                })
-  document.querySelector("#part_nop").addEventListener('change',(e)=>{
-    e.preventDefault();
-    var wo_no = $("#wno").val();
-    var brn_no = $("#br_no").val();
-    var shop_sec = $("#shop_sec").val()
-   // var assm_no = $('#assm_no').val()
-    var part_no = $('#part_nop').val()
-    var data = {wo_no,brn_no,shop_sec,part_no};
-          $.ajax({
-                type : 'GET',
-                url : "{% url 'm5getdoc_no' %}",
-                dataType : 'json',
-                data : data,
-                success : function(response){
-                          var elementsadded = document.querySelectorAll(".neweledoc");
-                              if(elementsadded.length>0){
-                                  var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#op_doc").selected = true; 
-                               }
-                              var brarr,mystr,html;
-                              brarr = response.map((el)=>el.m2slno);
-                              mystr = "";
-                              brarr.forEach((el,index)=>{
-                                html = `<option class="neweledoc">${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                              });
-                              html = "";
-                              document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
-                              mystr=""; 
-                        }
-                          })
-                })
-                </script>
-    
-    {% endblock content %}
-  
-  
-    
-    
-    
-    
-    
+    document.querySelector("#shop_sec").addEventListener('change',(e)=>{ //console.log("hi"); e.preventDefault(); var shop_sec = $("#shop_sec").val() var data = {shop_sec}; $.ajax({ type : 'GET', url : "{% url 'm5getwono' %}", dataType : 'json', data : data,
+    success : function(response){ var elementsadded = document.querySelectorAll(".newelewono"); if(elementsadded.length>0){ var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=> el.remove()); document.querySelector("#op_wo").selected=true;
+    document.querySelector("#op_br").selected=true; //document.querySelector("#op_assm").selected = true; document.querySelector("#op_part").selected = true; document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.batch_no);
+    mystr = ""; brarr.forEach((el,index)=>{ html = `
+    <option class="newelewono">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) }) $("#wno").change(function(e){ e.preventDefault(); var wo_no = $(this).val(); var shop_sec
+    = $("#shop_sec").val(); var data = {wo_no,shop_sec}; $.ajax({ type : 'GET', url : "{% url 'm5getbr' %}", dataType : 'json', data : data, success : function(response){ var elementsadded = document.querySelectorAll(".newelebr"); if(elementsadded.length>0){
+    var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=> el.remove()); document.querySelector("#op_br").selected = true; // document.querySelector("#op_assm").selected = true; document.querySelector("#op_part").selected =
+    true; document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.brn_no); mystr = ""; brarr.forEach((el,index)=>{ html = `
+    <option class="newelebr">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) }) document.querySelector("#br_no").addEventListener('change',(e)=>{ e.preventDefault(); var
+    wo_no = $("#wno").val(); var brn_no = $("#br_no").val(); var shop_sec = $("#shop_sec").val() // var assm_no = $('#assm_no').val() var data = {wo_no,brn_no,shop_sec}; $.ajax({ type : 'GET', url : "{% url 'm5getpart_no' %}", dataType : 'json', data
+    : data, success : function(response){ var elementsadded = document.querySelectorAll(".newelepart"); if(elementsadded.length>0){ var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=> el.remove()); document.querySelector("#op_part").selected
+    = true; document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.part_no); mystr = ""; brarr.forEach((el,index)=>{ html = `
+    <option class="newelepart">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) }) document.querySelector("#part_nop").addEventListener('change',(e)=>{ e.preventDefault();
+    var wo_no = $("#wno").val(); var brn_no = $("#br_no").val(); var shop_sec = $("#shop_sec").val() // var assm_no = $('#assm_no').val() var part_no = $('#part_nop').val() var data = {wo_no,brn_no,shop_sec,part_no}; $.ajax({ type : 'GET', url : "{% url
+    'm5getdoc_no' %}", dataType : 'json', data : data, success : function(response){ var elementsadded = document.querySelectorAll(".neweledoc"); if(elementsadded.length>0){ var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=>
+    el.remove()); document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.m2slno); mystr = ""; brarr.forEach((el,index)=>{ html = `
+    <option class="neweledoc">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) })
+</script>
+
+{% endblock content %}
