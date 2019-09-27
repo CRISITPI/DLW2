@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>M5 CARD</title>
+    </head>
+
+    <body>
+        <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M5 - JOB CARD </h1>
+        <form action='.' method="POST">
+
+            <p align="center" style="text-align: left;color:black">
+
+<style>
+table, th, td {
+  border: 2px solid black;
+  height: 20px;
+
+}
+
+#myTable, th, td {
+  border: 2px solid black;
+  height: 20px;
+
+ }
+
+
+
+</style>
+ <div class="container">
+<table style="width:30%">
+    <tr style="width:50%" height="30">
+   <td>
+    <label for="wk_ord_no">Work Order NO:/कार्यादेश सं. :</label>
+    <input type="text" id="wk_ord_no" name="wk_ord_no">
+    </td>
+    <td>
+    <label for="ord_type">Order Type:</label>
+    <input type="text" id="ord_type" name="ord_type">
+    </td>
+    <td>
+    <label for="br_no">BR NO:/बी.आर.नंबर</label>
+    <input type="text" id="br_no" name="br_no" >
+    </td>
+    <td>
+    <label for="ltf">Loco(To):/लोको से :</label>
+    <input type="text" id="ltf" name="ltfe" >
+    </td>
+    <td>
+    <label for="ltf">Loco(From ):/लोको तक:</label>
+    <input type="text" id="ltfi" name="ltff">
+    </td>
+    <td>
+    <label for="route_card_no">Route Card No.:</label>
+    <input type="text" id="route_card_no" name="route_card_no" >
+    </td>
+    <td>
+    <label for="end_prod_par_no">End Product Part No:</label>
+    <input type="text" id="end_prod_par_no" name="end_prod_par_no" >
+    </td>
+    <td>
+    <label for="docno">Document No:/प्रलेख सं.:</label>
+    <input type="text" id="docno" name="docno">
+    </td>
+    <td colspan="2">
+    <label for="date">Date:/तिथि:</label>
+    <input type="date" id="date" name="date">
+    </td>
+</tr>
+<tr style="width:50%" height="70">
+    <td>
+    <label for="partno">Part NO:/पार्ट सं.:</label>
+    <input type="text" id="partno" name="partno">
+    </td>
+    <td colspan="6">
+    <label for="partdes">Part Description:/पार्ट विवरण:</label>
+    <input type="text" id="partdes" name="partdes">
+    </td>
+    <td colspan="2">
+    <label for="drno">Drawing NO:/ड्राइंग संख्या:</label>
+    <input type="text" id="drno" name="drno">
+    </td>
+    <td>
+    <label for="ordqty">Ordered QTY/आदेशित मात्रा :</label>
+    <input type="text" id="ordqty" name="ordqty">
+    </td>
+</tr>
+<tr style="width:50%" height="70">
+    <td>
+    <label for="raw_mat_partno">Raw Material Part No/कच्चा माल पार्ट संख्या:</label>
+    <input type="text" id="raw_mat_partno" name="raw_mat_partno">
+    </td>
+    <td colspan="5">
+    <label for="raw_mat_des">Raw Material Description:</label>
+    <input type="text" id="raw_mat_des" name="raw_mat_des">
+    </td>
+    <td>
+    <label for="tlwt">TOTAL Lenght/WT / कुल लम्बाई/वजन:</label>
+    <input type="text" id="tlwt" name="tlwt">
+    </td>
+    <td>
+    <label for="unit">Unit :</label>
+    <input type="text" id="unit" name="unit">
+    </td>
+    <td>
+    <label for="lwp">Length & WT/Piece / लम्बाई/वजन/खण्ड :</label>
+    <input type="text" id="lwp" name="lwp">
+    </td>
+
+
+</tr>
+<tr style="width:50%" height="70">
+    <td>
+    <label for="prev_shop">Previous Shop :</label>
+    <input type="text" id="prev_shop" name="prev_shop">
+    </td>
+    <td>
+    <label for="pres_shop">Present Shop :</label>
+    <input type="text" id="pres_shop" name="pres_shop">
+    </td>
+    <td>
+    <label for="load_centre">Load Centre :</label>
+    <input type="text" id="load_centre" name="load_centre">
+    </td>
+    <td>
+    <label for="supply_no">Supply No:</label>
+    <input type="text" id="supply_no" name="supply_no">
+    </td>
+    <td>
+    <label for="pa">P.A.</label>
+    <input type="text" id="pa" name="pa">
+    </td>
+     <td>
+    <label for="at">A.T.</label>
+    <input type="text" id="at" name="at">
+    </td>
+     <td>
+    <label for="copyno">No Of Copies</label>
+    <input type="text" id="copyno" name="copyno">
+    </td>
+     <td>
+    <label for="next_shop">Next Shop</label>
+    <input type="text" id="next_shop" name="next_shop">
+    </td>
+     <td>
+    <label for="receiver">Receiver</label>
+    <input type="text" id="receiver" name="receiver">
+    </td>
+    <td>
+    <label for="cut_sheer">Cut/Sheer</label>
+    <input type="text" id="cut_sheer" name="cut_sheer">
+    </td>
+    <td></td>
+
+
+
+
+
+</tr>
+   <tr  style="width:50%" height="70">
+   <td colspan="6">
+   <label for="opr_des">Operation Description:</label>
+   <input type="text" id="opr_des" name="opr_des">
+   </td>
+   <td colspan="6">
+   <label for="endpro_des">End Product Description:</label>
+   <input type="text" id="endpro_des" name="endpro_des">
+   </td>
+
+   </tr></table>
+        </div>
+    <!--<label for="ono">Operation NO:</label>-->
+    <!--<input type="text" id="ono" name="ono">-->
+
+    <!--<label for="sseg">Shop Segment:</label>-->
+    <!--<input type="text" id="sseg" name="sseg">-->
+
+    <!--<label for="lc">Load Centre:</label>-->
+    <!--<input type="text" id="lc" name="lc">-->
+
+    <!--<label for="oped">Operation Description:</label>-->
+    <!--<input type="text" id="oped" name="oped">-->
+
+    <!--<label for="pa">PA:</label>-->
+    <!--<input type="text" id="pa" name="pa">-->
+
+    <!--<label for="ta">TA:</label>-->
+    <!--<input type="text" id="ta" name="ta">-->
+
+    <!--<label for="no">NO:</label>-->
+    <!--<input type="text" id="no" name="no">-->
+
+    <!--<label for="qtyp">QTY Produced:</label>-->
+    <!--<input type="text" id="qtyp" name="qtyp">-->
+
+    <!--<label for="qtya">QTY Accepted:</label>-->
+    <!--<input type="text" id="qtya" name="qtya">-->
+
+    <!--<label for="qtyp">QTY Produced:</label>-->
+    <!--<input type="text" id="qtyp" name="qtyp">-->
+
+    <!--<label for="qtyp">QTY Produced</label>-->
+    <!--<input type="text" id="qtyp" name="qtyp">-->
+      <!---->
+    <!--<label for="qtyp">QTY Produced</label>-->
+    <!--<input type="text" id="qtyp" name="qtyp">  -->
+
+</div>
+<style>
+table, th, td {
+  border: 1px solid black;
+  height: 15px;
+}
+
+#myTable, th, td {
+  border: 1px solid black;
+  height: 10px;
+}
+
+
+
+
+</style>
+            <br><br>
+
+<input style="background-color: darkslategrey;color:white;padding: 12px;" type="button" id="add" value="Add Operations" style="width: 150px;"/>
+<input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
+<div id="items">
+
+
+    </div>
+
+<br>
+    <br><br><br>
+
+<input style="background-color: darkslategrey;color:white;padding: 12px;" type="submit" value="Submit/सबमिट" name="submit"/>
+
+
+
+
+
+</div>
+</form>
+
+
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script language="javascript">
+var j=0;
+$(document).ready(function(){
+    $("#add").click(function(e){
+        event.preventDefault()
+
+
+
+        j++;
+        console.log(j);
+        assign();
+
+        var inspected_qty="inspected_qty"+String(j);
+        var accepted_qty="accepted_qty"+String(j);
+        var worker="worker"+String(j);
+        var material="material"+String(j);
+        var modify_qty="modify_qty"+String(j);
+        var date="date"+String(j);
+        var inspector="inspector"+String(j);
+        var remarks="remarks"+String(j);
+        var sno=j;
+
+        if(j==1)
+        {
+            var happ='<div class="table-responsive"><table id="customers">'+'<tr style="background-color: darkslategrey;color:white;padding: 12px;" style="width:50%" height="70"><th style="width:3%" >Sr NO:</th><th >Inspected Qty:</th>'+
+'<th>Accepted Qty:</th><th>Worker:</th><th>Material</th>'+
+    '<th>Modified Qty</th>'+
+    '<th>Date</th>'+
+    '<th>Inspector</th>'+
+    '<th>Remarks</th></tr>';
+
+
+
+    happ=happ+'</tr></table></div>';
+        $('#items').append(happ);
+
+        }
+var htAppend='<div><table id="customers"><tr><td style="width:4%">'+sno+'</td>'+'<td style="width:19%"><input type="text" id="inspected_qty" name='+inspected_qty+'></td>'+'<td style="width:15%"><input type="text" id="accepted_qty" name='+accepted_qty+'> </td>'+'<td style="width:11%"><input type="text" id="worker" name='+worker+'></td>'+'<td style="width:10%"><input type="text" id="material" name='+material+'></td>'+'<td style="width:14%"><input type="text" id="modify_qty" name='+modify_qty+'></td>'+'<td><input type="text" id="date" name='+date+'></td>'+'<td><input type="text" id="inspector" name='+inspector+'></td>'+'<td><input type="text" id="remarks" name='+remarks+'></td>';
+        htAppend=htAppend+'</tr></table></div>';
+
+
+
+     $('#items').append(htAppend);
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+});
+function assign(){
+        function operation()
+        {
+        console.log(j);
+        return j;
+        }
+       document.getElementById('myvalue').value =operation();
+    }
+  </script>

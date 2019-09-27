@@ -8,11 +8,12 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import date,datetime,timedelta
 import datetime
+from array import array
 from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import testc,navbar,user_master,roles,shift_history,shift,M2Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section
+from dlw.models import testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -1184,9 +1185,8 @@ def bprodplan(request):
                                 "dgn":objn[j].design,}}
                     namedg.update(copy.deepcopy(temp))
             flag=1
-            # print("namedg",namedg)
-            # print(dictemper)
             existlen=(len(dictemper))
+            print("existlen",existlen)
             context={
                         'user':cuser,
                         'ruser':ruser,
@@ -1275,7 +1275,6 @@ def bprodplan(request):
                     obj1.design=v
                     obj1.revision=rev
                     obj1.save()
-
 
             obj1=None
             print("num is",num)
@@ -3399,3 +3398,164 @@ def dpoinput(request):
 
 
     return render(request, 'dpoinput.html', context)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def m1view(request):
+    pa_no = user_master.objects.none()
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    if(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            pa_no =pa_no | req
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'pa_no':pa_no,
+            'roles' :rolelist,
+            'nav':nav,
+            'ip':get_client_ip(request),
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'nav':nav,
+            'ip':get_client_ip(request),
+        }
+    if request.method == "POST":
+        print("hi")
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            shop_sec = request.POST.get('shop_sec')
+            part_no = request.POST.get('part_nop')
+            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs').order_by('opn')
+            leng = obj.count()
+            context = {
+                'ip':get_client_ip(request),
+                'obj': obj,
+                'sub': 1,
+                'len': leng,
+                'shop_sec': shop_sec,
+                'part_no': part_no,
+                'nav':nav,
+            'ip':get_client_ip(request),
+            }
+    
+
+
+    return render(request,"m1view.html",context)
+
+
+def m1getpano(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        print(shop_sec)
+        pano = list(Oprn.objects.filter(shop_sec = shop_sec).values('part_no').distinct())
+        print(pano)
+        return JsonResponse(pano, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def m5view(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    wo_no = user_master.objects.none()
+    if(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M5Doc.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+            wo_no =wo_no | req
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'wo_no':wo_no,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+
+    if request.method == "POST":
+        print("hi")
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            shop_sec = request.POST.get('shop_sec')
+            part_no = request.POST.get('part_nop')
+            wo_no = request.POST.get('wo_no')
+            brn_no = request.POST.get('br_no')
+            doc_no = request.POST.get('doc_no')
+            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep').order_by('opn')
+        
+            leng = obj.count()
+            context = {
+                'obj': obj,
+                'sub': 1,
+                'len': leng,
+                'shop_sec': shop_sec,
+                'part_no': part_no,
+                'wo_no': wo_no,\
+                'brn_no': brn_no,
+                'doc_no': doc_no,
+                'nav':nav,
+            'ip':get_client_ip(request),
+            }
+
+    return render(request,"m5view.html",context)
+
+
+def m5getwono(request):
+    # print("m5getwono")
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        print(shop_sec)
+        wono = list(M5Doc.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
+        print(wono)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m5getbr(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        shop_sec = request.GET.get('shop_sec')
+        br_no = list(M5Doc.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('brn_no').distinct())
+        return JsonResponse(br_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+   
+
+def m5getpart_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = request.GET.get('shop_sec')
+        part_no = list(M5Doc.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec).values('part_no').distinct())
+        return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+def m5getdoc_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = request.GET.get('shop_sec')
+        part_no = request.GET.get('part_no')
+        doc_no = list(M5Doc.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').distinct())
+        return JsonResponse(doc_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
