@@ -870,7 +870,7 @@ def m2view(request):
                     'assembly_no': assembly_no,
                     'doc_no': doc_no,
                 }
-        if submitvalue=='Submit':
+        if submitvalue=='Save':
             leng=request.POST.get('len')
             shopsec= request.POST.get('shopsec')
             partno= request.POST.get('partno')
@@ -881,6 +881,7 @@ def m2view(request):
                 matrej = request.POST.get('matrej'+str(i))
                 opn=request.POST.get('opn'+str(i))
                 Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
+                messages.success(request, 'Successfully Updated!')
                 wo_no=M2Doc.objects.all().values('batch_no').distinct()
     return render(request,"m2view.html",context)
 
@@ -3195,7 +3196,7 @@ def checkloco(request):
     from .models import jpo,annual_production
     if request.method == "GET" and request.is_ajax():
         lcname=request.GET.get('vdp')
-        print(lcname)
+        # print(lcname)
         flag=0
         try:
             emp=annual_production.objects.filter(loco_type=lcname).exists()

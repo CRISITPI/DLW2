@@ -77,21 +77,22 @@
         <table align="center" id="customers">
             <tr>
                 <td style="width: 15%"><b>Role:</b></td>
-                <td style="width: 10%">{{Role}}</td>
+                <td>{{Role}}</td>
                 <td style="width: 15%"><b>Financial Year:</b></td>
-                <td style="width: 10%">{{cyear}}</td>
-                <td style="width: 12%"><b>Revision:</b></td>
-                <td style="width: 10%">{{revex}}</td>
+                <td>{{cyear}}</td>
+                <td><b>Revision:</b></td>
+                <td>{{revex}}</td>
                 <input type="hidden" name="rev" value={{revex}} class="form-control" />
             </tr>
             <tr>
+                <td><b>Select type:</b></td>
                 {% if "Dy_CME/Plg" in Role %}
                 <td>
                     <div class="dropdown">
                         <select name="type" class="form-control ll" id="type" required>
             <div class="dropdown-content">
-            <option selected="selected" disabled>Type:</option>
-            <option value="ind-rail">Indian Railway Loco</option>
+            <!-- <option selected="selected" disabled>Type:</option> -->
+            <option value="ind-rail" selected>Indian Railway Loco</option>
             <option value="zr">ZR</option>
             <option value="nrc">NRC</option>
             <option value="export">Export</option>
@@ -104,9 +105,9 @@
             </select>
                     </div>
                 </td>
-                <td style="width: 15%"><b>Num Of FY's:</b></td>
+                <td><b>Num Of FY's:</b></td>
                 <td><input type="text" id="numfy" name="numfy" class="form-control" value={{numfy}} onkeyup="displaydatafun()" pattern="[1-9]" title="Cannot have alphabets and Financial years  cannot be 'Zero' " required/></td>
-                <td style="width: 15%"><b>No. of Designated Persons: </b></td>
+                <td><b>No. of Designated Persons: </b></td>
                 <td><input type="text" id="dgp" name="dgp" value={{dgp}} class="form-control" onkeyup="displaydatafun()" pattern="[0-9]" title="Cannot have alphabets" required/></td>
                 <input type="hidden" id="lmtype" value={{typec}} class="form-control" />
                 <td><input type="submit" name='proceed' value='Proceed' id="proceed" style="display: none" class="btn btn-primary" /></td>

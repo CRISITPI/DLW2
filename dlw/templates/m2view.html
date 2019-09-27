@@ -51,7 +51,21 @@
 <br>
 <br>
 <h3 align="center">M2 Card</h3>
-<br><br>
+<br>
+<center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{ message }}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </center>
+<br>
 <form action="{% url 'm2view' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
@@ -192,31 +206,31 @@
             </td>
             <td>
             {% if i.qty_prod %}
-                <input type="text" id="qtypr" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="qtypr" class="myinp" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
-                <input type="text" id="qtypr" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="qtypr" class="myinp" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
                 {% endif %}
                 
             </td>
             <td>
             {% if i.qtr_accep %}
-                <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="qtyac" class="myinp" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
-                <input type="text" id="qtyac" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="qtyac" class="myinp" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
             {% endif %}
             </td>
             <td>
             {% if i.work_rej %}
-                <input type="text" id="wrrej" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="wrrej" class="myinp" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
-                <input type="text" id="wrrej" value="0" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="wrrej" value="0" class="myinp" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
             {% endif %}
             </td>
             <td>
             {% if i.mat_rej %}
-                <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="matrej" class="myinp" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
-                 <input type="text" id="matrej" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                 <input type="text" id="matrej" class="myinp" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
             {% endif %}
             </td>
         </tr>
@@ -401,13 +415,16 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
   
 
 document.querySelector("#doc_no").addEventListener('change',(e)=>{
-    console.log("this is doc");
+
     document.querySelector("#myproceed").click();
 })
-
-document.querySelector("#submitted").addEventListener('click',()=>{
-    alert("Saved Successfully");
+document.addEventListener('keypress',(event)=>{
+    console.log("i ma here");
+    if(event.keyCode===13){
+        document.querySelector("#submitted").click();
+    }
 })
+
 
   </script>
   
