@@ -881,7 +881,7 @@ def m2view(request):
                 matrej = request.POST.get('matrej'+str(i))
                 opn=request.POST.get('opn'+str(i))
                 Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
-                messages.success(request, 'Successfully Updated!')
+                messages.success(request, 'Successfully Updated!, Select new values to update')
                 wo_no=M2Doc.objects.all().values('batch_no').distinct()
     return render(request,"m2view.html",context)
 
