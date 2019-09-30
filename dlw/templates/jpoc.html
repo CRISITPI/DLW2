@@ -61,23 +61,25 @@
         <tr>
             <td>
                 <div class="dropdown" style="margin-left:10px">
-                    <select name="rev" class="form-control ll" required>
-    <div  class="dropdown-content">
-    <option value="" selected hidden disabled>Revision</option>
-    {% for i in revcnt %}
-    <option value={{forloop.counter0}}>Revision {{forloop.counter0}}</option>
-    {% endfor %}
-    </select></div>
-            </td>
-            <td>
-                <div class="dropdown" style="margin-left:10px">
-                    <select name="jpotype" class="form-control ll" required>
+                    <select name="jpotype" id="jpotypesel" class="form-control ll" required>
   <div  class="dropdown-content">
   <option selected value="" disabled hidden>JPO</option>
   <option value="main">MAIN</option>
   <option value="rsp">RSP</option>
   <option value="combined">Combined</option>
-  </select></div>
+  </select>
+                    </div>
+            </td>
+            <td>
+                <div class="dropdown" style="margin-left:10px">
+                    <select name="rev" id="revsel" class="form-control ll" required>
+    <div  class="dropdown-content">
+    <option value="" selected hidden disabled>Revision</option>
+    {% for i in revcnt %}
+    <option value={{forloop.counter0}}>Revision {{forloop.counter0}}</option>
+    {% endfor %}
+    </select>
+                    </div>
             </td>
         </tr>
         <br><br><br>
@@ -115,6 +117,10 @@
 
                 <!-- <center><h4><b>DLW</b></h4></center>
 <center><h4><b><u>Production JPO {{year1}}, Revision-{{rev}}</u></b></h4></center> -->
+
+    <input type="hidden" name="jpotyp" id="jpotyp" value={{jpo}} />
+
+
                 {% if jpo == 1 %}
                 <center>
                     <h4><b>DLW</b></h4>
@@ -850,6 +856,20 @@
 
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
 <script>
+
+    $(document).ready(function() {
+    var jpotyp=document.getElementById('jpotyp');
+    if(jpotyp!=null)
+    {
+    // console.log("jpotyp"+String(jpotyp.value))
+    if(jpotyp.value==2)
+    {
+      document.getElementById('jpotypesel').required=false;
+      document.getElementById('revsel').required=false;
+    }
+}
+});
+
     $('#pr_sch').click(function(e) {
         var sTable = document.getElementById('doc_sc').innerHTML;
 
