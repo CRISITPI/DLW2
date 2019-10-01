@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import date,datetime,timedelta
-import datetime,sweetify
+import datetime
 from array import array
 from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
@@ -2215,7 +2215,7 @@ def jpo(request):
             "colsapn":colsapn,"bufcspan":int(cspan),
             "nrcrwspan":nrcrwspan,"nrcdgrwspan":nrcdgrwspan,"indrwspan":indrwspan,"exprwspan":exprwspan,"zrrwspan":zrrwspan,"zroverrwspan":zroverrwspan,"zrasrwspan":zrasrwspan,
             "year1":yr,"year2":yr2,"year3":yr3,"year4":yr4,
-            "toty1":ty1,"toty2":ty2,"toty3":ty3,"toty4":ty4,
+            "toty1":ty1,"toty2":ty2,"toty3":ty3,"toty4":ty4,'jpoo':jpoo,'rev':rev,
             "pre":f,"n":j+1,'headalt':headalt,
             "pre2":nr,"n2":k+1,
             "pre3":ex,"n3":e+1,
@@ -2381,7 +2381,7 @@ def jpo(request):
               "years":years,"rspdictemper":rspdictemper,"rspitmdictemper":rspitmdictemper,
             "rspflag":rspflag,"rspitmflag":rspitmflag,
             "colsapn":colsapn,"bufcspan":int(cspan),
-            "rsprwspan":rsprwspan,"rspitmrwspan":rspitmrwspan,
+            "rsprwspan":rsprwspan,"rspitmrwspan":rspitmrwspan,'jpoo':jpoo,'rev':rev,
             "year1":yr,"year2":yr2,"year3":yr3,"year4":yr4,
             "pre5":rm,"n5":r1+1,
             "pre6":ri,"n6":r2+1,
@@ -3074,7 +3074,7 @@ def jpo(request):
             "rspdictemper":rspdictemper,"rspitmdictemper":rspitmdictemper,
             "rspflag":rspflag,"rspitmflag":rspitmflag,
             "colsapn":colsapn,"bufcspan":int(cspan),
-            "rsprwspan":rsprwspan,"rspitmrwspan":rspitmrwspan,
+            "rsprwspan":rsprwspan,"rspitmrwspan":rspitmrwspan,'jpoo':jpoo,'rev':rev,
             "year1":yr,"year2":yr2,"year3":yr3,"year4":yr4,
             "toty1":ty1,"toty2":ty2,"toty3":ty3,"toty4":ty4,
             "pre":f,"n":j+1,'headalt':headalt,

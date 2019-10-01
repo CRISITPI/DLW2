@@ -60,7 +60,7 @@
         <tr>
                 <td>
                         <div class="dropdown" style="margin: 1em 0 0.5em 0">
-                            <select name="jpotype" class="form-control ll" required>
+                            <select name="jpotype" id="jpotypesel" class="form-control ll" required>
           <div  class="dropdown-content">
           <!-- <option selected value="" disabled hidden>JPO</option> -->
           <option value="main" selected>MAIN</option>
@@ -72,7 +72,7 @@
         <tr>
             <td>
                 <div class="dropdown" style="margin: 1em 0 0.5em 0">
-                    <select name="rev" class="form-control ll" required>
+                    <select name="rev" id="revsel" class="form-control ll" required>
     <div  class="dropdown-content">
     <option value="" selected hidden disabled>Revision</option>
     {% for i in revcnt %}
@@ -95,8 +95,8 @@
 
 
 
-    <input type="hidden" name="revh" value={{rev}} />
-    <input type="hidden" name="jpotypeh" value={{jpoo}} />
+    <input type="hidden" name="revh" id="revh" value={{rev}} />
+    <input type="hidden" name="jpotypeh" id="jpotypeh" value={{jpoo}} />
     <input type="hidden" name="finalizevalue" value={{finalvalue}} />
 
     <br>
@@ -857,6 +857,13 @@
 <script>
 
     $(document).ready(function() {
+        var jpo =document.getElementById('jpotypeh').value;
+        var rev=document.getElementById('revh').value;
+        if(jpo !="/" && rev !="/")
+        {
+        document.getElementById('jpotypesel').value=jpo;
+        document.getElementById('revsel').value=rev;
+    }
     var jpotyp=document.getElementById('jpotyp');
     if(jpotyp!=null)
     {
