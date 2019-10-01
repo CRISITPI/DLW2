@@ -164,7 +164,7 @@
             <th>Part Description</th>
             <th>Drawing NO</th>
             <th>Document NO</th>
-            <th>Ordered Type</th>
+            <th>Order Type</th>
         </tr>
         <tr>
              <td>{{shop_sec}}</td>
@@ -176,9 +176,11 @@
             <td>{{ii.drgno}}</td>
             {% endfor %}
             <td>{{doc_no}}</td>
+            {% for k in obj3 %}
+            <td>{{k.batch_type}}</td>{% endfor %}
         </tr>
     </table>
-    <br><br>
+    </br>
 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
     <table border="2" align="center">
@@ -439,7 +441,7 @@ document.addEventListener('keypress',(event)=>{
         event.preventDefault();
     }
 })
-console.log(document.activeElement);
+
 
   </script>
   
