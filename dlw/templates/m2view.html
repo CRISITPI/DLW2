@@ -142,27 +142,43 @@
             <th>Printed Date(MM-DD-YYYY)</th>
             <th>Work Order NO</th>
             <th>BRN NO</th>
-            <th>Shop Section</th>
-            <th>Assembly NO</th>
-            <th>Part NO</th>
-            <!--<th>Part Description</th>-->
-            <th>Document NO</th>
+            <th>Ordered Quantity</th>
+            <th>Assembly Part NO</th>
+            <th>Assembly Description</th>
         </tr>
+
         <tr>
             {% for i in date %}
             <td>{{i.m2prtdt}}</td>{% endfor %}
             <td>{{wo_no}}</td>
             <td>{{brn_no}}</td>
-            <td>{{shop_sec}}</td>
-            <input type="hidden" name="shopsec" value="{{shop_sec}}">
+            {% for ij in date %}
+            <td>{{ij.qty}}</td>{% endfor %}
             <td>{{assembly_no}}</td>
+            {% for g in obj2 %}
+            <td>{{g.des}}</td>{% endfor %}
+        </tr>
+         <tr>
+            <th>Shop Section</th>
+            <th>Part NO</th>
+            <th>Part Description</th>
+            <th>Drawing NO</th>
+            <th>Document NO</th>
+            <th>Ordered Type</th>
+        </tr>
+        <tr>
+             <td>{{shop_sec}}</td>
+            <input type="hidden" name="shopsec" value="{{shop_sec}}">
             <td>{{part_no}}</td>
             <input type="hidden" name="partno" value="{{part_no}}">
-            <!--<td>{{obj1}}</td>-->
+            {% for ii in obj1 %}
+            <td>{{ii.des}}</td>
+            <td>{{ii.drgno}}</td>
+            {% endfor %}
             <td>{{doc_no}}</td>
         </tr>
     </table>
-    </br>
+    <br><br>
 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
     <table border="2" align="center">

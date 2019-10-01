@@ -13,7 +13,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section
+from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -805,10 +805,13 @@ def m2view(request):
             assembly_no = request.POST.get('assm_no')
             doc_no = request.POST.get('doc_no')
             kkk=Oprn.objects.all()
+            obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno')
+            obj2 = Cst.objects.filter(partno=part_no).values('des')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
-            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
+            obj = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
+            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
             leng = obj.count()
+            print(obj2)
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -820,6 +823,8 @@ def m2view(request):
                     'nav':nav,
                     'ip':get_client_ip(request),
                     'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
                     'sub': 1,
                     'len': leng,
                     'date': date,
@@ -839,9 +844,11 @@ def m2view(request):
                     'roles' :rolelist,
                     'usermaster':usermaster,
                     'lenm' :len(rolelist),
-                    'nav':nav,
-                    'ip':get_client_ip(request),
+                    'nav': nav,
+                    'ip': get_client_ip(request),
                     'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
                     'sub': 1,
                     'len': leng,
                     'date': date,
@@ -860,6 +867,8 @@ def m2view(request):
                     'usermaster':usermaster,
                     'roles' :rolelist,
                     'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
                     'sub': 1,
                     'len': leng,
                     'date': date,
@@ -883,15 +892,13 @@ def m2view(request):
                 Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
                 messages.success(request, 'Successfully Updated!, Select new values to update')
                 wo_no=M2Doc.objects.all().values('batch_no').distinct()
-    return render(request,"m2view.html",context)
+    return render(request, "m2view.html", context)
 
 
 def m2getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        print(shop_sec)
         wono = list(M2Doc.objects.filter(f_shopsec = shop_sec).values('batch_no').distinct())
-        print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
