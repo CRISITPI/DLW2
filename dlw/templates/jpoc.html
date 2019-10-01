@@ -59,27 +59,27 @@
 
 
         <tr>
+                <td>
+                        <div class="dropdown" style="margin: 1em 0 0.5em 0">
+                            <select name="jpotype" class="form-control ll" required>
+          <div  class="dropdown-content">
+          <!-- <option selected value="" disabled hidden>JPO</option> -->
+          <option value="main" selected>MAIN</option>
+          <option value="rsp">RSP</option>
+          <option value="combined">Combined</option>
+          </select></div>
+                    </td>
+                </tr>
+        <tr>
             <td>
-                <div class="dropdown" style="margin-left:10px">
-                    <select name="jpotype" id="jpotypesel" class="form-control ll" required>
-  <div  class="dropdown-content">
-  <option selected value="" disabled hidden>JPO</option>
-  <option value="main">MAIN</option>
-  <option value="rsp">RSP</option>
-  <option value="combined">Combined</option>
-  </select>
-                    </div>
-            </td>
-            <td>
-                <div class="dropdown" style="margin-left:10px">
-                    <select name="rev" id="revsel" class="form-control ll" required>
+                <div class="dropdown" style="margin: 1em 0 0.5em 0">
+                    <select name="rev" class="form-control ll" required>
     <div  class="dropdown-content">
     <option value="" selected hidden disabled>Revision</option>
     {% for i in revcnt %}
     <option value={{forloop.counter0}}>Revision {{forloop.counter0}}</option>
     {% endfor %}
-    </select>
-                    </div>
+    </select></div>
             </td>
         </tr>
         <br><br><br>
