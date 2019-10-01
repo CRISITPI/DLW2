@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'dlw',
     'crispy_forms',
     'rest_framework',
-    'sweetify',
 ]
 
 
@@ -76,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dlw_integrate.wsgi.application'
 
-SWEETIFY_SWEETALERT_LIBRARY='sweetalert2'
 
 #Datbase connectivity config
 

@@ -66,7 +66,6 @@ urlpatterns = [
     path('ajax/m1getpano/',m1getpano,name='m1getpano'),
     path('m5view/',m5view,name='m5view'),
     path('ajax/m5getbr/',m5getbr,name='m5getbr'),
-    path('ajax/submitprod/',bprodplan,name="submitprod"),
     path('ajax/m5getpart_no/',m5getpart_no,name='m5getpart_no'),
     path('ajax/m5getdoc_no/',m5getdoc_no,name='m5getdoc_no'),
     path('ajax/m5getwono',m5getwono,name='m5getwono'),
