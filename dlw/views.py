@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import date,datetime,timedelta
-import datetime
+import datetime,sweetify
 from array import array
 from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
@@ -1032,6 +1032,8 @@ def bprodplan(request):
         bval=request.POST.get('proceed')
         save=request.POST.get('save')
         typec=request.POST.get('type')
+        if (bval==None and save==None):
+            save="Save"
         # num=request.POST.get('numfy')
         print(bval,save)
         dgp=request.POST.get('dgp')
@@ -1539,9 +1541,8 @@ def bprodplan(request):
                             o.revisionid=int(request.POST.get("rev"))
                             o.customer=request.POST.get("typec")
                             o.save()
-
+                            messages.success(request, 'Successfully Created!')
                             o=None
-
     return render(request,'newaprodplan.html',context)
 
 

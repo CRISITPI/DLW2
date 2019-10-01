@@ -43,8 +43,7 @@
     </div>
     <table align="center">
         <tr>
-            <td>
-            </td>
+            
             <td>
                 <h2 style="margin: 1em 0 0.5em 0;
           color: #343434;
@@ -88,7 +87,7 @@
         </tr><br><br><br>
 
 
-        <td></td>
+       
         <td><input class="btn btn-primary" type="submit" name='save' value='Proceed' /> &nbsp; &nbsp;
         </td>
         </tr>
@@ -849,9 +848,9 @@
 
 {% endif %}
 <!-- these js files are used for making PDF -->
-<script src="{% static '/js/jspdf.js' %}"></script>
+<!-- <script src="{% static '/js/jspdf.js' %}"></script>
 <script src="{% static '/js/jquery-2.1.3.js' %}"></script>
-<script src="{% static '/js/pdfFromHTML.js' %}"></script>
+<script src="{% static '/js/pdfFromHTML.js' %}"></script> -->
 <!-- <script src="{% static '/js/jquery-1.7.1.min.js' %}"></script> -->
 
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
@@ -871,6 +870,7 @@
 });
 
     $('#pr_sch').click(function(e) {
+        M.toast({html: 'I am a toast!'})
         var sTable = document.getElementById('doc_sc').innerHTML;
 
         var style = "<style>";
