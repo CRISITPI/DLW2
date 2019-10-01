@@ -811,7 +811,6 @@ def m2view(request):
             obj = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
             date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
             leng = obj.count()
-            print(obj2)
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
