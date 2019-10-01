@@ -419,9 +419,8 @@ document.querySelector("#doc_no").addEventListener('change',(e)=>{
     document.querySelector("#myproceed").click();
 })
 document.addEventListener('keypress',(event)=>{
-    console.log("i ma here");
     if(event.keyCode===13){
-        document.querySelector("#submitted").click();
+        event.preventDefault();
     }
 })
 console.log(document.activeElement);

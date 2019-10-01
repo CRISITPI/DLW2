@@ -117,6 +117,10 @@
 
                 <!-- <center><h4><b>DLW</b></h4></center>
 <center><h4><b><u>Production JPO {{year1}}, Revision-{{rev}}</u></b></h4></center> -->
+
+    <input type="hidden" name="jpotyp" id="jpotyp" value={{jpo}} />
+
+
                 {% if jpo == 1 %}
                 <center>
                     <h4><b>DLW</b></h4>
@@ -852,6 +856,20 @@
 
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
 <script>
+
+    $(document).ready(function() {
+    var jpotyp=document.getElementById('jpotyp');
+    if(jpotyp!=null)
+    {
+    // console.log("jpotyp"+String(jpotyp.value))
+    if(jpotyp.value==2)
+    {
+      document.getElementById('jpotypesel').required=false;
+      document.getElementById('revsel').required=false;
+    }
+}
+});
+
     $('#pr_sch').click(function(e) {
         var sTable = document.getElementById('doc_sc').innerHTML;
 

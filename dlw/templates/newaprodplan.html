@@ -122,9 +122,10 @@
                 <td><textarea name="formno" class="form-control" style="overflow:hidden; resize:none;width: 100%;" cols="30">{{formno}}</textarea></td>
                 {% endif %}
                 <td><b>Date:</b></td>
-                <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
+                <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 64px;width: 200px">
+
             <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 90%;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:center;padding-top: 0px;" tabindex="-1">&#9660;</span>
+            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 100%; font-size:16px;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 40px;" tabindex="-1">&#9660;</span>
                     </span>
                 </td>
                 
@@ -531,11 +532,33 @@
 
     var j = 0;
     $(document).ready(function() {
+
+     var typeval=document.getElementById('type').value;
+        console.log("Type"+String(typeval));
+  var lentype=typeval.length;
+      if(lentype==0)
+      {
+
+        $('#type').val('ind-rail');
+        // $("#type").change();
+
+        ajaxfortype();
+    }
+
+
+
+
+
+
+
+
+
+
         var ff=parseInt(document.getElementById('flag').value);
     if(ff==1)
     {
-    var num_loco=document.getElementById("num_of_loco").value;
-    console.log(num_loco);
+    // var num_loco=document.getElementById("num_of_loco").value;
+    // console.log(num_loco);
     var p=0;
     if(locolist.length == 0)
     {
@@ -544,6 +567,13 @@
     $(".dropselect").select2({
         data:locolist
     });
+
+    if (document.getElementById("num_of_loco")!=null)
+    {
+    var num_loco=document.getElementById("num_of_loco").value;
+    console.log("num_loco"+num_loco);
+
+
 
     for(p=1;p<=parseInt(num_loco);p++)
     {
@@ -562,10 +592,15 @@
 else { 
     
     var newOption = new Option(locon, locon, true, true);
-    console.log("working");
+    
     $('#editloconame'+String(p)).append(newOption).trigger('change');
-}
+        
+
+} 
+
     }
+
+}
 
 }
 
@@ -589,12 +624,17 @@ return false;
 
 
 
-
-        $("#type").change(function(e) {
-            e.preventDefault();
-            var username = $(this).val();
+function ajaxfortype()
+            {
+            // var username = $(this).val();
+            var username=document.getElementById('type').value;
+            var v='type'
+            var type=document.getElementById('lmtype').value;
+            
             var data = {
-                username
+                username,
+                v,
+                type
             };
             $.ajax({
                 type: 'GET',
@@ -603,11 +643,21 @@ return false;
                 data: data,
                 success: function(response) {
                     document.getElementById('numfy').value = response.jpo_info.numfy,
-                    document.getElementById('dgp').value = response.jpo_info.dgp;
+                        document.getElementById('dgp').value = response.jpo_info.dgp;
                     document.getElementById("proceed").click();
+
                 },
                 error: function(response) {}
             });
+        }
+
+
+
+
+
+        $("#type").change(function(e) {
+            e.preventDefault();
+            ajaxfortype();
         });
 
 
