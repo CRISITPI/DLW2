@@ -48,9 +48,9 @@
         background-color: #f2f2f2;
     }
     
-    #custo tr:hover {
+    /* #custo tr:hover {
         background-color: #ddd;
-    }
+    } */
     
     #custo th {
         padding-top: 12px;
@@ -68,16 +68,26 @@
         width: 100px;
     }
 </style>
-<form action="." method="POST">{%csrf_token%}
+<center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <script>M.toast({html: "{{message}}", classes: 'blue rounded', displayLength:2000});</script>
+            {% endfor %}
+        </ul>
+        {% endif %}
+</center>
+<form action="." id="submitprod" method="POST">{%csrf_token%}
     <br>
+    <h3 style="float: right;"><b>{{Role}}</b></h3>
     <center>
         <h2>Annual Production Plan</h2>
     </center><br>
     <div class="containers">
         <table align="center" id="customers">
             <tr>
-                <td style="width: 15%"><b>Role:</b></td>
-                <td>{{Role}}</td>
+                <!-- <td style="width: 15%"><b>Role:</b></td>
+                <td>{{Role}}</td> -->
                 <td style="width: 15%"><b>Financial Year:</b></td>
                 <td>{{cyear}}</td>
                 <td><b>Revision:</b></td>
@@ -110,22 +120,22 @@
                 <td><b>No. of Designated Persons: </b></td>
                 <td><input type="text" id="dgp" name="dgp" value={{dgp}} class="form-control" onkeyup="displaydatafun()" pattern="[0-9]" title="Cannot have alphabets" required/></td>
                 <input type="hidden" id="lmtype" value={{typec}} class="form-control" />
-                <td><input type="submit" name='proceed' value='Proceed' id="proceed" style="display: none" class="btn btn-primary" /></td>
+                <input type="submit" name='proceed' value='Proceed' id="proceed" style="display: none" class="btn btn-primary" />
             </tr>
             <input type="hidden" name="flag" id="flag" value="{{flag}}">
             {% if flag == 1 %}
             <tr>
                 <td><b>No.</b></td>
-                <td><textarea name="number" class="form-control" style="overflow:hidden; resize:none;width: 100%" cols="30">{{number}}</textarea></td>
+                <td><textarea name="number" class="form-control" style="overflow:hidden; resize:none;width: 100%" cols="30" rows="1">{{number}}</textarea></td>
                 {% if iammain == 1 %}
                 <td style="width: 10%"><b>Form No.</b></td>
-                <td><textarea name="formno" class="form-control" style="overflow:hidden; resize:none;width: 100%;" cols="30">{{formno}}</textarea></td>
+                <td><textarea name="formno" class="form-control" style="overflow:hidden; resize:none;width: 100%;" cols="30" rows="1">{{formno}}</textarea></td>
                 {% endif %}
                 <td><b>Date:</b></td>
-                <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 64px;width: 200px">
+                <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 28px;width: 200px">
 
             <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 100%; font-size:16px;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 40px;" tabindex="-1">&#9660;</span>
+            <input type="text" id="xTime" name="xTime" value={{dt}} style="border: none;height: 100%; font-size:16px;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 4px;" tabindex="-1">&#9660;</span>
                     </span>
                 </td>
                 
@@ -278,17 +288,27 @@
         {% endfor %}
             </datalist>
     <table id="customers" align="center">
-        <tr>
+        <!-- <tr>
             <td><b>Name</b></td>
             <td><b>Designation</b></td>
-        </tr>
-        {% for k,v in namedg.items %}
+        </tr> -->
         <tr>
-            <td style="width: 10%"><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
-            <td style="width: 10%"><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
-        </tr>
+            <td><b>Name</b></td>
+        {% for k,v in namedg.items %}
+            <td><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
+        
         {% endfor %}
+    </tr>
+    <tr>
+        <td><b>Designation</b></td>
+            {% for k,v in namedg.items %}
+
+        <td><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
+        {% endfor %}
+
+    </tr>
     </table>
+    <br>
     <table id="customers">
         <tr>
             <td style="width: 20%">
@@ -466,13 +486,14 @@
                 <tr>
                     <br>
                     <center>
-                        <td><input type="submit" name="save" value="Save" class="btn btn-primary" /></td>
+                        <td><input type="submit" name="save" value="Save" id="trysub" class="btn btn-primary" /></td>
                     </center>
                     <br>
                 </tr>
                 {% endif %}
             </table>
 </form>
+
 <!-- <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
@@ -480,6 +501,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet"/> -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.css">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.common.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.5/sweetalert2.min.js"></script>
+<!-- <script src="sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script> -->
 
 
 <script language="javascript">
@@ -532,6 +558,56 @@
 
     var j = 0;
     $(document).ready(function() {
+
+
+
+
+
+
+
+
+        var ff=parseInt(document.getElementById('flag').value);
+    if(ff==1)
+{
+var myVar = setInterval(submitdata, 10000);
+
+// $("#submitprod").submit(function(e) {
+    function submitdata(){
+
+    console.log("submitprod");
+
+    // e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    var form = $("#submitprod");
+    var serdata=form.serialize();
+    // console.log(serdata);
+    var url = form.attr('action');
+
+    $.ajax({
+           type: "POST",
+           // url: url,
+           url:"{% url 'submitprod' %}",
+           data: form.serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+            //    alert("Data saved successfully"); // show response from the php script.
+               // M.toast({html: 'Changes are saved!'});
+           }
+         });
+
+
+// });
+}
+}
+
+
+
+
+
+
+
+
+
 
      var typeval=document.getElementById('type').value;
         console.log("Type"+String(typeval));
@@ -645,20 +721,21 @@ function ajaxfortype()
                     document.getElementById('numfy').value = response.jpo_info.numfy,
                         document.getElementById('dgp').value = response.jpo_info.dgp;
                     document.getElementById("proceed").click();
-
                 },
                 error: function(response) {}
             });
         }
 
-
-
-
-
         $("#type").change(function(e) {
             e.preventDefault();
             ajaxfortype();
         });
+
+        // $("#trysub").click(function(e) {
+        //     e.preventDefault();
+        //     console.log("i am here");
+        //     swal("Done!", "Data saved succesfully!", "success");
+        // });
 
 
         $("#add").click(function(e) {
