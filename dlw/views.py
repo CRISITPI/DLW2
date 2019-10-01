@@ -1027,6 +1027,7 @@ def bprodplan(request):
         save=request.POST.get('save')
         typec=request.POST.get('type')
         # num=request.POST.get('numfy')
+        print(bval,save)
         dgp=request.POST.get('dgp')
         if dgp is None:
             cnt=0
@@ -1680,7 +1681,7 @@ def jpo(request):
         objm=jpo.objects.filter(jpo='main',revisionid=rev)
         if len(objm):
             cdgp=int(objm[0].numdgp)
-        objnm=namedgn.objects.all()
+        objnm=namedgn.objects.filter(revision=rev)
         namelist=[]
         desiglist=[]
         for o in objnm:
