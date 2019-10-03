@@ -1,5 +1,46 @@
 {% extends 'base.html' %} {% block content %}
 <style>
+    #snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;} 
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;} 
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
     #customers {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
@@ -83,6 +124,7 @@
     <center>
         <h2>Annual Production Plan</h2>
     </center><br>
+    <div id="snackbar">Changes are saved successfully..</div>
     <div class="containers">
         <table align="center" id="customers">
             <tr>
@@ -583,7 +625,6 @@ var myVar = setInterval(submitdata, 10000);
 // $("#submitprod").submit(function(e) {
     function submitdata(){
 
-    console.log("submitprod");
 
     // e.preventDefault(); // avoid to execute the actual submit of the form.
 
@@ -599,6 +640,11 @@ var myVar = setInterval(submitdata, 10000);
            data: form.serialize(), // serializes the form's elements.
            success: function(data)
            {
+            console.log("submitprod");
+
+            var x = document.getElementById("snackbar");
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
             //    alert("Data saved successfully"); // show response from the php script.
                // M.toast({html: 'Changes are saved!'});
            }
