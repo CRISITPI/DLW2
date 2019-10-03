@@ -3283,6 +3283,6 @@ class MachiningAirBox(models.Model):
     airbox_make=models.CharField(max_length=20,null=True)
     in_qty=models.IntegerField(null=True)
     out_qty=models.IntegerField(null=True)
-    date=models.DateField(null=True)
+    date=models.CharField(null=True,max_length=20)
     loco_type=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=20,null=True)

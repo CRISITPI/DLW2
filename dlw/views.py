@@ -13,7 +13,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section
+from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -41,18 +41,18 @@ from django.http import HttpResponseRedirect
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302"])
 def insert_machining_of_air_box(request):
-    from .models import MachiningAirBox
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     obj2=MachiningAirBox.objects.all().order_by('sno')
-
+    mybo=Batch.objects.all().values('bo_no')
     my_context={
        'object':obj2,
        'nav':nav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
+        'mybo':mybo
        }
     if request.method=="POST":
         print("partly working")
@@ -74,17 +74,13 @@ def insert_machining_of_air_box(request):
             obj.out_qty=request.POST.get('out_qty')
            
             obj.save()
-
-            # obj3=MachiningAirBox.objects.filter(wheel_no=request.POST.get('wheel_no'),wheel_make=request.POST.get('wheel_make'))
-            # l=obj3[0].id
-            # print("id = "+str(l))
             obj2=MachiningAirBox.objects.all().order_by('sno')
 
             my_context={
             'object':obj2,
             'nav':nav,
-        'usermaster':usermaster,
-        'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
             }
 
         if submit=='save':
@@ -112,9 +108,17 @@ def insert_machining_of_air_box(request):
             MachiningAirBox.objects.filter(sno=sno).delete()
 
         
-        return HttpResponseRedirect("/machining_of_air_box/")
+        # return HttpResponseRedirect("/machining_of_air_box/")
 
     return render(request,"machining_of_air_box.html",my_context)
+
+
+def airbox_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 def login_request(request):
     if request.method=='POST':
@@ -1347,7 +1351,7 @@ def bprodplan(request):
                 deledit=annual_production.objects.filter(customer=typ,revisionid=rev).delete()
                 for lo in range(0,int(num_loco)):
                     # deledit=annual_production.objects.filter(customer=typ,loco_type=request.POST.get("editloco"+str(lo+1)),revisionid=rev).delete()
-                    # print(" For Loco: "+request.POST.get("editloconame"+str(lo+1)))
+                    print(" For Loco: "+request.POST.get("editloconame"+str(lo+1)))
 
                     for nf in range(1,int(num_fy)+1):
                         if(request.POST.get("edit"+str(lo)+str(1))!=None):
@@ -1436,7 +1440,7 @@ def bprodplan(request):
                 
 
                 for lo in range(0,int(num_loco)):
-                    # print(" For Loco: "+request.POST.get("editloco"+str(lo+1)))
+                    print(" For Loco: "+request.POST.get("editloco"+str(lo+1)))
                     for nf in range(1,int(num_fy)+1):
                         if(request.POST.get("edit"+str(lo)+str(1))!=None):
                             if len(request.POST.get("edit"+str(lo)+str(1))) and (request.POST.get("edit"+str(lo)+str(1))) is not None:
@@ -3124,7 +3128,7 @@ def material(request):
     for o in objy:
         if (o.matrname):
             lcname.append(o.matrname)
-    print(lcname)
+    # print(lcname)
     return lcname
 
 def findthis(request,temp):
