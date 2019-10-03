@@ -1274,8 +1274,8 @@ def bprodplan(request):
             number=request.POST.get('number')
             dt=request.POST.get('xTime')
             remk=request.POST.get('remk')
-            print(remk)
             mjalt=request.POST.get('mjalt')
+            print("altr",mjalt)
             headalt=request.POST.get('headalt')
             ob=namedgn.objects.filter(revision=rev)
             indx=len(ob)
@@ -1412,6 +1412,7 @@ def bprodplan(request):
                     subobj[0].number=number
                     subobj[0].remark=remk
                     subobj[0].headmjr=headalt
+                    subobj[0].majoralt=mjalt
                     subobj[0].save()
 
 
