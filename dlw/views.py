@@ -806,7 +806,7 @@ def m2view(request):
             doc_no = request.POST.get('doc_no')
             kkk=Oprn.objects.all()
             obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno')
-            obj2 = Cst.objects.filter(partno=part_no).values('des')
+            obj2 = Part.objects.filter(partno=part_no).values('des')
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
             obj = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
