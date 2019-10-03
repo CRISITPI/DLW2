@@ -1232,6 +1232,7 @@ def bprodplan(request):
         elif(save=="Save"):
             nmdgn={}
             dgp=request.POST.get('dgp')
+            print("new dgp",dgp)
             cnt=int(dgp)+1
             temp1="namep"
             temp2="desig"
@@ -1266,6 +1267,7 @@ def bprodplan(request):
             number=request.POST.get('number')
             dt=request.POST.get('xTime')
             remk=request.POST.get('remk')
+            print(remk)
             mjalt=request.POST.get('mjalt')
             headalt=request.POST.get('headalt')
             ob=namedgn.objects.filter(revision=rev)
@@ -3162,7 +3164,8 @@ def getYrDgp(request):
         else:
             jpot='rsp'
         try:
-            emp=jpo.objects.filter(jpo=jpot).first()
+            rev=request.GET.get('revex')
+            emp=jpo.objects.filter(jpo=jpot,revisionid=rev).first()
 
 
         except:
