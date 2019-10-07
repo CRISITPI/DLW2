@@ -3439,7 +3439,7 @@ def m1view(request):
             pa_no =pa_no | req
         context = {
             'sub':0,
-            'len' :len(rolelist),
+            'lenm' :len(rolelist),
             'pa_no':pa_no,
             'roles' :rolelist,
             'nav':nav,
@@ -3448,7 +3448,7 @@ def m1view(request):
     elif(len(rolelist)>1):
         context = {
             'sub':0,
-            'len' :len(rolelist),
+            'lenm' :len(rolelist),
             'ip':get_client_ip(request),
             'roles' :rolelist,
             'nav':nav,
