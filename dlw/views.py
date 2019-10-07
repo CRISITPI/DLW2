@@ -3354,9 +3354,7 @@ def dpo(request):
 @login_required
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dpoinput(request):
-    from .models import annual_production
-    # locodpo,barrelfirst
-
+    from .models import annual_production,barrelfirst
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -3365,16 +3363,11 @@ def dpoinput(request):
     ft=int(tod.strftime("%Y"))
     ft2=ft+1
     ctp=str(ft)+'-'+str(ft2)
-
     locos=[]
-
-    obj=annual_production.objects.filter(financial_year=ctp)
-
+    obj=barrelfirst.objects.all()
     for i in range(0,len(obj)):
-        locos.append(obj[i].loco_type)
-    
-
-
+        locos.append(obj[i].locotype)
+    # print("locolist:",locos)
     context={
         'nav':nav,
         'ip':get_client_ip(request),
@@ -3383,24 +3376,15 @@ def dpoinput(request):
         'add':0,
         'locolist':locos
     }
-
     if request.method=="POST":
-        locos=[]
-        obj=annual_production.objects.filter(financial_year=ctp)
-        for i in range(0,len(obj)):
-            locos.append(obj[i].loco_type)
         submit=request.POST.get('submit')
         if submit=='Proceed':
             b1=0
-            
             loco=request.POST.get('loco')
             b2=request.POST.get('barl2')
-            # cm=request.POST.get('cumi')
             cm=225
-            if loco=='WAP10' or loco=='WAP11' or loco=='WAP-7 ELECTRIC LOCO' or loco=='WAP-9 ELECTRIC LOCO':
-                b1=33
-
-
+            obj1=barrelfirst.objects.filter(locotype=loco)
+            b1=obj1[0].code
             context={
             'nav':nav,
             'ip':get_client_ip(request),
@@ -3412,24 +3396,19 @@ def dpoinput(request):
             'lcname':loco,
             'add':1,
             'locolist':locos
-
         } 
 
         if submit=='Save':
-
             context={
             'nav':nav,
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
-            
             'locolist':locos
 
         } 
 
-
-
-    return render(request, 'dpoinput.html', context)
+    return render(request, 'dpof.html', context)
 
 
 @login_required
@@ -3440,7 +3419,21 @@ def m1view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
-    if(len(rolelist)==1):
+    if "Superuser" in rolelist:
+        print("i am superuser")
+        tm=Oprn.objects.all().values('shop_sec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shop_sec'])
+        print(tmp)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
             pa_no =pa_no | req
@@ -3479,6 +3472,11 @@ def m1view(request):
                 'nav':nav,
             'ip':get_client_ip(request),
             }
+        if submitvalue=='Generate Report':
+            shopsec= request.POST.get('shopsec')
+            partno= request.POST.get('partno')
+            print("this is part no:",partno)
+            return m1genrept1(request,partno,shopsec)
     
 
 
@@ -3493,6 +3491,19 @@ def m1getpano(request):
         print(pano)
         return JsonResponse(pano, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+def m1genrept1(request,prtno,shopsec):
+    from .models import Part
+    obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight').distinct()
+    print(obj)
+    obj2 = Oprn.objects.filter(shop_sec=shopsec, part_no=prtno).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs').order_by('opn')
+    context={
+        'obj1':obj,
+        'prtno':prtno,
+        'dtl':obj2,
+    }
+    return render(request,"M1report.html",context)
 
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302"])

@@ -60,10 +60,10 @@
                             <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
                             <select class="form-control" id="shop_sec" name="shop_sec" required>
                     <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-                    {% if len == 1 %}
+                    {% if lenm == 1 %}
                         <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
                     {% endif %}
-                    {% if len > 1 %}
+                    {% if lenm > 1 %}
                     {% for role in roles %}
                       <option>{{role}}</option>
                     {% endfor %}
@@ -72,9 +72,9 @@
                         </td>
                         <td>
                             <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
-                            <select class="form-control" id="part_nop" name="part_nop" required>
+                            <select class="form-control" id="part_nop" name="part_nop" required onchange="clickpr()">
                 <option id="op_part" selected disabled hidden>Select Part No</option>
-                {% if len == 1 %}
+                {% if lenm == 1 %}
                 {% for i in pa_no %}
                   <option>{{i.part_no}}</option>
                 {% endfor %}
@@ -86,7 +86,7 @@
 
                     </table>
                     
-                    <center><input type="submit" value="Proceed" name="proceed" /></center>
+                    <center><input type="submit" value="Proceed" name="proceed" id="proceed" style="display: none"/></center>
 
             
             
@@ -153,13 +153,17 @@
 </table>
 <br><br>
 <center>
-    <input type="submit" name="proceed" value="Submit">
+    <input type="submit" name="proceed" value="Generate Report">
 </center>
 <br><br> {% endif %}
 
 </form>
 
 <script type="text/javaScript">
+function clickpr()
+{
+    document.getElementById('proceed').click();    
+}
     document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                       e.preventDefault();
                       var shop_sec = $("#shop_sec").val()

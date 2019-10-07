@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>M1 CARD</title>
+    </head>
+
+    <body>
+        <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M1 - MASTER PROCESS SHEET</h1>
+        <form action='.' method="POST">
+
+            <p align="center" style="text-align: left;color:black">
+
+<style>
+table, th, td {
+  border: 2px solid black;
+  height: 20px;
+
+}
+
+#myTable, th, td {
+  border: 2px solid black;
+  height: 20px;
+
+ }
+ #customers {
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          
+        }
+        
+        #customers td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        #customers tr:nth-child(even){background-color: #f2f2f2;}
+        
+        #customers tr:hover {background-color: #ddd;}
+        
+        #customers th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          /*background-color: #4CAF50;*/
+          background-color: #808080;
+          
+          color: white;
+        }
+
+</style>
+ <div class="container">
+<table id="customers">
+    {% for i in obj1 %}
+    <tr>
+   <td><label for="plno"><b>P.L. NO:</b></label>
+    <td></td>
+    </td>
+    <td>
+    <label for="setnos"><b>SET NOS.:</b></label>
+    <td></td>
+    </td>
+    <td>
+    <label for="text"><b>DATE:<b></label>
+    <td>{{i.updt_dt}}</td>
+    </td>
+    </tr>
+<tr>
+    <td>
+    <label for="partno"><b>Part NO:/पार्ट सं.:<b></label>
+   <td>{{prtno}}</td>
+    </td>
+    <td>
+    <label for="partname"><b>NAME OF PART:</b></label>
+    <td>{{i.des}}</td>
+    </td>
+    <td>
+    </td>
+</tr>
+<tr>
+    <td>
+    <label for="componentof"><b>COMPONENT OF:</b></label>
+    <td></td>
+    </td>
+    <td>
+    <label for="drawing_no"><b>DRAWING NO:</b></label>
+    <td>{{i.drgno}}</td>
+    </td>
+    <td >
+    <label for="alt"><b>ALT:</b></label>
+    <td>{{i.drg_alt}}</td>
+    </td>
+    <td>
+    <label for="priority"><b>PRIORITY:</b></label>
+    <td></td>
+    </td>
+
+
+
+</tr>
+    <tr>
+    <td>
+    <label for="mat_specn"><b>MAT: SPECN:</b></label>
+   <td>{{i.spec}}</td>
+    </td>
+    <td>
+    <label for="mat_size"><b>MAT: SIZE & LENGTH/PIECE:<b></label>
+   <td>{{i.size_m}}</td>
+    </td>
+
+
+
+
+</tr>
+
+<tr>
+    <td >
+    <label for="no_set"><b>NO/SET:</b></label>
+   <td></td>
+    </td>
+    <td >
+    <label for="batch"><b>BATCH:</b></label>
+    <td></td>
+    </td>
+    <td >
+    <label for="order_qty"><b>QTY ON ORDER:</b></label>
+    <td></td>
+    </td>
+    <td >
+    <label for="rawmat_wt"><b>RAW MAT.WT./PIECE KGS:</b></label>
+    <td>{{i.weight}}</td>
+    </td>
+
+
+
+
+
+</tr>
+   <tr>
+   <td>
+   <label for="route"><b>ROUTE:</b></label>
+   <td></td>
+   </td>
+   <td>
+   <label for="deliver_to"><b>DELIVER TO:</b></label>
+   <td></td>
+   </td>
+   <td>
+   <label for="total_rawmat"><b>TOTAL RAW MATERIAL:</b></label>
+   <td></td>
+   </td>
+
+   </tr>
+   {% endfor %}
+</table>
+
+
+
+
+</div>
+<style>
+table, th, td {
+  border: 1px solid black;
+  height: 15px;
+}
+
+#myTable, th, td {
+  border: 1px solid black;
+  height: 10px;
+}
+
+
+#customers {
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          
+        }
+        
+        #customers td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        #customers tr:nth-child(even){background-color: #f2f2f2;}
+        
+        #customers tr:hover {background-color: #ddd;}
+        
+        #customers th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          /*background-color: #4CAF50;*/
+          background-color: #808080;
+          
+          color: white;
+        }
+
+
+</style>
+
+<table>
+    <div class="table-responsive"><table id="customers"><tr style="background-color: darkslategrey;color:white;padding: 12px;" style="width:30%" height="40"><th rowspan="2" style="width:3%" >Sr NO:</th><th rowspan="2" style="width:12%">SHOP/SEC</th>
+        <th rowspan="2" style="width:12%">OPR. NO.</th><th rowspan="2" style="width:12%">L.C.</th><th rowspan="2" style="width:12%">OPERATION DESCRIPTION</th>
+            <th colspan="2" style="width:12%">TIME</th>
+            <th colspan="3" style="width:12%">NO OFF</th></tr>
+                 <tr style="background-color: darkslategrey;color:white;padding: 12px;" style="width:50%" height="40"><th  >PA</th><th>AT</th><th style="width:3%">PA</th><th style="width:3%">AT</th><th style="width:3%">NCP/JBS/M5</th></tr>
+                 {% for i in dtl %}
+                 <tr>
+                     <td>{{forloop.counter}}</td>
+                     <td>
+                            {{i.shop_sec}}
+                        </td>
+                     <td>
+                         {{i.opn}}
+                     </td>
+                     <input type="hidden" name="opn{{ forloop.counter }}" value="{{i.opn}}">
+             
+                    
+                     <td>
+                         {{i.lc_no}}
+                     </td>
+                     <td>
+                         {{i.des}}
+                     </td>
+                     <td>
+                         {{i.pa}}
+                     </td>
+                     <td>
+                         {{i.at}}
+                     </td>
+                     <td>
+                         {{i.ncp_jbs}}
+                     </td>
+                     
+                     
+                 </tr>
+                 {% endfor %}
+                </table>
+
+            <br><br>
+
+
+
+    </div>
+
+<br>
+    <br><br><br>
+
+
+<br>
+
+
+
+</div>
+</form>
+
+
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+  </script>

@@ -3286,3 +3286,7 @@ class MachiningAirBox(models.Model):
     date=models.CharField(null=True,max_length=20)
     loco_type=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=20,null=True)
+
+class barrelfirst(models.Model):
+    locotype=models.CharField(max_length=100,null=True)
+    code=models.CharField(max_length=50,null=True)
