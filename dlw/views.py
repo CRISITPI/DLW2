@@ -3420,12 +3420,10 @@ def m1view(request):
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     if "Superuser" in rolelist:
-        print("i am superuser")
         tm=Oprn.objects.all().values('shop_sec').distinct()
         tmp=[]
         for on in tm:
             tmp.append(on['shop_sec'])
-        print(tmp)
         context={
             'sub':0,
             'lenm' :2,
@@ -3434,6 +3432,7 @@ def m1view(request):
             'roles':tmp
         }
     elif(len(rolelist)==1):
+        print("in else")
         for i in range(0,len(rolelist)):
             req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
             pa_no =pa_no | req
@@ -3457,28 +3456,63 @@ def m1view(request):
     if request.method == "POST":
         print("hi")
         submitvalue = request.POST.get('proceed')
+        shop_sec = request.POST.get('shop_sec')
+        part_no = request.POST.get('part_nop')
+        obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('opn')
+        leng = obj.count()
         if submitvalue=='Proceed':
-            shop_sec = request.POST.get('shop_sec')
-            part_no = request.POST.get('part_nop')
-            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs').order_by('opn')
-            leng = obj.count()
-            context = {
-                'ip':get_client_ip(request),
-                'obj': obj,
-                'sub': 1,
-                'len': leng,
-                'shop_sec': shop_sec,
-                'part_no': part_no,
-                'nav':nav,
-            'ip':get_client_ip(request),
-            }
+            if "Superuser" in rolelist:
+                tm=Oprn.objects.all().values('shop_sec').distinct()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on['shop_sec'])
+                context={
+                    'sub': 1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'len': leng,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'obj': obj,
+                }
+            elif(len(rolelist)==1):
+                lent=len(rolelist)
+                for i in range(0,len(rolelist)):
+                    req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    pa_no =pa_no | req
+                context = {
+                    'sub': 1,
+                    'lenm' :len(rolelist),
+                    'pa_no':pa_no,
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'len': leng,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'obj': obj,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                   'sub': 1,
+                    'lenm' :len(rolelist),
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'len': leng,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'obj': obj,
+                }
         if submitvalue=='Generate Report':
             shopsec= request.POST.get('shopsec')
             partno= request.POST.get('partno')
             print("this is part no:",partno)
             return m1genrept1(request,partno,shopsec)
     
-
 
     return render(request,"m1view.html",context)
 
@@ -3494,14 +3528,36 @@ def m1getpano(request):
 
 
 def m1genrept1(request,prtno,shopsec):
-    from .models import Part
-    obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight').distinct()
-    print(obj)
-    obj2 = Oprn.objects.filter(shop_sec=shopsec, part_no=prtno).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs').order_by('opn')
+    from .models import Part,Partalt
+    today = date.today()
+    # dd/mm/YY
+    d1 = today.strftime("%d/%m/%Y")
+    # print("d1 =", d1)
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
+    obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
+    # print(obj)
+    obj2 = Oprn.objects.filter(part_no=prtno).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('opn')
+    patotal=0
+    attotal=0
+    if len(obj2):
+        for op in obj2:
+            patotal=patotal+op['pa']
+            attotal=attotal+op['at']
     context={
         'obj1':obj,
         'prtno':prtno,
         'dtl':obj2,
+        'nav':nav,
+        'obj3':obj3,
+        'ip':get_client_ip(request),
+        'roles' :rolelist,
+        'pttl':patotal,
+        'attl':attotal,
+        'dt':d1,
     }
     return render(request,"M1report.html",context)
 
