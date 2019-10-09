@@ -198,6 +198,7 @@
             <th>Material Rejected:</th>
         </tr>
         {% for i in obj %}
+        {% if i.shop_sec == shop_sec  %}
         <tr>
             <td>
                 {{i.opn}}
@@ -251,6 +252,60 @@
                  <input type="text" id="matrej" class="myinp" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
             {% endif %}
             </td>
+              {% else %}
+             <td>
+                {{i.opn}}
+            </td>
+            <input type="hidden" name="opn{{ forloop.counter }}" value="{{i.opn}}">
+
+            <td>
+                {{i.shop_sec}}
+            </td>
+            <td>
+                {{i.lc_no}}
+            </td>
+            <td>
+                {{i.des}}
+            </td>
+            <td>
+                {{i.pa}}
+            </td>
+            <td>
+                {{i.at}}
+            </td>
+            <td>
+                {{i.lot}}
+            </td>
+            <td>
+            {% if i.qty_prod %}
+                <input readonly type="text" id="qtypr" class="myinp" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+                <input readonly type="text" id="qtypr" class="myinp" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
+
+            </td>
+            <td>
+            {% if i.qtr_accep %}
+                <input readonly type="text" id="qtyac" class="myinp" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+                <input readonly type="text" id="qtyac" class="myinp" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+            {% endif %}
+            </td>
+            <td>
+            {% if i.work_rej %}
+                <input readonly type="text" id="wrrej" class="myinp" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+                <input readonly type="text" id="wrrej" value="0" class="myinp" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+            {% endif %}
+            </td>
+            <td>
+            {% if i.mat_rej %}
+                <input readonly type="text" id="matrej" class="myinp" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+                 <input readonly type="text" id="matrej" class="myinp" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+            {% endif %}
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>

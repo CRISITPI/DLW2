@@ -813,10 +813,10 @@ def m2view(request):
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-            obj = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
+            obj = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
             date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
             leng = obj.count()
-            print(obj)
+            # print(obj)
             # print(obj1)
             # print(obj2.count())
             # print(obj1.count())
@@ -901,8 +901,8 @@ def m2view(request):
                 matrej = request.POST.get('matrej'+str(i))
                 opn=request.POST.get('opn'+str(i))
                 Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
-                messages.success(request, 'Successfully Updated!, Select new values to update')
                 wo_no=M2Doc.objects.all().values('batch_no').distinct()
+        messages.success(request, 'Successfully Updated!, Select new values to update')
     return render(request, "m2view.html", context)
 
 
