@@ -349,31 +349,16 @@
                     </li>
                     {% endfor %}
                 </ul>
-                <table align="center" style="border: none;" class="a">
+                <table align="center" style="border: none;">
                     <tr style="border: none;">
-                        {% if cdgplen == 3 %}
-                            <td style="border: none;"></td>
-                            <center>
-                            <td style="border: none; align-content: center;font-size: 22px;"><b></b></td>
-                        </center>
-                        <td style="border: none;"></td>
-                        {% endif %}
-    
                         {% for i in cdgp %}
                         <td style="border: none;"></td>
                         <td style="border: none;">
-                            <textarea rows="5" style="overflow:hidden; resize:none;border: none" readonly></textarea></td>
+                            <textarea rows="5" style="overflow:hidden; resize:none;border: none"></textarea></td>
                         <td style="border: none;"></td>
                         {% endfor %}
                     </tr>
                     <tr style="border: none;">
-                            {% if cdgplen == 3 %}
-                            <td style="border: none;"></td>
-                        <center>
-                            <td style="border: none; align-content: center;font-size: 22px;"><b></b></td>
-                        </center>
-                        <td style="border: none;"></td>
-                        {% endif %}
                         {% for nm in namelist %}
                         <td style="border: none;"></td>
                         <center>
@@ -383,13 +368,6 @@
                         {% endfor %}
                     </tr>
                     <tr style="border: none;">
-                            {% if cdgplen == 3 %}
-                            <td style="border: none;"></td>
-                        <center>
-                            <td style="border: none; align-content: center;font-size: 22px;"></td>
-                        </center>
-                        <td style="border: none;"></td>
-                        {% endif %}
                         {% for dg in desiglist %}
                         <td style="border: none;"></td>
                         <td style="border: none; align-content: center;font-size: 17px;"><b>{{dg}}</b></td>
@@ -501,16 +479,8 @@
                     </li>
                     {% endfor %}
                 </ul>
-                <table align="center" style="border: none;" class="a">
+                <table align="center" style="border: none;">
                     <tr style="border: none;">
-                        {% if cdgplen == 3 %}
-                            <td style="border: none;"></td>
-                            <center>
-                            <td style="border: none; align-content: center;font-size: 22px;"><b></b></td>
-                        </center>
-                        <td style="border: none;"></td>
-                        {% endif %}
-    
                         {% for i in cdgp %}
                         <td style="border: none;"></td>
                         <td style="border: none;">
@@ -519,13 +489,6 @@
                         {% endfor %}
                     </tr>
                     <tr style="border: none;">
-                            {% if cdgplen == 3 %}
-                            <td style="border: none;"></td>
-                        <center>
-                            <td style="border: none; align-content: center;font-size: 22px;"><b></b></td>
-                        </center>
-                        <td style="border: none;"></td>
-                        {% endif %}
                         {% for nm in namelist %}
                         <td style="border: none;"></td>
                         <center>
@@ -535,13 +498,6 @@
                         {% endfor %}
                     </tr>
                     <tr style="border: none;">
-                            {% if cdgplen == 3 %}
-                            <td style="border: none;"></td>
-                        <center>
-                            <td style="border: none; align-content: center;font-size: 22px;"></td>
-                        </center>
-                        <td style="border: none;"></td>
-                        {% endif %}
                         {% for dg in desiglist %}
                         <td style="border: none;"></td>
                         <td style="border: none; align-content: center;font-size: 17px;"><b>{{dg}}</b></td>
@@ -821,54 +777,32 @@
                     {% endfor %}
                 </ul>
                 <div style="align-content: center;">
-            <table align="center" style="border: none;" class="a">
-                <tr style="border: none;">
-                    {% if cdgplen == 3 %}
-                        <td style="border: none;"></td>
-                        <center>
-                        <td style="border: none; align-content: center;font-size: 22px;"><b></b></td>
-                    </center>
-                    <td style="border: none;"></td>
-                    {% endif %}
-
-                    {% for i in cdgp %}
-                    <td style="border: none;"></td>
-                    <td style="border: none;">
-                        <textarea rows="5" style="overflow:hidden; resize:none;border: none"></textarea></td>
-                    <td style="border: none;"></td>
-                    {% endfor %}
-                </tr>
-                <tr style="border: none;">
-                        {% if cdgplen == 3 %}
-                        <td style="border: none;"></td>
-                    <center>
-                        <td style="border: none; align-content: center;font-size: 22px;"><b></b></td>
-                    </center>
-                    <td style="border: none;"></td>
-                    {% endif %}
-                    {% for nm in namelist %}
-                    <td style="border: none;"></td>
-                    <center>
-                        <td style="border: none; align-content: center;font-size: 22px;"><b>{{nm}}</b></td>
-                    </center>
-                    <td style="border: none;"></td>
-                    {% endfor %}
-                </tr>
-                <tr style="border: none;">
-                        {% if cdgplen == 3 %}
-                        <td style="border: none;"></td>
-                    <center>
-                        <td style="border: none; align-content: center;font-size: 22px;"></td>
-                    </center>
-                    <td style="border: none;"></td>
-                    {% endif %}
-                    {% for dg in desiglist %}
-                    <td style="border: none;"></td>
-                    <td style="border: none; align-content: center;font-size: 17px;"><b>{{dg}}</b></td>
-                    <td style="border: none;"></td>
-                    {% endfor %}
-                </tr>
-            </table>
+                    <table align="center" style="border: none;justify-items: center">
+                        <tr style="border: none;">
+                            {% for i in cdgp %}
+                            <td style="border: none;"></td>
+                            <td style="border: none;">
+                                <textarea rows="5" style="overflow:hidden; resize:none;border: none;"></textarea></td>
+                            <td style="border: none;"></td>
+                            {% endfor %}
+                        </tr>
+                        <tr style="border: none;">
+                            {% for nm in namelist %}
+                            <td style="border: none;text-align: center"></td>
+                            <center>
+                                <td style="border: none; text-align: center;font-size: 22px;"><b>{{nm}}</b></td>
+                            </center>
+                            <td style="border: none;"></td>
+                            {% endfor %}
+                        </tr>
+                        <tr style="border: none;">
+                            {% for dg in desiglist %}
+                            <td style="border: none;"></td>
+                            <td style="border: none; text-align: center;font-size: 17px;place-content: right;"><b>{{dg}}</b></td>
+                            <td style="border: none;"></td>
+                            {% endfor %}
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
