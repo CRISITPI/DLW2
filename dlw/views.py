@@ -810,13 +810,13 @@ def m2view(request):
             doc_no = request.POST.get('doc_no')
             kkk=Oprn.objects.all()
             obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
-            obj2 = Part.objects.filter(partno=part_no).values('des').distinct()
+            obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
             obj = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
             date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
             leng = obj.count()
-            # print(obj2)
+            print(obj)
             # print(obj1)
             # print(obj2.count())
             # print(obj1.count())
@@ -908,8 +908,11 @@ def m2view(request):
 
 def m2getwono(request):
     if request.method == "GET" and request.is_ajax():
+        from.models import Batch
         shop_sec = request.GET.get('shop_sec')
-        wono = list(M2Doc.objects.filter(f_shopsec = shop_sec).values('batch_no').distinct())
+        w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
+        w2=M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+        wono = list(w2)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -917,7 +920,7 @@ def m2getbr(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
         shop_sec = request.GET.get('shop_sec')
-        br_no = list(M2Doc.objects.filter(batch_no =wo_no,f_shopsec=shop_sec).values('brn_no').distinct())
+        br_no = list(M2Doc.objects.filter(batch_no =wo_no).values('brn_no').distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -926,7 +929,7 @@ def m2getassly(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
-        assm_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec = shop_sec).values('assly_no').distinct())
+        assm_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no).values('assly_no').distinct())
         return JsonResponse(assm_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -938,7 +941,7 @@ def m2getpart_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         assembly_no = request.GET.get('assm_no')
-        part_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no).values('part_no').distinct())
+        part_no = list(M2Doc.objects.filter(brn_no=br_no,assly_no=assembly_no).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -951,7 +954,7 @@ def m2getdoc_no(request):
         shop_sec = request.GET.get('shop_sec')
         assembly_no = request.GET.get('assm_no')
         part_no = request.GET.get('part_no')
-        doc_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no,part_no=part_no).values('m2sln').distinct())
+        doc_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('m2sln').distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
