@@ -1,5 +1,46 @@
 {% extends 'base.html' %} {% block content %}
 <style>
+    #snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;} 
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;} 
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
     #customers {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
@@ -83,6 +124,7 @@
     <center>
         <h2>Annual Production Plan</h2>
     </center><br>
+    <div id="snackbar">Changes are saved successfully..</div>
     <div class="containers">
         <table align="center" id="customers">
             <tr>
@@ -92,7 +134,7 @@
                 <td>{{cyear}}</td>
                 <td><b>Revision:</b></td>
                 <td>{{revex}}</td>
-                <input type="hidden" name="rev" value={{revex}} class="form-control" />
+                <input type="hidden" name="rev" id="revex" value={{revex}} class="form-control" />
             </tr>
             <tr>
                 <td><b>Select type:</b></td>
@@ -295,7 +337,7 @@
         <tr>
             <td><b>Name</b></td>
         {% for k,v in namedg.items %}
-            <td><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
+            <td><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" value="{{v.name}}" /></td>
         
         {% endfor %}
     </tr>
@@ -303,7 +345,7 @@
         <td><b>Designation</b></td>
             {% for k,v in namedg.items %}
 
-        <td><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
+        <td><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" value="{{v.dgn}}" /></td>
         {% endfor %}
 
     </tr>
@@ -460,16 +502,25 @@
                     <div id="items"> </div>
                 </table>
                 <table id="customers" align="center">
-                    <tr>
+                    <!-- <tr>
                         <td><b>Name</b></td>
                         <td><b>Designation</b></td>
-                    </tr>
-                    {% for k,v in namedg.items %}
+                    </tr> -->
                     <tr>
-                        <td style="width: 10%"><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" required value="{{v.name}}" /></td>
-                        <td style="width: 10%"><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" required value="{{v.dgn}}" /></td>
-                    </tr>
+                        <td><b>Name</b></td>
+                    {% for k,v in namedg.items %}
+                        <td><input type="text" name="namep{{forloop.counter}}" placeholder="name" wrap="soft" class="form-control" style="overflow:hidden; resize:none;" value="{{v.name}}" /></td>
+                    
                     {% endfor %}
+                </tr>
+                <tr>
+                    <td><b>Designation</b></td>
+                        {% for k,v in namedg.items %}
+            
+                    <td><input type="text" name="desig{{forloop.counter}}" placeholder="designation" wrap="soft" class="form-control" value="{{v.dgn}}" /></td>
+                    {% endfor %}
+            
+                </tr>
                 </table>
                 <tr>
                     <td>
@@ -574,7 +625,6 @@ var myVar = setInterval(submitdata, 10000);
 // $("#submitprod").submit(function(e) {
     function submitdata(){
 
-    console.log("submitprod");
 
     // e.preventDefault(); // avoid to execute the actual submit of the form.
 
@@ -590,6 +640,11 @@ var myVar = setInterval(submitdata, 10000);
            data: form.serialize(), // serializes the form's elements.
            success: function(data)
            {
+            console.log("submitprod");
+
+            var x = document.getElementById("snackbar");
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
             //    alert("Data saved successfully"); // show response from the php script.
                // M.toast({html: 'Changes are saved!'});
            }
@@ -706,11 +761,13 @@ function ajaxfortype()
             var username=document.getElementById('type').value;
             var v='type'
             var type=document.getElementById('lmtype').value;
+            var revex=document.getElementById('revex').value;
             
             var data = {
                 username,
                 v,
-                type
+                type,
+                revex,
             };
             $.ajax({
                 type: 'GET',

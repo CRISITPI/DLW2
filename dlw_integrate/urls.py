@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from dlw.views import m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
-from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view
+from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,airbox_addbo
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -70,5 +70,5 @@ urlpatterns = [
     path('ajax/m5getpart_no/',m5getpart_no,name='m5getpart_no'),
     path('ajax/m5getdoc_no/',m5getdoc_no,name='m5getdoc_no'),
     path('ajax/m5getwono',m5getwono,name='m5getwono'),
-
+    path('ajax/airbox_addbo',airbox_addbo,name='airbox_addbo'),
 ]
