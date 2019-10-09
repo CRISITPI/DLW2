@@ -3369,3 +3369,5 @@ class AxleWheelMachining(models.Model):
   bore_diawhl=models.CharField(max_length=20,null=True)
   inspector_namewhl=models.CharField(max_length=20,null=True)
   datewhl=models.DateField(null=True)      
+
+

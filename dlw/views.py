@@ -3796,3 +3796,181 @@ def axle_addbo(request):
         myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def m3view(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    wo_no = user_master.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'len' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            wo_no =wo_no | req
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'wo_no':wo_no,
+            'roles' :rolelist,
+            'nav':nav,
+            'ip':get_client_ip(request),
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'roles' :rolelist,
+            'nav':nav,
+            'ip':get_client_ip(request),
+        }
+    if request.method == "POST":
+        print("hi")
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            print("ii")
+            shop_sec = request.POST.get('shop_sec')
+            part_no = request.POST.get('part_nop')
+            wo_no = request.POST.get('wo_no')
+            brn_no = request.POST.get('br_no')
+            assembly_no = request.POST.get('assm_no')
+            doc_no = request.POST.get('doc_no')
+            obj = Part.objects.filter(partno=part_no).values('drgno','des')
+
+    
+            objj = M2Doc.objects.filter(m2sln=doc_no,f_shopsec=shop_sec).values('qty','rm_partno','m4_no','scl_cl').distinct()
+            obj1 = user_master.objects.filter(role=shop_sec).values('name','department')
+            print(obj1)
+            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
+            leng = obj.count()
+            leng1 = obj1.count()
+            
+            leng2 = objj.count()
+
+            context = {
+                        'obj': obj,
+                        'objj': objj,
+                        'obj1': obj1,
+                        'len': leng,
+                        'len1':leng1,
+                        'len2':leng2,
+                        'date': date,
+                        'shop_sec': shop_sec,
+                        'part_no': part_no,
+                        'wo_no': wo_no,
+                        'brn_no': brn_no,
+                        'assembly_no': assembly_no,
+                        'doc_no': doc_no,
+                        'sub':1,
+                        'nav':nav,
+            'ip':get_client_ip(request),
+                    }
+    return render(request,"m3view.html",context)
+
+
+def m3getwono(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        print(shop_sec)
+        wo_no = list(M2Doc.objects.filter(f_shopsec = shop_sec).values('batch_no').distinct())
+        print(wo_no)
+        return JsonResponse(wo_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def m3getbr(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = list(M2Doc.objects.filter(batch_no =wo_no).values('brn_no').distinct())
+        return JsonResponse(br_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m3shopsec(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no).values('f_shopsec').distinct())
+        return JsonResponse(shop_sec, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m3getassly(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = request.GET.get('shop_sec')
+        assembly_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec).values('assly_no').distinct())
+        return JsonResponse(assembly_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m3getpart_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = request.GET.get('shop_sec')
+        assembly_no = request.GET.get('assm_no')
+        part_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no).values('part_no').distinct())
+        return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m3getdoc_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = request.GET.get('shop_sec')
+        assembly_no = request.GET.get('assm_no')
+        part_no = request.GET.get('part_no')
+        doc_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no,part_no=part_no).values('m2sln').distinct())
+        return JsonResponse(doc_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def m3sub(request):
+    if request.method == "POST":
+
+        shop_sec = request.POST.get('shop_sec')
+        part_no = request.POST.get('part_nop')
+        wo_no = request.POST.get('wo_no')
+        brn_no = request.POST.get('br_no')
+        assembly_no = request.POST.get('assm_no')
+        doc_no = request.POST.get('doc_no')
+        obj = Part.objects.filter(partno=part_no).values('drgno','des')
+        objj = M2Doc.objects.filter(m2sln=doc_no,f_shopsec=shop_sec).values('qty','m4_no','scl_cl','rm_partno')
+        obj1 = user_master.objects.filter(role=shop_sec).values('name','department')
+        date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
+        leng = obj.count()
+        leng1 = obj1.count()
+        leng2 = objj.count()
+
+        context = {
+                    'obj': obj,
+                    'objj': objj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1':leng1,
+                    'len2':leng2,
+                    #'len3':leng3,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                    #'rm_partno': rm_partno,
+    }
+
+    return render(request, "m3view.html", context)

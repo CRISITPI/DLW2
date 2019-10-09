@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from dlw.views import m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
 from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,airbox_addbo
-from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section
+from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -67,6 +67,7 @@ urlpatterns = [
     path('m1view/',m1view,name='m1view'),
     path('ajax/m1getpano/',m1getpano,name='m1getpano'),
     path('m5view/',m5view,name='m5view'),
+    path('m3view/',m3view,name='m3view'),
     path('ajax/m5getbr/',m5getbr,name='m5getbr'),
     path('ajax/submitprod/',bprodplan,name="submitprod"),
     path('ajax/m5getpart_no/',m5getpart_no,name='m5getpart_no'),
@@ -77,4 +78,11 @@ urlpatterns = [
     path('ajax/axle_addbo',axle_addbo,name='axle_addbo'),
     path('m1genrept1/',m1genrept1,name='m1genrept1'),
     path('axlewheelmachining_section/',axlewheelmachining_section,name='axlewheelmachining_section'),
+    path('ajax/m3getbr/', m3getbr, name='m3getbr'),
+    path('ajax/m3shopsec/', m3shopsec, name='m3shopsec'),
+    path('ajax/m3getassly/', m3getassly, name='m3getassly'),
+    path('ajax/m3getpart_no/', m3getpart_no, name='m3getpart_no'),
+    path('ajax/m3getdoc_no/', m3getdoc_no, name='m3getdoc_no'),
+    path('ajax/m3getwono/', m3getwono, name='m3getwono'),
+    path('m3sub/', m3sub, name='m3sub'),
 ]
