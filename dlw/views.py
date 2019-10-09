@@ -3432,7 +3432,7 @@ def m1view(request):
             'roles':tmp
         }
     elif(len(rolelist)==1):
-        print("in else")
+        # print("in else")
         for i in range(0,len(rolelist)):
             req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
             pa_no =pa_no | req
@@ -3608,7 +3608,7 @@ def m5view(request):
                 'len': leng,
                 'shop_sec': shop_sec,
                 'part_no': part_no,
-                'wo_no': wo_no,\
+                'wo_no': wo_no,
                 'brn_no': brn_no,
                 'doc_no': doc_no,
                 'nav':nav,
