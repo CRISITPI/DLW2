@@ -391,27 +391,14 @@
                 <h4 align="left"><b>Sub: {{subject}}</b></h4>
                 <table id="customers">
                     <tr>
-                        <!-- <td colspan={{colsapn}}> </td><td colspan="{{bufcspan}}"><b>Qty (nos.)</b></td> -->
-                    </tr>
-
-                    <tr>
                         <td><b>SN</b></td>
                         <td><b>Item Description</b></td>
                         <td colspan={{colsapn}}><b>Qty (nos.)</b></td>
-                        <!-- {% for key,values in years.items %}
-   <td>{{values.yrs}}</td>
-    {% endfor %} -->
-
-                        <!-- {% for key,values in years.items %}
-   <td>{{values.yrs}}</td>
-    {% endfor %}
-   -->
+  
                     </tr>
 
                     {% if rspflag == 1 %}
                     <tr>
-                        <!-- <td rowspan={{rsprwspan}}>RSP Manufacturing</td> -->
-
 
                         {% for key, values in rspdictemper.items %}
 
@@ -426,7 +413,7 @@
                         {% endfor %}
                     </tr>
 
-                    {% endif %}
+                    <!-- {% endif %}
                     {% if rspitmflag == 1 %}
                     <tr>
 
@@ -444,7 +431,7 @@
                         {% endfor %}
                     </tr>
 
-                    {% endif %}
+                    {% endif %} -->
 
                 </table>
                 <table style="border: none">
