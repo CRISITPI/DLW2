@@ -1,0 +1,409 @@
+{% extends 'base.html' %} {% block content %}
+<html>
+<style>
+    #customers {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+    
+    #customers td,
+    #customers th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    
+    @import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+    body {
+        font-family: 'Quicksand', sans-serif;
+        height: 100%;
+        margin: 0;
+    }
+    
+    html {
+        height: 100%;
+        margin: 0;
+    }
+    
+    .page-content {
+        min-height: 100%;
+        margin-bottom: -40px;
+    }
+    
+    .page-content::after {
+        content: "";
+        display: block;
+    }
+    
+    footer,
+    .page-content::after {
+        height: 40px;
+    }
+    
+    .content_section {
+        width: 60%;
+    }
+</style>
+<form action="." id="myForm" method="POST" novalidate>{% csrf_token %}
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <ul class="navbar nav" style="width:60%">
+            <font size="4pt" color="#FFFFFF">Miscellaneous Section</font>
+        </ul>
+
+        <div class="collapse navbar-collapse" id="collapse_target">
+            <ul class="navbar nav" style="width:100%;">
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3">
+                       Delete
+                     </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
+                       Dispatch
+                     </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1">
+                       EditRecord
+                 </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                       AddRecord
+                 </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <table id="customers">
+        <tbody>
+            <th>Serial No. &nbsp;</th>
+            <th>Batch order No. &nbsp;</th>
+            <th>Batch Order Date &nbsp;</th>
+            <th>Loco Type &nbsp;</th>
+            <th>In Quantity &nbsp;</th>
+            <th>Out Quantity &nbsp;</th>
+            <th>Shaft Machining &nbsp;</th>
+            <th>Date &nbsp;</th>
+            <th>Dispatch To &nbsp;</th>
+
+            {% for objec in object %}
+            <tr>
+            <td>{{objec.sno}} <br><br></td>
+            <td>{{objec.bo_no}} <br><br></td>
+            <td>{{objec.bo_date}} <br><br></td>
+            <td>{{objec.loco_type}} <br><br></td>
+            <td>{{objec.in_qty}} <br><br></td>
+            <td>{{objec.out_qty}} <br><br></td>
+            <td>{{objec.shaft_m}} <br><br></td>
+            <td>{{objec.date}} <br><br></td>
+            <td>{{objec.dispatch_to}} <br><br></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <input type="hidden" name="once" id="once" value="0">
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Miscellaneous Section</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+            
+                <form method="POST" class="needs-validation" > {% csrf_token %}
+
+                <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="">Batch Order No.</label>
+                                            <select name="bo_no" id="addbono" class="form-control ll" required>
+                                                    <option value="" hidden selected>Select BO No.</option>  
+                                                    {% for x in mybo %}
+                                                    <option>{{x.bo_no}}</option>
+                                                    {% endfor %}
+                                            </select> 
+                                    </div>
+                                    <div class="col-6">
+                                        <h6><label for="">Batch Order Date</label></h6>
+                                        <input type="text" class="form-control" name="bo_date" id="bo_date" required readonly>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                        <div class="col-6">
+                                            <label>Loco Type</label>
+                                                <input type="text" class="form-control" name="locos" id="locos" required readonly>
+                                                </div>
+
+                                    <div class="col-6">
+                                        <h6><label>Shaft Machining</label></h6>
+                                        <select class="btn btn-info" name="shaft_m" id="shaft_m" type="form-control ll" required>
+                                          <option value="" hidden selected>Shaft Machining</option>
+                                          <option value="VERTICAL">Vertical</option>
+                                          <option value="HORIZONTAL">Horizontal</option>
+                                        </select>
+                                    </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="">In Quantity</label>
+                                            <input type="number" class="form-control" name="in_qty" id="in_qty" required>
+                                     </div>
+                                        <div class="col-6">
+                                            <label for="">Out Quantity</label>
+                                            <input type="number" class="form-control" name="out_qty" id="out_qty" required>
+                                        </div>
+                                        </div>
+
+                                        <div class="row">
+                                          <div class="col-6">
+                                            <label for="">Date</label>
+                                            <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
+                                                <input type="date" class="xDateContainer" onchange="setCorrect(this,'date');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
+                                                <input type="text" id="date" name="date" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
+                                            </span>
+                                        </div>
+                                        </div>            
+
+                                    </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                 <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Save" />
+                            </div>
+            </form>      
+         </div>
+     </div>
+ </div>
+
+        <!--EditRecord-->
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel1">Miscellaneous Section</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                    <form method="POST" class="needs-validation" > {% csrf_token %}
+                    <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="">S No.</label>
+                                            <input type="number" class="form-control" id="editsno" name="editsno" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="">Batch Order No.</label>
+                                            <input type="number" class="form-control" name="editbo_no" id="editbo_no" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="">Batch Order Date</label>
+                                            <input type="date" class="form-control" name="editbo_date" id="editbo_date" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <label>Loco Type</label>
+                                            <div class="dropdown">
+                                              <select class="btn btn-info" name="editlocos" type="form-control ll" style="margin-left:0%;" required>
+                                              <option value="" hidden selected>Loco Type</option>
+                                              <option value="wap7">WAP7</option>
+                                              <option value="wag9">WAG9</option>
+                                              <option value="hhp">HHP</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                        <h6><label for="">Date</label></h6>
+                                        <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
+                                            <input type="date" class="xDateContainer" onchange="setCorrect(this,'editdate');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
+                                            <input type="text" id="editdate" name="editdate" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
+                                        </span>
+                                        </div>
+                                        
+                                        <div class="col-6">
+                                            <h6><label>Shaft Machining</label></h6>
+                                            <select class="btn btn-info" name="editshaft_m" id="editshaft_m" type="form-control ll" required>
+                                              <option value="" hidden selected>Shaft Machining</option>
+                                              <option value="VERTICAL">Vertical</option>
+                                              <option value="HORIZONTAL">Horizontal</option>
+                                            </select>
+                                        </div>
+                                        </div>
+                                
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label for="">In Quantity</label>
+                                                <input type="number" class="form-control" name="editin_qty" id="editin_qty" required>
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="">Out Quantity</label>
+                                                <input type="number" class="form-control" name="editout_qty" id="editout_qty" required>
+                                            </div>
+                                        </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" name="submit" class="btn btn-primary" id="editsavebtn" value="save">
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!--Dispatch-->
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel2">Miscellaneous Section</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="POST" class="needs-validation" > {% csrf_token %}
+                        <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="">S No.</label>
+                                                <input type="number" class="form-control" id="dissno" name="dissno" required>
+                                            </div>
+                                        </div>
+                                        <br>
+                                            <div class="col">
+                                                <div class="dropdown">
+                                                    <select name="dislocos" type="form-control ll" required>
+                                                    <option value="" hidden selected>Dispatch To</option>
+                                                    <option value="BogieAssembly">Bogie Assembly and Dispatch</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" name="submit" class="btn btn-primary" id="dissavebtn" value="Dispatch">
+                        </div>
+                    </form>
+                 </div>
+            </div>
+        </div>
+
+            <!--Delete-->
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel3">Miscellaneous Section</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>
+                        <form method="POST" class="needs-validation" id="delform" > {% csrf_token %}
+
+                        <div class="modal-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <h5><label>S No.</label></h5>
+                                        <input type="number" class="form-control" id="delsno" name="delsno" required>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" name="submit" class="btn btn-primary" id="delsavebtn" value="Delete">
+                        </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <script>
+                $(document).ready(function() {
+                    $('#delform').bootstrapValidator({
+                        feedbackIcons: {
+                            valid: 'glyphicon glyphicon-ok',
+                            invalid: 'glyphicon glyphicon-remove',
+                            validating: 'glyphicon glyphicon-refresh'
+                        },
+                        fields: {
+                            delsno: {
+                                validators: {
+                                    notEmpty: {
+                                        message: 'The username is required'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+                
+                $("#addbono").change(function(e){
+                    e.preventDefault();
+                    var selbo_no = $(this).val();
+                    var data = {selbo_no};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'miscell_addbo' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){            
+                            $("#bo_date").val(`${response[0].rel_date}`);
+                            $("#locos").val(`${response[0].ep_type}`);
+                        }
+                    })
+                });
+
+
+
+                window.onload = function() {
+                    var input = document.createElement('input');
+                    input.setAttribute('type', 'date');
+                    input.setAttribute('value', 'some text');
+                    if (input.value === "some text") {
+                        allDates = document.getElementsByClassName("xDateContainer");
+                        console.log(allDates);
+                        matchEnterdDate = 1;
+                        for (var i = 0; i < allDates.length; i++) {
+                            allDates[i].style.opacity = "1";
+                        }
+                    }
+                };
+                //function to convert enterd date to any format
+            function setCorrect(xObj, xTraget) {
+                var date = new Date(xObj.value);
+                var month = date.getMonth() + 1;
+                var day = date.getDate();
+                var year = date.getFullYear();
+                if (month != 'NaN') {
+                    document.getElementById(xTraget).value = day + "-" + month + "-" + year;
+                } else {
+                    if (matchEnterdDate == 1) {
+                        document.getElementById(xTraget).value = xObj.value;
+                    }
+                }
+        
+            };
+
+
+            </script>
+            </html>
+            {% endblock content %}

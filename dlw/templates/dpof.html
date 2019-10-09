@@ -86,9 +86,10 @@
     </tr>
 </table>
             <input type="hidden" name="cm" id="cm" value={{cm}} id="cm"/>
+            <input type="hidden" name="cm2" id="cm2" value={{cm2}} id="cm2"/>
             <input type="hidden" name="b1" value={{b1}} id="b1"/>
             <input type="hidden" name="b2" value={{b2}} id="b2"/>
-            <!-- <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/> -->
+            <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
 
 
 
@@ -132,6 +133,15 @@ function prcdcall()
 {
     document.getElementById('proceed').click();
 }
+
+var typecd = document.getElementById('lcname').value;
+var ordno=document.getElementById('b2').value;
+$(document).ready(() => {
+    $("#loco").val(typecd);
+console.log(ordno);
+    $("#barl2").val(ordno);
+});
+
 $(document).ready(function(){
 
     $("#addloco").click(function(e){
@@ -160,7 +170,16 @@ $(document).ready(function(){
         var sno=j;
         
         var b1= document.getElementById("b1").value;
-        var cm= document.getElementById("cm").value;
+        if(idname=='loconame1')
+        {
+          console.log("in 1st loco");
+          var cm= document.getElementById("cm").value;
+        }
+        else
+        {
+          console.log("in 2nd loco");
+          var cm= document.getElementById("cm2").value;
+        }
         var b2= document.getElementById('b2').value;
         var loconame=document.getElementById(idname).value;
         if(j<10){
@@ -223,7 +242,7 @@ function myFunction(elem){
     var id = elem.id;
     var name=elem.name;
     var txt = document.getElementById(id).value; 
-    console.log('area element value = ' + name);
+    // console.log('area element value = ' + name);
     var array = name.split("qty");
 
     var cuminoname="cumino"+String(array[1]);
