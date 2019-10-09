@@ -39,7 +39,7 @@ from django.http import HttpResponseRedirect
 #
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def insert_machining_of_air_box(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
@@ -197,7 +197,7 @@ def homeadmin(request):
 
 
 @login_required
-@role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge","2301","2302","Dy_CME/Plg","Dy_CME_Spares","Dy_CMgm"])
+@role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge","2301","2302","Dy_CME/Plg","Dy_CME_Spares","Dy_CMgm","0401","0402","0403"])
 def homeuser(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
@@ -756,7 +756,7 @@ class ChartData(APIView):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m2view(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
@@ -2387,6 +2387,8 @@ def jpo(request):
 
                 if rspflag or rspitmflag :
                     data=1
+            totalcnt=len(rspitmdictemper)+len(rspdictemper)
+            print("in rsp:",totalcnt)
 
             colsapn=int(cspan)+2
 
@@ -2396,7 +2398,7 @@ def jpo(request):
             "colsapn":colsapn,"bufcspan":int(cspan),
             "rsprwspan":rsprwspan,"rspitmrwspan":rspitmrwspan,'jpoo':jpoo,'rev':rev,
             "year1":yr,"year2":yr2,"year3":yr3,"year4":yr4,
-            "pre5":rm,"n5":r1+1,
+            "pre5":rm,"n5":r1+1,'totalcnt':range(totalcnt),
             "pre6":ri,"n6":r2+1,
             'nav':nav,'rev':rev,
             'usermaster':usermaster,
@@ -3417,7 +3419,7 @@ def dpoinput(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m1view(request):
     pa_no = user_master.objects.none()
     cuser=request.user
@@ -3567,7 +3569,7 @@ def m1genrept1(request,prtno,shopsec):
     return render(request,"M1report.html",context)
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m5view(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
@@ -3667,7 +3669,7 @@ def m5getdoc_no(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def miscellaneous_section(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()

@@ -408,25 +408,24 @@
 
                     {% if rspflag == 1 %}
                     <tr>
-                        <td rowspan={{rsprwspan}}>RSP Manufacturing</td>
+                        <!-- <td rowspan={{rsprwspan}}>RSP Manufacturing</td> -->
 
 
                         {% for key, values in rspdictemper.items %}
 
                         <tr>
-
+                            <td>{{forloop.counter}}</td>
                             <td>{{values.loty}}</td>
                             {% for key,value in values.dict.items %}
                             <td>{{value.yrtq}}</td>
-                            {% endfor %} {% for key,value in values.dict.items %}
-                            <td>{{value.yrbq}}</td>
-                            {% endfor %}
+                            {% endfor %} 
 
                         </tr>
                         {% endfor %}
                     </tr>
 
-                    {% endif %} {% if rspitmflag == 1 %}
+                    {% endif %}
+                    {% if rspitmflag == 1 %}
                     <tr>
 
 
