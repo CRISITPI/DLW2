@@ -56,24 +56,24 @@
         <div class="collapse navbar-collapse" id="collapse_target">
             <ul class="navbar nav" style="width:100%;">
                 <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3">
-                       Delete
-                     </button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <font color="white">Delete</font>
+                    </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
-                       Dispatch
-                     </button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <font color="white">Dispatch</font>
+                    </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1">
-                       EditRecord
-                 </button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <font color="white">EditRecord</font>
+                    </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                       AddRecord
-                 </button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">AddRecord</font>
+                        </button>
                 </li>
             </ul>
         </div>
@@ -128,12 +128,12 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <label for="">Batch Order No.</label>
-                                        <select name="bo_no" id="addbono" class="form-control ll" required>
-                                                <option value="" hidden selected>Select BO No.</option>  
-                                                {% for x in mybo %}
-                                                <option>{{x.bo_no}}</option>
-                                                {% endfor %}
-                                        </select> 
+                                            <select name="bo_no" id="addbono" class="form-control ll" required>
+                                                    <option value="" hidden selected>Select BO No.</option>  
+                                                    {% for x in mybo %}
+                                                    <option>{{x.bo_no}}</option>
+                                                    {% endfor %}
+                                            </select> 
                                     </div>
                                     <div class="col-6">
                                         <h6><label for="">Batch Order Date</label></h6>
@@ -158,15 +158,15 @@
                                             <input type="text" class="form-control" name="airbox_sno" id="airbox_sno" required>
                                     </div>
                                         <div class="col-6">
-                                            <label for="">Out Quantity</label>
-                                            <input type="number" class="form-control" name="out_qty" id="out_qty" required>
+                                            <label for="">In Quantity</label>
+                                            <input type="number" class="form-control" name="in_qty" id="in_qty" required>
                                         </div>
                                         </div>
 
                                         <div class="row">
                                         <div class="col-6">
                                                 <label for="">In Quantity</label>
-                                                <input type="number" class="form-control" name="in_qty" id="in_qty" required>
+                                                <input type="number" class="form-control" name="out_qty" id="out_qty" required>
                                          </div>
                                           <div class="col-6">
                                             <label for="">Date</label>
@@ -214,7 +214,7 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <label for="">Batch Order Date</label>
-                                            <input type="date" class="form-control" name="editbo_date" id="editbo_date" required>
+                                            <input type="date" class="form-control" name="editbo_date" id="editbo_date" required readonly>
                                         </div>
                                         <div class="col-6">
                                             <label>Loco Type</label>
@@ -373,7 +373,8 @@
                             $("#locos").val(`${response[0].ep_type}`);
                         }
                     })
-                }) 
+                });
+
 
 
                 window.onload = function() {
@@ -388,7 +389,7 @@
                             allDates[i].style.opacity = "1";
                         }
                     }
-                }
+                };
                 //function to convert enterd date to any format
             function setCorrect(xObj, xTraget) {
                 var date = new Date(xObj.value);
@@ -403,7 +404,7 @@
                     }
                 }
         
-            }
+            };
 
 
             </script>

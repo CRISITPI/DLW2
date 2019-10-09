@@ -3678,3 +3678,121 @@ def miscell_addbo(request):
         myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def axlewheelmachining_section(request): 
+    from .models import AxleWheelMachining
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    obj2=AxleWheelMachining.objects.all().order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       'mybo':mybo
+       }
+    if request.method=="POST":
+        print("partly working")
+        once=request.POST.get('once')
+        print(once)
+        submit=request.POST.get('submit')
+        if submit=='Save':
+        
+            print("working")
+            obj=AxleWheelMachining.objects.create()
+            obj.bo_no=request.POST.get('bo_no')
+            obj.bo_date=request.POST.get('bo_date')
+            obj.date=request.POST.get('date')
+            obj.wheel_no=request.POST.get('wheel_no')
+            obj.wheel_make=request.POST.get('wheel_make')
+            obj.loco_type=request.POST.get('locos')
+            obj.wheel_heatcaseno=request.POST.get('wheel_heatcaseno')
+            obj.axle_no=request.POST.get('axle_no')
+            obj.axle_make=request.POST.get('axle_make')
+            obj.axle_heatcaseno=request.POST.get('axle_heatcaseno')
+            obj.save()
+
+            obj2=AxleWheelMachining.objects.all().order_by('sno')
+
+            my_context={
+            'object':obj2,
+            }
+
+        if submit=='save':
+            print("Whats wrong")
+            sno=int(request.POST.get('editsno'))
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            wheel_no=request.POST.get('editwheel_no')
+            wheel_make=request.POST.get('editwheel_make')
+            loco_type=request.POST.get('editlocos')
+            wheel_heatcaseno=request.POST.get('editwheel_heatcaseno')
+            axle_no=request.POST.get('editaxle_no')
+            axle_make=request.POST.get('editaxle_make')
+            axle_heatcaseno=request.POST.get('editaxle_heatcaseno')
+            AxleWheelMachining.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,wheel_no=wheel_no,wheel_make=wheel_make,loco_type=loco_type,wheel_heatcaseno=wheel_heatcaseno,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
+
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            AxleWheelMachining.objects.filter(sno=sno).update(dispatch_to=dislocos)
+        
+        if submit=='Delete':
+
+            sno=int(request.POST.get('delsno'))
+            AxleWheelMachining.objects.filter(sno=sno).delete()
+
+        if submit=='InspectWheel':
+            print("Inspect")
+            obj=AxleWheelMachining.objects.create()
+            obj.ustwhl=request.POST.get('ustwhl')
+            obj.hub_lengthwhl=request.POST.get('hub_lengthwhl')
+            obj.tread_diawhl=request.POST.get('tread_diawhl')
+            obj.rim_thicknesswhl=request.POST.get('rim_thicknesswhl')
+            obj.bore_diawhl=request.POST.get('bore_diawhl')
+            obj.inspector_namewhl=request.POST.get('collarwhl')
+            obj.datewhl=request.POST.get('datewhl')
+            obj.save()
+
+        if submit=='InspectAxle':
+            print("Axle")
+            obj=AxleWheelMachining.objects.create()
+            obj.ustaxle=request.POST.get('ustaxle')
+            obj.axlelength=request.POST.get('axlelength')
+            obj.journalaxle=request.POST.get('journalaxle')
+            obj.throweraxle=request.POST.get('throweraxle')
+            obj.wheelseataxle=request.POST.get('wheelseataxle')
+            obj.gearseataxle=request.POST.get('gearseataxle')
+            obj.collaraxle=request.POST.get('collaraxle')
+            obj.dateaxle=request.POST.get('dateaxle')
+            obj.bearingaxle=request.POST.get('bearingaxle')
+            obj.abutmentaxle=request.POST.get('abutmentaxle')
+            obj.inspector_nameaxle=request.POST.get('inspector_nameaxle')
+            obj.journal_surfacefinishGE=request.POST.get('journal_surfacefinishGE')
+            obj.wheelseat_surfacefinishGE=request.POST.get('wheelseat_surfacefinishGE')
+            obj.gearseat_surfacefinishGE=request.POST.get('gearseat_surfacefinishGE')
+            obj.journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
+            obj.wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
+            obj.gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
+            obj.save()
+
+
+        
+        return HttpResponseRedirect("/axlewheelmachining_section/")
+
+    return render(request,"axlewheelmachining_section.html",my_context)
+
+def axle_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
