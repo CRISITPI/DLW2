@@ -333,14 +333,6 @@ def update_permission(request):
 
 
 
-
-
-
-
-
-
-
-
 @login_required
 @role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge"])
 def update_permission_incharge(request):
@@ -373,71 +365,6 @@ def update_permission_incharge(request):
         'roles':available,
     }
     return render(request,'update_permission_incharge.html',context)
-
-
-
-
-
-
-# @login_required
-# @role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge"])
-# def update_emp_shift(request):
-#     cuser=request.user
-#     usermaster=user_master.objects.filter(emp_id=cuser).first()
-#     rolelist=usermaster.role.split(", ")
-#     parentrole=roles.objects.all().filter(role__in=rolelist).first()
-#     users=user_master.objects.all().filter(parent=parentrole.parent).exclude(role__in=rolelist)
-#     nav=dynamicnavbar(request,rolelist)
-#     total=users.count()+1
-#     cnt=0
-#     temp="radio"
-#     if request.method == "POST":
-#         namelist=[]
-#         shiftlist={}
-#         for j in range(1,total):
-#             temp=temp+str(j)
-#             namelist.append(temp)
-#             temp="radio"
-#         for key in request.POST:
-#             for temp in namelist:
-#                 if key==temp:
-#                     shiftlist[key]=request.POST[key]
-#         finallist={}
-#         for k,v in shiftlist.items():
-#             shiftlist1=k.split('radio')
-#             finallist[shiftlist1[1]]=v
-#         print(finallist)
-#         for k,v in finallist.items():
-#             print(k)
-#             user=users[int(k)-1].emp_id
-#             print(user)
-#             updateuser=user_master.objects.get(emp_id=user)
-#             print(updateuser)
-#             if updateuser.shift_id is None:
-#                 updateuser.shift_id=v
-#                 updateuser.validity_from=date.today()
-#                 updateuser.save()
-#                 cnt=cnt+1
-#             else:
-#                 newhistory=shift_history.objects.create()
-#                 newhistory.emp_id=updateuser.emp_id
-#                 newhistory.shift_id=updateuser.shift_id
-#                 newhistory.validity_from=updateuser.validity_from
-#                 newhistory.validity_to=date.today()
-#                 newhistory.save()
-#                 updateuser.shift_id=v
-#                 updateuser.validity_from=date.today()
-#                 updateuser.save()
-#                 cnt=cnt+1
-#         if cnt==total-1:
-#             messages.success(request, 'Successfully Updated!')
-#             return redirect('update_emp_shift')
-#     context={
-#         'users':users,
-#         'nav':nav,
-#         'ip':get_client_ip(request),
-#     }
-#     return render(request,'update_emp_shift.html',context)
 
 
 
@@ -1444,7 +1371,7 @@ def bprodplan(request):
                 
 
                 for lo in range(0,int(num_loco)):
-                    print(" For Loco: "+request.POST.get("editloco"+str(lo+1)))
+                    # print(" For Loco: "+request.POST.get("editloco"+str(lo+1)))
                     for nf in range(1,int(num_fy)+1):
                         if(request.POST.get("edit"+str(lo)+str(1))!=None):
                             if len(request.POST.get("edit"+str(lo)+str(1))) and (request.POST.get("edit"+str(lo)+str(1))) is not None:
@@ -2299,8 +2226,7 @@ def jpo(request):
                     years.update(copy.deepcopy(temr))
                     # print(years)
 
-
-
+                myvar=0
 
 
                 if rspflag:
@@ -2336,10 +2262,8 @@ def jpo(request):
                         temper = {str(j):{"loty":rspdobj[j].loco_type,
                                       "dict":diiict,}}
 
-
-                       
-
                         j=j+1
+                        myvar=j
                        
                         rspdictemper.update(copy.deepcopy(temper))
 
@@ -2374,31 +2298,34 @@ def jpo(request):
 
 
                         dictname="dict"
-                        temper = {str(j):{"loty":rspitmdobj[j].loco_type,
+                        myvar=myvar+1
+                        temper = {str(myvar):{"loty":rspitmdobj[j].loco_type,
                                       "dict":diiict,
                                   
                                         }}
 
                         j=j+1
                        
-                        rspitmdictemper.update(copy.deepcopy(temper))
-                        print(rspitmdictemper)
+                        # rspitmdictemper.update(copy.deepcopy(temper))
+                        rspdictemper.update(copy.deepcopy(temper))
+                # print("finaldict",rspdictemper)
 
 
                 if rspflag or rspitmflag :
                     data=1
-            totalcnt=len(rspitmdictemper)+len(rspdictemper)
-            print("in rsp:",totalcnt)
+            # totalcnt=len(rspitmdictemper)+len(rspdictemper)
+            # print("in rsp:",totalcnt)
 
             colsapn=int(cspan)+2
 
             context={"data":data,"data6":rspm,"data7":rspitm,"jpo":0,
-              "years":years,"rspdictemper":rspdictemper,"rspitmdictemper":rspitmdictemper,
+              "years":years,"rspdictemper":rspdictemper,
+            #   "rspitmdictemper":rspitmdictemper,
             "rspflag":rspflag,"rspitmflag":rspitmflag,
             "colsapn":colsapn,"bufcspan":int(cspan),
             "rsprwspan":rsprwspan,"rspitmrwspan":rspitmrwspan,'jpoo':jpoo,'rev':rev,
             "year1":yr,"year2":yr2,"year3":yr3,"year4":yr4,
-            "pre5":rm,"n5":r1+1,'totalcnt':range(totalcnt),
+            "pre5":rm,"n5":r1+1,
             "pre6":ri,"n6":r2+1,
             'nav':nav,'rev':rev,
             'usermaster':usermaster,
