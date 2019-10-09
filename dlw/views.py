@@ -13,7 +13,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox
+from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -3383,6 +3383,7 @@ def dpoinput(request):
             loco=request.POST.get('loco')
             b2=request.POST.get('barl2')
             cm=225
+            cm2=300
             obj1=barrelfirst.objects.filter(locotype=loco)
             b1=obj1[0].code
             context={
@@ -3393,9 +3394,10 @@ def dpoinput(request):
             'b1':b1,
             'b2':b2,
             'cm':cm,
+            'cm2':cm2,
             'lcname':loco,
             'add':1,
-            'locolist':locos
+            'locolist':locos,
         } 
 
         if submit=='Save':
@@ -3657,4 +3659,85 @@ def m5getdoc_no(request):
         part_no = request.GET.get('part_no')
         doc_no = list(M5Doc.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').distinct())
         return JsonResponse(doc_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def miscellaneous_section(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    obj2=MiscellSection.objects.all().order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
+        'mybo':mybo
+       }
+    if request.method=="POST":
+        print("partly working")
+        once=request.POST.get('once')
+        print(once)
+        # if(once == '1'):
+        submit=request.POST.get('submit')
+        if submit=='Save':
+        
+            print("working")
+            obj=MiscellSection.objects.create()
+            obj.bo_no=request.POST.get('bo_no')
+            obj.bo_date=request.POST.get('bo_date')
+            obj.date=request.POST.get('date')
+            obj.loco_type=request.POST.get('locos')
+            obj.shaft_m=request.POST.get('shaft_m')
+            obj.in_qty=request.POST.get('in_qty')
+            obj.out_qty=request.POST.get('out_qty')
+            obj.save()
+            obj2=MiscellSection.objects.all().order_by('sno')
+
+            my_context={
+            'object':obj2,
+            'nav':nav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            }
+
+        if submit=='save':
+            print("Whats wrong")
+            sno=int(request.POST.get('editsno'))
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
+            shaft_m=request.POST.get('editshaft_m')
+            in_qty=request.POST.get('editin_qty')
+            out_qty=request.POST.get('editout_qty')
+            MiscellSection.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,shaft_m=shaft_m,in_qty=in_qty,out_qty=out_qty)
+
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            MiscellSection.objects.filter(sno=sno).update(dispatch_to=dislocos)
+        
+        if submit=='Delete':
+
+            sno=int(request.POST.get('delsno'))
+            MiscellSection.objects.filter(sno=sno).delete()
+
+        
+        return HttpResponseRedirect("/miscellaneous_section/")
+
+    return render(request,"miscellaneous_section.html",my_context)
+
+
+def miscell_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
