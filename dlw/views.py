@@ -2239,10 +2239,10 @@ def jpo(request):
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'total':total,
-            'namelist':namelist,'desiglist':desiglist,
+            'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),
             'number':number,'formno':formno,'subject':sub,'dt':dt,
             'reflist':reflist,'altrlist':altrlist,'remklist':remklist,'spclremlist':spclremlist,
-            'nrmllist':nrmllist,'revcnt':range(revcnt),'cdgp':range(cdgp),'cdgplen':cdgp,
+            'nrmllist':nrmllist,'revcnt':range(revcnt),
             }
 
         elif jpoo=="rsp":
@@ -2405,7 +2405,7 @@ def jpo(request):
             'total':total,
             'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),
             'number':number,'subject':sub,'dt':dt,'remklist':remklist,
-            'nrmllist':nrmllist,'revcnt':range(revcnt),'cdgplen':cdgp,
+            'nrmllist':nrmllist,'revcnt':range(revcnt),
             }
 
         elif jpoo=="combined":
@@ -3099,7 +3099,7 @@ def jpo(request):
             'nav':nav,'dt':dt,'subject':sub,'rev':rev,
             'usermaster':usermaster,'ip':get_client_ip(request),
             'total':total,
-            'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),'cdgplen':cdgp,
+            'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),
             'number':number,'formno':formno,'subject':sub,'dt':dt,'heading':heading,
             'reflist':reflist,'altrlist':altrlist,'remklist':remklist,'spclremlist':spclremlist,
             'nrmllist':nrmllist,'revcnt':range(revcnt),
@@ -3110,7 +3110,7 @@ def jpo(request):
             # 'refr':ref,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
-        'revision':rev,'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),'cdgplen':cdgp,}
+        'revision':rev,'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),}
 
  
     return render(request,"jpoc.html",context)
