@@ -777,8 +777,13 @@ def m2view(request):
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
-            req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-            wo_nop =wo_nop | req
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
         context = {
             'sub':0,
             'lenm' :len(rolelist),
