@@ -3910,7 +3910,7 @@ def m5view(request):
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
-            req = M5SHEMP.objects.all().filter(shopsec=rolelist[i]).values('batch_no').distinct()
+            req = M5DOCnew.objects.filter(shop_sec=rolelist[i]).values('batch_no').exclude(batch_no__isnull=True).distinct()
             wo_no =wo_no | req
         context = {
             'sub':0,
@@ -3944,8 +3944,6 @@ def m5view(request):
             obj2 = Part.objects.filter(partno=part_no).values('drgno','des').order_by('partno')
             obj3 = Batch.objects.filter(part_no=part_no).values('batch_type').order_by('part_no').distinct()
             obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
-           
-            messages.success(request,'THANK YOU')
             leng = obj.count()
             leng1=obj1.count()
             leng2=obj2.count()
@@ -4000,9 +3998,6 @@ def m5view(request):
                 ticket_no = request.POST.get('ticket_no'+str(i))
                 month_hrs = request.POST.get('month_hrs'+str(i))
                 total_time_taken = request.POST.get('total_time_taken'+str(i))
-                print(staff_no)
-                print(brn_no)
-                print(lc_no)
                 Oprn.objects.filter(shop_sec=shopsec, part_no=partno,lc_no=lc_no).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
               
                 M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=int(qtyinsp),inspector=int(inspector),date=str(date),remarks=str(remarks),worker=str(worker))
