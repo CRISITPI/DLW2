@@ -89,6 +89,22 @@ footer, .page-content::after{
 
 <table id="customers">
     <tbody>
+        <tr>
+                <center>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <font size="3">
+                                <li>
+                                    <h4><b>{{ message }}</b></h4>
+                                </li>
+                            </font>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </center>
+        </tr>
+        <tr>
         <th>Serial No.</th>
         <th>Batch Order No.</th>
         <th>Batch Order Date &nbsp;</th>
@@ -101,6 +117,7 @@ footer, .page-content::after{
         <th>Axle Make &nbsp; </th>
         <th>Axle Heat Cast No. </th>
         <th>Dispatch To</th>
+        </tr>
         {% for objec in object %}
         <tr>
         <td>{{objec.sno}} <br><br></td>
@@ -155,7 +172,6 @@ footer, .page-content::after{
                                         <div class="row">
                                             <div class="col-6">
                                                 <h6><label for="">Loco Type</label></h6>
-                                                <label>Loco Type</label>
                                                 <input type="text" class="form-control" name="locos" id="locos" required readonly>
                                             </div>
                                        <div class="col-6">
@@ -378,35 +394,46 @@ footer, .page-content::after{
                               <form method="POST" class="needs-validation" > {% csrf_token %}
               
                               <div class="modal-body">
+                                    <div class="row">
+                                    <div class="col">
+                                            <label for="">Batch Order No.</label>
+                                            <select name="snowheel" id="addsno" class="form-control ll" required>
+                                                    <option value="" hidden selected>Select S.No.</option>  
+                                                    {% for x in mysno %}
+                                                    <option>{{x.sno}}</option>
+                                                    {% endfor %}
+                                            </select> 
+                                    </div>
+                                    </div>
                                   <h4 class="mb-3">Wheel</h4>
                                   <div class="row">
                                           <div class="col-md-6 mb-3">
                                                   <label for="Axle">UST</label>
-                                                  <input type="number" class="form-control" name="ust" id="ustwhl" placeholder="" required>
+                                                  <input type="number" class="form-control" name="ustwhl" id="ustwhl" placeholder="" required>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                       <label for="Axle">Hub Length</label>
-                                                      <input type="number" class="form-control" name="hub_length" id="hub_lengthwhl" placeholder="" required>
+                                                      <input type="number" class="form-control" name="hub_lengthwhl" id="hub_lengthwhl" placeholder="" required>
                                                     </div>  
                                                     <div class="col-md-6 mb-3">
                                                           <label for="Axle">Tread Dia</label>
-                                                          <input type="number" class="form-control" name="tread_dia" id="tread_diawhl" placeholder="" required>
+                                                          <input type="number" class="form-control" name="tread_diawhl" id="tread_diawhl" placeholder="" required>
                                                         </div>  
                                                         <div class="col-md-6 mb-3">
                                                               <label for="Axle">Rim Thickness</label>
-                                                              <input type="number" class="form-control" name="rim_thickness" id="rim_thicknesswhl" placeholder="" required>
+                                                              <input type="number" class="form-control" name="rim_thicknesswhl" id="rim_thicknesswhl" placeholder="" required>
                                                             </div>  
                                                             <div class="col-md-6 mb-3">
                                                                   <label for="Axle">Bore Dia</label>
-                                                                  <input type="number" class="form-control" name="bore_dia" id="bore_diawhl" placeholder="" required>
+                                                                  <input type="number" class="form-control" name="bore_diawhl" id="bore_diawhl" placeholder="" required>
                                                                 </div>  
                                                                 <div class="col-md-6 mb-3">
                                                                       <label for="Axle">Inspector Name</label>
-                                                                      <input type="text" class="form-control" name="inspector_name" id="inspector_namewhl" placeholder="" required>
+                                                                      <input type="text" class="form-control" name="inspector_namewhl" id="inspector_namewhl" placeholder="" required>
                                                                     </div> 
                                                                     <div class="col-md-6 mb-3">
                                                                           <label for="Axle">Date</label>
-                                                                          <input type="Date" class="form-control" name="date" id="datewhl" placeholder="" required>
+                                                                          <input type="Date" class="form-control" name="datewhl" id="datewhl" placeholder="" required>
                                                                         </div>     
                                                                             
                                                             
@@ -429,13 +456,24 @@ footer, .page-content::after{
                         <div class="modal-header">
                             <h5 class="modal-title" id="inspectmodal">Axle Inspection</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+                            <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
                     
                         <form method="POST" class="needs-validation" > {% csrf_token %}
         
                           <div class="modal-body">
+                              <div class="row">
+                              <div class="col">
+                                    <label for="">Batch Order No.</label>
+                                    <select name="snoaxle" id="addsno" class="form-control ll" required>
+                                            <option value="" hidden selected>Select S.No.</option>  
+                                            {% for x in mysno %}
+                                            <option>{{x.sno}}</option>
+                                            {% endfor %}
+                                    </select> 
+                              </div>
+                              </div>
                           <div class="row">
                             <div class="col-4">
                                     <label for="Axle">UST</label>
