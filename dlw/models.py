@@ -1391,9 +1391,20 @@ class M14M4(models.Model):
     wardkp_date = models.CharField(db_column='WARDKP_DATE', max_length=50, blank=True, default=0)
     shopsup_date = models.CharField(db_column='SHOPSUP_DATE', max_length=50, blank=True, default=0)
     posted1_date = models.CharField(db_column='POSTED1_DATE', max_length=50, blank=True, default=0)
-
+    received_mat14 = models.CharField(db_column='RECEIVED_MAT14', max_length=50, blank=True, null=True)
+    issued_qty14 = models.CharField(db_column='ISSUED_QTY14', max_length=50, blank=True, null=True)
+    received_qty14 = models.CharField(db_column='RECEIVED_QTY14', max_length=50, blank=True, null=True)
+    remarks14 = models.CharField(db_column='REMARKS14', max_length=50, blank=True, null=True)
+    line14 = models.CharField(db_column='LINE14', max_length=50, blank=True, null=True)
+    closing_bal14 = models.CharField(db_column='CLOSING_BAL14', max_length=50, blank=True, null=True)
+    laser_pst14 = models.CharField(db_column='LASER_PST14', max_length=50, blank=True, default=0)
+    posted_date14 = models.CharField(db_column='POSTED_DATE14', max_length=50, blank=True, default=0)
+    wardkp_date14 = models.CharField(db_column='WARDKP_DATE14', max_length=50, blank=True, default=0)
+    shopsup_date14 = models.CharField(db_column='SHOPSUP_DATE14', max_length=50, blank=True, default=0)
+    posted1_date14 = models.CharField(db_column='POSTED1_DATE14', max_length=50, blank=True, default=0)
 
     class Meta:
+
         db_table = 'M14M4'
 
 
