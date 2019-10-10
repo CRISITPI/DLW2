@@ -81,6 +81,22 @@
 
     <table id="customers">
         <tbody>
+            <tr>
+                <center>
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <font size="3">
+                             <li>
+                                <h4>{{ message }}</h4>
+                            </li>
+                            </font>
+                                {% endfor %}
+                            </ul>
+                                {% endif %}
+                </center>
+            </tr>
+            <tr>
             <th>Serial No. &nbsp; </th>
             <th>Batch order No. &nbsp; </th>
             <th>Batch Order Date &nbsp; </th>
@@ -91,7 +107,7 @@
             <th>Out Quantity &nbsp; </th>
             <th>Date &nbsp; </th>
             <th>Dispatch To &nbsp; </th>
-
+            </tr>
             {% for objec in object %}
             <tr>
                 <td>{{objec.sno}} <br><br></td>
@@ -165,7 +181,7 @@
 
                                         <div class="row">
                                         <div class="col-6">
-                                                <label for="">In Quantity</label>
+                                                <label for="">Out Quantity</label>
                                                 <input type="number" class="form-control" name="out_qty" id="out_qty" required>
                                          </div>
                                           <div class="col-6">

@@ -39,87 +39,6 @@ from django.http import HttpResponseRedirect
 #
 #
 
-@login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
-def insert_machining_of_air_box(request):
-    cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    obj2=MachiningAirBox.objects.all().order_by('sno')
-    mybo=Batch.objects.all().values('bo_no')
-    my_context={
-       'object':obj2,
-       'nav':nav,
-        'usermaster':usermaster,
-        'ip':get_client_ip(request),
-        'mybo':mybo
-       }
-    if request.method=="POST":
-        print("partly working")
-        once=request.POST.get('once')
-        print(once)
-        # if(once == '1'):
-        submit=request.POST.get('submit')
-        if submit=='Save':
-        
-            print("working")
-            obj=MachiningAirBox.objects.create()
-            obj.bo_no=request.POST.get('bo_no')
-            obj.bo_date=request.POST.get('bo_date')
-            obj.date=request.POST.get('date')
-            obj.loco_type=request.POST.get('locos')
-            obj.airbox_sno=request.POST.get('airbox_sno')
-            obj.airbox_make=request.POST.get('airbox_make')
-            obj.in_qty=request.POST.get('in_qty')
-            obj.out_qty=request.POST.get('out_qty')
-            obj.save()
-            obj2=MachiningAirBox.objects.all().order_by('sno')
-
-            my_context={
-            'object':obj2,
-            'nav':nav,
-            'usermaster':usermaster,
-            'ip':get_client_ip(request),
-            }
-
-        if submit=='save':
-            print("Whats wrong")
-            sno=int(request.POST.get('editsno'))
-            bo_no=request.POST.get('editbo_no')
-            bo_date=request.POST.get('editbo_date')
-            date=request.POST.get('editdate')
-            loco_type=request.POST.get('editlocos')
-            airbox_sno=request.POST.get('editairbox_sno')
-            airbox_make=request.POST.get('editairbox_make')
-            in_qty=request.POST.get('editin_qty')
-            out_qty=request.POST.get('editout_qty')
-            MachiningAirBox.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,airbox_sno=airbox_sno,airbox_make=airbox_make,in_qty=in_qty,out_qty=out_qty)
-
-        if submit=="Dispatch":
-            
-            sno=int(request.POST.get('dissno'))
-            dislocos=request.POST.get('dislocos')
-            MachiningAirBox.objects.filter(sno=sno).update(dispatch_to=dislocos)
-        
-        if submit=='Delete':
-
-            sno=int(request.POST.get('delsno'))
-            MachiningAirBox.objects.filter(sno=sno).delete()
-
-        
-        return HttpResponseRedirect("/machining_of_air_box/")
-
-    return render(request,"machining_of_air_box.html",my_context)
-
-
-def airbox_addbo(request):
-    if request.method=="GET" and request.is_ajax():
-        mybo = request.GET.get('selbo_no')
-        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
-        return JsonResponse(myval, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
 def login_request(request):
     if request.method=='POST':
         u_id = request.POST.get('user_id')
@@ -3978,10 +3897,10 @@ def m5view(request):
     nav=dynamicnavbar(request,rolelist)
     wo_no = user_master.objects.none()
     if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
+        tm=M5SHEMP.objects.all().values('shopsec').distinct()
         tmp=[]
         for on in tm:
-            tmp.append(on.section_code)
+            tmp.append(on['shopsec'])
         context={
             'sub':0,
             'len' :2,
@@ -3991,7 +3910,7 @@ def m5view(request):
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
-            req = M5Doc.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+            req = M5SHEMP.objects.all().filter(shopsec=rolelist[i]).values('batch_no').distinct()
             wo_no =wo_no | req
         context = {
             'sub':0,
@@ -4095,11 +4014,12 @@ def m5view(request):
 
     return render(request,"m5view.html",context)
 
-
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
+        print(shop_sec)
         wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
+        print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -4107,7 +4027,7 @@ def m5getbr(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
         shop_sec = request.GET.get('shop_sec')
-        br_no = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('brn_no').distinct())
+        br_no = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('brn_no').exclude(brn_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -4118,7 +4038,7 @@ def m5getpart_no(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
-        part_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec).values('part_no').distinct())
+        part_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec).values('part_no').exclude(part_no__isnull=True).distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -4130,16 +4050,16 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').exclude(m2slno__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
 
 def m5getstaff_no(request):
     if request.method == "GET" and request.is_ajax():
-        staff_no = request.GET.get('wo_no')
+        # staff_no = request.GET.get('wo_no')
         shop_sec = request.GET.get('shop_sec')
-        br_no = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        br_no = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -4147,7 +4067,108 @@ def m5getstaff_no(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def insert_machining_of_air_box(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    obj2=MachiningAirBox.objects.all().order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
+        'mybo':mybo
+       }
+    if request.method=="POST":
+        
+        once=request.POST.get('once')
+        print(once)
+    
+        submit=request.POST.get('submit')
+        if submit=='Save':
+        
+            
+            bo_no=request.POST.get('bo_no')
+            bo_date=request.POST.get('bo_date')
+            date=request.POST.get('date')
+            loco_type=request.POST.get('locos')
+            airbox_sno=request.POST.get('airbox_sno')
+            airbox_make=request.POST.get('airbox_make')
+            in_qty=request.POST.get('in_qty')
+            out_qty=request.POST.get('out_qty')
+            if bo_no and bo_date and date and loco_type and airbox_sno and airbox_make and in_qty and out_qty:
+               obj=MachiningAirBox.objects.create()
+               obj.bo_no=bo_no
+               obj.bo_date=bo_date
+               obj.date=date
+               obj.loco_type=loco_type
+               obj.airbox_sno=airbox_sno
+               obj.airbox_make=airbox_make
+               obj.in_qty=in_qty
+               obj.out_qty=out_qty
+               obj.save()
+               messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+            obj2=MachiningAirBox.objects.all().order_by('sno')
+            my_context={
+            'object':obj2,
+            }
+
+        if submit=='save':
+    
+            sno=int(request.POST.get('editsno'))
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
+            airbox_sno=request.POST.get('editairbox_sno')
+            airbox_make=request.POST.get('editairbox_make')
+            in_qty=request.POST.get('editin_qty')
+            out_qty=request.POST.get('editout_qty')
+            if bo_no and bo_date and date and loco_type and airbox_sno and airbox_make and in_qty and out_qty:
+               MachiningAirBox.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,airbox_sno=airbox_sno,airbox_make=airbox_make,in_qty=in_qty,out_qty=out_qty)
+               messages.success(request, 'Successfully Edited!')
+            else:
+               messages.error(request,"Please Enter S.No.!")
+
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            if sno and dislocos:
+                MachiningAirBox.objects.filter(sno=sno).update(dispatch_to=dislocos)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        if submit=='Delete':
+
+            first=int(request.POST.get('delsno'))
+            if first:
+                MachiningAirBox.objects.filter(sno=first).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        return HttpResponseRedirect("/machining_of_air_box/")
+
+    return render(request,"machining_of_air_box.html",my_context)
+
+
+def airbox_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
 def miscellaneous_section(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
@@ -4163,34 +4184,40 @@ def miscellaneous_section(request):
         'mybo':mybo
        }
     if request.method=="POST":
-        print("partly working")
+        
         once=request.POST.get('once')
         print(once)
-        # if(once == '1'):
         submit=request.POST.get('submit')
         if submit=='Save':
         
-            print("working")
-            obj=MiscellSection.objects.create()
-            obj.bo_no=request.POST.get('bo_no')
-            obj.bo_date=request.POST.get('bo_date')
-            obj.date=request.POST.get('date')
-            obj.loco_type=request.POST.get('locos')
-            obj.shaft_m=request.POST.get('shaft_m')
-            obj.in_qty=request.POST.get('in_qty')
-            obj.out_qty=request.POST.get('out_qty')
-            obj.save()
-            obj2=MiscellSection.objects.all().order_by('sno')
+            first=request.POST.get('bo_no')
+            second=request.POST.get('bo_date')
+            third=request.POST.get('date')
+            fourth=request.POST.get('locos')
+            fifth=request.POST.get('shaft_m')
+            sixth=request.POST.get('in_qty')
+            seventh=request.POST.get('out_qty')
+            if first and second and third and fourth and fifth and sixth and seventh:
+                obj=MiscellSection.objects.create()
+                obj.bo_no=first
+                obj.bo_date=second
+                obj.date=third
+                obj.loco_type=fourth
+                obj.shaft_m=fifth
+                obj.in_qty=sixth
+                obj.out_qty=seventh
+                obj.save()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request,"Please Enter All Records!")
 
+            obj2=MiscellSection.objects.all().order_by('sno')
             my_context={
             'object':obj2,
-            'nav':nav,
-            'usermaster':usermaster,
-            'ip':get_client_ip(request),
             }
 
         if submit=='save':
-            print("Whats wrong")
+        
             sno=int(request.POST.get('editsno'))
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
@@ -4199,19 +4226,30 @@ def miscellaneous_section(request):
             shaft_m=request.POST.get('editshaft_m')
             in_qty=request.POST.get('editin_qty')
             out_qty=request.POST.get('editout_qty')
-            MiscellSection.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,shaft_m=shaft_m,in_qty=in_qty,out_qty=out_qty)
-
+            if sno and bo_no and bo_date and date and loco_type and shaft_m and in_qty and out_qty:
+                MiscellSection.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,shaft_m=shaft_m,in_qty=in_qty,out_qty=out_qty)
+                messages.success(request, 'Successfully Edited!')
+            else:
+               messages.error(request,"Please Enter S.No.!")
+        
         if submit=="Dispatch":
             
-            sno=int(request.POST.get('dissno'))
-            dislocos=request.POST.get('dislocos')
-            MiscellSection.objects.filter(sno=sno).update(dispatch_to=dislocos)
+            first=int(request.POST.get('dissno'))
+            second=request.POST.get('dislocos')
+            if first and second:
+               MiscellSection.objects.filter(sno=first).update(dispatch_to=second)
+               messages.success(request, 'Successfully Dispatched!')
+            else:
+               messages.error(request,"Please Enter S.No.!")
         
         if submit=='Delete':
 
-            sno=int(request.POST.get('delsno'))
-            MiscellSection.objects.filter(sno=sno).delete()
-
+            first=int(request.POST.get('delsno'))
+            if first:
+                MiscellSection.objects.filter(sno=first).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
         
         return HttpResponseRedirect("/miscellaneous_section/")
 
@@ -4227,7 +4265,7 @@ def miscell_addbo(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=["Superuser","2301","2302"])
 def axlewheelmachining_section(request): 
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
@@ -4256,7 +4294,6 @@ def axlewheelmachining_section(request):
             fourth=request.POST.get('wheel_no')
             fifth=request.POST.get('wheel_make')
             sixth=request.POST.get('locos')
-            print(sixth)
             seventh=request.POST.get('wheel_heatcaseno')
             eighth=request.POST.get('axle_no')
             ninth=request.POST.get('axle_make')
@@ -4268,7 +4305,7 @@ def axlewheelmachining_section(request):
                 obj.date=third
                 obj.wheel_no=fourth
                 obj.wheel_make=fifth
-                obj.loco_type=sixth
+                obj.locos=sixth
                 obj.wheel_heatcaseno=seventh
                 obj.axle_no=eighth
                 obj.axle_make=ninth
@@ -4279,13 +4316,12 @@ def axlewheelmachining_section(request):
                 messages.error(request,"Please Enter All Records!")
 
             obj2=AxleWheelMachining.objects.all().order_by('sno')
-
             my_context={
             'object':obj2,
             }
 
         if submit=='save':
-            print("Whats wrong")
+
             sno=int(request.POST.get('editsno'))
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
@@ -4297,23 +4333,33 @@ def axlewheelmachining_section(request):
             axle_no=request.POST.get('editaxle_no')
             axle_make=request.POST.get('editaxle_make')
             axle_heatcaseno=request.POST.get('editaxle_heatcaseno')
-            AxleWheelMachining.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,wheel_no=wheel_no,wheel_make=wheel_make,loco_type=loco_type,wheel_heatcaseno=wheel_heatcaseno,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
-
+            if bo_no and bo_date and date and loco_type and wheel_make and wheel_no and wheel_heatcaseno and axle_no and axle_make and axle_heatcaseno:
+                AxleWheelMachining.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,wheel_no=wheel_no,wheel_make=wheel_make,loco_type=loco_type,wheel_heatcaseno=wheel_heatcaseno,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
+                messages.success(request, 'Successfully Edited!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
         if submit=="Dispatch":
             
             sno=int(request.POST.get('dissno'))
             dislocos=request.POST.get('dislocos')
-            AxleWheelMachining.objects.filter(sno=sno).update(dispatch_to=dislocos)
+            if sno and dislocos:
+                AxleWheelMachining.objects.filter(sno=sno).update(dispatch_to=dislocos)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
         
         if submit=='Delete':
 
             sno=int(request.POST.get('delsno'))
-            AxleWheelMachining.objects.filter(sno=sno).delete()
+            if sno:
+                AxleWheelMachining.objects.filter(sno=sno).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
 
         if submit=='InspectWheel':
-            print("Inspect")
+    
             sno=int(request.POST.get('snowheel'))
-            print(sno)
             oustwhl=request.POST.get('ustwhl')
             ohub_lengthwhl=request.POST.get('hub_lengthwhl')
             otread_diawhl=request.POST.get('tread_diawhl')
@@ -4321,11 +4367,14 @@ def axlewheelmachining_section(request):
             obore_diawhl=request.POST.get('bore_diawhl')
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
-            AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl)
-            
+            if oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
+                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl)
+                messages.success(request, 'Wheel Successfully Inspected!')
+            else:
+                messages.error(request,"Please Select S.No.!")
 
         if submit=='InspectAxle':
-            print("Axle")
+            
             sno=int(request.POST.get('snoaxle'))
             ustaxle=request.POST.get('ustaxle')
             axlelength=request.POST.get('axlelength')
@@ -4344,8 +4393,11 @@ def axlewheelmachining_section(request):
             journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
-            AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE)
-
+            if ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
+                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE)
+                messages.success(request, 'Axle Successfully Inspected!')
+            else:
+                messages.error(request,"Please Select S.No.!")
 
         
         return HttpResponseRedirect("/axlewheelmachining_section/")

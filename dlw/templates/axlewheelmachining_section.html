@@ -96,7 +96,7 @@ footer, .page-content::after{
                             {% for message in messages %}
                             <font size="3">
                                 <li>
-                                    <h4><b>{{ message }}</b></h4>
+                                   <h4>{{ message }}</h4>
                                 </li>
                             </font>
                             {% endfor %}
@@ -123,7 +123,7 @@ footer, .page-content::after{
         <td>{{objec.sno}} <br><br></td>
         <td>{{objec.bo_no}} <br><br></td>
         <td>{{objec.bo_date}} <br><br></td>
-        <td>{{objec.loco_type}} <br><br></td>
+        <td>{{objec.locos}} <br><br></td>
         <td>{{objec.date}} <br><br></td>
         <td>{{objec.wheel_no}} <br><br></td>
         <td>{{objec.wheel_make}} <br><br></td>
@@ -253,16 +253,17 @@ footer, .page-content::after{
                                            <label for="">Batch Order Date</label>
                                            <input type="date" class="form-control" name="editbo_date" id="editbo_date" required>
                                        </div>
-                                            <div class="col-6">
-                                          <div class="dropdown">
-                                            <select name="editlocos" class="btn btn-info" type="form-control ll" required>
+                                       <div class="col-6">
+                                            <label>Loco Type</label>
+                                            <div class="dropdown">
+                                              <select class="btn btn-info" name="editlocos" type="form-control ll" style="margin-left:0%;" required>
                                               <option value="" hidden selected>Loco Type</option>
                                               <option value="wap7">WAP7</option>
                                               <option value="wag9">WAG9</option>
                                               <option value="hhp">HHP</option>
                                             </select>
                                             </div>
-                                          </div>  
+                                        </div>  
                                    </div>
                         
                                     <div class="row">
@@ -396,7 +397,7 @@ footer, .page-content::after{
                               <div class="modal-body">
                                     <div class="row">
                                     <div class="col">
-                                            <label for="">Batch Order No.</label>
+                                            <label for="">Serial No.</label>
                                             <select name="snowheel" id="addsno" class="form-control ll" required>
                                                     <option value="" hidden selected>Select S.No.</option>  
                                                     {% for x in mysno %}
@@ -465,7 +466,7 @@ footer, .page-content::after{
                           <div class="modal-body">
                               <div class="row">
                               <div class="col">
-                                    <label for="">Batch Order No.</label>
+                                    <label for="">Serial No.</label>
                                     <select name="snoaxle" id="addsno" class="form-control ll" required>
                                             <option value="" hidden selected>Select S.No.</option>  
                                             {% for x in mysno %}
