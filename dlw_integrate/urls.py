@@ -15,8 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+<<<<<<< HEAD
 from dlw.views import m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
+=======
+<<<<<<< HEAD
+from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr,m14view,m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
+>>>>>>> master
 from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,airbox_addbo
+=======
+from dlw.views import m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
+from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,airbox_addbo,m5getstaff_no
+>>>>>>> ca8823a72fde0238cda57a9a022e92c143c43cf1
 from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono
 from django.contrib.auth import views as auth_views
 
@@ -79,6 +88,7 @@ urlpatterns = [
     path('ajax/m5getpart_no/',m5getpart_no,name='m5getpart_no'),
     path('ajax/m5getdoc_no/',m5getdoc_no,name='m5getdoc_no'),
     path('ajax/m5getwono',m5getwono,name='m5getwono'),
+    path('ajax/m5getstaff_no/',m5getstaff_no,name='m5getstaff_no'),
     path('ajax/airbox_addbo',airbox_addbo,name='airbox_addbo'),
     path('ajax/miscell_addbo',miscell_addbo,name='miscell_addbo'),
     path('ajax/axle_addbo',axle_addbo,name='axle_addbo'),
