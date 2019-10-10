@@ -1380,9 +1380,20 @@ class M14M4(models.Model):
     del_fl = models.CharField(db_column='DEL_FL', max_length=1, blank=True, null=True)  # Field name made lowercase.
     doc_no_old = models.DecimalField(db_column='DOC_NO_OLD', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
     epc_old = models.CharField(db_column='EPC_OLD', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    received_mat = models.CharField(db_column='RECEIVED_MAT', max_length=50, blank=True, null=True)
+    issued_qty = models.CharField(db_column='ISSUED_QTY', max_length=50, blank=True, null=True)
+    received_qty = models.CharField(db_column='RECEIVED_QTY', max_length=50, blank=True, null=True)
+    remarks = models.CharField(db_column='REMARKS', max_length=50, blank=True, null=True)
+    line = models.CharField(db_column='LINE', max_length=50, blank=True, null=True)
+    closing_bal = models.CharField(db_column='CLOSING_BAL', max_length=50, blank=True, null=True)
+    laser_pst = models.CharField(db_column='LASER_PST', max_length=50, blank=True, default=0)
+    posted_date = models.CharField(db_column='POSTED_DATE', max_length=50, blank=True, default=0)
+    wardkp_date = models.CharField(db_column='WARDKP_DATE', max_length=50, blank=True, default=0)
+    shopsup_date = models.CharField(db_column='SHOPSUP_DATE', max_length=50, blank=True, default=0)
+    posted1_date = models.CharField(db_column='POSTED1_DATE', max_length=50, blank=True, default=0)
+
 
     class Meta:
-        managed = False
         db_table = 'M14M4'
 
 
