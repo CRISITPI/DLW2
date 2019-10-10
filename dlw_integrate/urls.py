@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from dlw.views import m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
+from dlw.views import m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
 from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,airbox_addbo
 from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section
 from django.contrib.auth import views as auth_views
@@ -55,6 +55,12 @@ urlpatterns = [
     path('ajax/m2getpart_no/',m2getpart_no,name='m2getpart_no'),
     path('ajax/m2getdoc_no/',m2getdoc_no,name='m2getdoc_no'),
     path('ajax/m2getwono',m2getwono,name='m2getwono'),
+    path('m4view/', m4view, name='m4view'),
+    path('ajax/m4getbr/',m4getbr,name='m4getbr'),
+    path('ajax/m4getassly/',m4getassly,name='m4getassly'),
+    path('ajax/m4getpart_no/',m4getpart_no,name='m4getpart_no'),
+    path('ajax/m4getdoc_no/',m4getdoc_no,name='m4getdoc_no'),
+    path('ajax/m4getwono',m4getwono,name='m4getwono'),
     path('ajax/get_yr_dgp/',getYrDgp,name='get_yr_dgp'),
     path('ajax/check_loco/',checkloco,name='check_loco'),
     path('ajax/check_total/',checktotal,name='check_total'),
