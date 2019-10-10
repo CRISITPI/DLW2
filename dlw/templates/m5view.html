@@ -50,7 +50,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">M5 Card</h3>
+<h3 align="center">JOB CARD</h3>
 <br><br>
 <form action="{% url 'm5view' %}" method="POST"> {% csrf_token %}
     <div class="container">
@@ -81,7 +81,7 @@
         {% endif %}
     </select>
                 </td>
-
+                
                 <td>
                     <label for="br_no"><b>BR NO/बी.आर.नंबर</b></label>
                     <select class="form-control" id="br_no" name="br_no" required>
@@ -90,7 +90,7 @@
               </select>
                 </td>
 
-
+             
             </tr>
             <tr>
                 <td>
@@ -105,61 +105,275 @@
             <option id="op_doc" selected disabled hidden>Select Document No</option>
         </select>
                 </td>
+                <td>
+                  <label for="staff_no"><b>Staff NO/प्रमुख कर्मचारी :</b></label>
+                  <select class="form-control" id="staff_no" name="staff_no" required>
+          <option id="op_doc" selected disabled hidden>Select Staff No</option>
+      </select>
+              </td>
             </tr>
 
 
         </table>
-
-        <center><input type="submit" value="Proceed" name="proceed" /></center>
+        
+        <center><input type="submit" value="Proceed" id="myproceed" name="proceed"  /></center>
 
 
     </div>
     <br><br> {% if sub == 1 %}
     <input type="hidden" name="len" value="{{len}}">
     <table border="2" align="center">
-        <tr>
-            <th>Work Order NO</th>
-            <th>BRN NO</th>
-            <th>Shop Section</th>
-            <th>Part NO</th>
-            <!--<th>Part Description</th>-->
-            <th>Document NO</th>
-        </tr>
-        <tr>
-            {% for i in date %}
-            <td>{{i.m2prtdt}}</td>{% endfor %}
-            <td>{{wo_no}}</td>
-            <td>{{brn_no}}</td>
-            <td>{{shop_sec}}</td>
-            <input type="hidden" name="shopsec" value="{{shop_sec}}">
-            <td>{{part_no}}</td>
-            <input type="hidden" name="partno" value="{{part_no}}">
-            <!--<td>{{obj1}}</td>-->
-            <td>{{doc_no}}</td>
-        </tr>
-    </table>
-    </br>
+        <tr style='background-color:rgb(24, 36, 36); text-align: center;color:white;'>
+          <th>Work Order NO</th>
+          <th>BRN NO</th>
+          <th>Shop Section</th>
+          <th>Part NO</th>
+          <!--<th>Part Description</th>-->
+          <th>Document NO</th>
+      </tr>
+      <tr>
+          {% for i in date %}
+          <td>{{i.m2prtdt}}</td>{% endfor %}
+          <td>{{wo_no}}</td>
+          <td>{{brn_no}}</td>
+          <input type="hidden"  name="brn_no" value="{{brn_no}}">
+          <td>{{shop_sec}}</td>
+          <input type="hidden" name="shopsec" value="{{shop_sec}}">
+          <td>{{part_no}}</td>
+          <input type="hidden" name="partno" value="{{part_no}}">
+          <!--<td>{{obj1}}</td>-->
+          <td>{{doc_no}}</td>
+      </tr>
+  </table>
+  </br>
 
-
+ 
 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
-    <table border="2" align="center">
-        <tr>
-            <th>QTY Accepted:</th>
-        </tr>
-        {% for i in obj %}
-        <tr>
-
-
-            <td>
+        <table border="2" align="center">
+            <tr style='background-color:rgb(24, 36, 36); text-align: center;color:white;'>
+               <th>QTY Accepted:</th>
+               <th>LOAD CENTRE</th>
+               <th>P.A.</th>
+               <th>A.T.</th>
+               <th>OPERATION DESCRIPTION</th>
+               <th>MATERIAL REJECTED</th>
+             
+           </tr>
+            {% for i in obj %}
+            <tr>
+              <td>
                 <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+              </td> 
+              <td>
+                  {{i.lc_no}}
+                  <input type="hidden" id="lc_no" name="lc_no{{ forloop.counter }}" value="{{i.lc_no}}">
+                </td> 
+                <td>
+                    {{i.pa}}
+    
+                  </td> 
+                  <td>
+                      {{i.at}}
+      
+                    </td>
+                    
+                  <td>
+                    {{i.des}}
+                </td>
+                <td>
+                  <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+              </td>     
+                  
+           
+           </tr>
+            {% endfor %}
+        </table>
+<br><br>
+<table border="2" align="center">
+  <tr  style='background-color:rgb(24, 36, 36); text-align: center;color:white;'>
+     <th>CUT SHEAR:</th>
+     <th>PREVIOUS SHOP</th>
+     <th>NEXT SHOP</th>
+     <th>LOCO TO</th>
+     <th>LOCO FROM</th>
+     <th>QUANTITY INSPECTED</th>
+     <th>INSPECTOR</th>
+     <th>DATE</th>
+     <th>REMARKS</th>
+     <th>WORKER</th>
+   
+ </tr>
+  {% for i in obj1 %}
+  <tr>
+    <td>
+      {{i.cut_shear}}
+
+    </td> 
+    <td>
+        {{i.pr_shopsec}}
+
+      </td> 
+      <td>
+          {{i.n_shopsec}}
+
+        </td> 
+        <td>
+            {{i.l_to}}
+
+          </td>
+          <td>
+            {{i.l_fr}}
+          </td>
+          <td>
+            <input type="text" id="qtyinsp" value="{{i.qty_insp}}" name="qtyinsp{{ forloop.counter }}"  title="Numeric Value">
+          </td>
+          <td>
+              <input type="text" id="inspector" value="{{i.inspector}}" name="inspector{{ forloop.counter }}"  title="Numeric Value">
+           </td>
+          <td>
+            {% if i.date %}
+              <input type="date" id="date"  class="myinp" value="{{i.date}}" name="date{{ forloop.counter }}"  >
+              {% else %}
+              <input type="date" id="date"  class="myinp" value="0" name="date{{ forloop.counter }}">
+            {% endif %}  
+          </td>
+          <td>
+              <input type="text" id="remarks" value="{{i.remarks}}" name="remarks{{ forloop.counter }}" title="Character Value">
+
+          </td>
+          <td>
+            <input type="text" id="worker" value="{{i.worker}}" name="worker{{ forloop.counter }}" title="Character Value">
+
+          </td>
+         
+ </tr>
+  {% endfor %}
+</table>
+<br><br>
+
+
+<table border="2" align="center">
+  <tr style='background-color:rgb(26, 46, 46); text-align: center;color:white;'>
+    <th>SERIAL NO</th>
+     <th>STAFF NO</th>
+     <th>Name:</th>
+     <th>TICKET NO</th>
+     
+    
+   
+ </tr>
+ 
+  {% for i in obj4 %}
+  <tr>
+    <td>
+      {{i.shopsec}}
+    </td>
+    <td>
+      {{i.staff_no}}
+      <input type="hidden" id="staff_o" name="staff_no{{ forloop.counter }}" value="{{i.staff_no}}">
+      
+    </td>
+    <td>
+      {{i.name}}
+
+    </td> 
+    
+      <td>
+          {{i.ticket_no}}
+      
+
+      </td> 
+          
+         
+ </tr>
+  {% endfor %}
+</table>
+<br><br><br>
+<table border="2" align="center">
+    <tr style='background-color:rgb(26, 46, 46); text-align: center;color:white;'>
+      <th>IN</th>
+       <th>OUT</th>
+       
+       
+      
+     
+   </tr>
+   
+    {% for i in obj4 %}
+    <tr>
+        <td>
+          {% if i.in1 %}
+            <input type="time" id="in1"  class="myinps" value="{{i.in1}}" name="in1{{ forloop.counter }}"  >
+            {% else %}
+            <input type="time" id="in1"  class="myinps" value="0" name="in1{{ forloop.counter }}">
+          {% endif %}  
+          
+          </td> 
+          <td>
+           {% if i.out %}
+              <input type="time" id="out"  class="myinps" value="{{i.out}}" name="out{{ forloop.counter }}"  >
+              {% else %}
+              <input type="time" id="out"  class="myinps" value="0" name="out{{ forloop.counter }}">
+            {% endif %}    
+      
+           </td> 
+   
+           
+   </tr>
+    {% endfor %}
+  </table>
+  
+
+
+
+<br><br><br>
+<table border="2" align="center">
+  <tr style='background-color:rgb(26, 46, 46); text-align: center;color:white;'>
+  
+    
+     <th>TICKET NO</th>
+     <th>Category:</th>
+     <th>MONTH HRS</th>
+     <th>TOTAL TIME TAKEN</th>
+    
+   
+ </tr>
+ 
+  {% for i in obj4 %}
+  <tr>
+    <td>
+      <input type="text" id="ticket_no" value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}">
+
+
+    </td> 
+    <td>
+        {{i.cat}}
+      
+        <input type="hidden" id="cat" name="cat{{ forloop.counter }}" value="{{i.cat}}">
+  
+
+      </td> 
+     
+      <td>
+         
+          <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}" title="Character Value" >
+  
+        </td> 
+        <td>
+            
+            <input type="text" id="total_time_taken"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" >
+    
+          </td> 
+      
+         
+ </tr>
+  {% endfor %}
+</table>
+
     <br><br>
     <center>
-        <input type="submit" name="proceed" value="Submit">
+        <input type="submit" name="proceed" value="submit">
     </center>
     <br><br> {% endif %}
 
@@ -167,23 +381,185 @@
 
 
 <script type="text/javaScript">
-    document.querySelector("#shop_sec").addEventListener('change',(e)=>{ //console.log("hi"); e.preventDefault(); var shop_sec = $("#shop_sec").val() var data = {shop_sec}; $.ajax({ type : 'GET', url : "{% url 'm5getwono' %}", dataType : 'json', data : data,
-    success : function(response){ var elementsadded = document.querySelectorAll(".newelewono"); if(elementsadded.length>0){ var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=> el.remove()); document.querySelector("#op_wo").selected=true;
-    document.querySelector("#op_br").selected=true; //document.querySelector("#op_assm").selected = true; document.querySelector("#op_part").selected = true; document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.batch_no);
-    mystr = ""; brarr.forEach((el,index)=>{ html = `
-    <option class="newelewono">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) }) $("#wno").change(function(e){ e.preventDefault(); var wo_no = $(this).val(); var shop_sec
-    = $("#shop_sec").val(); var data = {wo_no,shop_sec}; $.ajax({ type : 'GET', url : "{% url 'm5getbr' %}", dataType : 'json', data : data, success : function(response){ var elementsadded = document.querySelectorAll(".newelebr"); if(elementsadded.length>0){
-    var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=> el.remove()); document.querySelector("#op_br").selected = true; // document.querySelector("#op_assm").selected = true; document.querySelector("#op_part").selected =
-    true; document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.brn_no); mystr = ""; brarr.forEach((el,index)=>{ html = `
-    <option class="newelebr">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) }) document.querySelector("#br_no").addEventListener('change',(e)=>{ e.preventDefault(); var
-    wo_no = $("#wno").val(); var brn_no = $("#br_no").val(); var shop_sec = $("#shop_sec").val() // var assm_no = $('#assm_no').val() var data = {wo_no,brn_no,shop_sec}; $.ajax({ type : 'GET', url : "{% url 'm5getpart_no' %}", dataType : 'json', data
-    : data, success : function(response){ var elementsadded = document.querySelectorAll(".newelepart"); if(elementsadded.length>0){ var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=> el.remove()); document.querySelector("#op_part").selected
-    = true; document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.part_no); mystr = ""; brarr.forEach((el,index)=>{ html = `
-    <option class="newelepart">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) }) document.querySelector("#part_nop").addEventListener('change',(e)=>{ e.preventDefault();
-    var wo_no = $("#wno").val(); var brn_no = $("#br_no").val(); var shop_sec = $("#shop_sec").val() // var assm_no = $('#assm_no').val() var part_no = $('#part_nop').val() var data = {wo_no,brn_no,shop_sec,part_no}; $.ajax({ type : 'GET', url : "{% url
-    'm5getdoc_no' %}", dataType : 'json', data : data, success : function(response){ var elementsadded = document.querySelectorAll(".neweledoc"); if(elementsadded.length>0){ var elementsaddedarr = Array.from(elementsadded); elementsaddedarr.forEach((el)=>
-    el.remove()); document.querySelector("#op_doc").selected = true; } var brarr,mystr,html; brarr = response.map((el)=>el.m2slno); mystr = ""; brarr.forEach((el,index)=>{ html = `
-    <option class="neweledoc">${brarr[index]}</option>` mystr = html.concat(mystr); }); html = ""; document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr); mystr=""; } }) })
-</script>
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm5getwono' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_wo").selected=true;
+                                  document.querySelector("#op_br").selected=true;
+                                  //document.querySelector("#op_assm").selected = true;
+                                  document.querySelector("#op_part").selected = true;
+                                  document.querySelector("#op_doc").selected = true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.batch_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+  $("#wno").change(function(e){
+      e.preventDefault();
+      var wo_no = $(this).val();
+      var shop_sec = $("#shop_sec").val();
+      var data = {wo_no,shop_sec};
+        $.ajax({
+          type : 'GET',
+          url : "{% url 'm5getbr' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+                var elementsadded = document.querySelectorAll(".newelebr");
+                if(elementsadded.length>0){
+                  var elementsaddedarr = Array.from(elementsadded);
+                elementsaddedarr.forEach((el)=> el.remove());
+                document.querySelector("#op_br").selected = true;
+              //  document.querySelector("#op_assm").selected = true;
+                document.querySelector("#op_part").selected = true;
+                document.querySelector("#op_doc").selected = true; 
+                }
+                var brarr,mystr,html;
+                brarr = response.map((el)=>el.brn_no);
+                mystr = "";
+                brarr.forEach((el,index)=>{
+                  html = `<option class="newelebr">${brarr[index]}</option>`
+                  mystr = html.concat(mystr);
+                });
+                html = "";
+                document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr);
+                mystr="";
+          }
+             })
+             }) 
+ 
+    
+  document.querySelector("#br_no").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var wo_no = $("#wno").val();
+                    var brn_no = $("#br_no").val();
+                    var shop_sec = $("#shop_sec").val()
+                   // var assm_no = $('#assm_no').val()
+                    var data = {wo_no,brn_no,shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm5getpart_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_part").selected = true;
+                                  document.querySelector("#op_doc").selected = true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.part_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+  document.querySelector("#part_nop").addEventListener('change',(e)=>{
+    e.preventDefault();
+    var wo_no = $("#wno").val();
+    var brn_no = $("#br_no").val();
+    var shop_sec = $("#shop_sec").val()
+   // var assm_no = $('#assm_no').val()
+    var part_no = $('#part_nop').val()
+    var data = {wo_no,brn_no,shop_sec,part_no};
+          $.ajax({
+                type : 'GET',
+                url : "{% url 'm5getdoc_no' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                          var elementsadded = document.querySelectorAll(".neweledoc");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_doc").selected = true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.m2slno);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="neweledoc">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+                </script>
 
-{% endblock content %}
+
+<script type="text/javaScript">
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm5getstaff_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelestaff");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_staff").selected = true; 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.staff_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelestaff">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+
+
+             </script>   
+
+
+
+
+    
+    {% endblock content %}
+  
+  
+
+

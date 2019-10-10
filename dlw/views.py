@@ -13,7 +13,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection
+from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,AxleWheelMachining,MiscellSection,M5DOCnew,M5SHEMP
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -3343,7 +3343,6 @@ def dpoinput(request):
             'Role':rolelist[0],
             'cyear':ctp,
             'locolist':locos
-
         } 
 
     return render(request, 'dpof.html', context)
@@ -3396,7 +3395,7 @@ def m1view(request):
         submitvalue = request.POST.get('proceed')
         shop_sec = request.POST.get('shop_sec')
         part_no = request.POST.get('part_nop')
-        obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('opn')
+        obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec')
         leng = obj.count()
         if submitvalue=='Proceed':
             if "Superuser" in rolelist:
@@ -3507,7 +3506,19 @@ def m5view(request):
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     wo_no = user_master.objects.none()
-    if(len(rolelist)==1):
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'len' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             req = M5Doc.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
             wo_no =wo_no | req
@@ -3529,7 +3540,7 @@ def m5view(request):
         }
 
     if request.method == "POST":
-        print("hi")
+        
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
             shop_sec = request.POST.get('shop_sec')
@@ -3537,32 +3548,87 @@ def m5view(request):
             wo_no = request.POST.get('wo_no')
             brn_no = request.POST.get('br_no')
             doc_no = request.POST.get('doc_no')
-            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep').order_by('opn')
-        
+            staff_no = request.POST.get('staff_no')
+            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').order_by('opn')
+            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m5prtdt','qty_ord').order_by('opn')
+            obj2 = Part.objects.filter(partno=part_no).values('drgno','des').order_by('partno')
+            obj3 = Batch.objects.filter(part_no=part_no).values('batch_type').order_by('part_no').distinct()
+            obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
+           
+            messages.success(request,'THANK YOU')
             leng = obj.count()
-            context = {
+            leng1=obj1.count()
+            leng2=obj2.count()
+            leng3=obj3.count()
+            leng4=obj4.count()
+            if obj != None:
+                
+             context = {
+                'nav':nav,
+                'ip':get_client_ip(request),
                 'obj': obj,
+                'obj1':obj1,
+                'obj2':obj2,
+                'obj3':obj3,
+                'obj4':obj4,
                 'sub': 1,
                 'len': leng,
+                'len1':leng1,
+                'len2':leng2,
+                'len3':leng3,
+                'len4':leng4,
                 'shop_sec': shop_sec,
                 'part_no': part_no,
                 'wo_no': wo_no,
+                #'assm_no':assm_no,
                 'brn_no': brn_no,
                 'doc_no': doc_no,
-                'nav':nav,
-            'ip':get_client_ip(request),
-            }
+                'staff_no':staff_no,
+              }
+        
+        if submitvalue=='submit':
+            leng=request.POST.get('len')
+            shopsec= request.POST.get('shopsec')
+            partno= request.POST.get('partno')
+            brn_no = request.POST.get('brn_no')
+            #name = request.Post.get('name')
+            
+            for i in range(1, int(leng)+1):
+                qtyac = request.POST.get('qtyac'+str(i))
+                matrej = request.POST.get('matrej'+str(i))
+                qtyinsp = request.POST.get('qtyinsp'+str(i))
+                inspector = request.POST.get('inspector'+str(i))
+                date = request.POST.get('date'+str(i))
+                remarks = request.POST.get('remarks'+str(i))
+                worker = request.POST.get('worker'+str(i))
+                in1 = request.POST.get('in1'+str(i))
+                out = request.POST.get('out'+str(i))
+                lc_no = request.POST.get('lc_no'+str(i))
+               # brn_no = request.POST.get('brn_no'+str(i))
+                cat = request.POST.get('cat'+str(i))
+                staff_no = request.POST.get('staff_no'+str(i))
+                ticket_no = request.POST.get('ticket_no'+str(i))
+                month_hrs = request.POST.get('month_hrs'+str(i))
+                total_time_taken = request.POST.get('total_time_taken'+str(i))
+                print(staff_no)
+                print(brn_no)
+                print(lc_no)
+                Oprn.objects.filter(shop_sec=shopsec, part_no=partno,lc_no=lc_no).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
+              
+                M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=int(qtyinsp),inspector=int(inspector),date=str(date),remarks=str(remarks),worker=str(worker))
+                print(date)
+                M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat ).update(in1=str(in1),ticket_no=int(ticket_no),out=str(out),month_hrs=int(month_hrs),total_time_taken=int(total_time_taken))
+                print(in1)
+                print(total_time_taken)
+                wo_no=M5DOCnew.objects.all().values('batch_no').distinct()
 
     return render(request,"m5view.html",context)
 
 
 def m5getwono(request):
-    # print("m5getwono")
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        print(shop_sec)
-        wono = list(M5Doc.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
-        print(wono)
+        wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -3570,7 +3636,7 @@ def m5getbr(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
         shop_sec = request.GET.get('shop_sec')
-        br_no = list(M5Doc.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('brn_no').distinct())
+        br_no = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('brn_no').distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -3581,7 +3647,7 @@ def m5getpart_no(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
-        part_no = list(M5Doc.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec).values('part_no').distinct())
+        part_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -3593,9 +3659,19 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5Doc.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+def m5getstaff_no(request):
+    if request.method == "GET" and request.is_ajax():
+        staff_no = request.GET.get('wo_no')
+        shop_sec = request.GET.get('shop_sec')
+        br_no = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        return JsonResponse(br_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
 
 
 
@@ -3682,40 +3758,54 @@ def miscell_addbo(request):
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def axlewheelmachining_section(request): 
-    from .models import AxleWheelMachining
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     obj2=AxleWheelMachining.objects.all().order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
+    mysno=AxleWheelMachining.objects.all().values('sno')
     my_context={
        'object':obj2,
        'nav':nav,
        'usermaster':usermaster,
        'ip':get_client_ip(request),
-       'mybo':mybo
+       'mybo':mybo,
+       'mysno':mysno,
        }
     if request.method=="POST":
-        print("partly working")
         once=request.POST.get('once')
         print(once)
         submit=request.POST.get('submit')
         if submit=='Save':
         
-            print("working")
-            obj=AxleWheelMachining.objects.create()
-            obj.bo_no=request.POST.get('bo_no')
-            obj.bo_date=request.POST.get('bo_date')
-            obj.date=request.POST.get('date')
-            obj.wheel_no=request.POST.get('wheel_no')
-            obj.wheel_make=request.POST.get('wheel_make')
-            obj.loco_type=request.POST.get('locos')
-            obj.wheel_heatcaseno=request.POST.get('wheel_heatcaseno')
-            obj.axle_no=request.POST.get('axle_no')
-            obj.axle_make=request.POST.get('axle_make')
-            obj.axle_heatcaseno=request.POST.get('axle_heatcaseno')
-            obj.save()
+            first=request.POST.get('bo_no')
+            second=request.POST.get('bo_date')
+            third=request.POST.get('date')
+            fourth=request.POST.get('wheel_no')
+            fifth=request.POST.get('wheel_make')
+            sixth=request.POST.get('locos')
+            print(sixth)
+            seventh=request.POST.get('wheel_heatcaseno')
+            eighth=request.POST.get('axle_no')
+            ninth=request.POST.get('axle_make')
+            tenth=request.POST.get('axle_heatcaseno')
+            if first and second and third and fourth and fifth and sixth and seventh and eighth and ninth and tenth:
+                obj=AxleWheelMachining.objects.create()
+                obj.bo_no=first
+                obj.bo_date=second
+                obj.date=third
+                obj.wheel_no=fourth
+                obj.wheel_make=fifth
+                obj.loco_type=sixth
+                obj.wheel_heatcaseno=seventh
+                obj.axle_no=eighth
+                obj.axle_make=ninth
+                obj.axle_heatcaseno=tenth
+                obj.save()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request,"Please Enter All Records!")
 
             obj2=AxleWheelMachining.objects.all().order_by('sno')
 
@@ -3751,37 +3841,39 @@ def axlewheelmachining_section(request):
 
         if submit=='InspectWheel':
             print("Inspect")
-            obj=AxleWheelMachining.objects.create()
-            obj.ustwhl=request.POST.get('ustwhl')
-            obj.hub_lengthwhl=request.POST.get('hub_lengthwhl')
-            obj.tread_diawhl=request.POST.get('tread_diawhl')
-            obj.rim_thicknesswhl=request.POST.get('rim_thicknesswhl')
-            obj.bore_diawhl=request.POST.get('bore_diawhl')
-            obj.inspector_namewhl=request.POST.get('collarwhl')
-            obj.datewhl=request.POST.get('datewhl')
-            obj.save()
+            sno=int(request.POST.get('snowheel'))
+            print(sno)
+            oustwhl=request.POST.get('ustwhl')
+            ohub_lengthwhl=request.POST.get('hub_lengthwhl')
+            otread_diawhl=request.POST.get('tread_diawhl')
+            orim_thicknesswhl=request.POST.get('rim_thicknesswhl')
+            obore_diawhl=request.POST.get('bore_diawhl')
+            oinspector_namewhl=request.POST.get('inspector_namewhl')
+            odatewhl=request.POST.get('datewhl')
+            AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl)
+            
 
         if submit=='InspectAxle':
             print("Axle")
-            obj=AxleWheelMachining.objects.create()
-            obj.ustaxle=request.POST.get('ustaxle')
-            obj.axlelength=request.POST.get('axlelength')
-            obj.journalaxle=request.POST.get('journalaxle')
-            obj.throweraxle=request.POST.get('throweraxle')
-            obj.wheelseataxle=request.POST.get('wheelseataxle')
-            obj.gearseataxle=request.POST.get('gearseataxle')
-            obj.collaraxle=request.POST.get('collaraxle')
-            obj.dateaxle=request.POST.get('dateaxle')
-            obj.bearingaxle=request.POST.get('bearingaxle')
-            obj.abutmentaxle=request.POST.get('abutmentaxle')
-            obj.inspector_nameaxle=request.POST.get('inspector_nameaxle')
-            obj.journal_surfacefinishGE=request.POST.get('journal_surfacefinishGE')
-            obj.wheelseat_surfacefinishGE=request.POST.get('wheelseat_surfacefinishGE')
-            obj.gearseat_surfacefinishGE=request.POST.get('gearseat_surfacefinishGE')
-            obj.journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
-            obj.wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
-            obj.gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
-            obj.save()
+            sno=int(request.POST.get('snoaxle'))
+            ustaxle=request.POST.get('ustaxle')
+            axlelength=request.POST.get('axlelength')
+            journalaxle=request.POST.get('journalaxle')
+            throweraxle=request.POST.get('throweraxle')
+            wheelseataxle=request.POST.get('wheelseataxle')
+            gearseataxle=request.POST.get('gearseataxle')
+            collaraxle=request.POST.get('collaraxle')
+            dateaxle=request.POST.get('dateaxle')
+            bearingaxle=request.POST.get('bearingaxle')
+            abutmentaxle=request.POST.get('abutmentaxle')
+            inspector_nameaxle=request.POST.get('inspector_nameaxle')
+            journal_surfacefinishGE=request.POST.get('journal_surfacefinishGE')
+            wheelseat_surfacefinishGE=request.POST.get('wheelseat_surfacefinishGE')
+            gearseat_surfacefinishGE=request.POST.get('gearseat_surfacefinishGE')
+            journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
+            wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
+            gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
+            AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE)
 
 
         

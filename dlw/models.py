@@ -3376,3 +3376,68 @@ class AxleWheelMachining(models.Model):
 #     locotype=models.CharField(max_length=50,null=True)
 #     endcumno=models.CharField(max_length=10,null=True)
 #     orderno=models.CharField(max_length=10,null=True)
+
+
+class M5SHEMP(models.Model):
+    yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    shopsec = models.CharField(db_column='SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    desgn = models.CharField(db_column='DESGN', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    emp_type = models.CharField(db_column='EMP_TYPE', max_length=3, blank=True, null=True)  # Field name made lowercase.
+    status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    remark = models.CharField(db_column='REMARK', max_length=1000, blank=True, null=True)  # Field name made lowercase.
+    updt_by = models.CharField(db_column='UPDT_BY', max_length=6, blank=True, null=True)  # Field name made lowercase.
+    updt_date = models.DateField(db_column='UPDT_DATE', blank=True, null=True)  # Field name made lowercase.
+    rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    in1 = models.CharField(db_column='IN1', max_length=10, blank=True,null=True) # Field name made lowercase.
+    out = models.CharField(db_column='OUT', max_length=10, blank=True,null=True) # Field name made lowercase.
+    ticket_no = models.IntegerField(db_column='TICKET_NO',  blank=True, null=True, default=0)  # Field name made lowercase.
+    month_hrs = models.IntegerField(db_column='MONTH_HRS',  blank=True,null=True, default=0) # Field name made lowercase.
+    total_time_taken = models.IntegerField(db_column='TOTAL_TIME_TAKEN', blank=True,null=True, default=0)
+
+    class Meta:
+        managed = False
+        db_table = 'M5SHEMP'      
+
+class M5DOCnew(models.Model):   
+    scl_cl = models.CharField(db_column='SCL_CL', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    batch_no = models.CharField(db_column='BATCH_NO', max_length=7, blank=True, null=True)  # Field name made lowercase.
+    assly_no = models.CharField(db_column='ASSLY_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    m2slno = models.DecimalField(db_column='M2SLNO', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    rm_partno = models.CharField(db_column='RM_PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    cut_shear = models.CharField(db_column='CUT_SHEAR', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    lc_no = models.CharField(db_column='LC_NO', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    opn = models.CharField(db_column='OPN', max_length=3, blank=True, null=True)  # Field name made lowercase.
+    opn_desc = models.CharField(db_column='OPN_DESC', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    pa = models.DecimalField(db_column='PA', max_digits=5, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    at = models.DecimalField(db_column='AT', max_digits=6, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    no_off = models.DecimalField(db_column='NO_OFF', max_digits=2, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    m5_cd = models.CharField(db_column='M5_CD', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    pr_shopsec = models.CharField(db_column='PR_SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    n_shopsec = models.CharField(db_column='N_SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    qty_ord = models.DecimalField(db_column='QTY_ORD', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    tot_rm_qty = models.DecimalField(db_column='TOT_RM_QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    l_fr = models.CharField(db_column='L_FR', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    l_to = models.CharField(db_column='L_TO', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    m5glsn = models.DecimalField(db_column='M5GLSN', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    m5prtdt = models.DateField(db_column='M5PRTDT', blank=True, null=True)  # Field name made lowercase.
+    seq = models.DecimalField(db_column='SEQ', max_digits=3, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    brn_no = models.DecimalField(db_column='BRN_NO', max_digits=5, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    mark = models.CharField(db_column='MARK', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    del_fl = models.CharField(db_column='DEL_FL', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    qty_insp = models.IntegerField(db_column='QTY_INSP', default=0, blank=True, null=True)  # Field name made lowercase.
+    inspector = models.IntegerField(db_column='INSPECTOR',  blank=True, null=True, default=0)  # Field name made lowercase.
+    date = models.CharField(db_column='DATE', blank='True', max_length=10, null='True')  # Field name made lowercase.
+    remarks = models.CharField(db_column='REMARKS',max_length=50, blank='True', null='True')  # Field name made lowercase.
+    worker = models.CharField(db_column='WORKER',  max_length=15, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'M5DOCnew'
