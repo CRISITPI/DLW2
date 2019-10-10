@@ -1379,11 +1379,8 @@ class M14M4(models.Model):
     mark = models.CharField(db_column='MARK', max_length=1, blank=True, null=True)  # Field name made lowercase.
     del_fl = models.CharField(db_column='DEL_FL', max_length=1, blank=True, null=True)  # Field name made lowercase.
     doc_no_old = models.DecimalField(db_column='DOC_NO_OLD', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
-<<<<<<< HEAD
     epc_old = models.CharField(db_column='EPC_OLD', max_length=1, blank=True, null=True)
-=======
     epc_old = models.CharField(db_column='EPC_OLD', max_length=1, blank=True, null=True)  # Field name made lowercase.
->>>>>>> master
     received_mat = models.CharField(db_column='RECEIVED_MAT', max_length=50, blank=True, null=True)
     issued_qty = models.CharField(db_column='ISSUED_QTY', max_length=50, blank=True, null=True)
     received_qty = models.CharField(db_column='RECEIVED_QTY', max_length=50, blank=True, null=True)
