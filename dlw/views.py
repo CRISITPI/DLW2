@@ -14,11 +14,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-<<<<<<< HEAD
-from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,AxleWheelMachining,MiscellSection,M5DOCnew,M5SHEMP
-=======
-from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection
->>>>>>> 26b2ef9a5a4543f09016a522cf7387e495918c8d
+from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,AxleWheelMachining,MiscellSection,M5DOCnew,M5SHEMP
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
