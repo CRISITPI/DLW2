@@ -3371,3 +3371,8 @@ class AxleWheelMachining(models.Model):
   datewhl=models.DateField(null=True)      
 
 
+# class dpo(models.Model):
+#     loconame=models.CharField(max_length=50,null=True)
+#     locotype=models.CharField(max_length=50,null=True)
+#     endcumno=models.CharField(max_length=10,null=True)
+#     orderno=models.CharField(max_length=10,null=True)

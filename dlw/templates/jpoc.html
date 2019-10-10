@@ -35,24 +35,20 @@
     }
 </style>
 
-<form action="." method="POST">
-    {%csrf_token%}
-
-    <div id="content">
-
-    </div>
+<form action="." method="POST">{%csrf_token%}
+    <!-- <div id="content">
+    </div> -->
     <table align="center">
         <tr>
-            
-            <td>
-                <h2 style="margin: 1em 0 0.5em 0;
+            <td><h2><center><b>JPO</b></center></h2>
+                <!-- <h2 style="margin: 1em 0 0.5em 0;
           color: #343434;
           font-weight: normal;
           font-family: 'Ultra', sans-serif;   
           font-size: 36px;
           line-height: 42px;
           text-transform: uppercase;
-          text-shadow: 0 2px white, 0 3px #777;">JPO</h2>
+          text-shadow: 0 2px white, 0 3px #777;">JPO</h2> -->
             </td>
         </tr>
 
@@ -60,13 +56,13 @@
         <tr>
                 <td>
                         <div class="dropdown" style="margin: 1em 0 0.5em 0">
-                            <select name="jpotype" id="jpotypesel" class="form-control ll" required>
+                            <center><select name="jpotype" id="jpotypesel" class="form-control ll" required>
           <div  class="dropdown-content">
           <!-- <option selected value="" disabled hidden>JPO</option> -->
           <option value="main" selected>MAIN</option>
           <option value="rsp">RSP</option>
           <option value="combined">Combined</option>
-          </select></div>
+          </select></center></div>
                     </td>
                 </tr>
         <tr>
@@ -88,7 +84,7 @@
 
 
        
-        <td><input class="btn btn-primary" type="submit" name='save' value='Proceed' /> &nbsp; &nbsp;
+        <td><input class="btn btn-primary" type="submit" name='save' value='Proceed' /> 
         </td>
         </tr>
     </table>

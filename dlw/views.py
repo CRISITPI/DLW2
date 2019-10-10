@@ -72,7 +72,6 @@ def insert_machining_of_air_box(request):
             obj.airbox_make=request.POST.get('airbox_make')
             obj.in_qty=request.POST.get('in_qty')
             obj.out_qty=request.POST.get('out_qty')
-           
             obj.save()
             obj2=MachiningAirBox.objects.all().order_by('sno')
 
@@ -108,7 +107,7 @@ def insert_machining_of_air_box(request):
             MachiningAirBox.objects.filter(sno=sno).delete()
 
         
-        # return HttpResponseRedirect("/machining_of_air_box/")
+        return HttpResponseRedirect("/machining_of_air_box/")
 
     return render(request,"machining_of_air_box.html",my_context)
 
@@ -3359,10 +3358,10 @@ def m1view(request):
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     if "Superuser" in rolelist:
-        tm=Oprn.objects.all().values('shop_sec').distinct()
+        tm=shop_section.objects.all()
         tmp=[]
         for on in tm:
-            tmp.append(on['shop_sec'])
+            tmp.append(on.section_code)
         context={
             'sub':0,
             'lenm' :2,
