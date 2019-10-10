@@ -50,7 +50,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">M4 Card</h3>
+<h3 align="center">M14 Card</h3>
 <br>
 <center>
         {% if messages %}
@@ -66,7 +66,7 @@
         {% endif %}
     </center>
 <br>
- <form action="{% url 'm4view' %}" method="POST"> {% csrf_token %}
+ <form action="{% url 'm14view' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
             <tr>
@@ -92,7 +92,7 @@
         <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
         {% if lenm == 1 %}
         {% for i in wo_nop %}
-          <option>{{i.bo_no}}</option>
+          <option>{{i.batch_no}}</option>
         {% endfor %}
         {% endif %}
     </select>
@@ -194,7 +194,7 @@
 
         </tr>
         <tr>
-         {% for obj in obj %}
+
              <td>
             {% if obj.received_mat %}
                 <input type="text" id="received_mat" class="myinp" value="{{obj.received_mat}}" name="received_mat" pattern="[0-9]*" title="Numeric Value" required>
@@ -291,7 +291,7 @@
                  <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date"  >
             {% endif %}
             </td>
-                {% endfor %}
+
         </tr>
     </table>
     <br><br>
@@ -310,7 +310,7 @@ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                   var data = {shop_sec};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm4getwono' %}",
+                      url : "{% url 'm14getwono' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -344,7 +344,7 @@ $("#wno").change(function(e){
     var data = {wo_no,shop_sec};
       $.ajax({
         type : 'GET',
-        url : "{% url 'm4getbr' %}",
+        url : "{% url 'm14getbr' %}",
         dataType : 'json',
         data : data,
         success : function(response){
@@ -378,7 +378,7 @@ document.querySelector("#br_no").addEventListener('change',(e)=>{
                   var data = {wo_no,brn_no,shop_sec};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm4getassly' %}",
+                      url : "{% url 'm14getassly' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -413,7 +413,7 @@ document.querySelector("#assm_no").addEventListener('change',(e)=>{
                   var data = {wo_no,brn_no,shop_sec,assm_no};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm4getpart_no' %}",
+                      url : "{% url 'm14getpart_no' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -447,7 +447,7 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
   var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
         $.ajax({
               type : 'GET',
-              url : "{% url 'm4getdoc_no' %}",
+              url : "{% url 'm14getdoc_no' %}",
               dataType : 'json',
               data : data,
               success : function(response){
@@ -484,7 +484,6 @@ document.addEventListener('keypress',(event)=>{
 
 
   </script>
-
 
 
 
