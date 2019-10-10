@@ -191,38 +191,39 @@
             <th>LASER_PST:</th>
             <th>LINE//लाइन:</th>
             <th>CLOSING BALANCE:</th>
+            <th>REMARKS:</th>
 
         </tr>
         <tr>
          {% for obj in obj %}
              <td>
-            {% if obj.received_mat %}
-                <input type="text" id="received_mat" class="myinp" value="{{obj.received_mat}}" name="received_mat" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.received_mat14 %}
+                <input type="text" id="received_mat" class="myinp" value="{{obj.received_mat14}}" name="received_mat" >
                 {% else %}
-                <input type="text" id="received_mat" class="myinp" value="0" name="received_mat" pattern="[0-9]*" title="Numeric Value" required>
+                <input type="text" id="received_mat" class="myinp" value="0" name="received_mat" >
                 {% endif %}
             </td>
 
             <td>
-            {% if obj.issued_qty %}
-              <input type="text" id="issued_qty" class="myinp" value="{{obj.issued_qty}}" name="issued_qty" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.issued_qty14 %}
+              <input type="text" id="issued_qty" class="myinp" value="{{obj.issued_qty14}}" name="issued_qty" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
               <input type="text" id="issued_qty" class="myinp" value="0" name="issued_qty" pattern="[0-9]*" title="Numeric Value" required>
                 {% endif %}
             </td>
 
             <td>
-            {% if obj.received_qty %}
-              <input type="text" id="received_qty" class="myinp" value="{{obj.received_qty}}" name="received_qty" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.received_qty14 %}
+              <input type="text" id="received_qty" class="myinp" value="{{obj.received_qty14}}" name="received_qty" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
               <input type="text" id="received_qty" class="myinp" value="0" name="received_qty" pattern="[0-9]*" title="Numeric Value" required>
                 {% endif %}
             </td>
 
              <td>
-            {% if obj.laser_pst %}
+            {% if obj.laser_pst14 %}
 
-                <input type="date" id="laser_pst" class="myinp" value="{{obj.laser_pst}}" name="laser_pst"  >
+                <input type="date" id="laser_pst" class="myinp" value="{{obj.laser_pst14}}" name="laser_pst"  >
                 {% else %}
 
                 <input type="date" id="laser_pst" class="myinp" value="0" name="laser_pst" >
@@ -230,63 +231,65 @@
             </td>
 
             <td>
-            {% if obj.line %}
-              <input type="text" id="line" class="myinp" value="{{obj.line}}" name="line" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.line14 %}
+              <input type="text" id="line" class="myinp" value="{{obj.line14}}" name="line" >
                 {% else %}
-              <input type="text" id="line" class="myinp" value="0" name="line" pattern="[0-9]*" title="Numeric Value" required>
+              <input type="text" id="line" class="myinp" value="0" name="line" >
                 {% endif %}
             </td>
             <td>
-            {% if obj.closing_bal %}
-              <input type="text" id="closing_bal" class="myinp" value="{{obj.closing_bal}}" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.closing_bal14 %}
+              <input type="text" id="closing_bal" class="myinp" value="{{obj.closing_bal14}}" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
               <input type="text" id="closing_bal" class="myinp" value="0" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
                 {% endif %}
             </td>
-</tr></table>
-        <table border="2" align="center">
+
+
+        <td>
+            {% if obj.remarks14 %}
+              <input type="text" id="remarks" class="myinp" value="{{obj.remarks14}}" name="remarks" >
+                {% else %}
+              <input type="text" id="remarks" class="myinp" value="0" name="remarks">
+                {% endif %}
+        </td>
+
+</tr>
         <tr>
             <th>POSTED DATE:</th>
             <th>WARDKEEPER DATE:</th>
             <th>SHOP SUPERINTENDENT DATE:</th>
             <th>POSTED DATE:</th>
-            <th>REMARKS</th>:</th>
+
         </tr>
             <tr>
 
-        <td>
-            {% if obj.remarks %}
-              <input type="text" id="remarks" class="myinp" value="{{obj.remarks}}" name="remarks" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-              <input type="text" id="remarks" class="myinp" value="0" name="remarks" pattern="[0-9]*" title="Numeric Value" required>
-                {% endif %}
-        </td>
             <td>
-            {% if obj.posted_date %}
-                <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date}}" name="posted_date"  >
+            {% if obj.posted_date14 %}
+                <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date14}}" name="posted_date"  >
                 {% else %}
                 <input type="date" id="posted_date" class="myinp" value="0" name="posted_date"  >
                 {% endif %}
 
             </td>
             <td>
-            {% if obj.wardkp_date %}
-                <input type="date" id="wardkp_date" class="myinp" value="{{obj.wardkp_date}}" name="wardkp_date"  >
+            {% if obj.wardkp_date14 %}
+                <input type="date" id="wardkp_date" class="myinp" value="{{obj.wardkp_date14}}" name="wardkp_date"  >
                 {% else %}
                 <input type="date" id="wardkp_date" class="myinp" value="0" name="wardkp_date" >
             {% endif %}
             </td>
             <td>
-            {% if obj.shopsup_date %}
-                <input type="date" id="shopsup_date" class="myinp" value="{{obj.shopsup_date}}" name="shopsup_date"  >
+            {% if obj.shopsup_date14 %}
+                <input type="date" id="shopsup_date" class="myinp" value="{{obj.shopsup_date14}}" name="shopsup_date"  >
                 {% else %}
                 <input type="date" id="shopsup_date" value="0" class="myinp" name="shopsup_date"  >
             {% endif %}
             </td>
 
             <td>
-            {% if obj.posted1_date %}
-                <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date}}" name="posted1_date"  >
+            {% if obj.posted1_date14 %}
+                <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date14}}" name="posted1_date"  >
                 {% else %}
                  <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date"  >
             {% endif %}
