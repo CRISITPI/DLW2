@@ -3866,14 +3866,14 @@ def m1view(request):
         submitvalue = request.POST.get('proceed')
         shop_sec = request.POST.get('shop_sec')
         part_no = request.POST.get('part_nop')
-        obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec')
+        obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec','opn')
         leng = obj.count()
         if submitvalue=='Proceed':
             if "Superuser" in rolelist:
-                tm=Oprn.objects.all().values('shop_sec').distinct()
+                tm=shop_section.objects.all()
                 tmp=[]
                 for on in tm:
-                    tmp.append(on['shop_sec'])
+                    tmp.append(on.section_code)
                 context={
                     'sub': 1,
                     'lenm' :2,
@@ -3948,7 +3948,7 @@ def m1genrept1(request,prtno,shopsec):
     obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
     obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
     # print(obj)
-    obj2 = Oprn.objects.filter(part_no=prtno).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('opn')
+    obj2 = Oprn.objects.filter(part_no=prtno).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('shop_sec','opn')
     patotal=0
     attotal=0
     if len(obj2):
