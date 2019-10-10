@@ -50,7 +50,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">M4 Card</h3>
+<h3 align="center">M14 Card</h3>
 <br>
 <center>
         {% if messages %}
@@ -66,7 +66,7 @@
         {% endif %}
     </center>
 <br>
- <form action="{% url 'm4view' %}" method="POST"> {% csrf_token %}
+ <form action="{% url 'm14view' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
             <tr>
@@ -310,7 +310,7 @@ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                   var data = {shop_sec};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm4getwono' %}",
+                      url : "{% url 'm14getwono' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -344,7 +344,7 @@ $("#wno").change(function(e){
     var data = {wo_no,shop_sec};
       $.ajax({
         type : 'GET',
-        url : "{% url 'm4getbr' %}",
+        url : "{% url 'm14getbr' %}",
         dataType : 'json',
         data : data,
         success : function(response){
@@ -378,7 +378,7 @@ document.querySelector("#br_no").addEventListener('change',(e)=>{
                   var data = {wo_no,brn_no,shop_sec};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm4getassly' %}",
+                      url : "{% url 'm14getassly' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -413,7 +413,7 @@ document.querySelector("#assm_no").addEventListener('change',(e)=>{
                   var data = {wo_no,brn_no,shop_sec,assm_no};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm4getpart_no' %}",
+                      url : "{% url 'm14getpart_no' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -447,7 +447,7 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
   var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
         $.ajax({
               type : 'GET',
-              url : "{% url 'm4getdoc_no' %}",
+              url : "{% url 'm14getdoc_no' %}",
               dataType : 'json',
               data : data,
               success : function(response){
