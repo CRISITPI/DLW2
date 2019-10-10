@@ -6,14 +6,19 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from datetime import date,datetime,timedelta
+from datetime import date,datetime,timedelta,time
+import time
 import datetime
 from array import array
 from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
+<<<<<<< HEAD
 from dlw.models import Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,AxleWheelMachining,MiscellSection,M5DOCnew,M5SHEMP
+=======
+from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection
+>>>>>>> 26b2ef9a5a4543f09016a522cf7387e495918c8d
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -777,8 +782,12 @@ def m2view(request):
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
-                    req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-                    wo_nop =wo_nop | req
+                    # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                    # wo_nop =wo_nop | req
+
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
                 context = {
                     'wo_nop':wo_nop,
                     'roles' :rolelist,
@@ -889,6 +898,240 @@ def m2getdoc_no(request):
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
+
+
+
+
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def m4view(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    wo_nop = user_master.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = user_master.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            part_no = request.POST.get('part_nop')
+            wo_no = request.POST.get('wo_no')
+            brn_no = request.POST.get('br_no')
+            assembly_no = request.POST.get('assm_no')
+            doc_no = request.POST.get('doc_no')
+            kkk=Oprn.objects.all()
+            obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
+            obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
+            obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
+            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
+            obj = M14M4.objects.filter(bo_no=wo_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
+            # print(obj)
+            date = M14M4.objects.filter(doc_no=doc_no).values('prtdt','qty').distinct()
+            leng = obj.count()
+            # print(obj)
+            # print(obj1)
+            # print(obj2.count())
+            # print(obj1.count())
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context = {
+                    'roles':tmp,
+                    'lenm' :2,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                    # wo_nop =wo_nop | req
+
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'wo_nop':wo_nop,
+                    'roles' :rolelist,
+                    'usermaster':usermaster,
+                    'lenm' :len(rolelist),
+                    'nav': nav,
+                    'ip': get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+        if submitvalue=='Save':
+            doc_no= request.POST.get('doc_no')
+            part_no= request.POST.get('part_no')
+            wo_no=request.POST.get('wo_no')
+            brn_no=request.POST.get('brn_no')
+            print("hh")
+            print(doc_no)
+            print(part_no)
+            print(wo_no)
+            print(brn_no)
+            print("hhhh")
+            received_mat = request.POST.get('received_mat')
+            issued_qty = request.POST.get('issued_qty')
+            received_qty = request.POST.get('received_qty')
+            laser_pst = request.POST.get('laser_pst')
+            line= request.POST.get('line')
+            closing_bal = request.POST.get('closing_bal')
+            remarks = request.POST.get('remarks')
+            posted_date = request.POST.get('posted_date')
+            wardkp_date = request.POST.get('wardkp_date')
+            shopsup_date = request.POST.get('shopsup_date')
+
+            print(laser_pst)
+            # temp_date = time.strptime(laser_pst, "%Y-%m-%d")
+            # print(temp_date)
+
+            posted1_date = request.POST.get('posted1_date')
+            M14M4.objects.filter(part_no=part_no,brn_no=brn_no).update(received_mat=int(received_mat), issued_qty=int(issued_qty), received_qty=int(received_qty), laser_pst=str(laser_pst), line=int(line), closing_bal=int(closing_bal), remarks=int(remarks), posted_date=str(posted_date), wardkp_date=str(wardkp_date), shopsup_date=str(shopsup_date), posted1_date=str(posted1_date))
+            wo_no=M14M4.objects.all().values('bo_no').distinct()
+            messages.success(request, 'Successfully Updated!, Select new values to update')
+    return render(request, "m4view.html", context)
+
+
+
+
+def m4getwono(request):
+    if request.method == "GET" and request.is_ajax():
+        from.models import Batch
+        shop_sec = request.GET.get('shop_sec')
+        w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
+        w2 = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+        wono = list(w2)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m4getbr(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = list(M14M4.objects.filter(bo_no =wo_no).values('brn_no').distinct())
+        return JsonResponse(br_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m4getassly(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        assm_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no).values('assly_no').distinct())
+        return JsonResponse(assm_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+def m4getpart_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        assembly_no = request.GET.get('assm_no')
+        part_no = list(M14M4.objects.filter(brn_no=br_no,assly_no=assembly_no).values('part_no').distinct())
+        return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+def m4getdoc_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = request.GET.get('shop_sec')
+        assembly_no = request.GET.get('assm_no')
+        part_no = request.GET.get('part_no')
+        doc_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').distinct())
+        return JsonResponse(doc_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 
 

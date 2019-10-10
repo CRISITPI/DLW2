@@ -13,7 +13,7 @@
         border-radius: 4px;
         box-sizing: border-box;
     }
-    
+
     input[type=submit] {
         width: 20%;
         text-align: center;
@@ -25,12 +25,12 @@
         border-radius: 4px;
         cursor: pointer;
     }
-    
+
     input[type=submit]:hover {
         background-color: #45a049;
         text-align: center;
     }
-    
+
     input[type=button] {
         width: 10%;
         text-align: center;
@@ -42,7 +42,7 @@
         border-radius: 4px;
         cursor: pointer;
     }
-    
+
     input[type=button]:hover {
         background-color: #45a049;
         text-align: center;
@@ -50,7 +50,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">M2 Card</h3>
+<h3 align="center">M4 Card</h3>
 <br>
 <center>
         {% if messages %}
@@ -66,7 +66,7 @@
         {% endif %}
     </center>
 <br>
-<form action="{% url 'm2view' %}" method="POST"> {% csrf_token %}
+ <form action="{% url 'm4view' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
             <tr>
@@ -101,7 +101,7 @@
                     <label for="br_no"><b>BR NO/बी.आर.नंबर</b></label>
                     <select class="form-control" id="br_no" name="br_no" required>
             <option id="op_br" selected disabled hidden>Select BR NO</option>
-            
+
               </select>
                 </td>
 
@@ -129,29 +129,30 @@
 
 
         </table>
-        
-        
+
+
         <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
 
 
     </div>
     <br><br> {% if sub == 1 %}
-    <input type="hidden" name="len" value="{{len}}">
     <table border="2" align="center">
         <tr>
             <th>Printed Date(MM-DD-YYYY)</th>
             <th>Work Order NO</th>
             <th>BRN NO</th>
             <th>Ordered Quantity</th>
-            <th>Assembly Part NO</th>
-            <th>Assembly Description</th>
+            <th>End Product Part NO</th>
+            <th>End Product Description</th>
         </tr>
 
         <tr>
             {% for i in date %}
-            <td>{{i.m2prtdt}}</td>{% endfor %}
+            <td>{{i.prtdt}}</td>{% endfor %}
             <td>{{wo_no}}</td>
+            <input type="hidden" name="wo_no" value="{{wo_no}}">
             <td>{{brn_no}}</td>
+            <input type="hidden" name="brn_no" value="{{brn_no}}">
             {% for ij in date %}
             <td>{{ij.qty}}</td>{% endfor %}
             <td>{{assembly_no}}</td>
@@ -168,146 +169,130 @@
         </tr>
         <tr>
              <td>{{shop_sec}}</td>
-            <input type="hidden" name="shopsec" value="{{shop_sec}}">
             <td>{{part_no}}</td>
-            <input type="hidden" name="partno" value="{{part_no}}">
+            <input type="hidden" name="part_no" value="{{part_no}}">
             {% for ii in obj1 %}
             <td>{{ii.des}}</td>
             <td>{{ii.drgno}}</td>
             {% endfor %}
             <td>{{doc_no}}</td>
+            <input type="hidden" name="doc_no" value="{{doc_no}}">
             {% for k in obj3 %}
             <td>{{k.batch_type}}</td>{% endfor %}
         </tr>
     </table>
-    </br>
+    </br></br></br>
 
-    <!--<form action="." method = "POST">  {% csrf_token %}-->
     <table border="2" align="center">
         <tr>
-            <th>Operation NO:</th>
-            <th>Shop Section:</th>
-            <th>Load Centre:</th>
-            <th>Operation Description:</th>
-            <th>PA:</th>
-            <th>TA:</th>
-            <th>NO:</th>
-            <th>QTY Produced:</th>
-            <th>QTY Accepted:</th>
-            <th>Work Rejected:</th>
-            <th>Material Rejected:</th>
+            <th>REC_MAT:</th>
+            <th>ISSUED_QTY:</th>
+            <th>REC_QTY:</th>
+            <th>LASER_PST:</th>
+            <th>LINE//लाइन:</th>
+            <th>CLOSING BALANCE:</th>
+
         </tr>
-        {% for i in obj %}
-        {% if i.shop_sec == shop_sec  %}
         <tr>
-            <td>
-                {{i.opn}}
-            </td>
-            <input type="hidden" name="opn{{ forloop.counter }}" value="{{i.opn}}">
-
-            <td>
-                {{i.shop_sec}}
-            </td>
-            <td>
-                {{i.lc_no}}
-            </td>
-            <td>
-                {{i.des}}
-            </td>
-            <td>
-                {{i.pa}}
-            </td>
-            <td>
-                {{i.at}}
-            </td>
-            <td>
-                {{i.lot}}
-            </td>
-            <td>
-            {% if i.qty_prod %}
-                <input type="text" id="qtypr" class="myinp" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                <input type="text" id="qtypr" class="myinp" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% endif %}
-
-            </td>
-            <td>
-            {% if i.qtr_accep %}
-                <input type="text" id="qtyac" class="myinp" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                <input type="text" id="qtyac" class="myinp" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-            {% endif %}
-            </td>
-            <td>
-            {% if i.work_rej %}
-                <input type="text" id="wrrej" class="myinp" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                <input type="text" id="wrrej" value="0" class="myinp" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-            {% endif %}
-            </td>
-            <td>
-            {% if i.mat_rej %}
-                <input type="text" id="matrej" class="myinp" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                 <input type="text" id="matrej" class="myinp" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-            {% endif %}
-            </td>
-              {% else %}
+         {% for obj in obj %}
              <td>
-                {{i.opn}}
+            {% if obj.received_mat %}
+                <input type="text" id="received_mat" class="myinp" value="{{obj.received_mat}}" name="received_mat" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+                <input type="text" id="received_mat" class="myinp" value="0" name="received_mat" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
             </td>
-            <input type="hidden" name="opn{{ forloop.counter }}" value="{{i.opn}}">
 
             <td>
-                {{i.shop_sec}}
-            </td>
-            <td>
-                {{i.lc_no}}
-            </td>
-            <td>
-                {{i.des}}
-            </td>
-            <td>
-                {{i.pa}}
-            </td>
-            <td>
-                {{i.at}}
-            </td>
-            <td>
-                {{i.lot}}
-            </td>
-            <td>
-            {% if i.qty_prod %}
-                <input readonly type="text" id="qtypr" class="myinp" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.issued_qty %}
+              <input type="text" id="issued_qty" class="myinp" value="{{obj.issued_qty}}" name="issued_qty" pattern="[0-9]*" title="Numeric Value" required>
                 {% else %}
-                <input readonly type="text" id="qtypr" class="myinp" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+              <input type="text" id="issued_qty" class="myinp" value="0" name="issued_qty" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
+            </td>
+
+            <td>
+            {% if obj.received_qty %}
+              <input type="text" id="received_qty" class="myinp" value="{{obj.received_qty}}" name="received_qty" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+              <input type="text" id="received_qty" class="myinp" value="0" name="received_qty" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
+            </td>
+
+             <td>
+            {% if obj.laser_pst %}
+
+                <input type="date" id="laser_pst" class="myinp" value="{{obj.laser_pst}}" name="laser_pst"  >
+                {% else %}
+
+                <input type="date" id="laser_pst" class="myinp" value="0" name="laser_pst" >
+            {% endif %}
+            </td>
+
+            <td>
+            {% if obj.line %}
+              <input type="text" id="line" class="myinp" value="{{obj.line}}" name="line" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+              <input type="text" id="line" class="myinp" value="0" name="line" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
+            </td>
+            <td>
+            {% if obj.closing_bal %}
+              <input type="text" id="closing_bal" class="myinp" value="{{obj.closing_bal}}" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+              <input type="text" id="closing_bal" class="myinp" value="0" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
+            </td>
+</tr></table>
+        <table border="2" align="center">
+        <tr>
+            <th>POSTED DATE:</th>
+            <th>WARDKEEPER DATE:</th>
+            <th>SHOP SUPERINTENDENT DATE:</th>
+            <th>POSTED DATE:</th>
+            <th>REMARKS</th>:</th>
+        </tr>
+            <tr>
+
+        <td>
+            {% if obj.remarks %}
+              <input type="text" id="remarks" class="myinp" value="{{obj.remarks}}" name="remarks" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+              <input type="text" id="remarks" class="myinp" value="0" name="remarks" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
+        </td>
+            <td>
+            {% if obj.posted_date %}
+                <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date}}" name="posted_date"  >
+                {% else %}
+                <input type="date" id="posted_date" class="myinp" value="0" name="posted_date"  >
                 {% endif %}
 
             </td>
             <td>
-            {% if i.qtr_accep %}
-                <input readonly type="text" id="qtyac" class="myinp" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.wardkp_date %}
+                <input type="date" id="wardkp_date" class="myinp" value="{{obj.wardkp_date}}" name="wardkp_date"  >
                 {% else %}
-                <input readonly type="text" id="qtyac" class="myinp" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                <input type="date" id="wardkp_date" class="myinp" value="0" name="wardkp_date" >
             {% endif %}
             </td>
             <td>
-            {% if i.work_rej %}
-                <input readonly type="text" id="wrrej" class="myinp" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.shopsup_date %}
+                <input type="date" id="shopsup_date" class="myinp" value="{{obj.shopsup_date}}" name="shopsup_date"  >
                 {% else %}
-                <input readonly type="text" id="wrrej" value="0" class="myinp" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                <input type="date" id="shopsup_date" value="0" class="myinp" name="shopsup_date"  >
             {% endif %}
             </td>
+
             <td>
-            {% if i.mat_rej %}
-                <input readonly type="text" id="matrej" class="myinp" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+            {% if obj.posted1_date %}
+                <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date}}" name="posted1_date"  >
                 {% else %}
-                 <input readonly type="text" id="matrej" class="myinp" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                 <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date"  >
             {% endif %}
             </td>
-            {% endif %}
+                {% endfor %}
         </tr>
-        {% endfor %}
     </table>
     <br><br>
     <center>
@@ -325,7 +310,7 @@ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                   var data = {shop_sec};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm2getwono' %}",
+                      url : "{% url 'm4getwono' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -340,7 +325,7 @@ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                                 document.querySelector("#op_doc").selected = true;
                             }
                             var brarr,mystr,html;
-                            brarr = response.map((el)=>el.batch_no);
+                            brarr = response.map((el)=>el.bo_no);
                             mystr = "";
                             brarr.forEach((el,index)=>{
                               html = `<option class="newelewono">${brarr[index]}</option>`
@@ -359,7 +344,7 @@ $("#wno").change(function(e){
     var data = {wo_no,shop_sec};
       $.ajax({
         type : 'GET',
-        url : "{% url 'm2getbr' %}",
+        url : "{% url 'm4getbr' %}",
         dataType : 'json',
         data : data,
         success : function(response){
@@ -393,7 +378,7 @@ document.querySelector("#br_no").addEventListener('change',(e)=>{
                   var data = {wo_no,brn_no,shop_sec};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm2getassly' %}",
+                      url : "{% url 'm4getassly' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -428,7 +413,7 @@ document.querySelector("#assm_no").addEventListener('change',(e)=>{
                   var data = {wo_no,brn_no,shop_sec,assm_no};
                     $.ajax({
                       type : 'GET',
-                      url : "{% url 'm2getpart_no' %}",
+                      url : "{% url 'm4getpart_no' %}",
                       dataType : 'json',
                       data : data,
                       success : function(response){
@@ -462,7 +447,7 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
   var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
         $.ajax({
               type : 'GET',
-              url : "{% url 'm2getdoc_no' %}",
+              url : "{% url 'm4getdoc_no' %}",
               dataType : 'json',
               data : data,
               success : function(response){
@@ -473,7 +458,7 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
                                 document.querySelector("#op_doc").selected = true;
                              }
                             var brarr,mystr,html;
-                            brarr = response.map((el)=>el.m2sln);
+                            brarr = response.map((el)=>el.doc_no);
                             mystr = "";
                             brarr.forEach((el,index)=>{
                               html = `<option class="neweledoc">${brarr[index]}</option>`
@@ -509,4 +494,3 @@ document.addEventListener('keypress',(event)=>{
 
 
 {% endblock content %}
-

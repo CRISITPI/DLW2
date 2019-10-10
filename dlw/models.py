@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-
+from datetime import date
 
 class Aaa(models.Model):
     code = models.CharField(db_column='CODE', max_length=6, blank=True, null=True)  # Field name made lowercase.
@@ -1380,9 +1380,25 @@ class M14M4(models.Model):
     del_fl = models.CharField(db_column='DEL_FL', max_length=1, blank=True, null=True)  # Field name made lowercase.
     doc_no_old = models.DecimalField(db_column='DOC_NO_OLD', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
     epc_old = models.CharField(db_column='EPC_OLD', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    received_mat = models.CharField(db_column='REC_MAT',max_length=50, blank=True, null=True)
+    issued_qty = models.CharField(db_column='ISSUED_QTY', max_length=50, blank=True, null=True)
+    received_qty = models.CharField(db_column='REC_QTY', max_length=50, blank=True, null=True)
+    line = models.CharField(db_column='LINE', max_length=50, blank=True, null=True)
+    closing_bal = models.CharField(db_column='CLOSING_BAL', max_length=50, blank=True, null=True)
+    remarks = models.CharField(db_column='REMARKS', max_length=50, blank=True, null=True)
+    laser_pst = models.CharField(db_column='LASER_PST',max_length=50, blank=True, null=True)
+    posted_date = models.CharField(db_column='POSTED_DATE',max_length=50, blank=True, null=True)
+    wardkp_date = models.CharField(db_column='WARDKP_DATE',max_length=50, blank=True, null=True)
+    shopsup_date = models.CharField(db_column='SHOPSUP_DATE',max_length=50, blank=True, null=True)
+    posted1_date = models.CharField(db_column='POSTED1_DATE',max_length=50, blank=True, null=True)
+
+
+
+
+
 
     class Meta:
-        managed = False
+
         db_table = 'M14M4'
 
 
