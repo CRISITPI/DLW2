@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr,m14view,m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
+from dlw.views import m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
 from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,airbox_addbo
 from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono
 from django.contrib.auth import views as auth_views
@@ -61,12 +61,6 @@ urlpatterns = [
     path('ajax/m4getpart_no/',m4getpart_no,name='m4getpart_no'),
     path('ajax/m4getdoc_no/',m4getdoc_no,name='m4getdoc_no'),
     path('ajax/m4getwono',m4getwono,name='m4getwono'),
-    path('m14view/', m14view, name='m14view'),
-    path('ajax/m14getbr/',m14getbr,name='m14getbr'),
-    path('ajax/m14getassly/',m14getassly,name='m14getassly'),
-    path('ajax/m14getpart_no/',m14getpart_no,name='m14getpart_no'),
-    path('ajax/m14getdoc_no/',m14getdoc_no,name='m14getdoc_no'),
-    path('ajax/m14getwono',m14getwono,name='m14getwono'),
     path('ajax/get_yr_dgp/',getYrDgp,name='get_yr_dgp'),
     path('ajax/check_loco/',checkloco,name='check_loco'),
     path('ajax/check_total/',checktotal,name='check_total'),
