@@ -106,7 +106,6 @@ def homeadmin(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    print(subnav)
     context={
         'nav':nav,
         'subnav':subnav,
@@ -157,7 +156,7 @@ def dynamicnavbar(request,rolelist=[]):
         nav=navbar.objects.filter(role="Superuser")
         return nav
     else:
-        nav=navbar.objects.filter(role__in=rolelist).values('navmenu','navitem','link').distinct()
+        nav=navbar.objects.filter(role__in=rolelist).distinct('navmenu','navitem')
         return nav
 
 
