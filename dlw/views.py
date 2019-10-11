@@ -726,7 +726,6 @@ def m2view(request):
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-<<<<<<< HEAD
             obgg = Oprn.objects.filter(part_no=part_no, shop_sec=shop_sec).values('shop_sec').distinct()
             obggg = Oprn.objects.filter(part_no=part_no).values('shop_sec').distinct()
             obgggg = obggg.union(obgg)
@@ -762,6 +761,7 @@ def m2view(request):
                         'brn_no': brn_no,
                         'assembly_no': assembly_no,
                         'doc_no': doc_no,
+                        'subnav':subnav
                     }
                 elif(len(rolelist)==1):
                     for i in range(0,len(rolelist)):
@@ -791,6 +791,7 @@ def m2view(request):
                         'brn_no': brn_no,
                         'assembly_no': assembly_no,
                         'doc_no': doc_no,
+                        'subnav':subnav
                     }
                 elif(len(rolelist)>1):
                     context = {
@@ -812,6 +813,7 @@ def m2view(request):
                         'brn_no': brn_no,
                         'assembly_no': assembly_no,
                         'doc_no': doc_no,
+                        'subnav':subnav
                     }
             else:
                 messages.success(request, 'Corresponding Data Not Found!, Select other values to check')
@@ -828,105 +830,6 @@ def m2view(request):
                     Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
                     wo_no=M2Doc.objects.all().values('batch_no').distinct()
             messages.success(request, 'Successfully Updated!, Select new values to update')
-=======
-            obj = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
-            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
-            leng = obj.count()
-            # print(obj)
-            # print(obj1)
-            # print(obj2.count())
-            # print(obj1.count())
-            if "Superuser" in rolelist:
-                tm=shop_section.objects.all()
-                tmp=[]
-                for on in tm:
-                    tmp.append(on.section_code)
-                context = {
-                    'roles':tmp,
-                    'lenm' :2,
-                    'nav':nav,
-                    'ip':get_client_ip(request),
-                    'obj': obj,
-                    'obj1': obj1,
-                    'obj2': obj2,
-                    'obj3': obj3,
-                    'sub': 1,
-                    'len': leng,
-                    'date': date,
-                    'shop_sec': shop_sec,
-                    'part_no': part_no,
-                    'wo_no': wo_no,
-                    'brn_no': brn_no,
-                    'assembly_no': assembly_no,
-                    'doc_no': doc_no,
-                    'subnav':subnav,
-                }
-            elif(len(rolelist)==1):
-                for i in range(0,len(rolelist)):
-                    # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-                    # wo_nop =wo_nop | req
-
-                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
-                    wo_nop = wo_nop | req
-                context = {
-                    'wo_nop':wo_nop,
-                    'roles' :rolelist,
-                    'usermaster':usermaster,
-                    'lenm' :len(rolelist),
-                    'nav': nav,
-                    'subnav':subnav,
-                    'ip': get_client_ip(request),
-                    'obj': obj,
-                    'obj1': obj1,
-                    'obj2': obj2,
-                    'obj3': obj3,
-                    'sub': 1,
-                    'len': leng,
-                    'date': date,
-                    'shop_sec': shop_sec,
-                    'part_no': part_no,
-                    'wo_no': wo_no,
-                    'brn_no': brn_no,
-                    'assembly_no': assembly_no,
-                    'doc_no': doc_no,
-                }
-            elif(len(rolelist)>1):
-                context = {
-                    'lenm' :len(rolelist),
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'obj': obj,
-                    'obj1': obj1,
-                    'obj2': obj2,
-                    'obj3': obj3,
-                    'sub': 1,
-                    'len': leng,
-                    'date': date,
-                    'shop_sec': shop_sec,
-                    'part_no': part_no,
-                    'wo_no': wo_no,
-                    'brn_no': brn_no,
-                    'assembly_no': assembly_no,
-                    'doc_no': doc_no,
-                }
-        if submitvalue=='Save':
-            leng=request.POST.get('len')
-            shopsec= request.POST.get('shopsec')
-            partno= request.POST.get('partno')
-            for i in range(1, int(leng)+1):
-                qtypr=request.POST.get('qtypr'+str(i))
-                qtyac = request.POST.get('qtyac'+str(i))
-                wrrej = request.POST.get('wrrej'+str(i))
-                matrej = request.POST.get('matrej'+str(i))
-                opn=request.POST.get('opn'+str(i))
-                Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
-                wo_no=M2Doc.objects.all().values('batch_no').distinct()
-        messages.success(request, 'Successfully Updated!, Select new values to update')
->>>>>>> master
     return render(request, "m2view.html", context)
 
 
