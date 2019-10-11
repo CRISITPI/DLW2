@@ -223,10 +223,10 @@
              <td>
             {% if obj.laser_pst14 %}
 
-                <input type="date" id="laser_pst" class="myinp" value="{{obj.laser_pst14}}" name="laser_pst"  >
+                <input type="date" id="laser_pst" class="myinp" value="{{obj.laser_pst14}}" name="laser_pst" min="2015-01-01" max="2020-12-31" >
                 {% else %}
 
-                <input type="date" id="laser_pst" class="myinp" value="0" name="laser_pst" >
+                <input type="date" id="laser_pst" class="myinp" value="0" name="laser_pst" min="2015-01-01" max="2020-12-31" >
             {% endif %}
             </td>
 
@@ -266,32 +266,32 @@
 
             <td>
             {% if obj.posted_date14 %}
-                <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date14}}" name="posted_date"  >
+                <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date14}}" name="posted_date" min="2015-01-01" max="2020-12-31" >
                 {% else %}
-                <input type="date" id="posted_date" class="myinp" value="0" name="posted_date"  >
+                <input type="date" id="posted_date" class="myinp" value="0" name="posted_date" min="2015-01-01" max="2020-12-31" >
                 {% endif %}
 
             </td>
             <td>
             {% if obj.wardkp_date14 %}
-                <input type="date" id="wardkp_date" class="myinp" value="{{obj.wardkp_date14}}" name="wardkp_date"  >
+                <input type="date" id="wardkp_date" class="myinp" value="{{obj.wardkp_date14}}" name="wardkp_date" min="2015-01-01" max="2020-12-31" >
                 {% else %}
-                <input type="date" id="wardkp_date" class="myinp" value="0" name="wardkp_date" >
+                <input type="date" id="wardkp_date" class="myinp" value="0" name="wardkp_date" min="2015-01-01" max="2020-12-31">
             {% endif %}
             </td>
             <td>
             {% if obj.shopsup_date14 %}
-                <input type="date" id="shopsup_date" class="myinp" value="{{obj.shopsup_date14}}" name="shopsup_date"  >
+                <input type="date" id="shopsup_date" class="myinp" value="{{obj.shopsup_date14}}" name="shopsup_date" min="2015-01-01" max="2020-12-31" >
                 {% else %}
-                <input type="date" id="shopsup_date" value="0" class="myinp" name="shopsup_date"  >
+                <input type="date" id="shopsup_date" value="0" class="myinp" name="shopsup_date" min="2015-01-01" max="2020-12-31" >
             {% endif %}
             </td>
 
             <td>
             {% if obj.posted1_date14 %}
-                <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date14}}" name="posted1_date"  >
+                <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date14}}" name="posted1_date" min="2015-01-01" max="2020-12-31" >
                 {% else %}
-                 <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date"  >
+                 <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date" min="2015-01-01" max="2020-12-31" >
             {% endif %}
             </td>
                 {% endfor %}
