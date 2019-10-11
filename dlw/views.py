@@ -1675,7 +1675,7 @@ def bprodplan(request):
                 deledit=annual_production.objects.filter(customer=typ,revisionid=rev).delete()
                 for lo in range(0,int(num_loco)):
                     # deledit=annual_production.objects.filter(customer=typ,loco_type=request.POST.get("editloco"+str(lo+1)),revisionid=rev).delete()
-                    print(" For Loco: "+request.POST.get("editloconame"+str(lo+1)))
+                    # print(" For Loco: "+request.POST.get("editloconame"+str(lo+1)))
 
                     for nf in range(1,int(num_fy)+1):
                         if(request.POST.get("edit"+str(lo)+str(1))!=None):
