@@ -3461,3 +3461,17 @@ class M5DOCnew(models.Model):
 
     class Meta:
         db_table = 'M5DOCnew'
+
+class PinionPressing(models.Model):
+    sno=models.AutoField(primary_key=True)
+    bo_no=models.CharField(max_length=20,null=True)
+    bo_date=models.CharField(max_length=20,null=True)
+    date=models.CharField(max_length=20,null=True)
+    tm_no=models.CharField(max_length=20,null=True)
+    tm_make=models.CharField(max_length=20,null=True)
+    pinion_no=models.CharField(max_length=20,null=True)
+    pinion_make=models.CharField(max_length=20,null=True)
+    pinion_travel=models.CharField(max_length=20,null=True)
+    pinion_pressure=models.CharField(max_length=20,null=True)
+    blue_match=models.CharField(max_length=20,null=True)
+    loco_type=models.CharField(max_length=20,null=True)
