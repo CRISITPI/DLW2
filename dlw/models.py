@@ -3393,12 +3393,6 @@ class AxleWheelMachining(models.Model):
   datewhl=models.DateField(null=True)      
 
 
-# class dpo(models.Model):
-#     loconame=models.CharField(max_length=50,null=True)
-#     locotype=models.CharField(max_length=50,null=True)
-#     endcumno=models.CharField(max_length=10,null=True)
-#     orderno=models.CharField(max_length=10,null=True)
-
 
 class M5SHEMP(models.Model):
     yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -3475,3 +3469,17 @@ class PinionPressing(models.Model):
     pinion_pressure=models.CharField(max_length=20,null=True)
     blue_match=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
+
+
+class dpo(models.Model):
+    loconame=models.CharField(max_length=50,null=True)
+    locotype=models.CharField(max_length=50,null=True)
+    endcumno=models.CharField(max_length=10,null=True)
+    orderno=models.CharField(max_length=10,null=True)
+
+
+
+class subnavbar(models.Model):
+    parentmenu=models.CharField(null=True,max_length=50)
+    childmenu=models.CharField(null=True,max_length=50)
+    link=models.CharField(null=True,max_length=50)

@@ -150,7 +150,7 @@ $(document).ready(function(){
         // console.log(aj);
         idname=idname+String(aj);
         var newp='<div><table id="customers"><td><b>Loco Name:</b></td>'+
-            '<td><input type="text" name="loconame" placeholder="loconame" id="'+idname+'"/></td>'+
+            '<td><input type="text" name="loconame" placeholder="loconame" id="'+idname+'" onblur="findcm(this)" /></td>'+
             '<td><input type="button" id="add" value="Add Batch"/></td>'+
             '<input type="hidden" name="num" value="THE OUTPUT OF BATCH FUNCTION" id="myvalue"/></table></div>'
             $('#lcbtch').append(newp);
@@ -332,5 +332,13 @@ function assign(){
         }
        document.getElementById('myvalue').value =operation();
     }
+
+
+function findcm(x) {
+var lcid=x.id;
+var loco=document.getElementById(lcid).value;
+console.log("in func cm:",String(loco));
+  
+}
   </script>
 {% endblock content %}
