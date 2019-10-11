@@ -14,7 +14,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining
+from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -101,8 +101,14 @@ def homeadmin(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     context={
         'nav':nav,
+        'subnav':subnav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
     }
@@ -122,10 +128,16 @@ def homeuser(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     context={
         'nav':nav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
+        'subnav':subnav
     }
     return render(request,'homeuser.html',context)
 
@@ -144,7 +156,7 @@ def dynamicnavbar(request,rolelist=[]):
         nav=navbar.objects.filter(role="Superuser")
         return nav
     else:
-        nav=navbar.objects.filter(role__in=rolelist).values('navmenu','navitem','navsubitem','link').distinct()
+        nav=navbar.objects.filter(role__in=rolelist).distinct('navmenu','navitem')
         return nav
 
 
@@ -163,6 +175,11 @@ def create(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     emp=user_master.objects.filter(role__isnull=True)
     availableroles=roles.objects.all().values('parent').distinct()
     if request.method == "POST":
@@ -202,6 +219,7 @@ def create(request):
         'emp':emp,
         'ip':get_client_ip(request),
         'roles':availableroles,
+        'subnav':subnav,
     }
 
     return render(request,'createuser.html',context)
@@ -223,6 +241,11 @@ def update_permission(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     users=User.objects.all()
     availableroles=roles.objects.all().values('parent').distinct()
     if request.method == "POST":
@@ -246,7 +269,8 @@ def update_permission(request):
         'nav':nav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
-        'roles':availableroles
+        'roles':availableroles,
+        'subnav':subnav,
     }
     return render(request,'update_permission.html',context)
 
@@ -262,6 +286,11 @@ def update_permission_incharge(request):
     available=roles.objects.all().filter(parent=parentrole.parent).values('role').exclude(role__in=rolelist)
     users=user_master.objects.all().filter(parent=parentrole.parent).values('emp_id').exclude(role__in=rolelist)
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     if request.method == "POST":
         updateuser=request.POST.get('emp_id')
         sublevelrole=request.POST.getlist('sublevel')
@@ -282,6 +311,7 @@ def update_permission_incharge(request):
         'usermaster':usermaster,
         'ip':get_client_ip(request),
         'roles':available,
+        'subnav':subnav,
     }
     return render(request,'update_permission_incharge.html',context)
 
@@ -296,6 +326,11 @@ def update_emp_shift(request):
     parentrole=roles.objects.all().filter(role__in=rolelist).first()
     users=user_master.objects.all().filter(parent=parentrole.parent).exclude(role__in=rolelist)
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     now=datetime.datetime.now() + datetime.timedelta(days=7)
     stringdate=str(now.date())
     movetohistory=shift.objects.all().filter(validity_from__lt=date.today())
@@ -314,6 +349,7 @@ def update_emp_shift(request):
     context={
         'users':users,
         'nav':nav,
+        'subnav':subnav,
         'ip':get_client_ip(request),
         'future':stringdate,
     }
@@ -361,6 +397,11 @@ def update_emp_shift_admin(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     parentshops=roles.objects.all().distinct().values('parent').exclude(parent='Superuser')
     if request.method=="POST":
         emp_shiftupdate=request.POST.get('emp_id')
@@ -390,6 +431,7 @@ def update_emp_shift_admin(request):
             return redirect('update_emp_shift_admin')
     context={
         'nav':nav,
+        'subnav':subnav,
         'ip':get_client_ip(request),
         'parentshops':parentshops,
     }
@@ -518,6 +560,11 @@ def delete_user(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     users=User.objects.all()
     if not users:
         messages.success(request, 'No User Exist!')
@@ -539,6 +586,7 @@ def delete_user(request):
         'nav':nav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
+        'subnav':subnav,
     }
     return render(request,'delete_user.html',context)
 
@@ -555,6 +603,11 @@ def forget_password(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     if request.method == "POST":
         emp=request.POST.get('emp_id')
         forgetuser=User.objects.filter(username=emp).first()
@@ -572,6 +625,7 @@ def forget_password(request):
         'nav':nav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
+        'subnav':subnav,
     }
     return render(request,'forget_password.html',context)
 
@@ -608,6 +662,11 @@ def m2view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
@@ -618,6 +677,7 @@ def m2view(request):
             'sub':0,
             'lenm' :2,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp
         }
@@ -632,6 +692,7 @@ def m2view(request):
 
         context = {
             'sub':0,
+            'subnav':subnav,
             'lenm' :len(rolelist),
             'wo_nop':wo_nop,
             'nav':nav,
@@ -644,6 +705,7 @@ def m2view(request):
             'sub':0,
             'lenm' :len(rolelist),
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
@@ -664,6 +726,7 @@ def m2view(request):
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
+<<<<<<< HEAD
             obgg = Oprn.objects.filter(part_no=part_no, shop_sec=shop_sec).values('shop_sec').distinct()
             obggg = Oprn.objects.filter(part_no=part_no).values('shop_sec').distinct()
             obgggg = obggg.union(obgg)
@@ -765,6 +828,105 @@ def m2view(request):
                     Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
                     wo_no=M2Doc.objects.all().values('batch_no').distinct()
             messages.success(request, 'Successfully Updated!, Select new values to update')
+=======
+            obj = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
+            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
+            leng = obj.count()
+            # print(obj)
+            # print(obj1)
+            # print(obj2.count())
+            # print(obj1.count())
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context = {
+                    'roles':tmp,
+                    'lenm' :2,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                    # wo_nop =wo_nop | req
+
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+                context = {
+                    'wo_nop':wo_nop,
+                    'roles' :rolelist,
+                    'usermaster':usermaster,
+                    'lenm' :len(rolelist),
+                    'nav': nav,
+                    'subnav':subnav,
+                    'ip': get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+        if submitvalue=='Save':
+            leng=request.POST.get('len')
+            shopsec= request.POST.get('shopsec')
+            partno= request.POST.get('partno')
+            for i in range(1, int(leng)+1):
+                qtypr=request.POST.get('qtypr'+str(i))
+                qtyac = request.POST.get('qtyac'+str(i))
+                wrrej = request.POST.get('wrrej'+str(i))
+                matrej = request.POST.get('matrej'+str(i))
+                opn=request.POST.get('opn'+str(i))
+                Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
+                wo_no=M2Doc.objects.all().values('batch_no').distinct()
+        messages.success(request, 'Successfully Updated!, Select new values to update')
+>>>>>>> master
     return render(request, "m2view.html", context)
 
 
@@ -834,6 +996,11 @@ def m4view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
@@ -844,6 +1011,7 @@ def m4view(request):
             'sub':0,
             'lenm' :2,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp
         }
@@ -859,6 +1027,7 @@ def m4view(request):
             'lenm' :len(rolelist),
             'wo_nop':wo_nop,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
@@ -868,6 +1037,7 @@ def m4view(request):
             'sub':0,
             'lenm' :len(rolelist),
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
@@ -907,6 +1077,7 @@ def m4view(request):
                     'roles':tmp,
                     'lenm' :2,
                     'nav':nav,
+                    'subnav':subnav,
                     'ip':get_client_ip(request),
                     'obj': obj,
                     'obj1': obj1,
@@ -935,6 +1106,7 @@ def m4view(request):
                 context = {
                     'wo_nop':wo_nop,
                     'roles' :rolelist,
+                    'subnav':subnav,
                     'usermaster':usermaster,
                     'lenm' :len(rolelist),
                     'nav': nav,
@@ -957,6 +1129,7 @@ def m4view(request):
                 context = {
                     'lenm' :len(rolelist),
                     'nav':nav,
+                    'subnav':subnav,
                     'ip':get_client_ip(request),
                     'usermaster':usermaster,
                     'roles' :rolelist,
@@ -1070,6 +1243,11 @@ def m14view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
@@ -1080,6 +1258,7 @@ def m14view(request):
             'sub':0,
             'lenm' :2,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp
         }
@@ -1095,6 +1274,7 @@ def m14view(request):
             'lenm' :len(rolelist),
             'wo_nop':wo_nop,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
@@ -1104,6 +1284,7 @@ def m14view(request):
             'sub':0,
             'lenm' :len(rolelist),
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
@@ -1144,6 +1325,7 @@ def m14view(request):
                     'roles':tmp,
                     'lenm' :2,
                     'nav':nav,
+                    'subnav':subnav,
                     'ip':get_client_ip(request),
                     'obj': obj,
                     'obj1': obj1,
@@ -1174,6 +1356,7 @@ def m14view(request):
                     'usermaster':usermaster,
                     'lenm' :len(rolelist),
                     'nav': nav,
+                    'subnav':subnav,
                     'ip': get_client_ip(request),
                     'obj': obj,
                     'obj1': obj1,
@@ -1193,6 +1376,7 @@ def m14view(request):
                 context = {
                     'lenm' :len(rolelist),
                     'nav':nav,
+                    'subnav':subnav,
                     'ip':get_client_ip(request),
                     'usermaster':usermaster,
                     'roles' :rolelist,
@@ -1325,8 +1509,14 @@ def bprodplan(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     context={
         'nav':nav,
+        'subnav':subnav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
     }
@@ -1375,6 +1565,7 @@ def bprodplan(request):
               'Role':rolelist[0],
               'cyear':ctp,
               'numfy':'-','dgp':'-','flag':flag,'existlen':0,
+              'subnav':subnav,
             }
     lcname=loco(request)
     mtname=material(request)
@@ -1561,6 +1752,7 @@ def bprodplan(request):
                         'Account':"Account",
                         'Add':"Add",
                         'nav':nav,
+                        'subnav':subnav,
                         'Role':rolelist[0],
                         'value': range(5),
                         'typec':typec,
@@ -1911,6 +2103,11 @@ def jpo(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     dictt=jpo.objects.all().aggregate(Max('revisionid'))
     revex=dictt['revisionid__max']
     if revex is None:
@@ -1919,6 +2116,7 @@ def jpo(request):
     datadic={}
     context={
         'nav':nav,
+        'subnav':subnav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
         'revcnt':range(revcnt),
@@ -2575,7 +2773,7 @@ def jpo(request):
             'nav':nav,'rev':rev,'heading':heading,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
-            'total':total,
+            'total':total,'subnav':subnav,
             'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),
             'number':number,'formno':formno,'subject':sub,'dt':dt,
             'reflist':reflist,'altrlist':altrlist,'remklist':remklist,'spclremlist':spclremlist,
@@ -2741,7 +2939,7 @@ def jpo(request):
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'dt':dt,'subject':sub,
-            'total':total,
+            'total':total,'subnav':subnav,
             'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),
             'number':number,'subject':sub,'dt':dt,'remklist':remklist,
             'nrmllist':nrmllist,'revcnt':range(revcnt),
@@ -3438,7 +3636,7 @@ def jpo(request):
             "pre8":zo,"n8":z2+1,
             'nav':nav,'dt':dt,'subject':sub,'rev':rev,
             'usermaster':usermaster,'ip':get_client_ip(request),
-            'total':total,
+            'total':total,'subnav':subnav,
             'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),
             'number':number,'formno':formno,'subject':sub,'dt':dt,'heading':heading,
             'reflist':reflist,'altrlist':altrlist,'remklist':remklist,'spclremlist':spclremlist,
@@ -3448,7 +3646,7 @@ def jpo(request):
         else:
             context={'nav':nav,'dt':dt,'subject':sub,'revcnt':range(revcnt),
             # 'refr':ref,
-        'usermaster':usermaster,
+        'usermaster':usermaster,'subnav':subnav,
         'ip':get_client_ip(request),
         'revision':rev,'namelist':namelist,'desiglist':desiglist,'cdgp':range(cdgp),}
 
@@ -3599,7 +3797,11 @@ def dpo(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
-    
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
 
      
 
@@ -3623,7 +3825,8 @@ def dpo(request):
         'Role':rolelist[0],
         'cyear':ctp,
         'add':0,
-        'locolist':locos
+        'locolist':locos,
+        'subnav':subnav,
     }
 
     if request.method=="POST":
@@ -3672,7 +3875,8 @@ def dpo(request):
             'cm':225,
             'lcname':loco,
             'add':1,
-            'locolist':locos
+            'locolist':locos,
+            'subnav':subnav,
 
         } 
 
@@ -3683,7 +3887,7 @@ def dpo(request):
             'Role':rolelist[0],
             'locolist':locos,
             'cyear':ctp,
-
+            'subnav':subnav,
 
             
 
@@ -3702,6 +3906,11 @@ def dpoinput(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     tod = date.today()
     ft=int(tod.strftime("%Y"))
     ft2=ft+1
@@ -3713,6 +3922,7 @@ def dpoinput(request):
     # print("locolist:",locos)
     context={
         'nav':nav,
+        'subnav':subnav,
         'ip':get_client_ip(request),
         'Role':rolelist[0],
         'cyear':ctp,
@@ -3731,6 +3941,7 @@ def dpoinput(request):
             b1=obj1[0].code
             context={
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
@@ -3744,8 +3955,10 @@ def dpoinput(request):
         } 
 
         if submit=='Save':
+            
             context={
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
@@ -3763,6 +3976,11 @@ def m1view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -3773,7 +3991,8 @@ def m1view(request):
             'lenm' :2,
             'nav':nav,
             'ip':get_client_ip(request),
-            'roles':tmp
+            'roles':tmp,
+            'subnav':subnav
         }
     elif(len(rolelist)==1):
         # print("in else")
@@ -3786,6 +4005,7 @@ def m1view(request):
             'pa_no':pa_no,
             'roles' :rolelist,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
         }
     elif(len(rolelist)>1):
@@ -3795,6 +4015,7 @@ def m1view(request):
             'ip':get_client_ip(request),
             'roles' :rolelist,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
         }
     if request.method == "POST":
@@ -3814,6 +4035,7 @@ def m1view(request):
                     'sub': 1,
                     'lenm' :2,
                     'nav':nav,
+                    'subnav':subnav,
                     'ip':get_client_ip(request),
                     'roles':tmp,
                     'len': leng,
@@ -3832,6 +4054,7 @@ def m1view(request):
                     'pa_no':pa_no,
                     'roles' :rolelist,
                     'nav':nav,
+                    'subnav':subnav,
                     'ip':get_client_ip(request),
                     'len': leng,
                     'shop_sec': shop_sec,
@@ -3845,6 +4068,7 @@ def m1view(request):
                     'ip':get_client_ip(request),
                     'roles' :rolelist,
                     'nav':nav,
+                    'subnav':subnav,
                     'ip':get_client_ip(request),
                     'len': leng,
                     'shop_sec': shop_sec,
@@ -3912,6 +4136,11 @@ def m5view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=M5SHEMP.objects.all().values('shopsec').distinct()
@@ -3923,7 +4152,8 @@ def m5view(request):
             'lenm' :2,
             'nav':nav,
             'ip':get_client_ip(request),
-            'roles':tmp
+            'roles':tmp,
+            'subnav':subnav,
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -3931,6 +4161,7 @@ def m5view(request):
             wo_nop =wo_nop | req
         context = {
             'sub':0,
+            'subnav':subnav,
             'lenm' :len(rolelist),
             'wo_nop':wo_nop,
             'nav':nav,
@@ -3942,6 +4173,7 @@ def m5view(request):
             'sub':0,
             'lenm' :len(rolelist),
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'roles' :rolelist
         }
@@ -3995,6 +4227,7 @@ def m5view(request):
                         'brn_no': brn_no,
                         'doc_no': doc_no,
                         'staff_no':staff_no,
+                        'subnav':subnav,
                     }
                 elif(len(rolelist)==1):
                     # print("in m5 else")
@@ -4005,6 +4238,7 @@ def m5view(request):
                         'lenm' :len(rolelist),
                         'wo_nop':wo_nop,
                         'nav':nav,
+                        'subnav':subnav,
                         'ip':get_client_ip(request),
                         'roles' :rolelist,
                         'obj': obj,
@@ -4030,6 +4264,7 @@ def m5view(request):
                     context = {
                         'lenm' :len(rolelist),
                         'nav':nav,
+                        'subnav':subnav,
                         'ip':get_client_ip(request),
                         'roles' :rolelist,
                         'obj': obj,
@@ -4145,6 +4380,11 @@ def insert_machining_of_air_box(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=MachiningAirBox.objects.all().order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     my_context={
@@ -4152,7 +4392,8 @@ def insert_machining_of_air_box(request):
        'nav':nav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
-        'mybo':mybo
+        'mybo':mybo,
+        'subnav':subnav,
        }
     if request.method=="POST":
         
@@ -4246,6 +4487,11 @@ def miscellaneous_section(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=MiscellSection.objects.all().order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     my_context={
@@ -4253,7 +4499,8 @@ def miscellaneous_section(request):
        'nav':nav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
-        'mybo':mybo
+        'mybo':mybo,
+        'subnav':subnav,
        }
     if request.method=="POST":
         
@@ -4343,6 +4590,11 @@ def axlewheelmachining_section(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=AxleWheelMachining.objects.all().order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=AxleWheelMachining.objects.all().values('sno')
@@ -4353,6 +4605,7 @@ def axlewheelmachining_section(request):
        'ip':get_client_ip(request),
        'mybo':mybo,
        'mysno':mysno,
+       'subnav':subnav,
        }
     if request.method=="POST":
         once=request.POST.get('once')
@@ -4491,6 +4744,11 @@ def m3view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_no = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
@@ -4501,6 +4759,7 @@ def m3view(request):
             'sub':0,
             'len' :2,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp
         }
@@ -4514,6 +4773,7 @@ def m3view(request):
             'wo_no':wo_no,
             'roles' :rolelist,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
         }
     elif(len(rolelist)>1):
@@ -4522,6 +4782,7 @@ def m3view(request):
             'len' :len(rolelist),
             'roles' :rolelist,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
         }
     if request.method == "POST":
@@ -4563,6 +4824,7 @@ def m3view(request):
                         'doc_no': doc_no,
                         'sub':1,
                         'nav':nav,
+                        'subnav':subnav,
             'ip':get_client_ip(request),
                     }
     return render(request,"m3view.html",context)

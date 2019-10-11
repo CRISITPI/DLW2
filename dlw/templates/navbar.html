@@ -1,5 +1,61 @@
 {% load static %}
-
+<style>
+    .navbar-nav li:hover > ul.dropdown-menu {
+        display: block;
+    }
+    .dropdown-submenu {
+        position:relative;
+    }
+    
+    /* rotate caret on hover */
+    .dropdown-menu > li > a:hover:after {
+        text-decoration: underline;
+        transform: rotate(-90deg);
+    } 
+    .dropdown-submenu>.dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -6px;
+        margin-left: -1px;
+        -webkit-border-radius: 0 6px 6px 6px;
+        -moz-border-radius: 0 6px 6px;
+        border-radius: 0 6px 6px 6px;
+    }
+    
+    .dropdown-submenu:hover>.dropdown-menu {
+        display: block;
+    }
+    
+    .dropdown-submenu>a:after {
+        display: block;
+        content: " ";
+        float: right;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: 5px 0 5px 5px;
+        border-left-color: #ccc;
+        margin-top: 5px;
+        margin-right: -10px;
+    }
+    
+    .dropdown-submenu:hover>a:after {
+        border-left-color: #fff;
+    }
+    
+    .dropdown-submenu.pull-left {
+        float: none;
+    }
+    
+    .dropdown-submenu.pull-left>.dropdown-menu {
+        left: -100%;
+        margin-left: 10px;
+        -webkit-border-radius: 6px 0 6px 6px;
+        -moz-border-radius: 6px 0 6px 6px;
+        border-radius: 6px 0 6px 6px;
+    }
+    </style>
 <div class="page-header navbar-dark bg-dark">
     <center><font color="white"><h3 style="margin:0 auto;">Diesel Locomotive Works, Varanasi</h3></font></center>
     </div>
@@ -15,26 +71,46 @@
             <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
             Add
             <span class="caret"></span>
-            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
                 {% for menu in nav %}
             {% if menu.navmenu in "Add" %}
-                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+                {% if subnav.parentmenu in menu.navitem %}
+                <ul class="dropdown-menu">
+                    {% for obj in subnav %}
+                        {% if obj.parentmenu in menu.navitem %}
+                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </li> 
             {% endif %}
             {% endfor %}
-            </div>
+            </ul>
             </a>
         </li>
     <li class="navbar-item dropdown">
             <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
             Report
             <span class="caret"></span>
-            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
                 {% for menu in nav %}
             {% if menu.navmenu in "Report" %}
-                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+                {% if subnav.parentmenu in menu.navitem %}
+                <ul class="dropdown-menu">
+                    {% for obj in subnav %}
+                        {% if obj.parentmenu in menu.navitem %}
+                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </li> 
             {% endif %}
             {% endfor %}
-            </div>
+            </ul>
             </a>
         </li>
 
@@ -45,52 +121,90 @@
             <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
             Dashboard
             <span class="caret"></span>
-            <div class="dropdown-menu" aria-labelledby="dropdown_target">
-                  {% for menu in nav %}
+            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+                {% for menu in nav %}
             {% if menu.navmenu in "Dashboard" %}
-                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+                {% if subnav.parentmenu in menu.navitem %}
+                <ul class="dropdown-menu">
+                    {% for obj in subnav %}
+                        {% if obj.parentmenu in menu.navitem %}
+                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </li> 
             {% endif %}
             {% endfor %}
-            </div>
+            </ul>
             </a>
         </li>
         <li class="navbar-item dropdown">
             <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
             Production
             <span class="caret"></span>
-            <div class="dropdown-menu" aria-labelledby="dropdown_target">
+            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
                 {% for menu in nav %}
             {% if menu.navmenu in "Production" %}
-                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+                <ul class="dropdown-menu">
+                    {% for obj in subnav %}
+                        {% if obj.parentmenu in menu.navitem %}
+                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </li> 
             {% endif %}
             {% endfor %}
-            </div>
+            </ul>
             </a>
         </li>
         <li class="navbar-item dropdown">
             <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
             Manpower
             <span class="caret"></span>
-            <div class="dropdown-menu" aria-labelledby="dropdown_target">
-            {% for menu in nav %}
+            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+                {% for menu in nav %}
             {% if menu.navmenu in "Manpower" %}
-                <a class="dropdown-item">{{menu.navitem}}</a>
+               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+                {% if subnav.parentmenu in menu.navitem %}
+                <ul class="dropdown-menu">
+                    {% for obj in subnav %}
+                        {% if obj.parentmenu in menu.navitem %}
+                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </li> 
             {% endif %}
             {% endfor %}
-            </div>
+            </ul>
             </a>
         </li>
         <li class="navbar-item dropdown">
             <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
             Account
             <span class="caret"></span>
-            <div class="dropdown-menu" aria-labelledby="dropdown_target">
-            {% for menu in nav %}
+            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+                {% for menu in nav %}
             {% if menu.navmenu in "Account" %}
-                <a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+                {% if subnav.parentmenu in menu.navitem %}
+                <ul class="dropdown-menu">
+                    {% for obj in subnav %}
+                        {% if obj.parentmenu in menu.navitem %}
+                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </li> 
             {% endif %}
             {% endfor %}
-            </div>
+            </ul>
             </a>
         </li>
         <li>
