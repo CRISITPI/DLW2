@@ -147,8 +147,13 @@
         </tr>
 
         <tr>
+
             {% for i in date %}
-            <td>{{i.prtdt}}</td>{% endfor %}
+
+                      <td>{{i.prtdt}}</td>
+
+            {% endfor %}
+
             <td>{{wo_no}}</td>
             <input type="hidden" name="wo_no" value="{{wo_no}}">
             <td>{{brn_no}}</td>
