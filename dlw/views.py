@@ -3904,7 +3904,7 @@ def m5view(request):
             tmp.append(on['shopsec'])
         context={
             'sub':0,
-            'len' :2,
+            'lenm' :2,
             'nav':nav,
             'ip':get_client_ip(request),
             'roles':tmp
@@ -3915,8 +3915,8 @@ def m5view(request):
             wo_nop =wo_nop | req
         context = {
             'sub':0,
-            'len' :len(rolelist),
-            'wo_no':wo_nop,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
             'nav':nav,
             'ip':get_client_ip(request),
             'roles' :rolelist
@@ -3924,7 +3924,7 @@ def m5view(request):
     elif(len(rolelist)>1):
         context = {
             'sub':0,
-            'len' :len(rolelist),
+            'lenm' :len(rolelist),
             'nav':nav,
             'ip':get_client_ip(request),
             'roles' :rolelist
@@ -3957,8 +3957,7 @@ def m5view(request):
                     for on in tm:
                         tmp.append(on['shopsec'])
                     context={
-                        'sub':0,
-                        'len' :2,
+                        'lenm' :2,
                         'nav':nav,
                         'ip':get_client_ip(request),
                         'roles':tmp,
@@ -3987,9 +3986,8 @@ def m5view(request):
                         req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
                         wo_nop =wo_nop | req
                     context = {
-                        'sub':0,
-                        'len' :len(rolelist),
-                        'wo_no':wo_nop,
+                        'lenm' :len(rolelist),
+                        'wo_nop':wo_nop,
                         'nav':nav,
                         'ip':get_client_ip(request),
                         'roles' :rolelist,
@@ -4014,8 +4012,7 @@ def m5view(request):
                     }
                 elif(len(rolelist)>1):
                     context = {
-                        'sub':0,
-                        'len' :len(rolelist),
+                        'lenm' :len(rolelist),
                         'nav':nav,
                         'ip':get_client_ip(request),
                         'roles' :rolelist,
