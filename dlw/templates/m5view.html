@@ -3,50 +3,50 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 
 <style>
-    input[type=text],
-    select {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: block;
-        border: 0.5px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-    
-    input[type=submit] {
-        width: 20%;
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    input[type=submit]:hover {
-        background-color: #45a049;
-        text-align: center;
-    }
-    
-    input[type=button] {
-        width: 10%;
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 6px 6px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    input[type=button]:hover {
-        background-color: #45a049;
-        text-align: center;
-    }
+  input[type=text],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 20%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 10%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 6px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
 </style>
 <br>
 <br>
@@ -60,10 +60,10 @@
                     <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-            {% if len == 1 %}
+            {% if lenm == 1 %}
                 <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
             {% endif %}
-            {% if len > 1 %}
+            {% if lenm > 1 %}
             {% for role in roles %}
               <option>{{role}}</option>
             {% endfor %}
@@ -74,8 +74,8 @@
                     <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
                     <select class="form-control" id="wno" name="wo_no" required>
         <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
-        {% if len == 1 %}
-        {% for i in wo_no %}
+        {% if lenm == 1 %}
+        {% for i in wo_nop %}
           <option>{{i.batch_no}}</option>
         {% endfor %}
         {% endif %}
@@ -116,184 +116,179 @@
 
         </table>
         
-        <center><input type="submit" value="Proceed" id="myproceed" name="proceed"  /></center>
-
-
+        <center><input type="submit" value="Proceed" id="myproceed" name="proceed" hidden  /></center>
     </div>
     <br><br> {% if sub == 1 %}
     <input type="hidden" name="len" value="{{len}}">
+    
     <table border="2" align="center">
-        <tr style='background-color:rgb(24, 36, 36); text-align: center;color:white;'>
-          <th>Work Order NO</th>
-          <th>BRN NO</th>
-          <th>Shop Section</th>
-          <th>Part NO</th>
+        <tr >
+          <th height="30">WORK ORDER NUMBER</th>
+          <th height="30">BRN NUMBER</th>
+          <th height="30">SHOP SECTION</th>
+          <th height="30" colspan="2">Part NO</th>
           <!--<th>Part Description</th>-->
-          <th>Document NO</th>
+          <th>DOCUMENT NUMBER</th>
       </tr>
       <tr>
           {% for i in date %}
-          <td>{{i.m2prtdt}}</td>{% endfor %}
-          <td>{{wo_no}}</td>
-          <td>{{brn_no}}</td>
+          <td height="50">{{i.m2prtdt}}</td>{% endfor %}
+          <td height="50">{{wo_no}}</td>
+          <td height="50">{{brn_no}}</td>
           <input type="hidden"  name="brn_no" value="{{brn_no}}">
-          <td>{{shop_sec}}</td>
+          <td height="50">{{shop_sec}}</td>
           <input type="hidden" name="shopsec" value="{{shop_sec}}">
-          <td>{{part_no}}</td>
+          <td height="50" colspan="2">{{part_no}}</td>
           <input type="hidden" name="partno" value="{{part_no}}">
           <!--<td>{{obj1}}</td>-->
-          <td>{{doc_no}}</td>
+          <td height="50">{{doc_no}}</td>
       </tr>
-  </table>
-  </br>
+  
 
  
 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
-        <table border="2" align="center">
-            <tr style='background-color:rgb(24, 36, 36); text-align: center;color:white;'>
-               <th>QTY Accepted:</th>
-               <th>LOAD CENTRE</th>
-               <th>P.A.</th>
-               <th>A.T.</th>
-               <th>OPERATION DESCRIPTION</th>
-               <th>MATERIAL REJECTED</th>
+  
+            <tr >
+               <th height="30">QUANTITIY ACCEPTED:</th>
+               <th height="30">LOAD CENTRE</th>
+               <th height="30">P.A.</th>
+               <th height="30">A.T.</th>
+               <th height="30">OPERATION DESCRIPTION</th>
+               <th height="30">MATERIAL REJECTED</th>
              
            </tr>
             {% for i in obj %}
             <tr>
-              <td>
+              <td height="50">
                 <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
               </td> 
-              <td>
+              <td height="50">
                   {{i.lc_no}}
                   <input type="hidden" id="lc_no" name="lc_no{{ forloop.counter }}" value="{{i.lc_no}}">
                 </td> 
-                <td>
+                <td height="50">
                     {{i.pa}}
     
                   </td> 
-                  <td>
+                  <td height="50">
                       {{i.at}}
       
                     </td>
                     
-                  <td>
+                  <td height="50">
                     {{i.des}}
                 </td>
-                <td>
+                <td height="50">
                   <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
               </td>     
                   
            
            </tr>
             {% endfor %}
-        </table>
-<br><br>
-<table border="2" align="center">
-  <tr  style='background-color:rgb(24, 36, 36); text-align: center;color:white;'>
-     <th>CUT SHEAR:</th>
-     <th>PREVIOUS SHOP</th>
-     <th>NEXT SHOP</th>
-     <th>LOCO TO</th>
-     <th>LOCO FROM</th>
-     <th>QUANTITY INSPECTED</th>
-     <th>INSPECTOR</th>
-     <th>DATE</th>
-     <th>REMARKS</th>
-     <th>WORKER</th>
+      
+
+  <tr>
+     <th height="30">CUT SHEAR:</th>
+     <th height="30" colspan="2">PREVIOUS SHOP</th>
+     <th height="30">NEXT SHOP</th>
+     <th height="30">LOCO TO</th>
+     <th height="30">LOCO FROM</th>
+     
    
  </tr>
   {% for i in obj1 %}
   <tr>
-    <td>
+    <td height="50">
       {{i.cut_shear}}
 
     </td> 
-    <td>
+    <td height="50" colspan="2">
         {{i.pr_shopsec}}
 
       </td> 
-      <td>
+      <td height="50">
           {{i.n_shopsec}}
 
         </td> 
-        <td>
+        <td height="50">
             {{i.l_to}}
 
           </td>
-          <td>
+          <td height="50">
             {{i.l_fr}}
           </td>
-          <td>
-            <input type="text" id="qtyinsp" value="{{i.qty_insp}}" name="qtyinsp{{ forloop.counter }}"  title="Numeric Value">
-          </td>
-          <td>
-              <input type="text" id="inspector" value="{{i.inspector}}" name="inspector{{ forloop.counter }}"  title="Numeric Value">
-           </td>
-          <td>
-            {% if i.date %}
-              <input type="date" id="date"  class="myinp" value="{{i.date}}" name="date{{ forloop.counter }}"  >
-              {% else %}
-              <input type="date" id="date"  class="myinp" value="0" name="date{{ forloop.counter }}">
-            {% endif %}  
-          </td>
-          <td>
-              <input type="text" id="remarks" value="{{i.remarks}}" name="remarks{{ forloop.counter }}" title="Character Value">
-
-          </td>
-          <td>
-            <input type="text" id="worker" value="{{i.worker}}" name="worker{{ forloop.counter }}" title="Character Value">
-
-          </td>
+         
+         
          
  </tr>
-  {% endfor %}
+ {% endfor %}
 </table>
 <br><br>
 
-
 <table border="2" align="center">
-  <tr style='background-color:rgb(26, 46, 46); text-align: center;color:white;'>
-    <th>SERIAL NO</th>
-     <th>STAFF NO</th>
-     <th>Name:</th>
-     <th>TICKET NO</th>
-     
-    
-   
- </tr>
- 
-  {% for i in obj4 %}
-  <tr>
-    <td>
-      {{i.shopsec}}
-    </td>
-    <td>
-      {{i.staff_no}}
-      <input type="hidden" id="staff_o" name="staff_no{{ forloop.counter }}" value="{{i.staff_no}}">
-      
-    </td>
-    <td>
-      {{i.name}}
+    <tr>
+  <th height="30">QUANTITY INSPECTED</th>
+  <th height="30">INSPECTOR</th>
+  <th height="30">DATE</th>
+  <th height="30">REMARKS</th>
+  <th height="30">WORKER</th>
 
-    </td> 
-    
-      <td>
-          {{i.ticket_no}}
-      
+</tr>
+{% for i in obj1 %}
+<tr>
+        <td height="50">
+         <input type="text" id="qtyinsp" value="{{i.qty_insp}}" name="qtyinsp{{ forloop.counter }}"  title="Numeric Value">
+       </td >
+       <td height="50">
+           <input type="text" id="inspector" value="{{i.inspector}}" name="inspector{{ forloop.counter }}"  title="Numeric Value">
+        </td>
+       <td height="50">
+         {% if i.date %}
+           <input type="date" id="date"  class="myinp" value="{{i.date}}" name="date{{ forloop.counter }}"  >
+           {% else %}
+           <input type="date" id="date"  class="myinp" value="0" name="date{{ forloop.counter }}">
+         {% endif %}  
+       </td>
+       <td height="50">
+           <input type="text" id="remarks" value="{{i.remarks}}" name="remarks{{ forloop.counter }}" title="Character Value">
 
-      </td> 
-          
-         
- </tr>
-  {% endfor %}
+       </td>
+       <td height="50">
+         <input type="text" id="worker" value="{{i.worker}}" name="worker{{ forloop.counter }}" title="Character Value">
+
+       </td>
+      
+</tr>
+{% endfor %}
+
 </table>
-<br><br><br>
-<table border="2" align="center">
-    <tr style='background-color:rgb(26, 46, 46); text-align: center;color:white;'>
-      <th>IN</th>
-       <th>OUT</th>
+<br><br>
+
+<div class="container" style="width: 100%">
+ {% for i in obj4 %}
+ &nbsp;&nbsp;&nbsp;&nbsp;
+<h5><b>SERIAL No: </b> {{i.shopsec}}</h5>
+
+<h5><b>STAFF NO:</b> {{i.staff_no}}
+  <input type="hidden" id="staff_o" name="staff_no{{ forloop.counter }}" value="{{i.staff_no}}">
+  </h5>
+
+
+<h5><b>TICKET NO: </b> {{i.ticket_no}}</b></h5>
+
+<h5><b>NAME: </b>{{i.name}}</h5>
+{% endfor %}
+</div>
+
+<table border="2" align="center" >
+    <tr>
+      <th height="30">IN</th>
+       <th  height="30">OUT</th>
+       <th height="30">TICKET NO</th>
+       <th height="30">CATEGORY:</th>
+       <th height="30">MONTH HRS</th>
+       <th height="30">TOTAL TIME TAKEN</th>
        
        
       
@@ -302,7 +297,7 @@
    
     {% for i in obj4 %}
     <tr>
-        <td>
+        <td  height="50">
           {% if i.in1 %}
             <input type="time" id="in1"  class="myinps" value="{{i.in1}}" name="in1{{ forloop.counter }}"  >
             {% else %}
@@ -310,7 +305,7 @@
           {% endif %}  
           
           </td> 
-          <td>
+          <td  height="50">
            {% if i.out %}
               <input type="time" id="out"  class="myinps" value="{{i.out}}" name="out{{ forloop.counter }}"  >
               {% else %}
@@ -318,68 +313,49 @@
             {% endif %}    
       
            </td> 
+           <td>
+              <input type="text" id="ticket_no" value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}">
+        
+        
+            </td> 
+            <td>
+                {{i.cat}}
+                <input type="hidden" id="cat" name="cat{{ forloop.counter }}" value="{{i.cat}}">      
+        
+              </td> 
+             
+              <td>
+                 
+                  <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}" title="Character Value" >
+          
+                </td> 
+                <td>
+                    
+                    <input type="text" id="total_time_taken"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" >
+            
+                  </td> 
+              
    
            
    </tr>
     {% endfor %}
   </table>
   
+<br><br>
 
 
 
-<br><br><br>
-<table border="2" align="center">
-  <tr style='background-color:rgb(26, 46, 46); text-align: center;color:white;'>
-  
-    
-     <th>TICKET NO</th>
-     <th>Category:</th>
-     <th>MONTH HRS</th>
-     <th>TOTAL TIME TAKEN</th>
-    
-   
- </tr>
- 
-  {% for i in obj4 %}
-  <tr>
-    <td>
-      <input type="text" id="ticket_no" value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}">
-
-
-    </td> 
-    <td>
-        {{i.cat}}
-      
-        <input type="hidden" id="cat" name="cat{{ forloop.counter }}" value="{{i.cat}}">
-  
-
-      </td> 
-     
-      <td>
-         
-          <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}" title="Character Value" >
-  
-        </td> 
-        <td>
-            
-            <input type="text" id="total_time_taken"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" >
-    
-          </td> 
-      
-         
- </tr>
-  {% endfor %}
-</table>
-
-    <br><br>
     <center>
-        <input type="submit" name="proceed" value="submit">
+      <input type="submit" name="proceed" value="submit">
     </center>
     <br><br> {% endif %}
 
 </form>
 
 
+
+ 
+    
 <script type="text/javaScript">
   document.querySelector("#shop_sec").addEventListener('change',(e)=>{
     //console.log("hi");
@@ -552,14 +528,31 @@
                 })  
 
 
-             </script>   
+                document.querySelector("#staff_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+
+
+</script> 
 
 
 
 
-    
-    {% endblock content %}
-  
-  
 
 
+
+
+
+
+
+
+
+
+
+{% endblock content %}

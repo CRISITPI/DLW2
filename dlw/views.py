@@ -1675,7 +1675,7 @@ def bprodplan(request):
                 deledit=annual_production.objects.filter(customer=typ,revisionid=rev).delete()
                 for lo in range(0,int(num_loco)):
                     # deledit=annual_production.objects.filter(customer=typ,loco_type=request.POST.get("editloco"+str(lo+1)),revisionid=rev).delete()
-                    print(" For Loco: "+request.POST.get("editloconame"+str(lo+1)))
+                    # print(" For Loco: "+request.POST.get("editloconame"+str(lo+1)))
 
                     for nf in range(1,int(num_fy)+1):
                         if(request.POST.get("edit"+str(lo)+str(1))!=None):
@@ -2754,6 +2754,7 @@ def jpo(request):
                 rspnumfy=int(jprsp[0].numyrs)
             if len(jpoobj):
                 mainnumfy=int(jpoobj[0].numyrs)
+                print(mainnumfy,rspnumfy)
                 if mainnumfy>rspnumfy:
                     numfy=mainnumfy
                 else:
@@ -2818,7 +2819,7 @@ def jpo(request):
                         nrcdgrwspan=len(nrcdgo)+1
 
 
-
+                print("error",numfy)
                 for yrs in range(int(numfy)):
 
                     temr = {str(yrs):{"yrs":yearlist[yrs],}}
@@ -3895,7 +3896,7 @@ def m5view(request):
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
-    wo_no = user_master.objects.none()
+    wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=M5SHEMP.objects.all().values('shopsec').distinct()
         tmp=[]
@@ -3903,19 +3904,19 @@ def m5view(request):
             tmp.append(on['shopsec'])
         context={
             'sub':0,
-            'len' :2,
+            'lenm' :2,
             'nav':nav,
             'ip':get_client_ip(request),
             'roles':tmp
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
-            req = M5DOCnew.objects.filter(shop_sec=rolelist[i]).values('batch_no').exclude(batch_no__isnull=True).distinct()
-            wo_no =wo_no | req
+            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+            wo_nop =wo_nop | req
         context = {
             'sub':0,
-            'len' :len(rolelist),
-            'wo_no':wo_no,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
             'nav':nav,
             'ip':get_client_ip(request),
             'roles' :rolelist
@@ -3923,7 +3924,7 @@ def m5view(request):
     elif(len(rolelist)>1):
         context = {
             'sub':0,
-            'len' :len(rolelist),
+            'lenm' :len(rolelist),
             'nav':nav,
             'ip':get_client_ip(request),
             'roles' :rolelist
@@ -3950,30 +3951,90 @@ def m5view(request):
             leng3=obj3.count()
             leng4=obj4.count()
             if obj != None:
-                
-             context = {
-                'nav':nav,
-                'ip':get_client_ip(request),
-                'obj': obj,
-                'obj1':obj1,
-                'obj2':obj2,
-                'obj3':obj3,
-                'obj4':obj4,
-                'sub': 1,
-                'len': leng,
-                'len1':leng1,
-                'len2':leng2,
-                'len3':leng3,
-                'len4':leng4,
-                'shop_sec': shop_sec,
-                'part_no': part_no,
-                'wo_no': wo_no,
-                #'assm_no':assm_no,
-                'brn_no': brn_no,
-                'doc_no': doc_no,
-                'staff_no':staff_no,
-              }
-        
+                if "Superuser" in rolelist:
+                    tm=M5SHEMP.objects.all().values('shopsec').distinct()
+                    tmp=[]
+                    for on in tm:
+                        tmp.append(on['shopsec'])
+                    context={
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'roles':tmp,
+                        'obj': obj,
+                        'obj1':obj1,
+                        'obj2':obj2,
+                        'obj3':obj3,
+                        'obj4':obj4,
+                        'sub': 1,
+                        'len': leng,
+                        'len1':leng1,
+                        'len2':leng2,
+                        'len3':leng3,
+                        'len4':leng4,
+                        'shop_sec': shop_sec,
+                        'part_no': part_no,
+                        'wo_no': wo_no,
+                        #'assm_no':assm_no,
+                        'brn_no': brn_no,
+                        'doc_no': doc_no,
+                        'staff_no':staff_no,
+                    }
+                elif(len(rolelist)==1):
+                    # print("in m5 else")
+                    for i in range(0,len(rolelist)):
+                        req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+                        wo_nop =wo_nop | req
+                    context = {
+                        'lenm' :len(rolelist),
+                        'wo_nop':wo_nop,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'roles' :rolelist,
+                        'obj': obj,
+                        'obj1':obj1,
+                        'obj2':obj2,
+                        'obj3':obj3,
+                        'obj4':obj4,
+                        'sub': 1,
+                        'len': leng,
+                        'len1':leng1,
+                        'len2':leng2,
+                        'len3':leng3,
+                        'len4':leng4,
+                        'shop_sec': shop_sec,
+                        'part_no': part_no,
+                        'wo_no': wo_no,
+                        #'assm_no':assm_no,
+                        'brn_no': brn_no,
+                        'doc_no': doc_no,
+                        'staff_no':staff_no,
+                    }
+                elif(len(rolelist)>1):
+                    context = {
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'roles' :rolelist,
+                        'obj': obj,
+                        'obj1':obj1,
+                        'obj2':obj2,
+                        'obj3':obj3,
+                        'obj4':obj4,
+                        'sub': 1,
+                        'len': leng,
+                        'len1':leng1,
+                        'len2':leng2,
+                        'len3':leng3,
+                        'len4':leng4,
+                        'shop_sec': shop_sec,
+                        'part_no': part_no,
+                        'wo_no': wo_no,
+                        #'assm_no':assm_no,
+                        'brn_no': brn_no,
+                        'doc_no': doc_no,
+                        'staff_no':staff_no,
+                    }    
         if submitvalue=='submit':
             leng=request.POST.get('len')
             shopsec= request.POST.get('shopsec')
@@ -4012,9 +4073,9 @@ def m5view(request):
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        print(shop_sec)
+        # print(shop_sec)
         wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
-        print(wono)
+        # print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
