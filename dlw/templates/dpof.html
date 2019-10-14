@@ -134,16 +134,13 @@ function prcdcall()
     document.getElementById('proceed').click();
 }
 
-var typecd = document.getElementById('lcname').value;
+
+$(document).ready(() => {
+  var typecd = document.getElementById('lcname').value;
 console.log(typecd);
 var ordno=document.getElementById('b2').value;
-$(document).ready(() => {
     $("#loco").val(typecd);
-// console.log(ordno);
-if(len(ordno))
-{
     $("#barl2").val(ordno);
-  }
 });
 
 $(document).ready(function(){
