@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr,m14view,m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
-from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo
+from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo,getcumino
 from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono
 from django.contrib.auth import views as auth_views
 
@@ -76,6 +76,7 @@ urlpatterns = [
     path('machining_of_air_box/',insert_machining_of_air_box,name='machining_of_air_box'),
     path('dpoinput/',dpoinput,name='dpoinput'),
     path('dpo/',dpo,name='dpo'),
+    path('ajax/getcumino/',getcumino,name='getcumino'),
     path('m1view/',m1view,name='m1view'),
     path('ajax/m1getpano/',m1getpano,name='m1getpano'),
     path('m5view/',m5view,name='m5view'),

@@ -14,7 +14,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar
+from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -3858,7 +3858,21 @@ def dpoinput(request):
         } 
 
         if submit=='Save':
-            
+            locot=request.POST.get('loco')
+            ordno=request.POST.get('barl2')
+            temp1="loconame"
+            idname=[]
+            lcname=[]
+            ttlcnt=request.POST.get('cm2')
+            for i in range(1,int(ttlcnt)+1):
+                temp1=temp1+str(i)
+                idname.append(temp1)
+                temp1="loconame"
+            for key in request.POST:
+                for temp1 in idname:
+                    if key==temp1:
+                        lcname.append(request.POST[key])
+            print(lcname)
             context={
             'nav':nav,
             'subnav':subnav,
@@ -3869,6 +3883,37 @@ def dpoinput(request):
         } 
 
     return render(request, 'dpof.html', context)
+
+
+
+def getcumino(request):
+    from .models import dpo
+    if request.method == "GET" and request.is_ajax():
+        cmno=0
+       
+        loco=request.GET.get('loco')
+        locot=request.GET.get('locot')
+        ordno=request.GET.get('ordno')
+        try:
+            emp=dpo.objects.filter(loconame=loco,locotype=locot,orderno=ordno).first()
+        except:
+            return JsonResponse({"success":False}, status=400)
+       
+        if emp is not None:
+            cmno=emp.endcumno
+        else:
+            if loco=='WAP7':
+                cmno=111
+            else:
+                cmno=225
+        
+        dpo_info={
+            "cumino":cmno,
+         }
+        
+        return JsonResponse({"dpo_info":dpo_info}, status=200)
+
+    return JsonResponse({"success":False}, status=400)
 
 
 @login_required
