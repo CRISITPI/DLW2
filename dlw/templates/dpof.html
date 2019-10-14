@@ -77,7 +77,7 @@
             {% endfor %}
         </select></div></td>
        
-        <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" onblur="prcdcall()"/></td>
+        <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" onblur="prcdcall()" required/></td>
 
     </tr>
     <tr>
@@ -251,6 +251,56 @@ function myFunction(elem){
     var cm= parseInt(document.getElementById("cm").value);
     var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
     document.getElementById(cuminoname).value=cuminoval;
+
+    var i;
+    var p;
+    for(i=array[1];i<=tbnum;i++)
+    {
+      if(document.getElementById('bqt'+String(i)).value)
+      {
+          var qval=document.getElementById('bqt'+String(i)).value;
+          // cuminoname="cumino"+String(i-1);
+          // var cuminoval=document.getElementById(cuminoname).value;
+          if(i==1)
+          {
+          var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+        }
+        else
+        {
+          cuminoname="cumino"+String(i-1);
+          var cuminoval=document.getElementById(cuminoname).value;
+        }
+          p=i-1;
+          if(cuminoval)
+          {
+          var cval=cuminoval.split('-');
+          }
+
+          
+
+          else
+          {
+           while(p>=1)
+           {
+            p=p-1;
+            cuminoname="cumino"+String(p);
+            var cuminoval=document.getElementById(cuminoname).value;
+            if(cuminoval)
+            {
+           var cval=cuminoval.split('-');
+            break;
+            }
+           }
+          }
+
+          cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
+          cuminoname="cumino"+String(i);
+          document.getElementById(cuminoname).value=cuminoval;
+      }
+
+    }
+
+
     }
 
     else
