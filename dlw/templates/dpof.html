@@ -85,10 +85,6 @@
         <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" onblur="prcdcall()" required/></td>
 
     </tr>
-    <tr>
-       
-
-    </tr>
 </table>
             <input type="hidden" name="cm" id="cm" value={{cm}} id="cm"/>
             <input type="hidden" name="cm2" id="ttlcnt"/>
@@ -97,17 +93,28 @@
             <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
 
 
-
+{% if add == 1 %}
 <table  align="center">
   <tr>
   <td></td>
 </tr>
-      </table>
+</table>
 
 <table id="custo" align="center">
+<tr>
+  <td style="width: 20%"><b>Subject:</b></td>
+  <td style="width: 30%"><textarea name="sub" placeholder="subject" wrap="soft" style="width: 100%;" rows="5"></textarea></td>
+  <td style="width: 20%"><b>Reference:</b></td>
+  <td style="width: 30%"><textarea name="refn" placeholder="reference" wrap="soft" style="width: 100%;" rows="5"></textarea></td>
+</tr>
+<tr>
+    <td style="width: 20%"><b>Summary:</b></td>
+    <td style="width: 30%"><textarea name="summary" placeholder="summary" wrap="soft" style="width: 100%" rows="5"></textarea></td>
+    <td style="width: 20%"><b>Copy To:</b></td>
+    <td style="width: 30%"><textarea name="copyto" placeholder="copy to" wrap="soft" style="width: 100%" rows="5"></textarea></td>
+</tr>
         <tr>
-                <td><input type="button" id="addloco" value="Add Loco" /></td>
-                <!-- <input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" /> -->
+            <td><input type="button" id="addloco" value="Add Loco" /></td>
         </tr>
        <div id="lcbtch"></div>
 </table>
