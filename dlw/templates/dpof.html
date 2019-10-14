@@ -64,21 +64,47 @@
 <div class="containers">
 <table align="center" id="customers">
     <tr>
-        <td><b>Role:</b></td><td>{{Role}}</td>
-        <td><b>Financial Year:</b></td><td>{{cyear}}</td>
+      <td><b>Office of the :</b></td></td><td>{{Role}}</td>
+      <td><b>Date :<b></td>
+      <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 28px;width: 200px">
+        <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
+        <input type="text" id="xTime" name="xTime" style="border: none;height: 100%; font-size:16px;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 4px;" tabindex="-1">&#9660;</span>
+        </span>
+        </td>
     </tr>
-    <tr><td>Select Loco Type:</td>
-    <td><div class="dropdown">
-        <select name="loco" class="form-control ll" id="loco" required>
-            <div class="dropdown-content">
-            <option selected="selected" value="" disabled>Loco Name:</option>
-            {% for l in locolist %}
-            <option value="{{l}}">{{l}}</option>
-            {% endfor %}
-        </select></div></td>
-       
-        <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" onblur="prcdcall()"/></td>
-
+    <tr><td><b>Select Loco Type:</b></td>
+      <td><div class="dropdown">
+          <select name="loco" class="form-control ll" id="loco" required>
+              <div class="dropdown-content">
+              <option selected="selected" value="" disabled>Loco Name:</option>
+              {% for l in locolist %}
+              <option value="{{l}}">{{l}}</option>
+              {% endfor %}
+          </select></div></td>
+         <td><b>Order No.:</b></td>
+          <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" class="form-control" style="width: 50%" onblur="prcdcall()"/></td>
+  
+      </tr>
+</table>
+      {% if add == 1 %}
+      <table align="center" id="customers">
+    <tr>
+      <td style="width: 20%"><b>Subject:</b></td>
+      <td style="width: 30%"><textarea name="sub" placeholder="subject" wrap="soft" class="form-control" required cols="50" rows="5">{{sub}}</textarea></td>
+      <td><b>Reference:</b></td>
+      <td>
+          <textarea name="refrn" placeholder="reference" wrap="soft" class="form-controll" style="width: 80%" rows="5" required>{{ref}}</textarea>
+      </td>
+    </tr>
+    <tr>
+      <td><b>Summary :</b></td>
+      <td colspan="2"><textarea name="summary" placeholder="summary" wrap="soft" class="form-controll" style="width: 80%" rows="5" required>{{ref}}</textarea>
+      </td>
+    </tr>
+    <tr>
+      <td><b>Copy To :</b></td>
+      <td colspan="2"><textarea name="copyto" placeholder="copy to" wrap="soft" class="form-controll" style="width: 80%" rows="5" required>{{ref}}</textarea>
+      </td>
     </tr>
     <tr>
        
@@ -86,7 +112,7 @@
     </tr>
 </table>
             <input type="hidden" name="cm" id="cm" value={{cm}} id="cm"/>
-            <input type="hidden" name="cm2" id="cm2" value={{cm2}} id="cm2"/>
+            <input type="hidden" name="cm2" id="ttlcnt"/>
             <input type="hidden" name="b1" value={{b1}} id="b1"/>
             <input type="hidden" name="b2" value={{b2}} id="b2"/>
             <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
@@ -95,10 +121,9 @@
 
 <table  align="center">
   <tr>
-  <td><input type="submit" name ='submit' value='Proceed' id="proceed" style="display: none"/></td>
+  <td></td>
 </tr>
       </table>
-      {% if add == 1 %}
 
 <table id="custo" align="center">
         <tr>
@@ -117,6 +142,7 @@
   <table id="custo" align="center"><tr><td><input type="submit" name ='submit' value='Save' id="save"/></td></tr>
 </table>
 {% endif %}
+<input type="submit" name ='submit' value='Proceed' id="proceed" style="display: none"/>
 </div>
 
 </form>
@@ -128,7 +154,36 @@
 var j=0;
 var aj=0;
 var idname="loconame"
+var matchEnterdDate = 0;
+    //function to set back date opacity for non supported browsers
+window.onload = function() {
+      var input = document.createElement('input');
+      input.setAttribute('type', 'date');
+      input.setAttribute('value', 'some text');
+      if (input.value === "some text") {
+          allDates = document.getElementsByClassName("xDateContainer");
+          console.log(allDates);
+          matchEnterdDate = 1;
+          for (var i = 0; i < allDates.length; i++) {
+              allDates[i].style.opacity = "1";
+          }
+      }
+  }
+  //function to convert enterd date to any format
+function setCorrect(xObj, xTraget) {
+  var date = new Date(xObj.value);
+  var month = date.getMonth() + 1;
+  var day = date.getDate();
+  var year = date.getFullYear();
+  if (month != 'NaN') {
+      document.getElementById(xTraget).value = day + "-" + month + "-" + year;
+  } else {
+      if (matchEnterdDate == 1) {
+          document.getElementById(xTraget).value = xObj.value;
+      }
+  }
 
+}
 function prcdcall()
 {
     document.getElementById('proceed').click();
@@ -144,42 +199,32 @@ console.log(ordno);
 
 $(document).ready(function(){
 
+
     $("#addloco").click(function(e){
         event.preventDefault()
         aj++;
-        // console.log(aj);
-        idname=idname+String(aj);
+        
+        idname="loconame"+String(aj);
         var newp='<div><table id="customers"><td><b>Loco Name:</b></td>'+
-            '<td><input type="text" name="loconame" placeholder="loconame" id="'+idname+'" onblur="findcm(this)" /></td>'+
+            '<td><input type="text" name="'+idname+'" placeholder="loconame" id="'+idname+'" onblur="findcm(this)" /></td>'+
             '<td><input type="button" id="add" value="Add Batch"/></td>'+
             '<input type="hidden" name="num" value="THE OUTPUT OF BATCH FUNCTION" id="myvalue"/></table></div>'
             $('#lcbtch').append(newp);
+            document.getElementById('ttlcnt').value=aj;
     });
 
     $('body').on('click','#add',function(e){
         event.preventDefault()
         j++;
-        console.log(idname);
+        console.log("idname:"+String(idname));
         assign();
 
         var bnoname="bno"+String(j);
         var qtyname="qty"+String(j);
         var typname="typ"+String(j);
         var cuminoname="cumino"+String(j);
-        
         var sno=j;
-        
         var b1= document.getElementById("b1").value;
-        if(idname=='loconame1')
-        {
-          console.log("in 1st loco");
-          var cm= document.getElementById("cm").value;
-        }
-        else
-        {
-          console.log("in 2nd loco");
-          var cm= document.getElementById("cm2").value;
-        }
         var b2= document.getElementById('b2').value;
         var loconame=document.getElementById(idname).value;
         if(j<10){
@@ -255,7 +300,6 @@ function myFunction(elem){
 
     else
     {
-
 
     var i;
     var p
@@ -337,8 +381,26 @@ function assign(){
 function findcm(x) {
 var lcid=x.id;
 var loco=document.getElementById(lcid).value;
-console.log("in func cm:",String(loco));
-  
+var locot=document.getElementById('loco').value;
+var ordno=document.getElementById('barl2').value;
+// console.log("in func cm:",String(loco));
+console.log("in cmfunc");
+var data = {
+    loco,
+    locot,
+    ordno
+};
+$.ajax({
+        type: 'GET',
+        url: "{% url 'getcumino' %}",
+        dataType: 'json',
+        data: data,
+        success: function(response) {
+          console.log("success ajax");
+            document.getElementById('cm').value = response.dpo_info.cumino;
+        },
+        error: function(response) {console.log("no ajax");}
+    });
 }
   </script>
 {% endblock content %}
