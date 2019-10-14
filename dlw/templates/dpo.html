@@ -358,17 +358,19 @@ console.log(tbnum);
           if(i==1)
           {
           var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
-        }
-        else
-        {
+          }
+          else
+          {
           cuminoname="cumino"+String(i-1);
           var cuminoval=document.getElementById(cuminoname).value;
-        }
+          }
+        console.log("cuminoval"+String(cuminoval));
           p=i-1;
           if(cuminoval)
           {
           var cval=cuminoval.split('-');
           }
+          
 
           
 
@@ -387,9 +389,22 @@ console.log(tbnum);
            }
           }
 
+          if(i==1)
+          {
+          cuminoname="cumino"+String(i);
+
+
+          document.getElementById(cuminoname).value=cuminoval;
+
+          }
+
+          else
+          {
+
           cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
           cuminoname="cumino"+String(i);
           document.getElementById(cuminoname).value=cuminoval;
+        }
       }
 
     }

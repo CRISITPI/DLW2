@@ -135,11 +135,15 @@ function prcdcall()
 }
 
 var typecd = document.getElementById('lcname').value;
+console.log(typecd);
 var ordno=document.getElementById('b2').value;
 $(document).ready(() => {
     $("#loco").val(typecd);
-console.log(ordno);
+// console.log(ordno);
+if(len(ordno))
+{
     $("#barl2").val(ordno);
+  }
 });
 
 $(document).ready(function(){
@@ -254,11 +258,11 @@ function myFunction(elem){
 
     var i;
     var p;
-    for(i=array[1];i<=tbnum;i++)
+    for(i=array[1];i<=j;i++)
     {
-      if(document.getElementById('bqt'+String(i)).value)
+      if(document.getElementById('qty'+String(i)).value)
       {
-          var qval=document.getElementById('bqt'+String(i)).value;
+          var qval=document.getElementById('qty'+String(i)).value;
           // cuminoname="cumino"+String(i-1);
           // var cuminoval=document.getElementById(cuminoname).value;
           if(i==1)
@@ -293,9 +297,22 @@ function myFunction(elem){
            }
           }
 
+          if(i==1)
+          {
+          cuminoname="cumino"+String(i);
+
+
+          document.getElementById(cuminoname).value=cuminoval;
+
+          }
+
+          else
+          {
+
           cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
           cuminoname="cumino"+String(i);
           document.getElementById(cuminoname).value=cuminoval;
+        }
       }
 
     }
