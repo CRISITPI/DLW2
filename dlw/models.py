@@ -3351,6 +3351,7 @@ class MiscellSection(models.Model):
    date=models.CharField(max_length=20,null=True) 
    loco_type=models.CharField(max_length=20,null=True)
    dispatch_to=models.CharField(max_length=20,null=True)
+   dispatch_status = models.BooleanField(default=False)
 
 
 class AxleWheelMachining(models.Model):
