@@ -14,7 +14,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import M14M4,Cst,testc,navbar,user_master,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar
+from dlw.models import M14M4,Cst,testc,navbar,user_master,PinionPressing,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -4941,3 +4941,295 @@ def m3sub(request):
     }
 
     return render(request, "m3view.html", context)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def m7view(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = user_master.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        # return render(request,"m2view.html",context)
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            shop_sec = request.POST.get('shop_sec')
+            mon = request.POST.get('mon')
+            wo_no = request.POST.get('wo_no')
+            staff_no = request.POST.get('staff_no')
+            part_no = request.POST.get('part_no')
+            obj1 = M7.objects.filter(staff_no=staff_no).values('month','date','in1','out')
+            obj2 = Shemp.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name','cat').distinct()
+            leng = obj1.count()
+            leng2 = obj2.count()
+            print(obj1,"obj1")
+            print(obj2,"obj2")
+            context = {
+                'obj1': obj1,
+                'obj2': obj2,
+                'ran':range(1,32),
+                'len': 31,
+                'len2': leng2,
+                'shop_sec': shop_sec,
+                'wo_no': wo_no,
+                'staff_no': staff_no,
+                'part_no': part_no, 
+                'mon': mon,
+                'sub':1,
+                'nav':nav,
+                'ip':get_client_ip(request),  
+                'subnav':subnav,     
+            }
+
+        if submitvalue =='Submit':
+                print("hi")
+                leng=request.POST.get('len')
+                shop_sec= request.POST.get('shop_sec')
+                staff_no = request.POST.get('staff_no')
+                wo_no = request.POST.get('wo_no')
+                part_no = request.POST.get('part_no')
+            
+                m7obj = M7.objects.filter(shop_sec=shop_sec,staff_no=staff_no,part_no=part_no).distinct()
+                print(m7obj)
+                if((m7obj)):
+                    m7obj.delete()
+                
+                for i in range(1, int(leng)+1):
+                    in1 = request.POST.get('in1'+str(i))
+                    out = request.POST.get('out'+str(i))
+                    date = request.POST.get('date'+str(i))
+                    mon = request.POST.get('mon'+str(i))
+                
+                    print(in1,out,date,mon)
+                    
+                # reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
+                    #print(shopsec)
+                    # objjj=M7.objects.create(shop_sec=shop_sec,staff_no=staff_no,part_no=part_no,in1=in1,out=out,month=mon,date=date)
+                    if in1 and out and date and mon :
+                        objjj=M7.objects.create()
+                        objjj.shop_sec=shop_sec
+                        objjj.staff_no=staff_no
+                        objjj.part_no=part_no
+                        objjj.in1=in1
+                        objjj.out=out
+                        objjj.mon=mon
+                        objjj.date=date
+                        objjj.save()
+                    #print(in1)
+                    #print(date)
+                    
+                wo_nop=Batch.objects.all().values('bo_no').distinct()
+ 
+    return render(request,"m7view.html",context)
+                        
+def m7getwono(request):
+    if request.method == "GET" and request.is_ajax():
+        #from.models import Batch
+        shop_sec = request.GET.get('shop_sec')
+        w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
+        w2=Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+        wono = list(w2)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def m7getempno(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wo_no = request.GET.get('wo_no')
+        staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        return JsonResponse(staff_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def m7getpart_no(request):
+    if request.method == "GET" and request.is_ajax():
+        
+        wo_no = request.GET.get('wo_no')
+        
+        part_no = list(Batch.objects.filter(bo_no=wo_no).values('part_no').distinct())
+        return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def pinionpressing_section(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    obj2=PinionPressing.objects.all().order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    mysno=PinionPressing.objects.all().values('sno')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       'mybo':mybo,
+       'mysno':mysno,
+       'subnav':subnav,
+        }
+    
+    
+    if request.method=="POST":
+        once=request.POST.get('once')
+        print(once)
+        submit=request.POST.get('submit')
+        
+        if submit=='Save':
+            first=request.POST.get('bo_no')
+            second=request.POST.get('bo_date')
+            third=request.POST.get('date')
+            fourth=request.POST.get('tm_make')
+            fifth=request.POST.get('tm_no')
+            sixth=request.POST.get('locos')
+            if first and second and third and fourth and fifth and sixth:
+                obj=PinionPressing.objects.create()
+                obj.bo_no=first
+                obj.bo_date=second
+                obj.date=third
+                obj.tm_make=fourth
+                obj.tm_no=fifth
+                obj.loco_type=sixth
+                obj.save()
+                messages.success(request,'Successfully Added!')
+            else:
+                messages.error(request,"Please Enter All Records!")    
+        
+        obj2=PinionPressing.objects.all().order_by('sno') 
+        my_context={
+            'object':obj2,
+            }   
+
+        if submit=='Edit':
+            temp=request.POST.get('sno')
+            print(temp)
+            if temp is not None:
+                sno=int(temp)
+            else:
+                sno=None
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            tm_make=request.POST.get('edittm_make')
+            tm_no=request.POST.get('edittm_no')
+            if sno and bo_no and bo_date and date and tm_make and tm_no:
+                PinionPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,tm_make=tm_make,tm_no=tm_no)
+                messages.success(request, 'Successfully Edited!')
+            else:
+                messages.error(request,"Please Enter S.No.!")        
+
+
+
+        if submit=='Inspect':
+            sno=int(request.POST.get('snowheel'))
+            # print(sno)
+            pinion_no=request.POST.get('pinion_no')
+            pinion_make=request.POST.get('pinion_make')
+            pinion_travel=request.POST.get('pinion_travel')
+            pinion_pressure=request.POST.get('pinion_pressure')
+            blue_match=request.POST.get('blue_match')
+            # loco_type=request.POST.get('locos')
+            if pinion_no and pinion_make and pinion_travel and pinion_pressure and blue_match :
+                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match) 
+                messages.success(request,'Successfully Inspected!')
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+        
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            if sno and dislocos:
+                PinionPressing.objects.filter(sno=sno).update(dispatch_to=dislocos)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        if submit=='Delete':
+
+            sno=int(request.POST.get('delsno'))
+            if sno:
+                PinionPressing.objects.filter(sno=sno).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+
+        return HttpResponseRedirect("/PinionPress/")
+    
+    return render(request,"PinionPress.html",my_context)
+
+def pinion_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
+        
+def pinion_editsno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno=request.GET.get('sels_no')
+        myval=list(PinionPressing.objects.filter(sno=mysno).values('bo_no','bo_date','loco_type','date','tm_make','tm_no'))
+        return JsonResponse(myval, safe=False)
+    return JsonResponse({"success":False}, status=400)  
+
+def airbox_editsno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno=request.GET.get('sels_no')
+        myval=list(MachiningAirBox.objects.filter(sno=mysno).values('bo_no','bo_date','airbox_sno','airbox_make','in_qty','out_qty','date','loco_type'))
+        return JsonResponse(myval, safe=False)
+    return JsonResponse({"success":False}, status=400) 

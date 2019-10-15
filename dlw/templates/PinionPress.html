@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% block content %}
+<html lang="en">
+   
+    <style>
+        #customers {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        
+        #customers td,
+        #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+    </style>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    height:100%;
+    margin:0;
+}
+html{
+    height:100%;
+    margin:0;
+}
+.page-content{
+    min-height:100%;
+    margin-bottom:-40px;
+}
+.page-content::after{
+    content:"";
+    display:block;
+}
+footer, .page-content::after{
+    height:40px;
+}
+.content_section{
+    width:60%;
+}
+</style>
+
+<form action="." id="myForm" method="POST" novalidate>{% csrf_token %}
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <ul class="navbar nav" style="width:60%">
+            <font size="4pt" color="#FFFFFF">Pinion Pressing Section</font>
+        </ul>
+
+        <div class="collapse navbar-collapse" id="collapse_target">
+            <ul class="navbar nav" style="width:100%;">
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                            <font color="white">Delete</font>
+                     </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                            <font color="white">Dispatch</font>
+                     </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#InspectModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                            <font color="white">Inspect</font>
+                     </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EditModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                            <font color="white">EditRecord</font>
+                 </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <font color="white">AddRecord</font>
+                 </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <table id="customers">
+        <tbody>
+            <tr>
+                <center>
+                    {% if messages %}
+                        <ul class="messages">
+                             {% for message in messages %}
+                             <font size="3">
+                             <li>
+                                <h4>{{ message }}</h4>
+                            </li>
+                            </font>
+                                {% endfor %}
+                        </ul>
+                            {% endif %}
+                </center>
+            </tr>
+            <tr>
+                <th>Serial No.&nbsp;</th>
+                <th>Batch Order No.&nbsp;</th>
+                <th>Batch Order Date </th>
+                <th>Loco Type &nbsp;</th>
+                <th>Date &nbsp; </th>
+                <th>Traction Motor No. </th>
+                <th>Traction Motor Make </th>
+                </tr>
+        {% for objec in object %}
+        <tr>
+                <td>{{objec.sno}} <br></td>
+                <td>{{objec.bo_no}} <br></td>
+                <td>{{objec.bo_date}} <br></td>
+                <td>{{objec.loco_type}} <br></td>
+                <td>{{objec.date}} <br></td>
+                <td>{{objec.tm_no}} <br></td>
+                <td>{{objec.tm_make}} <br></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>     
+        <input type="hidden" name="once" id="once" value="0">
+    
+<!-- Modal -->
+<div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Pinion Pressing</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+      <div class="modal-body">       
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="">Batch Order No.</label>
+                                    <select name="bo_no" id="addbono" class="form-control ll" required>
+                                            <option value="" hidden selected>Select BO No.</option>  
+                                            {% for x in mybo %}
+                                            <option>{{x.bo_no}}</option>
+                                            {% endfor %}
+                                    </select> 
+                                        </div>
+                                        <div class="col-6">
+                                                <h6><label for="">Batch Order Date</label></h6>
+                                                <input type="text" class="form-control" name="bo_date" id="bo_date" required readonly>
+                                        </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <h6><label for="">Loco Type</label></h6>
+                                                <input type="text" class="form-control" name="locos" id="locos" required readonly>
+                                            </div>
+                                       <div class="col-6">
+                                            <label for="">Date</label>
+                                            <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
+                                            <input type="date" class="xDateContainer" onchange="setCorrect(this,'date');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
+                                            <input type="text" id="date" name="date" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
+                                        </span>
+                                      </div>
+                                   </div>
+                                    
+                                    <div class="row">   
+                                        <div class="col-6">
+                                            <label for="">Traction motor No.</label>
+                                            <input type="text" class="form-control" name="tm_no" id="tm_no" placeholder="" required>
+                                        </div>   
+                                        <div class="col-6">
+                                            <label for="">Traction motor Make</label>
+                                            <input type="text" class="form-control" name="tm_make" id="tm_make" placeholder="" required>
+                                        </div> 
+                                </div>
+                            </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" />
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<!--EditRecord-->
+<!-- Modal -->
+<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Pinion Pressing</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+     
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+        <div class="modal-body"> 
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="">S No.</label>
+                                    <select name="sno" id="editsno" class="form-control ll" required>
+                                        <option value="" hidden selected>Select S No.</option>  
+                                        {% for y in mysno %}
+                                        <option>{{y.sno}}</option>
+                                        {% endfor %}
+                                </select> 
+                                </div>
+
+                                <div class="col-6">
+                                    <h6><label for="">Batch Order No.</label></h6>
+                                    <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
+                                </div>
+                                        <div class="col-6">
+                                            <h6><label for="">Batch Order Date</label></h6>
+                                            <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
+                                        </div>
+                                      
+                                         <div class="col-6">
+                                                <h6><label for="">Loco Type</label></h6>
+                                                <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="">Traction motor No.</label>
+                                                <input type="text" class="form-control" id="edittm_no" name="edittm_no" placeholder="" required>
+                                   </div>
+                                   <div class="col-6">
+                                      <label for="">Date</label>
+                                      <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
+                                      <input type="date" class="xDateContainer" onchange="setCorrect(this,'date');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
+                                      <input type="text" id="editdate" name="editdate" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
+                                  </span>
+                                </div>
+                                <div class="col-6">
+                                    <label for="">Traction motor Make</label>
+                                    <input type="text" class="form-control" id="edittm_make" name="edittm_make" placeholder="" required>
+                                </div> 
+                                     </div>  
+                                    </div>                      
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" />
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  <!--Dispatch-->
+<!-- Modal -->
+<div class="modal fade" id="DispatchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">Pinion Pressing</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+         <div class="modal-body">       
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="">Serial No.</label>
+                                        <input type="number" class="form-control" id="dissno" name="dissno" required>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                               <div class="col-6">
+                                <div class="dropdown">
+                                  <select name="dislocos" type="form-control ll" required>
+                                    <option value="" hidden selected>Dispatch To</option>
+                                    <option value="Pinion Pressing">Axle & Wheel Pressing Section</option>
+                                  </select>
+                                  </div>
+                                </div>  
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                 </div>    
+
+<!--Inspect Wheel-->
+<!--modal-->
+<div class="modal fade bd-example-modal-lg" id="InspectModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Pinion Pressing Inspection</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+            </div>
+        
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+
+            <div class="modal-body">
+                  <div class="row">
+                  <div class="col-6">
+                          <label for="">Serial No.</label>
+                          <select name="snowheel" id="addsno" class="form-control ll" required>
+                                  <option value="" hidden selected>Select S.No.</option>  
+                                  {% for x in mysno %}
+                                  <option>{{x.sno}}</option>
+                                  {% endfor %}
+                          </select> 
+                        </div>         
+                    <div class="col-6">
+                        <label for="">Pinion No.</label>
+                        <input type="text" class="form-control" name="pinion_no" id="pinion_no" placeholder="" required>
+                      </div>
+                      <div class="col-6">
+                            <label for="">Pinion Make</label>
+                            <input type="text" class="form-control" name="pinion_make" id="pinion_make" placeholder="" required>
+                          </div>
+                          <div class="col-6">
+                                <label for="">Pinion Travel</label>
+                                <input type="text" class="form-control" name="pinion_travel" id="pinion_travel" placeholder="" required>
+                              </div>
+                              <div class="col-6">
+                                    <label for="">Pinion Pressure</label>
+                                    <input type="text" class="form-control" id="pinion_pressure" name="pinion_pressure" placeholder=""required>
+                                  </div>
+                                  <div class="col-6">
+                                        <label for="">Blue matching status</label>
+                                        <input type="text" class="form-control" name="blue_match" id="blue_match" placeholder="" required>
+                                      </div>
+                                <!-- <div class="col-6">
+                                <label>Loco Type</label>
+                                    <input type="text" class="form-control" name="locos" id="locos" required readonly>
+                                    </div> -->
+                              
+                                          
+                </div>
+            </div>                        
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Inspect" />
+                        </div>
+              </form>
+     </div>
+ </div>
+</div> 
+
+<!--Delete-->
+<!-- Modal -->
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel3">Pinion Pressing</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+    <form method="POST" class="needs-validation" > {% csrf_token %}
+           <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                                <label for="">Serial No.</label>
+                                <input type="number" class="form-control" id="delsno" name="delsno"  required>
+                        </div> 
+                    </div>
+            </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
+        </div>
+        </form>
+    </div>
+  </div>
+  </div>   
+  </form>
+  <script>
+    $(document).ready(function() {
+        $('#delform').bootstrapValidator({
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                delsno: {
+                    validators: {
+                        notEmpty: {
+                            message: 'The username is required'
+                        }
+                    }
+                }
+            }
+        });
+    });
+    
+    $("#addbono").change(function(e){
+        e.preventDefault();
+        var selbo_no = $(this).val();
+        var data = {selbo_no};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'pinion_addbo' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){            
+                $("#bo_date").val(`${response[0].rel_date}`);
+                $("#locos").val(`${response[0].ep_type}`);
+            }
+        })
+    });
+
+    $("#editsno").change(function(e){
+                    e.preventDefault();
+                    var sels_no=$(this).val();
+                    var data={sels_no};
+                        $.ajax({
+                            type: 'GET',
+                            url: "{% url 'pinion_editsno' %}",
+                            dataType: 'json',
+                            data:data,
+                            success:function(response){
+                                console.log(response);
+                                $("#editbo_no").val(`${response[0].bo_no}`);
+                                $("#editbo_date").val(`${response[0].bo_date}`);
+                                $("#editlocos").val(`${response[0].loco_type}`);
+                                $("#editdate").val(`${response[0].date}`);
+                                $("#edittm_make").val(`${response[0].tm_make}`);
+                                $("#edittm_no").val(`${response[0].tm_no}`);
+                                
+                                
+                            }
+                        })
+                })
+
+    window.onload = function() {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'date');
+        input.setAttribute('value', 'some text');
+        if (input.value === "some text") {
+            allDates = document.getElementsByClassName("xDateContainer");
+            console.log(allDates);
+            matchEnterdDate = 1;
+            for (var i = 0; i < allDates.length; i++) {
+                allDates[i].style.opacity = "1";
+            }
+        }
+    };
+    //function to convert enterd date to any format
+function setCorrect(xObj, xTraget) {
+    var date = new Date(xObj.value);
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+    if (month != 'NaN') {
+        document.getElementById(xTraget).value = day + "-" + month + "-" + year;
+    } else {
+        if (matchEnterdDate == 1) {
+            document.getElementById(xTraget).value = xObj.value;
+        }
+    }
+
+};
+</script>
+
+</html>  
+{% endblock content %}
+  
+
+    

@@ -3469,6 +3469,8 @@ class PinionPressing(models.Model):
     pinion_pressure=models.CharField(max_length=20,null=True)
     blue_match=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
+    dispatch_to=models.CharField(max_length=50,null=True)
+    dispatch_status=models.BooleanField(default=False)
 
 
 class dpo(models.Model):
@@ -3492,3 +3494,18 @@ class subnavbar(models.Model):
     parentmenu=models.CharField(null=True,max_length=50)
     childmenu=models.CharField(null=True,max_length=50)
     link=models.CharField(null=True,max_length=50)
+
+class M7(models.Model):
+    shop_sec = models.CharField(max_length=100, blank=True, null=True)
+    staff_no = models.CharField(max_length=5, blank=True, null=True)
+    wo_no = models.CharField(max_length=100, blank=True, null=True)
+    month = models.CharField(max_length=5, blank=True, null=True)
+    name = models.CharField(max_length=40, blank=True, null=True)
+    part_no = models.CharField(max_length=8, blank=True, null=True)
+    cat = models.CharField(max_length=2, blank=True, null=True)
+    date = models.CharField(max_length=10, blank=True, null=True)
+    in1 = models.CharField(max_length=10, blank=True, null=True)
+    out = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        db_table = 'M7'  
