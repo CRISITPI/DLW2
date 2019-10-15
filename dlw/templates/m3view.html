@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -62,15 +63,13 @@
             <tr>
                 <td>
                     <label for="sno"><b>Shop Section NO/शॉप अधी. :</b></label>
-                  
-
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-            {% if len == 1 %}
+            {% if lenm == 1 %}
                 <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
                 {{role}}
             {% endif %}
-            {% if len > 1 %}
+            {% if lenm > 1 %}
             {% for role in roles %}
             {{role}}
               <option>{{role}}</option>
@@ -82,8 +81,8 @@
                     <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
                     <select class="form-control" id="wno" name="wo_no" required>
         <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
-        {% if len == 1 %}
-        {% for i in wo_no %}
+        {% if lenm == 1 %}
+        {% for i in wo_nop %}
         <option>{{i.batch_no}}</option>
         {% endfor %}
         {% endif %}
@@ -123,7 +122,8 @@
 
         </table>
         
-        <center><input type="submit" value="Proceed" name="proceed" /></center>
+        <!-- <center><input type="submit" value="Proceed" name="proceed" /></center> -->
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
 
 
     </div>
@@ -450,41 +450,17 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
                       }
                         })
               })
+document.querySelector("#doc_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+</script>    
+{% endblock content %} 
 
 
-// document.querySelector("#rm_partno").addEventListener('change',(e)=>{
-//   e.preventDefault();
-//   var wo_no = $("#wno").val();
-//   var brn_no = $("#br_no").val();
-//   var shop_sec = $("#shop_sec").val()
-//   var assm_no = $('#assm_no').val()
-//   var part_no = $('#part_nop').val()
-//   var rm_partno = $('#rm_partno').val()
-//   var data = {wo_no,brn_no,shop_sec,assm_no,part_no,rm_partno};
-//         $.ajax({
-//               type : 'GET',
-//               url : "{% url 'm3getdoc_no' %}",
-//               dataType : 'json',
-//               data : data,
-//               success : function(response){
-//                         var elementsadded = document.querySelectorAll(".neweledoc");
-//                             if(elementsadded.length>0){
-//                                 var elementsaddedarr = Array.from(elementsadded);
-//                                 elementsaddedarr.forEach((el)=> el.remove());
-//                                 document.querySelector("#op_doc").selected = true; 
-//                              }
-//                             var brarr,mystr,html;
-//                             brarr = response.map((el)=>el.m2sln);
-//                             mystr = "";
-//                             brarr.forEach((el,index)=>{
-//                               html = `<option class="neweledoc">${brarr[index]}</option>`
-//                               mystr = html.concat(mystr);
-//                             });
-//                             html = "";
-//                             document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
-//                             mystr=""; 
-//                       }
-//                         })
-//               })
-</script>
-{% endblock content %}
+

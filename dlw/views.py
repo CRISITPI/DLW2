@@ -4697,7 +4697,7 @@ def m3view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_no = user_master.objects.none()
+    wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -4705,7 +4705,7 @@ def m3view(request):
             tmp.append(on.section_code)
         context={
             'sub':0,
-            'len' :2,
+            'lenm' :2,
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
@@ -4714,11 +4714,11 @@ def m3view(request):
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-            wo_no =wo_no | req
+            wo_nop =wo_nop | req
         context = {
             'sub':0,
-            'len' :len(rolelist),
-            'wo_no':wo_no,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
             'roles' :rolelist,
             'nav':nav,
             'subnav':subnav,
@@ -4727,7 +4727,7 @@ def m3view(request):
     elif(len(rolelist)>1):
         context = {
             'sub':0,
-            'len' :len(rolelist),
+            'lenm' :len(rolelist),
             'roles' :rolelist,
             'nav':nav,
             'subnav':subnav,
@@ -4745,36 +4745,107 @@ def m3view(request):
             assembly_no = request.POST.get('assm_no')
             doc_no = request.POST.get('doc_no')
             obj = Part.objects.filter(partno=part_no).values('drgno','des')
-
-    
             objj = M2Doc.objects.filter(m2sln=doc_no,f_shopsec=shop_sec).values('qty','rm_partno','m4_no','scl_cl').distinct()
             obj1 = user_master.objects.filter(role=shop_sec).values('name','department')
             print(obj1)
             date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
             leng = obj.count()
             leng1 = obj1.count()
-            
             leng2 = objj.count()
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'objj': objj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1':leng1,
+                    'len2':leng2,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                    'sub':1,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'objj': objj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1':leng1,
+                    'len2':leng2,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                    'sub':1,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'objj': objj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1':leng1,
+                    'len2':leng2,
+                    'date': date,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                    'sub':1,
+                }
 
-            context = {
-                        'obj': obj,
-                        'objj': objj,
-                        'obj1': obj1,
-                        'len': leng,
-                        'len1':leng1,
-                        'len2':leng2,
-                        'date': date,
-                        'shop_sec': shop_sec,
-                        'part_no': part_no,
-                        'wo_no': wo_no,
-                        'brn_no': brn_no,
-                        'assembly_no': assembly_no,
-                        'doc_no': doc_no,
-                        'sub':1,
-                        'nav':nav,
-                        'subnav':subnav,
-            'ip':get_client_ip(request),
-                    }
+            # context = {
+            #             'obj': obj,
+            #             'objj': objj,
+            #             'obj1': obj1,
+            #             'len': leng,
+            #             'len1':leng1,
+            #             'len2':leng2,
+            #             'date': date,
+            #             'shop_sec': shop_sec,
+            #             'part_no': part_no,
+            #             'wo_no': wo_no,
+            #             'brn_no': brn_no,
+            #             'assembly_no': assembly_no,
+            #             'doc_no': doc_no,
+            #             'sub':1,
+            #             'nav':nav,
+            #             'subnav':subnav,
+            # 'ip':get_client_ip(request),
+            #         }
     return render(request,"m3view.html",context)
 
 

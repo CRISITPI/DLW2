@@ -3472,11 +3472,20 @@ class PinionPressing(models.Model):
 
 
 class dpo(models.Model):
+    procedureno=models.CharField(max_length=50,null=True)
+    locotype=models.CharField(max_length=50,null=True)
+    orderno=models.CharField(max_length=10,null=True)
+    subject=models.TextField(null=True)
+    reference=models.TextField(null=True)
+    copyto=models.TextField(null=True)
+    summary=models.TextField(null=True)
+
+class dpoinput(models.Model):
+    procedureno=models.CharField(max_length=50,null=True)
     loconame=models.CharField(max_length=50,null=True)
     locotype=models.CharField(max_length=50,null=True)
     endcumno=models.CharField(max_length=10,null=True)
     orderno=models.CharField(max_length=10,null=True)
-
 
 
 class subnavbar(models.Model):
