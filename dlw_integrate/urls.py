@@ -18,6 +18,7 @@ from django.urls import path, include
 from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr,m14view,m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
 from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo,getcumino
 from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono
+from dlw.views import m7getwono,m7view,m7getempno,m7getpart_no,pinion_editsno,pinionpressing_section,pinion_addbo,airbox_editsno
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -99,4 +100,12 @@ urlpatterns = [
     path('ajax/m3getwono/', m3getwono, name='m3getwono'),
     path('m3sub/', m3sub, name='m3sub'),
     path('ajax/m5getstaff_no/',m5getstaff_no,name='m5getstaff_no'),
+    path('m7view/', m7view, name='m7view'),
+    path('ajax/m7getwono/', m7getwono, name='m7getwono'),
+    path('ajax/m7getempno/', m7getempno, name='m7getempno'),
+    path('ajax/m7getpart_no/', m7getpart_no, name='m7getpart_no'),
+    path('ajax/airbox_editsno',airbox_editsno,name='airbox_editsno'),
+    path('ajax/pinion_addbo',pinion_addbo,name='pinion_addbo'),
+    path('PinionPress/',pinionpressing_section,name='PinionPress'),
+    path('ajax/pinion_editsno',pinion_editsno,name='pinion_editsno'),
 ]
