@@ -726,24 +726,22 @@ def m2view(request):
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-            obgg = Oprn.objects.filter(part_no=part_no, shop_sec=shop_sec).values('shop_sec').distinct()
-            obggg = Oprn.objects.filter(part_no=part_no).values('shop_sec').distinct()
-            obgggg = obggg.union(obgg)
-            if obgg.count() != 0 :
-                obj = Oprn.objects.filter(part_no=part_no,shop_sec__in=obgggg).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
-                date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
-                leng = obj.count()
-                print(obgg)
-                print(obj)
-                # print(obj2.count())
-                # print(obj1.count())
+            # obgg = Oprn.objects.filter(part_no=part_no, shop_sec=shop_sec).values('shop_sec').distinct()
+            # obggg = Oprn.objects.filter(part_no=part_no).values('shop_sec').distinct()
+            # obgggg = obggg.union(obgg)
+            # if obgg.count() != 0:
+            obj = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
+            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
+            leng = obj.count()
+            datel= date.count()
 
-                if "Superuser" in rolelist:
-                    tm=shop_section.objects.all()
-                    tmp=[]
-                    for on in tm:
-                        tmp.append(on.section_code)
-                    context = {
+
+            if "Superuser" in rolelist:
+                  tm=shop_section.objects.all()
+                  tmp=[]
+                  for on in tm:
+                      tmp.append(on.section_code)
+                  context = {
                         'roles':tmp,
                         'lenm' :2,
                         'nav':nav,
@@ -755,6 +753,7 @@ def m2view(request):
                         'sub': 1,
                         'len': leng,
                         'date': date,
+                        'datel': datel,
                         'shop_sec': shop_sec,
                         'part_no': part_no,
                         'wo_no': wo_no,
@@ -762,16 +761,16 @@ def m2view(request):
                         'assembly_no': assembly_no,
                         'doc_no': doc_no,
                         'subnav':subnav
-                    }
-                elif(len(rolelist)==1):
-                    for i in range(0,len(rolelist)):
+                  }
+            elif(len(rolelist)==1):
+                  for i in range(0,len(rolelist)):
                         # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
                         # wo_nop =wo_nop | req
 
                         w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
                         req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
                         wo_nop = wo_nop | req
-                    context = {
+                  context = {
                         'wo_nop':wo_nop,
                         'roles' :rolelist,
                         'usermaster':usermaster,
@@ -785,6 +784,7 @@ def m2view(request):
                         'sub': 1,
                         'len': leng,
                         'date': date,
+                        'datel': datel,
                         'shop_sec': shop_sec,
                         'part_no': part_no,
                         'wo_no': wo_no,
@@ -792,9 +792,9 @@ def m2view(request):
                         'assembly_no': assembly_no,
                         'doc_no': doc_no,
                         'subnav':subnav
-                    }
-                elif(len(rolelist)>1):
-                    context = {
+                  }
+            elif(len(rolelist)>1):
+                  context = {
                         'lenm' :len(rolelist),
                         'nav':nav,
                         'ip':get_client_ip(request),
@@ -807,6 +807,7 @@ def m2view(request):
                         'sub': 1,
                         'len': leng,
                         'date': date,
+                        'datel': datel,
                         'shop_sec': shop_sec,
                         'part_no': part_no,
                         'wo_no': wo_no,
@@ -814,9 +815,9 @@ def m2view(request):
                         'assembly_no': assembly_no,
                         'doc_no': doc_no,
                         'subnav':subnav
-                    }
-            else:
-                messages.success(request, 'Corresponding Data Not Found!, Select other values to check')
+                  }
+            # else:
+            #     messages.error(request,'Corresponding Data For Shop-Section and PartNumber Not Found!, Select other values to check')
             if submitvalue=='Save':
                 leng=request.POST.get('len')
                 shopsec= request.POST.get('shopsec')
@@ -829,7 +830,7 @@ def m2view(request):
                     opn=request.POST.get('opn'+str(i))
                     Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
                     wo_no=M2Doc.objects.all().values('batch_no').distinct()
-            messages.success(request, 'Successfully Updated!, Select new values to update')
+                messages.success(request, 'Successfully Updated!, Select new values to update')
     return render(request, "m2view.html", context)
 
 
@@ -856,8 +857,16 @@ def m2getassly(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
-        assm_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no).values('assly_no').distinct())
-        return JsonResponse(assm_no, safe = False)
+        w2=M2Doc.objects.filter(batch_no=wo_no).values('assly_no').distinct()
+        w1=Oprn.objects.filter(part_no__in=w2).values('shop_sec', 'part_no').distinct()
+        print(w1)
+        w3=w1.filter(shop_sec=shop_sec).values('part_no').distinct()
+        w4=M2Doc.objects.filter(batch_no=wo_no, f_shopsec=shop_sec, brn_no=br_no).values('assly_no').distinct()
+        w5=w3.union(w4)
+        w6=w5.distinct()
+        print(w6)
+        assm_no = list(w6)
+        return JsonResponse(assm_no, safe=False)
     return JsonResponse({"success":False}, status=400)
 
 
@@ -868,8 +877,14 @@ def m2getpart_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         assembly_no = request.GET.get('assm_no')
-        part_no = list(M2Doc.objects.filter(brn_no=br_no,assly_no=assembly_no).values('part_no').distinct())
-        return JsonResponse(part_no, safe = False)
+        w2 = M2Doc.objects.filter(batch_no=wo_no).values('part_no').distinct()
+        w1 = Oprn.objects.filter(part_no__in=w2).all().distinct()
+        w3= w1.filter(shop_sec=shop_sec).values('part_no').distinct()
+        w4 = M2Doc.objects.filter(batch_no=wo_no, f_shopsec=shop_sec, brn_no=br_no,assly_no=assembly_no).values('part_no').distinct()
+        w5=w3.union(w4)
+        w6=w5.distinct()
+        part_no = list(w6)
+        return JsonResponse(part_no, safe=False)
     return JsonResponse({"success":False}, status=400)
 
 
@@ -877,13 +892,14 @@ def m2getpart_no(request):
 def m2getdoc_no(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
-        br_no = request.GET.get('brn_no')
-        shop_sec = request.GET.get('shop_sec')
-        assembly_no = request.GET.get('assm_no')
+        # br_no = request.GET.get('brn_no')
+        # shop_sec = request.GET.get('shop_sec')
+        # assembly_no = request.GET.get('assm_no')
         part_no = request.GET.get('part_no')
-        doc_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('m2sln').distinct())
-        return JsonResponse(doc_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
+        doc_no = list(M2Doc.objects.filter(batch_no=wo_no,part_no=part_no).values('m2sln').distinct())
+
+        return JsonResponse(doc_no, safe=False)
+    return JsonResponse({"success": False}, status=400)
 
 
 
@@ -964,10 +980,10 @@ def m4view(request):
             obj = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
             print("hh")
             print(obj)
-            date = M14M4.objects.filter(doc_no=doc_no).values('prtdt','qty').distinct()
+            date = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('prtdt','qty').distinct()
             leng = obj.count()
             datel = date.count()
-            print(date)
+            print(datel)
             # print(obj1)
             # print(obj2.count())
             # print(obj1.count())
@@ -1021,6 +1037,7 @@ def m4view(request):
                     'sub': 1,
                     'len': leng,
                     'date': date,
+                    'datel': datel,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'wo_no': wo_no,
@@ -1043,6 +1060,7 @@ def m4view(request):
                     'sub': 1,
                     'len': leng,
                     'date': date,
+                    'datel': datel,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'wo_no': wo_no,
@@ -1050,6 +1068,13 @@ def m4view(request):
                     'assembly_no': assembly_no,
                     'doc_no': doc_no,
                 }
+
+        # if submitvalue=='Print':
+        #     ppp=1
+        #     context={
+        #         'ppp': ppp
+        #     }
+
         if submitvalue=='Save':
             doc_no= request.POST.get('doc_no')
             part_no= request.POST.get('part_no')
@@ -1090,7 +1115,7 @@ def m4getwono(request):
         from.models import Batch
         shop_sec = request.GET.get('shop_sec')
         w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2 = M14M4.objects.filter(assly_no__in=w1).values('bo_no').exclude(bo_no__isnull=True)
+        w2 = M14M4.objects.filter(assly_no__in=w1).values('bo_no').exclude(bo_no__isnull=True).distinct()
         # print(w2)
         wono = list(w2)
         return JsonResponse(wono, safe = False)
@@ -1214,6 +1239,7 @@ def m14view(request):
             # print(assembly_no)
             date = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no).values('prtdt','qty').distinct()
             leng = obj.count()
+            datel= date.count()
             print(obj)
             print(date)
             # print(obj1)
@@ -1237,6 +1263,7 @@ def m14view(request):
                     'sub': 1,
                     'len': leng,
                     'date': date,
+                    'datel': datel,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'wo_no': wo_no,
@@ -1268,6 +1295,7 @@ def m14view(request):
                     'sub': 1,
                     'len': leng,
                     'date': date,
+                    'datel': datel,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'wo_no': wo_no,
@@ -1290,6 +1318,7 @@ def m14view(request):
                     'sub': 1,
                     'len': leng,
                     'date': date,
+                    'datel': datel,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'wo_no': wo_no,

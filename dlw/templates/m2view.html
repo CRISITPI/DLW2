@@ -58,7 +58,7 @@
             {% for message in messages %}
             <font size="3">
                 <li>
-                    {{ message }}
+                    {{message}}
                 </li>
             </font>
             {% endfor %}
@@ -136,6 +136,7 @@
 
     </div>
     <br><br> {% if sub == 1 %}
+     <div id="print" style="align:center" >
     <input type="hidden" name="len" value="{{len}}">
     <table border="2" align="center">
         <tr>
@@ -148,12 +149,31 @@
         </tr>
 
         <tr>
-            {% for i in date %}
-            <td>{{i.m2prtdt}}</td>{% endfor %}
+             <td>
+                {% if datel == 0   %}
+                       None
+                {% else %}
+                   {% for i in date %}
+
+                      {{i.m2prtdt}}
+
+                   {% endfor %}
+                {% endif %}
+            </td>
+
             <td>{{wo_no}}</td>
             <td>{{brn_no}}</td>
-            {% for ij in date %}
-            <td>{{ij.qty}}</td>{% endfor %}
+            <td>
+                {% if datel == 0   %}
+                       None
+                {% else %}
+                   {% for i in date %}
+
+                      {{i.qty}}
+
+                   {% endfor %}
+                {% endif %}
+            </td>
             <td>{{assembly_no}}</td>
             {% for g in obj2 %}
             <td>{{g.des}}</td>{% endfor %}
@@ -278,40 +298,49 @@
             </td>
             <td>
             {% if i.qty_prod %}
-                <input readonly type="text" id="qtypr" class="myinp" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                <input readonly type="text" id="qtypr" class="myinp" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% endif %}
+
+                 {{i.qty_prod}}
+
+            {% else %}
+                   0
+
+            {% endif %}
 
             </td>
             <td>
             {% if i.qtr_accep %}
-                <input readonly type="text" id="qtyac" class="myinp" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {{i.qtr_accep}}
+
                 {% else %}
-                <input readonly type="text" id="qtyac" class="myinp" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                0
+
             {% endif %}
             </td>
             <td>
             {% if i.work_rej %}
-                <input readonly type="text" id="wrrej" class="myinp" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {{i.work_rej}}
+
                 {% else %}
-                <input readonly type="text" id="wrrej" value="0" class="myinp" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                0
             {% endif %}
             </td>
             <td>
             {% if i.mat_rej %}
-                <input readonly type="text" id="matrej" class="myinp" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                {{i.mat_rej}}
+
                 {% else %}
-                 <input readonly type="text" id="matrej" class="myinp" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
+                0
             {% endif %}
             </td>
             {% endif %}
         </tr>
         {% endfor %}
     </table>
+    </div>
     <br><br>
     <center>
         <input type="submit" name="proceed" value="Save" id="submitted">
+         <input type="submit" onclick="printDiv()" value="print">
     </center>
     <br><br> {% endif %}
 
@@ -363,6 +392,8 @@ $("#wno").change(function(e){
         dataType : 'json',
         data : data,
         success : function(response){
+        if(response == ''){
+                       alert("BRN NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no);}
               var elementsadded = document.querySelectorAll(".newelebr");
               if(elementsadded.length>0){
                 var elementsaddedarr = Array.from(elementsadded);
@@ -397,6 +428,8 @@ document.querySelector("#br_no").addEventListener('change',(e)=>{
                       dataType : 'json',
                       data : data,
                       success : function(response){
+                               if(response == ''){
+                               alert("Assembly Number Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no);}
                            var elementsadded = document.querySelectorAll(".neweleassm");
                             if(elementsadded.length>0){
                                 var elementsaddedarr = Array.from(elementsadded);
@@ -406,7 +439,7 @@ document.querySelector("#br_no").addEventListener('change',(e)=>{
                                 document.querySelector("#op_doc").selected = true;
                              }
                             var brarr,mystr,html;
-                            brarr = response.map((el)=>el.assly_no);
+                            brarr = response.map((el)=>el.part_no);
                             mystr = "";
                             brarr.forEach((el,index)=>{
                               html = `<option class="neweleassm">${brarr[index]}</option>`
@@ -432,6 +465,8 @@ document.querySelector("#assm_no").addEventListener('change',(e)=>{
                       dataType : 'json',
                       data : data,
                       success : function(response){
+                      if(response == ''){
+                       alert("Part Number Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no+", Assembly NO:"+assm_no);}
                         var elementsadded = document.querySelectorAll(".newelepart");
                             if(elementsadded.length>0){
                                 var elementsaddedarr = Array.from(elementsadded);
@@ -466,6 +501,8 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
               dataType : 'json',
               data : data,
               success : function(response){
+                       if(response == ''){
+                       alert("Document NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no+", Assembly NO:"+assm_no+", Part NO:"+part_no);}
                         var elementsadded = document.querySelectorAll(".neweledoc");
                             if(elementsadded.length>0){
                                 var elementsaddedarr = Array.from(elementsadded);
@@ -496,6 +533,39 @@ document.addEventListener('keypress',(event)=>{
         event.preventDefault();
     }
 })
+
+
+
+
+
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M2(ROUTE CARD) Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+
+
+}
+
+
+
 
 
   </script>

@@ -136,6 +136,7 @@
 
     </div>
     <br><br> {% if sub == 1 %}
+     <div id="print" style="align:center" >
     <table border="2" align="center">
         <tr>
             <th>Printed Date(MM-DD-YYYY)</th>
@@ -147,18 +148,32 @@
         </tr>
 
         <tr>
-            {% for i in date %}
-            {% if i.prtdt %}
-            <td>{{i.prtdt}}</td>
-              {% else %}
-            <td>None</td>{% endif %}
-            {% endfor %}
+             <td>
+                {% if datel == 0   %}
+                       None
+                {% else %}
+                   {% for i in date %}
+
+                      {{i.prtdt}}
+
+                   {% endfor %}
+                {% endif %}
+            </td>
             <td>{{wo_no}}</td>
             <input type="hidden" name="wo_no" value="{{wo_no}}">
             <td>{{brn_no}}</td>
             <input type="hidden" name="brn_no" value="{{brn_no}}">
-            {% for ij in date %}
-            <td>{{ij.qty}}</td>{% endfor %}
+            <td>
+                {% if datel == 0   %}
+                       None
+                {% else %}
+                   {% for i in date %}
+
+                      {{i.qty}}
+
+                   {% endfor %}
+                {% endif %}
+            </td>
             <td>{{assembly_no}}</td>
             {% for g in obj2 %}
             <td>{{g.des}}</td>{% endfor %}
@@ -301,9 +316,11 @@
                 {% endfor %}
         </tr>
     </table>
+    </div>
     <br><br>
     <center>
         <input type="submit" name="proceed" value="Save" id="submitted">
+        <input type="submit" onclick="printDiv()" value="print">
     </center>
     <br><br> {% endif %}
 
@@ -488,6 +505,41 @@ document.addEventListener('keypress',(event)=>{
         event.preventDefault();
     }
 })
+
+
+
+
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M14 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+
+
+}
+
+
+
+
+
+
 
 
   </script>
