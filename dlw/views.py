@@ -4119,10 +4119,10 @@ def m5view(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
-        tm=M5SHEMP.objects.all().values('shopsec').distinct()
+        tm=shop_section.objects.all()
         tmp=[]
         for on in tm:
-            tmp.append(on['shopsec'])
+            tmp.append(on.section_code)
         context={
             'sub':0,
             'lenm' :2,
@@ -4300,9 +4300,7 @@ def m5view(request):
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        # print(shop_sec)
         wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
-        # print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
