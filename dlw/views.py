@@ -4072,6 +4072,8 @@ def m1getpano(request):
     return JsonResponse({"success":False}, status=400)
 
 
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m1genrept1(request,prtno,shopsec):
     from .models import Part,Partalt
     today = date.today()
@@ -4082,6 +4084,11 @@ def m1genrept1(request,prtno,shopsec):
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
     obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
     # print(obj)
@@ -4097,6 +4104,7 @@ def m1genrept1(request,prtno,shopsec):
         'prtno':prtno,
         'dtl':obj2,
         'nav':nav,
+        'subnav':subnav,
         'obj3':obj3,
         'ip':get_client_ip(request),
         'roles' :rolelist,
