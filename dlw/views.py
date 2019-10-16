@@ -14,7 +14,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import empmast,M14M4,Cst,testc,navbar,empmast,PinionPressing,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7
+from dlw.models import empmast,M14M4,Cst,testc,navbar,empmast,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -5232,3 +5232,111 @@ def airbox_editsno(request):
         myval=list(MachiningAirBox.objects.filter(sno=mysno).values('bo_no','bo_date','airbox_sno','airbox_make','in_qty','out_qty','date','loco_type'))
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400) 
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def axlewheelpressing_section(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    obj2=AxleWheelPressing.objects.all().filter(dispatch_status=False).order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+       'subnav':subnav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       'mybo':mybo
+       }
+    if request.method=="POST":
+        
+        once=request.POST.get('once')
+        print(once)
+        submit=request.POST.get('submit')
+        if submit=='Save':
+
+            bo_no=request.POST.get('bo_no')
+            bo_date=request.POST.get('bo_date')
+            date=request.POST.get('date')
+            loco_type=request.POST.get('locos')
+            axle_no=request.POST.get('axle_no')
+            wheelno_de=request.POST.get('wheelno_de')
+            wheelno_nde=request.POST.get('wheelno_nde')
+            bullgear_no=request.POST.get('bullgear_no')
+            bullgear_make=request.POST.get('bullgear_make')
+            
+            if bo_no and bo_date and date and loco_type and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make:
+               obj=AxleWheelPressing.objects.create()
+               obj.bo_no=bo_no
+               obj.bo_date=bo_date
+               obj.date=date
+               obj.loco_type=loco_type
+               obj.axle_no=axle_no
+               obj.wheelno_de=wheelno_de
+               obj.wheelno_nde=wheelno_nde
+               obj.bullgear_no=bullg_no
+               obj.bullgear_make=bullg_make
+               obj.save()
+               messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+            obj2=AxleWheelPressing.objects.all().order_by('sno')
+            my_context={
+            'object':obj2,
+            }
+
+        if submit=='save':
+    
+            sno=int(request.POST.get('editsno'))
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
+            axle_no=request.POST.get('editaxle_no')
+            wheelno_de=request.POST.get('editwheelno_nde')
+            in_qty=request.POST.get('editin_qty')
+            out_qty=request.POST.get('editout_qty')
+            if bo_no and bo_date and date and loco_type and airbox_sno and airbox_make and in_qty and out_qty:
+               AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,airbox_sno=airbox_sno,airbox_make=airbox_make,in_qty=in_qty,out_qty=out_qty)
+               messages.success(request, 'Successfully Edited!')
+            else:
+               messages.error(request,"Please Enter S.No.!")
+
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            if sno and dislocos:
+                MachiningAirBox.objects.filter(sno=sno).update(dispatch_to=dislocos)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        if submit=='Delete':
+
+            first=int(request.POST.get('delsno'))
+            if first:
+                MachiningAirBox.objects.filter(sno=first).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        return HttpResponseRedirect("/axlewheelpressing_section/")
+
+    return render(request,"axlewheelpressing_section.html",my_context)
+
+def axlepress_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
