@@ -3396,7 +3396,9 @@ class AxleWheelMachining(models.Model):
   bore_diawhl=models.CharField(max_length=20,null=True)
   inspector_namewhl=models.CharField(max_length=20,null=True)
   datewhl=models.DateField(null=True)      
-
+  dispatch_status=models.BooleanField(default=False)
+  axlefitting_status=models.BooleanField(default=False) 
+  wheelfitting_status=models.BooleanField(default=False) 
 
 
 class M5SHEMP(models.Model):
@@ -3417,7 +3419,8 @@ class M5SHEMP(models.Model):
     total_time_taken = models.IntegerField(db_column='TOTAL_TIME_TAKEN', blank=True,null=True, default=0)
     in1 = models.CharField(db_column='IN1', max_length=10, blank=True,null=True) # Field name made lowercase.
     out = models.CharField(db_column='OUT', max_length=10, blank=True,null=True) # Field name made lowercase.
-
+    date = models.CharField(db_column='DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+    flag = models.CharField(db_column='FLAG', max_length=1, blank=True,null=True, default='A') # Field name made lowercase.
     class Meta:
         db_table = 'M5SHEMP'      
 
