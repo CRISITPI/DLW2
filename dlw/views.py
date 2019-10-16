@@ -14,7 +14,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import M14M4,Cst,testc,navbar,user_master,PinionPressing,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7
+from dlw.models import empmast,M14M4,Cst,testc,navbar,empmast,PinionPressing,roles,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -46,7 +46,7 @@ def login_request(request):
         user = authenticate(username=u_id, password=pwd)
         if user is not None:
             login(request, user)
-            currentuser=user_master.objects.filter(emp_id=user).first()
+            currentuser=empmast.objects.filter(empno=user).first()
             rolelist=currentuser.role.split(", ")
             if "Superuser" in rolelist:
                 return redirect('homeadmin')
@@ -98,7 +98,7 @@ def logout_request(request):
 @role_required(allowed_roles=["Superuser"])
 def homeadmin(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -125,7 +125,7 @@ def homeadmin(request):
 @role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge","2301","2302","Dy_CME/Plg","Dy_CME_Spares","Dy_CMgm","0401","0402","0403"])
 def homeuser(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -172,7 +172,7 @@ def dynamicnavbar(request,rolelist=[]):
 @role_required(allowed_roles=["Superuser"])
 def create(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -180,7 +180,7 @@ def create(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    emp=user_master.objects.filter(role__isnull=True)
+    emp=empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL') | empmast.objects.filter(role__isnull=True,dept_desc='CRIS_MU')
     availableroles=roles.objects.all().values('parent').distinct()
     if request.method == "POST":
         emp_id=request.POST.get('emp_id')
@@ -190,7 +190,7 @@ def create(request):
         sublevelrolelist= ", ".join(sublevelrole)
         password="dlw@123"
         if "Superuser" in sublevelrole and emp_id and role and sublevelrole:
-            employee=user_master.objects.filter(emp_id=emp_id).first()
+            employee=empmast.objects.filter(empno=emp_id).first()
             employee.role=sublevelrolelist
             employee.parent=role
             newuser = User.objects.create_user(username=emp_id, password=password,email=email)
@@ -201,7 +201,7 @@ def create(request):
             messages.success(request, 'Successfully Created!')
             return redirect('create')
         elif "Superuser" not in sublevelrole and emp_id and role and sublevelrole:
-            employee=user_master.objects.filter(emp_id=emp_id).first()
+            employee=empmast.objects.filter(empno=emp_id).first()
             employee.role=sublevelrolelist
             employee.parent=role
             newuser = User.objects.create_user(username=emp_id, password=password,email=email)
@@ -238,7 +238,7 @@ def create(request):
 @role_required(allowed_roles=["Superuser"])
 def update_permission(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -254,7 +254,7 @@ def update_permission(request):
         role=request.POST.get('role')
         sublevelrolelist= ", ".join(sublevelrole)
         if updateuser and sublevelrole:
-            usermasterupdate=user_master.objects.filter(emp_id=updateuser).first()
+            usermasterupdate=empmast.objects.filter(empno=updateuser).first()
             usermasterupdate.role=sublevelrolelist
             usermasterupdate.parent=role
             usermasterupdate.save()
@@ -280,11 +280,11 @@ def update_permission(request):
 @role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge"])
 def update_permission_incharge(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     parentrole=roles.objects.all().filter(role__in=rolelist).first()
     available=roles.objects.all().filter(parent=parentrole.parent).values('role').exclude(role__in=rolelist)
-    users=user_master.objects.all().filter(parent=parentrole.parent).values('emp_id').exclude(role__in=rolelist)
+    users=empmast.objects.all().filter(parent=parentrole.parent).values('empno').exclude(role__in=rolelist)
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
     for ob in nav:
@@ -296,7 +296,7 @@ def update_permission_incharge(request):
         sublevelrole=request.POST.getlist('sublevel')
         sublevelrolelist= ", ".join(sublevelrole)
         if updateuser and sublevelrole:
-            usermasterupdate=user_master.objects.filter(emp_id=updateuser).first()
+            usermasterupdate=empmast.objects.filter(empno=updateuser).first()
             usermasterupdate.role=sublevelrolelist
             usermasterupdate.save()
             messages.success(request, 'Successfully Updated!')
@@ -321,10 +321,10 @@ def update_permission_incharge(request):
 @role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge"])
 def update_emp_shift(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     parentrole=roles.objects.all().filter(role__in=rolelist).first()
-    users=user_master.objects.all().filter(parent=parentrole.parent).exclude(role__in=rolelist)
+    users=empmast.objects.all().filter(parent=parentrole.parent).exclude(role__in=rolelist)
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
     for ob in nav:
@@ -394,7 +394,7 @@ def shiftsave(request):
 @role_required(allowed_roles=["Superuser"])
 def update_emp_shift_admin(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -407,7 +407,7 @@ def update_emp_shift_admin(request):
         emp_shiftupdate=request.POST.get('emp_id')
         shift=request.POST.get('shift')
         if emp_shiftupdate and shift:
-            updateuser=user_master.objects.get(emp_id=emp_shiftupdate)
+            updateuser=empmast.objects.get(empno=emp_shiftupdate)
             if updateuser.shift_id is None:
                 updateuser.shift_id=shift
                 updateuser.validity_from=date.today()
@@ -450,17 +450,17 @@ def getEmpInfo(request):
     if request.method == "GET" and request.is_ajax():
         emp_id=request.GET.get('username')
         try:
-            emp=user_master.objects.filter(emp_id=emp_id).first()
-            if(emp.shop_id is None):
+            emp=empmast.objects.filter(empno=emp_id).first()
+            if(emp.parentshop is None):
                 uniqparent = list(roles.objects.all().values('parent').distinct())
             else:
-                uniqparent = list(roles.objects.all().values('parent').filter(parent = emp.shop_id).distinct())
+                uniqparent = list(roles.objects.all().values('parent').filter(parent = emp.parentshop).distinct())
         except:
             return JsonResponse({"success":False}, status=400)
         emp_info={
-            "name":emp.name,
-            "designation":emp.designation,
-            "department":emp.department,
+            "name":emp.empname,
+            "designation":emp.desig_longdesc,
+            "department":emp.dept_desc,
             "email":emp.email,
             "contactno":emp.contactno,
             "uniqparent" : uniqparent
@@ -484,11 +484,11 @@ def getauthempInfo(request):
         emp_id=request.GET.get('username')
         emp=User.objects.filter(username=emp_id).first()
         if emp:
-            usermaster=user_master.objects.filter(emp_id=emp).first()
+            usermaster=empmast.objects.filter(empno=emp).first()
             auth_info={
-                "name":usermaster.name,
-                "designation":usermaster.designation,
-                "department":usermaster.department,
+                "name":usermaster.empname,
+                "designation":usermaster.desig_longdesc,
+                "department":usermaster.dept_desc,
                 "contactno":usermaster.contactno
             }
             return JsonResponse({"auth_info":auth_info}, status=200)
@@ -535,9 +535,8 @@ def getPermissionInfo(request):
 def getshopempinfo(request):
     if request.method == "GET" and request.is_ajax():
         shop=request.GET.get('username')
-        usermaster=user_master.objects.filter(parent=shop).values('emp_id')
-        print(usermaster)
-        neededusers=list(usermaster.values('emp_id'))
+        usermaster=empmast.objects.filter(parent=shop).values('empno')
+        neededusers=list(usermaster.values('empno'))
         shopemp_info={
             "neededusers":neededusers,
             }
@@ -557,7 +556,7 @@ def getshopempinfo(request):
 @role_required(allowed_roles=["Superuser"])
 def delete_user(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -574,7 +573,7 @@ def delete_user(request):
         if not delete:
             messages.error(request,"Error, No user selected!")
             return redirect('delete_user')
-        usermasterupdate=user_master.objects.filter(emp_id=delete.username).first()
+        usermasterupdate=empmast.objects.filter(empno=delete.username).first()
         usermasterupdate.role=None
         usermasterupdate.parent=None
         delete.delete()
@@ -600,7 +599,7 @@ def delete_user(request):
 @role_required(allowed_roles=["Superuser"])
 def forget_password(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -659,7 +658,7 @@ class ChartData(APIView):
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m2view(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -667,7 +666,7 @@ def m2view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = user_master.objects.none()
+    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -714,7 +713,7 @@ def m2view(request):
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
             rolelist=usermaster.role.split(", ")
-            wo_nop = user_master.objects.none()
+            wo_nop = empmast.objects.none()
             shop_sec = request.POST.get('shop_sec')
             part_no = request.POST.get('part_nop')
             wo_no = request.POST.get('wo_no')
@@ -896,7 +895,7 @@ def m2getdoc_no(request):
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m4view(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -904,7 +903,7 @@ def m4view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = user_master.objects.none()
+    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -949,7 +948,7 @@ def m4view(request):
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
             rolelist=usermaster.role.split(", ")
-            wo_nop = user_master.objects.none()
+            wo_nop = empmast.objects.none()
             shop_sec = request.POST.get('shop_sec')
             part_no = request.POST.get('part_nop')
             wo_no = request.POST.get('wo_no')
@@ -1143,7 +1142,7 @@ def m4getdoc_no(request):
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m14view(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -1151,7 +1150,7 @@ def m14view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = user_master.objects.none()
+    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -1196,7 +1195,7 @@ def m14view(request):
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
             rolelist=usermaster.role.split(", ")
-            wo_nop = user_master.objects.none()
+            wo_nop = empmast.objects.none()
             shop_sec = request.POST.get('shop_sec')
             part_no = request.POST.get('part_nop')
             wo_no = request.POST.get('wo_no')
@@ -1409,7 +1408,7 @@ def bprodplan(request):
     ft2=ft+1
     ctp=str(ft)+'-'+str(ft2)
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -2003,7 +2002,7 @@ def bprodplan(request):
 def jpo(request):
     from .models import annual_production,jpo,namedgn
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -3697,7 +3696,7 @@ def dpo(request):
     # locodpo,barrelfirst
 
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -3806,7 +3805,7 @@ def dpo(request):
 def dpoinput(request):
     from .models import annual_production,barrelfirst
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -3919,9 +3918,9 @@ def getcumino(request):
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m1view(request):
-    pa_no = user_master.objects.none()
+    pa_no = empmast.objects.none()
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4050,7 +4049,7 @@ def m1genrept1(request,prtno,shopsec):
     d1 = today.strftime("%d/%m/%Y")
     # print("d1 =", d1)
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
@@ -4081,7 +4080,7 @@ def m1genrept1(request,prtno,shopsec):
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m5view(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4089,7 +4088,7 @@ def m5view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = user_master.objects.none()
+    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=M5SHEMP.objects.all().values('shopsec').distinct()
         tmp=[]
@@ -4325,7 +4324,7 @@ def m5getstaff_no(request):
 @role_required(allowed_roles=["Superuser","2301","2302"])
 def insert_machining_of_air_box(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4432,7 +4431,7 @@ def airbox_addbo(request):
 @role_required(allowed_roles=["Superuser","2301","2302"])
 def miscellaneous_section(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4535,7 +4534,7 @@ def miscell_addbo(request):
 @role_required(allowed_roles=["Superuser","2301","2302"])
 def axlewheelmachining_section(request): 
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4689,7 +4688,7 @@ def axle_addbo(request):
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m3view(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4697,7 +4696,7 @@ def m3view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = user_master.objects.none()
+    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -4746,7 +4745,7 @@ def m3view(request):
             doc_no = request.POST.get('doc_no')
             obj = Part.objects.filter(partno=part_no).values('drgno','des')
             objj = M2Doc.objects.filter(m2sln=doc_no,f_shopsec=shop_sec).values('qty','rm_partno','m4_no','scl_cl').distinct()
-            obj1 = user_master.objects.filter(role=shop_sec).values('name','department')
+            obj1 = empmast.objects.filter(role=shop_sec).values('empname','dept_desc')
             print(obj1)
             date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
             leng = obj.count()
@@ -4916,7 +4915,7 @@ def m3sub(request):
         doc_no = request.POST.get('doc_no')
         obj = Part.objects.filter(partno=part_no).values('drgno','des')
         objj = M2Doc.objects.filter(m2sln=doc_no,f_shopsec=shop_sec).values('qty','m4_no','scl_cl','rm_partno')
-        obj1 = user_master.objects.filter(role=shop_sec).values('name','department')
+        obj1 = empmast.objects.filter(role=shop_sec).values('empname','dept_desc')
         date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
         leng = obj.count()
         leng1 = obj1.count()
@@ -4947,7 +4946,7 @@ def m3sub(request):
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m7view(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4955,7 +4954,7 @@ def m7view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = user_master.objects.none()
+    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -5102,7 +5101,7 @@ def m7getpart_no(request):
 @role_required(allowed_roles=["Superuser","2301","2302"])
 def pinionpressing_section(request):
     cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()

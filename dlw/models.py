@@ -3340,6 +3340,10 @@ class empmast(models.Model):
     wau=models.CharField(max_length=50,null=True)
     inc_category=models.CharField(max_length=50,null=True)
     emp_inctype=models.CharField(max_length=50,null=True)
+    parent = models.CharField(max_length=50, blank=True, null=True)
+    role = models.CharField(max_length=500, blank=True, null=True)
+    email = models.CharField(max_length=50, blank=True, null=True)
+    contactno = models.CharField(max_length=10, blank=True, null=True)
 
 class MiscellSection(models.Model):
    sno=models.AutoField(primary_key=True)
@@ -3483,7 +3487,7 @@ class dpo(models.Model):
     copyto=models.TextField(null=True)
     summary=models.TextField(null=True)
 
-class dpoinput(models.Model):
+class dpoloco(models.Model):
     procedureno=models.CharField(max_length=50,null=True)
     loconame=models.CharField(max_length=50,null=True)
     locotype=models.CharField(max_length=50,null=True)
@@ -3520,4 +3524,19 @@ class M20new(models.Model):
 
     class Meta:
         db_table = 'M20new'
+
+class AxleWheelPressing(models.Model):
+    sno=models.AutoField(primary_key=True)
+    bo_no=models.CharField(max_length=20,null=True)
+    bo_date=models.CharField(max_length=20,null=True)
+    date=models.CharField(max_length=20,null=True)
+    loco_type=models.CharField(max_length=20,null=True)
+    axle_no=models.CharField(max_length=20,null=True)
+    wheelno_de=models.CharField(max_length=20,null=True)
+    wheelno_nde=models.CharField(max_length=20,null=True)
+    bullgear_make=models.CharField(max_length=20,null=True)   
+    bullgear_no=models.CharField(max_length=20,null=True)
+    inspector_name=models.CharField(max_length=20,null=True)
+    dispatch_to=models.CharField(max_length=50,null=True)
+    dispatch_status=models.BooleanField(default=False)
 
