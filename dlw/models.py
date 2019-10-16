@@ -3340,6 +3340,10 @@ class empmast(models.Model):
     wau=models.CharField(max_length=50,null=True)
     inc_category=models.CharField(max_length=50,null=True)
     emp_inctype=models.CharField(max_length=50,null=True)
+    parent = models.CharField(max_length=50, blank=True, null=True)
+    role = models.CharField(max_length=500, blank=True, null=True)
+    email = models.CharField(max_length=50, blank=True, null=True)
+    contactno = models.CharField(max_length=10, blank=True, null=True)
 
 class MiscellSection(models.Model):
    sno=models.AutoField(primary_key=True)
@@ -3351,6 +3355,7 @@ class MiscellSection(models.Model):
    date=models.CharField(max_length=20,null=True) 
    loco_type=models.CharField(max_length=20,null=True)
    dispatch_to=models.CharField(max_length=20,null=True)
+   dispatch_status = models.BooleanField(default=False)
 
 
 class AxleWheelMachining(models.Model):
@@ -3469,17 +3474,69 @@ class PinionPressing(models.Model):
     pinion_pressure=models.CharField(max_length=20,null=True)
     blue_match=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
+    dispatch_to=models.CharField(max_length=50,null=True)
+    dispatch_status=models.BooleanField(default=False)
 
 
 class dpo(models.Model):
+    procedureno=models.CharField(max_length=50,null=True)
+    locotype=models.CharField(max_length=50,null=True)
+    orderno=models.CharField(max_length=10,null=True)
+    subject=models.TextField(null=True)
+    reference=models.TextField(null=True)
+    copyto=models.TextField(null=True)
+    summary=models.TextField(null=True)
+
+class dpoloco(models.Model):
+    procedureno=models.CharField(max_length=50,null=True)
     loconame=models.CharField(max_length=50,null=True)
     locotype=models.CharField(max_length=50,null=True)
     endcumno=models.CharField(max_length=10,null=True)
     orderno=models.CharField(max_length=10,null=True)
 
 
-
 class subnavbar(models.Model):
     parentmenu=models.CharField(null=True,max_length=50)
     childmenu=models.CharField(null=True,max_length=50)
     link=models.CharField(null=True,max_length=50)
+
+class M7(models.Model):
+    shop_sec = models.CharField(max_length=100, blank=True, null=True)
+    staff_no = models.CharField(max_length=5, blank=True, null=True)
+    wo_no = models.CharField(max_length=100, blank=True, null=True)
+    month = models.CharField(max_length=5, blank=True, null=True)
+    name = models.CharField(max_length=40, blank=True, null=True)
+    part_no = models.CharField(max_length=8, blank=True, null=True)
+    cat = models.CharField(max_length=2, blank=True, null=True)
+    date = models.CharField(max_length=10, blank=True, null=True)
+    in1 = models.CharField(max_length=10, blank=True, null=True)
+    out = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        db_table = 'M7'
+
+class M20new(models.Model):
+    shop_sec = models.CharField(max_length=10, blank=True, null= True)
+    sno = models.CharField(max_length=4, blank = True, null = True)
+    name = models.CharField(max_length=50, blank=True, null= True)
+    ticketno = models.CharField(max_length=10, blank = True, null= True)
+    date = models.DateField(blank = True, null=True)
+
+    class Meta:
+        db_table = 'M20new'
+
+class AxleWheelPressing(models.Model):
+    sno=models.AutoField(primary_key=True)
+    bo_no=models.CharField(max_length=20,null=True)
+    bo_date=models.CharField(max_length=20,null=True)
+    date=models.CharField(max_length=20,null=True)
+    loco_type=models.CharField(max_length=20,null=True)
+    axle_no=models.CharField(max_length=20,null=True)
+    wheelno_de=models.CharField(max_length=20,null=True)
+    wheelno_nde=models.CharField(max_length=20,null=True)
+    bullgear_make=models.CharField(max_length=20,null=True)   
+    bullgear_no=models.CharField(max_length=20,null=True)
+    inspector_name=models.CharField(max_length=20,null=True)
+    dispatch_to=models.CharField(max_length=50,null=True)
+    dispatch_status=models.BooleanField(default=False)
+

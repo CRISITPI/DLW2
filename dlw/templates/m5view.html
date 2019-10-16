@@ -60,10 +60,10 @@
                     <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-            {% if lenm == 1 %}
+            {% if len == 1 %}
                 <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
             {% endif %}
-            {% if lenm > 1 %}
+            {% if len > 1 %}
             {% for role in roles %}
               <option>{{role}}</option>
             {% endfor %}
@@ -74,8 +74,8 @@
                     <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
                     <select class="form-control" id="wno" name="wo_no" required>
         <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
-        {% if lenm == 1 %}
-        {% for i in wo_nop %}
+        {% if len == 1 %}
+        {% for i in wo_no %}
           <option>{{i.batch_no}}</option>
         {% endfor %}
         {% endif %}
@@ -161,7 +161,7 @@
             {% for i in obj %}
             <tr>
               <td height="50">
-                <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
               </td> 
               <td height="50">
                   {{i.lc_no}}
@@ -180,7 +180,7 @@
                     {{i.des}}
                 </td>
                 <td height="50">
-                  <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+                  <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
               </td>     
                   
            
@@ -238,10 +238,10 @@
 {% for i in obj1 %}
 <tr>
         <td height="50">
-         <input type="text" id="qtyinsp" value="{{i.qty_insp}}" name="qtyinsp{{ forloop.counter }}"  title="Numeric Value">
+         <input type="text" id="qtyinsp" value="{{i.qty_insp}}" name="qtyinsp{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
        </td >
        <td height="50">
-           <input type="text" id="inspector" value="{{i.inspector}}" name="inspector{{ forloop.counter }}"  title="Numeric Value">
+           <input type="text" id="inspector" value="{{i.inspector}}" name="inspector{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
         </td>
        <td height="50">
          {% if i.date %}
@@ -251,11 +251,11 @@
          {% endif %}  
        </td>
        <td height="50">
-           <input type="text" id="remarks" value="{{i.remarks}}" name="remarks{{ forloop.counter }}" title="Character Value">
+           <input type="text" id="remarks" value="{{i.remarks}}" name="remarks{{ forloop.counter }}" pattern="[a-zA-Z]+" title="Character Value">
 
        </td>
        <td height="50">
-         <input type="text" id="worker" value="{{i.worker}}" name="worker{{ forloop.counter }}" title="Character Value">
+         <input type="text" id="worker" value="{{i.worker}}" name="worker{{ forloop.counter }}"  pattern="[a-zA-Z]+" title="Character Value">
 
        </td>
       
@@ -314,7 +314,7 @@
       
            </td> 
            <td>
-              <input type="text" id="ticket_no" value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}">
+              <input type="text" id="ticket_no" value="{{i.ticket_no}}" pattern="[0-9]+" name="ticket_no{{ forloop.counter }}">
         
         
             </td> 
@@ -326,12 +326,12 @@
              
               <td>
                  
-                  <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}" title="Character Value" >
+                  <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}" pattern="[0-9]+" title="Integer Value" >
           
                 </td> 
                 <td>
                     
-                    <input type="text" id="total_time_taken"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" >
+                    <input type="text" id="total_time_taken"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" pattern="[0-9]+" title="Integer Value" >
             
                   </td> 
               
