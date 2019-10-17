@@ -1,0 +1,171 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+table, td, th {  
+  
+  text-align: left;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 15px;
+}
+</style>
+
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+<br>
+    <center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{ message }}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </center>
+<br>
+<form action="{% url 'm27view' %}" method="POST"> {% csrf_token %}
+
+    <div class="container">
+        <table>
+            <tr>
+                 <td>
+                    <label for="br_no"><b>Work Order No./कार्य० आ० स०</b></label>
+                    <select class="form-control" id="" name="" required>
+                        <option value="" >--Select--</option>                          
+                    </select>
+                </td>
+                <td>
+                    <label for="sno"><b>Set/सेट</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>
+                <td>
+                    <label for="wk_ord_no"><b>No./संo</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>  
+                <td>
+                    <label for="wk_ord_no"><b>For special allowance/केवल विशेष भत्तों क लिय</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>                          
+            </tr>      
+            <tr>
+                 <td>
+                    <label for="br_no"><b>Part No./पार्ट सं</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>
+                <td>
+                    <label for="br_no"><b>Discription/विवरण </b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>
+                <td>
+                    <label for="br_no"><b>Operation No./ऑपरेशन सं</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>   
+                <td>
+                    <label for="br_no"><b>Reason For Special Allowance/विशेष भतो के लिय</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>                    
+            </tr>    
+            <tr>
+                 <td>
+                    <label for="br_no"><b>Operation Desc/ऑपरेशन विवरण</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>
+                <td>
+                    <label for="br_no"><b>Shop Section/शॉप सेक्शन</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>
+                <td>
+                    <label for="br_no"><b>Shop Incharge/शॉप प्रायेवेचक</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>      
+                 <td>
+                    <label for="br_no"><b>Quantity/मात्रा</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>                 
+            </tr>   
+            <tr>                 
+                <td>
+                    <label for="br_no"><b>Extra Time Per No./अतिरिक्त समय प्रति नग</b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>
+               
+                <td>
+                    <label for="br_no"><b>Total Extra Time/कूल अतिरिक्त समय </b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>                       
+            </tr>    
+    </table>
+    </div>
+    
+<center><hr style="width:70%; margin-right: 100px; margin-left: 100px;"></center>
+<br><br>
+        <table style="width:70%; margin-right: 100px; margin-left: 400px;">
+            <tr>
+                 <td>
+                    <label for="br_no"><b>Name/Staff No.</b></label>                   
+                </td>
+                <td>
+                    <label for="sno"><b>Senior Section Engg./एस०एस०इ०</b></label>                    
+                </td>                 
+                <td>
+                    <label for="wk_ord_no"><b>ह०दर० निर्धारण  </b></label>                    
+                </td>                          
+            </tr>  
+        </table>    
+</form>
+
+{% endblock content %}
+

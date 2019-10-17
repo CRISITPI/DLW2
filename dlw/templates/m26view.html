@@ -1,0 +1,197 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<style>
+table, td, th {  
+  
+  text-align: left;
+}
+
+table {
+  border-collapse: collapse;
+  width: 90%;
+}
+
+th, td {
+  padding: 15px;
+}
+</style>
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+<br>
+<br>
+<h3 align="center">अपरोक्ष मजदूरों का समय पत्रक</h3>
+<h4 align="center">Time Sheet of indirect Labour</h4>
+<div> <h6 align="left" style="margin-left: 100px;">डी० रे० का/D.L.W.</h6> <h6 align="right" style="margin-right: 100px;">एम-26/M.-26 </h6></div><br>
+
+<div class="container">
+        <table >
+            <tr>
+                 <td>
+                    <label for="br_no"><b>महीनो के लिय/For The Month Of</b></label>
+                    <select class="form-control" id="" name="" required>
+                        <option value="" >--Select--</option>  
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="August">August</option>                          
+                        <option value="September">September</option>
+                        <option value="October">October</option>
+                        <option value="November">November</option>
+                        <option value="December">December</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="sno"><b>शाप/Shop</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+                                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                            {% if lenm == 1 %}
+                                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                            {% endif %}
+                            {% if lenm > 1 %}
+                            {% for role in roles %}
+                            <option>{{role}}</option>
+                            {% endfor %}
+                            {% endif %}                         
+                    </select>
+                </td>
+                <td>
+                    <label for="br_no"><b>कार्यादेश सँ/ Chargeable to W.O. NO. 01/003/ </b></label>
+                    <input type="text" class="form-control" name="" id="">
+                </td>
+
+             </tr>
+           </table>
+</div>                
+</h6>
+<hr style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
+<center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{ message }}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </center>
+<br>
+<form action="{% url 'm26view' %}" method="POST"> {% csrf_token %}
+    <div class="w3-container">
+  
+
+  <table class="w3-table-all" style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
+    <thead>
+      <tr class="w3-light-grey">
+        <th>Staff No./कर्मचारी सं</th>
+        <th>Category/वर्ग सं</th>
+        <th>Total Hrs./कुल घंटे</th>
+        <th></th>
+        <th>Staff No./कर्मचारी सं</th>
+        <th>Category/वर्ग सं</th>
+        <th>Total Hrs./कुल घंटे</th>
+      </tr>
+    </thead>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr><tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    
+  </table>
+  <h6 align="right" style="margin-right: 100px;">................................................................... </h6>
+  <h6 align="right" style="margin-right: 100px;">समय पाल के हस्ताछर </h6>
+  <h6 align="right" style="margin-right: 100px;"> Signature of Time Keepar</h6>
+
+</div>
+
+    
+</form>
+
+
+{% endblock content %}
+
