@@ -5515,3 +5515,101 @@ def m20getstaffno(request):
         print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+
+def m27view(request):
+    pa_no = empmast.objects.none()
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav
+        }
+    elif(len(rolelist)==1):
+        # print("in else")
+        for i in range(0,len(rolelist)):
+            req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            pa_no =pa_no | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'pa_no':pa_no,
+            'roles' :rolelist,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+        }
+    return render(request,'m27view.html',context)    
+
+def m18view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    context={
+        'nav':nav,
+        'subnav':subnav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
+    }
+    return render(request,'m18view.html',context)  
+	
+	
+def m26view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=M5SHEMP.objects.all().values('shopsec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    return render(request,'m26view.html',context)  
+	
