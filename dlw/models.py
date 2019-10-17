@@ -3413,17 +3413,17 @@ class M5SHEMP(models.Model):
     status = models.CharField(db_column='STATUS', max_length=10, blank=True, null=True)  # Field name made lowercase.
     remark = models.CharField(db_column='REMARK', max_length=1000, blank=True, null=True)  # Field name made lowercase.
     updt_by = models.CharField(db_column='UPDT_BY', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    updt_date = models.DateField(db_column='UPDT_DATE', blank=True, null=True)  # Field name made lowercase.
+    updt_date = models.CharField(db_column='UPDT_DATE',max_length=20, blank=True, null=True)  # Field name made lowercase.
     rec_ind = models.CharField(db_column='REC_IND', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    ticket_no = models.IntegerField(db_column='TICKET_NO',  blank=True, null=True, default=0)  # Field name made lowercase.
+    ticket_no = models.CharField(db_column='TICKET_NO',max_length=20,  blank=True, null=True, default=0)  # Field name made lowercase.
     month_hrs = models.CharField(db_column='MONTH_HRS', max_length=10, blank=True,null=True,default=0) # Field name made lowercase0.
-    total_time_taken = models.IntegerField(db_column='TOTAL_TIME_TAKEN', blank=True,null=True, default=0)
     in1 = models.CharField(db_column='IN1', max_length=10, blank=True,null=True) # Field name made lowercase.
     out = models.CharField(db_column='OUT', max_length=10, blank=True,null=True) # Field name made lowercase.
+    total_time_taken = models.CharField(db_column='TOTAL_TIME_TAKEN',max_length=20, blank=True,null=True, default=0)
     date = models.CharField(db_column='DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
     flag = models.CharField(db_column='FLAG', max_length=1, blank=True,null=True, default='A') # Field name made lowercase.
     class Meta:
-        db_table = 'M5SHEMP'      
+        db_table = 'M5SHEMP'
 
 class M5DOCnew(models.Model):   
     scl_cl = models.CharField(db_column='SCL_CL', max_length=1, blank=True, null=True)  # Field name made lowercase.
