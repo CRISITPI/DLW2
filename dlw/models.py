@@ -3520,10 +3520,11 @@ class M7(models.Model):
 
 class M20new(models.Model):
     shop_sec = models.CharField(max_length=10, blank=True, null= True)
-    sno = models.CharField(max_length=4, blank = True, null = True)
+    staff_no = models.CharField(max_length=10, blank=True, null = True)
+    lv_date = models.DateField(blank= True, null= True)
     name = models.CharField(max_length=50, blank=True, null= True)
     ticketno = models.CharField(max_length=10, blank = True, null= True)
-    date = models.DateField(blank = True, null=True)
+    alt_date = models.DateField(blank = True, null=True)
 
     class Meta:
         db_table = 'M20new'
