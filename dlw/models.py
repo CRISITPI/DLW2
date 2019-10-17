@@ -3489,6 +3489,7 @@ class dpo(models.Model):
     reference=models.TextField(null=True)
     copyto=models.TextField(null=True)
     summary=models.TextField(null=True)
+    date=models.CharField(null=True,max_length=20)
 
 class dpoloco(models.Model):
     procedureno=models.CharField(max_length=50,null=True,default='0')
@@ -3547,3 +3548,15 @@ class AxleWheelPressing(models.Model):
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
 
+
+class M11doc(models.Model):    
+    shopsec=models.CharField(db_column='shopsec',null=True,max_length=50)
+    staff_no=models.CharField(db_column='staffno',null=True,max_length=50)
+    name=models.CharField(db_column='name',null=True,max_length=50)
+    month=models.CharField(db_column='month',null=True,max_length=50)
+    date=models.CharField(db_column='date',null=True,max_length=50)
+    in1=models.CharField(db_column='in',null=True,max_length=50)
+    out=models.CharField(db_column='out',null=True,max_length=50)
+    tot=models.CharField(db_column='total_time',null=True,max_length=50)
+    detail_no=models.CharField(db_column='IT_reasons',null=True,max_length=70)
+    idle_time=models.CharField(db_column='idle_time',null=True,max_length=50)
