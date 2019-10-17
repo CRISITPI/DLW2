@@ -1,5 +1,4 @@
-{% extends 'base.html' %}
-
+{% extends 'base.html' %} 
 {% block content %}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -64,7 +63,7 @@
                 <tr>
                         <td>
                             <label for="mon"><b>MONTH/माह :</b></label>
-                            <select id="mon" name="mon" class="form-control">
+                            <select id="mon" name="mon">
                                     <option selected disabled>SELECT MONTH</option>
                                     <option  value="JAN">JAN</option>
                                     <option  value="FEB">FEB</option>
@@ -84,11 +83,11 @@
                             <label for="sno"><b>SHOP SECTION/शॉप अधी. :</b></label>
                             <select class="form-control" id="shop_sec" name="shop_sec" required>
                             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-                        {% if lenm == 1 %}
+                        {% if len == 1 %}
                             <option selected readomly>{% for role in roles %}{{role}}{% endfor %}</option>
                             {{role}}
                         {% endif %}
-                        {% if lenm > 1 %}
+                        {% if len > 1 %}
                         {% for role in roles %}
                         {{role}}
                             <option>{{role}}</option>
@@ -100,8 +99,8 @@
                             <label for="wk_ord_no"><b>W.O.NO/कार्यादेश सं. :</b></label>
                             <select class="form-control" id="wno" name="wo_no" required>
                             <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
-                    {% if lenm == 1 %}
-                    {% for i in wo_nop %}
+                    {% if len == 1 %}
+                    {% for i in wo_no %}
                     <option>{{i.bo_no}}</option>
                     {% endfor %}
                     {% endif %}
@@ -130,6 +129,7 @@
 
     </div>
 <br><br> {% if sub == 1 %}
+<div id="print" style="align:center" >
 <input type="hidden" name="len" value="{{len}}">
 <table align="center">  
     <tr>
@@ -166,7 +166,7 @@
         {% endfor %}
     </tr>  
         
-    {% endif %}
+    
             
     
 </table> 
@@ -215,16 +215,17 @@
                
     {% endfor %}
 
- 
-
-
-            <!-- <td>{{mon}}</td> -->
-            
-     
+   
 </table>
+
+
+
 <center>
     <input type="submit" name="proceed" value="Submit">
+    <input type="button" onclick="printDiv()" value="Print">
 </center> 
+</div>
+{% endif %}
 
 
 </form>
@@ -345,6 +346,33 @@ if(event.keyCode===13){
     event.preventDefault();
 }
 })
+
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M2(ROUTE CARD) Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+
+
+}
+
 </script>    
 {% endblock content %}        
     

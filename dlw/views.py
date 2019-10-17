@@ -14,7 +14,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import empmast,M14M4,Cst,testc,navbar,empmast,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7
+from dlw.models import empmast,M14M4,Cst,testc,navbar,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -5433,10 +5433,7 @@ def M20view(request):
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
-            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-            # wo_nop =wo_nop | req
-
-            w1 = dlw_empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
 
@@ -5460,6 +5457,52 @@ def M20view(request):
             'usermaster':usermaster,
             'roles' :rolelist
         }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Add':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            staffno=request.POST.get('staff_no')
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist
+                }
     return render(request,'M20view.html',context)
 
 

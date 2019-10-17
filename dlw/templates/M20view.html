@@ -1,18 +1,20 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+{% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 
 
 <title>jQuery UI Datepicker - Default functionality</title>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="/resources/demos/style.css">
+<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
+<!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
 <style>
+   @import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
     input[type=text],
     select {
         width: 100%;
@@ -62,20 +64,35 @@
 </style>
 <br>
 <br>
+<form action="{% url 'M20view' %}" method="POST" > {% csrf_token %}
 <h3 align="center">कर्मशाला कर्मचारियों की रविवार की बुकिंग </h3>
 <h4 align="center">SUNDAY BOOKING OF WORKSHOP STAFF</h4>
 <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> 
 <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम-20/M.-20 </h6></div><br>
 <div class="container">
 <table class="table">
+  <tr>
+      <center>
+          {% if messages %}
+          <ul class="messages">
+              {% for message in messages %}
+              <font size="3">
+                  <li>
+                      {{ message }}
+                  </li>
+              </font>
+              {% endfor %}
+          </ul>
+          {% endif %}
+  </center>
+  </tr>
     <tr>
         <td>
-  
-          <h6 align="left" style="margin-left: 100px;">शाप/Shop
+            <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
 
-          <select class="form-control" id="shop_sec" name="shop_sec" required style="width: 150px;">
+          <select class="form-control ll" id="shop_sec" name="shop_sec" required style="width: 150px;">
    
-          <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+          <option id="op_shop" selected disabled hidden>Shop Section</option>
   
           {% if lenm == 1 %}
             {% for role in roles %}
@@ -89,65 +106,43 @@
           {% endif %}
 
             </select>
-            </h6>
           </td>
         <td>
-          <h6 align="left" style="margin-left: 100px;">Staff No/ स्टाफ न 
+            <label for="sno"><b>Staff No/ स्टाफ न .:</b></label>
 
-          <select class="form-control" id="staff_no" name="staff_no" required style="width: 150px;">
+          <select class="form-control ll" id="staff_no" name="staff_no" required style="width: 150px;">
        
-          <option id="staff_no" selected disabled hidden>Select Staff Number</option>
+          <option id="staff_no" selected disabled hidden>Staff Number</option>
     
           </select>
-          </h6>
         </td>
         <td>
-          <h6 align="left" style="margin-left: 100px;">Date/ दिनांक 
+            <label for="sno"><b>Date/ दिनांक.:</b></label>
             <script>
               $( function() {
-                $( "#datepicker" ).datepicker({
+                $( "#datepicker2" ).datepicker({
                   dateFormat:'dd-mm-yy'
                 }).val;
               } );
             </script>
-          <input type="text" id="datepicker" style="width: 150px;" readonly>
- 
-          
-            </h6>
+          <input type="text" id="datepicker2" style="width: 150px;" name="altdate"  placeholder="dd-mm-yyyy" readonly/>
           </td>
         </tr>
     </table>
 
-    <input style="margin: auto;display: block;" type="submit" value="Proceed" name="proceed" id="myproceed"/>   <br>
+    <input style="margin: auto;display: block;" type="submit" value="Add" name="proceed" id="myproceed"/>   <br>
 <h6 style="width:90%; margin-right: 100px; margin-left: 100px;" align="center"></h6>
 <br>
-
-<center>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <font size="3">
-                <li>
-                    {{ message }}
-                </li>
-            </font>
-            {% endfor %}
-        </ul>
-        {% endif %}
-</center>
 <br>
 <br>
-<form action="{% url 'M20view' %}" method="POST" > {% csrf_token %}
+{% if sub == 1 %}
     <h6 align="center">Particulars of Staff booked to work on Sunday</h6>
     <h6 align="center">रविवार को काम करने के लिए बुक किये गए कर्मचारियों  का विवरण </h6>
     <div class="w3-container">
-  
-        
-  
-  <table class="w3-table-all" style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
+  <table class="table table-stripped" style="width:90%; margin-right: 100px; margin-left: 100px;" align="center" id="customers">
     <thead>
       <tr class="w3-light-grey">
-        <th>Sl No. क्रम स.</th>
+        <!-- <th>Sl No. क्रम स.</th> -->
         <th>Name नाम</th>
         <th>Ticket No.  टिकट स.</th>
         <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>
@@ -155,7 +150,7 @@
       </tr>
     </thead>
     <tr>
-      <td>Auto Generated</td>
+      <!-- <td>Auto Generated</td> -->
       <td>Workshop emp name</td>
       <td>Random ticket number</td>
       <td>
@@ -167,7 +162,7 @@
               }).val;
             } );
           </script>
-        <input type="text" id="datepicker2" style="width: 150px;" readonly>
+        <input type="text" id="datepicker2" style="width: 150px;" name="leavedate" readonly>
 
         
           
@@ -178,12 +173,8 @@
     
   </table>
 
-    </div>
- 
-
-
-
-    
+    </div>  
+    {% endif %}
 </form>
 <br>
 
