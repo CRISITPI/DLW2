@@ -3482,7 +3482,7 @@ class PinionPressing(models.Model):
 
 
 class dpo(models.Model):
-    procedureno=models.CharField(max_length=50,null=True)
+    procedureno=models.CharField(max_length=50,null=True,default='0')
     locotype=models.CharField(max_length=50,null=True)
     orderno=models.CharField(max_length=10,null=True)
     subject=models.TextField(null=True)
@@ -3491,10 +3491,13 @@ class dpo(models.Model):
     summary=models.TextField(null=True)
 
 class dpoloco(models.Model):
-    procedureno=models.CharField(max_length=50,null=True)
+    procedureno=models.CharField(max_length=50,null=True,default='0')
     loconame=models.CharField(max_length=50,null=True)
     locotype=models.CharField(max_length=50,null=True)
-    endcumno=models.CharField(max_length=10,null=True)
+    # endcumno=models.CharField(max_length=10,null=True)
+    batchordno=models.CharField(max_length=50,null=True)
+    qtybatch=models.CharField(max_length=50,null=True)
+    cumino=models.CharField(max_length=50,null=True)
     orderno=models.CharField(max_length=10,null=True)
 
 
