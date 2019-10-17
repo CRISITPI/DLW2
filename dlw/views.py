@@ -3858,8 +3858,20 @@ def dpoinput(request):
         } 
 
         if submit=='Save':
+            sub=request.POST.get('sub')
+            refn=request.POST.get('refn')
+            summary=request.POST.get('summary')
+            copyto=request.POST.get('copyto')
+            datee=request.POST.get('xTime')
+            
+            
             locot=request.POST.get('loco')
             ordno=request.POST.get('barl2')
+            totbaches=request.POST.get('totbaches')
+         
+            
+            print("locot",locot)
+            print("ordno",ordno)
             temp1="loconame"
             idname=[]
             lcname=[]
@@ -3872,7 +3884,17 @@ def dpoinput(request):
                 for temp1 in idname:
                     if key==temp1:
                         lcname.append(request.POST[key])
-            print(lcname)
+            
+            print("lcname",lcname)
+            
+            
+            for i in range(1,int(totbaches)+1):
+               bno=request.POST.get("bno"+str(i))
+               qty=request.POST.get("qty"+str(i))
+               typ=request.POST.get("typ"+str(i))               
+               cumino=request.POST.get("cumino"+str(i))
+            
+               
             context={
             'nav':nav,
             'subnav':subnav,
@@ -3888,15 +3910,20 @@ def dpoinput(request):
 
 def getcumino(request):
     from .models import dpo
+    print("dpogetcumi")
     if request.method == "GET" and request.is_ajax():
+        print("in")
         cmno=0
        
         loco=request.GET.get('loco')
         locot=request.GET.get('locot')
         ordno=request.GET.get('ordno')
         try:
-            emp=dpo.objects.filter(loconame=loco,locotype=locot,orderno=ordno).first()
+            print("hell")
+            emp=dpo.objects.filter(loconame=loco,locotype=locot,orderno=ordno).exists()
+            print("emp",emp)
         except:
+            print("hello")
             return JsonResponse({"success":False}, status=400)
        
         if emp is not None:

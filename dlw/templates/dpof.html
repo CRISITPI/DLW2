@@ -91,6 +91,7 @@
             <input type="hidden" name="b1" value={{b1}} id="b1"/>
             <input type="hidden" name="b2" value={{b2}} id="b2"/>
             <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
+            <input type="hidden" name="totbaches" value=0 id="totbaches" />
 
 
 {% if add == 1 %}
@@ -136,6 +137,8 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 <script language="javascript">
 var j=0;
 var aj=0;
@@ -185,6 +188,28 @@ var ordno=document.getElementById('b2').value;
 });
 
 $(document).ready(function(){
+    $(document).on("click", ".delete", function(){
+
+//var user_choice = window.confirm('Are you sure you want to delete the Record??');
+
+//if(user_choice==true) {
+
+$(this).parents("tr").remove();
+    $(".add-new").removeAttr("disabled");
+// window.location='your url';  // you can also use element.submit() if your input type='submit' 
+
+
+//} else {
+
+
+//return false;
+
+
+//}
+
+
+        
+    });
 
 
     $("#addloco").click(function(e){
@@ -234,7 +259,7 @@ $(document).ready(function(){
         $('#items').append(happ);
 
         }
-var htAppend='<div><table id="customers"><tr>'+'<td>'+bn+'</td>'+'<td><input type="text" id="'+qtyname+'" name="'+qtyname+'" pattern="[0-9]*" title="numbers only" onkeyup="myFunction(this)"> </td>'+'<td>'+loconame+'</td>'+'<td><input type="text" id='+cuminoname+' name='+cuminoname+'></td>';
+var htAppend='<div><table id="customers"><tr>'+'<td>'+bn+'</td><input type="hidden" id="'+bnoname+'" name="'+bnoname+'" value="'+bn+'"  >'+'<td><input type="text" id="'+qtyname+'" name="'+qtyname+'" pattern="[0-9]*" title="numbers only" onkeyup="myFunction(this)"> </td>'+'<td>'+loconame+'</td><input type="hidden" id="'+typname+'" name="'+typname+'" value="'+loconame+'"  >'+'<td><input type="text" id='+cuminoname+' name='+cuminoname+'></td>';
        
 
      $("#totdiv").remove();
@@ -260,6 +285,7 @@ var htAppend='<div><table id="customers"><tr>'+'<td>'+bn+'</td>'+'<td><input typ
      
  htAppend=htAppend+'</tr></table>'+'</div>';
      $('#items').append(htAppend);
+     document.getElementById("totbaches").value=j;
 
     });
     $('body').on('click','#del',function(e){
