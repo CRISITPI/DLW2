@@ -31,6 +31,7 @@ from dlw.decorators import role_required
 from django.db.models import Max
 from django.http import HttpResponseRedirect
 import math
+import random
 # Create your views here.
 #
 #
@@ -4210,7 +4211,7 @@ def m5view(request):
             obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
             obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
             print(obj5)
-            ticket= randint(1111,9999)
+            ticket= random.randint(1111,9999)
             leng = obj.count()
             leng1=obj1.count()
             leng2=obj2.count()
