@@ -70,7 +70,7 @@ th, td {
 <h3 align="center">अपरोक्ष मजदूरों का समय पत्रक</h3>
 <h4 align="center">Time Sheet of indirect Labour</h4>
 <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का/D.L.W.</h6> <h6 align="right" style="margin-right: 100px;">एम-26/M.-26 </h6></div><br>
-
+<form action="{% url 'm26view' %}" method="POST"> {% csrf_token %}
 <div class="container">
         <table >
             <tr>
@@ -94,17 +94,17 @@ th, td {
                 </td>
                 <td>
                     <label for="sno"><b>शाप/Shop</b></label>
-                    <select class="form-control" id="shop_sec" name="shop_sec" required>
-                                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-                            {% if lenm == 1 %}
-                                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
-                            {% endif %}
-                            {% if lenm > 1 %}
-                            {% for role in roles %}
+                      <select class="form-control" id="shop_sec" name="shop_sec" required>
+                          <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                          {% if lenm == 1 %}
+                              <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                          {% endif %}
+                          {% if lenm > 1 %}
+                          {% for role in roles %}
                             <option>{{role}}</option>
-                            {% endfor %}
-                            {% endif %}                         
-                    </select>
+                          {% endfor %}
+                          {% endif %}
+                      </select>
                 </td>
                 <td>
                     <label for="br_no"><b>कार्यादेश सँ/ Chargeable to W.O. NO. 01/003/ </b></label>
@@ -130,7 +130,7 @@ th, td {
         {% endif %}
     </center>
 <br>
-<form action="{% url 'm26view' %}" method="POST"> {% csrf_token %}
+
     <div class="w3-container">
   
 
@@ -186,12 +186,10 @@ th, td {
   <h6 align="right" style="margin-right: 100px;">................................................................... </h6>
   <h6 align="right" style="margin-right: 100px;">समय पाल के हस्ताछर </h6>
   <h6 align="right" style="margin-right: 100px;"> Signature of Time Keepar</h6>
-
-</div>
-
-    
+</div>   
 </form>
 
+             
 
 {% endblock content %}
 
