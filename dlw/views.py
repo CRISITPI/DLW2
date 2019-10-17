@@ -4916,7 +4916,7 @@ def m3getwono(request):
         shop_sec = request.GET.get('shop_sec')
         print(shop_sec)
         wo_no = list(M2Doc.objects.filter(f_shopsec = shop_sec).values('batch_no').distinct())
-        print(wo_no)
+        # print(wo_no)
         return JsonResponse(wo_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 

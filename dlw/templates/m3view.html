@@ -62,7 +62,9 @@
         <table class="table">
             <tr>
                 <td>
-                    <label for="sno"><b>Shop Section NO/शॉप अधी. :</b></label>
+                    <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>
+                  
+
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
             {% if lenm == 1 %}
@@ -78,7 +80,7 @@
         </select>
                 </td>
                 <td>
-                    <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
+                    <label for="wk_ord_no"><b>WORK ORDER NO:/कार्यादेश सं. :</b></label>
                     <select class="form-control" id="wno" name="wo_no" required>
         <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
         {% if lenm == 1 %}
@@ -97,7 +99,7 @@
                 </td>
 
                 <td>
-                    <label for="apn"><b>Assembly NO/एसेम्ब्ली संख्या:</b></label>
+                    <label for="apn"><b>ASSEMBLY NO/एसेम्ब्ली संख्या:</b></label>
                     <select class="form-control" id="assm_no" name="assm_no" required>
             <option id="op_assm" selected disabled hidden>Select Assembly No</option>
         </select>
@@ -105,14 +107,14 @@
             </tr>
             <tr>
                 <td>
-                    <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
+                    <label for="partno"><b>PART NO:/पार्ट सं.:</b></label>
                     <select class="form-control" id="part_nop" name="part_nop" required>
             <option id="op_part" selected disabled hidden>Select Part No</option>
         </select>
                 </td>
                 
                 <td>
-                    <label for="docno"><b>Document NO:/प्रलेख सं.:</b></label>
+                    <label for="docno"><b>DOCUMENT NO:/प्रलेख सं.:</b></label>
                     <select class="form-control" id="doc_no" name="doc_no" required>
             <option id="op_doc" selected disabled hidden>Select Document No</option>
         </select>
@@ -162,41 +164,7 @@
 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
     <table border="2" align="center">
-        <!-- <tr>
-            <th>Cut/Sheer Dye NO:</th>
-            <th>Loco To:</th>
-            <th>Loco From:</th>
-            <th>Raw Material Description:</th>
-            <th>Raw Material Length:</th>
-            <th>Raw Material Weight:</th>
-            <th>Unit:</th>
-            
-        </tr>
-        {% for i in obj1 %}
-        <tr>
-            <td>
-                {{i.cutdia_no}}
-            </td>
-            <td>
-                {{i.l_to}}
-            </td>
-            <td>
-                {{i.l_fr}}
-            </td>
-            <td>
-                {{i.rm_desc}}
-            </td>
-            <td>
-                {{i.rm_len}}
-            </td>
-            <td>
-                {{i.wt_rm}}
-            </td>
-            <td>
-                {{i.rm_unit}}
-            </td>
-        </tr>
-        {% endfor %} -->
+        
         <tr>
             <th>Ordered Qty:</th>
             <th>Raw material Part No:</th>
@@ -238,12 +206,7 @@
             </td>
         
         {% endfor %}
-        <!-- <tr>
-        <th>Shop Owner:</th>
-        <th>Store Keeper:</th> -->
-            
-            
-        <!-- </tr> -->
+        
          
         
         {% for i in obj1 %}
@@ -258,22 +221,15 @@
         
         </tr>
         {% endfor %}
-<!-- <td>
-                <input type="text" id="" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
-            </td>
-            <td>
-                <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
-            </td>
-        </tr>  -->
+
         
          
     </table>
     <br><br>
-    <!-- <center>
-        <input type="submit" name="proceed" value="Submit">
-    </center> -->
+    SS
     <br><br>
-     {% endif %}
+    {% endif %}
+    <center><input type="submit" onclick="printDiv()" value="print"></center>
 
 </form>
 
@@ -459,6 +415,28 @@ if(event.keyCode===13){
     event.preventDefault();
 }
 })
+
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M2(ROUTE CARD) Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
 </script>    
 {% endblock content %} 
 
