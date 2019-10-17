@@ -2,6 +2,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 
+
 <style>
   input[type=text],
   select {
@@ -115,6 +116,7 @@
 
 
         </table>
+        <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
         
         <center><input type="submit" value="Proceed" id="myproceed" name="proceed" hidden  /></center>
     </div>
@@ -161,7 +163,7 @@
             {% for i in obj %}
             <tr>
               <td height="50">
-                <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
+                <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
               </td> 
               <td height="50">
                   {{i.lc_no}}
@@ -180,7 +182,7 @@
                     {{i.des}}
                 </td>
                 <td height="50">
-                  <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
+                  <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
               </td>     
                   
            
@@ -237,28 +239,29 @@
 </tr>
 {% for i in obj1 %}
 <tr>
-        <td height="50">
-         <input type="text" id="qtyinsp" value="{{i.qty_insp}}" name="qtyinsp{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
-       </td >
-       <td height="50">
-           <input type="text" id="inspector" value="{{i.inspector}}" name="inspector{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
-        </td>
-       <td height="50">
-         {% if i.date %}
-           <input type="date" id="date"  class="myinp" value="{{i.date}}" name="date{{ forloop.counter }}"  >
-           {% else %}
-           <input type="date" id="date"  class="myinp" value="0" name="date{{ forloop.counter }}">
-         {% endif %}  
-       </td>
-       <td height="50">
-           <input type="text" id="remarks" value="{{i.remarks}}" name="remarks{{ forloop.counter }}" pattern="[a-zA-Z]+" title="Character Value">
+  <td height="50">
+    <input type="text" id="qtyinsp" value="{{i.qty_insp}}" name="qtyinsp{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
+  </td >
+  <td height="50">
+      <input type="text" id="inspector" value="{{i.inspector}}" name="inspector{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value">
+   </td>
+  <td height="50">
+    {% if i.date %}
+      <input type="date" id="date"  class="myinp" value="{{i.date}}" name="date{{ forloop.counter }}"  >
+      {% else %}
+      <input type="date" id="date"  class="myinp" value="0" name="date{{ forloop.counter }}">
+    {% endif %}  
+  </td>
+  <td height="50">
+      <input type="text" id="remarks" value="{{i.remarks}}" name="remarks{{ forloop.counter }}" pattern="[a-zA-Z]*" title="Character Value">
 
-       </td>
-       <td height="50">
-         <input type="text" id="worker" value="{{i.worker}}" name="worker{{ forloop.counter }}"  pattern="[a-zA-Z]+" title="Character Value">
+  </td>
+  
+  <td height="50">
+      <input type="text" id="worker" value="{{obj5.name}}" name="worker{{ forloop.counter }}" pattern="[a-zA-Z]*" title="Character Value">
 
-       </td>
-      
+  </td>
+ 
 </tr>
 {% endfor %}
 
@@ -266,29 +269,47 @@
 <br><br>
 
 <div class="container" style="width: 100%">
- {% for i in obj4 %}
+  
+ 
  &nbsp;&nbsp;&nbsp;&nbsp;
-<h5><b>SERIAL No: </b> {{i.shopsec}}</h5>
+<h5><b>SERIAL No: </b> {{obj5.shopsec}}</h5>
 
-<h5><b>STAFF NO:</b> {{i.staff_no}}
-  <input type="hidden" id="staff_o" name="staff_no{{ forloop.counter }}" value="{{i.staff_no}}">
-  </h5>
+<h5><b>STAFF NO:</b> {{obj5.staff_no}}
+  {% for i in obj4 %}
+  <input type="hidden" id="staff_no" name="staff_no{{ forloop.counter }}" value="{{i.staff_no}}">
+  {% endfor %}  </h5>
 
 
-<h5><b>TICKET NO: </b> {{i.ticket_no}}</b></h5>
+<h5><b>TICKET NO: </b>
+  
+      {{obj5.ticket_no}}
 
-<h5><b>NAME: </b>{{i.name}}</h5>
-{% endfor %}
+      </b></h5>
+
+
+<h5><b>NAME: </b>{{obj5.name}}
+  {% for i in obj4 %}
+  <input type="hidden" id="name" name="name{{ forloop.counter }}" value="{{i.name}}">
+  {% endfor %}
+</h5>
+
+<h5><b>STATUS: </b>{{obj5.flag}}
+ 
+</h5>
+
 </div>
+
 
 <table border="2" align="center" >
     <tr>
+      <th height="30">Date</th>
       <th height="30">IN</th>
        <th  height="30">OUT</th>
        <th height="30">TICKET NO</th>
        <th height="30">CATEGORY:</th>
        <th height="30">MONTH HRS</th>
        <th height="30">TOTAL TIME TAKEN</th>
+      
        
        
       
@@ -297,49 +318,69 @@
    
     {% for i in obj4 %}
     <tr>
+        <td height="50">
+            {% if i.date %}
+              <input type="date" id="date"  class="myinp" value="{{i.date}}" name="date{{ forloop.counter }}"  >
+              {% else %}
+              <input type="date" id="date"  class="myinp" value="0" name="date{{ forloop.counter }}">
+
+            {% endif %}  
+          </td>
         <td  height="50">
           {% if i.in1 %}
-            <input type="time" id="in1"  class="myinps" value="{{i.in1}}" name="in1{{ forloop.counter }}"  >
+            <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="{{i.in1}}" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');"  >
             {% else %}
-            <input type="time" id="in1"  class="myinps" value="0" name="in1{{ forloop.counter }}">
+            <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="0" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');">
           {% endif %}  
           
           </td> 
           <td  height="50">
            {% if i.out %}
-              <input type="time" id="out"  class="myinps" value="{{i.out}}" name="out{{ forloop.counter }}"  >
+              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="{{i.out}}" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');" >
               {% else %}
-              <input type="time" id="out"  class="myinps" value="0" name="out{{ forloop.counter }}">
+              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="0" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');">
             {% endif %}    
       
            </td> 
            <td>
-              <input type="text" id="ticket_no" value="{{i.ticket_no}}" pattern="[0-9]+" name="ticket_no{{ forloop.counter }}">
+           
+              {% if i.ticket_no %}
+              <input type="text" id="ticket_no{{ forloop.counter }}"  value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}"  >
+              {% else %}
+              <input type="text" id="ticket_no{{ forloop.counter }}"  value="0" name="ticket_no{{ forloop.counter }}" >
+            {% endif %}           
         
         
             </td> 
             <td>
-                {{i.cat}}
-                <input type="hidden" id="cat" name="cat{{ forloop.counter }}" value="{{i.cat}}">      
+                
+                <input type="text" id="cat"  value="{{i.cat}}" name="cat{{ forloop.counter }}" title="Character Value" >
+
         
               </td> 
              
               <td>
                  
-                  <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}" pattern="[0-9]+" title="Integer Value" >
+                  <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}" title="Character Value" >
           
                 </td> 
                 <td>
-                    
-                    <input type="text" id="total_time_taken"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" pattern="[0-9]+" title="Integer Value" >
+                    {{total1}}
+                    <input type="text" id="total_time_taken{{ forloop.counter }}"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" >
             
                   </td> 
+               
               
    
            
    </tr>
     {% endfor %}
+
+
   </table>
+  <div id="inouttab">
+
+  </div>
   
 <br><br>
 
@@ -348,15 +389,200 @@
     <center>
       <input type="submit" name="proceed" value="submit">
     </center>
-    <br><br> {% endif %}
+    <br><br> 
+
 
 </form>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<input  type="button" id="add" value="Add Operations" style="width: 150px;"/>
+<input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
+<div id="items">
+
+
+    </div>
+
+<br>
+    <br><br><br>
+
+<br>
+
+
+
+</div>
+{% endif %}
+</form>
+
+
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script language="javascript">
+var j=0;
+$(document).ready(function(){
+    $("#add").click(function(e){
+        event.preventDefault()
+
+
+
+        j++;
+        console.log(j);
+        assign();
+ 
+       var date="dateadd"+String(j)
+       var in1="in1add"+String(j);
+       var out="outadd"+String(j);
+       var outid="'"+out+"'";
+       var in1id="'"+out+"'";
+       var cat="catadd"+String(j);
+       var ticket_no="ticket_noadd"+String(j);
+       var month_hrs="month_hrsadd"+String(j)
+       var total_time_taken="total_time_takenadd"+String(j);
+       
+      
+       var sno=j;
+        if(j==1)
+        {
+
+
+            var happ='<div class="table-responsive"><table id="customers" border="2" align="center">'+'<tr ><th  style="width:12%">In</th>'+
+'<th style="width:12%">OUT</th>'+'<th  style="width:12%">Categoy</th>'+'<th  style="width:12%">Ticket No.</th>'+'<th  style="width:12%">Month Hours</th>'+'<th  style="width:12%">Total Time Taken</th></tr>';
+
+     happ=happ+'</tr></table></div>';
+        // $('#items').append(happ);
+
+        }
+var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><input type="date" id='+date+' name='+date+'  /></td >'+'<td ><input type="time" id='+in1+' name='+in1+' onchange="tottime('+in1id+')" /></td >'+'<td  height="50"><input type="time" id='+out+' name='+out+'  onchange="tottime('+outid+')" /></td>'+' <td  height="50"><input type="text" id="ticket_no" name='+ticket_no+'></td>'+'<td  height="50"><input type="text" id="cat" name='+cat+'></td>'+'<td  height="50"><input type="text" id="month_hrs" name='+month_hrs+'></td>'+'<td  height="50"><input type="text" id='+total_time_taken+' name='+total_time_taken+'></td>';
+
+        htAppend=htAppend+'</tr></table></div>';
+
+
+
+     $('#inouttab').append(htAppend);
+     document.getElementById("inoutnum").value=j;
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+});
+function assign(){
+        function operation()
+        {
+        console.log(j);
+        return j;
+        }
+       document.getElementById('myvalue').value =operation();
+    }
+  </script>
 
 
 
  
     
 <script type="text/javaScript">
+$( document ).ready(function() {
+    // console.log( "ready!" );
+    tottime('in11');
+});
+    // console.log( "ready!" );
+    function tottime(id) {
+      console.log("id=");
+      console.log(id);
+      var ad=id.includes("add");
+      
+      if(ad==false)
+      {
+      var inn=id.includes("in");
+      console.log(inn);
+      if(inn)
+      {
+        var res = id.split("in1");
+        console.log(res[1]);
+        var outid="#out"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_taken'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("out");
+        console.log(res[1]);
+        var inid="#in1"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_taken'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+      else{
+      var inn=id.includes("in");
+
+        if(inn)
+      {
+        var res = id.split("in1add");
+        console.log(res[1]);
+        var outid="#outadd"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_takenadd'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("outadd");
+        console.log(res[1]);
+        var inid="#in1add"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_takenadd'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+    
+  }
+
   document.querySelector("#shop_sec").addEventListener('change',(e)=>{
     //console.log("hi");
                     e.preventDefault();
