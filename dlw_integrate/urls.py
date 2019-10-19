@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr,m14view,m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
-from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo,getcumino
-from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono
-from dlw.views import m7getwono,m7view,m7getempno,m7getpart_no,pinion_editsno,pinionpressing_section,pinion_addbo,airbox_editsno,axlepress_addbo,axlewheelpressing_section,M20view,m20getstaffno
 from django.contrib.auth import views as auth_views
+from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr,m14view,m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
+from dlw.views import dpo,dpoinput,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo,getcumino,m26view,m27view,m18view,m26getwono,m26getStaffCatWorkHrs
+from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono,m20getstaffName
+from dlw.views import m7getwono,m7view,m7getempno,m7getpart_no,pinion_editsno,pinionpressing_section,pinion_addbo,airbox_editsno,axlepress_addbo,axlewheelpressing_section,M20view,m20getstaffno
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -111,6 +112,12 @@ urlpatterns = [
     path('ajax/axlepress_addbo',axlepress_addbo,name='axlepress_addbo'),
     path('axlewheelpressing_section/',axlewheelpressing_section,name='axlewheelpressing_section'),
     path('M20view/',M20view,name='M20view'),
-     path('m20getstaffno/',m20getstaffno,name='m20getstaffno'),
-
+    path('m20getstaffno/',m20getstaffno,name='m20getstaffno'),
+    path('m26view/',m26view,name='m26view'),
+    path('m27view/',m27view,name='m27view'),
+    path('m18view/',m18view,name='m18view'),
+    path('ajax/m26getwono/', m26getwono, name='m26getwono'),
+    path('ajax/m26getStaffCatWorkHrs/', m26getStaffCatWorkHrs, name='m26getStaffCatWorkHrs'),
+    path('ajax/m20getstaffName/', m20getstaffName, name='m20getstaffName'),
+    
 ]

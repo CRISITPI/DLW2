@@ -31,6 +31,7 @@ from dlw.decorators import role_required
 from django.db.models import Max
 from django.http import HttpResponseRedirect
 import math
+import random
 # Create your views here.
 #
 #
@@ -4163,9 +4164,9 @@ def m5view(request):
             'sub':0,
             'lenm' :2,
             'nav':nav,
-            'ip':get_client_ip(request),
-            'roles':tmp,
             'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -4200,22 +4201,30 @@ def m5view(request):
             brn_no = request.POST.get('br_no')
             doc_no = request.POST.get('doc_no')
             staff_no = request.POST.get('staff_no')
-            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').order_by('opn')
-            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m5prtdt','qty_ord').order_by('opn')
-            obj2 = Part.objects.filter(partno=part_no).values('drgno','des').order_by('partno')
+            ticket_no = request.POST.get('ticket_no')
+            name = request.POST.get('name')
+            
+            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').distinct()
+            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no,brn_no=brn_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m5prtdt','qty_ord').order_by('opn').distinct()
+            obj2 = Part.objects.filter(partno=part_no).values('drgno','des').order_by('partno').distinct()
             obj3 = Batch.objects.filter(part_no=part_no).values('batch_type').order_by('part_no').distinct()
-            obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
+            obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
+            obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
+            print(obj5)
+            ticket= random.randint(1111,9999)
             leng = obj.count()
             leng1=obj1.count()
             leng2=obj2.count()
             leng3=obj3.count()
             leng4=obj4.count()
+            
+            
             if obj != None:
                 if "Superuser" in rolelist:
-                    tm=M5SHEMP.objects.all().values('shopsec').distinct()
+                    tm=shop_section.objects.all()
                     tmp=[]
                     for on in tm:
-                        tmp.append(on['shopsec'])
+                        tmp.append(on.section_code)
                     context={
                         'lenm' :2,
                         'nav':nav,
@@ -4226,6 +4235,8 @@ def m5view(request):
                         'obj2':obj2,
                         'obj3':obj3,
                         'obj4':obj4,
+                        'obj5':obj5,
+                        'ticket1':ticket,
                         'sub': 1,
                         'len': leng,
                         'len1':leng1,
@@ -4258,6 +4269,7 @@ def m5view(request):
                         'obj2':obj2,
                         'obj3':obj3,
                         'obj4':obj4,
+                        'obj5':obj5,
                         'sub': 1,
                         'len': leng,
                         'len1':leng1,
@@ -4271,6 +4283,7 @@ def m5view(request):
                         'brn_no': brn_no,
                         'doc_no': doc_no,
                         'staff_no':staff_no,
+                        'subnav':subnav
                     }
                 elif(len(rolelist)>1):
                     context = {
@@ -4284,6 +4297,7 @@ def m5view(request):
                         'obj2':obj2,
                         'obj3':obj3,
                         'obj4':obj4,
+                        'obj5':obj5,
                         'sub': 1,
                         'len': leng,
                         'len1':leng1,
@@ -4297,12 +4311,14 @@ def m5view(request):
                         'brn_no': brn_no,
                         'doc_no': doc_no,
                         'staff_no':staff_no,
+                        'subnav':subnav
                     }    
         if submitvalue=='submit':
             leng=request.POST.get('len')
             shopsec= request.POST.get('shopsec')
             partno= request.POST.get('partno')
             brn_no = request.POST.get('brn_no')
+            inoutnum=request.POST.get("inoutnum")
             #name = request.Post.get('name')
             
             for i in range(1, int(leng)+1):
@@ -4322,13 +4338,39 @@ def m5view(request):
                 ticket_no = request.POST.get('ticket_no'+str(i))
                 month_hrs = request.POST.get('month_hrs'+str(i))
                 total_time_taken = request.POST.get('total_time_taken'+str(i))
+                date =  request.POST.get('date'+str(i))
                 Oprn.objects.filter(shop_sec=shopsec, part_no=partno,lc_no=lc_no).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
               
                 M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=int(qtyinsp),inspector=int(inspector),date=str(date),remarks=str(remarks),worker=str(worker))
-                print(date)
-                M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat ).update(in1=str(in1),ticket_no=int(ticket_no),out=str(out),month_hrs=int(month_hrs),total_time_taken=int(total_time_taken))
-                print(in1)
-                print(total_time_taken)
+                
+                M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat).update(in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),date=str(date),ticket_no=int(ticket_no))
+               
+            
+            for i in range(1, int(inoutnum)+1):
+                qtyac = request.POST.get('qtyac'+str(i))
+                matrej = request.POST.get('matrej'+str(i))
+                qtyinsp = request.POST.get('qtyinsp'+str(i))
+                inspector = request.POST.get('inspector'+str(i))
+                date = request.POST.get('date'+str(i))
+                remarks = request.POST.get('remarks'+str(i))
+                worker = request.POST.get('worker'+str(i))
+                in1 = request.POST.get('in1add'+str(i))
+                out = request.POST.get('outadd'+str(i))
+                lc_no = request.POST.get('lc_no'+str(i))
+               # brn_no = request.POST.get('brn_no'+str(i))
+                cat = request.POST.get('catadd'+str(i))
+                staff_no = request.POST.get('staff_no'+str(i))
+                ticket_no = request.POST.get('ticket_noadd'+str(i))
+                month_hrs = request.POST.get('month_hrsadd'+str(i))
+                total_time_taken = request.POST.get('total_time_takenadd'+str(i))
+                name = request.POST.get('name'+str(i))
+                date = request.POST.get('dateadd'+str(i))
+               
+                if len(cat)==1:
+                    cat="0"+cat
+                M5SHEMP.objects.create(shopsec=shopsec,staff_no=staff_no,name=name,in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),cat=int(cat),date=str(date),ticket_no=int(ticket_no))
+               
+                
                 wo_no=M5DOCnew.objects.all().values('batch_no').distinct()
 
     return render(request,"m5view.html",context)
@@ -4336,7 +4378,9 @@ def m5view(request):
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
+        print(shop_sec)
         wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
+        print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -4379,6 +4423,7 @@ def m5getstaff_no(request):
         br_no = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 
 
 
@@ -5507,11 +5552,166 @@ def M20view(request):
 
 
 def m20getstaffno(request):
-    if request.method == "GET" and request.is_ajax():
-        from.models import Batch
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch      
         shop_sec = request.GET.get('shop_sec')
         w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct()
         wono = list(w1)
         print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+def m20getstaffName(request):
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch     
+        shop_sec = request.GET.get('shop_sec')
+        staff_no = request.GET.get('staff_no')
+        print(staff_no)
+        w1=M5SHEMP.objects.filter(staff_no=staff_no).values('staff_no','name').distinct()
+        wono = list(w1)
+        print("ths is",shop_sec)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+    
+
+def m26view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    return render(request,'m26view.html',context)
+
+
+def m27view(request):
+    pa_no = empmast.objects.none()
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav
+        }
+    elif(len(rolelist)==1):
+        # print("in else")
+        for i in range(0,len(rolelist)):
+            req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            pa_no =pa_no | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'pa_no':pa_no,
+            'roles' :rolelist,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+        }
+    return render(request,'m27view.html',context)    
+
+def m18view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    context={
+        'nav':nav,
+        'subnav':subnav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
+    }
+    return render(request,'m18view.html',context)  
+	
+	
+def m26view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=M5SHEMP.objects.all().values('shopsec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    return render(request,'m26view.html',context)  
+	 
+def m26getwono(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wono = list(M5DOCnew.objects.all().filter(shop_sec=shop_sec).values('batch_no').distinct())
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m26getStaffCatWorkHrs(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        w_no     = request.GET.get('wno')
+        date     = request.GET.get('date')
+        wono = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no','cat','total_time_taken').exclude(total_time_taken__isnull=True).distinct())
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+    
+    
+
