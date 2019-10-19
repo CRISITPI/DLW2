@@ -5552,14 +5552,28 @@ def M20view(request):
 
 
 def m20getstaffno(request):
-    if request.method == "GET" and request.is_ajax():
-        from.models import Batch
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch      
         shop_sec = request.GET.get('shop_sec')
         w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct()
         wono = list(w1)
         print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+def m20getstaffName(request):
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch     
+        shop_sec = request.GET.get('shop_sec')
+        staff_no = request.GET.get('staff_no')
+        print(staff_no)
+        w1=M5SHEMP.objects.filter(staff_no=staff_no).values('staff_no','name').distinct()
+        wono = list(w1)
+        print("ths is",shop_sec)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+    
 
 def m26view(request):
     cuser=request.user
@@ -5683,3 +5697,21 @@ def m26view(request):
         }
     return render(request,'m26view.html',context)  
 	 
+def m26getwono(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wono = list(M5DOCnew.objects.all().filter(shop_sec=shop_sec).values('batch_no').distinct())
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m26getStaffCatWorkHrs(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        w_no     = request.GET.get('wno')
+        date     = request.GET.get('date')
+        wono = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no','cat','total_time_taken').exclude(total_time_taken__isnull=True).exclude(staff_no__isnull=True).exclude(cat__isnull=True).distinct())
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+    
+    
+

@@ -177,10 +177,8 @@ function clickpr()
                             var elementsadded = document.querySelectorAll(".newelewono");
                                 if(elementsadded.length>0){
                                     var elementsaddedarr = Array.from(elementsadded);
-                                    elementsaddedarr.forEach((el)=> el.remove());
-                                    
-                                    document.querySelector("#op_part").selected = true;
-                                     
+                                    elementsaddedarr.forEach((el)=> el.remove());                                    
+                                    document.querySelector("#op_part").selected = true;                                   
                                  }
                                 var brarr,mystr,html;
                                 brarr = response.map((el)=>el.part_no);
