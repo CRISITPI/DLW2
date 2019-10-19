@@ -5709,11 +5709,11 @@ def m26getStaffCatWorkHrs(request):
         shop_sec = request.GET.get('shop_sec')
         w_no     = request.GET.get('wno')
         date     = request.GET.get('date')
-<<<<<<< HEAD
+
         wono = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no','cat','total_time_taken').exclude(total_time_taken__isnull=True).distinct())
-=======
+
         wono = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no','cat','total_time_taken').exclude(total_time_taken__isnull=True).exclude(staff_no__isnull=True).exclude(cat__isnull=True).distinct())
->>>>>>> master
+
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
     
