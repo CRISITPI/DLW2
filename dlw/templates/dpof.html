@@ -66,10 +66,13 @@
     <tr>
       <td><b>Office of the :</b></td></td><td>{{Role}}</td>
       <td><b>Date :<b></td>
-      <td><span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 28px;width: 200px">
+      <td>
+      {% comment %} <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 28px;width: 200px">
         <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
         <input type="text" id="xTime" name="xTime" style="border: none;height: 100%; font-size:16px;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 4px;" tabindex="-1">&#9660;</span>
-        </span>
+        </span>  {% endcomment %}
+        <input type="text" id="datepicker2" name="xTime" style="width: 150px;" placeholder="dd-mm-yyyy" value={{date}} readonly>
+
         </td>
     </tr>
     <tr><td>Select Loco Type:</td>
@@ -92,6 +95,8 @@
             <input type="hidden" name="b2" value={{b2}} id="b2"/>
             <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
             <input type="hidden" name="totbaches" value=0 id="totbaches" />
+<input type="hidden" name="dataext" id="dataext" value="{{dataext}}">
+
 
 
 {% if add == 1 %}
@@ -104,25 +109,47 @@
 <table id="custo" align="center">
 <tr>
   <td style="width: 20%"><b>Subject:</b></td>
-  <td style="width: 30%"><textarea name="sub" placeholder="subject" wrap="soft" style="width: 100%;" rows="5"></textarea></td>
+  <td style="width: 30%"><textarea name="sub" placeholder="subject" wrap="soft" style="width: 100%;" rows="5" >{{subject}}</textarea></td>
   <td style="width: 20%"><b>Reference:</b></td>
-  <td style="width: 30%"><textarea name="refn" placeholder="reference" wrap="soft" style="width: 100%;" rows="5"></textarea></td>
+  <td style="width: 30%"><textarea name="refn" placeholder="reference" wrap="soft" style="width: 100%;" rows="5">{{reference}}</textarea></td>
 </tr>
 <tr>
     <td style="width: 20%"><b>Summary:</b></td>
-    <td style="width: 30%"><textarea name="summary" placeholder="summary" wrap="soft" style="width: 100%" rows="5"></textarea></td>
+    <td style="width: 30%"><textarea name="summary" placeholder="summary" wrap="soft" style="width: 100%" rows="5">{{summary}}</textarea></td>
     <td style="width: 20%"><b>Copy To:</b></td>
-    <td style="width: 30%"><textarea name="copyto" placeholder="copy to" wrap="soft" style="width: 100%" rows="5"></textarea></td>
+    <td style="width: 30%"><textarea name="copyto" placeholder="copy to" wrap="soft" style="width: 100%" rows="5">{{copyto}}</textarea></td>
 </tr>
         <tr>
             <td><input type="button" id="addloco" value="Add Loco" /></td>
         </tr>
        <div id="lcbtch"></div>
 </table>
+
+
+<table id="customers" align="center">
+  {% if dataext %}
+  <tr><th>Batch Order NO:</th><th>QTY. of Batch</th><th>Type of Loco</th>
+            <th>Cumilative No. of Loco</th></tr>
+   {% for key, values in dictemper.items %}
+
+                        <tr>
+
+                            <td><input type="hidden" id="bno{{forloop.counter}}" name="bno{{forloop.counter}}" value="{{values.bno}}" >{{values.bno}}</td>
+                            <td><input type="text" id="qty{{forloop.counter}}" name="qty{{forloop.counter}}" onkeyup="myFunction(this)" value="{{values.qty}}" ></td>
+                            <td><input type="hidden" id="typ{{forloop.counter}}" name="typ{{forloop.counter}}" value="{{values.loconame}}" >{{values.loconame}}</td>
+                            <td><input type="text" id="cumino{{forloop.counter}}" name="cumino{{forloop.counter}}" value="{{values.cumino}}" ></td>
+
+                          </tr>
+    {% endfor %}
+  
+  {% endif %}
+  
+</table>
 <table id="customers" align="center">
   
+  <div id="items"></div>
 
-<div id="items"></div>
+
 </table>
 
 
@@ -138,8 +165,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script language="javascript">
+$( function() {
+              $( "#datepicker2" ).datepicker({
+                dateFormat:'dd-mm-yy',
+                changeMonth:true,
+                changeYear:true,
+                yearRange:"2009:2099"
+              }).val;
+            } );
+
+
 var j=0;
 var aj=0;
 var idname="loconame"
@@ -180,6 +220,9 @@ function prcdcall()
 
 
 $(document).ready(() => {
+        j=document.getElementById("dataext").value;
+
+
   var typecd = document.getElementById('lcname').value;
 console.log(typecd);
 var ordno=document.getElementById('b2').value;
@@ -227,6 +270,7 @@ $(this).parents("tr").remove();
 
     $('body').on('click','#add',function(e){
         event.preventDefault()
+        console.log("j"+String(j));
         j++;
         console.log("idname:"+String(idname));
         assign();
@@ -298,6 +342,7 @@ var htAppend='<div><table id="customers"><tr>'+'<td>'+bn+'</td><input type="hidd
 
 function myFunction(elem){
     var id = elem.id;
+    console.log(id);
     var name=elem.name;
     var txt = document.getElementById(id).value; 
     // console.log('area element value = ' + name);

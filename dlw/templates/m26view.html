@@ -4,17 +4,28 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <script>
+    $(document).ready(function () {
+        $('#date').datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+    });
+</script>
+
+
 <style>
 table, td, th {  
-  
   text-align: left;
 }
-
 table {
   border-collapse: collapse;
   width: 90%;
 }
-
 th, td {
   padding: 15px;
 }
@@ -76,21 +87,7 @@ th, td {
             <tr>
                  <td>
                     <label for="br_no"><b>महीनो के लिय/For The Month Of</b></label>
-                    <select class="form-control" id="" name="" required>
-                        <option value="" >--Select--</option>  
-                        <option value="January">January</option>
-                        <option value="February">February</option>
-                        <option value="March">March</option>
-                        <option value="April">April</option>
-                        <option value="May">May</option>
-                        <option value="June">June</option>
-                        <option value="July">July</option>
-                        <option value="August">August</option>                          
-                        <option value="September">September</option>
-                        <option value="October">October</option>
-                        <option value="November">November</option>
-                        <option value="December">December</option>
-                    </select>
+                       <input type="text" name="date" id="date" readonly class="form-control">
                 </td>
                 <td>
                     <label for="sno"><b>शाप/Shop</b></label>
@@ -108,7 +105,14 @@ th, td {
                 </td>
                 <td>
                     <label for="br_no"><b>कार्यादेश सँ/ Chargeable to W.O. NO. 01/003/ </b></label>
-                    <input type="text" class="form-control" name="" id="">
+                    <select class="form-control" id="wno" name="wno" required>
+                              <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+                              {% if lenm == 1 %}
+                              {% for i in wo_nop %}
+                                <option>{{i.batch_no}}</option>
+                              {% endfor %}
+                              {% endif %}
+                     </select>
                 </td>
 
              </tr>
@@ -130,66 +134,97 @@ th, td {
         {% endif %}
     </center>
 <br>
+        <div class="w3-container">
+      <table class="w3-table-all" style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
+        <thead>
+          <tr class="w3-light-grey">
+            <th>Staff No./कर्मचारी सं</th>
+            <th>Category/वर्ग सं</th>
+            <th>Total Hrs./कुल घंटे</th>      
+          </tr>
+        </thead>
+        <tbody id="projectData">
+        </tbody>
+      </table>
+                               
 
-    <div class="w3-container">
-  
-
-  <table class="w3-table-all" style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
-    <thead>
-      <tr class="w3-light-grey">
-        <th>Staff No./कर्मचारी सं</th>
-        <th>Category/वर्ग सं</th>
-        <th>Total Hrs./कुल घंटे</th>
-        <th></th>
-        <th>Staff No./कर्मचारी सं</th>
-        <th>Category/वर्ग सं</th>
-        <th>Total Hrs./कुल घंटे</th>
-      </tr>
-    </thead>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>4</td>
-      <td>5</td>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>4</td>
-      <td>5</td>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>4</td>
-      <td>5</td>
-      <td>6</td>
-      <td>7</td>
-    </tr><tr>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>4</td>
-      <td>5</td>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    
-  </table>
   <h6 align="right" style="margin-right: 100px;">................................................................... </h6>
   <h6 align="right" style="margin-right: 100px;">समय पाल के हस्ताछर </h6>
   <h6 align="right" style="margin-right: 100px;"> Signature of Time Keepar</h6>
 </div>   
 </form>
+   <script>
+     document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm26getwono' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.batch_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+     document.querySelector("#wno").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var wno = $("#wno").val()
+                    var shop_sec = $("#shop_sec").val();
+                    var date = $("#date").val();
+                   var data = {wno,shop_sec,date};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm26getStaffCatWorkHrs' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          console.log(response);
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                   document.querySelector("#wno").selected=true;
+                               }                               
+                              var brarr,mystr,html,mstaff_no,mcat,mtoatlhrs,totdata;
+                              var  i=0
+                              mstaff_no = response.map((el)=>el.staff_no);   
 
-             
+                               for(i;i<response.length;i++){
 
+                                      mstaff_no = response[i].staff_no
+                                      mcat      = response[i].cat
+                                      mtoatlhrs = response[i].total_time_taken
+
+                                      totdata = '<tr><td>'+mstaff_no+'</td><td>'+mcat+'</td><td>'+mtoatlhrs+'</td></tr>'
+                                      $(totdata).appendTo('#projectData');
+                                  }
+
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+   </script>          
 {% endblock content %}
-

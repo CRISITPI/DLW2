@@ -1,0 +1,333 @@
+ {% extends 'base.html' %} {% block content %} {% load static %}
+<style>
+    #customers {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+    
+    #customers td,
+    #customers th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    
+    #customers tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    
+    #customers tr:hover {
+        background-color: #ddd;
+    }
+    
+    #customers th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #808080;
+        color: white;
+    }
+    
+    #try table {
+        border: none;
+    }
+    table.a {
+  table-layout: fixed;
+  width: 100px;  
+}
+
+
+ #custo {
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          
+        }
+        
+        #custo td, #custoth {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        #custo tr:nth-child(even){background-color: #f2f2f2;}
+        
+        #custo tr:hover {background-color: #ddd;}
+        
+        #custo th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #4CAF50;
+          color: white;
+        }
+</style>
+
+<form action="." method="POST">
+    {%csrf_token%}
+
+    <div id="content">
+
+    </div>
+    <table align="center">
+        <tr>
+            <!-- <td>
+            </td> -->
+            <td style="text-align: center;">
+                <h2 style="margin: 1em 0 0.5em 0;
+          color: #343434;
+          font-weight: normal;
+          font-family: 'Ultra', sans-serif;   
+          font-size: 36px;
+          line-height: 42px;
+          text-transform: uppercase;
+          text-shadow: 0 2px white, 0 3px #777;">DPO</h2>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td>
+                
+                    <div class="dropdown" style="margin-left:10px">
+        <select name="loco" class="form-control ll" id="loco" >
+            <div class="dropdown-content">
+            <option selected="selected" value="" disabled>Loco Name:</option>
+            {% for l in locolist %}
+            <option value="{{l}}">{{l}}</option>
+            {% endfor %}
+        </select></div>
+            </td>
+            
+        <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" value="002" onblur="prcdcall()" /></td>
+               
+           
+        </tr>
+        <br><br><br>
+        
+
+
+        <td></td>
+        <td><input type="submit" name ='submit' value='Proceed' id="proceed" style="display: none"/> &nbsp; &nbsp;
+        </td>
+        </tr>
+    </table>
+    <hr>
+
+    <table align="center">
+        <tr>
+            <td><input type="text" id="pord" name="pord" placeholder="Procedure Order No:"  onblur="prcdcall()" /></td>
+        </tr>
+    </table>
+
+
+
+    <input type="hidden" name="revh" value={{rev}} />
+    <input type="hidden" name="jpotypeh" value={{jpoo}} />
+    <input type="hidden" name="finalizevalue" value={{finalvalue}} />
+    <input type="hidden" name="b2" value="{{b2}}" id="b2">
+
+    <br>
+
+    <!-- <h1 align="center">{{year1}}</h1> -->
+    {% if data == 1 %}
+    <table id="customers" align="center" style="border: none;">
+        <tr>
+            <td style="border: none;width: 20%"><b>Convert it into PDF:</b></td>
+            <td style="border: none;"><input type="button" id="pr_sch" name="PDF" value="PDF" class="btn btn-primary" /></td>
+        </tr>
+        <tr></tr>
+    </table>
+    <div id="conta">
+        <div id="HTMLtoPDF">
+            <div id="doc_sc" class="field">
+
+    <input type="hidden" name="jpotyp" id="jpotyp" value={{jpo}} />
+
+
+               <!--  <center>
+                    <h4><b>DLW</b></h4>
+                </center> -->
+                <center>
+                    <!-- <h4><b><u>Production JPO {{year1}}, Revision-{{rev}}</u></b></h4> -->
+                </center>
+                {% if finalvalue %}
+                <h4 align="left">Procedure Order No.- <b>{{procedure}}</b></h4>
+
+                {% endif %}
+                <h5 align="right">Office of the : {{Role}}</h5>
+                <h5 align="right">Date : {{date}}</h5>
+               
+                <h4 align="left"><b>Sub: {{subject}}</b></h4>
+                <b>Ref:</b> {% for rm in reflist %} {{rm}}
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endfor %}
+
+                
+                <p>{{summary}}</p>
+                <table id="customers">
+                    <tr><th>Sno.</th><th>Order No</th><th>Batch Order NO:</th><th>Qty. of Batch</th><th>Type of Loco</th>
+            <th>Cumilative No. of Loco</th><th>Production Year</th><th>Remarks</th></tr>
+
+                    {% if dataext  %}
+
+
+
+                        
+
+
+                        {% for key, values in dictemper.items %}
+
+                    <tr>
+
+                        {% if forloop.counter == 1 %}
+                         <td rowspan="{{dataext}}" style="text-align: center;">1</td>
+
+                     
+                     <td rowspan="{{dataext}}" style="text-align: center;">{{b2}}</td>
+
+                        {% endif %}
+
+                          
+                            <td>{{values.bno}}</td>
+                            <td>{{values.qty}}</td>
+                            <td>{{values.loconame}}</td>
+                            <td>{{values.cumino}}</td>
+                            <!-- <td rowspan="{{dataext}}">{{cyear}}</td>
+                            <td rowspan="{{dataext}}"></td> -->
+                            {% if forloop.counter == 1 %}
+                         <td rowspan="{{dataext}}"  style="text-align: center;">{{cyear}}</td>
+
+                     
+                     <td rowspan="{{dataext}}" style="text-align: center;"></td>
+
+                        {% endif %}
+                            
+                            
+                        </tr>
+                        {% endfor %}
+
+           
+                  
+                   
+                    {% endif %}
+
+                </table>
+
+
+                <br>
+                <br>
+                <h5 align="right">Dy. CME / Plg</h5>
+
+                
+  
+
+
+
+               
+               <h4 ><b>Copy to: {{copyto}}</b></h4>
+                
+                
+
+
+
+            
+
+
+
+</div>
+</div>
+</div>
+
+ {% if finalvalue == 0 %}
+        <table id="customers" align="center" style="border: none">
+            <tr>
+                <td style="width: 20%;border:none">
+                    <select name="Finalize" class="form-control ll">
+<option selected="selected" disabled>Finalize DPO</option>
+   <option value="yes">YES</option>
+   <option value="no">NO</option>
+ </select></td>
+                {% endif %} {% if finalvalue == 1 %}
+                <td>
+                    <select name="Finalize" disabled>
+   <option value="yes">YES</option>
+   <option value="no">NO</option>
+ </select></td>
+                {% endif %}
+                <td style="border: none">
+                    <input type="submit" name="finalize" value="Submit" class="button button2"></td>
+            </tr>
+        </table>
+        
+</form>
+                {% endif %}
+
+
+
+{% if data == 0 %}
+
+<h1 align="center">The requested data is not present</h1>
+
+
+{% endif %}
+<!-- these js files are used for making PDF -->
+<!-- <script src="{% static '/js/jspdf.js' %}"></script> -->
+<!-- <script src="{% static '/js/jquery-2.1.3.js' %}"></script> -->
+<!-- <script src="{% static '/js/pdfFromHTML.js' %}"></script> -->
+<!-- <script src="{% static '/js/jquery-1.7.1.min.js' %}"></script> -->
+
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
+
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet"/> -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script>
+    function prcdcall()
+{
+    document.getElementById('proceed').click();
+    console.log("pro");
+}
+    $(document).ready(function() {
+               // M.toast({html: 'Changes are saved!'});
+
+    var jpotyp=document.getElementById('jpotyp');
+    if(jpotyp!=null)
+    {
+    // console.log("jpotyp"+String(jpotyp.value))
+    if(jpotyp.value==2)
+    {
+               // M.toast({html: 'Changes are saved!'});
+      document.getElementById('jpotypesel').required=false;
+      document.getElementById('revsel').required=false;
+    }
+}
+});
+    $('#pr_sch').click(function(e) {
+        var sTable = document.getElementById('doc_sc').innerHTML;
+
+        var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+
+        // CREATE A WINDOW OBJECT.
+        var win = window.open('', '', 'height=700,width=700');
+
+        win.document.write('<html><head>');
+        win.document.write('<title>DPO</title>'); // <title> FOR PDF HEADER.
+        win.document.write(style); // ADD STYLE INSIDE THE HEAD TAG.
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(sTable); // THE TABLE CONTENTS INSIDE THE BODY TAG.
+        win.document.write('</body></html>');
+
+        win.document.close(); // CLOSE THE CURRENT WINDOW.
+
+        win.print(); // PRINT THE CONTENTS.
+    });
+</script>
+
+{% endblock content %}
