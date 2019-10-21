@@ -3834,9 +3834,13 @@ def dpo(request):
 @login_required
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dpoinput(request):
-    from .models import annual_production,barrelfirst
+    from datetime import date
+
+    from .models import annual_production,barrelfirst,dpo,dpoloco
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
+    # cuser=request.user
+    # usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -3852,6 +3856,7 @@ def dpoinput(request):
     obj=barrelfirst.objects.all()
     for i in range(0,len(obj)):
         locos.append(obj[i].locotype)
+
     # print("locolist:",locos)
     context={
         'nav':nav,
@@ -3863,6 +3868,14 @@ def dpoinput(request):
         'locolist':locos
     }
     if request.method=="POST":
+        subject=None
+        reference=None
+        copyto=None
+        summary=None
+        dat=None
+        locoindb=[]
+        dictemper={}
+        dataext=0
         submit=request.POST.get('submit')
         if submit=='Proceed':
             b1=0
@@ -3872,6 +3885,36 @@ def dpoinput(request):
             cm2=300
             obj1=barrelfirst.objects.filter(locotype=loco)
             b1=obj1[0].code
+            
+            obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+            if (obj is not None) and len(obj):
+                print(obj)
+                subject=obj[0].subject
+                reference=obj[0].reference
+                copyto=obj[0].copyto
+                summary=obj[0].summary
+                dat=obj[0].date
+                print(subject,reference,copyto,summary,dat)
+            objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
+            if (objloco is not None) and len(objloco):
+                for l in range(len(objloco)):
+                    locoindb.append(objloco[l]['loconame'])
+
+                objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+                if (objlocobt is not None) and len(objlocobt):
+                    for l in range(len(objlocobt)):
+                        temper = {str(l):{"bno":objlocobt[l].batchordno,
+                                           "qty":objlocobt[l].qtybatch,
+                                           "cumino":objlocobt[l].cumino,
+                                           "loconame":objlocobt[l].loconame,
+                                           }}
+                        dataext=dataext+1
+
+                        dictemper.update(copy.deepcopy(temper))
+                    print(dictemper)
+
+
+                
             context={
             'nav':nav,
             'subnav':subnav,
@@ -3885,6 +3928,14 @@ def dpoinput(request):
             'lcname':loco,
             'add':1,
             'locolist':locos,
+            'subject':subject,
+            'reference':reference,
+            'copyto':copyto,
+            'summary':summary,
+            'date':dat,
+            'dictemper':dictemper,
+            'dataext':dataext,
+
         } 
 
         if submit=='Save':
@@ -3894,26 +3945,34 @@ def dpoinput(request):
             copyto=request.POST.get('copyto')
             datee=request.POST.get('xTime')
             
-            
             locot=request.POST.get('loco')
             ordno=request.POST.get('barl2')
             totbaches=request.POST.get('totbaches')
-         
             
+            obj=dpo.objects.create()
+            obj.subject=sub
+            obj.reference=refn
+            obj.date=datee
+            obj.copyto=copyto
+            obj.summary=summary
+            obj.orderno=ordno
+            obj.locotype=locot
+            obj.save()
+               
             print("locot",locot)
             print("ordno",ordno)
             temp1="loconame"
             idname=[]
             lcname=[]
             ttlcnt=request.POST.get('cm2')
-            for i in range(1,int(ttlcnt)+1):
-                temp1=temp1+str(i)
-                idname.append(temp1)
-                temp1="loconame"
-            for key in request.POST:
-                for temp1 in idname:
-                    if key==temp1:
-                        lcname.append(request.POST[key])
+            # for i in range(1,int(ttlcnt)+1):
+            #     temp1=temp1+str(i)
+            #     idname.append(temp1)
+            #     temp1="loconame"
+            # for key in request.POST:
+            #     for temp1 in idname:
+            #         if key==temp1:
+            #             lcname.append(request.POST[key])
             
             print("lcname",lcname)
             
@@ -3923,6 +3982,16 @@ def dpoinput(request):
                qty=request.POST.get("qty"+str(i))
                typ=request.POST.get("typ"+str(i))               
                cumino=request.POST.get("cumino"+str(i))
+               obj=dpoloco.objects.create()
+               obj.loconame=typ
+               obj.batchordno=bno
+               obj.qtybatch=qty
+               obj.cumino=cumino
+               obj.orderno=ordno
+               obj.locotype=locot
+               obj.save()
+               
+               
             
                
             context={
@@ -3935,6 +4004,334 @@ def dpoinput(request):
         } 
 
     return render(request, 'dpof.html', context)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+def dporeport(request):
+    from .models import annual_production,dpo,barrelfirst,dpoloco
+    # locodpo,barrelfirst
+    
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+
+     
+
+    tod = date.today()
+    ft=int(tod.strftime("%Y"))
+    ft2=ft+1
+    ctp=str(ft)+'-'+str(ft2)
+
+    locos=[]
+    reflist=[]
+
+    obj=barrelfirst.objects.all()
+    for i in range(0,len(obj)):
+        locos.append(obj[i].locotype)
+    
+
+
+    context={
+        'nav':nav,
+        'ip':get_client_ip(request),
+        'Role':rolelist[0],
+        'cyear':ctp,
+        'add':0,
+        'locolist':locos,
+        'subnav':subnav,
+       
+    }
+
+    if request.method=="POST":
+
+        pno=None
+        pnonum=None
+
+
+        subject=None
+        reference=None
+        copyto=None
+        summary=None
+        dat=None
+        data=0
+        locodisp=""
+        procedureno=None
+        locoindb=[]
+        dictemper={}
+        dataext=0
+        procedure=0
+
+        submit=request.POST.get('submit')
+        finalsubmit=request.POST.get('finalize')
+        locos=[]
+        # obj=annual_production.objects.filter(financial_year=ctp)
+        # for i in range(0,len(obj)):
+        #     locos.append(obj[i].loco_type)
+        obj=barrelfirst.objects.all()
+        for i in range(0,len(obj)):
+            locos.append(obj[i].locotype)
+        if submit=='Proceed':
+
+            pord=request.POST.get('pord')
+
+
+            b1=0
+            loco=request.POST.get('loco')
+            b2=request.POST.get('barl2')
+            cm=225
+            cm2=300
+            
+
+            
+
+            
+
+            procedure=pord
+
+            if(pord!=None and  len(pord)):
+                dloco=dpo.objects.filter(procedureno=pord)
+                if(len(dloco)):
+                    loco=dloco[0].locotype
+                    b2=dloco[0].orderno
+
+                obj1=barrelfirst.objects.filter(locotype=loco)
+                b1=obj1[0].code
+                
+                obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
+                if (obj is not None) and len(obj):
+                    print(obj)
+                    subject=obj[0].subject
+                    reference=obj[0].reference
+                    copyto=obj[0].copyto
+                    summary=obj[0].summary
+                    dat=obj[0].date
+                    if(obj[0].procedureno=='0'):
+                        procedureno=0
+                    else:
+                        procedureno=1
+
+                    print(subject,reference,copyto,summary,dat)
+                    reflist=findthis(request,reference)
+                objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord).values('loconame').distinct()
+                if (objloco is not None) and len(objloco):
+                    for l in range(len(objloco)):
+                        locoindb.append(objloco[l]['loconame'])
+                    print(locoindb)
+
+
+                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
+                    if (objlocobt is not None) and len(objlocobt):
+                        for l in range(len(objlocobt)):
+
+                            temper = {str(l):{"bno":objlocobt[l].batchordno,
+                                               "qty":objlocobt[l].qtybatch,
+                                               "cumino":objlocobt[l].cumino,
+                                               "loconame":objlocobt[l].loconame,
+                                               }}
+                            dataext=dataext+1
+
+                            dictemper.update(copy.deepcopy(temper))
+                        print(dictemper)
+                        data=1
+
+            else:
+                obj1=barrelfirst.objects.filter(locotype=loco)
+                b1=obj1[0].code
+                
+                obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+                if (obj is not None) and len(obj):
+                    print(obj)
+                    subject=obj[0].subject
+                    reference=obj[0].reference
+                    copyto=obj[0].copyto
+                    summary=obj[0].summary
+                    dat=obj[0].date
+                    if(obj[0].procedureno=='0'):
+                        procedureno=0
+                    else:
+                        procedureno=1
+
+                    print(subject,reference,copyto,summary,dat)
+                    reflist=findthis(request,reference)
+                objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
+                if (objloco is not None) and len(objloco):
+                    for l in range(len(objloco)):
+                        locoindb.append(objloco[l]['loconame'])
+
+                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+                    if (objlocobt is not None) and len(objlocobt):
+                        for l in range(len(objlocobt)):
+
+                            temper = {str(l):{"bno":objlocobt[l].batchordno,
+                                                   "qty":objlocobt[l].qtybatch,
+                                                   "cumino":objlocobt[l].cumino,
+                                                   "loconame":objlocobt[l].loconame,
+                                                   }}
+                            # if objlocobt[l].loconame!=locodisp:
+
+                            #     temper = {str(l):{"bno":objlocobt[l].batchordno,
+                            #                        "qty":objlocobt[l].qtybatch,
+                            #                        "cumino":objlocobt[l].cumino,
+                            #                        "loconame":objlocobt[l].loconame,
+                            #                        }}
+                            #     locodisp=objlocobt[l].loconame
+                            # else:
+
+                            #     temper = {str(l):{"bno":objlocobt[l].batchordno,
+                            #                        "qty":objlocobt[l].qtybatch,
+                            #                        "cumino":objlocobt[l].cumino,
+                            #                        "loconame":"-DO-",
+                            #                        }}
+
+                            dataext=dataext+1
+
+                            dictemper.update(copy.deepcopy(temper))
+                        print(dictemper)
+                        data=1
+
+
+
+            print("dataext",dataext)
+            context={
+            'nav':nav,
+            # 'subnav':subnav,
+            'ip':get_client_ip(request),
+            'Role':rolelist[0],
+            'cyear':ctp,
+            'b1':b1,
+            'b2':b2,
+            'cm':cm,
+            'cm2':cm2,
+            'lcname':loco,
+            'add':1,
+            'locolist':locos,
+            'subject':subject,
+            'reference':reference,
+            'copyto':copyto,
+            'summary':summary,
+            'date':dat,
+            'dictemper':dictemper,
+            'dataext':dataext,
+            'data':data,
+            'reflist':reflist,
+            'finalvalue':procedureno,
+            'procedure':procedure,
+            'subnav':subnav,
+        } 
+
+
+
+        if finalsubmit == "Submit":
+            
+            pnonum=0
+            b1=0
+            loco=request.POST.get('loco')
+            b2=request.POST.get('barl2')
+            cm=225
+            cm2=300
+            obj1=barrelfirst.objects.filter(locotype=loco)
+            b1=obj1[0].code
+
+
+            objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+            # print("pnoo")
+            if (objlocobt is not None) and len(objlocobt):
+                args = dpo.objects.filter(locotype=loco,orderno=b2) # or whatever arbitrary queryset
+                pno=args.aggregate(Max('procedureno'))
+                print("pno",pno['procedureno__max'])
+                if int(pno['procedureno__max'])==0:
+                    pnonum=547
+                else:
+                    pnonum=int(pno['procedureno__max'])+1
+
+
+
+            
+            obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+            if (obj is not None) and len(obj):
+                print(obj)
+                subject=obj[0].subject
+                reference=obj[0].reference
+                copyto=obj[0].copyto
+                summary=obj[0].summary
+                dat=obj[0].date
+                if(obj[0].procedureno=='0'):
+                    procedureno=0
+                else:
+                    procedureno=1
+
+                print(subject,reference,copyto,summary,dat)
+                reflist=findthis(request,reference)
+            objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
+            if (objloco is not None) and len(objloco):
+                for l in range(len(objloco)):
+                    locoindb.append(objloco[l]['loconame'])
+
+                objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+                if (objlocobt is not None) and len(objlocobt):
+                    for l in range(len(objlocobt)):
+                        temper = {str(l):{"bno":objlocobt[l].batchordno,
+                                           "qty":objlocobt[l].qtybatch,
+                                           "cumino":objlocobt[l].cumino,
+                                           "loconame":objlocobt[l].loconame,
+                                           }}
+                        dataext=dataext+1
+
+                        dictemper.update(copy.deepcopy(temper))
+                    print(dictemper)
+
+                    data=1
+
+                    dpp=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).update(procedureno=pnonum)
+                    dpp=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0).update(procedureno=pnonum)
+
+                    dpoop=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pnonum)
+                    print(dpoop[0].procedureno,"procedureno")
+                    procedure=dpoop[0].procedureno
+                
+
+
+
+            print("dataext",dataext)
+            context={
+            'nav':nav,
+            # 'subnav':subnav,
+            'ip':get_client_ip(request),
+            'Role':rolelist[0],
+            'cyear':ctp,
+            'b1':b1,
+            'b2':b2,
+            'cm':cm,
+            'cm2':cm2,
+            'lcname':loco,
+            'add':1,
+            'locolist':locos,
+            'subject':subject,
+            'reference':reference,
+            'copyto':copyto,
+            'summary':summary,
+            'date':dat,
+            'dictemper':dictemper,
+            'dataext':dataext,
+            'data':data,
+            'reflist':reflist,
+            'finalvalue':procedureno,
+            'procedure':procedure,
+            'subnav':subnav,
+        }
+
+
+
+
+
+    return render(request, 'dporeport.html', context)
 
 
 
