@@ -31,7 +31,7 @@ from dlw.decorators import role_required
 from django.db.models import Max
 from django.http import HttpResponseRedirect
 import math
-import random
+from random import randint
 # Create your views here.
 #
 #
@@ -4156,17 +4156,17 @@ def m5view(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
+        tm=M5SHEMP.objects.all().values('shopsec').distinct()
         tmp=[]
         for on in tm:
-            tmp.append(on.section_code)
+            tmp.append(on['shopsec'])
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
-            'subnav':subnav,
             'ip':get_client_ip(request),
-            'roles':tmp
+            'roles':tmp,
+            'subnav':subnav,
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -4211,7 +4211,7 @@ def m5view(request):
             obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
             obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
             print(obj5)
-            ticket= random.randint(1111,9999)
+            ticket= randint(1111,9999)
             leng = obj.count()
             leng1=obj1.count()
             leng2=obj2.count()
@@ -4221,10 +4221,10 @@ def m5view(request):
             
             if obj != None:
                 if "Superuser" in rolelist:
-                    tm=shop_section.objects.all()
+                    tm=M5SHEMP.objects.all().values('shopsec').distinct()
                     tmp=[]
                     for on in tm:
-                        tmp.append(on.section_code)
+                        tmp.append(on['shopsec'])
                     context={
                         'lenm' :2,
                         'nav':nav,
@@ -4378,9 +4378,9 @@ def m5view(request):
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        print(shop_sec)
+        # print(shop_sec)
         wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
-        print(wono)
+        # print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -4423,6 +4423,7 @@ def m5getstaff_no(request):
         br_no = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 
 
 
