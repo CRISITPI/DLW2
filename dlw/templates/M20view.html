@@ -1,8 +1,8 @@
 {% extends 'base.html' %} {% block content %}
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -108,6 +108,7 @@ th, td {
             <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
           <select class="form-control ll" id="shop_sec" name="shop_sec" required style="width: 150px;">   
           <option id="op_shop" selected disabled hidden>Shop Section</option>  
+         
           {% if lenm == 1 %}
             {% for role in roles %}
               <option selected readonly>{{role}}</option>
@@ -129,10 +130,10 @@ th, td {
           </td>        
         </tr>
     </table>
-    
+
 
      
-
+      <input type="reset" name="reset">
     <hr style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
 
   
@@ -144,10 +145,13 @@ th, td {
       <thead>
         <tr>
           <th>Name नाम</th>
-          <th>Ticket No.  टिकट स.</th>            
+          <th>Ticket No.  टिकट स.</th>           
         </tr>
       </thead>
-      <tbody id="projectData">    
+
+
+      <tbody id="projectData">
+          
       </tbody> 
     </table>
   </div>
