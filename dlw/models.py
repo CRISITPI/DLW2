@@ -3597,3 +3597,19 @@ class M12DOC(models.Model):
     
     class Meta:
         db_table = 'M12DOC'
+
+
+class M22(models.Model):
+    datelw = models.CharField(db_column='DATELW', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    datecc = models.CharField(db_column='DATECC', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    daterw = models.CharField(db_column='DATERW', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    briefdd = models.CharField(db_column='BRIEFDD', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    no_hrs = models.CharField(db_column='NO_HRS', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    wo_no = models.CharField(db_column='WORK_ORDER_JOB_LEFT', max_length=7, blank=True, null=True)  # Field name made lowercase.
+    wo_no1 = models.CharField(db_column='WORK_ORDER_TIME_ON_DUTY', max_length=7, blank=True, null=True)  # Field name made lowercase.
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    month = models.CharField(db_column='MONTH', max_length=10, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'M22'

@@ -71,12 +71,12 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Dispatch</font>
                          </button>
                     </li>
@@ -135,7 +135,7 @@ footer, .page-content::after{
         <td>{{objec.sno}} <br><br></td>
         <td>{{objec.bo_no}} <br><br></td>
         <td>{{objec.bo_date}} <br><br></td>
-        <td>{{objec.locos}} <br><br></td>
+        <td>{{objec.loco_type}} <br><br></td>
         <td>{{objec.date}} <br><br></td>
         <td>{{objec.axle_no}} <br><br></td>
         <td>{{objec.wheelno_de}} <br><br></td>
@@ -194,18 +194,33 @@ footer, .page-content::after{
                                     <div class="row">
                                             <div class="col-6">
                                                     <label for="">Axle No.</label>
-                                                    <input type="number" class="form-control" name="axle_no" id="axle_no" required>
+                                                    <select input type="number" name="axle_no" id="axle_no" class="form-control ll" required>
+                                                            <option value="" hidden selected>Select Axle No.</option>  
+                                                            {% for y in axle %}
+                                                            <option>{{y.axle_no}}</option>
+                                                            {% endfor %}
+                                                    </select> 
                                             </div>
                                             <div class="col-6">
                                             <label for="">Wheel No(DE)</label>
-                                            <input type="number" class="form-control" name="wheelno_de" id="wheelno_de" required>
+                                            <select input type="number" class="form-control" name="wheelno_de" id="wheelno_de" required>
+                                                    <option value="" hidden selected>Select Wheel No(DE)</option>  
+                                                    {% for y in wheelde %}
+                                                    <option>{{y.wheel_no}}</option>
+                                                    {% endfor %}
+                                            </select> 
                                         </div> 
                                         </div>
 
                                 <div class="row">   
                                 <div class="col-6">
                                         <label for="">Wheel No(NDE)</label>
-                                        <input type="text" class="form-control" name="wheelno_nde" id="wheelno_nde" required>
+                                        <select input type="number" class="form-control" name="wheelno_nde" id="wheelno_nde" required>
+                                                <option id="wheelnonde" hidden selected>Select Wheel No(DE)</option>
+                                                <!-- {% for y in wheelnde %}
+                                                    <option>{{y.wheel_no}}</option>
+                                                    {% endfor %}   -->
+                                        </select> 
                                 </div> 
                                 <div class="col-6">
                                         <label for="">Bull Gear No.</label>
@@ -228,10 +243,169 @@ footer, .page-content::after{
           </div>
           </div>
           </div>
+
+<!--EditRecord-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">AxleWheelPressing</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+         
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+            <div class="modal-body"> 
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="">S No.</label>
+                                        <select name="editsno" id="editsno" class="form-control ll" required>
+                                            <option value="" hidden selected>Select S No.</option>  
+                                            {% for y in mysno %}
+                                            <option>{{y.sno}}</option>
+                                            {% endfor %}
+                                    </select> 
+                                    </div>
     
+                                    <div class="col-6">
+                                        <h6><label for="">Batch Order No.</label></h6>
+                                        <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
+                                    </div>
+                                            <div class="col-6">
+                                                <h6><label for="">Batch Order Date</label></h6>
+                                                <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
+                                            </div>
+                                          
+                                             <div class="col-6">
+                                                    <h6><label for="">Loco Type</label></h6>
+                                                    <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
+                                                </div>
+                                                <div class="col-6">
+                                                        <label for="">Date</label>
+                                                        <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                </div>
+
+                                       <div class="col-6">
+                                                    <label for="">Axle No.</label>
+                                                    <select input type="number" name="editaxle_no" id="editaxle_no" class="form-control ll" required>
+                                                            <option value="" hidden selected>Select Axle No.</option>  
+                                                            {% for y in axle %}
+                                                            <option>{{y.axle_no}}</option>
+                                                            {% endfor %}
+                                                    </select> 
+                                        </div>
+
+                                        <div class="col-6">
+                                                <label for="">Wheel No(DE)</label>
+                                                <select input type="number" class="form-control" name="editwheelno_de" id="editwheelno_de" required>
+                                                        <option value="" hidden selected>Select Wheel No(DE)</option>  
+                                                        {% for z in wheelde %}
+                                                        <option>{{z.wheel_no}}</option>
+                                                        {% endfor %}
+                                                </select> 
+                                        </div> 
+                                        <div class="col-6">
+                                                <label for="">Wheel No(NDE)</label>
+                                                <select input type="number" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
+                                                        <option id="wheelnonde" value="" hidden selected>Select Wheel No(DE)</option>
+                                                        {% for z in wheelnde %}
+                                                        <option class="neweledoc">{{z.wheel_no}}</option>
+                                                        {% endfor %}
+                                                </select> 
+                                        </div> 
+                                        <div class="col-6">
+                                                <label for="">Bull Gear No.</label>
+                                                <input type="text" class="form-control" name="editbullgear_no" id="editbullgear_no" required>
+                                        </div> 
+                                        <div class="col-6">
+                                                <label for="">Bull Gear Make</label>
+                                                <input type="text" class="form-control" name="editbullgear_make" id="editbullgear_make" required>
+                                        </div>   
+                        </div>  
+                    </div>                      
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" />
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    
+      <!--Dispatch-->
+    <!-- Modal -->
+    <div class="modal fade" id="DispatchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel2">AxleWheelPressing</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+             <div class="modal-body">       
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="">Serial No.</label>
+                                            <input type="number" class="form-control" id="dissno" name="dissno" required>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                   <div class="col-6">
+                                    <div class="dropdown">
+                                      <select name="dislocos" type="form-control ll" required>
+                                        <option value="" hidden selected>Dispatch To</option>
+                                        <option value="Bogie Assembly">Bogie Assembly and Dispatch</option>
+                                      </select>
+                                      </div>
+                                    </div>  
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                     </div>    
+
+<!--Delete-->
+<!-- Modal -->
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel3">AxleWheelPressing</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+               <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                    <label for="">Serial No.</label>
+                                    <input type="number" class="form-control" id="delsno" name="delsno"  required>
+                            </div> 
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
+            </div>
+            </form>
+        </div>
+      </div>
+    </div>   
 </form>
 
 <script>
+    var i=0;
         $(document).ready(function() {
             $('#delform').bootstrapValidator({
                 feedbackIcons: {
@@ -267,7 +441,94 @@ footer, .page-content::after{
             })
         });
 
-    </script>
+        $("#editsno").change(function(e){
+            e.preventDefault();
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'axlepress_editsno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        console.log(response);
+                        $("#editbo_no").val(`${response[0].bo_no}`);
+                        $("#editbo_date").val(`${response[0].bo_date}`);
+                        $("#editlocos").val(`${response[0].loco_type}`);
+                        $("#editdate").val(`${response[0].date}`);
+                        $("#editaxle_no").val(`${response[0].axle_no}`);
+                        $("#editwheelno_de").val(`${response[0].wheelno_de}`);
+                        $("#editwheelno_nde").val(`${response[0].wheelno_nde}`);
+                        $("#editbullgear_no").val(`${response[0].bullgear_no}`);
+                        $("#editbullgear_make").val(`${response[0].bullgear_make}`);
 
-    </html>  
+                    }
+                })
+        });   
+
+        document.querySelector("#wheelno_de").addEventListener('change',(e)=>{
+            e.preventDefault();
+            var wheel_no = $("#wheelno_de").val();
+            var data = {wheel_no};
+                  $.ajax({
+                        type : 'GET',
+                        url : "{% url 'wheelnde' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                                  var elementsadded = document.querySelectorAll(".neweledoc");
+                                      if(elementsadded.length>0){
+                                          var elementsaddedarr = Array.from(elementsadded);
+                                          elementsaddedarr.forEach((el)=> el.remove());
+                                          document.querySelector("#wheelnonde").selected = true; 
+                                       }
+                                      var brarr,mystr,html;
+                                      brarr = response.map((el)=>el.wheel_no);
+                                      mystr = "";
+                                      brarr.forEach((el,index)=>{
+                                        html = `<option class="neweledoc">${brarr[index]}</option>`
+                                        mystr = html.concat(mystr);
+                                      });
+                                      html = "";
+                                      document.querySelector("#wheelno_nde").insertAdjacentHTML('beforeend',mystr);
+                                      mystr=""; 
+                                }
+                                  })
+                        });
+if(i>1)
+{
+    
+}
+document.querySelector("#editwheelno_de").addEventListener('change',(e)=>{
+    e.preventDefault();
+    var wheel_no = $("#editwheelno_de").val();
+    var data = {wheel_no};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'wheelnde' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                            var elementsadded = document.querySelectorAll(".neweledoc");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#wheelnonde").selected = true; 
+                             }
+                                var brarr,mystr,html;
+                                brarr = response.map((el)=>el.wheel_no);
+                                mystr = "";
+                                brarr.forEach((el,index)=>{
+                                html = `<option class="neweledoc">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                                });
+                                html = "";
+                                document.querySelector("#editwheelno_nde").insertAdjacentHTML('beforeend',mystr);
+                                mystr=""; 
+                        }
+                            })
+                })
+
+</script>
+</html>  
 {% endblock content %}

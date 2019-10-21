@@ -1,6 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
 <html lang="en">
+        <head>
+                <script>
+                   $(document).ready(function () {
+                        $('#date').datepicker({
+                            dateFormat: 'dd-mm-yy'
+                        });
+                    });
+                </script>
+                        <script>
+                           $(document).ready(function () {
+                                $('#datewhl').datepicker({
+                                    dateFormat: 'dd-mm-yy'
+                                });
+                            });
+                        </script> 
+                            <script>
+                                   $(document).ready(function () {
+                                        $('#dateaxle').datepicker({
+                                            dateFormat: 'dd-mm-yy'
+                                        });
+                                    });
+                                </script>
+    
+            </head>
    
     <style>
         #customers {
@@ -123,7 +147,7 @@ footer, .page-content::after{
         <td>{{objec.sno}} <br><br></td>
         <td>{{objec.bo_no}} <br><br></td>
         <td>{{objec.bo_date}} <br><br></td>
-        <td>{{objec.locos}} <br><br></td>
+        <td>{{objec.loco_type}} <br><br></td>
         <td>{{objec.date}} <br><br></td>
         <td>{{objec.wheel_no}} <br><br></td>
         <td>{{objec.wheel_make}} <br><br></td>
@@ -172,15 +196,12 @@ footer, .page-content::after{
                                         <div class="row">
                                             <div class="col-6">
                                                 <h6><label for="">Loco Type</label></h6>
-                                                <input type="text" class="form-control" name="locos" id="locos" required readonly>
+                                                <input type="text" class="form-control" name="loco_type" id="loco_type" required readonly>
                                             </div>
-                                       <div class="col-6">
-                                            <label for="">Date</label>
-                                            <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
-                                            <input type="date" class="xDateContainer" onchange="setCorrect(this,'date');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-                                            <input type="text" id="date" name="date" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
-                                        </span>
-                                      </div>
+                                            <div class="col-6">
+                                                    <label for="">Date</label>
+                                                    <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                            </div>
                                    </div>
                                     
                                     <div class="row">   
@@ -267,10 +288,10 @@ footer, .page-content::after{
                                    </div>
                         
                                     <div class="row">
-                                        <div class="col-6">
-                                        <label for="">Date</label>
-                                        <input type="date" class="form-control" name="editdate" id="editdate" plac required>
-                                    </div>
+                                            <div class="col-6">
+                                                    <label for="">Date</label>
+                                                    <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                              </div>
                                     <div class="col-md-6 mb-3">
                                             <label for="">Wheel No.</label>
                                             <input type="number" class="form-control" name="editwheel_no" id="editwheel_no" required>
@@ -427,15 +448,16 @@ footer, .page-content::after{
                                                             <div class="col-md-6 mb-3">
                                                                   <label for="Axle">Bore Dia</label>
                                                                   <input type="number" class="form-control" name="bore_diawhl" id="bore_diawhl" placeholder="" required>
-                                                                </div>  
+                                                                </div> 
+                                                                <div class="col-md-6 mb-3">
+                                                                        <label for="Axle">Date</label>
+                                                                        <input type="text" name="datewhl" id="datewhl" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                                      </div>  
                                                                 <div class="col-md-6 mb-3">
                                                                       <label for="Axle">Inspector Name</label>
                                                                       <input type="text" class="form-control" name="inspector_namewhl" id="inspector_namewhl" placeholder="" required>
                                                                     </div> 
-                                                                    <div class="col-md-6 mb-3">
-                                                                          <label for="Axle">Date</label>
-                                                                          <input type="Date" class="form-control" name="datewhl" id="datewhl" placeholder="" required>
-                                                                        </div>     
+                                                                        
                                                                             
                                                             
                                   </div>
@@ -504,11 +526,7 @@ footer, .page-content::after{
                                                           <label for="Axle">collar</label>
                                                           <input type="number" class="form-control" id="collaraxle" placeholder="" value="" required>
                                                         </div> 
-            
-                                                      <div class="col-4">
-                                                            <label for="Axle">Date</label>
-                                                            <input type="Date" class="form-control" id="dateaxle" placeholder="" value="" required>
-                                                          </div>   
+        
                                                           <div class="col-4">
                                                               <label for="Axle">Bearing</label>
                                                               <input type="number" class="form-control" id="bearingaxle" placeholder="" value="" required>
@@ -517,6 +535,11 @@ footer, .page-content::after{
                                                                 <label for="Axle">Abutment</label>
                                                                 <input type="number" class="form-control" id="abutmentaxle" placeholder="" value="" required>
                                                               </div> 
+                                                              <div class="col-4">
+                                                                    <label for="Axle">Date</label>
+                                                                    <input type="text" name="dateaxle" id="dateaxle" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+
+                                                                  </div>   
                                                               <div class="col-4">
                                                                   <label for="Axle">Inspector Name</label>
                                                                   <input type="Text" class="form-control" id="inspector_nameaxle" placeholder="" value="" required>
@@ -597,7 +620,7 @@ footer, .page-content::after{
                 data : data,
                 success : function(response){            
                     $("#bo_date").val(`${response[0].rel_date}`);
-                    $("#locos").val(`${response[0].ep_type}`);
+                    $("#loco_type").val(`${response[0].ep_type}`);
                 }
             })
         });

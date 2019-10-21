@@ -1,5 +1,14 @@
 {% extends 'base.html' %} {% block content %}
 <html>
+        <head>
+                <script>
+                   $(document).ready(function () {
+                        $('#date').datepicker({
+                            dateFormat: 'dd-mm-yy'
+                        });
+                    });
+                </script>
+        </head> 
 <style>
     #customers {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -162,7 +171,7 @@
 
                                     <div class="col-6">
                                         <h6><label>Shaft Machining</label></h6>
-                                        <select class="btn btn-info" name="shaft_m" id="shaft_m" type="form-control ll" required>
+                                        <select class="btn btn" name="shaft_m" id="shaft_m" type="form-control ll" required>
                                           <option value="" hidden selected>Shaft Machining</option>
                                           <option value="VERTICAL">Vertical</option>
                                           <option value="HORIZONTAL">Horizontal</option>
@@ -182,13 +191,10 @@
                                         </div>
 
                                         <div class="row">
-                                          <div class="col-6">
-                                            <label for="">Date</label>
-                                            <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
-                                                <input type="date" class="xDateContainer" onchange="setCorrect(this,'date');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-                                                <input type="text" id="date" name="date" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
-                                            </span>
-                                        </div>
+                                                <div class="col-6">
+                                                        <label for="">Date</label>
+                                                        <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                </div>
                                         </div>            
 
                                     </div>
