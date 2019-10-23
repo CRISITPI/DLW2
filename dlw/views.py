@@ -1,3 +1,7 @@
+
+
+
+
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -15,7 +19,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+from dlw.models import empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
