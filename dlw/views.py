@@ -15,7 +15,11 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
+<<<<<<< HEAD
 from dlw.models import empmast,M14M4,M13,Cst,testc,navbar,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+=======
+from dlw.models import empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+>>>>>>> abhishek
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -5950,7 +5954,8 @@ def M20view(request):
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
-            'roles':tmp
+            'roles':tmp,
+            'lvdate':"yyyy-mm-dd",
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -5966,7 +5971,8 @@ def M20view(request):
             'nav':nav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
-            'roles' :rolelist
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
         }
     elif(len(rolelist)>1):
         context = {
@@ -5976,7 +5982,8 @@ def M20view(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
-            'roles' :rolelist
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
@@ -5985,6 +5992,11 @@ def M20view(request):
             wo_nop = empmast.objects.none()
             shop_sec = request.POST.get('shop_sec')
             staffno=request.POST.get('staff_no')
+            lvdate=request.POST.get('lv_date')
+            w1=M5SHEMP.objects.filter(staff_no=staffno).values('staff_no','name').distinct()
+            wono = list(w1)
+            obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno)
+            print(obj1)
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -5996,7 +6008,11 @@ def M20view(request):
                     'nav':nav,
                     'subnav':subnav,
                     'ip':get_client_ip(request),
-                    'roles':tmp
+                    'roles':tmp,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'obj1':obj1,
+                    'empname':wono[0]['name'],
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
@@ -6012,7 +6028,11 @@ def M20view(request):
                     'nav':nav,
                     'ip':get_client_ip(request),
                     'usermaster':usermaster,
-                    'roles' :rolelist
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    'ticket':wono[0]['staff_no'],
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -6022,9 +6042,25 @@ def M20view(request):
                     'subnav':subnav,
                     'ip':get_client_ip(request),
                     'usermaster':usermaster,
-                    'roles' :rolelist
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    'ticket':wono[0]['staff_no'],
                 }
-    return render(request,'M20view.html',context)
+        
+        if submitvalue=='Save':
+            print("data saved")
+            shop_sec= request.POST.get('shop_sec')
+            staff_no=request.POST.get('stffno')
+            lv_date= request.POST.get('lv_date')
+            name=request.POST.get('empname')
+            ticketno = request.POST.get('stffno')
+            alt_date = request.POST.get('alt_date')
+            M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(staff_no), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(alt_date))
+            messages.success(request, 'Successfully Saved !!!, Select new values to update')
+    return render(request, "M20view.html", context)
+
 
 
 def m20getstaffno(request):
@@ -6048,6 +6084,7 @@ def m20getstaffName(request):
         print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 
     
 
