@@ -14,7 +14,8 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import empmast,M14M4,Cst,testc,navbar,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+from dlw.models import EpcCode,empmast,M14M4,Cst,testc,navbar,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+from dlw.models import Cstr
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -6446,3 +6447,36 @@ def m22getstaff(request):
         staff_no = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+
+@login_required
+@role_required(allowed_roles=["Superuser"])
+def CardGeneration(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    assmno = EpcCode.objects.all().values('num_1').distinct();
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
+        'assmno':assmno,
+    }
+    if request.method=="POST":
+        bval=request.POST.get('cardbutton')
+        asmno=request.POST.get('asslyno')
+        if bval=="Generate Cards":
+            # obj1=Cstr.objects.filter(cp_part__in=list(Cstr.objects.all().values('pp_part').distinct())).values('cp_part').distinct()
+            obj1=Cstr.objects.none()
+            obj2=list(Cstr.objects.filter(pp_part=asmno).values('pp_part','cp_part').distinct())
+            print(len(obj2))
+            print(obj2)
+    return render(request,'CardGeneration.html',context)
+
