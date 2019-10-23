@@ -1,13 +1,10 @@
 {% extends 'base.html' %} {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
 <style>
-
-.tt {
-    display: inline-block;
-}
 
 
 
@@ -156,22 +153,17 @@
 
     </div>
     <br><br> {% if sub == 1 %}
+    <div id="print" style="align:center"  >
 
-     <!--<table align="center">-->
-         <!--<tr>-->
-         <!--<th><b><h5>Indian Railways/भारतीय रेल</h5></b></th>-->
-         <!--</tr>-->
-         <!--<tr>-->
-         <!--<th><b><h5>Diesel Locomotive Works/डीजल रेल इंजन कारखाना</h5></b></th>-->
-         <!--</tr>-->
-         <!--<tr>-->
-         <!--<th><b><h5>Varanasi/वाराणसी</h5></b></th>-->
-         <!--<tr>-->
-         <!--<th><b><h5>DUTY CERTIFICATE/ड्यूटी प्रमाण-पत्र </h5></b></th>-->
-         <!--</tr>-->
-     <!--</table>-->
-         <!--<br><br>-->
-     <div id="print" style="align:center"  >
+        <center><b><h4>Indian Railways/भारतीय रेल</h4></b></center>
+
+        <center> <b><h4>Diesel Locomotive Works/डीजल रेल इंजन कारखाना</h4></b></center>
+
+        <center><b><h4>Varanasi/वाराणसी</h4></b></center>
+        <center><b><h4>DUTY CERTIFICATE/ड्यूटी प्रमाण-पत्र </h4></b></center>
+
+         <br><br><br>
+
      <table border="2" align="center">
         <tr>
 
@@ -267,19 +259,19 @@
          {% endfor %}
     </tr>
 
-  </table>
+  </table><br><br>
      <input type="hidden" value={{mt1}} name="mt1">
 
        <center><b><h5>No.of Hours each date on Duty/प्रत्येक तारीख के ड्यूटी के घंटो की संख्या </h5></b></center>
          <center>
 
 <table border="1" class="tt" align="center" >
-    <tr><th>SNO</th><th>No.of Hours each date on Duty</th></tr>
 
 
+ <tr>
            {% for i in obj3  %}
-           {% if forloop.counter <= 15  %}
-        <tr>
+           {% if forloop.counter <= 10  %}
+
             <td>
                 {{forloop.counter}}
             </td>
@@ -293,14 +285,14 @@
                 <input type = "number" class="form-control" value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
           </td>
 
-            {% endif %}</tr>{% endif %}
-    {% endfor %}</table>
+            {% endif %}{% endif %}
+    {% endfor %}</tr>
 
-    <table border="1" class="tt" align="center" >
-         <tr><th>SNO</th><th>No.of Hours each date on Duty</th></tr>
+
+ <tr>
           {% for i in obj3  %}
-           {% if forloop.counter > 16 %}
-      <tr>
+           {% if forloop.counter > 10 and forloop.counter <= 20 %}
+
             <td>
                 {{forloop.counter}}
             </td>
@@ -311,14 +303,68 @@
           </td>
           {% else %}
           <td>
-                <input type = "number" class="form-control" value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
+                <input type = "number" class="form-control"  value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
           </td>
 
-          {% endif %}</tr>
+          {% endif %}
 
 
     {% endif %}
     {% endfor %}
+    </tr>
+
+
+
+ <tr>
+          {% for i in obj3  %}
+           {% if forloop.counter > 20 and forloop.counter <= 30 %}
+
+            <td>
+                {{forloop.counter}}
+            </td>
+  {% if i.no_hrs %}
+
+          <td>
+                <input type = "number" class="form-control" value="{{i.no_hrs}}" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 " step="0.01" min="0.00" max="24.00"  >
+          </td>
+          {% else %}
+          <td>
+                <input type = "number" class="form-control"  value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
+          </td>
+
+          {% endif %}
+
+
+    {% endif %}
+    {% endfor %}
+    </tr>
+
+
+     <tr>
+          {% for i in obj3  %}
+           {% if forloop.counter > 30 %}
+
+            <td>
+                {{forloop.counter}}
+            </td>
+  {% if i.no_hrs %}
+
+          <td>
+                <input type = "number" class="form-control" value="{{i.no_hrs}}" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 " step="0.01" min="0.00" max="24.00"  >
+          </td>
+          {% else %}
+          <td>
+                <input type = "number" class="form-control"  value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
+          </td>
+
+          {% endif %}
+
+
+    {% endif %}
+    {% endfor %}
+    </tr>
+
+
 </table>
 </center>
 
@@ -428,7 +474,7 @@ function printDiv() {
        var style = "<style>";
         style = style + "table {width: 100%;font: 17px Calibri;}";
         style = style + "table, th, td { border-collapse: collapse;";
-        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "padding: 2px 3px;text-align: left;}"+".tt {width: 50%;}";
         style = style + "</style>";
       var win = window.open('', '', 'height=750,width=750');
 
@@ -442,7 +488,7 @@ function printDiv() {
         win.document.write('</body></html>');
         win.print();
         win.close();
-
+     }
 
   </script>
 
