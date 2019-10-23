@@ -9,6 +9,13 @@
                         });
                     });
                 </script>
+                <script>
+                        $(document).ready(function () {
+                             $('#editdate').datepicker({
+                                 dateFormat: 'dd-mm-yy'
+                             });
+                         });
+                     </script>
                         <script>
                            $(document).ready(function () {
                                 $('#datewhl').datepicker({
@@ -199,7 +206,7 @@ footer, .page-content::after{
                                                 <input type="text" class="form-control" name="loco_type" id="loco_type" required readonly>
                                             </div>
                                             <div class="col-6">
-                                                    <label for="">Date</label>
+                                                    <label for="">Date(Manually)</label>
                                                     <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                             </div>
                                    </div>
@@ -262,34 +269,33 @@ footer, .page-content::after{
                             <div class="row">
                                 <div class="col-6">
                                     <label for="">Serial No.</label>
-                                    <input type="number" class="form-control" id="editsno" name="editsno" required>
+                                    <label for="">S No.</label>
+                                    <select name="editsno" id="editsno" class="form-control ll" required>
+                                        <option value="" hidden selected>Select S No.</option>  
+                                        {% for y in mysno %}
+                                        <option>{{y.sno}}</option>
+                                        {% endfor %}
+                                </select> 
                                       </div> 
                                             <div class="col-6">
-                                            <label for="">Batch Order No.</label>
-                                            <input type="number" class="form-control" name="editbo_no" id="editbo_no" required>
+                                                    <h6><label for="">Batch Order No.</label></h6>
+                                                    <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
                                           </div>
                                       </div>
                                         <div class="row">
                                             <div class="col-6">
-                                           <label for="">Batch Order Date</label>
-                                           <input type="date" class="form-control" name="editbo_date" id="editbo_date" required>
+                                                    <h6><label for="">Batch Order Date</label></h6>
+                                                    <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
                                        </div>
                                        <div class="col-6">
-                                            <label>Loco Type</label>
-                                            <div class="dropdown">
-                                              <select class="btn btn-info" name="editlocos" type="form-control ll" style="margin-left:0%;" required>
-                                              <option value="" hidden selected>Loco Type</option>
-                                              <option value="wap7">WAP7</option>
-                                              <option value="wag9">WAG9</option>
-                                              <option value="hhp">HHP</option>
-                                            </select>
-                                            </div>
+                                            <h6><label for="">Loco Type</label></h6>
+                                            <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
                                         </div>  
                                    </div>
                         
                                     <div class="row">
                                             <div class="col-6">
-                                                    <label for="">Date</label>
+                                                    <label for="">Date(Manually)</label>
                                                     <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                               </div>
                                     <div class="col-md-6 mb-3">
@@ -450,7 +456,7 @@ footer, .page-content::after{
                                                                   <input type="number" class="form-control" name="bore_diawhl" id="bore_diawhl" placeholder="" required>
                                                                 </div> 
                                                                 <div class="col-md-6 mb-3">
-                                                                        <label for="Axle">Date</label>
+                                                                        <label for="Axle">Date(Manually)</label>
                                                                         <input type="text" name="datewhl" id="datewhl" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                                                       </div>  
                                                                 <div class="col-md-6 mb-3">
@@ -536,7 +542,7 @@ footer, .page-content::after{
                                                                 <input type="number" class="form-control" id="abutmentaxle" placeholder="" value="" required>
                                                               </div> 
                                                               <div class="col-4">
-                                                                    <label for="Axle">Date</label>
+                                                                    <label for="Axle">Date(Manually)</label>
                                                                     <input type="text" name="dateaxle" id="dateaxle" class="form-control" placeholder="dd-mm-yyyy" required readonly>
 
                                                                   </div>   
@@ -625,36 +631,32 @@ footer, .page-content::after{
             })
         });
 
+        $("#editsno").change(function(e){
+            e.preventDefault();
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'axle_editsno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        console.log(response);
+                        $("#editbo_no").val(`${response[0].bo_no}`);
+                        $("#editbo_date").val(`${response[0].bo_date}`);
+                        $("#editlocos").val(`${response[0].loco_type}`);
+                        $("#editdate").val(`${response[0].date}`);
+                        $("#editwheel_no").val(`${response[0].wheel_no}`);
+                        $("#editwheel_make").val(`${response[0].wheel_make}`);
+                        $("#editwheel_heatcaseno").val(`${response[0].wheel_heatcaseno}`);
+                        $("#editaxle_no").val(`${response[0].axle_no}`);
+                        $("#editaxle_make").val(`${response[0].axle_make}`);
+                        $("#editaxle_heatcaseno").val(`${response[0].axle_heatcaseno}`);
 
+                    }
+                })
+        }); 
 
-        window.onload = function() {
-            var input = document.createElement('input');
-            input.setAttribute('type', 'date');
-            input.setAttribute('value', 'some text');
-            if (input.value === "some text") {
-                allDates = document.getElementsByClassName("xDateContainer");
-                console.log(allDates);
-                matchEnterdDate = 1;
-                for (var i = 0; i < allDates.length; i++) {
-                    allDates[i].style.opacity = "1";
-                }
-            }
-        };
-        //function to convert enterd date to any format
-    function setCorrect(xObj, xTraget) {
-        var date = new Date(xObj.value);
-        var month = date.getMonth() + 1;
-        var day = date.getDate();
-        var year = date.getFullYear();
-        if (month != 'NaN') {
-            document.getElementById(xTraget).value = day + "-" + month + "-" + year;
-        } else {
-            if (matchEnterdDate == 1) {
-                document.getElementById(xTraget).value = xObj.value;
-            }
-        }
-
-    };
     </script>
 
     </html>  

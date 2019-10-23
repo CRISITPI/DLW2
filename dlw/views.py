@@ -4841,13 +4841,15 @@ def insert_machining_of_air_box(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=MachiningAirBox.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
+    mysno=MachiningAirBox.objects.filter(dispatch_status=False).values('sno')
     my_context={
        'object':obj2,
        'nav':nav,
        'subnav':subnav,
        'usermaster':usermaster,
        'ip':get_client_ip(request),
-       'mybo':mybo
+       'mybo':mybo,
+       'mysno':mysno,
        }
     if request.method=="POST":
         
@@ -4938,6 +4940,7 @@ def airbox_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
         myval=list(MachiningAirBox.objects.filter(sno=mysno).values('bo_no','bo_date','airbox_sno','airbox_make','in_qty','out_qty','date','loco_type'))
+        print(myval)
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400) 
 
@@ -4955,13 +4958,15 @@ def miscellaneous_section(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=MiscellSection.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
+    mysno=MiscellSection.objects.filter(dispatch_status=False).values('sno')
     my_context={
        'object':obj2,
        'nav':nav,
        'subnav':subnav,
         'usermaster':usermaster,
         'ip':get_client_ip(request),
-        'mybo':mybo
+        'mybo':mybo,
+        'mysno':mysno,
        }
     if request.method=="POST":
         
@@ -5043,6 +5048,13 @@ def miscell_addbo(request):
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+def miscell_editsno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno=request.GET.get('sels_no')
+        myval=list(MiscellSection.objects.filter(sno=mysno).values('bo_no','bo_date','shaft_m','in_qty','out_qty','date','loco_type'))
+        return JsonResponse(myval, safe=False)
+    return JsonResponse({"success":False}, status=400) 
+
 
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302"])
@@ -5058,7 +5070,7 @@ def axlewheelmachining_section(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=AxleWheelMachining.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
-    mysno=AxleWheelMachining.objects.all().values('sno')
+    mysno=AxleWheelMachining.objects.filter(dispatch_status=False).values('sno')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -5112,9 +5124,9 @@ def axlewheelmachining_section(request):
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
             date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
             wheel_no=request.POST.get('editwheel_no')
             wheel_make=request.POST.get('editwheel_make')
-            loco_type=request.POST.get('editlocos')
             wheel_heatcaseno=request.POST.get('editwheel_heatcaseno')
             axle_no=request.POST.get('editaxle_no')
             axle_make=request.POST.get('editaxle_make')
@@ -5197,6 +5209,13 @@ def axle_addbo(request):
         myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+def axle_editsno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno=request.GET.get('sels_no')
+        myval=list(AxleWheelMachining.objects.filter(sno=mysno).values('bo_no','bo_date','date','wheel_no','wheel_make','loco_type','wheel_heatcaseno','axle_no','axle_make','axle_heatcaseno'))
+        return JsonResponse(myval, safe=False)
+    return JsonResponse({"success":False}, status=400) 
 
 
 
@@ -6279,7 +6298,7 @@ def m22view(request):
             else:
                     obj3=M22.objects.filter(shop_sec=shop_sec, staff_no=staff_no, month=month, wo_no=wo_no, wo_no1=wo_no1).values('no_hrs')[:mt+1]
                     # obj4=M22.objects.filter(shop_sec=shop_sec, staff_no=staff_no, month=month, wo_no=wo_no, wo_no1=wo_no1).values('no_hrs')[16:]
-            print(obj3)
+            # print(obj3)
             # print(obj4)
             if "Superuser" in rolelist:
                   tm=shop_section.objects.all()
@@ -6433,12 +6452,11 @@ def m22view(request):
 def m22getwono(request):
     if request.method == "GET" and request.is_ajax():
         from.models import Batch
-        print("HI")
+
         shop_sec = request.GET.get('shop_sec')
         w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
         w2=Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
         wono = list(w2)
-        print(w2)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -6449,7 +6467,6 @@ def m22getstaff(request):
         staff_no = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
-
 
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
