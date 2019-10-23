@@ -6050,7 +6050,8 @@ def m20getstaffName(request):
     return JsonResponse({"success":False}, status=400)
 
     
-
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m26view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6172,7 +6173,9 @@ def m26view(request):
             'subnav':subnav,
         }
     return render(request,'m26view.html',context)  
-	 
+
+
+
 def m26getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
@@ -6180,20 +6183,19 @@ def m26getwono(request):
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
 def m26getStaffCatWorkHrs(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         w_no     = request.GET.get('wno')
         date     = request.GET.get('date')
-
-        wono = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no','cat','total_time_taken').exclude(total_time_taken__isnull=True).distinct())
-
-        wono = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no','cat','total_time_taken').exclude(total_time_taken__isnull=True).exclude(staff_no__isnull=True).exclude(cat__isnull=True).distinct())
-
+        print(date)
+        if shop_sec and w_no and date:
+            wono = list(M5SHEMP.objects.filter(shopsec=shop_sec,date__contains=date).values('staff_no','cat','total_time_taken').exclude(staff_no__isnull=True).exclude(total_time_taken__isnull=True).distinct('staff_no'))
+        else:
+            wono = "NO"
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
-    
-    
 
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
