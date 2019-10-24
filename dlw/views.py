@@ -6475,8 +6475,12 @@ def CardGeneration(request):
         if bval=="Generate Cards":
             # obj1=Cstr.objects.filter(cp_part__in=list(Cstr.objects.all().values('pp_part').distinct())).values('cp_part').distinct()
             obj1=Cstr.objects.none()
-            obj2=list(Cstr.objects.filter(pp_part=asmno).values('pp_part','cp_part').distinct())
-            print(len(obj2))
-            print(obj2)
+            obj2=Cstr.objects.filter(pp_part=asmno).values('cp_part').distinct()
+            for i in range(len(obj2)):
+                obj3=Cstr.objects.filter(pp_part__in=obj2[i].cp_part).values('cp_part').distinct()
+                obj1=obj1 | obj3
+            print(obj1)
+            # print(len(obj2))
+            # print(obj2)
     return render(request,'CardGeneration.html',context)
 
