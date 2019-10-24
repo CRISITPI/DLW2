@@ -8,6 +8,13 @@
                         });
                     });
                 </script>
+                <script>
+                        $(document).ready(function () {
+                             $('#editdate').datepicker({
+                                 dateFormat: 'dd-mm-yy'
+                             });
+                         });
+                     </script>
         </head> 
 
 <style>
@@ -195,7 +202,7 @@
                                                 <input type="number" class="form-control" name="out_qty" id="out_qty" required>
                                          </div>
                                          <div class="col-6">
-                                                <label for="">Date</label>
+                                                <label for="">Date(Manually)</label>
                                                 <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                           </div>
                                         </div>            
@@ -226,39 +233,34 @@
                     <div class="modal-body">
                                     <div class="row">
                                         <div class="col-6">
-                                            <label for="">S No.</label>
-                                            <input type="number" class="form-control" id="editsno" name="editsno" required>
+                                                <label for="">S No.</label>
+                                                <select name="editsno" id="editsno" class="form-control ll" required>
+                                                    <option value="" hidden selected>Select S No.</option>  
+                                                    {% for y in mysno %}
+                                                    <option>{{y.sno}}</option>
+                                                    {% endfor %}
+                                            </select> 
                                         </div>
                                         <div class="col-6">
-                                            <label for="">Batch Order No.</label>
-                                            <input type="number" class="form-control" name="editbo_no" id="editbo_no" required>
+                                                <h6><label for="">Batch Order No.</label></h6>
+                                                <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
-                                            <label for="">Batch Order Date</label>
-                                            <input type="date" class="form-control" name="editbo_date" id="editbo_date" required readonly>
+                                                <h6><label for="">Batch Order Date</label></h6>
+                                                <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
                                         </div>
                                         <div class="col-6">
-                                            <label>Loco Type</label>
-                                            <div class="dropdown">
-                                              <select name="editlocos" type="form-control ll" style="margin-left:0%;" required>
-                                              <option value="" hidden selected>Loco Type</option>
-                                              <option value="wap7">WAP7</option>
-                                              <option value="wag9">WAG9</option>
-                                              <option value="hhp">HHP</option>
-                                            </select>
-                                            </div>
+                                                <h6><label for="">Loco Type</label></h6>
+                                                <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-6">
-                                        <h6><label for="">Date</label></h6>
-                                        <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
-                                          <input type="date" class="xDateContainer" onchange="setCorrect(this,'editdate');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-                                          <input type="text" name="editdate" id="editdate" style="border:none;height:100%; width:100%;" tabindex="-1" required><span style="display: inline-block;width: 0px; z-index: 2;float:right ;padding-top: 0px;" tabindex="-1">&#9660;</span>
-                                        </span>
+                                                <label for="">Date(Manually)</label>
+                                                <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                         </div>
                                         <div class="col-6">
                                             <label for="Axle">Serial No.</label>
@@ -398,36 +400,29 @@
                     })
                 });
 
-
-
-                window.onload = function() {
-                    var input = document.createElement('input');
-                    input.setAttribute('type', 'date');
-                    input.setAttribute('value', 'some text');
-                    if (input.value === "some text") {
-                        allDates = document.getElementsByClassName("xDateContainer");
-                        console.log(allDates);
-                        matchEnterdDate = 1;
-                        for (var i = 0; i < allDates.length; i++) {
-                            allDates[i].style.opacity = "1";
-                        }
-                    }
-                };
-                //function to convert enterd date to any format
-            function setCorrect(xObj, xTraget) {
-                var date = new Date(xObj.value);
-                var month = date.getMonth() + 1;
-                var day = date.getDate();
-                var year = date.getFullYear();
-                if (month != 'NaN') {
-                    document.getElementById(xTraget).value = day + "-" + month + "-" + year;
-                } else {
-                    if (matchEnterdDate == 1) {
-                        document.getElementById(xTraget).value = xObj.value;
-                    }
-                }
+                $("#editsno").change(function(e){
+                    e.preventDefault();
+                    var sels_no=$(this).val();
+                    var data={sels_no};
+                        $.ajax({
+                            type: 'GET',
+                            url: "{% url 'airbox_editsno' %}",
+                            dataType: 'json',
+                            data:data,
+                            success:function(response){
+                                console.log(response);
+                                $("#editbo_no").val(`${response[0].bo_no}`);
+                                $("#editbo_date").val(`${response[0].bo_date}`);
+                                $("#editlocos").val(`${response[0].loco_type}`);
+                                $("#editdate").val(`${response[0].date}`);
+                                $("#editairbox_sno").val(`${response[0].airbox_sno}`);
+                                $("#editairbox_make").val(`${response[0].airbox_make}`);
+                                $("#editin_qty").val(`${response[0].in_qty}`);
+                                $("#editout_qty").val(`${response[0].out_qty}`);
         
-            };
+                            }
+                        })
+                }); 
 
 
             </script>

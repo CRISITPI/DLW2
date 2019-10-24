@@ -8,8 +8,19 @@
                         });
                     });
                 </script>
+                <script>
+                    $(document).ready(function () {
+                        $('#editdate').datepicker({
+                            dateFormat: 'dd-mm-yy'
+                        });
+                    });
+                </script>
         </head> 
 <style>
+        .default {
+            border-color: #e7e7e7;
+            color: black;
+          }
     #customers {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
@@ -171,7 +182,7 @@
 
                                     <div class="col-6">
                                         <h6><label>Shaft Machining</label></h6>
-                                        <select class="btn btn" name="shaft_m" id="shaft_m" type="form-control ll" required>
+                                        <select class="btn default" name="shaft_m" id="shaft_m" type="form-control ll" required>
                                           <option value="" hidden selected>Shaft Machining</option>
                                           <option value="VERTICAL">Vertical</option>
                                           <option value="HORIZONTAL">Horizontal</option>
@@ -223,44 +234,38 @@
                     <div class="modal-body">
                                     <div class="row">
                                         <div class="col-6">
-                                            <label for="">S No.</label>
-                                            <input type="number" class="form-control" id="editsno" name="editsno" required>
+                                                <label for="">S No.</label>
+                                                <select name="editsno" id="editsno" class="form-control ll" required>
+                                                    <option value="" hidden selected>Select S No.</option>  
+                                                    {% for y in mysno %}
+                                                    <option>{{y.sno}}</option>
+                                                    {% endfor %}
+                                            </select> 
                                         </div>
                                         <div class="col-6">
                                             <label for="">Batch Order No.</label>
-                                            <input type="number" class="form-control" name="editbo_no" id="editbo_no" required>
+                                            <input type="number" class="form-control" name="editbo_no" id="editbo_no" required readonly>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
-                                            <label for="">Batch Order Date</label>
-                                            <input type="date" class="form-control" name="editbo_date" id="editbo_date" required>
+                                                <label for="">Batch Order Date</label>
+                                                <input type="date" class="form-control" name="editbo_date" id="editbo_date" placeholder="yyyy-mm-dd" required readonly>
                                         </div>
                                         <div class="col-6">
-                                            <label>Loco Type</label>
-                                            <div class="dropdown">
-                                              <select class="btn btn-info" name="editlocos" type="form-control ll" style="margin-left:0%;" required>
-                                              <option value="" hidden selected>Loco Type</option>
-                                              <option value="wap7">WAP7</option>
-                                              <option value="wag9">WAG9</option>
-                                              <option value="hhp">HHP</option>
-                                            </select>
-                                            </div>
+                                                <h6><label for="">Loco Type</label></h6>
+                                                <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-6">
-                                        <h6><label for="">Date</label></h6>
-                                        <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
-                                            <input type="date" class="xDateContainer" onchange="setCorrect(this,'editdate');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-                                            <input type="text" id="editdate" name="editdate" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
-                                        </span>
-                                        </div>
-                                        
+                                            <div class="col-6">
+                                                    <label for="">Date(Manually)</label>
+                                                    <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                            </div>
                                         <div class="col-6">
                                             <h6><label>Shaft Machining</label></h6>
-                                            <select class="btn btn-info" name="editshaft_m" id="editshaft_m" type="form-control ll" required>
+                                            <select class="btn default" name="editshaft_m" id="editshaft_m" type="form-control ll" required>
                                               <option value="" hidden selected>Shaft Machining</option>
                                               <option value="VERTICAL">Vertical</option>
                                               <option value="HORIZONTAL">Horizontal</option>
@@ -394,36 +399,28 @@
                     })
                 });
 
-
-
-                window.onload = function() {
-                    var input = document.createElement('input');
-                    input.setAttribute('type', 'date');
-                    input.setAttribute('value', 'some text');
-                    if (input.value === "some text") {
-                        allDates = document.getElementsByClassName("xDateContainer");
-                        console.log(allDates);
-                        matchEnterdDate = 1;
-                        for (var i = 0; i < allDates.length; i++) {
-                            allDates[i].style.opacity = "1";
-                        }
-                    }
-                };
-                //function to convert enterd date to any format
-            function setCorrect(xObj, xTraget) {
-                var date = new Date(xObj.value);
-                var month = date.getMonth() + 1;
-                var day = date.getDate();
-                var year = date.getFullYear();
-                if (month != 'NaN') {
-                    document.getElementById(xTraget).value = day + "-" + month + "-" + year;
-                } else {
-                    if (matchEnterdDate == 1) {
-                        document.getElementById(xTraget).value = xObj.value;
-                    }
-                }
+                $("#editsno").change(function(e){
+                    e.preventDefault();
+                    var sels_no=$(this).val();
+                    var data={sels_no};
+                        $.ajax({
+                            type: 'GET',
+                            url: "{% url 'miscell_editsno' %}",
+                            dataType: 'json',
+                            data:data,
+                            success:function(response){
+                                console.log(response);
+                                $("#editbo_no").val(`${response[0].bo_no}`);
+                                $("#editbo_date").val(`${response[0].bo_date}`);
+                                $("#editlocos").val(`${response[0].loco_type}`);
+                                $("#editdate").val(`${response[0].date}`);
+                                $("#editshaft_m").val(`${response[0].shaft_m}`);
+                                $("#editin_qty").val(`${response[0].in_qty}`);
+                                $("#editout_qty").val(`${response[0].out_qty}`);
         
-            };
+                            }
+                        })
+                }); 
 
 
             </script>

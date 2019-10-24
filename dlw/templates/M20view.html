@@ -11,10 +11,10 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
   <script>
-    $(document).ready(function () { $('#datepicker').datepicker({dateFormat: 'yy-mm-dd'}); });
+    $(document).ready(function () { $('#lv_date').datepicker({dateFormat: 'yy-mm-dd'}); });
   </script>
   <script>
-    $(document).ready(function () { $('#datepicker1').datepicker({dateFormat: 'yy-mm-dd'}); });
+    $(document).ready(function () { $('#alt_date').datepicker({dateFormat: 'yy-mm-dd'}); });
   </script>
 
 <style>
@@ -79,7 +79,7 @@ th, td {
 <h4 align="center">SUNDAY BOOKING OF WORKSHOP STAFF</h4>
 <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
 <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम-20/M.-20 </h6></div><br>
-<form>
+<form action="{% url 'M20view' %}" method="POST"> {% csrf_token %}
     <div class="container">
 <table class="table">
   <tr>
@@ -101,7 +101,7 @@ th, td {
 
         <td>
             <label for="sno"><b>Date/ दिनांक.:</b></label>            
-          <input type="text" id="datepicker" style="width: 150px;" name="datepicker"  placeholder="dd-mm-yyyy" readonly/>
+          <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" readonly/>
         </td> 
 
         <td>
@@ -127,7 +127,12 @@ th, td {
               <select class="form-control ll" id="staff_no" name="staff_no" required style="width: 150px;">       
                   <option id="staff_no" selected disabled hidden>Staff Number</option>    
             </select>
-          </td>        
+          </td>  
+          <td><input type="text" id="stffno" name="stffno" value="{{ticket}}" style="display: none" /></td>     
+          <td><input type="text" id="shpsec" value="{{shopsec}}" style="display: none" /></td>     
+        </tr>
+        <tr>
+          <td><input type="submit" name="proceed" value="Add" id="proceed" style="display: none" /></td>
         </tr>
     </table>
 
@@ -136,20 +141,26 @@ th, td {
       <input type="reset" name="reset">
     <hr style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
 
-  
+  {% if sub == 1 %}
+    
     <h4 align="center">Particulars of Staff booked to work on Sunday</h4>
     <h4 align="center">रविवार को काम करने के लिए बुक किये गए कर्मचारियों का विवरण </h4>
    <div class="row">
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <table class="table">
       <thead>
+          
         <tr>
-          <th>Name नाम</th>
-          <th>Ticket No.  टिकट स.</th>           
+          <th>Name नाम</th> <td><input type="text" name="empname" value="{{empname}}" style="display: none" /></td>
+          <th>Ticket No.  टिकट स.</th>       
         </tr>
+        {% for i in obj1 %}
+        <tr>
+          <td style="width: 150px;">{{i.name}}</td>
+          <td style="width: 150px;">{{i.ticketno}}</td> 
+        </tr>
+        {% endfor %}
       </thead>
-
-
       <tbody id="projectData">
           
       </tbody> 
@@ -162,16 +173,24 @@ th, td {
           <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>          
         </tr>
       </thead>
+      {% for i in obj1 %}
       <tbody >  
-          <tr><td><input type="text" id="datepicker1" style="width: 150px;" name="datepicker1"  placeholder="dd-mm-yyyy" readonly/></td></tr>
+          <tr><td><input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="dd-mm-yyyy" value="{{i.alt_date}}" readonly/></td></tr>
       </tbody> 
-
+{% endfor %}
     </table>
   </div>
 </div>
 </div>
-</form>  
+<center>
+  <input type="submit" name="proceed" value="Save" id="submitted">  
+</center>
+{% endif %}
+</form>
+
 <script type="text/javaScript">
+  
+
   document.querySelector("#shop_sec").addEventListener('change',(e)=>{
     //console.log("hi");
                     e.preventDefault();
@@ -205,7 +224,10 @@ th, td {
                           })
                 })
 
+                document.querySelector("#staff_no").addEventListener('change',(e)=>{
 
+                  document.querySelector("#proceed").click();
+              })
       document.querySelector("#staff_no").addEventListener('change',(e)=>{
     //console.log("hi");
                     e.preventDefault();
@@ -249,7 +271,13 @@ th, td {
                         }
                           })
                 })
-
+  var spsec = document.getElementById('shpsec').value;
+  var stfno = document.getElementById('stffno').value;
+  console.log(stfno);
+    
+    $(document).ready(() => {
+        $("#shop_sec").val(spsec);
+    });
 
 </script>    
 {% endblock content %}
