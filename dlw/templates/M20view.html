@@ -101,7 +101,7 @@ th, td {
 
         <td>
             <label for="sno"><b>Date/ दिनांक.:</b></label>            
-          <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" readonly/>
+          <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" readonly required/>
         </td> 
 
         <td>
@@ -128,7 +128,7 @@ th, td {
                   <option id="staff_no" selected disabled hidden>Staff Number</option>    
             </select>
           </td>  
-          <td><input type="text" id="stffno" name="stffno" value="{{ticket}}" style="display: none" /></td>     
+          <td><input type="text" id="stffno" name="stffno" value="{{ticketno}}" style="display: none" /></td>     
           <td><input type="text" id="shpsec" value="{{shopsec}}" style="display: none" /></td>     
         </tr>
         <tr>
@@ -142,24 +142,24 @@ th, td {
     <hr style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
 
   {% if sub == 1 %}
-    
+  <div id="print" style="align:center" >
     <h4 align="center">Particulars of Staff booked to work on Sunday</h4>
     <h4 align="center">रविवार को काम करने के लिए बुक किये गए कर्मचारियों का विवरण </h4>
    <div class="row">
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <table class="table">
       <thead>
-          
+          <input type="text" name="empname" value="{{empname}}" style="display: none" />
         <tr>
-          <th>Name नाम</th> <td><input type="text" name="empname" value="{{empname}}" style="display: none" /></td>
+          <th>Name नाम</th> 
+          
           <th>Ticket No.  टिकट स.</th>       
         </tr>
-        {% for i in obj1 %}
         <tr>
-          <td style="width: 150px;">{{i.name}}</td>
-          <td style="width: 150px;">{{i.ticketno}}</td> 
+          <td>{{empname}}</td>
+          <td>{{ticketno}}</td> 
         </tr>
-        {% endfor %}
+    
       </thead>
       <tbody id="projectData">
           
@@ -173,17 +173,19 @@ th, td {
           <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>          
         </tr>
       </thead>
-      {% for i in obj1 %}
+     
       <tbody >  
-          <tr><td><input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="dd-mm-yyyy" value="{{i.alt_date}}" readonly/></td></tr>
+          <tr><td><input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="yy-mm-dd" value="{{alt_date}}" readonly required /></td></tr>
       </tbody> 
-{% endfor %}
+
     </table>
   </div>
 </div>
 </div>
+
 <center>
-  <input type="submit" name="proceed" value="Save" id="submitted">  
+  <input type="submit" name="proceed" value="Save" id="submitted"> 
+  <input type="button" onclick="printDiv()" value="Print"> 
 </center>
 {% endif %}
 </form>
@@ -278,6 +280,33 @@ th, td {
     $(document).ready(() => {
         $("#shop_sec").val(spsec);
     });
+
+    function printDiv() {
+      var printContents = document.getElementById("print").innerHTML;
+ 
+        var style = "<style>";
+         style = style + "table {width: 100%;font: 17px Calibri;}";
+         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+         style = style + "padding: 2px 3px;text-align: left;}";
+         style = style + "</style>";
+       var win = window.open('', '', 'height=500,width=500');
+ 
+         win.document.write('<html><head>');
+ 
+         win.document.write('<title>M20(Sunday Booking) Card</title>');
+         win.document.write(style);
+         win.document.write('</head>');
+         win.document.write('<body>');
+         win.document.write(printContents);
+         win.document.write('</body></html>');
+ 
+         win.print();
+         win.close();
+ 
+ 
+ 
+ }
+
 
 </script>    
 {% endblock content %}

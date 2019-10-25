@@ -5991,8 +5991,13 @@ def M20view(request):
             lvdate=request.POST.get('lv_date')
             w1=M5SHEMP.objects.filter(staff_no=staffno).values('staff_no','name').distinct()
             wono = list(w1)
-            obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno)
+            ename=wono[0]['name']
+            obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
             print(obj1)
+            alt_date="yyyy-mm-dd"
+            if obj1 is not None:
+                ename=obj1[0].name
+                alt_date=obj1[0].alt_date
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -6008,7 +6013,9 @@ def M20view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'obj1':obj1,
-                    'empname':wono[0]['name'],
+                    'empname':ename,
+                    'ticketno':staffno,
+                    'alt_date':alt_date,
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
@@ -6028,7 +6035,7 @@ def M20view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'empname':wono[0]['name'],
-                    'ticket':wono[0]['staff_no'],
+                    # 'ticket':wono[0]['staff_no'],
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -6042,7 +6049,7 @@ def M20view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'empname':wono[0]['name'],
-                    'ticket':wono[0]['staff_no'],
+                    # 'ticket':wono[0]['staff_no'],
                 }
         
         if submitvalue=='Save':
