@@ -3904,7 +3904,9 @@ def dpoinput(request):
                 objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
                 if (objlocobt is not None) and len(objlocobt):
                     for l in range(len(objlocobt)):
-                        temper = {str(l):{"bno":objlocobt[l].batchordno,
+                        bnoo=objlocobt[l].batchordno
+                        ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                        temper = {str(l):{"bno":ss,
                                            "qty":objlocobt[l].qtybatch,
                                            "cumino":objlocobt[l].cumino,
                                            "loconame":objlocobt[l].loconame,
@@ -3913,6 +3915,7 @@ def dpoinput(request):
 
                         dictemper.update(copy.deepcopy(temper))
                     print(dictemper)
+                    print("j=",dataext)
 
 
                 
@@ -3948,17 +3951,26 @@ def dpoinput(request):
             
             locot=request.POST.get('loco')
             ordno=request.POST.get('barl2')
+            dataext=request.POST.get('dataext')
             totbaches=request.POST.get('totbaches')
+            print("dataext",dataext,"totbaches",totbaches)
+            # totbaches=int(tbaches)-int(dataext)
             
-            obj=dpo.objects.create()
-            obj.subject=sub
-            obj.reference=refn
-            obj.date=datee
-            obj.copyto=copyto
-            obj.summary=summary
-            obj.orderno=ordno
-            obj.locotype=locot
-            obj.save()
+            dpopb=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno)
+            if dpopb is not None and len(dpopb):
+                print("already exists")
+                obj=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno).update(subject=sub,reference=refn,date=datee,copyto=copyto,summary=summary)
+                
+            else:
+                obj=dpo.objects.create()
+                obj.subject=sub
+                obj.reference=refn
+                obj.date=datee
+                obj.copyto=copyto
+                obj.summary=summary
+                obj.orderno=ordno
+                obj.locotype=locot
+                obj.save()
                
             print("locot",locot)
             print("ordno",ordno)
@@ -3977,20 +3989,38 @@ def dpoinput(request):
             
             print("lcname",lcname)
             
+            for i in range(1,int(dataext)+1):
+                bno=request.POST.get("bno"+str(i))
+           
+                a=bno.split('/')
+                s=""
+                for ad in a:
+                    s=s+ad
+                qty=request.POST.get("qty"+str(i))
+                typ=request.POST.get("typ"+str(i))               
+                cumino=request.POST.get("cumino"+str(i))
+                dpoloco.objects.filter(procedureno=0,locotype=locot,orderno=ordno,batchordno=s,loconame=typ).update(qtybatch=qty,cumino=cumino)
             
-            for i in range(1,int(totbaches)+1):
-               bno=request.POST.get("bno"+str(i))
-               qty=request.POST.get("qty"+str(i))
-               typ=request.POST.get("typ"+str(i))               
-               cumino=request.POST.get("cumino"+str(i))
-               obj=dpoloco.objects.create()
-               obj.loconame=typ
-               obj.batchordno=bno
-               obj.qtybatch=qty
-               obj.cumino=cumino
-               obj.orderno=ordno
-               obj.locotype=locot
-               obj.save()
+            
+            for i in range(int(dataext)+1,int(totbaches)+1):
+                 
+                bno=request.POST.get("bno"+str(i))
+         
+                a=bno.split('/')
+                s=""
+                for ad in a:
+                    s=s+ad
+                qty=request.POST.get("qty"+str(i))
+                typ=request.POST.get("typ"+str(i))               
+                cumino=request.POST.get("cumino"+str(i))
+                obj=dpoloco.objects.create()
+                obj.loconame=typ
+                obj.batchordno=s
+                obj.qtybatch=qty
+                obj.cumino=cumino
+                obj.orderno=ordno
+                obj.locotype=locot
+                obj.save()
                
                
             
@@ -4010,7 +4040,7 @@ def dpoinput(request):
 @login_required
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dporeport(request):
-    from .models import annual_production,dpo,barrelfirst,dpoloco
+    from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
     # locodpo,barrelfirst
     
     cuser=request.user
@@ -4068,6 +4098,10 @@ def dporeport(request):
         dictemper={}
         dataext=0
         procedure=0
+        
+        totproduction=0
+        balance=0
+        totproduced=0
 
         submit=request.POST.get('submit')
         finalsubmit=request.POST.get('finalize')
@@ -4090,20 +4124,18 @@ def dporeport(request):
             cm2=300
             
 
-            
-
-            
-
             procedure=pord
 
             if(pord!=None and  len(pord)):
                 dloco=dpo.objects.filter(procedureno=pord)
-                if(len(dloco)):
+                if(len(dloco) and dloco is not None):
                     loco=dloco[0].locotype
                     b2=dloco[0].orderno
+                    # print("loco",loco,"b2",b2)
 
                 obj1=barrelfirst.objects.filter(locotype=loco)
-                b1=obj1[0].code
+                if (obj1 is not None) and len(obj1):
+                    b1=obj1[0].code
                 
                 obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
                 if (obj is not None) and len(obj):
@@ -4122,20 +4154,42 @@ def dporeport(request):
                     reflist=findthis(request,reference)
                 objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord).values('loconame').distinct()
                 if (objloco is not None) and len(objloco):
+                    # for l in range(len(objloco)):
+                    args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+                    ar=args.aggregate(Max('revisionid'))
+                    revisionidmax=ar['revisionid__max']
+                    lis=['WDM2','YDM4','G4D']
                     for l in range(len(objloco)):
                         locoindb.append(objloco[l]['loconame'])
-                    print(locoindb)
+                        annualobj=annual_production.objects.filter(financial_year=ctp,loco_type=locoindb[l]+" ELECTRIC LOCO",revisionid=revisionidmax)
+                        if(annualobj is not None and len(annualobj)):
+                            if annualobj[0].target_quantity=='-':
+                                totproduction=totproduction+0
+                            else:
+                                
+                                totproduction=totproduction+int(annualobj[0].target_quantity)
+                    print("locoindb",locoindb)
+                    print("totproduction",totproduction)
+                    
+                    
+                
+                    
+                    
 
 
-                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
+                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord).order_by('id')
                     if (objlocobt is not None) and len(objlocobt):
                         for l in range(len(objlocobt)):
 
-                            temper = {str(l):{"bno":objlocobt[l].batchordno,
+                            bnoo=objlocobt[l].batchordno
+                            ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                            temper = {str(l):{"bno":ss,
                                                "qty":objlocobt[l].qtybatch,
                                                "cumino":objlocobt[l].cumino,
                                                "loconame":objlocobt[l].loconame,
                                                }}
+                            totproduced=totproduced+int(objlocobt[l].qtybatch)
+                            print("totproduced",totproduced)
                             dataext=dataext+1
 
                             dictemper.update(copy.deepcopy(temper))
@@ -4163,14 +4217,35 @@ def dporeport(request):
                     reflist=findthis(request,reference)
                 objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
                 if (objloco is not None) and len(objloco):
+                    args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+                    ar=args.aggregate(Max('revisionid'))
+                    revisionidmax=ar['revisionid__max']
+                    lis=['WDM2','YDM4','G4D']
                     for l in range(len(objloco)):
                         locoindb.append(objloco[l]['loconame'])
+                        annualobj=annual_production.objects.filter(financial_year=ctp,loco_type=locoindb[l]+" ELECTRIC LOCO",revisionid=revisionidmax)
+                        if(annualobj is not None and len(annualobj)):
+                            if annualobj[0].target_quantity=='-':
+                                totproduction=totproduction+0
+                            else:
+                                
+                                totproduction=totproduction+int(annualobj[0].target_quantity)
+                    # print("locoindb",locoindb)
+                    # print("totproduction",totproduction)
+                    
+                    for n in locoindb:
+                        obt=dpoloco.objects.filter(locotype=loco,orderno=b2,loconame=n)
+                        if obt is not None and len(obt):
+                            for nn in range(len(obt)):
+                                totproduced=totproduced+int(obt[nn].qtybatch)
 
-                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).order_by('batchordno')
                     if (objlocobt is not None) and len(objlocobt):
                         for l in range(len(objlocobt)):
 
-                            temper = {str(l):{"bno":objlocobt[l].batchordno,
+                            bnoo=objlocobt[l].batchordno
+                            ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                            temper = {str(l):{"bno":ss,
                                                    "qty":objlocobt[l].qtybatch,
                                                    "cumino":objlocobt[l].cumino,
                                                    "loconame":objlocobt[l].loconame,
@@ -4192,13 +4267,18 @@ def dporeport(request):
                             #                        }}
 
                             dataext=dataext+1
+                            # totproduced=totproduced+int(objlocobt[l].qtybatch)
 
                             dictemper.update(copy.deepcopy(temper))
                         print(dictemper)
                         data=1
 
 
-
+            # if loco is None:
+            balance=totproduction-totproduced
+            if balance==0:
+                balance="NIL"
+                
             print("dataext",dataext)
             context={
             'nav':nav,
@@ -4206,6 +4286,9 @@ def dporeport(request):
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
+            'productionyear':ctp,
+            'totproduction':totproduction,
+            'balance':balance,
             'b1':b1,
             'b2':b2,
             'cm':cm,
@@ -4278,7 +4361,9 @@ def dporeport(request):
                 objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
                 if (objlocobt is not None) and len(objlocobt):
                     for l in range(len(objlocobt)):
-                        temper = {str(l):{"bno":objlocobt[l].batchordno,
+                        bnoo=objlocobt[l].batchordno
+                        ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                        temper = {str(l):{"bno":ss,
                                            "qty":objlocobt[l].qtybatch,
                                            "cumino":objlocobt[l].cumino,
                                            "loconame":objlocobt[l].loconame,

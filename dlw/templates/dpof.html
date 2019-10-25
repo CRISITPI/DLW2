@@ -63,18 +63,9 @@
     <center><h2>DPO</h2></center>
 <div class="containers">
 <table align="center" id="customers">
-    <tr>
-      <td><b>Office of the :</b></td></td><td>{{Role}}</td>
-      <td><b>Date :<b></td>
-      <td>
-      {% comment %} <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 28px;width: 200px">
-        <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-        <input type="text" id="xTime" name="xTime" style="border: none;height: 100%; font-size:16px;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 4px;" tabindex="-1">&#9660;</span>
-        </span>  {% endcomment %}
-        <input type="text" id="datepicker2" name="xTime" style="width: 150px;" placeholder="dd-mm-yyyy" value={{date}} readonly>
-
-        </td>
-    </tr>
+    {% comment %} <tr>
+      
+    </tr> {% endcomment %}
     <tr><td>Select Loco Type:</td>
     <td><div class="dropdown">
         <select name="loco" class="form-control ll" id="loco" required>
@@ -89,6 +80,7 @@
 
     </tr>
 </table>
+<br>
             <input type="hidden" name="cm" id="cm" value={{cm}} id="cm"/>
             <input type="hidden" name="cm2" id="ttlcnt"/>
             <input type="hidden" name="b1" value={{b1}} id="b1"/>
@@ -100,8 +92,19 @@
 
 
 {% if add == 1 %}
-<table  align="center">
+<table  id="customers">
   <tr>
+      <td><b>Office of the :</b></td></td><td>{{Role}}</td>
+
+  <td><b>Date :<b></td>
+      <td>
+      {% comment %} <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 28px;width: 200px">
+        <input type="date" class="xDateContainer" onchange="setCorrect(this,'xTime');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
+        <input type="text" id="xTime" name="xTime" style="border: none;height: 100%; font-size:16px;" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 4px;" tabindex="-1">&#9660;</span>
+        </span>  {% endcomment %}
+        <input type="text" id="datepicker2" name="xTime" style="width: 150px;" placeholder="dd-mm-yyyy" value={{date}} readonly>
+
+        </td>
   <td></td>
 </tr>
 </table>
@@ -271,6 +274,12 @@ $(this).parents("tr").remove();
     $('body').on('click','#add',function(e){
         event.preventDefault()
         console.log("j"+String(j));
+        var dataext=document.getElementById('dataext').value;
+        if(j==0)
+        {
+        j=dataext;
+          
+        }
         j++;
         console.log("idname:"+String(idname));
         assign();
@@ -418,10 +427,18 @@ function myFunction(elem){
 
 
     }
+  
 
-    else
+    else 
+    {
+      
+      var typ1=document.getElementById("typ"+String(array[1]-1));
+    var typ2=document.getElementById("typ"+String(array[1]));
+
+    if(typ1==typ2)
     {
 
+   console.log("elseif");
     var i;
     var p
     for(i=array[1];i<=j;i++)
@@ -472,6 +489,125 @@ function myFunction(elem){
     // document.getElementById(cuminoname).value=cuminoval;
     }
 
+    else
+    {
+      obj={}
+      for(i=1;i<=j;i++)
+      {
+        var typna=document.getElementById("typ"+String(i)).value;
+        obj["typ"+String(i)]=typna;
+      }
+      console.log(obj);
+      console.log("elseelse");
+      var k=array[1];
+      var arr1=array[1];
+      console.log("ar",arr1);
+      var ty="typ"+array[1];
+        var typn=obj[ty];
+      while(true)
+      {
+        
+        k--;
+        var tyy="typ"+String(k);
+        var tyypn=obj[tyy];
+        if(typn==tyypn)
+        {
+          
+        }
+        else{
+          var tpval=tyy.split("typ");
+         arr1=parseInt(tpval[1])+1;
+         break;
+        }
+
+
+      }
+      console.log("arr1",arr1);
+
+      var cm= parseInt(document.getElementById("cm").value);
+    var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+    document.getElementById(cuminoname).value=cuminoval;
+    console.log(cm);
+    console.log("cumival",cuminoval,"cuminame",cuminoname);
+    
+
+    var i;
+    var p;
+    for(i=array[1];i<=j;i++)
+    {
+      if(document.getElementById('qty'+String(i)).value)
+      {
+          var qval=document.getElementById('qty'+String(i)).value;
+          // cuminoname="cumino"+String(i-1);
+          // var cuminoval=document.getElementById(cuminoname).value;
+          if(i==arr1)
+          {
+            console.log("i",i,"arr1",arr1,"array[1]",array[1],"j",j);
+          var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+            console.log("if i==arr1",cuminoval);
+
+        }
+        else
+        {
+           
+          
+          cuminoname="cumino"+String(i-1);
+          var cuminoval=document.getElementById(cuminoname).value;
+        }
+          p=i-1;
+          if(cuminoval)
+          {
+          var cval=cuminoval.split('-');
+          }
+
+          
+
+          else
+          {
+           while(p>=1)
+           {
+            p=p-1;
+            cuminoname="cumino"+String(p);
+            var cuminoval=document.getElementById(cuminoname).value;
+            if(cuminoval)
+            {
+           var cval=cuminoval.split('-');
+            break;
+            }
+           }
+          }
+
+          if(i==arr1)
+          {
+          cuminoname="cumino"+String(i);
+
+
+          document.getElementById(cuminoname).value=cuminoval;
+
+          }
+
+          else
+          {
+
+          cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
+          cuminoname="cumino"+String(i);
+          document.getElementById(cuminoname).value=cuminoval;
+        }
+      }
+
+    }
+
+    }
+
+
+
+
+
+
+
+
+    }
+
 
    var num=array[1];
    var tot=0;
@@ -511,6 +647,7 @@ var data = {
     locot,
     ordno
 };
+console.log(data);
 $.ajax({
         type: 'GET',
         url: "{% url 'getcumino' %}",

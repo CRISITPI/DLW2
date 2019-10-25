@@ -115,6 +115,9 @@
         </td>
         </tr>
     </table>
+
+                <h5 align="center">or</h5>
+    
     <hr>
 
     <table align="center">
@@ -125,9 +128,9 @@
 
 
 
-    <input type="hidden" name="revh" value={{rev}} />
-    <input type="hidden" name="jpotypeh" value={{jpoo}} />
+
     <input type="hidden" name="finalizevalue" value={{finalvalue}} />
+     <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
     <input type="hidden" name="b2" value="{{b2}}" id="b2">
 
     <br>
@@ -174,10 +177,6 @@
                     {% if dataext  %}
 
 
-
-                        
-
-
                         {% for key, values in dictemper.items %}
 
                     <tr>
@@ -198,10 +197,10 @@
                             <!-- <td rowspan="{{dataext}}">{{cyear}}</td>
                             <td rowspan="{{dataext}}"></td> -->
                             {% if forloop.counter == 1 %}
-                         <td rowspan="{{dataext}}"  style="text-align: center;">{{cyear}}</td>
+                         <td rowspan="{{dataext}}"  style="text-align: center;">{{productionyear}}<br>({{totproduction}})</td>
 
                      
-                     <td rowspan="{{dataext}}" style="text-align: center;"></td>
+                     <td rowspan="{{dataext}}" style="text-align: center;">Balance = <br> {{balance}}</td>
 
                         {% endif %}
                             
@@ -221,21 +220,10 @@
                 <br>
                 <h5 align="right">Dy. CME / Plg</h5>
 
-                
-  
-
-
-
                
                <h4 ><b>Copy to: {{copyto}}</b></h4>
                 
-                
-
-
-
-            
-
-
+ 
 
 </div>
 </div>
@@ -289,21 +277,19 @@
     document.getElementById('proceed').click();
     console.log("pro");
 }
-    $(document).ready(function() {
-               // M.toast({html: 'Changes are saved!'});
+    
 
-    var jpotyp=document.getElementById('jpotyp');
-    if(jpotyp!=null)
-    {
-    // console.log("jpotyp"+String(jpotyp.value))
-    if(jpotyp.value==2)
-    {
-               // M.toast({html: 'Changes are saved!'});
-      document.getElementById('jpotypesel').required=false;
-      document.getElementById('revsel').required=false;
-    }
-}
+$(document).ready(() => {
+        
+
+
+  var typecd = document.getElementById('lcname').value;
+console.log(typecd);
+var ordno=document.getElementById('b2').value;
+    $("#loco").val(typecd);
+    $("#barl2").val(ordno);
 });
+
     $('#pr_sch').click(function(e) {
         var sTable = document.getElementById('doc_sc').innerHTML;
 
