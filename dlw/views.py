@@ -15,7 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -4603,12 +4603,12 @@ def m5view(request):
             name = request.POST.get('name')
             
             obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').distinct()
-            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no,brn_no=brn_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m5prtdt','qty_ord').order_by('opn').distinct()
-            obj2 = Part.objects.filter(partno=part_no).values('drgno','des').order_by('partno').distinct()
-            obj3 = Batch.objects.filter(part_no=part_no).values('batch_type').order_by('part_no').distinct()
+            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty').order_by('opn').distinct()
+            obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
+            obj3 = Batch.objects.filter(bo_no=wo_no,part_no=part_no).values('batch_type','part_no').order_by('part_no').distinct()
             obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
             obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
-            print(obj5)
+            # print(obj3)
             ticket= randint(1111,9999)
             leng = obj.count()
             leng1=obj1.count()
@@ -4809,7 +4809,7 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').exclude(m2slno__isnull=True).distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5gslsnM').exclude(m2slno__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -6608,3 +6608,179 @@ def m15getpart_no(request):
         part_no = list(M13.objects.filter(shop = shop_sec,wo=wo_no).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def m13view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            
+            shop_sec = request.POST.get('shop_sec')
+            wo_no = request.POST.get('wo_no')
+            part_no = request.POST.get('part_nop')
+            obj = M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no','qty_tot','qty_ins','qty_pas','qty_rej','opn','vendor_cd','fault_cd','reason','slno','m13_sn','wo_rep','m15_no','epc','rej_cat','job_no').distinct()
+            obj1 = Part.objects.filter(partno=part_no).values('des','drgno').distinct()
+            #obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
+            leng = obj.count()
+            leng1 = obj1.count()
+            #leng2 = obj2.count()
+            # print(obj)
+            # print(obj1)
+
+            context = {
+                        'obj': obj,
+                        'obj1': obj1,
+                        #'obj2': obj2,
+                        'len': leng,
+                        'len1':leng1,
+                        #'len2':leng2,
+                        'shop_sec': shop_sec,
+                        'wo_no': wo_no,
+                        'part_no': part_no,
+                        
+                        'sub' : 1,
+                        'nav':nav,
+                        'ip':get_client_ip(request),  
+                        'subnav':subnav,
+            }
+
+
+
+
+
+        if submitvalue=='Save':
+                slno= request.POST.get('slno')
+                m13_sn = request.POST.get('m13_sn')
+                epc = request.POST.get('epc')
+                qty_tot = request.POST.get('qty_tot')
+                qty_ins = request.POST.get('qty_ins')
+                qty_pas = request.POST.get('qty_pas')
+                qty_rej = request.POST.get('qty_rej')
+                vendor_cd = request.POST.get('vendor_cd')
+                opn = request.POST.get('opn')
+                job_no = request.POST.get('job_no')
+                fault_cd = request.POST.get('fault_cd')
+                wo_rep = request.POST.get('wo_rep')
+                m13no = request.POST.get('m13no')
+                m15_no = request.POST.get('m15_no')
+                rej_cat = request.POST.get('rej_cat')
+                reason = request.POST.get('reason')
+                print(reason)
+
+                M13.objects.filter(m13_no=m13no).update(slno=slno,m13_sn=m13_sn,epc=epc,qty_tot=qty_tot,qty_ins=qty_ins,qty_pas=qty_pas,qty_rej=qty_rej,vendor_cd=vendor_cd,opn=opn,job_no=job_no,fault_cd=fault_cd,wo_rep=wo_rep,m13_no=m13no,m15_no=m15_no,rej_cat=rej_cat,reason=reason)
+
+    return render(request,"m13view.html",context)
+
+def m13getwono(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wo_no = list(M13.objects.filter(shop = shop_sec).values('wo').distinct())
+        return JsonResponse(wo_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m13getpano(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wo_no = request.GET.get('wo_no')
+        part_no = list(M13.objects.filter(shop = shop_sec,wo=wo_no).values('part_no').distinct())
+        return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m13getno(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wo_no = request.GET.get('wo_no')
+        part_no = request.GET.get('part_nop')
+        # print(wo_no)
+        # print(shop_sec)
+        # print(part_no)
+        pp = list(M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no').distinct())
+        # print(pp)
+        return JsonResponse(pp, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser"])
+def CardGeneration(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    assmno = EpcCode.objects.all().values('num_1').distinct();
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
+        'assmno':assmno,
+    }
+    if request.method=="POST":
+        bval=request.POST.get('cardbutton')
+        asmno=request.POST.get('asslyno')
+        if bval=="Generate Cards":
+            # obj1=Cstr.objects.filter(cp_part__in=list(Cstr.objects.all().values('pp_part').distinct())).values('cp_part').distinct()
+            obj1=Cstr.objects.none()
+            obj2=Cstr.objects.filter(pp_part=asmno).values('cp_part').distinct()
+            for i in range(len(obj2)):
+                obj3=Cstr.objects.filter(pp_part__in=obj2[i].cp_part).values('cp_part').distinct()
+                obj1=obj1 | obj3
+            print(obj1)
+            # print(len(obj2))
+            # print(obj2)
+    return render(request,'CardGeneration.html',context)
