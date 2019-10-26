@@ -7205,7 +7205,7 @@ def mg7getpartno(request):
 
 
 @login_required
-#@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
 def m23view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7227,7 +7227,6 @@ def m23view(request):
         context={
             'sub':0,
             'lenm' :2,
-
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
@@ -7235,9 +7234,6 @@ def m23view(request):
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
-            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-            # wo_nop =wo_nop | req
-
             w1 = M5SHEMP.objects.filter(shopsec=rolelist[i]).values('empno').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
@@ -7278,8 +7274,18 @@ def m23view(request):
             #leng2 = obj2.count()
            # print(obj1,"obj1")
             #print(obj2,"obj2")
-            context = {
-                'obj1': obj1,
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
                 'obj2': obj2,
                 'ran':range(1,32),
                 'len': 31,
@@ -7290,10 +7296,69 @@ def m23view(request):
                 #'part_no': part_no, 
                 #'mon': mon,
                 'sub':1,
-                'nav':nav,
-                'ip':get_client_ip(request),  
-                'subnav':subnav,     
-            }
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = M5SHEMP.objects.filter(shopsec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                'obj2': obj2,
+                'ran':range(1,32),
+                'len': 31,
+                #'len2': leng2,
+                'shop_sec': shop_sec,
+                #'wo_no': wo_no,
+                'staff_no': staff_no,
+                #'part_no': part_no, 
+                #'mon': mon,
+                'sub':1,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                'obj2': obj2,
+                'ran':range(1,32),
+                'len': 31,
+                #'len2': leng2,
+                'shop_sec': shop_sec,
+                #'wo_no': wo_no,
+                'staff_no': staff_no,
+                #'part_no': part_no, 
+                #'mon': mon,
+                'sub':1,
+                }
+            # context = {
+            #     'obj1': obj1,
+            #     'obj2': obj2,
+            #     'ran':range(1,32),
+            #     'len': 31,
+            #     #'len2': leng2,
+            #     'shop_sec': shop_sec,
+            #     #'wo_no': wo_no,
+            #     'staff_no': staff_no,
+            #     #'part_no': part_no, 
+            #     #'mon': mon,
+            #     'sub':1,
+            #     'nav':nav,
+            #     'ip':get_client_ip(request),  
+            #     'subnav':subnav,     
+            # }
         if submitvalue =='Save':
                     leng=request.POST.get('len')
                     print("HH")
