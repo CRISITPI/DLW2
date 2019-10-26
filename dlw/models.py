@@ -3345,6 +3345,10 @@ class empmast(models.Model):
     role = models.CharField(max_length=500, blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
     contactno = models.CharField(max_length=10, blank=True, null=True)
+    ticket_no = models.CharField(max_length=12, blank=True, null=True)
+    idcard_no= models.CharField(max_length=15, blank=True, null=True)
+    
+
 
 class MiscellSection(models.Model):
    sno=models.AutoField(primary_key=True)
@@ -3633,33 +3637,4 @@ class M18(models.Model):
     class Meta:
         db_table = 'M18'
 
-
-class MG7(models.Model):
-    fromshop = models.CharField(db_column='FROMSHOP', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    toshop = models.CharField(db_column='TOSHOP', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True,default=0)  # Field name made lowercase.
-    wo_no = models.CharField(db_column='WORK_DRDER', max_length=9, blank=True, null=True)  # Field name made lowercase.
-    part_no = models.CharField(db_column='PART_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    des = models.CharField(db_column='PART_DESCRIPTION', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    qty_ord = models.CharField(db_column='QTY_ORDERED', max_length=8, blank=True, null=True)  # Field name made lowercase.
-    qty_req = models.CharField(db_column='QTY_REQUESTED', max_length=8, blank=True, null=True)  # Field name made lowercase.
-    qty_rej = models.CharField(db_column='QTY_REJECTED', max_length=8, blank=True, null=True)  # Field name made lowercase.
-    m13_no = models.CharField(db_column='M13_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    m5glsn = models.CharField(db_column='M5GLSN', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    reason = models.CharField(db_column='QTY_REASON', max_length=25, blank=True, null=True)  # Field name made lowercase.
-    class Meta:
-        db_table = 'MG7'
-
-
-class m23doc(models.Model):
-     id = models.AutoField(primary_key=True)
-     date=models.CharField(db_column=' DATE', max_length=50)
-     shop_no=models.CharField(db_column=' SHOP_NO', max_length=15)
-     emp_no=models.CharField( db_column=' EMP_NO', max_length=15)
-     emp_name=models.CharField( db_column=' EMP_NAME', max_length=25)
-     ga_time=models.CharField(db_column='GA_TIME', max_length=50)
-     purpose=models.CharField(db_column=' PURPOSE', max_length=80 )
-     from_time=models.CharField(db_column='FROM_TIME', max_length=20)
-     to_time=models.CharField(db_column='TO_TIME', max_length=20)
-     class Meta:
-        db_table = 'M23new'
+        
