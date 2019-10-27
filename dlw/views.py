@@ -6306,7 +6306,7 @@ def m18view(request):
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
-        if submitvalue=='Save':
+        if submitvalue=='Print/Save':
             print("data saved")            
             shopIncharge    = request.POST.get('shopIncharge')
             shop_sec        = request.POST.get('shop_sec')

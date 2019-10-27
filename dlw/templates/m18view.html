@@ -75,7 +75,12 @@ th, td {
         {% endif %}
     </center>
 <form action="{% url 'm18view' %}" method="POST"> {% csrf_token %}
-<br><h4 align="center">Extra Time Card</h4>
+<script>
+function myFunction() {
+  window.print();
+}
+</script>
+  <br><h4 align="center">Extra Time Card</h4>
     <div class="container">
         <table style="width:100%; margin-right: 10px; margin-left: 10px;">
             <tr>
@@ -110,7 +115,6 @@ th, td {
                         </select>
                 </td>                                        
                 </tr>
-
                 <tr>                          
                 <td>
                     <label for="br_no"><b>Extra Time Per No./अतिरिक्त समय प्रति नग</b></label>
@@ -179,8 +183,8 @@ th, td {
                 </td>                          
             </tr>  
         </table>  
-
-        <center><input type="submit" name="proceed" value="Save"/></center>  
+ 
+        <center><input type="submit" name="proceed" value="Print/Save"  onclick="myFunction()"/></center>  
 </form>
 <script>
       document.querySelector("#shop_sec").addEventListener('change',(e)=>{
@@ -315,6 +319,7 @@ th, td {
                         }
                    })
                 })
+
 </script>
 {% endblock content %}
 
