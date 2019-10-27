@@ -3613,3 +3613,24 @@ class M22(models.Model):
 
     class Meta:
         db_table = 'M22'
+
+class M18(models.Model):
+    shopIncharge   = models.CharField(db_column='SHOPINCHARGE', max_length=100, blank=True, null=True,default=0)  # Field name made lowercase.
+    shop_sec       = models.CharField(db_column='SHOPSEC', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    wo_no          = models.CharField(db_column='WONO', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    part_nop       = models.CharField(db_column='PARTNOP', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    extraTimePartNo = models.CharField(db_column='EXTRATIMEPARTNO', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    reasonSpecialAllowance  = models.CharField(db_column='REASON_SPCL_ALLOW', max_length=300, blank=True, null=True)  # Field name made lowercase.
+    forSpecialAllowance     = models.CharField(db_column='FOR_SPCL_ALLOW', max_length=300, blank=True, null=True)  # Field name made lowercase.
+    totalExtraTime     = models.CharField(db_column='TOTAL_EXTRA_TIME', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    opno            = models.CharField(db_column='OPNO', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    opdesc          = models.CharField(db_column='OPDESC', max_length=300, blank=True, null=True)  # Field name made lowercase.
+    discription     = models.CharField(db_column='DISCRIPTION', max_length=300, blank=True, null=True)  # Field name made lowercase.
+    quantity        = models.CharField(db_column='QUANTITY', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    setExtraTime    = models.CharField(db_column='SET_EXTRA_TIME', max_length=200, blank=True, null=True)  # Field name made lowercase.
+    setno           = models.CharField(db_column='SETNO', max_length=100, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'M18'
+
+        
