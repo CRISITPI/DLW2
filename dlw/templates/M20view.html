@@ -101,7 +101,7 @@ th, td {
 
         <td>
             <label for="sno"><b>Date/ दिनांक.:</b></label>            
-          <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" readonly/>
+          <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" readonly required/>
         </td> 
 
         <td>
@@ -122,13 +122,13 @@ th, td {
             </select>
           </td>   
 
-          <td>
+          <!-- <td>
               <label for="sno"><b>Staff No/ स्टाफ न .:</b></label>
               <select class="form-control ll" id="staff_no" name="staff_no" required style="width: 150px;">       
                   <option id="staff_no" selected disabled hidden>Staff Number</option>    
             </select>
-          </td>  
-          <td><input type="text" id="stffno" name="stffno" value="{{ticket}}" style="display: none" /></td>     
+          </td>   -->
+          <td><input type="text" id="stffno" name="stffno" value="{{ticketno}}" style="display: none" /></td>     
           <td><input type="text" id="shpsec" value="{{shopsec}}" style="display: none" /></td>     
         </tr>
         <tr>
@@ -140,26 +140,28 @@ th, td {
      
       <input type="reset" name="reset">
     <hr style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
+    <input type="button" id="add" value="Add Member" />
+    <input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" />
 
   {% if sub == 1 %}
-    
+  
     <h4 align="center">Particulars of Staff booked to work on Sunday</h4>
     <h4 align="center">रविवार को काम करने के लिए बुक किये गए कर्मचारियों का विवरण </h4>
    <div class="row">
-  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  <!-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <table class="table">
       <thead>
-          
+          <input type="text" name="empname" value="{{empname}}" style="display: none" />
         <tr>
-          <th>Name नाम</th> <td><input type="text" name="empname" value="{{empname}}" style="display: none" /></td>
+          <th>Name नाम</th> 
+          
           <th>Ticket No.  टिकट स.</th>       
         </tr>
-        {% for i in obj1 %}
         <tr>
-          <td style="width: 150px;">{{i.name}}</td>
-          <td style="width: 150px;">{{i.ticketno}}</td> 
+          <td>{{empname}}</td>
+          <td>{{ticketno}}</td> 
         </tr>
-        {% endfor %}
+    
       </thead>
       <tbody id="projectData">
           
@@ -173,22 +175,91 @@ th, td {
           <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>          
         </tr>
       </thead>
-      {% for i in obj1 %}
+     
       <tbody >  
-          <tr><td><input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="dd-mm-yyyy" value="{{i.alt_date}}" readonly/></td></tr>
+          <tr><td><input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="yy-mm-dd" value="{{alt_date}}" readonly required /></td></tr>
       </tbody> 
-{% endfor %}
+
     </table>
-  </div>
+  </div> -->
 </div>
+<div id="items"> </div>
+
+
+<div id="print" style="text-align:center" hidden>
+
+    <table class="table">
+        <thead>
+            <input type="text" name="empname" value="{{empname}}" style="display: none" />
+          <tr>
+            <th>Name नाम</th>
+            <th>Ticket No.  टिकट स.</th>
+            <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>         
+          </tr>
+          <tr>
+            <td>{{empname}}</td>
+            <td>{{ticketno}}</td> 
+          </tr>
+      
+        </thead>
+        <tbody id="projectData">
+            
+        </tbody> 
+      </table>
+      <input type="hidden" name="totmebs" id="totmebs" value="0">
+
+      
+
+
+
+
 </div>
+
 <center>
-  <input type="submit" name="proceed" value="Save" id="submitted">  
+  <input type="submit" name="proceed" value="Save" id="submitted"> 
+  <input type="button" onclick="printDiv()" value="Print"> 
 </center>
 {% endif %}
+</div>
 </form>
 
 <script type="text/javaScript">
+  var j=0;
+  
+
+  $("#add").click(function(e) {
+    event.preventDefault()
+        console.log("j"+String(j));
+        j++;
+        
+      
+
+        var nameoname="name"+String(j);
+        var ticketfname="ticket"+String(j);
+        var datename="date"+String(j);
+       
+        var sno=j;
+      
+        if(j==1)
+        {
+            var happ='<div><table id="customers">'+'<tr><th>Name नाम</th><th>Ticket No.  टिकट स.</th><th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>';
+
+    happ=happ+'</tr></table></div>';
+        $('#items').append(happ);
+
+        }
+var htAppend='<div><table id="customers"><tr>'+'<td><input type="text" id="'+nameoname+'" name="'+nameoname+'"> </td>'+'<td><input type="text" id="'+ticketfname+'" name="'+ticketfname+'"  ></td>'+'<td><input type="date" id='+datename+' name='+datename+'></td>';
+       
+
+
+
+
+     
+ htAppend=htAppend+'</tr></table>'+'</div>';
+     $('#items').append(htAppend);
+     document.getElementById("totmebs").value=j;
+
+});
   
 
   document.querySelector("#shop_sec").addEventListener('change',(e)=>{
@@ -224,60 +295,37 @@ th, td {
                           })
                 })
 
-                document.querySelector("#staff_no").addEventListener('change',(e)=>{
+                document.querySelector("#shop_sec").addEventListener('change',(e)=>{
 
                   document.querySelector("#proceed").click();
               })
-      document.querySelector("#staff_no").addEventListener('change',(e)=>{
-    //console.log("hi");
-                    e.preventDefault();
-                    var staff_no = $("#staff_no").val()
-                    var data = {staff_no};
-                      $.ajax({
-                        type : 'GET',
-                        url : "{% url 'm20getstaffName' %}",
-                        dataType : 'json',
-                        data : data,
-                        success : function(response){
-                          console.log(response);
-                          var elementsadded = document.querySelectorAll(".newelewono");
-                              if(elementsadded.length>0){
-                                  var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#staff_no").selected=true;                                  
-                                }
+      
+    function printDiv() {
+      var printContents = document.getElementById("print").innerHTML;
+ 
+        var style = "<style>";
+         style = style + "table {width: 100%;font: 17px Calibri;}";
+         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+         style = style + "padding: 2px 3px;text-align: left;}";
+         style = style + "</style>";
+       var win = window.open('', '', 'height=500,width=500');
+ 
+         win.document.write('<html><head>');
+ 
+         win.document.write('<title>M20(Sunday Booking) Card</title>');
+         win.document.write(style);
+         win.document.write('</head>');
+         win.document.write('<body>');
+         win.document.write(printContents);
+         win.document.write('</body></html>');
+ 
+         win.print();
+         win.close();
+ 
+ 
+ 
+ }
 
-                                   var i=0, totdata; 
-                                 for(i;i<response.length;i++){
-
-                                      mstaff_no = response[i].staff_no
-                                      name      = response[i].name                                     
-
-                                      totdata = '<tr><td>'+name+'</td><td>'+mstaff_no+'</td></tr>'
-                                      $(totdata).appendTo('#projectData');
-                                  }
-
-
-                              var brarr,mystr,html;
-                              brarr = response.map((el)=>el.staff_no);
-                              mystr = "";
-                              brarr.forEach((el,index)=>{
-                                html = `<option class="newelewono">${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                              });
-                              html = "";
-                              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
-                              mystr=""; 
-                        }
-                          })
-                })
-  var spsec = document.getElementById('shpsec').value;
-  var stfno = document.getElementById('stffno').value;
-  console.log(stfno);
-    
-    $(document).ready(() => {
-        $("#shop_sec").val(spsec);
-    });
 
 </script>    
 {% endblock content %}

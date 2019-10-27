@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
 from dlw.models import M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -3904,7 +3905,9 @@ def dpoinput(request):
                 objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
                 if (objlocobt is not None) and len(objlocobt):
                     for l in range(len(objlocobt)):
-                        temper = {str(l):{"bno":objlocobt[l].batchordno,
+                        bnoo=objlocobt[l].batchordno
+                        ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                        temper = {str(l):{"bno":ss,
                                            "qty":objlocobt[l].qtybatch,
                                            "cumino":objlocobt[l].cumino,
                                            "loconame":objlocobt[l].loconame,
@@ -3913,6 +3916,7 @@ def dpoinput(request):
 
                         dictemper.update(copy.deepcopy(temper))
                     print(dictemper)
+                    print("j=",dataext)
 
 
                 
@@ -3948,17 +3952,26 @@ def dpoinput(request):
             
             locot=request.POST.get('loco')
             ordno=request.POST.get('barl2')
+            dataext=request.POST.get('dataext')
             totbaches=request.POST.get('totbaches')
+            print("dataext",dataext,"totbaches",totbaches)
+            # totbaches=int(tbaches)-int(dataext)
             
-            obj=dpo.objects.create()
-            obj.subject=sub
-            obj.reference=refn
-            obj.date=datee
-            obj.copyto=copyto
-            obj.summary=summary
-            obj.orderno=ordno
-            obj.locotype=locot
-            obj.save()
+            dpopb=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno)
+            if dpopb is not None and len(dpopb):
+                print("already exists")
+                obj=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno).update(subject=sub,reference=refn,date=datee,copyto=copyto,summary=summary)
+                
+            else:
+                obj=dpo.objects.create()
+                obj.subject=sub
+                obj.reference=refn
+                obj.date=datee
+                obj.copyto=copyto
+                obj.summary=summary
+                obj.orderno=ordno
+                obj.locotype=locot
+                obj.save()
                
             print("locot",locot)
             print("ordno",ordno)
@@ -3977,20 +3990,38 @@ def dpoinput(request):
             
             print("lcname",lcname)
             
+            for i in range(1,int(dataext)+1):
+                bno=request.POST.get("bno"+str(i))
+           
+                a=bno.split('/')
+                s=""
+                for ad in a:
+                    s=s+ad
+                qty=request.POST.get("qty"+str(i))
+                typ=request.POST.get("typ"+str(i))               
+                cumino=request.POST.get("cumino"+str(i))
+                dpoloco.objects.filter(procedureno=0,locotype=locot,orderno=ordno,batchordno=s,loconame=typ).update(qtybatch=qty,cumino=cumino)
             
-            for i in range(1,int(totbaches)+1):
-               bno=request.POST.get("bno"+str(i))
-               qty=request.POST.get("qty"+str(i))
-               typ=request.POST.get("typ"+str(i))               
-               cumino=request.POST.get("cumino"+str(i))
-               obj=dpoloco.objects.create()
-               obj.loconame=typ
-               obj.batchordno=bno
-               obj.qtybatch=qty
-               obj.cumino=cumino
-               obj.orderno=ordno
-               obj.locotype=locot
-               obj.save()
+            
+            for i in range(int(dataext)+1,int(totbaches)+1):
+                 
+                bno=request.POST.get("bno"+str(i))
+         
+                a=bno.split('/')
+                s=""
+                for ad in a:
+                    s=s+ad
+                qty=request.POST.get("qty"+str(i))
+                typ=request.POST.get("typ"+str(i))               
+                cumino=request.POST.get("cumino"+str(i))
+                obj=dpoloco.objects.create()
+                obj.loconame=typ
+                obj.batchordno=s
+                obj.qtybatch=qty
+                obj.cumino=cumino
+                obj.orderno=ordno
+                obj.locotype=locot
+                obj.save()
                
                
             
@@ -4010,7 +4041,7 @@ def dpoinput(request):
 @login_required
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dporeport(request):
-    from .models import annual_production,dpo,barrelfirst,dpoloco
+    from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
     # locodpo,barrelfirst
     
     cuser=request.user
@@ -4068,6 +4099,10 @@ def dporeport(request):
         dictemper={}
         dataext=0
         procedure=0
+        
+        totproduction=0
+        balance=0
+        totproduced=0
 
         submit=request.POST.get('submit')
         finalsubmit=request.POST.get('finalize')
@@ -4090,20 +4125,18 @@ def dporeport(request):
             cm2=300
             
 
-            
-
-            
-
             procedure=pord
 
             if(pord!=None and  len(pord)):
                 dloco=dpo.objects.filter(procedureno=pord)
-                if(len(dloco)):
+                if(len(dloco) and dloco is not None):
                     loco=dloco[0].locotype
                     b2=dloco[0].orderno
+                    # print("loco",loco,"b2",b2)
 
                 obj1=barrelfirst.objects.filter(locotype=loco)
-                b1=obj1[0].code
+                if (obj1 is not None) and len(obj1):
+                    b1=obj1[0].code
                 
                 obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
                 if (obj is not None) and len(obj):
@@ -4122,20 +4155,42 @@ def dporeport(request):
                     reflist=findthis(request,reference)
                 objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord).values('loconame').distinct()
                 if (objloco is not None) and len(objloco):
+                    # for l in range(len(objloco)):
+                    args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+                    ar=args.aggregate(Max('revisionid'))
+                    revisionidmax=ar['revisionid__max']
+                    lis=['WDM2','YDM4','G4D']
                     for l in range(len(objloco)):
                         locoindb.append(objloco[l]['loconame'])
-                    print(locoindb)
+                        annualobj=annual_production.objects.filter(financial_year=ctp,loco_type=locoindb[l]+" ELECTRIC LOCO",revisionid=revisionidmax)
+                        if(annualobj is not None and len(annualobj)):
+                            if annualobj[0].target_quantity=='-':
+                                totproduction=totproduction+0
+                            else:
+                                
+                                totproduction=totproduction+int(annualobj[0].target_quantity)
+                    print("locoindb",locoindb)
+                    print("totproduction",totproduction)
+                    
+                    
+                
+                    
+                    
 
 
-                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
+                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord).order_by('id')
                     if (objlocobt is not None) and len(objlocobt):
                         for l in range(len(objlocobt)):
 
-                            temper = {str(l):{"bno":objlocobt[l].batchordno,
+                            bnoo=objlocobt[l].batchordno
+                            ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                            temper = {str(l):{"bno":ss,
                                                "qty":objlocobt[l].qtybatch,
                                                "cumino":objlocobt[l].cumino,
                                                "loconame":objlocobt[l].loconame,
                                                }}
+                            totproduced=totproduced+int(objlocobt[l].qtybatch)
+                            print("totproduced",totproduced)
                             dataext=dataext+1
 
                             dictemper.update(copy.deepcopy(temper))
@@ -4163,14 +4218,35 @@ def dporeport(request):
                     reflist=findthis(request,reference)
                 objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
                 if (objloco is not None) and len(objloco):
+                    args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+                    ar=args.aggregate(Max('revisionid'))
+                    revisionidmax=ar['revisionid__max']
+                    lis=['WDM2','YDM4','G4D']
                     for l in range(len(objloco)):
                         locoindb.append(objloco[l]['loconame'])
+                        annualobj=annual_production.objects.filter(financial_year=ctp,loco_type=locoindb[l]+" ELECTRIC LOCO",revisionid=revisionidmax)
+                        if(annualobj is not None and len(annualobj)):
+                            if annualobj[0].target_quantity=='-':
+                                totproduction=totproduction+0
+                            else:
+                                
+                                totproduction=totproduction+int(annualobj[0].target_quantity)
+                    # print("locoindb",locoindb)
+                    # print("totproduction",totproduction)
+                    
+                    for n in locoindb:
+                        obt=dpoloco.objects.filter(locotype=loco,orderno=b2,loconame=n)
+                        if obt is not None and len(obt):
+                            for nn in range(len(obt)):
+                                totproduced=totproduced+int(obt[nn].qtybatch)
 
-                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).order_by('batchordno')
                     if (objlocobt is not None) and len(objlocobt):
                         for l in range(len(objlocobt)):
 
-                            temper = {str(l):{"bno":objlocobt[l].batchordno,
+                            bnoo=objlocobt[l].batchordno
+                            ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                            temper = {str(l):{"bno":ss,
                                                    "qty":objlocobt[l].qtybatch,
                                                    "cumino":objlocobt[l].cumino,
                                                    "loconame":objlocobt[l].loconame,
@@ -4192,13 +4268,18 @@ def dporeport(request):
                             #                        }}
 
                             dataext=dataext+1
+                            # totproduced=totproduced+int(objlocobt[l].qtybatch)
 
                             dictemper.update(copy.deepcopy(temper))
                         print(dictemper)
                         data=1
 
 
-
+            # if loco is None:
+            balance=totproduction-totproduced
+            if balance==0:
+                balance="NIL"
+                
             print("dataext",dataext)
             context={
             'nav':nav,
@@ -4206,6 +4287,9 @@ def dporeport(request):
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
+            'productionyear':ctp,
+            'totproduction':totproduction,
+            'balance':balance,
             'b1':b1,
             'b2':b2,
             'cm':cm,
@@ -4278,7 +4362,9 @@ def dporeport(request):
                 objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
                 if (objlocobt is not None) and len(objlocobt):
                     for l in range(len(objlocobt)):
-                        temper = {str(l):{"bno":objlocobt[l].batchordno,
+                        bnoo=objlocobt[l].batchordno
+                        ss=bnoo[0:2]+'/'+bnoo[2:5]+'/'+bnoo[5:8]
+                        temper = {str(l):{"bno":ss,
                                            "qty":objlocobt[l].qtybatch,
                                            "cumino":objlocobt[l].cumino,
                                            "loconame":objlocobt[l].loconame,
@@ -4603,12 +4689,12 @@ def m5view(request):
             name = request.POST.get('name')
             
             obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').distinct()
-            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no,brn_no=brn_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m5prtdt','qty_ord').order_by('opn').distinct()
-            obj2 = Part.objects.filter(partno=part_no).values('drgno','des').order_by('partno').distinct()
-            obj3 = Batch.objects.filter(part_no=part_no).values('batch_type').order_by('part_no').distinct()
+            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty').order_by('opn').distinct()
+            obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
+            obj3 = Batch.objects.filter(bo_no=wo_no,part_no=part_no).values('batch_type','part_no').order_by('part_no').distinct()
             obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
             obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
-            print(obj5)
+            # print(obj3)
             ticket= randint(1111,9999)
             leng = obj.count()
             leng1=obj1.count()
@@ -4809,7 +4895,7 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m2slno').exclude(m2slno__isnull=True).distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5gslsnM').exclude(m2slno__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5991,8 +6077,13 @@ def M20view(request):
             lvdate=request.POST.get('lv_date')
             w1=M5SHEMP.objects.filter(staff_no=staffno).values('staff_no','name').distinct()
             wono = list(w1)
-            obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno)
+            ename=wono[0]['name']
+            obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
             print(obj1)
+            alt_date="yyyy-mm-dd"
+            if obj1 is not None:
+                ename=obj1[0].name
+                alt_date=obj1[0].alt_date
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -6008,7 +6099,9 @@ def M20view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'obj1':obj1,
-                    'empname':wono[0]['name'],
+                    'empname':ename,
+                    'ticketno':staffno,
+                    'alt_date':alt_date,
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
@@ -6028,7 +6121,7 @@ def M20view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'empname':wono[0]['name'],
-                    'ticket':wono[0]['staff_no'],
+                    # 'ticket':wono[0]['staff_no'],
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -6042,7 +6135,7 @@ def M20view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'empname':wono[0]['name'],
-                    'ticket':wono[0]['staff_no'],
+                    # 'ticket':wono[0]['staff_no'],
                 }
         
         if submitvalue=='Save':
@@ -6694,3 +6787,178 @@ def m18getoperation_desc(request):
         print(opndesc)
         return JsonResponse(opndesc, safe = False)
     return JsonResponse({"success":False}, status=400) 
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def m13view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            
+            shop_sec = request.POST.get('shop_sec')
+            wo_no = request.POST.get('wo_no')
+            part_no = request.POST.get('part_nop')
+            obj = M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no','qty_tot','qty_ins','qty_pas','qty_rej','opn','vendor_cd','fault_cd','reason','slno','m13_sn','wo_rep','m15_no','epc','rej_cat','job_no').distinct()
+            obj1 = Part.objects.filter(partno=part_no).values('des','drgno').distinct()
+            #obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
+            leng = obj.count()
+            leng1 = obj1.count()
+            #leng2 = obj2.count()
+            # print(obj)
+            # print(obj1)
+
+            context = {
+                        'obj': obj,
+                        'obj1': obj1,
+                        #'obj2': obj2,
+                        'len': leng,
+                        'len1':leng1,
+                        #'len2':leng2,
+                        'shop_sec': shop_sec,
+                        'wo_no': wo_no,
+                        'part_no': part_no,
+                        
+                        'sub' : 1,
+                        'nav':nav,
+                        'ip':get_client_ip(request),  
+                        'subnav':subnav,
+            }
+
+
+
+
+
+        if submitvalue=='Save':
+                slno= request.POST.get('slno')
+                m13_sn = request.POST.get('m13_sn')
+                epc = request.POST.get('epc')
+                qty_tot = request.POST.get('qty_tot')
+                qty_ins = request.POST.get('qty_ins')
+                qty_pas = request.POST.get('qty_pas')
+                qty_rej = request.POST.get('qty_rej')
+                vendor_cd = request.POST.get('vendor_cd')
+                opn = request.POST.get('opn')
+                job_no = request.POST.get('job_no')
+                fault_cd = request.POST.get('fault_cd')
+                wo_rep = request.POST.get('wo_rep')
+                m13no = request.POST.get('m13no')
+                m15_no = request.POST.get('m15_no')
+                rej_cat = request.POST.get('rej_cat')
+                reason = request.POST.get('reason')
+                print(reason)
+
+                M13.objects.filter(m13_no=m13no).update(slno=slno,m13_sn=m13_sn,epc=epc,qty_tot=qty_tot,qty_ins=qty_ins,qty_pas=qty_pas,qty_rej=qty_rej,vendor_cd=vendor_cd,opn=opn,job_no=job_no,fault_cd=fault_cd,wo_rep=wo_rep,m13_no=m13no,m15_no=m15_no,rej_cat=rej_cat,reason=reason)
+
+    return render(request,"m13view.html",context)
+
+def m13getwono(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wo_no = list(M13.objects.filter(shop = shop_sec).values('wo').distinct())
+        return JsonResponse(wo_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m13getpano(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wo_no = request.GET.get('wo_no')
+        part_no = list(M13.objects.filter(shop = shop_sec,wo=wo_no).values('part_no').distinct())
+        return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m13getno(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        wo_no = request.GET.get('wo_no')
+        part_no = request.GET.get('part_nop')
+        # print(wo_no)
+        # print(shop_sec)
+        # print(part_no)
+        pp = list(M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no').distinct())
+        # print(pp)
+        return JsonResponse(pp, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser"])
+def CardGeneration(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    assmno = EpcCode.objects.all().values('num_1').distinct();
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
+        'assmno':assmno,
+    }
+    if request.method=="POST":
+        bval=request.POST.get('cardbutton')
+        asmno=request.POST.get('asslyno')
+        if bval=="Generate Cards":
+            # obj1=Cstr.objects.filter(cp_part__in=list(Cstr.objects.all().values('pp_part').distinct())).values('cp_part').distinct()
+            obj1=Cstr.objects.none()
+            obj2=Cstr.objects.filter(pp_part=asmno).values('cp_part').distinct()
+            for i in range(len(obj2)):
+                obj3=Cstr.objects.filter(pp_part__in=obj2[i].cp_part).values('cp_part').distinct()
+                obj1=obj1 | obj3
+            print(obj1)
+            # print(len(obj2))
+            # print(obj2)
+    return render(request,'CardGeneration.html',context)

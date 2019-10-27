@@ -20,6 +20,7 @@ from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr
 from dlw.views import dpo,dpoinput,dporeport,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo,getcumino,m26view,m27view,m18view,m26getwono,m26getStaffCatWorkHrs,m18getwono,m18getoperation_no
 from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono,m20getstaffName
 from dlw.views import m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m18getpart_no,m18getoperation_desc
+from dlw.views import CardGeneration,m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m13getno,m13getpano,m13getwono,m13view
 from dlw.views import m7getwono,m7view,m7getempno,m7getpart_no,pinion_editsno,pinionpressing_section,pinion_addbo,airbox_editsno,axlepress_addbo,axlewheelpressing_section,M20view,m20getstaffno,m22view,m22getwono,m22getstaff,wheelnde,axlepress_addbo,axlepress_editsno
 
 
@@ -128,6 +129,7 @@ urlpatterns = [
     path('ajax/m22getstaff/',m22getstaff,name='m22getstaff'),
     path('ajax/axlepress_editsno',axlepress_editsno,name="axlepress_editsno"),
     path('ajax/wheelnde',wheelnde,name='wheelnde'),
+    path('CardGeneration/',CardGeneration,name='CardGeneration'),
     path('m15view/', m15view, name='m15view'),
     path('ajax/m15getwono/', m15getwono, name='m15getwono'),
     path('ajax/m15getpart_no/', m15getpart_no, name='m15getpart_no'),
@@ -135,4 +137,8 @@ urlpatterns = [
     path('ajax/m18getpart_no/', m18getpart_no, name='m18getpart_no'),
     path('ajax/m18getoperation_no/', m18getoperation_no, name='m18getoperation_no'),
     path('ajax/m18getoperation_desc/', m18getoperation_desc, name='m18getoperation_desc'),
+    path('ajax/m13getpano/',m13getpano,name='m13getpano'),
+    path('ajax/m13getwono',m13getwono,name='m13getwono'),
+    path('m13view/', m13view, name='m13view'),
+    path('ajax/m13getno',m13getno,name='m13getno'),
 ]
