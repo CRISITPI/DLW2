@@ -3533,7 +3533,7 @@ class M20new(models.Model):
     lv_date = models.DateField(blank= True, null= True)
     name = models.CharField(max_length=50, blank=True, null= True)
     ticketno = models.CharField(max_length=10, blank = True, null= True)
-    alt_date = models.DateField(blank = True, null=True)
+    alt_date = models.CharField(blank = True, null=True,max_length=10)
 
     class Meta:
         db_table = 'M20new'
