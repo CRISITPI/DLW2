@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    input[type=button] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    /* input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    } */
+</style>
+<br>
+<br>
+
+<h2 align="center" >GATE PASS</h2>
+<br><br>
+<form action="{% url 'm23view' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+                <tr>
+                        
+                        <td>
+                            <label for="sno"><b>SHOP SECTION/शॉप अधी. :</b></label>
+                            <select class="form-control" id="shop_sec" name="shop_sec" required>
+                            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                        {% if lenm == 1 %}
+                            <option selected readomly>{% for role in roles %}{{role}}{% endfor %}</option>
+                            {{role}}
+                        {% endif %}
+                        {% if lenm > 1 %}
+                        {% for role in roles %}
+                        {{role}}
+                            <option>{{role}}</option>
+                        {% endfor %}
+                        {% endif %}
+                            </select>
+                        </td>
+                        
+                        <td>
+                                <label for="staff_no"><b>EMPLOYEE NO/क्रम सं.:</b></label>
+                                <select class="form-control" id="staff_no" name="staff_no" required>
+                        <option id="op_emp" selected disabled hidden>Select EMPLOYEE NO</option>
+                        
+                                </select>
+                        </td>
+                </tr>
+        </table>
+        <!-- <center><input type="submit" value="Proceed" name="proceed" /></center> -->
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+
+
+    </div>
+
+    
+<br><br> {% if sub == 1 %}
+<input type="hidden" name="len" value="{{len}}">
+<div id="print" >
+    <input type="hidden" id="sub" name="sub" value={{sub}}>
+<table align="center">  
+    <tr>
+        <th>SHOP SECTION/शाप विभाग:</th>
+        <input type="text" value={{shop_sec}} name="shopsec" hidden /> 
+        <td><u>{{shop_sec}}</u></td>
+        <th>EMPLOYEE NO/क्रम सं.:</th> 
+        <input type="text" value={{staff_no}} name="staffno" hidden /> 
+        <td><u>{{staff_no}}</u></td>
+    </tr>
+    
+    <tr>
+        <th>EMPLOYEE NAME</th>
+        {% for i in obj1 %}
+        <td>
+                {{i.name}}
+        </td>
+        <input type="hidden" value={{i.name}} name="employeename" />
+        {% endfor %}
+        <th>GA PUNCHED AT</th>
+    </tr>
+    
+    <tr>
+        <th>PURPOSE</th>
+        
+     <div >  <td id="purposediv" style="display: none;">  {% for i in obj2 %} {{i.purpose}}<input type="hidden" value={{i.purpose}} name="purpose{{forloop.counter}}" id="purpose{{forloop.counter}}"  />{% endfor %}</td></div>
+             <div id="purdiv" ><td>          
+                        <select id="pur" name="pur" class="form-control" >
+                                <option selected disabled>SELECT PURPOSE</option>
+                                <option  value="OFFICIAL">OFFICIAL</option>
+                                <option  value="PRIVATE">PRIVATE</option>
+                        </select>
+                       
+        </td>
+        </div>
+         
+        
+        <th>DATE</th>
+        {% for i in obj2 %}
+        <td><input type="date" name="date" value="{{i.date}}"></td>
+        {% endfor %}
+        
+    </tr>
+      {% for i in obj2 %}
+        <tr> 
+            <th>FROM TIME</th>
+        <td><input type="time" name="from_time" value="{{i.from_time}}"></td>
+        <th>TO TIME</th>
+        <td><input type="time" name="to_time" value="{{i.to_time}}"></td>
+
+        </tr>
+    {% endfor %}
+</table></div>
+<br>
+<center>
+    <input type="submit" name="proceed" value="Save">
+    <!-- <input type="button" name="view" value="view"> &nbsp;&nbsp;&nbsp; -->
+    <!-- <input type="button" name="delete" value="delete"> &nbsp;&nbsp;&nbsp; -->
+    <!-- <input type="submit" name ="update" value="update" /> &nbsp; &nbsp; -->
+    <input type="button" onclick="printDiv()" value="print">
+</center> 
+{% endif %}
+</form> 
+
+
+<script type="text/javaScript">
+$(document).ready(function(){
+ var  subb=document.getElementById("sub").value;
+
+  if(subb==1)
+  {
+      var pur=document.getElementById("purpose1").value;
+      console.log(pur);
+      document.getElementById("pur").value = pur;
+  }
+});
+        document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                          e.preventDefault();
+                          var shop_sec = $("#shop_sec").val()
+                          var data = {shop_sec};
+                            $.ajax({
+                              type : 'GET',
+                              url : "{% url 'm23getempno' %}",
+                              dataType : 'json',
+                              data : data,
+                              success : function(response){
+                                var elementsadded = document.querySelectorAll(".neweleempno");
+                                    if(elementsadded.length>0){
+                                        var elementsaddedarr = Array.from(elementsadded);
+                                        elementsaddedarr.forEach((el)=> el.remove());
+                                
+                                        document.querySelector("#op_emp").selected=true;
+                                       
+    
+                                        
+                                     }
+                                    var brarr,mystr,html;
+                                    brarr = response.map((el)=>el.staff_no);
+                                    mystr = "";
+                                    brarr.forEach((el,index)=>{
+                                      html = `<option class="neweleempno">${brarr[index]}</option>`
+                                      mystr = html.concat(mystr);
+                                    });
+                                    html = "";
+                                    document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                                    mystr=""; 
+                              }
+                                })
+                      })
+document.querySelector("#staff_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+
+
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<h1 align="center">M23(Gate Pass) Card</h1>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+        win.document.getElementById('pur').style.visibility = "hidden";
+        win.document.getElementById('purposediv').style.display = "block";
+
+       
+        win.print();
+        win.close();
+}
+
+</script>    
+
+    
+    
+{% endblock content %}
