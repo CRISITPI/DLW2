@@ -3837,8 +3837,8 @@ def dpo(request):
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dpoinput(request):
     from datetime import date
-
-    from .models import annual_production,barrelfirst,dpo,dpoloco
+    
+    from .models import annual_production,barrelfirst,dpo,dpoloco,jpo
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     # cuser=request.user
@@ -3855,6 +3855,8 @@ def dpoinput(request):
     ft2=ft+1
     ctp=str(ft)+'-'+str(ft2)
     locos=[]
+    locoindb=[]
+    annulloco=[]
     obj=barrelfirst.objects.all()
     for i in range(0,len(obj)):
         locos.append(obj[i].locotype)
@@ -3867,7 +3869,9 @@ def dpoinput(request):
         'Role':rolelist[0],
         'cyear':ctp,
         'add':0,
-        'locolist':locos
+        'locolist':locos,
+        'locoindb':locoindb,
+        'annualloco':annulloco,
     }
     if request.method=="POST":
         subject=None
@@ -3887,6 +3891,13 @@ def dpoinput(request):
             cm2=300
             obj1=barrelfirst.objects.filter(locotype=loco)
             b1=obj1[0].code
+            
+            args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+            ar=args.aggregate(Max('revisionid'))
+            revisionidmax=ar['revisionid__max']
+            annualobj=annual_production.objects.filter(financial_year=ctp,revisionid=revisionidmax)
+            for l in range(len(annualobj)):
+                annulloco.append(annualobj[l].loco_type)
             
             obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
             if (obj is not None) and len(obj):
@@ -3919,7 +3930,8 @@ def dpoinput(request):
                     print("j=",dataext)
 
 
-                
+            print(locoindb,"locoindb")  
+            print("annualloco",annulloco)
             context={
             'nav':nav,
             'subnav':subnav,
@@ -3933,6 +3945,7 @@ def dpoinput(request):
             'lcname':loco,
             'add':1,
             'locolist':locos,
+            'locoindb':locoindb,
             'subject':subject,
             'reference':reference,
             'copyto':copyto,
@@ -3940,6 +3953,7 @@ def dpoinput(request):
             'date':dat,
             'dictemper':dictemper,
             'dataext':dataext,
+            'annualloco':annulloco,
 
         } 
 
@@ -3956,6 +3970,15 @@ def dpoinput(request):
             totbaches=request.POST.get('totbaches')
             print("dataext",dataext,"totbaches",totbaches)
             # totbaches=int(tbaches)-int(dataext)
+            
+            args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+            ar=args.aggregate(Max('revisionid'))
+            revisionidmax=ar['revisionid__max']
+            annualobj=annual_production.objects.filter(financial_year=ctp,revisionid=revisionidmax)
+            for l in range(len(annualobj)):
+                annulloco.append(annualobj[l].loco_type)
+                
+                # '<td><input type="text" name="'+idname+'" placeholder="loconame" id="'+idname+'" onkeyup="findcm(this)" /></td>'+
             
             dpopb=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno)
             if dpopb is not None and len(dpopb):
@@ -4025,14 +4048,17 @@ def dpoinput(request):
                
                
             
-               
+            print("annualloco",annulloco)
+            
             context={
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
-            'locolist':locos
+            'locolist':locos,
+            'annualloco':annulloco,
+            
         } 
 
     return render(request, 'dpof.html', context)
