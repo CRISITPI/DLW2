@@ -4449,33 +4449,53 @@ def dporeport(request):
 
 
 def getcumino(request):
-    from .models import dpo
+    from .models import dpo,dpoloco
     print("dpogetcumi")
+    l=[]
+    b=[]
     if request.method == "GET" and request.is_ajax():
         print("in")
         cmno=0
+        bnothr=0
        
         loco=request.GET.get('loco')
         locot=request.GET.get('locot')
         ordno=request.GET.get('ordno')
         try:
             print("hell")
-            emp=dpo.objects.filter(loconame=loco,locotype=locot,orderno=ordno).exists()
+            emp=dpoloco.objects.filter(loconame=loco,locotype=locot,orderno=ordno)
             print("emp",emp)
+            
+            
         except:
             print("hello")
             return JsonResponse({"success":False}, status=400)
        
-        if emp is not None:
-            cmno=emp.endcumno
+        if emp is not None  and len(emp):
+            print(emp)
+            cmno=412
+            for i in range(len(emp)):
+                p=emp[i].cumino
+                l.append(int(p.split('-')[1]))
+                
+                bn=emp[i].batchordno
+                b.append(bn)
+            
+            bnothr=str(max(b))
+            bnothr=bnothr[5:8]
+            print(bnothr,"bnothr")
+                
+            cmno=max(l)+1
+            
         else:
-            if loco=='WAP7':
-                cmno=111
-            else:
-                cmno=225
+            if loco=='WAP-7':
+                cmno=161
+            elif loco=='WAG-9':
+                cmno='001'
         
         dpo_info={
             "cumino":cmno,
+            "bnothr":bnothr,
          }
         
         return JsonResponse({"dpo_info":dpo_info}, status=200)

@@ -331,6 +331,7 @@ $(this).parents("tr").remove();
         event.preventDefault()
         console.log("j"+String(j));
         var dataext=document.getElementById('dataext').value;  
+        console.log("dataext",dataext);
         
         if(j==dataext)
         {
@@ -350,7 +351,7 @@ $(this).parents("tr").remove();
         var b1= document.getElementById("b1").value;
         var b2= document.getElementById('b2').value;
         var loconame=document.getElementById(idname).value;
-        if(aj==1 && tog==0)
+        if((aj==1 && tog==0) || (aj==1 && dataext==0))
         {
                 var sno=bnothr;
                   if(bnothr<10){
