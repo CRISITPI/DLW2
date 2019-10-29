@@ -115,7 +115,27 @@ function myFunction() {
                         </select>
                 </td>                                        
                 </tr>
-                <tr>                          
+                <tr>    
+                <td>
+                    <label for="br_no"><b>Document NO:/प्रलेख सं.:</b></label>
+                    <select class="form-control" id="refNo" name="refNo" required>
+                            <option id="wo_refNo" selected disabled hidden>Select Document No</option>                           
+                    </select>
+                </td>  
+                <td>
+                    <label for="opno"><b>Operation No./ऑपरेशन सं</b></label>
+                        <select class="form-control" id="opno" name="opno" required>
+                            <option id="wo_opno" selected disabled hidden>Select Operation No</option>                           
+                        </select>
+                </td>
+                <td>
+                    <label for="opdesc"><b>Operation Desc/ऑपरेशन विवरण</b></label>
+                    <select class="form-control" id="opdesc" name="opdesc" required style="width:300px;">
+                            <option id="wo_opdesc" selected disabled hidden>Select Operation Desc</option>                           
+                    </select>
+                </td>                                                                             
+            </tr>      
+            <tr> 
                 <td>
                     <label for="br_no"><b>Extra Time Per No./अतिरिक्त समय प्रति नग</b></label>
                     <input type="text" class="form-control" name="extraTimePartNo" id="extraTimePartNo" required>
@@ -128,34 +148,21 @@ function myFunction() {
                     <label for="forSpecialAllowance"><b>For special allowance/केवल विशेष भत्तों क लिय</b></label>
                     <input type="text" class="form-control" name="forSpecialAllowance" id="forSpecialAllowance" required>
                 </td> 
-                 <td>
+                <td>
                     <label for="totalExtraTime"><b>Total Extra Time/कूल अतिरिक्त समय </b></label>
                     <input type="text" class="form-control" name="totalExtraTime" id="totalExtraTime" required>
-                </td>                              
-            </tr>      
-            <tr>                            
-                <td>
-                    <label for="opno"><b>Operation No./ऑपरेशन सं</b></label>
-                        <select class="form-control" id="opno" name="opno" required>
-                            <option id="wo_opno" selected disabled hidden>Select Operation No</option>                           
-                        </select>
-                </td>
-                <td>
-                    <label for="opdesc"><b>Operation Desc/ऑपरेशन विवरण</b></label>
-                    <select class="form-control" id="opdesc" name="opdesc" required>
-                            <option id="wo_opdesc" selected disabled hidden>Select Operation Desc</option>                           
-                    </select>
-                </td>   
+                </td>                                           
+                                                  
+            </tr>   
+            <tr> 
                 <td>
                     <label for="discription"><b>Discription/विवरण </b></label>
                     <input type="text" class="form-control" name="discription" id="discription" required>
-                </td>
-                 <td>
+                </td> 
+                <td>
                     <label for="quantity"><b>Quantity/मात्रा</b></label>
                     <input type="text" class="form-control" name="quantity" id="quantity" required>
-                </td>                     
-            </tr>   
-            <tr>                 
+                </td>                   
                 <td>
                     <label for="setExtraTime"><b>Set/सेट</b></label>
                     <input type="text" class="form-control" name="setExtraTime" id="setExtraTime" required>
@@ -203,9 +210,10 @@ function myFunction() {
                                   var elementsaddedarr = Array.from(elementsadded);
                                   elementsaddedarr.forEach((el)=> el.remove());
                                   document.querySelector("#op_wo").selected=true;
-                                  document.querySelector("#op_part").selected=true;                                  
+                                  document.querySelector("#op_part").selected=true; 
+                                  document.querySelector("#wo_refNo").selected=true;                            
                                   document.querySelector("#wo_opno").selected=true;
-                                  document.querySelector("#wo_opdesc").selected=true;
+                                  document.querySelector("#wo_opdesc").selected=true;                                  
                                }
                               var brarr,mystr,html;
                               brarr = response.map((el)=>el.batch_no);
@@ -236,9 +244,10 @@ function myFunction() {
                               if(elementsadded.length>0){
                                   var elementsaddedarr = Array.from(elementsadded);
                                   elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#op_part").selected=true;                                  
-                                  document.querySelector("#wo_opno").selected=true;   
-                                  document.querySelector("#wo_opdesc").selected=true;                             
+                                  document.querySelector("#op_part").selected=true; 
+                                  document.querySelector("#wo_refNo").selected=true;                            
+                                  document.querySelector("#wo_opno").selected=true;
+                                  document.querySelector("#wo_opdesc").selected=true;                   
                                }
                               var brarr,mystr,html;
                               brarr = response.map((el)=>el.part_no);
@@ -254,8 +263,42 @@ function myFunction() {
                           })
                 })
 
+
+                document.querySelector("#part_nop").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var wo_no = $("#wo_no").val();
+                    var part_nop    = $("#part_nop").val();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {part_nop, shop_sec, wo_no};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm18getRef_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart3");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  document.querySelector("#wo_refNo").selected=true;                            
+                                  document.querySelector("#wo_opno").selected=true;
+                                  document.querySelector("#wo_opdesc").selected=true;  
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.m5glsn);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart3">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#refNo").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                     })
+                })
+
            
-             document.querySelector("#part_nop").addEventListener('change',(e)=>{
+             document.querySelector("#refNo").addEventListener('change',(e)=>{
                     e.preventDefault();
                     var part_nop    = $("#part_nop").val();
                     var shop_sec = $("#shop_sec").val()
@@ -269,9 +312,9 @@ function myFunction() {
                           var elementsadded = document.querySelectorAll(".newelepart");
                               if(elementsadded.length>0){
                                   var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  elementsaddedarr.forEach((el)=> el.remove());                            
                                   document.querySelector("#wo_opno").selected=true;
-                                  document.querySelector("#wo_opdesc").selected=true;
+                                  document.querySelector("#wo_opdesc").selected=true;  
                                }
                               var brarr,mystr,html;
                               brarr = response.map((el)=>el.opn);
@@ -286,6 +329,9 @@ function myFunction() {
                         }
                           })
                 })	
+
+                 	
+
 
                  document.querySelector("#opno").addEventListener('change',(e)=>{
                     e.preventDefault();
@@ -303,8 +349,8 @@ function myFunction() {
                           var elementsadded = document.querySelectorAll(".newelepart2");
                               if(elementsadded.length>0){
                                   var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#wo_opdesc").selected=true;
+                                  elementsaddedarr.forEach((el)=> el.remove());       
+                                  document.querySelector("#wo_opdesc").selected=true;    
                                }
                               var brarr,mystr,html;
                               brarr = response.map((el)=>el.des);
@@ -319,6 +365,8 @@ function myFunction() {
                         }
                    })
                 })
+
+               
 
 </script>
 {% endblock content %}
