@@ -3837,8 +3837,8 @@ def dpo(request):
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dpoinput(request):
     from datetime import date
-    
-    from .models import annual_production,barrelfirst,dpo,dpoloco,jpo
+
+    from .models import annual_production,barrelfirst,dpo,dpoloco
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     # cuser=request.user
@@ -3855,8 +3855,6 @@ def dpoinput(request):
     ft2=ft+1
     ctp=str(ft)+'-'+str(ft2)
     locos=[]
-    locoindb=[]
-    annulloco=[]
     obj=barrelfirst.objects.all()
     for i in range(0,len(obj)):
         locos.append(obj[i].locotype)
@@ -3869,9 +3867,7 @@ def dpoinput(request):
         'Role':rolelist[0],
         'cyear':ctp,
         'add':0,
-        'locolist':locos,
-        'locoindb':locoindb,
-        'annualloco':annulloco,
+        'locolist':locos
     }
     if request.method=="POST":
         subject=None
@@ -3891,13 +3887,6 @@ def dpoinput(request):
             cm2=300
             obj1=barrelfirst.objects.filter(locotype=loco)
             b1=obj1[0].code
-            
-            args = jpo.objects.filter(financial_year=ctp,jpo='main') 
-            ar=args.aggregate(Max('revisionid'))
-            revisionidmax=ar['revisionid__max']
-            annualobj=annual_production.objects.filter(financial_year=ctp,revisionid=revisionidmax)
-            for l in range(len(annualobj)):
-                annulloco.append(annualobj[l].loco_type)
             
             obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
             if (obj is not None) and len(obj):
@@ -3930,8 +3919,7 @@ def dpoinput(request):
                     print("j=",dataext)
 
 
-            print(locoindb,"locoindb")  
-            print("annualloco",annulloco)
+                
             context={
             'nav':nav,
             'subnav':subnav,
@@ -3945,7 +3933,6 @@ def dpoinput(request):
             'lcname':loco,
             'add':1,
             'locolist':locos,
-            'locoindb':locoindb,
             'subject':subject,
             'reference':reference,
             'copyto':copyto,
@@ -3953,7 +3940,6 @@ def dpoinput(request):
             'date':dat,
             'dictemper':dictemper,
             'dataext':dataext,
-            'annualloco':annulloco,
 
         } 
 
@@ -3970,15 +3956,6 @@ def dpoinput(request):
             totbaches=request.POST.get('totbaches')
             print("dataext",dataext,"totbaches",totbaches)
             # totbaches=int(tbaches)-int(dataext)
-            
-            args = jpo.objects.filter(financial_year=ctp,jpo='main') 
-            ar=args.aggregate(Max('revisionid'))
-            revisionidmax=ar['revisionid__max']
-            annualobj=annual_production.objects.filter(financial_year=ctp,revisionid=revisionidmax)
-            for l in range(len(annualobj)):
-                annulloco.append(annualobj[l].loco_type)
-                
-                # '<td><input type="text" name="'+idname+'" placeholder="loconame" id="'+idname+'" onkeyup="findcm(this)" /></td>'+
             
             dpopb=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno)
             if dpopb is not None and len(dpopb):
@@ -4048,17 +4025,14 @@ def dpoinput(request):
                
                
             
-            print("annualloco",annulloco)
-            
+               
             context={
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
-            'locolist':locos,
-            'annualloco':annulloco,
-            
+            'locolist':locos
         } 
 
     return render(request, 'dpof.html', context)
@@ -4069,8 +4043,6 @@ def dpoinput(request):
 def dporeport(request):
     from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
     # locodpo,barrelfirst
-    
-    procedure=None
     
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -4099,8 +4071,6 @@ def dporeport(request):
 
 
     context={
-        'dpono':0,
-    
         'nav':nav,
         'ip':get_client_ip(request),
         'Role':rolelist[0],
@@ -4108,7 +4078,6 @@ def dporeport(request):
         'add':0,
         'locolist':locos,
         'subnav':subnav,
-        'procedure':procedure,
        
     }
 
@@ -4209,7 +4178,7 @@ def dporeport(request):
                     
 
 
-                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord).order_by('batchordno')
+                    objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pord).order_by('id')
                     if (objlocobt is not None) and len(objlocobt):
                         for l in range(len(objlocobt)):
 
@@ -4310,13 +4279,9 @@ def dporeport(request):
             balance=totproduction-totproduced
             if balance==0:
                 balance="NIL"
-            print("totproduction",totproduction)
-            print(locoindb,"locoindb")
                 
             print("dataext",dataext)
             context={
-                'dpono':0,
-            
             'nav':nav,
             # 'subnav':subnav,
             'ip':get_client_ip(request),
@@ -4391,22 +4356,6 @@ def dporeport(request):
                 reflist=findthis(request,reference)
             objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
             if (objloco is not None) and len(objloco):
-                    args = jpo.objects.filter(financial_year=ctp,jpo='main') 
-                    ar=args.aggregate(Max('revisionid'))
-                    revisionidmax=ar['revisionid__max']
-                    lis=['WDM2','YDM4','G4D']
-                    for l in range(len(objloco)):
-                        locoindb.append(objloco[l]['loconame'])
-                        annualobj=annual_production.objects.filter(financial_year=ctp,loco_type=locoindb[l]+" ELECTRIC LOCO",revisionid=revisionidmax)
-                        if(annualobj is not None and len(annualobj)):
-                            if annualobj[0].target_quantity=='-':
-                                totproduction=totproduction+0
-                            else:
-                                
-                                totproduction=totproduction+int(annualobj[0].target_quantity)
-                    # print("locoindb",locoindb)
-                    # print("totproduction",totproduction)
-            if (objloco is not None) and len(objloco):
                 for l in range(len(objloco)):
                     locoindb.append(objloco[l]['loconame'])
 
@@ -4436,17 +4385,9 @@ def dporeport(request):
                 
 
 
-            balance=totproduction-totproduced
-            if balance==0:
-                balance="NIL"
+
             print("dataext",dataext)
             context={
-                'dpono':1,
-            
-                'productionyear':ctp,
-            'totproduction':totproduction,
-            'balance':balance,
-            
             'nav':nav,
             # 'subnav':subnav,
             'ip':get_client_ip(request),
@@ -4482,53 +4423,33 @@ def dporeport(request):
 
 
 def getcumino(request):
-    from .models import dpo,dpoloco
+    from .models import dpo
     print("dpogetcumi")
-    l=[]
-    b=[]
     if request.method == "GET" and request.is_ajax():
         print("in")
         cmno=0
-        bnothr=0
        
         loco=request.GET.get('loco')
         locot=request.GET.get('locot')
         ordno=request.GET.get('ordno')
         try:
             print("hell")
-            emp=dpoloco.objects.filter(loconame=loco,locotype=locot,orderno=ordno)
+            emp=dpo.objects.filter(loconame=loco,locotype=locot,orderno=ordno).exists()
             print("emp",emp)
-            
-            
         except:
             print("hello")
             return JsonResponse({"success":False}, status=400)
        
-        if emp is not None  and len(emp):
-            print(emp)
-            cmno=412
-            for i in range(len(emp)):
-                p=emp[i].cumino
-                l.append(int(p.split('-')[1]))
-                
-                bn=emp[i].batchordno
-                b.append(bn)
-            
-            bnothr=str(max(b))
-            bnothr=bnothr[5:8]
-            print(bnothr,"bnothr")
-                
-            cmno=max(l)+1
-            
+        if emp is not None:
+            cmno=emp.endcumno
         else:
-            if loco=='WAP-7':
-                cmno=161
-            elif loco=='WAG-9':
-                cmno='001'
+            if loco=='WAP7':
+                cmno=111
+            else:
+                cmno=225
         
         dpo_info={
             "cumino":cmno,
-            "bnothr":bnothr,
          }
         
         return JsonResponse({"dpo_info":dpo_info}, status=200)
@@ -4974,7 +4895,7 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').exclude(m2slno__isnull=True).distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5gslsnM').exclude(m2slno__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -6104,8 +6025,6 @@ def M20view(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
-    dictemper={}
-    totindb=0
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -6154,38 +6073,17 @@ def M20view(request):
             rolelist=usermaster.role.split(", ")
             wo_nop = empmast.objects.none()
             shop_sec = request.POST.get('shop_sec')
-            # staffno=request.POST.get('staff_no')
+            staffno=request.POST.get('staff_no')
             lvdate=request.POST.get('lv_date')
-            m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
-            if m2 is not None and len(m2):
-                for mm in range(len(m2)):
-                    temper = {str(mm):{"name":m2[mm].name,
-                                               "ticketno":m2[mm].ticketno,
-                                               "date":m2[mm].alt_date,
-                                               }}
-                    
-                            
-                    totindb=totindb+1
-
-                    dictemper.update(copy.deepcopy(temper))
-                    print(dictemper)
-                    
-            w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('name').distinct()
-            print("w1",w1)
-            wono=[]
-            for w in range(len(w1)):
-                wono.append(w1[w]['name'])
-                # print(w1[w]['name'])
-            print("wono",wono)
-            # wono = list(w1)
-            # print(wono)
-            # ename=wono[0]['name']
-            # obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
-            # print(obj1)
+            w1=M5SHEMP.objects.filter(staff_no=staffno).values('staff_no','name').distinct()
+            wono = list(w1)
+            ename=wono[0]['name']
+            obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
+            print(obj1)
             alt_date="yyyy-mm-dd"
-            # if obj1 is not None:
-            #     ename=obj1[0].name
-            #     alt_date=obj1[0].alt_date
+            if obj1 is not None:
+                ename=obj1[0].name
+                alt_date=obj1[0].alt_date
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -6200,12 +6098,9 @@ def M20view(request):
                     'roles':tmp,
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
-                    'names':wono,
-                    'dictemper':dictemper,
-                    'totindb':totindb,
-                    # 'obj1':obj1,
-                    # 'empname':ename,
-                    # 'ticketno':staffno,
+                    'obj1':obj1,
+                    'empname':ename,
+                    'ticketno':staffno,
                     'alt_date':alt_date,
                 }
             elif(len(rolelist)==1):
@@ -6246,34 +6141,12 @@ def M20view(request):
         if submitvalue=='Save':
             print("data saved")
             shop_sec= request.POST.get('shop_sec')
-            # staff_no=request.POST.get('stffno')
+            staff_no=request.POST.get('stffno')
             lv_date= request.POST.get('lv_date')
-            tot=0
-            tot=request.POST.get('totmebs')
-            
-            
-            totindb=request.POST.get('totindb')
-            for tb in range(1,int(totindb)+1):
-                namedb=request.POST.get('namedb'+str(tb))
-                ticketnodb=request.POST.get('ticketnodb'+str(tb))
-                datedb=request.POST.get('datedb'+str(tb))
-                print("Dateindb"+str(tb),datedb)
-                M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
-                
-            
-            
-            
-            for t in range(1,int(tot)+1):
-                name=request.POST.get('name'+str(t))
-                ticketno=request.POST.get('ticket'+str(t))
-                date=request.POST.get('date'+str(t))
-                M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
-                print(shop_sec,lv_date,name,ticketno,date)
-                
-            
-            # name=request.POST.get('empname')
-            # ticketno = request.POST.get('stffno')
-            # alt_date = request.POST.get('alt_date')
+            name=request.POST.get('empname')
+            ticketno = request.POST.get('stffno')
+            alt_date = request.POST.get('alt_date')
+            M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(staff_no), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(alt_date))
             messages.success(request, 'Successfully Saved !!!, Select new values to update')
     return render(request, "M20view.html", context)
 
@@ -6283,14 +6156,10 @@ def m20getstaffno(request):
     if request.method == "GET" and request.is_ajax():  
         from.models import Batch      
         shop_sec = request.GET.get('shop_sec')
-        name=request.GET.get('name')
-        w1=M5SHEMP.objects.filter(shopsec=shop_sec,name=name).values('staff_no').distinct()
-        wono = w1[0]['staff_no']
-        cont ={
-            "wono":wono,
-        }
-        # print("ths is",shop_sec)
-        return JsonResponse({"cont":cont}, safe = False)
+        w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct()
+        wono = list(w1)
+        print("ths is",shop_sec)
+        return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
 def m20getstaffName(request):
@@ -6443,7 +6312,6 @@ def m18view(request):
             shop_sec        = request.POST.get('shop_sec')
             wo_no           = request.POST.get('wo_no')
             part_nop        = request.POST.get('part_nop')
-            refNo        = request.POST.get('refNo')
             extraTimePartNo = request.POST.get('extraTimePartNo')
             reasonSpecialAllowance = request.POST.get('reasonSpecialAllowance')
             forSpecialAllowance    = request.POST.get('forSpecialAllowance')
@@ -6455,8 +6323,8 @@ def m18view(request):
             setExtraTime    = request.POST.get('setExtraTime')    
             setno           = request.POST.get('setno')  
 
-            M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop),refNo=str(refNo),extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
-            messages.success(request, 'Successfully Saved ! Your ref No is :'+refNo)    
+            M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
+            messages.success(request, 'Successfully Saved ! Select new values to update')    
     return render(request,"m18view.html",context)
 	
 	
@@ -6895,15 +6763,6 @@ def m18getpart_no(request):
         part_no = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('part_no').exclude(part_no__isnull=True).distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)    
-
-def m18getRef_no(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        shop_sec = request.GET.get('shop_sec')
-        part_nop = request.GET.get('part_nop')
-        refno = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec,part_no =part_nop).values('m5glsn').exclude(part_no__isnull=True).distinct())
-        return JsonResponse(refno, safe = False)
-    return JsonResponse({"success":False}, status=400)   
 
 def m18getoperation_no(request):
     if request.method == "GET" and request.is_ajax():
@@ -7346,7 +7205,7 @@ def mg7getpartno(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+#@role_required(allowed_roles=["Superuser"])
 def m23view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7368,6 +7227,7 @@ def m23view(request):
         context={
             'sub':0,
             'lenm' :2,
+
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
@@ -7375,6 +7235,9 @@ def m23view(request):
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
             w1 = M5SHEMP.objects.filter(shopsec=rolelist[i]).values('empno').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
@@ -7415,18 +7278,8 @@ def m23view(request):
             #leng2 = obj2.count()
            # print(obj1,"obj1")
             #print(obj2,"obj2")
-            if "Superuser" in rolelist:
-                tm=shop_section.objects.all()
-                tmp=[]
-                for on in tm:
-                    tmp.append(on.section_code)
-                context={
-                    'lenm' :2,
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'roles':tmp,
-                    'obj1': obj1,
+            context = {
+                'obj1': obj1,
                 'obj2': obj2,
                 'ran':range(1,32),
                 'len': 31,
@@ -7437,69 +7290,10 @@ def m23view(request):
                 #'part_no': part_no, 
                 #'mon': mon,
                 'sub':1,
-                }
-            elif(len(rolelist)==1):
-                for i in range(0,len(rolelist)):
-                    w1 = M5SHEMP.objects.filter(shopsec=rolelist[i]).values('empno').distinct()
-                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
-                    wo_nop = wo_nop | req
-
-                context = {
-                    'subnav':subnav,
-                    'lenm' :len(rolelist),
-                    'wo_nop':wo_nop,
-                    'nav':nav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'obj1': obj1,
-                'obj2': obj2,
-                'ran':range(1,32),
-                'len': 31,
-                #'len2': leng2,
-                'shop_sec': shop_sec,
-                #'wo_no': wo_no,
-                'staff_no': staff_no,
-                #'part_no': part_no, 
-                #'mon': mon,
-                'sub':1,
-                }
-            elif(len(rolelist)>1):
-                context = {
-                    'lenm' :len(rolelist),
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'obj1': obj1,
-                'obj2': obj2,
-                'ran':range(1,32),
-                'len': 31,
-                #'len2': leng2,
-                'shop_sec': shop_sec,
-                #'wo_no': wo_no,
-                'staff_no': staff_no,
-                #'part_no': part_no, 
-                #'mon': mon,
-                'sub':1,
-                }
-            # context = {
-            #     'obj1': obj1,
-            #     'obj2': obj2,
-            #     'ran':range(1,32),
-            #     'len': 31,
-            #     #'len2': leng2,
-            #     'shop_sec': shop_sec,
-            #     #'wo_no': wo_no,
-            #     'staff_no': staff_no,
-            #     #'part_no': part_no, 
-            #     #'mon': mon,
-            #     'sub':1,
-            #     'nav':nav,
-            #     'ip':get_client_ip(request),  
-            #     'subnav':subnav,     
-            # }
+                'nav':nav,
+                'ip':get_client_ip(request),  
+                'subnav':subnav,     
+            }
         if submitvalue =='Save':
                     leng=request.POST.get('len')
                     print("HH")
