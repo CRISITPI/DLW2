@@ -4895,7 +4895,7 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5gslsnM').exclude(m2slno__isnull=True).distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').exclude(m2slno__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -6312,6 +6312,7 @@ def m18view(request):
             shop_sec        = request.POST.get('shop_sec')
             wo_no           = request.POST.get('wo_no')
             part_nop        = request.POST.get('part_nop')
+            refNo        = request.POST.get('refNo')
             extraTimePartNo = request.POST.get('extraTimePartNo')
             reasonSpecialAllowance = request.POST.get('reasonSpecialAllowance')
             forSpecialAllowance    = request.POST.get('forSpecialAllowance')
@@ -6323,8 +6324,8 @@ def m18view(request):
             setExtraTime    = request.POST.get('setExtraTime')    
             setno           = request.POST.get('setno')  
 
-            M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
-            messages.success(request, 'Successfully Saved ! Select new values to update')    
+            M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop),refNo=str(refNo),extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
+            messages.success(request, 'Successfully Saved ! Your ref No is :'+refNo)    
     return render(request,"m18view.html",context)
 	
 	
@@ -6763,6 +6764,15 @@ def m18getpart_no(request):
         part_no = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('part_no').exclude(part_no__isnull=True).distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)    
+
+def m18getRef_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        shop_sec = request.GET.get('shop_sec')
+        part_nop = request.GET.get('part_nop')
+        refno = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec,part_no =part_nop).values('m5glsn').exclude(part_no__isnull=True).distinct())
+        return JsonResponse(refno, safe = False)
+    return JsonResponse({"success":False}, status=400)   
 
 def m18getoperation_no(request):
     if request.method == "GET" and request.is_ajax():
