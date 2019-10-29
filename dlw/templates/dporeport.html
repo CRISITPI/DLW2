@@ -72,11 +72,21 @@
     <div id="content">
 
     </div>
+    <h2 style="margin: 1em 0 0.5em 0;
+    text-align:center;
+          color: #343434;
+          font-weight: normal;
+          font-family: 'Ultra', sans-serif;   
+          font-size: 36px;
+          line-height: 42px;
+          text-transform: uppercase;
+          text-shadow: 0 2px white, 0 3px #777;">DPO</h2>
     <table align="center">
-        <tr>
-            <!-- <td>
-            </td> -->
-            <td style="text-align: center;">
+        {% comment %} <tr>
+        <td>
+            </td>
+            
+            <td style="text-align: right;">
                 <h2 style="margin: 1em 0 0.5em 0;
           color: #343434;
           font-weight: normal;
@@ -86,7 +96,9 @@
           text-transform: uppercase;
           text-shadow: 0 2px white, 0 3px #777;">DPO</h2>
             </td>
-        </tr>
+            
+            <td></td>
+        </tr> {% endcomment %}
 
 
         <tr>
@@ -101,6 +113,7 @@
             {% endfor %}
         </select></div>
             </td>
+            <td></td>
             
         <td><input type="text" id="barl2" name="barl2" placeholder="Order No:" value="002" onblur="prcdcall()" /></td>
                
@@ -132,6 +145,9 @@
     <input type="hidden" name="finalizevalue" value={{finalvalue}} />
      <input type="hidden" name="lcname" value="{{lcname}}" id="lcname"/>
     <input type="hidden" name="b2" value="{{b2}}" id="b2">
+    <input type="hidden" name="dpono" id="dpono" value={{dpono}} />
+<input type="hidden" name="procdno" id="procdno" value={{procedure}} />
+    
 
     <br>
 
@@ -280,6 +296,16 @@
     
 
 $(document).ready(() => {
+
+    var dpono = document.getElementById('dpono').value;
+    if(dpono==1)
+    {
+        var procdno= document.getElementById('procdno').value;
+        document.getElementById('pord').value= procdno;
+        prcdcall();
+
+    }
+   
         
 
 

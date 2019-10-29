@@ -3837,8 +3837,8 @@ def dpo(request):
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dpoinput(request):
     from datetime import date
-
-    from .models import annual_production,barrelfirst,dpo,dpoloco
+    
+    from .models import annual_production,barrelfirst,dpo,dpoloco,jpo
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     # cuser=request.user
@@ -3855,6 +3855,8 @@ def dpoinput(request):
     ft2=ft+1
     ctp=str(ft)+'-'+str(ft2)
     locos=[]
+    locoindb=[]
+    annulloco=[]
     obj=barrelfirst.objects.all()
     for i in range(0,len(obj)):
         locos.append(obj[i].locotype)
@@ -3867,7 +3869,9 @@ def dpoinput(request):
         'Role':rolelist[0],
         'cyear':ctp,
         'add':0,
-        'locolist':locos
+        'locolist':locos,
+        'locoindb':locoindb,
+        'annualloco':annulloco,
     }
     if request.method=="POST":
         subject=None
@@ -3887,6 +3891,13 @@ def dpoinput(request):
             cm2=300
             obj1=barrelfirst.objects.filter(locotype=loco)
             b1=obj1[0].code
+            
+            args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+            ar=args.aggregate(Max('revisionid'))
+            revisionidmax=ar['revisionid__max']
+            annualobj=annual_production.objects.filter(financial_year=ctp,revisionid=revisionidmax)
+            for l in range(len(annualobj)):
+                annulloco.append(annualobj[l].loco_type)
             
             obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
             if (obj is not None) and len(obj):
@@ -3919,7 +3930,8 @@ def dpoinput(request):
                     print("j=",dataext)
 
 
-                
+            print(locoindb,"locoindb")  
+            print("annualloco",annulloco)
             context={
             'nav':nav,
             'subnav':subnav,
@@ -3933,6 +3945,7 @@ def dpoinput(request):
             'lcname':loco,
             'add':1,
             'locolist':locos,
+            'locoindb':locoindb,
             'subject':subject,
             'reference':reference,
             'copyto':copyto,
@@ -3940,6 +3953,7 @@ def dpoinput(request):
             'date':dat,
             'dictemper':dictemper,
             'dataext':dataext,
+            'annualloco':annulloco,
 
         } 
 
@@ -3956,6 +3970,15 @@ def dpoinput(request):
             totbaches=request.POST.get('totbaches')
             print("dataext",dataext,"totbaches",totbaches)
             # totbaches=int(tbaches)-int(dataext)
+            
+            args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+            ar=args.aggregate(Max('revisionid'))
+            revisionidmax=ar['revisionid__max']
+            annualobj=annual_production.objects.filter(financial_year=ctp,revisionid=revisionidmax)
+            for l in range(len(annualobj)):
+                annulloco.append(annualobj[l].loco_type)
+                
+                # '<td><input type="text" name="'+idname+'" placeholder="loconame" id="'+idname+'" onkeyup="findcm(this)" /></td>'+
             
             dpopb=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno)
             if dpopb is not None and len(dpopb):
@@ -4025,14 +4048,17 @@ def dpoinput(request):
                
                
             
-               
+            print("annualloco",annulloco)
+            
             context={
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
             'Role':rolelist[0],
             'cyear':ctp,
-            'locolist':locos
+            'locolist':locos,
+            'annualloco':annulloco,
+            
         } 
 
     return render(request, 'dpof.html', context)
@@ -4043,6 +4069,8 @@ def dpoinput(request):
 def dporeport(request):
     from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
     # locodpo,barrelfirst
+    
+    procedure=None
     
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -4071,6 +4099,8 @@ def dporeport(request):
 
 
     context={
+        'dpono':0,
+    
         'nav':nav,
         'ip':get_client_ip(request),
         'Role':rolelist[0],
@@ -4078,6 +4108,7 @@ def dporeport(request):
         'add':0,
         'locolist':locos,
         'subnav':subnav,
+        'procedure':procedure,
        
     }
 
@@ -4279,9 +4310,13 @@ def dporeport(request):
             balance=totproduction-totproduced
             if balance==0:
                 balance="NIL"
+            print("totproduction",totproduction)
+            print(locoindb,"locoindb")
                 
             print("dataext",dataext)
             context={
+                'dpono':0,
+            
             'nav':nav,
             # 'subnav':subnav,
             'ip':get_client_ip(request),
@@ -4356,6 +4391,22 @@ def dporeport(request):
                 reflist=findthis(request,reference)
             objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
             if (objloco is not None) and len(objloco):
+                    args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+                    ar=args.aggregate(Max('revisionid'))
+                    revisionidmax=ar['revisionid__max']
+                    lis=['WDM2','YDM4','G4D']
+                    for l in range(len(objloco)):
+                        locoindb.append(objloco[l]['loconame'])
+                        annualobj=annual_production.objects.filter(financial_year=ctp,loco_type=locoindb[l]+" ELECTRIC LOCO",revisionid=revisionidmax)
+                        if(annualobj is not None and len(annualobj)):
+                            if annualobj[0].target_quantity=='-':
+                                totproduction=totproduction+0
+                            else:
+                                
+                                totproduction=totproduction+int(annualobj[0].target_quantity)
+                    # print("locoindb",locoindb)
+                    # print("totproduction",totproduction)
+            if (objloco is not None) and len(objloco):
                 for l in range(len(objloco)):
                     locoindb.append(objloco[l]['loconame'])
 
@@ -4385,9 +4436,17 @@ def dporeport(request):
                 
 
 
-
+            balance=totproduction-totproduced
+            if balance==0:
+                balance="NIL"
             print("dataext",dataext)
             context={
+                'dpono':1,
+            
+                'productionyear':ctp,
+            'totproduction':totproduction,
+            'balance':balance,
+            
             'nav':nav,
             # 'subnav':subnav,
             'ip':get_client_ip(request),
@@ -4423,33 +4482,53 @@ def dporeport(request):
 
 
 def getcumino(request):
-    from .models import dpo
+    from .models import dpo,dpoloco
     print("dpogetcumi")
+    l=[]
+    b=[]
     if request.method == "GET" and request.is_ajax():
         print("in")
         cmno=0
+        bnothr=0
        
         loco=request.GET.get('loco')
         locot=request.GET.get('locot')
         ordno=request.GET.get('ordno')
         try:
             print("hell")
-            emp=dpo.objects.filter(loconame=loco,locotype=locot,orderno=ordno).exists()
+            emp=dpoloco.objects.filter(loconame=loco,locotype=locot,orderno=ordno)
             print("emp",emp)
+            
+            
         except:
             print("hello")
             return JsonResponse({"success":False}, status=400)
        
-        if emp is not None:
-            cmno=emp.endcumno
+        if emp is not None  and len(emp):
+            print(emp)
+            cmno=412
+            for i in range(len(emp)):
+                p=emp[i].cumino
+                l.append(int(p.split('-')[1]))
+                
+                bn=emp[i].batchordno
+                b.append(bn)
+            
+            bnothr=str(max(b))
+            bnothr=bnothr[5:8]
+            print(bnothr,"bnothr")
+                
+            cmno=max(l)+1
+            
         else:
-            if loco=='WAP7':
-                cmno=111
-            else:
-                cmno=225
+            if loco=='WAP-7':
+                cmno=161
+            elif loco=='WAG-9':
+                cmno='001'
         
         dpo_info={
             "cumino":cmno,
+            "bnothr":bnothr,
          }
         
         return JsonResponse({"dpo_info":dpo_info}, status=200)
