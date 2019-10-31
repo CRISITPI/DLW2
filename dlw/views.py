@@ -15,7 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
+from dlw.models import M18,empmast,M14M4,Cst,testc,navbar,M20new,MG22new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
 from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
 import re,uuid,copy
@@ -7443,3 +7443,263 @@ def m23getempno(request):
         staff_no=list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def MG22view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    dictemper={}
+    totindb=0
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Add':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            # staffno=request.POST.get('staff_no')
+            lvdate=request.POST.get('lv_date')
+            m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
+            if m2 is not None and len(m2):
+                for mm in range(len(m2)):
+                    temper = {str(mm):{"name":m2[mm].name,
+                                               "ticketno":m2[mm].ticketno,
+                                               "date":m2[mm].alt_date,
+                                               }}
+                    
+                            
+                    totindb=totindb+1
+
+                    dictemper.update(copy.deepcopy(temper))
+                    print(dictemper)
+
+            emp=[]
+            
+            staff_name = request.GET.get('empname')
+            print(staff_name)
+            empname = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname')
+            if empname is not None and len(empname):
+                for i in range(len(empname)):
+                    emp.append(empname[i]['empname'])
+            print(emp)
+
+
+            w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('name').distinct()
+            print("w1",w1)
+            wono=[]
+            for w in range(len(w1)):
+                wono.append(w1[w]['name'])
+                # print(w1[w]['name'])
+            print("wono",wono)
+            # wono = list(w1)
+            # print(wono)
+            # ename=wono[0]['name']
+            # obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
+            # print(obj1)
+            alt_date="yyyy-mm-dd"
+            # if obj1 is not None:
+            #     ename=obj1[0].name
+            #     alt_date=obj1[0].alt_date
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'names':wono,
+                    'dictemper':dictemper,
+                    'totindb':totindb,
+                    'empname':emp,
+                    # 'obj1':obj1,
+                    # 'empname':ename,
+                    # 'ticketno':staffno,
+                    'alt_date':alt_date,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+        
+        if submitvalue=='Save':
+            print("data saved")
+            shop_sec= request.POST.get('shop_sec')
+            # staff_no=request.POST.get('stffno')
+            lv_date= request.POST.get('lv_date')
+            tot=0
+            tot=request.POST.get('totmebs')
+            
+            
+            totindb=request.POST.get('totindb')
+            for tb in range(1,int(totindb)+1):
+                namedb=request.POST.get('namedb'+str(tb))
+                ticketnodb=request.POST.get('ticketnodb'+str(tb))
+                datedb=request.POST.get('datedb'+str(tb))
+                print("Dateindb"+str(tb),datedb)
+                M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
+                
+            
+            
+            
+            for t in range(1,int(tot)+1):
+                name=request.POST.get('name'+str(t))
+                ticketno=request.POST.get('ticket'+str(t))
+                date=request.POST.get('date'+str(t))
+                M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
+                print(shop_sec,lv_date,name,ticketno,date)
+                
+            
+            # name=request.POST.get('empname')
+            # ticketno = request.POST.get('stffno')
+            # alt_date = request.POST.get('alt_date')
+
+        if submitvalue=='Save':
+            print("data saved")
+            shop_sec= request.POST.get('shop_sec')
+            # staff_no=request.POST.get('stffno')
+            lv_date= request.POST.get('lv_date')
+            tot=0
+            tot=request.POST.get('totmebs')
+            
+            
+            totindb=request.POST.get('totindb')
+            for tb in range(1,int(totindb)+1):
+                namedb=request.POST.get('namedb'+str(tb))
+                ticketnodb=request.POST.get('ticketnodb'+str(tb))
+                datedb=request.POST.get('datedb'+str(tb))
+                print("Dateindb"+str(tb),datedb)
+                M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
+                
+            
+            
+            
+            for t in range(1,int(tot)+1):
+                name=request.POST.get('name'+str(t))
+                ticketno=request.POST.get('ticket'+str(t))
+                date=request.POST.get('date'+str(t))
+                MG22new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
+                print(shop_sec,lv_date,name,ticketno,date)
+
+            messages.success(request, 'Successfully Saved !!!, Select new values to update')
+    return render(request, "MG22view.html", context)
+
+def mg22getstaffno(request):
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch      
+        shop_sec = request.GET.get('shop_sec')
+        name=request.GET.get('name')
+        w1=M5SHEMP.objects.filter(shopsec=shop_sec,name=name).values('staff_no').distinct()
+        wono = w1[0]['staff_no']
+        cont ={
+            "wono":wono,
+        }
+        # print("ths is",shop_sec)
+        return JsonResponse({"cont":cont}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg22getstaffName(request):
+    if request.method == "GET" and request.is_ajax():  
+        from .models import Batch     
+        shop_sec = request.GET.get('shop_sec')
+        staff_no = request.GET.get('staff_no')
+        print(staff_no)
+        w1=M5SHEMP.objects.filter(staff_no=staff_no).values('staff_no','name').distinct()
+        wono = list(w1)
+        print("ths is",shop_sec)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+
+
