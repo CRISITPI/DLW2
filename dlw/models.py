@@ -3667,48 +3667,4 @@ class m23doc(models.Model):
      class Meta:
         db_table = 'M23new'
 
-
-
-class MG22new(models.Model):
-    updt_date = models.CharField(blank = True, null=True,max_length=10)
-    shop_sec = models.CharField(max_length=10, blank=True, null= True)
-    name = models.CharField(max_length=50, blank=True, null= True)
-    staff_no = models.CharField(max_length=10, blank=True, null = True)
-    ticketno = models.CharField(max_length=10, blank = True, null= True)
-    acc_Date = models.DateField(blank= True, null= True)
-    cause = models.CharField(blank = True,max_length = 100, null = True)
-    reason_neg = models.CharField(blank = True,max_length = 100, null = True)
-    reason_y_neg = models.CharField(blank = True,max_length = 100, null = True)
-    equip_check = models.CharField(blank = True,max_length = 100, null = True)
-    suggestions = models.CharField(blank = True,max_length = 100, null = True)
-    bgc = models.CharField(blank = True,max_length = 100, null = True)
-    bgc2 = models.CharField(blank = True,max_length = 100, null = True)
-    sec_sup = models.CharField(blank = True,max_length = 100, null = True)
-    charegeman = models.CharField(blank = True,max_length = 100, null = True)
-    mistry = models.CharField(blank = True,max_length = 100, null = True)
-    c1 = models.CharField(blank = True,max_length = 100, null = True)
-    c2 = models.CharField(blank = True,max_length = 100, null = True)
-    c3 = models.CharField(blank = True,max_length = 100, null = True)
-    c4 = models.CharField(blank = True,max_length = 100, null = True)
-    a1 = models.CharField(blank = True,max_length = 100, null = True)
-    a1 = models.CharField(blank = True,max_length = 100, null = True)
-    a3 = models.CharField(blank = True,max_length = 100, null = True)
-    ssfo= models.CharField(blank = True,max_length = 100, null = True)
-
-    class Meta:
-        db_table = 'MG22new'
-    
-    
-
-
-
-
-
-
-
-
-    class Meta:
-        db_table = 'M20new'
-
-
         
