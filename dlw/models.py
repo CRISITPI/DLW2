@@ -3667,4 +3667,31 @@ class m23doc(models.Model):
      class Meta:
         db_table = 'M23new'
 
-        
+
+class BogieAssembly(models.Model):
+    sno=models.AutoField(primary_key=True)
+    bo_no=models.CharField(max_length=20,null=True)
+    bo_date=models.CharField(max_length=20,null=True)
+    date=models.CharField(max_length=20,null=True)
+    loco_type=models.CharField(max_length=20,null=True)
+    in_date=models.CharField(max_length=20,null=True)
+    frameserial_no=models.CharField(max_length=20,null=True)
+    frame_make=models.CharField(max_length=20,null=True)
+    frame_type=models.CharField(max_length=20,null=True)
+    axle_no=models.CharField(max_length=20,null=True)
+    axle_location=models.CharField(max_length=20,null=True)
+    traction_motor_no=models.CharField(max_length=20,null=True)
+    gear_case_no=models.CharField(max_length=20,null=True)
+    gear_case_make=models.CharField(max_length=20,null=True)
+    msu_unit_no=models.CharField(max_length=20,null=True)
+    break_rigging_make=models.CharField(max_length=20,null=True)
+    coil_spring_make=models.CharField(max_length=20,null=True)
+    secondary_coil_make=models.CharField(max_length=20,null=True)
+    sand_box_make=models.CharField(max_length=20,null=True)
+    spheri_block_make=models.CharField(max_length=20,null=True)
+    thrust_pad_make=models.CharField(max_length=20,null=True)
+    break_cylinder_make=models.CharField(max_length=20,null=True)
+    lateral_damper=models.CharField(max_length=20,null=True)
+    horizontal_damper=models.CharField(max_length=20,null=True)
+    dispatch_to=models.CharField(max_length=50,null=True)
+    dispatch_status=models.BooleanField(default=False)
