@@ -15,7 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
+from dlw.models import M18,empmast,M14M4,BogieAssembly,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
 from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
 import re,uuid,copy
@@ -7405,4 +7405,171 @@ def m23getempno(request):
         #wo_no = request.GET.get('wo_no')
         staff_no=list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def bogieassembly_section(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
+    myaxle=AxleWheelMachining.objects.all().values('axle_no')
+    mytm=PinionPressing.objects.all().values('tm_no')
+    # mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+       'subnav':subnav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       'mybo':mybo,
+       'mysno':mysno,
+       'myaxle':myaxle,
+       'mytm':mytm,
+    #    'mymsu':mymsu,
+    }
+
+    if request.method=="POST":
+
+        once=request.POST.get('once')
+        print(once)
+        submit=request.POST.get('submit')
+
+        if submit=='Save':
+            bo_no=request.POST.get('bo_no')
+            bo_date=request.POST.get('bo_date')
+            date=request.POST.get('date')
+            loco_type=request.POST.get('locos')
+            in_date=request.POST.get('in_date')
+            frameserial_no=request.POST.get('frameserial_no')
+            frame_make=request.POST.get('frame_make')
+            frame_type=request.POST.get('frame_type')
+            print(bo_no,bo_date,date,loco_type,in_date,frame_make,frame_type,frameserial_no)
+            
+
+            if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date:
+               obj=BogieAssembly.objects.create()
+               obj.bo_no=bo_no
+               obj.bo_date=bo_date
+               obj.date=date
+               obj.loco_type=loco_type
+               obj.in_date=in_date
+               obj.frame_make=frame_make
+               obj.frame_type=frame_type
+               obj.frameserial_no=frameserial_no
+               obj.save()
+               messages.success(request, 'Successfully Added!')
+            else:
+               messages.error(request,"Please Enter All Records!") 
+
+            obj2=BogieAssembly.objects.all().order_by('sno')
+            my_context={
+            'object':obj2,
+            'mybo':mybo,
+            'mysno':mysno,
+            }
+
+        if submit=='Edit':
+            temp=request.POST.get('editsno')
+            if temp is not None:
+                sno=int(temp)
+            else:
+                sno=None
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
+            in_date=request.POST.get('editin_date')
+            frameserial_no=request.POST.get('editframeserial_no')
+            frame_make=request.POST.get('editframe_make')
+            frame_type=request.POST.get('editframe_type')
+            print(bo_no,bo_date,date,loco_type,in_date,frame_make,frame_type,frameserial_no)
+        
+            if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date:
+               BogieAssembly.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,frameserial_no=frameserial_no,frame_make=frame_make,frame_type=frame_type,in_date=in_date)
+               messages.success(request, 'Successfully Edited!')
+            else:
+               messages.error(request,"Please Enter S.No.!")
+
+            my_context={
+            'object':obj2,
+            'mybo':mybo,
+            'mysno':mysno,
+            }
+
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            if sno and dislocos:
+                BogieAssembly.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+
+        if submit=='InspectHHP':
+            sno=int(request.POST.get('mysno'))
+            # print(sno)
+            axle_no=request.POST.get('axle_no')
+            axle_location=request.POST.get('axle_location')
+            gear_case_no=request.POST.get('gear_case_no')
+            traction_motor_no=request.POST.get('traction_motor_no')
+            gear_case_make=request.POST.get('gear_case_make')
+            msu_unit_no=request.POST.get('msu_unit_no')
+            break_rigging_make=request.POST.get('break_rigging_make')
+            coil_spring_make=request.POST.get('coil_spring_make')
+            sand_box_make=request.POST.get('sand_box_make')
+            spheri_block_make=request.POST.get('spheri_block_make')
+            elastic_shop_make=request.POST.get('elastic_shop_make')
+            horizontal_damper=request.POST.get('horizontal_damper')
+            secondary_coil_make=request.POST.get('secondary_coil_make')
+            thrust_pad_make=request.POST.get('thrust_pad_make')
+            break_cylinder_make=request.POST.get('break_cylinder_make')
+            lateral_damper=request.POST.get('lateral_damper')
+            if axle_no and axle_location and gear_case_no and traction_motor_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper and secondary_coil_make and thrust_pad_make and break_cylinder_make and lateral_damper :
+                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=traction_motor_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper) 
+                messages.success(request,'Successfully Inspected!')
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+        if submit=='Delete':
+
+            sno=int(request.POST.get('delsno'))
+            if sno:
+                myval=list(BogieAssembly.objects.filter(sno=sno))
+                print(myval) 
+                BogieAssembly.objects.filter(sno=sno).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+
+        
+        return HttpResponseRedirect("/bogieassembly/")
+
+    return render(request,"bogieassembly.html",my_context)
+
+def bogieassemb_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        # print(mybo)
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def bogieassemb_editsno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno=request.GET.get('sels_no')
+        myval=list(BogieAssembly.objects.filter(sno=mysno).values('bo_no','bo_date','loco_type','date','frameserial_no','frame_make','frame_type','in_date'))
+        return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
