@@ -4068,6 +4068,8 @@ def dpoinput(request):
 @role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dporeport(request):
     from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
+    from django.db.models import Max
+    
     # locodpo,barrelfirst
     
     cuser=request.user
@@ -4129,6 +4131,8 @@ def dporeport(request):
         totproduction=0
         balance=0
         totproduced=0
+        
+        
 
         submit=request.POST.get('submit')
         finalsubmit=request.POST.get('finalize')
@@ -4140,7 +4144,6 @@ def dporeport(request):
         for i in range(0,len(obj)):
             locos.append(obj[i].locotype)
         if submit=='Proceed':
-
             pord=request.POST.get('pord')
 
 
@@ -4354,13 +4357,16 @@ def dporeport(request):
             objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
             # print("pnoo")
             if (objlocobt is not None) and len(objlocobt):
-                args = dpo.objects.filter(locotype=loco,orderno=b2) # or whatever arbitrary queryset
-                pno=args.aggregate(Max('procedureno'))
-                print("pno",pno['procedureno__max'])
-                if int(pno['procedureno__max'])==0:
+                # args = dpo.objects.filter(locotype=loco,orderno=b2) # or whatever arbitrary queryset
+                allobj = dpo.objects.all()
+                # pno=args.aggregate(Max('procedureno'))
+                # print("pno",pno['procedureno__max'])
+                maxobj=dpo.objects.aggregate(Max('procedureno'))
+                print("Maximum",maxobj['procedureno__max'])
+                if allobj is None or len(allobj)==0:
                     pnonum=547
                 else:
-                    pnonum=int(pno['procedureno__max'])+1
+                    pnonum=int(maxobj['procedureno__max'])+1
 
 
 
@@ -4381,6 +4387,22 @@ def dporeport(request):
                 print(subject,reference,copyto,summary,dat)
                 reflist=findthis(request,reference)
             objloco=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).values('loconame').distinct()
+            if (objloco is not None) and len(objloco):
+                    args = jpo.objects.filter(financial_year=ctp,jpo='main') 
+                    ar=args.aggregate(Max('revisionid'))
+                    revisionidmax=ar['revisionid__max']
+                    lis=['WDM2','YDM4','G4D']
+                    for l in range(len(objloco)):
+                        locoindb.append(objloco[l]['loconame'])
+                        annualobj=annual_production.objects.filter(financial_year=ctp,loco_type=locoindb[l]+" ELECTRIC LOCO",revisionid=revisionidmax)
+                        if(annualobj is not None and len(annualobj)):
+                            if annualobj[0].target_quantity=='-':
+                                totproduction=totproduction+0
+                            else:
+                                
+                                totproduction=totproduction+int(annualobj[0].target_quantity)
+                    # print("locoindb",locoindb)
+                    # print("totproduction",totproduction)
             if (objloco is not None) and len(objloco):
                 for l in range(len(objloco)):
                     locoindb.append(objloco[l]['loconame'])
@@ -4411,9 +4433,17 @@ def dporeport(request):
                 
 
 
-
+            balance=totproduction-totproduced
+            if balance==0:
+                balance="NIL"
             print("dataext",dataext)
             context={
+                'dpono':1,
+            
+                'productionyear':ctp,
+            'totproduction':totproduction,
+            'balance':balance,
+            
             'nav':nav,
             # 'subnav':subnav,
             'ip':get_client_ip(request),
@@ -6994,6 +7024,7 @@ def CardGeneration(request):
         'subnav':subnav,
         'assmno':assmno,
     }
+    
     if request.method=="POST":
         bval=request.POST.get('cardbutton')
         asmno=request.POST.get('asslyno')
@@ -7002,11 +7033,14 @@ def CardGeneration(request):
             obj1=Cstr.objects.none()
             obj2=Cstr.objects.filter(pp_part=asmno).values('cp_part').distinct()
             for i in range(len(obj2)):
-                obj3=Cstr.objects.filter(pp_part__in=obj2[i].cp_part).values('cp_part').distinct()
+                
+                obj3=Cstr.objects.filter(pp_part__in=obj2[i]['cp_part']).values('cp_part').distinct()
+                if obj3 is not None and len(obj3):
+                    print(i,obj2[i]['cp_part'],obj3[0]['cp_part'])
                 obj1=obj1 | obj3
-            print(obj1)
-            # print(len(obj2))
-            # print(obj2)
+            print(len(obj2))
+            
+            
     return render(request,'CardGeneration.html',context)
 
 
