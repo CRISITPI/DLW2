@@ -7855,3 +7855,24 @@ def mg22getstaffName(request):
         print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+def wogen(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    context={
+        'nav':nav,
+        'subnav':subnav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
+    }
+    return render(request,'wogeneration.html',context)

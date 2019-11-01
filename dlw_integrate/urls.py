@@ -154,7 +154,7 @@ urlpatterns = [
     path('ajax/bogieassemb_addbo',bogieassemb_addbo,name="bogieassemb_addbo"),
     path('ajax/bogieassemb_editsno',bogieassemb_editsno,name="bogieassemb_editsno"),
     path('bogieassembly/',bogieassembly_section,name='bogieassembly'),
-    path('demandreg/',wogen,name='demandreg')
+    path('demandreg/',wogen,name='demandreg'),
     path('MG22view/', MG22view, name='MG22view')
 
 ]
