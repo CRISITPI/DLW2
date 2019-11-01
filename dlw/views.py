@@ -15,7 +15,11 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
+<<<<<<< HEAD
 from dlw.models import cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
+=======
+from dlw.models import M18,empmast,M14M4,BogieAssembly,Cst,testc,navbar,M20new,MG22new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
+>>>>>>> master
 from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
 import re,uuid,copy
@@ -4971,7 +4975,7 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5gslsnM').exclude(m2slno__isnull=True).distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').exclude(m2slno__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -6232,10 +6236,16 @@ def m20getstaffno(request):
     if request.method == "GET" and request.is_ajax():  
         from.models import Batch      
         shop_sec = request.GET.get('shop_sec')
-        w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct()
-        wono = list(w1)
+        name=request.GET.get('name')
         print("ths is",shop_sec)
-        return JsonResponse(wono, safe = False)
+        w1=M5SHEMP.objects.filter(shopsec=shop_sec,name=name).values('staff_no').distinct()
+        wono = w1[0]['staff_no']
+        cont ={
+            "wono":wono,
+        }
+        # print("ths is",shop_sec)
+        return JsonResponse({"cont":cont}, safe = False)
+
     return JsonResponse({"success":False}, status=400)
 
 def m20getstaffName(request):
@@ -7415,3 +7425,467 @@ def m23getempno(request):
         staff_no=list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def bogieassembly_section(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
+    myaxle=AxleWheelMachining.objects.all().values('axle_no')
+    mytm=PinionPressing.objects.all().values('tm_no')
+    # mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+       'subnav':subnav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       'mybo':mybo,
+       'mysno':mysno,
+       'myaxle':myaxle,
+       'mytm':mytm,
+    #    'mymsu':mymsu,
+    }
+
+    if request.method=="POST":
+
+        once=request.POST.get('once')
+        print(once)
+        submit=request.POST.get('submit')
+
+        if submit=='Save':
+            bo_no=request.POST.get('bo_no')
+            bo_date=request.POST.get('bo_date')
+            date=request.POST.get('date')
+            loco_type=request.POST.get('locos')
+            in_date=request.POST.get('in_date')
+            frameserial_no=request.POST.get('frameserial_no')
+            frame_make=request.POST.get('frame_make')
+            frame_type=request.POST.get('frame_type')
+            print(bo_no,bo_date,date,loco_type,in_date,frame_make,frame_type,frameserial_no)
+            
+
+            if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date:
+               obj=BogieAssembly.objects.create()
+               obj.bo_no=bo_no
+               obj.bo_date=bo_date
+               obj.date=date
+               obj.loco_type=loco_type
+               obj.in_date=in_date
+               obj.frame_make=frame_make
+               obj.frame_type=frame_type
+               obj.frameserial_no=frameserial_no
+               obj.save()
+               messages.success(request, 'Successfully Added!')
+            else:
+               messages.error(request,"Please Enter All Records!") 
+
+            obj2=BogieAssembly.objects.all().order_by('sno')
+            my_context={
+            'object':obj2,
+            'mybo':mybo,
+            'mysno':mysno,
+            }
+
+        if submit=='Edit':
+            temp=request.POST.get('editsno')
+            if temp is not None:
+                sno=int(temp)
+            else:
+                sno=None
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
+            in_date=request.POST.get('editin_date')
+            frameserial_no=request.POST.get('editframeserial_no')
+            frame_make=request.POST.get('editframe_make')
+            frame_type=request.POST.get('editframe_type')
+            print(bo_no,bo_date,date,loco_type,in_date,frame_make,frame_type,frameserial_no)
+        
+            if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date:
+               BogieAssembly.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,frameserial_no=frameserial_no,frame_make=frame_make,frame_type=frame_type,in_date=in_date)
+               messages.success(request, 'Successfully Edited!')
+            else:
+               messages.error(request,"Please Enter S.No.!")
+
+            my_context={
+            'object':obj2,
+            'mybo':mybo,
+            'mysno':mysno,
+            }
+
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            if sno and dislocos:
+                BogieAssembly.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+
+        if submit=='InspectHHP':
+            sno=int(request.POST.get('mysno'))
+            # print(sno)
+            axle_no=request.POST.get('axle_no')
+            axle_location=request.POST.get('axle_location')
+            gear_case_no=request.POST.get('gear_case_no')
+            traction_motor_no=request.POST.get('traction_motor_no')
+            gear_case_make=request.POST.get('gear_case_make')
+            msu_unit_no=request.POST.get('msu_unit_no')
+            break_rigging_make=request.POST.get('break_rigging_make')
+            coil_spring_make=request.POST.get('coil_spring_make')
+            sand_box_make=request.POST.get('sand_box_make')
+            spheri_block_make=request.POST.get('spheri_block_make')
+            elastic_shop_make=request.POST.get('elastic_shop_make')
+            horizontal_damper=request.POST.get('horizontal_damper')
+            secondary_coil_make=request.POST.get('secondary_coil_make')
+            thrust_pad_make=request.POST.get('thrust_pad_make')
+            break_cylinder_make=request.POST.get('break_cylinder_make')
+            lateral_damper=request.POST.get('lateral_damper')
+            if axle_no and axle_location and gear_case_no and traction_motor_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper and secondary_coil_make and thrust_pad_make and break_cylinder_make and lateral_damper :
+                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=traction_motor_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper) 
+                messages.success(request,'Successfully Inspected!')
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+        if submit=='Delete':
+
+            sno=int(request.POST.get('delsno'))
+            if sno:
+                myval=list(BogieAssembly.objects.filter(sno=sno))
+                print(myval) 
+                BogieAssembly.objects.filter(sno=sno).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+
+        
+        return HttpResponseRedirect("/bogieassembly/")
+
+    return render(request,"bogieassembly.html",my_context)
+
+def bogieassemb_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        # print(mybo)
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def bogieassemb_editsno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno=request.GET.get('sels_no')
+        myval=list(BogieAssembly.objects.filter(sno=mysno).values('bo_no','bo_date','loco_type','date','frameserial_no','frame_make','frame_type','in_date'))
+        return JsonResponse(myval, safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+def MG22view(request):
+    
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    dictemper={}
+    totindb=0
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Add':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            # staffno=request.POST.get('staff_no')
+            lvdate=request.POST.get('lv_date')
+            m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
+            if m2 is not None and len(m2):
+                for mm in range(len(m2)):
+                    temper = {str(mm):{"name":m2[mm].name,
+                                               "ticketno":m2[mm].ticketno,
+                                               "date":m2[mm].alt_date,
+                                               }}
+                    
+                            
+                    totindb=totindb+1
+
+                    dictemper.update(copy.deepcopy(temper))
+                    print(dictemper)
+
+            emp=[]
+            
+            staff_name = request.GET.get('empname')
+            print(staff_name)
+            empname = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname')
+            if empname is not None and len(empname):
+                for i in range(len(empname)):
+                    emp.append(empname[i]['empname'])
+            print(emp)
+
+            w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('name').distinct()
+            print("w1",w1)
+            wono=[]
+            for w in range(len(w1)):
+                wono.append(w1[w]['name'])
+                # print(w1[w]['name'])
+            print("wono",wono)
+            # wono = list(w1)
+            # print(wono)
+            # ename=wono[0]['name']
+            # obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
+            # print(obj1)
+            alt_date="yyyy-mm-dd"
+            # if obj1 is not None:
+            #     ename=obj1[0].name
+            #     alt_date=obj1[0].alt_date
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'names':wono,
+                    'dictemper':dictemper,
+                    'totindb':totindb,
+                    'empname':emp,
+                    # 'obj1':obj1,
+                    # 'empname':ename,
+                    # 'ticketno':staffno,
+                    'alt_date':alt_date,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+        
+        # if submitvalue=='Save':
+        #     print("data saved")
+        #     shop_sec= request.POST.get('shop_sec')
+        #     # staff_no=request.POST.get('stffno')
+        #     lv_date= request.POST.get('lv_date')
+        #     tot=0
+        #     tot=request.POST.get('totmebs')
+            
+            
+        #     totindb=request.POST.get('totindb')
+        #     for tb in range(1,int(totindb)+1):
+        #         namedb=request.POST.get('namedb'+str(tb))
+        #         ticketnodb=request.POST.get('ticketnodb'+str(tb))
+        #         datedb=request.POST.get('datedb'+str(tb))
+        #         print("Dateindb"+str(tb),datedb)
+        #         M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
+                
+            
+            
+            
+        #     for t in range(1,int(tot)+1):
+        #         name=request.POST.get('name'+str(t))
+        #         ticketno=request.POST.get('ticket'+str(t))
+        #         date=request.POST.get('date'+str(t))
+        #         M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
+        #         print(shop_sec,lv_date,name,ticketno,date)
+                
+            
+            # name=request.POST.get('empname')
+            # ticketno = request.POST.get('stffno')
+            # alt_date = request.POST.get('alt_date')
+
+        
+            # print("data saved")
+            # shop_sec= request.POST.get('shop_sec')
+            # # staff_no=request.POST.get('stffno')
+            # lv_date= request.POST.get('lv_date')
+            # tot=0
+            # tot=request.POST.get('totmebs')
+            
+            # totindb=request.POST.get('totindb')
+            # for tb in range(1,int(totindb)+1):
+            #     namedb=request.POST.get('namedb'+str(tb))
+            #     ticketnodb=request.POST.get('ticketnodb'+str(tb))
+            #     datedb=request.POST.get('datedb'+str(tb))
+            #     print("Dateindb"+str(tb),datedb)
+            #     M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
+                
+            # for t in range(1,int(tot)+1):
+        if submitvalue=='Save':
+            print("data saved")
+             
+            updt_date = request.POST.get('updt_date')
+            shop_sec = request.POST.get('shop_sec')
+            name=request.POST.get('name1')
+            staff_no = request.POST.get('staff_no')
+            ticketno = request.POST.get('ticket1')
+            acc_Date = request.POST.get('date1')
+            cause = request.POST.get('cause')
+            reason_neg = request.POST.get('reason_neg')
+            reason_y_neg = request.POST.get('reason_y_neg')
+            equip_check = request.POST.get('equip_check')
+            suggestions = request.POST.get('suggestion')
+            bgc = request.POST.get('bgc')
+            bgc2 = request.POST.get('bgc2')
+            sec_sup = request.POST.get('sec_sup')
+            chargeman = request.POST.get('Chargeman')
+            mistry = request.POST.get('Mistry')
+            c1 = request.POST.get('c1')
+            c2 = request.POST.get('c2')
+            c3 = request.POST.get('c3')
+            c4 = request.POST.get('c4')
+            a1 = request.POST.get('a1')
+            a2 = request.POST.get('a2')
+            a3 = request.POST.get('a3')
+            SSFO = request.POST.get('ssfo')
+              
+            
+            MG22new.objects.create(updt_date=str(updt_date), shop_sec = str(shop_sec),name=str(name),staff_no=str(staff_no), ticketno=str(ticketno), acc_Date =str(acc_Date),cause = str(cause), reason_neg = str(reason_neg), reason_y_neg= str(reason_y_neg),equip_check= str(equip_check), suggestions = str(suggestions), bgc= str(bgc), bgc2= str(bgc2), sec_sup= str(sec_sup), chargeman = str(chargeman), mistry= str(mistry),c1 = str(c1), c2 = str(c2), c3 = str(c3), c4 =str(c4), a1= str(a1), a2= str(a2), a3= str(a3), ssfo= str(SSFO) )
+            print(updt_date, shop_sec, name, staff_no, ticketno, acc_Date, cause, reason_neg, reason_y_neg, equip_check, suggestions, bgc, bgc2, sec_sup, chargeman, mistry, c1, c2, c3, c4, a1, a2, a3, SSFO)
+
+            messages.success(request, 'Successfully Saved !!!, Select new values to update')
+    return render(request, "MG22view.html", context)
+
+def mg22getstaffno(request):
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch      
+        shop_sec = request.GET.get('shop_sec')
+        name=request.GET.get('name')
+        w1=M5SHEMP.objects.filter(shopsec=shop_sec,name=name).values('staff_no').distinct()
+        wono = w1[0]['staff_no']
+        cont ={
+            "wono":wono,
+        }
+        # print("ths is",shop_sec)
+        return JsonResponse({"cont":cont}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg22getstaffName(request):
+    if request.method == "GET" and request.is_ajax():  
+        from .models import Batch     
+        shop_sec = request.GET.get('shop_sec')
+        staff_no = request.GET.get('staff_no')
+        print(staff_no)
+        w1=M5SHEMP.objects.filter(staff_no=staff_no).values('staff_no','name').distinct()
+        wono = list(w1)
+        print("ths is",shop_sec)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+def wogen(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    context={
+        'nav':nav,
+        'subnav':subnav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
+    }
+    return render(request,'wogeneration.html',context)

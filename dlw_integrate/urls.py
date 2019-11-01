@@ -17,10 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from dlw.views import m14getwono,m14getdoc_no,m14getpart_no,m14getassly,m14getbr,m14view,m4getwono,m4getdoc_no,m4getpart_no,m4getassly,m4getbr,m4view,m2getwono,m2getdoc_no,m2getpart_no,m2getassly,m2getbr,m2view,insert_machining_of_air_box,shiftsave,test,getshopempinfo,update_emp_shift_admin,update_emp_shift,update_permission_incharge,update_permission,getPermissionInfo,login_request,logout_request,homeadmin,create,homeuser,ChartData,dynamicnavbar,getEmpInfo,delete_user,forget_password,forget_path,getauthempInfo,checkloco,jpo,getYrDgp,bprodplan
-from dlw.views import dpo,dpoinput,dporeport,checktotal,m1getpano,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo,getcumino,m26view,m27view,m18view,m26getwono,m26getStaffCatWorkHrs,m18getwono,m18getoperation_no
+from dlw.views import dpo,dpoinput,dporeport,checktotal,m1getpano,MG22view,m1view,m5getwono,m5getdoc_no,m5getpart_no,m5getbr,m5view,m5getstaff_no,airbox_addbo,getcumino,m26view,m27view,m18view,m26getwono,m26getStaffCatWorkHrs,m18getwono,m18getoperation_no
 from dlw.views import m1genrept1,miscellaneous_section,miscell_addbo,axle_addbo,axlewheelmachining_section,m3sub,m3getdoc_no,m3getpart_no,m3getassly,m3shopsec,m3getbr,m3view,m3getwono,m20getstaffName
-from dlw.views import m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m18getpart_no,m18getoperation_desc
-from dlw.views import CardGeneration,m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m13getno,m13getpano,m13getwono,m13view
+from dlw.views import m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m18getpart_no,m18getoperation_desc,bogieassembly_section,bogieassemb_addbo,bogieassemb_editsno
+from dlw.views import CardGeneration,m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m13getno,m13getpano,m13getwono,m13view,wogen
 from dlw.views import m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m18getpart_no,m18getoperation_desc,mg7view,mg7getwono,mg7getpartno,mg7getshop,mg7getjob
 from dlw.views import CardGeneration,m15view,m15getwono,m15getpart_no,axle_editsno,miscell_editsno,m13getno,m13getpano,m13getwono,m13view,m23view,m23getempno
 from dlw.views import m7getwono,m7view,m7getempno,m7getpart_no,pinion_editsno,pinionpressing_section,pinion_addbo,airbox_editsno,axlepress_addbo,axlewheelpressing_section,M20view,m20getstaffno,m22view,m22getwono,m22getstaff,wheelnde,axlepress_addbo,axlepress_editsno
@@ -151,4 +151,10 @@ urlpatterns = [
     path('ajax/mg7getjob/', mg7getjob, name='mg7getjob'),
     path('m23view/',m23view,name='m23view'),
     path('m23getempno/',m23getempno,name='m23getempno'),
+    path('ajax/bogieassemb_addbo',bogieassemb_addbo,name="bogieassemb_addbo"),
+    path('ajax/bogieassemb_editsno',bogieassemb_editsno,name="bogieassemb_editsno"),
+    path('bogieassembly/',bogieassembly_section,name='bogieassembly'),
+    path('demandreg/',wogen,name='demandreg'),
+    path('MG22view/', MG22view, name='MG22view')
+
 ]
