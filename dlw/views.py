@@ -5271,6 +5271,7 @@ def axlewheelmachining_section(request):
                 obj.axle_no=eighth
                 obj.axle_make=ninth
                 obj.axle_heatcaseno=tenth
+                obj.inspection_status=False
                 obj.save()
                 messages.success(request, 'Successfully Added!')
             else:
@@ -5841,6 +5842,7 @@ def pinionpressing_section(request):
                 obj.tm_make=fourth
                 obj.tm_no=fifth
                 obj.loco_type=sixth
+                obj.inspection_status=False
                 obj.save()
                 messages.success(request,'Successfully Added!')
             else:
@@ -5994,6 +5996,7 @@ def axlewheelpressing_section(request):
                obj.wheelno_nde=wheelno_nde
                obj.bullgear_no=bullgear_no
                obj.bullgear_make=bullgear_make
+               obj.inspection_status=False
                obj.save()
                messages.success(request, 'Successfully Added!')
 
@@ -7483,6 +7486,7 @@ def bogieassembly_section(request):
                obj.frame_make=frame_make
                obj.frame_type=frame_type
                obj.frameserial_no=frameserial_no
+               obj.inspection_status=False
                obj.save()
                messages.success(request, 'Successfully Added!')
             else:

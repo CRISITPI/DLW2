@@ -3404,7 +3404,7 @@ class AxleWheelMachining(models.Model):
   dispatch_status=models.BooleanField(default=False)
   axlefitting_status=models.BooleanField(default=False) 
   wheelfitting_status=models.BooleanField(default=False)
-  inspection_status=models.BooleanField(default=False)
+  inspection_status=models.NullBooleanField()
 
 
 class M5SHEMP(models.Model):
@@ -3485,7 +3485,7 @@ class PinionPressing(models.Model):
     loco_type=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
-    inspection_status=models.BooleanField(default=False)
+    inspection_status=models.NullBooleanField()
 
 
 class dpo(models.Model):
@@ -3554,7 +3554,7 @@ class AxleWheelPressing(models.Model):
     inspector_name=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
-    inspection_status=models.BooleanField(default=False)
+    inspection_status=models.NullBooleanField()
 
      
 class M11(models.Model):
@@ -3701,7 +3701,7 @@ class BogieAssembly(models.Model):
     horizontal_damper=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
-    inspection_status=models.BooleanField(default=False)
+    inspection_status=models.NullBooleanField()
 
 class MG22new(models.Model):
     updt_date = models.CharField(blank = True, null=True,max_length=10)
