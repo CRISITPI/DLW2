@@ -3383,7 +3383,7 @@ class AxleWheelMachining(models.Model):
   wheelseataxle=models.CharField(max_length=20,blank=True)
   gearseataxle=models.CharField(max_length=20,blank=True)
   collaraxle=models.CharField(max_length=20,blank=True)
-  dateaxle=models.DateField(null=True)
+  dateaxle=models.CharField(null=True,max_length=20)
   bearingaxle=models.CharField(max_length=20,blank=True)
   abutmentaxle=models.CharField(max_length=20,blank=True)
   inspector_nameaxle=models.CharField(max_length=20,blank=True)
@@ -3400,10 +3400,11 @@ class AxleWheelMachining(models.Model):
   rim_thicknesswhl=models.CharField(max_length=20,null=True)
   bore_diawhl=models.CharField(max_length=20,null=True)
   inspector_namewhl=models.CharField(max_length=20,null=True)
-  datewhl=models.DateField(null=True)      
+  datewhl=models.CharField(null=True,max_length=20)      
   dispatch_status=models.BooleanField(default=False)
   axlefitting_status=models.BooleanField(default=False) 
-  wheelfitting_status=models.BooleanField(default=False) 
+  wheelfitting_status=models.BooleanField(default=False)
+  inspection_status=models.BooleanField(default=False)
 
 
 class M5SHEMP(models.Model):
@@ -3484,6 +3485,7 @@ class PinionPressing(models.Model):
     loco_type=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
+    inspection_status=models.BooleanField(default=False)
 
 
 class dpo(models.Model):
@@ -3552,6 +3554,7 @@ class AxleWheelPressing(models.Model):
     inspector_name=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
+    inspection_status=models.BooleanField(default=False)
 
      
 class M11(models.Model):
@@ -3698,6 +3701,7 @@ class BogieAssembly(models.Model):
     horizontal_damper=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
+    inspection_status=models.BooleanField(default=False)
 
 class MG22new(models.Model):
     updt_date = models.CharField(blank = True, null=True,max_length=10)

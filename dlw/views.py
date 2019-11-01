@@ -5221,7 +5221,7 @@ def miscell_editsno(request):
 
 @login_required
 @role_required(allowed_roles=["Superuser","2301","2302"])
-def axlewheelmachining_section(request): 
+def axlewheelmachining_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -5330,7 +5330,7 @@ def axlewheelmachining_section(request):
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
             if oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl)
+                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl,inspection_status=True)
                 messages.success(request, 'Wheel Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -5356,7 +5356,7 @@ def axlewheelmachining_section(request):
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
             if ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE)
+                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,inspection_status=True)
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -5947,9 +5947,9 @@ def axlewheelpressing_section(request):
     obj2=AxleWheelPressing.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
-    axle=AxleWheelMachining.objects.filter(axlefitting_status=False).values('axle_no')
-    wheelde=AxleWheelMachining.objects.filter(wheelfitting_status=False).values('wheel_no')
-    wheelnde=AxleWheelMachining.objects.filter(wheelfitting_status=False).values('wheel_no')
+    axle=AxleWheelMachining.objects.filter(axlefitting_status=False,inspection_status=True).values('axle_no')
+    wheelde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
+    wheelnde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -7439,9 +7439,9 @@ def bogieassembly_section(request):
     obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
-    myaxle=AxleWheelMachining.objects.all().values('axle_no')
-    mytm=PinionPressing.objects.all().values('tm_no')
-    # mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
+    myaxle=AxleWheelMachining.objects.filter(inspection_status=True,dispatch_status=True).values('axle_no')
+    mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
+    # mymsu=AxleWheelPressing.objects.filter(inspection_status=True,dispatch_status=True).values('msu_unit_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -7553,7 +7553,7 @@ def bogieassembly_section(request):
             break_cylinder_make=request.POST.get('break_cylinder_make')
             lateral_damper=request.POST.get('lateral_damper')
             if axle_no and axle_location and gear_case_no and traction_motor_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper and secondary_coil_make and thrust_pad_make and break_cylinder_make and lateral_damper :
-                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=traction_motor_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper) 
+                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=traction_motor_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper,inspection_status=True) 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
