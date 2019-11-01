@@ -15,7 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
+from dlw.models import cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
 from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
 import re,uuid,copy
@@ -7005,6 +7005,19 @@ def m13getno(request):
     return JsonResponse({"success":False}, status=400)
 
 
+
+def ShowLeaf(request,part,res):
+    obj1 = Cstr.objects.filter(pp_part=part).values('cp_part').distinct()
+    # while(len(obj1)):
+    if obj1 is not None and len(obj1):
+        for i in range(len(obj1)):
+            res.append(obj1[i]['cp_part'])
+            print(len(res))
+            ShowLeaf(request,obj1[i]['cp_part'],res)
+    return res
+    
+
+
 @login_required
 @role_required(allowed_roles=["Superuser"])
 def CardGeneration(request):
@@ -7024,23 +7037,19 @@ def CardGeneration(request):
         'subnav':subnav,
         'assmno':assmno,
     }
-    
     if request.method=="POST":
         bval=request.POST.get('cardbutton')
         asmno=request.POST.get('asslyno')
         if bval=="Generate Cards":
-            # obj1=Cstr.objects.filter(cp_part__in=list(Cstr.objects.all().values('pp_part').distinct())).values('cp_part').distinct()
-            obj1=Cstr.objects.none()
-            obj2=Cstr.objects.filter(pp_part=asmno).values('cp_part').distinct()
-            for i in range(len(obj2)):
-                
-                obj3=Cstr.objects.filter(pp_part__in=obj2[i]['cp_part']).values('cp_part').distinct()
-                if obj3 is not None and len(obj3):
-                    print(i,obj2[i]['cp_part'],obj3[0]['cp_part'])
-                obj1=obj1 | obj3
-            print(len(obj2))
-            
-            
+            res = []
+            obj1 = ShowLeaf(request,asmno,res)
+            try:
+                for j in range(len(obj1)):
+                    cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+                    print(j)
+                messages.success(request, 'Successfully Done!')
+            except:
+                messages.error(request,'Some Error Occurred')
     return render(request,'CardGeneration.html',context)
 
 

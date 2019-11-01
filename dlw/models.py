@@ -3667,4 +3667,8 @@ class m23doc(models.Model):
      class Meta:
         db_table = 'M23new'
 
+class cstr_buffer(models.Model):
+    pp_part = models.CharField(max_length=10,null=True,blank=True)
+    cp_part = models.CharField(max_length=10,null=True,blank=True)
+
         
