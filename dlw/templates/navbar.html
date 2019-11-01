@@ -69,11 +69,11 @@
     <ul class="navbar nav" style="width:100%;">
         <li class="navbar-item dropdown">
             <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
-            Add
+            Prod. Planning
             <span class="caret"></span>
             <ul class="dropdown-menu" aria-labelledby="dropdown_target">
                 {% for menu in nav %}
-            {% if menu.navmenu in "Add" %}
+            {% if menu.navmenu in "Prod. Planning" %}
                <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
                 {% if subnav.parentmenu in menu.navitem %}
                 <ul class="dropdown-menu">
