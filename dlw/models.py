@@ -3667,13 +3667,9 @@ class m23doc(models.Model):
      class Meta:
         db_table = 'M23new'
 
-<<<<<<< HEAD
 class cstr_buffer(models.Model):
     pp_part = models.CharField(max_length=10,null=True,blank=True)
     cp_part = models.CharField(max_length=10,null=True,blank=True)
-
-        
-=======
 
 class BogieAssembly(models.Model):
     sno=models.AutoField(primary_key=True)
@@ -3731,4 +3727,3 @@ class MG22new(models.Model):
 
     class Meta:
         db_table = 'MG22new'
->>>>>>> master
