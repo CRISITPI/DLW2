@@ -261,7 +261,7 @@
 <tr>
     {% for i in obj3 %}
     <td height="50" colspan="7">
-        {{i.batch_type}
+        {{i.batch_type}}
     
     
       </td> 
@@ -273,10 +273,10 @@
 
  <tr>
   <th height="30">END PRODUCT PART NO.</th>
-  <th height="30" colspan="3">END PRODUCT DESCRIPTION</th>
+  <th height="30" >END PRODUCT DESCRIPTION</th>
   <th height="30">LENGTH/WT.</th>
   <th height="30">UNIT</th>
-  <th height="30">TOTAL LENGTH/WT</th>
+  <th height="30" colspan="3">TOTAL LENGTH/WT</th>
  
 
 
@@ -288,7 +288,7 @@
       </td> 
     {% endfor %}
     {% for ii in obj2 %}
-    <td height="50" colspan="4">
+    <td height="50" >
         {{ii.partno}}
     </td> 
     {% endfor %}
@@ -303,7 +303,7 @@
       </td> 
     {% endfor %}
     {% for i in obj1 %}
-    <td height="50" >
+    <td height="50" colspan="3" >
    {{i.tot_rm_qty}}
       </td> 
     {% endfor %}
