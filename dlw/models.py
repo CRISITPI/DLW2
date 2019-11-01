@@ -3695,3 +3695,32 @@ class BogieAssembly(models.Model):
     horizontal_damper=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
+
+class MG22new(models.Model):
+    updt_date = models.CharField(blank = True, null=True,max_length=10)
+    shop_sec = models.CharField(max_length=10, blank=True, null= True)
+    name = models.CharField(max_length=50, blank=True, null= True)
+    staff_no = models.CharField(max_length=10, blank=True, null = True)
+    ticketno = models.CharField(max_length=10, blank = True, null= True)
+    acc_Date = models.CharField(max_length=10,blank= True, null= True)
+    cause = models.CharField(blank = True,max_length = 300, null = True)
+    reason_neg = models.CharField(blank = True,max_length = 300, null = True)
+    reason_y_neg = models.CharField(blank = True,max_length = 300, null = True)
+    equip_check = models.CharField(blank = True,max_length = 300, null = True)
+    suggestions = models.CharField(blank = True,max_length = 300, null = True)
+    bgc = models.CharField(blank = True,max_length = 200, null = True)
+    bgc2 = models.CharField(blank = True,max_length = 200, null = True)
+    sec_sup = models.CharField(blank = True,max_length = 200, null = True)
+    chargeman = models.CharField(blank = True,max_length = 200, null = True)
+    mistry = models.CharField(blank = True,max_length = 200, null = True)
+    c1 = models.CharField(blank = True,max_length = 200, null = True)
+    c2 = models.CharField(blank = True,max_length = 200, null = True)
+    c3 = models.CharField(blank = True,max_length = 200, null = True)
+    c4 = models.CharField(blank = True,max_length = 200, null = True)
+    a1 = models.CharField(blank = True,max_length = 200, null = True)
+    a2 = models.CharField(blank = True,max_length = 200, null = True)
+    a3 = models.CharField(blank = True,max_length = 200, null = True)
+    ssfo= models.CharField(blank = True,max_length = 200, null = True)
+
+    class Meta:
+        db_table = 'MG22new'
