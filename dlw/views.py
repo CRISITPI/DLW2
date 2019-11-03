@@ -7068,7 +7068,7 @@ def m13getno(request):
 
 
 def ShowLeaf(request,part,res):
-    obj1 = Cstr.objects.filter(pp_part=part,cp_part__isnull=False).values('cp_part').distinct()
+    obj1 = Cstr.objects.filter(pp_part=part).filter(cp_part__isnull=False).values('cp_part').distinct()
     if obj1 is not None and len(obj1):
         for i in range(len(obj1)):
             if obj1[i]['cp_part'] not in res:
