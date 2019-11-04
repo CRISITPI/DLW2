@@ -6928,7 +6928,7 @@ def m13getno(request):
 
 
 def ShowLeaf(request,part,res):
-    obj1 = Cstr.objects.filter(pp_part=part).filter(cp_part__isnull=False).values('cp_part').distinct()
+    obj1 = Cstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='M').values('cp_part').distinct()
     if obj1 is not None and len(obj1):
         for i in range(len(obj1)):
             if obj1[i]['cp_part'] not in res:
@@ -6964,13 +6964,14 @@ def CardGeneration(request):
         if bval=="Generate Cards":
             res = []
             obj1 = ShowLeaf(request,asmno,res)
-            try:
-                for j in range(len(obj1)):
-                    cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
-                    print(j)
-                messages.success(request, 'Successfully Done!')
-            except:
-                messages.error(request,'Some Error Occurred')
+            print("len = ",len(obj1))
+            # try:
+            #     for j in range(len(obj1)):
+            #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+            #         print(j)
+            #     messages.success(request, 'Successfully Done!')
+            # except:
+            #     messages.error(request,'Some Error Occurred')
     return render(request,'CardGeneration.html',context)
 
 
