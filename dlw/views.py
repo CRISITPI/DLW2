@@ -7091,7 +7091,7 @@ def CardGeneration(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    assmno = EpcCode.objects.all().values('num_1').distinct();
+    assmno = EpcCode.objects.all().values('num_1').distinct()
     context = {
         'ip':get_client_ip(request),
         'nav':nav,
