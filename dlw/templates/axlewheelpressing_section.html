@@ -16,6 +16,16 @@
                              });
                          });
                 </script>
+                <script>
+                        $(document).ready(function () {
+                             $('#inspectdate').datepicker({
+                                 dateFormat: 'dd-mm-yy'
+                             });
+                             $('#hhpdate').datepicker({
+                                 dateFormat: 'dd-mm-yy'
+                             });
+                         });
+                </script>
         </head>    
    
     <style>
@@ -71,19 +81,22 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Dispatch</font>
                          </button>
                     </li>
-                    <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inspectmodal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
-                                <font color="white">Inspect</font>
-                         </button>
+                    <li class="dropdown">
+                        <a href="#" class="btn btn-primary" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="false"  style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% "><font color="white">Inspect</font></a>
+                        <ul class="dropdown-menu">
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#InspectModalNormal">Inspect</button></li>
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#InspectModalHHP">Inspect HHP</button></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
@@ -135,7 +148,7 @@ footer, .page-content::after{
         <td>{{objec.sno}} <br><br></td>
         <td>{{objec.bo_no}} <br><br></td>
         <td>{{objec.bo_date}} <br><br></td>
-        <td>{{objec.loco_type}} <br><br></td>
+        <td>{{objec.locos}} <br><br></td>
         <td>{{objec.date}} <br><br></td>
         <td>{{objec.axle_no}} <br><br></td>
         <td>{{objec.wheelno_de}} <br><br></td>
@@ -193,34 +206,43 @@ footer, .page-content::after{
                                     
                                     <div class="row">
                                             <div class="col-6">
-                                                    <label for="">Axle No.</label>
-                                                    <select input type="number" name="axle_no" id="axle_no" class="form-control ll" required>
-                                                            <option value="" hidden selected>Select Axle No.</option>  
-                                                            {% for y in axle %}
-                                                            <option>{{y.axle_no}}</option>
-                                                            {% endfor %}
-                                                    </select> 
+                                              <label for="">Axle No.</label>
+                                              <select name="axle_no" id="axle_no" class="form-control ll" required>
+                                                      <option value="" hidden selected>Select Axle No.</option>  
+                                                      {% for d in myaxle %}
+                                                      <option>{{d.axle_no}}</option>
+                                                      {% endfor %}
+                                              </select> 
                                             </div>
                                             <div class="col-6">
-                                            <label for="">Wheel No(DE)</label>
-                                            <select input type="number" class="form-control" name="wheelno_de" id="wheelno_de" required>
-                                                    <option value="" hidden selected>Select Wheel No(DE)</option>  
-                                                    {% for y in wheelde %}
-                                                    <option>{{y.wheel_no}}</option>
-                                                    {% endfor %}
-                                            </select> 
+                                              <label for="">Wheel No(DE)</label>
+                                              <select name="wheelno_de" id="wheellist" class="form-control ll" required>
+                                                <datalist id="optionsdata">
+                                                  <option value="" hidden selected>Select Wheel No.</option>  
+                                                      {% for c in mywheel %}
+                                                      <option>{{c.wheel_no}}</option>
+                                                      {% endfor %}
+                                               </datalist>
+                                              </select> 
                                         </div> 
-                                        </div>
+                                        
+                                        </div>  
 
                                 <div class="row">   
                                 <div class="col-6">
-                                        <label for="">Wheel No(NDE)</label>
-                                        <select input type="number" class="form-control" name="wheelno_nde" id="wheelno_nde" required>
-                                                <option id="wheelnonde" hidden selected>Select Wheel No(DE)</option>
-                                                <!-- {% for y in wheelnde %}
-                                                    <option>{{y.wheel_no}}</option>
-                                                    {% endfor %}   -->
-                                        </select> 
+                                    <label for="">Wheel No(NDE)</label>
+                                              <!-- <select name="wheelno_nde" id="wheelno_nde" class="form-control ll" required>
+                                                      <option value="" hidden selected>Select Wheel No.</option>  
+                                                      {% for e in mywheel %}
+                                                      <option>{{e.wheel_no}}</option>
+                                                      {% endfor %}
+                                              </select>  -->
+                                              <select name="wheelno_nde" id="wheelno_nde" class="form-control ll" onchange="update(this);">
+                                                      <option value="" hidden selected>Select Wheel No.</option>  
+                                                      {% for e in mywheel %}
+                                                      <option>{{e.wheel_no}}</option>
+                                                      {% endfor %}
+                                            </select>
                                 </div> 
                                 <div class="col-6">
                                         <label for="">Bull Gear No.</label>
@@ -244,168 +266,426 @@ footer, .page-content::after{
           </div>
           </div>
 
+<!--Inspect Normal-->
+<!--modal-->
+          <div class="modal fade bd-example-modal-lg" id="InspectModalNormal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Axle and Wheel Pressing Inspection</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                    </div>
+                
+                    <form method="POST" class="needs-validation" > {% csrf_token %}
+        
+                    <div class="modal-body">
+                          <div class="row">
+                          <div class="col-6">
+                                  <label for="">Serial No.</label>
+                                  <select name="sno" id="wheelpress" class="form-control ll" required>
+                                          <option value="" hidden selected>Select S.No.</option>  
+                                          {% for x in mysno %}
+                                          <option>{{x.sno}}</option>
+                                          {% endfor %}
+                                  </select> 
+                                </div>         
+                            <div class="col-6">
+                                <label for="">Wheel No.(DE)</label>
+                                <input type="text" class="form-control" name="wheelno_de" id="inspectwheelno_de" placeholder="" required readonly>
+                              </div>
+                              <div class="col-6">
+                                    <label for="">Wheel(DE) Make</label>
+                                    <input type="text" class="form-control" name="wheel_de_make" id="wheel_de_make" placeholder="" required>
+                                  </div>
+                                  <div class="col-6">
+                                        <label for="">wheel No.(NDE)</label>
+                                        <input type="text" class="form-control" name="wheelno_nde" id="inspectwheelno_nde" placeholder="" readonly required>
+                                      </div>
+                                      <div class="col-6">
+                                            <label for="">Wheel (NDE) Make</label>
+                                            <input type="text" class="form-control" id="wheel_nde_make" name="wheel_nde_make" placeholder=""required>
+                                          </div>
+                                          <div class="col-6">
+                                                <label for="">Wheel (NDE) pressure</label>
+                                                <input type="text" class="form-control" name="wheel_nde_pressure" id="wheel_nde_pressure" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Axle No</label>
+                                                <input type="text" class="form-control" name="axle_no" id="inspectaxle_no" placeholder="" readonly required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Axle Make</label>
+                                                <input type="text" class="form-control" name="axle_make" id="inspectaxle_make" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Bull Gear No</label>
+                                                <input type="text" class="form-control" name="bullgear_no" id="inspectbullgear_no" placeholder="" readonly required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Bull Gear Make</label>
+                                                <input type="text" class="form-control" name="bullgear_make" id="inspectbullgear_make" placeholder="" readonly required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Bull Gear pressure</label>
+                                                <input type="text" class="form-control" name="bullgear_pressure" id="bullgear_pressure" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">MSU Unit no</label>
+                                                <input type="text" class="form-control" name="msu_unit_no" id="msu_unit_no" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">MSU Unit Make</label>
+                                                <input type="text" class="form-control" name="msu_unit_make" id="msu_unit_make" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Axle Box No</label>
+                                                <input type="text" class="form-control" name="axle_box_no" id="axle_box_no" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Axle Box Make</label>
+                                                <input type="text" class="form-control" name="axle_box_make" id="axle_box_make" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Axle Box Clearance</label>
+                                                <input type="text" class="form-control" name="axle_box_clearance" id="axle_box_clearance" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Suspension Bearing(DE) No</label>
+                                                <input type="text" class="form-control" name="suspension_bearing_de_no" id="suspension_bearing_de_no" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Suspension Bearing(DE) Make</label>
+                                                <input type="text" class="form-control" name="suspension_bearing_de_make" id="suspension_bearing_de_make" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Suspension Bearing(NDE) No</label>
+                                                <input type="text" class="form-control" name="suspension_bearing_nde_no" id="suspension_bearing_nde_no" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Suspension Bearing(NDE) Make</label>
+                                                <input type="text" class="form-control" name="suspension_bearing_nde_make" id="suspension_bearing_nde_make" placeholder="" required>
+                                              </div>
+                          </div>
+                                              <div class="row">
+                                                  
+                                                <div class="col-6">
+                                                <label for="">CRU Bearing No</label>
+                                                <input type="text" class="form-control" name="cru_bearing_no_de" id="cru_bearing_no_de" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">CRU Bearing Make</label>
+                                                <input type="text" class="form-control" name="cru_bearing_make_de" id="cru_bearing_make_de" placeholder="" required>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">CRU Bearing Pressure</label>
+                                                <input type="text" class="form-control" name="cru_bearing_pressure_de" id="cru_bearing_pressure_de" placeholder="" required>
+                                              </div>
+                                            </div>
+                                            <div class="row">
+                                              
+                                                <div class="col-6">
+                                                  <label for="">CRU Bearing No</label>
+                                                  <input type="text" class="form-control" name="cru_bearing_no_nde" id="cru_bearing_no_nde" placeholder="" required>
+                                                </div>
+                                                <div class="col-6">
+                                                  <label for="">CRU Bearing Make</label>
+                                                  <input type="text" class="form-control" name="cru_bearing_make_nde" id="cru_bearing_make_nde" placeholder="" required>
+                                                </div>
+                                                <div class="col-6">
+                                                  <label for="">CRU Bearing Pressure</label>
+                                                  <input type="text" class="form-control" name="cru_bearing_pressure_nde" id="cru_bearing_pressure_nde" placeholder="" required>
+                                                </div>
+                                              </div>
+                                              <div class="row">
+                                                <div class="col-6">
+                                                  <label for="">Date</label>
+                                                  <input type="text" name="editdate" id="inspectdate" class="form-control" placeholder="dd-mm-yyyy" required>
+                                          </div>
+                                            <!-- <div class="col-6">
+                                            <h6><label for="">Loco Type</label></h6>
+                                            <input type="text" class="form-control" name="locos" id="locos" required>
+                                            </div> -->
+                                            <div class="col-6">
+                                                <label for="">Inspector Name</label>
+                                                <input type="text" class="form-control" name="inspector_name" id="inspector_name" placeholder="" required>
+                                              </div>
+                                            </div>
+                                    </div>                        
+        
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Inspect" />
+                                </div>
+                      </form>
+             </div>
+         </div>
+        </div> 
+               
+<!--Inspect HHP-->
+<!--modal-->
+<div class="modal fade bd-example-modal-lg" id="InspectModalHHP" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Axle and Wheel Pressing Inspection</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+            </div>
+        
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+
+            <div class="modal-body">
+                  <div class="row">
+                  <div class="col-6">
+                          <label for="">Serial No.</label>
+                          <select name="sno" id="wheelpresshhp" class="form-control ll" required>
+                                  <option value="" hidden selected>Select S.No.</option>  
+                                  {% for x in mysno %}
+                                  <option>{{x.sno}}</option>
+                                  {% endfor %}
+                          </select> 
+                        </div>         
+                    <div class="col-6">
+                        <label for="">Wheel No.(DE)</label>
+                        <input type="text" class="form-control" name="wheelno_de" id="hhpwheelno_de" placeholder="" readonly required>
+                      </div>
+                      <div class="col-6">
+                            <label for="">Wheel(DE) Make</label>
+                            <input type="text" class="form-control" name="wheel_de_make" id="wheel_de_make" placeholder="" required>
+                          </div>
+                          <div class="col-6">
+                                <label for="">wheel No.(NDE)</label>
+                                <input type="text" class="form-control" name="wheelno_nde" id="hhpwheelno_nde" placeholder="" readonly required>
+                              </div>
+                              <div class="col-6">
+                                    <label for="">Wheel (NDE) Make</label>
+                                    <input type="text" class="form-control" id="wheel_nde_make" name="wheel_nde_make" placeholder=""required>
+                                  </div>
+                                  <div class="col-6">
+                                        <label for="">Wheel (NDE) pressure</label>
+                                        <input type="text" class="form-control" name="wheel_nde_pressure" id="wheel_nde_pressure" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Axle No</label>
+                                        <input type="text" class="form-control" name="axle_no" id="hhpaxle_no" placeholder="" readonly required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Axle Make</label>
+                                        <input type="text" class="form-control" name="axle_make" id="axle_make" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Bull Gear No</label>
+                                        <input type="text" class="form-control" name="bullgear_no" id="hhpbullgear_no" placeholder="" readonly required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Bull Gear Make</label>
+                                        <input type="text" class="form-control" name="bullgear_make" id="hhpbullgear_make" placeholder="" readonly required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Bull Gear pressure</label>
+                                        <input type="text" class="form-control" name="bullgear_pressure" id="bullgear_pressure" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">MSU Unit no</label>
+                                        <input type="text" class="form-control" name="msu_unit_no" id="msu_unit_no" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">MSU Unit Make</label>
+                                        <input type="text" class="form-control" name="msu_unit_make" id="msu_unit_make" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Axle Box No</label>
+                                        <input type="text" class="form-control" name="axle_box_no" id="axle_box_no" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Axle Box Make</label>
+                                        <input type="text" class="form-control" name="axle_box_make" id="axle_box_make" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Axle Box Clearance</label>
+                                        <input type="text" class="form-control" name="axle_box_clearance" id="axle_box_clearance" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Suspension Bearing(DE) No</label>
+                                        <input type="text" class="form-control" name="suspension_bearing_de_no" id="suspension_bearing_de_no" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Suspension Bearing(DE) Make</label>
+                                        <input type="text" class="form-control" name="suspension_bearing_de_make" id="suspension_bearing_de_make" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Suspension Bearing(NDE) No</label>
+                                        <input type="text" class="form-control" name="suspension_bearing_nde_no" id="suspension_bearing_nde_no" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Suspension Bearing(NDE) Make</label>
+                                        <input type="text" class="form-control" name="suspension_bearing_nde_make" id="suspension_bearing_nde_make" placeholder="" required>
+                                      </div>
+                                     </div>
+                                      <div class="row">
+                                      <div class="col-6">
+                                        <label for="">CRU Bearing No DE</label>
+                                        <input type="text" class="form-control" name="cru_bearing_no_de" id="cru_bearing_no_de" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">CRU Bearing Make DE</label>
+                                        <input type="text" class="form-control" name="cru_bearing_make_de" id="cru_bearing_make_de" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">CRU Bearing Pressure DE</label>
+                                        <input type="text" class="form-control" name="cru_bearing_pressure_de" id="cru_bearing_pressure_de" placeholder="" required>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                       <div class="col-6">
+                                          <label for="">CRU Bearing No NDE</label>
+                                          <input type="text" class="form-control" name="cru_bearing_no_nde" id="cru_bearing_no_nde" placeholder="" required>
+                                        </div>
+                                        <div class="col-6">
+                                          <label for="">CRU Bearing Make NDE</label>
+                                          <input type="text" class="form-control" name="cru_bearing_make_nde" id="cru_bearing_make_nde" placeholder="" required>
+                                        </div>
+                                        <div class="col-6">
+                                          <label for="">CRU Bearing Pressure NDE</label>
+                                          <input type="text" class="form-control" name="cru_bearing_pressure_nde" id="cru_bearing_pressure_nde" placeholder="" required>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-6">
+                                          <label for="">Date</label>
+                                          <input type="text" name="date" id="hhpdate" class="form-control" placeholder="dd-mm-yyyy" required>
+                                  </div>
+                                         <div class="col-6">
+                                        <label for="">Inspector Name</label>
+                                        <input type="text" class="form-control" name="inspector_name" id="inspector_name" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                          <label for="">Journal Bearing No. for DE</label>
+                                          <input type="text" class="form-control" name="journal_no_de" id="journal_no_de" placeholder="" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="">Journal Bearing Make for DE</label>
+                                            <input type="text" class="form-control" name="journal_make_de" id="journal_make_de" placeholder="" required>
+                                          </div>
+                                          <div class="col-6">
+                                              <label for="">Journal Bearing No. for NDE</label>
+                                              <input type="text" class="form-control" name="journal_no_nde" id="journal_no_nde" placeholder="" required>
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="">Journal Bearing Make for NDE</label>
+                                                <input type="text" class="form-control" name="journal_make_nde" id="journal_make_nde" placeholder="" required>
+                                              </div>   
+                                            </div> 
+                                <!-- <div class="col-6">
+                                <label>Loco Type</label>
+                                    <input type="text" class="form-control" name="locos" id="locos" required readonly>
+                                    </div> -->
+                              
+                                          
+                </div>
+                         
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Inspect" />
+                        </div>
+              </form>
+     </div>
+ </div>
+</div> 
+
 <!--EditRecord-->
 <!-- Modal -->
 <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">AxleWheelPressing</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>
-         
-            <form method="POST" class="needs-validation" > {% csrf_token %}
-            <div class="modal-body"> 
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label for="">S No.</label>
-                                        <select name="editsno" id="editsno" class="form-control ll" required>
-                                            <option value="" hidden selected>Select S No.</option>  
-                                            {% for y in mysno %}
-                                            <option>{{y.sno}}</option>
-                                            {% endfor %}
-                                    </select> 
-                                    </div>
-    
-                                    <div class="col-6">
-                                        <h6><label for="">Batch Order No.</label></h6>
-                                        <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
-                                    </div>
-                                            <div class="col-6">
-                                                <h6><label for="">Batch Order Date</label></h6>
-                                                <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
-                                            </div>
-                                          
-                                             <div class="col-6">
-                                                    <h6><label for="">Loco Type</label></h6>
-                                                    <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
-                                                </div>
-                                                <div class="col-6">
-                                                        <label for="">Date</label>
-                                                        <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
-                                                </div>
-
-                                       <div class="col-6">
-                                                    <label for="">Axle No.</label>
-                                                    <select input type="number" name="editaxle_no" id="editaxle_no" class="form-control ll" required>
-                                                            <option value="" hidden selected>Select Axle No.</option>  
-                                                            {% for y in axle %}
-                                                            <option>{{y.axle_no}}</option>
-                                                            {% endfor %}
-                                                    </select> 
-                                        </div>
-
-                                        <div class="col-6">
-                                                <label for="">Wheel No(DE)</label>
-                                                <select input type="number" class="form-control" name="editwheelno_de" id="editwheelno_de" required>
-                                                        <option value="" hidden selected>Select Wheel No(DE)</option>  
-                                                        {% for z in wheelde %}
-                                                        <option>{{z.wheel_no}}</option>
-                                                        {% endfor %}
-                                                </select> 
-                                        </div> 
-                                        <div class="col-6">
-                                                <label for="">Wheel No(NDE)</label>
-                                                <select input type="number" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
-                                                        <option id="wheelnonde" value="" hidden selected>Select Wheel No(DE)</option>
-                                                        {% for z in wheelnde %}
-                                                        <option class="neweledoc">{{z.wheel_no}}</option>
-                                                        {% endfor %}
-                                                </select> 
-                                        </div> 
-                                        <div class="col-6">
-                                                <label for="">Bull Gear No.</label>
-                                                <input type="text" class="form-control" name="editbullgear_no" id="editbullgear_no" required>
-                                        </div> 
-                                        <div class="col-6">
-                                                <label for="">Bull Gear Make</label>
-                                                <input type="text" class="form-control" name="editbullgear_make" id="editbullgear_make" required>
-                                        </div>   
-                        </div>  
-                    </div>                      
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" />
-              </div>
-              </form>
-            </div>
-          </div>
-        </div>
-    
-      <!--Dispatch-->
-    <!-- Modal -->
-    <div class="modal fade" id="DispatchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel2">AxleWheelPressing</h5>
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel1">AxleWheelPressing</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true">&times;</span>
               </button>
-            </div>
-            <form method="POST" class="needs-validation" > {% csrf_token %}
-             <div class="modal-body">       
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <label for="">Serial No.</label>
-                                            <input type="number" class="form-control" id="dissno" name="dissno" required>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                   <div class="col-6">
-                                    <div class="dropdown">
-                                      <select name="dislocos" type="form-control ll" required>
-                                        <option value="" hidden selected>Dispatch To</option>
-                                        <option value="Bogie Assembly">Bogie Assembly and Dispatch</option>
-                                      </select>
-                                      </div>
-                                    </div>  
-                                    </div>
-                                  </div>
-                                  <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                      <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                     </div>    
-
-<!--Delete-->
-<!-- Modal -->
-<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel3">AxleWheelPressing</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-        <form method="POST" class="needs-validation" > {% csrf_token %}
-               <div class="modal-body">
-                        <div class="row">
-                            <div class="col">
-                                    <label for="">Serial No.</label>
-                                    <input type="number" class="form-control" id="delsno" name="delsno"  required>
-                            </div> 
-                        </div>
-                </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
-            </div>
-            </form>
-        </div>
       </div>
-    </div>   
+   
+      <form method="POST" class="needs-validation" > {% csrf_token %}
+      <div class="modal-body"> 
+                          <div class="row">
+                              <div class="col-6">
+                                  <label for="">S No.</label>
+                                  <select name="editsno" id="editsno" class="form-control ll" required>
+                                      <option value="" hidden selected>Select S No.</option>  
+                                      {% for y in mysno %}
+                                      <option>{{y.sno}}</option>
+                                      {% endfor %}
+                              </select> 
+                              </div>
+
+                              <div class="col-6">
+                                  <h6><label for="">Batch Order No.</label></h6>
+                                  <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
+                              </div>
+                                      <div class="col-6">
+                                          <h6><label for="">Batch Order Date</label></h6>
+                                          <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
+                                      </div>
+                                    
+                                       <div class="col-6">
+                                              <h6><label for="">Loco Type</label></h6>
+                                              <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
+                                          </div>
+                                          <div class="col-6">
+                                                  <label for="">Date</label>
+                                                  <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                          </div>
+
+                                 <div class="col-6">
+                                              <label for="">Axle No.</label>
+                                              <select input type="number" name="editaxle_no" id="editaxle_no" class="form-control ll" required>
+                                                      <option value="" hidden selected>Select Axle No.</option>  
+                                                      {% for y in axle %}
+                                                      <option>{{y.axle_no}}</option>
+                                                      {% endfor %}
+                                              </select> 
+                                  </div>
+
+                                  <div class="col-6">
+                                          <label for="">Wheel No(DE)</label>
+                                          <select input type="number" class="form-control" name="editwheelno_de" id="editwheelno_de" required>
+                                                  <option value="" hidden selected>Select Wheel No(DE)</option>  
+                                                  {% for z in wheelde %}
+                                                  <option>{{z.wheel_no}}</option>
+                                                  {% endfor %}
+                                          </select> 
+                                  </div> 
+                                  <div class="col-6">
+                                          <label for="">Wheel No(NDE)</label>
+                                          <input type="text" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
+                                  </div> 
+                                  <div class="col-6">
+                                          <label for="">Bull Gear No.</label>
+                                          <input type="text" class="form-control" name="editbullgear_no" id="editbullgear_no" required>
+                                  </div> 
+                                  <div class="col-6">
+                                          <label for="">Bull Gear Make</label>
+                                          <input type="text" class="form-control" name="editbullgear_make" id="editbullgear_make" required>
+                                  </div>   
+                  </div>  
+              </div>                      
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" />
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+    
+
 </form>
 
 <script>
-    var i=0;
         $(document).ready(function() {
             $('#delform').bootstrapValidator({
                 feedbackIcons: {
@@ -441,94 +721,81 @@ footer, .page-content::after{
             })
         });
 
-        $("#editsno").change(function(e){
+        $("#wheelpress").change(function(e){
             e.preventDefault();
-            var sels_no=$(this).val();
-            var data={sels_no};
-                $.ajax({
-                    type: 'GET',
-                    url: "{% url 'axlepress_editsno' %}",
-                    dataType: 'json',
-                    data:data,
-                    success:function(response){
-                        console.log(response);
-                        $("#editbo_no").val(`${response[0].bo_no}`);
-                        $("#editbo_date").val(`${response[0].bo_date}`);
-                        $("#editlocos").val(`${response[0].loco_type}`);
-                        $("#editdate").val(`${response[0].date}`);
-                        $("#editaxle_no").val(`${response[0].axle_no}`);
-                        $("#editwheelno_de").val(`${response[0].wheelno_de}`);
-                        $("#editwheelno_nde").val(`${response[0].wheelno_nde}`);
-                        $("#editbullgear_no").val(`${response[0].bullgear_no}`);
-                        $("#editbullgear_make").val(`${response[0].bullgear_make}`);
-
-                    }
-                })
-        });   
-
-        document.querySelector("#wheelno_de").addEventListener('change',(e)=>{
-            e.preventDefault();
-            var wheel_no = $("#wheelno_de").val();
-            var data = {wheel_no};
-                  $.ajax({
-                        type : 'GET',
-                        url : "{% url 'wheelnde' %}",
-                        dataType : 'json',
-                        data : data,
-                        success : function(response){
-                                  var elementsadded = document.querySelectorAll(".neweledoc");
-                                      if(elementsadded.length>0){
-                                          var elementsaddedarr = Array.from(elementsadded);
-                                          elementsaddedarr.forEach((el)=> el.remove());
-                                          document.querySelector("#wheelnonde").selected = true; 
-                                       }
-                                      var brarr,mystr,html;
-                                      brarr = response.map((el)=>el.wheel_no);
-                                      mystr = "";
-                                      brarr.forEach((el,index)=>{
-                                        html = `<option class="neweledoc">${brarr[index]}</option>`
-                                        mystr = html.concat(mystr);
-                                      });
-                                      html = "";
-                                      document.querySelector("#wheelno_nde").insertAdjacentHTML('beforeend',mystr);
-                                      mystr=""; 
-                                }
-                                  })
-                        });
-if(i>1)
-{
-    
-}
-document.querySelector("#editwheelno_de").addEventListener('change',(e)=>{
-    e.preventDefault();
-    var wheel_no = $("#editwheelno_de").val();
-    var data = {wheel_no};
-            $.ajax({
+            var sels_no = $(this).val();
+            var data = {sels_no};
+              $.ajax({
                 type : 'GET',
-                url : "{% url 'wheelnde' %}",
+                url : "{% url 'wheelpress_inspectsno' %}",
                 dataType : 'json',
                 data : data,
                 success : function(response){
-                            var elementsadded = document.querySelectorAll(".neweledoc");
-                            if(elementsadded.length>0){
-                                var elementsaddedarr = Array.from(elementsadded);
-                                elementsaddedarr.forEach((el)=> el.remove());
-                                document.querySelector("#wheelnonde").selected = true; 
-                             }
-                                var brarr,mystr,html;
-                                brarr = response.map((el)=>el.wheel_no);
-                                mystr = "";
-                                brarr.forEach((el,index)=>{
-                                html = `<option class="neweledoc">${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                                });
-                                html = "";
-                                document.querySelector("#editwheelno_nde").insertAdjacentHTML('beforeend',mystr);
-                                mystr=""; 
-                        }
-                            })
-                })
+                    console.log(response);
+                    console.log(response[0].wheelno_de);
+                    console.log(response[0].wheelno_nde);
+                    console.log(response[0].bullgear_no);
+                    console.log(response[0].bullgear_make);
+                    console.log(response[0].axle_no);
 
-</script>
-</html>  
+
+                    $("#inspectwheelno_de").val(`${response[0].wheelno_de}`);
+                    $("#inspectwheelno_nde").val(`${response[0].wheelno_nde}`);
+                    $("#inspectaxle_no").val(`${response[0].axle_no}`);
+                    $("#inspectbullgear_no").val(`${response[0].bullgear_no}`);
+                    $("#inspectbullgear_make").val(`${response[0].bullgear_make}`);
+                    
+                }
+            })
+        });
+
+        $("#wheelpresshhp").change(function(e){
+            e.preventDefault();
+            var sels_no = $(this).val();
+            var data = {sels_no};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'wheelpress_inspectsno' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                    console.log(response);
+                    console.log(response[0].wheelno_de);
+                    console.log(response[0].wheelno_nde);
+                    console.log(response[0].bullgear_no);
+                    console.log(response[0].bullgear_make);
+                    console.log(response[0].axle_no);
+
+
+                    $("#hhpwheelno_de").val(`${response[0].wheelno_de}`);
+                    $("#hhpwheelno_nde").val(`${response[0].wheelno_nde}`);
+                    $("#hhpaxle_no").val(`${response[0].axle_no}`);
+                    $("#hhpbullgear_no").val(`${response[0].bullgear_no}`);
+                    $("#hhpbullgear_make").val(`${response[0].bullgear_make}`);
+                    
+                }
+            })
+        });
+      //   $("#wheelpress").change(function(e){
+      //     e.preventDefault();
+      //     var selbo_no = $(this).val();
+      //     var data = {selbo_no};
+      //       $.ajax({
+      //         type : 'GET',
+      //         url : "{% url 'wheelpress_inspectsno'%}",
+      //         dataType : 'json',
+      //         data : data,
+      //         success : funtion(response){
+      //           $("#wheelno_de").val(`${response[0].wheelno_de}`);
+      //           $("#wheelno_nde").val(`${response[0].wheelno_nde}`);
+      //           $("#axle_no").val(`${response[0].axle_no}`);  
+      //           $("#bullgear_no").val(`${response[0].bullgear_no}`);  
+      //           $("#bullgear_make").val(`${response[0].bullgear_make}`);    
+      //         }
+      //       })
+      //   });
+
+      // </script>
+
+    </html>  
 {% endblock content %}

@@ -5934,146 +5934,6 @@ def airbox_editsno(request):
     return JsonResponse({"success":False}, status=400) 
 
 
-@login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
-def axlewheelpressing_section(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    obj2=AxleWheelPressing.objects.all().filter(dispatch_status=False).order_by('sno')
-    mybo=Batch.objects.all().values('bo_no')
-    mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
-    axle=AxleWheelMachining.objects.filter(axlefitting_status=False,inspection_status=True).values('axle_no')
-    wheelde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
-    wheelnde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
-    my_context={
-       'object':obj2,
-       'nav':nav,
-       'subnav':subnav,
-       'usermaster':usermaster,
-       'ip':get_client_ip(request),
-       'mybo':mybo,
-       'mysno':mysno,
-       'axle':axle,
-       'wheelde':wheelde,
-       'wheelnde':wheelnde,
-       }
-    if request.method=="POST":
-
-        once=request.POST.get('once')
-        print(once)
-        submit=request.POST.get('submit')
-
-        if submit=='Save':
-            mybo=Batch.objects.all().values('bo_no')
-            mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
-            axle=AxleWheelMachining.objects.filter(axlefitting_status=False).values('axle_no')
-            wheelde=AxleWheelMachining.objects.filter(wheelfitting_status=False).values('wheel_no')
-            bo_no=request.POST.get('bo_no')
-            bo_date=request.POST.get('bo_date')
-            date=request.POST.get('date')
-            loco_type=request.POST.get('locos')
-            axle_no=request.POST.get('axle_no')
-            wheelno_de=request.POST.get('wheelno_de')
-            wheelno_nde=request.POST.get('wheelno_nde')
-            bullgear_no=request.POST.get('bullgear_no')
-            bullgear_make=request.POST.get('bullgear_make')
-            
-            if bo_no and bo_date and date and loco_type and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make:
-               obj=AxleWheelPressing.objects.create()
-               obj.bo_no=bo_no
-               obj.bo_date=bo_date
-               obj.date=date
-               obj.loco_type=loco_type
-               obj.axle_no=axle_no
-               obj.wheelno_de=wheelno_de
-               obj.wheelno_nde=wheelno_nde
-               obj.bullgear_no=bullgear_no
-               obj.bullgear_make=bullgear_make
-               obj.inspection_status=False
-               obj.save()
-               messages.success(request, 'Successfully Added!')
-
-               AxleWheelMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True)
-               AxleWheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)  
-               
-            else:
-               messages.error(request,"Please Enter All Records!")
-
-            obj2=AxleWheelPressing.objects.all().order_by('sno')
-            my_context={
-            'object':obj2,
-            'mybo':mybo,
-            'mysno':mysno,
-            'axle':axle,
-            'wheelde':wheelde
-            }
-
-        if submit=='Edit':
-            temp=request.POST.get('editsno')
-            print(temp)
-            if temp is not None:
-                sno=int(temp)
-            else:
-                sno=None
-            bo_no=request.POST.get('editbo_no')
-            bo_date=request.POST.get('editbo_date')
-            date=request.POST.get('editdate')
-            loco_type=request.POST.get('editlocos')
-            axle_no=request.POST.get('editaxle_no')
-            wheelno_de=request.POST.get('editwheelno_de')
-            wheelno_nde=request.POST.get('editwheelno_nde')
-            bullgear_no=request.POST.get('editbullgear_no')
-            bullgear_make=request.POST.get('editbullgear_make')
-
-            if bo_no and bo_date and date and loco_type and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make :
-               AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,axle_no=axle_no,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make)
-               AxleWheelMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True)
-               AxleWheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)  
-               messages.success(request, 'Successfully Edited!')
-            else:
-               messages.error(request,"Please Enter S.No.!")
-
-        if submit=="Dispatch":
-            
-            sno=int(request.POST.get('dissno'))
-            dislocos=request.POST.get('dislocos')
-            if sno and dislocos:
-                AxleWheelPressing.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True)
-                messages.success(request, 'Successfully Dispatched!')
-            else:
-                messages.error(request,"Please Enter S.No.!")
-        
-        if submit=='Delete':
-
-            sno=int(request.POST.get('delsno'))
-            if sno:
-                myval=list(AxleWheelMachining.objects.filter(sno=sno).values('wheel_no','axle_no'))
-                print(myval)
-                AxleWheelMachining.objects.filter(axle_no=myval[0]['axle_no']).update(axlefitting_status=False)
-                AxleWheelMachining.objects.filter(wheel_no=myval[0]['wheel_no']).update(wheelfitting_status=False) 
-                AxlewheelPressing.objects.filter(sno=sno).delete()
-                messages.success(request, 'Successfully Deleted!')
-            else:
-                messages.error(request,"Please Enter S.No.!")
-        
-        return HttpResponseRedirect("/axlewheelpressing_section/")
-
-    return render(request,"axlewheelpressing_section.html",my_context)
-
-def axlepress_addbo(request):
-    if request.method=="GET" and request.is_ajax():
-        mybo = request.GET.get('selbo_no')
-        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
-        return JsonResponse(myval, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
 def axlepress_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
@@ -7941,3 +7801,352 @@ def wogen(request):
         'ip':get_client_ip(request),
     }
     return render(request,'wogeneration.html',context)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302"])
+def axlewheelpressing_section(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    obj2=AxleWheelPressing.objects.all().filter(dispatch_status=False).order_by('sno')
+    mybo=Batch.objects.all().values('bo_no')
+    mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
+    axle=AxleWheelMachining.objects.filter(axlefitting_status=False,inspection_status=True).values('axle_no')
+    wheelde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
+    wheelnde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+       'subnav':subnav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       'mybo':mybo,
+       'mywheel':wheelde,
+       'myaxle':axle,
+        'mysno':mysno,
+       }
+    if request.method=="POST":
+        
+        once=request.POST.get('once')
+        print(once)
+        submit=request.POST.get('submit')
+        if submit=='Save':
+
+            bo_no=request.POST.get('bo_no')
+            bo_date=request.POST.get('bo_date')
+            date=request.POST.get('date')
+            loco_type=request.POST.get('locos')
+            axle_no=request.POST.get('axle_no')
+            wheelno_de=request.POST.get('wheelno_de')
+            wheelno_nde=request.POST.get('wheelno_nde')
+            bullgear_no=request.POST.get('bullgear_no')
+            bullgear_make=request.POST.get('bullgear_make')
+            
+            if bo_no and bo_date and date and loco_type and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make:
+               obj=AxleWheelPressing.objects.create()
+               obj.bo_no=bo_no
+               obj.bo_date=bo_date
+               obj.date=date
+               obj.loco_type=loco_type
+               obj.axle_no=axle_no
+               obj.wheelno_de=wheelno_de
+               obj.wheelno_nde=wheelno_nde
+               obj.bullgear_no=bullgear_no
+               obj.bullgear_make=bullgear_make
+               obj.inspection_status=False
+               obj.save()
+               messages.success(request, 'Successfully Added!')
+               AxleWheelMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True)
+               AxleWheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)  
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+            obj2=AxleWheelPressing.objects.all().order_by('sno')
+            my_context={
+            'object':obj2,
+            }
+
+        # if submit=='save':
+    
+        #     sno=int(request.POST.get('editsno'))
+        #     bo_no=request.POST.get('editbo_no')
+        #     bo_date=request.POST.get('editbo_date')
+        #     date=request.POST.get('editdate')
+        #     loco_type=request.POST.get('editlocos')
+        #     axle_no=request.POST.get('editaxle_no')
+        #     wheelno_de=request.POST.get('editwheelno_nde')
+        #     in_qty=request.POST.get('editin_qty')
+        #     out_qty=request.POST.get('editout_qty')
+        #     if bo_no and bo_date and date and loco_type and airbox_sno and airbox_make and in_qty and out_qty:
+        #        AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,airbox_sno=airbox_sno,airbox_make=airbox_make,in_qty=in_qty,out_qty=out_qty)
+        #        messages.success(request, 'Successfully Edited!')
+        #     else:
+        #        messages.error(request,"Please Enter S.No.!")
+        if submit=='Edit':
+            temp=request.POST.get('editsno')
+            print(temp)
+            if temp is not None:
+                sno=int(temp)
+            else:
+                sno=None
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
+            axle_no=request.POST.get('editaxle_no')
+            wheelno_de=request.POST.get('editwheelno_de')
+            wheelno_nde=request.POST.get('editwheelno_nde')
+            bullgear_no=request.POST.get('editbullgear_no')
+            bullgear_make=request.POST.get('editbullgear_make')
+            in_qty=request.POST.get('editin_qty')
+            out_qty=request.POST.get('editout_qty')
+
+            if bo_no and bo_date and date and loco_type and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
+               AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,axle_no=axle_no,in_qty=in_qty,out_qty=out_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make)
+               AxleWheelMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True)
+               AxleWheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)  
+               messages.success(request, 'Successfully Edited!')
+            else:
+               messages.error(request,"Please Enter S.No.!")
+
+        if submit=='Inspect':
+            sno=int(request.POST.get('sno'))
+            wheelno_de=request.POST.get('wheelno_de')
+            wheel_de_make=request.POST.get('wheel_de_make')
+            wheelno_nde=request.POST.get('wheelno_nde')
+            wheel_nde_make=request.POST.get('wheel_nde_make')
+            wheel_nde_pressure=request.POST.get('wheel_nde_pressure')
+            axle_no=request.POST.get('axle_no')
+            axle_make=request.POST.get('axle_make')
+            bullgear_no=request.POST.get('bullgear_no')
+            bullgear_make=request.POST.get('bullgear_make')
+            bullgear_pressure=request.POST.get('bullgear_pressure')
+            msu_unit_no=request.POST.get('msu_unit_no')
+            msu_unit_make=request.POST.get('msu_unit_make')
+            axle_box_no=request.POST.get('axle_box_no')
+            axle_box_make=request.POST.get('axle_box_make')
+            axle_box_clearance=request.POST.get('axle_box_clearance')
+            suspension_bearing_de_no=request.POST.get('suspension_bearing_de_no')
+            suspension_bearing_de_make=request.POST.get('suspension_bearing_de_make')
+            suspension_bearing_nde_no=request.POST.get('suspension_bearing_nde_no')
+            suspension_bearing_nde_make=request.POST.get('suspension_bearing_nde_make')
+            cru_bearing_no_de=request.POST.get('cru_bearing_no_de')
+            cru_bearing_make_de=request.POST.get('cru_bearing_make_de')
+            cru_bearing_pressure_de=request.POST.get('cru_bearing_pressure_de')
+            cru_bearing_no_nde=request.POST.get('cru_bearing_no_nde')
+            cru_bearing_make_nde=request.POST.get('cru_bearing_make_nde')
+            cru_bearing_pressure_nde=request.POST.get('cru_bearing_pressure_nde')
+            date=request.POST.get('date')
+            locos=request.POST.get('locos')
+            inspector_name=request.POST.get('inspector_name')
+            journal_no_de=request.POST.get('journal_no_de')
+            journal_make_de=request.POST.get('journal_make_de')
+            journal_no_nde=request.POST.get('journal_no_nde')
+            journal_make_nde=request.POST.get('journal_make_nde')
+            
+            if wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and locos and inspector_name and cru_bearing_no_nde and cru_bearing_pressure_nde and cru_bearing_make_nde and journal_no_de and journal_make_de and journal_no_nde and journal_make_nde:
+                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bull_gear_no=bullgear_no,bull_gear_make=bullgear_make,bull_gear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,locos=locos,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde)
+                messages.success(request,'Successfully Edited!')
+            else:
+                messages.error(request,"Please Enter the all the records!")    
+
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            if sno and dislocos:
+                AxleWheelPressing.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        if submit=='Delete':
+
+            sno=int(request.POST.get('delsno'))
+            if sno:
+                myval=list(AxleWheelMachining.objects.filter(sno=sno).values('wheel_no','axle_no'))
+                print(myval)
+                AxleWheelMachining.objects.filter(axle_no=myval[0]['axle_no']).update(axlefitting_status=False)
+                AxleWheelMachining.objects.filter(wheel_no=myval[0]['wheel_no']).update(wheelfitting_status=False) 
+                AxlewheelPressing.objects.filter(sno=sno).delete()
+                messages.success(request, 'Successfully Deleted!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        return HttpResponseRedirect("/axlewheelpressing_section/")
+
+    return render(request,"axlewheelpressing_section.html",my_context)
+
+def axlepress_addbo(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def wheelpress_inspectsno(request):
+    if request.method=="GET" and request.is_ajax():
+        print("hello1")
+        mysno=request.GET.get('sels_no')
+        print("hello")
+        myval=list(AxleWheelPressing.objects.filter(sno=mysno).values('wheelno_de','wheelno_nde','axle_no','bullgear_no','bullgear_make'))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def m13insert(request):
+    from .models import M13
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            
+            shop_sec = request.POST.get('shop_sec')
+            wo_no = request.POST.get('wo_no')
+            part_no = request.POST.get('part_nop')
+            obj = M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no','qty_tot','qty_ins','qty_pas','qty_rej','opn','vendor_cd','fault_cd','reason','slno','m13_sn','wo_rep','m15_no','epc','rej_cat','job_no').distinct()
+            obj1 = Part.objects.filter(partno=part_no).values('des','drgno').distinct()
+            #obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
+            leng = obj.count()
+            leng1 = obj1.count()
+            #leng2 = obj2.count()
+            print(obj)
+            print(obj1)
+
+            context = {
+                        'obj': obj,
+                        'obj1': obj1,
+                        #'obj2': obj2,
+                        'len': leng,
+                        'len1':leng1,
+                        #'len2':leng2,
+                        'shop_sec': shop_sec,
+                        'wo_no': wo_no,
+                        'part_no': part_no,
+                        
+                        'sub' : 1,
+                        'nav':nav,
+                        'ip':get_client_ip(request),  
+                        'subnav':subnav,
+            }
+
+
+
+
+
+        if submitvalue=='Save':
+                from decimal import Decimal
+                m13_no=request.POST.get('m13no')
+                print(m13_no)
+                #m13_date=request.POST.get('date')   
+                slno= request.POST.get('slno')
+                print(slno)
+                m13_sn = request.POST.get('m13_sn')
+                print(m13_sn)
+                epc = request.POST.get('epc')
+                print(epc)
+                qty_tot = Decimal(request.POST.get('qty_tot'))
+                print(qty_tot)
+                qty_ins = Decimal(request.POST.get('qty_ins'))
+                print(qty_ins)
+                qty_pas = Decimal(request.POST.get('qty_pas'))
+                print(qty_pas)
+                qty_rej = Decimal(request.POST.get('qty_rej'))
+                print(qty_rej)
+                vendor_cd = request.POST.get('vendor_cd')
+                print(vendor_cd)
+                opn = request.POST.get('opn')
+                print(opn)
+                job_no = request.POST.get('job_no')
+                print(job_no)
+                fault_cd = request.POST.get('fault_cd')
+                print(fault_cd)
+                wo_rep = request.POST.get('wo_rep')
+                print(wo_rep)
+                m13no = request.POST.get('m13no')
+                print(m13no)
+                m15_no = request.POST.get('m15_no')
+                print(m15_no)
+                rej_cat = request.POST.get('rej_cat')
+                print(rej_cat)
+                reason = request.POST.get('reason')
+                print(reason)
+
+                m13obj=M13.objects.create()
+                m13obj.m13_sn=m13_sn
+                m13obj.qty_tot=qty_tot
+                m13obj.qty_ins=qty_ins
+                m13obj.qty_pas=qty_pas
+                m13obj.qty_rej=qty_rej
+                m13obj.vendor_cd=vendor_cd
+                m13obj.opn=opn
+                m13obj.job_no=job_no 
+                m13obj.fault_cd=fault_cd
+                m13obj.wo_rep=wo_rep
+                m13obj.m15_no=m15_no 
+                m13obj.rej_cat=rej_cat
+                m13obj.reason=reason
+                m13obj.m13_no=m13no
+                m13obj.slno=slno
+                m13obj.epc=epc
+                m13obj.save()
+                # print(m13obj)
+
+    return render(request,"m13insert.html",context)
