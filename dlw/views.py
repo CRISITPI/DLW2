@@ -8095,60 +8095,67 @@ def m13insert(request):
 
         if submitvalue=='Save':
                 from decimal import Decimal
-                m13_no=request.POST.get('m13no')
-                print(m13_no)
-                #m13_date=request.POST.get('date')   
+                m13_no=request.POST.get('m13no')  
                 slno= request.POST.get('slno')
-                print(slno)
                 m13_sn = request.POST.get('m13_sn')
-                print(m13_sn)
                 epc = request.POST.get('epc')
-                print(epc)
-                qty_tot = Decimal(request.POST.get('qty_tot'))
-                print(qty_tot)
-                qty_ins = Decimal(request.POST.get('qty_ins'))
-                print(qty_ins)
-                qty_pas = Decimal(request.POST.get('qty_pas'))
-                print(qty_pas)
-                qty_rej = Decimal(request.POST.get('qty_rej'))
-                print(qty_rej)
+                ab=request.POST.get('qty_tot')
+                if len(ab):
+                    qty_tot = Decimal(ab)
+                else:
+                    qty_tot=0
+                ab=request.POST.get('qty_ins')
+                if len(ab):
+                    qty_ins = Decimal(ab)
+                else:
+                    qty_ins=0
+                ab=request.POST.get('qty_pas')
+                if len(ab):
+                    qty_pas = Decimal(ab)
+                else:
+                    qty_pas=0
+                ab=request.POST.get('qty_rej')
+                if len(ab):
+                    qty_rej = Decimal(ab)
+                else:
+                    qty_rej=0
                 vendor_cd = request.POST.get('vendor_cd')
-                print(vendor_cd)
                 opn = request.POST.get('opn')
-                print(opn)
                 job_no = request.POST.get('job_no')
-                print(job_no)
                 fault_cd = request.POST.get('fault_cd')
-                print(fault_cd)
                 wo_rep = request.POST.get('wo_rep')
-                print(wo_rep)
+                # print(wo_rep)
                 m13no = request.POST.get('m13no')
-                print(m13no)
+                # print(m13no)
                 m15_no = request.POST.get('m15_no')
                 print(m15_no)
                 rej_cat = request.POST.get('rej_cat')
                 print(rej_cat)
                 reason = request.POST.get('reason')
                 print(reason)
-
-                m13obj=M13.objects.create()
-                m13obj.m13_sn=m13_sn
-                m13obj.qty_tot=qty_tot
-                m13obj.qty_ins=qty_ins
-                m13obj.qty_pas=qty_pas
-                m13obj.qty_rej=qty_rej
-                m13obj.vendor_cd=vendor_cd
-                m13obj.opn=opn
-                m13obj.job_no=job_no 
-                m13obj.fault_cd=fault_cd
-                m13obj.wo_rep=wo_rep
-                m13obj.m15_no=m15_no 
-                m13obj.rej_cat=rej_cat
-                m13obj.reason=reason
-                m13obj.m13_no=m13no
-                m13obj.slno=slno
-                m13obj.epc=epc
-                m13obj.save()
+                if m13_sn and qty_tot and qty_ins and qty_pas and qty_rej and vendor_cd and opn and job_no and fault_cd and wo_rep and m15_no and rej_cat and reason and m13no and slno and epc:
+                    print("in if cond")
+                    m13obj=M13.objects.create()
+                    m13obj.m13_sn=m13_sn
+                    m13obj.qty_tot=qty_tot
+                    m13obj.qty_ins=qty_ins
+                    m13obj.qty_pas=qty_pas
+                    m13obj.qty_rej=qty_rej
+                    m13obj.vendor_cd=vendor_cd
+                    m13obj.opn=opn
+                    m13obj.job_no=job_no 
+                    m13obj.fault_cd=fault_cd
+                    m13obj.wo_rep=wo_rep
+                    m13obj.m15_no=m15_no 
+                    m13obj.rej_cat=rej_cat
+                    m13obj.reason=reason
+                    m13obj.m13_no=m13no
+                    m13obj.slno=slno
+                    m13obj.epc=epc
+                    m13obj.save()
+                    messages.success(request,'Successfully Edited!')
+                else:
+                    messages.success(request,'Please enter all fields!')
                 # print(m13obj)
 
     return render(request,"m13insert.html",context)
