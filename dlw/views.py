@@ -6965,6 +6965,7 @@ def CardGeneration(request):
             res = []
             obj1 = ShowLeaf(request,asmno,res)
             print("len = ",len(obj1))
+            print("All is Revealed",obj1)
             # try:
             #     for j in range(len(obj1)):
             #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
