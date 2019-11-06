@@ -1,13 +1,9 @@
 {% extends 'base.html' %} {% block content %}
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
-
-
+{% comment %} <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" /> {% endcomment %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
   <script>
@@ -18,6 +14,10 @@
   </script>
 
 <style>
+
+#dateshop,#dateshopval {
+    display: none;
+}
 table, td, th {  
   text-align: left;
 }
@@ -28,9 +28,7 @@ table {
 th, td {
   padding: 15px;
 }
-</style>
-<style>
-    input[type=text],
+input[type=text],
     select {
         width: 100%;
         padding: 12px 20px;
@@ -73,9 +71,11 @@ th, td {
     input[type=button]:hover {
         background-color: #45a049;
         text-align: center;
+
+
     }
 </style>
-<<form action="{% url 'M20view' %}" method="POST"> {% csrf_token %}
+<form action="{% url 'M20view' %}" method="POST"> {% csrf_token %}
     <div class="container">
 <table class="table">
   <tr>
@@ -93,8 +93,8 @@ th, td {
           {% endif %}
   </center>
   </tr>
+  <br>
     <tr>
-
         <td>
             <label for="sno"><b>Date/ दिनांक.:</b></label>            
           <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" readonly required/>
@@ -131,9 +131,6 @@ th, td {
           <td><input type="submit" name="proceed" value="Add" id="proceed" style="display: none" /></td>
         </tr>
     </table>
-
-
-     
       <input type="reset" name="reset">
     <hr style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
     <input type="hidden" id="sub" name="sub" value={{sub}}>
@@ -195,6 +192,10 @@ th, td {
 {% if totindb %}
 <table border="2" align="center">
 <tr>
+<div id="dateshop" style="display: none;">
+<th id="shpid" >Shop Section NO/शॉप अधी.</th>
+<th id="dtid" >Date/ दिनांक.</th>
+</div>
   <th>Name नाम</th>
   <th>Ticket No.  टिकट स.</th>
   <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>
@@ -203,13 +204,14 @@ th, td {
 <tr>
  <input type="hidden" name="namedb{{forloop.counter}}" id="namedb{{forloop.counter}}" value="{{values.name}}">
   <input type="hidden" name="ticketnodb{{forloop.counter}}" id="ticketnodb{{forloop.counter}}" value="{{values.ticketno}}">
- 
+  <div id="dateshopval" style="display: none;">
+ <td id="shpv" >{{shopsec}}</td>
+ <td id="datev">{{lvdate}}</td>
+ </div>
  <td>{{values.name}}</td>
   <td>{{values.ticketno}}</td>
- 
   <input type="hidden" name="datehid{{forloop.counter}}" id="datehid{{forloop.counter}}" value='{{values.date}}'>
- 
-   <td> <input type="text" id="datedb{{forloop.counter}}" class="datepicker2" style="width: 150px;"  name="datedb{{forloop.counter}}" placeholder="yy-mm-dd" value="{{values.date}}" readonly/></td>
+   <td><input type="text" id="datedb{{forloop.counter}}" class="datepicker2" style="width: 150px;"  name="datedb{{forloop.counter}}" placeholder="yy-mm-dd" value="{{values.date}}" readonly/></td>
 </tr>
 {% endfor %}
 </table> 
@@ -217,7 +219,7 @@ th, td {
 <div id="items"> </div>
     </div>
 
-
+{% comment %} 
 <div id="print" style="text-align:center" hidden>
 
     <table class="table">
@@ -245,7 +247,7 @@ th, td {
 
 
 
-</div>
+</div> {% endcomment %}
 
 <center>
   <input type="submit" name="proceed" value="Save" id="submitted"> 
@@ -256,6 +258,7 @@ th, td {
 </form>
 
 <script type="text/javaScript">
+
 $( function() {
               $( ".datepicker2" ).datepicker({
                 dateFormat:'yy-mm-dd',
@@ -271,6 +274,7 @@ $( document ).ready(function() {
     var tt=0;
     if (sub == 1)
     {
+      
     var totindb=document.getElementById('totindb').value;
 
       $("#shop_sec").val(shop_sec);
@@ -372,7 +376,7 @@ function find(th)
         var style = "<style>";
          style = style + "table {width: 100%;font: 17px Calibri;}";
          style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
-         style = style + "padding: 2px 3px;text-align: left;}";
+         style = style + "padding: 5px 3px;text-align: left;}";
          style = style + "</style>";
        var win = window.open('', '', 'height=500,width=500');
  
@@ -384,7 +388,9 @@ function find(th)
          win.document.write('<body>');
          win.document.write(printContents);
          win.document.write('</body></html>');
- 
+         win.document.getElementById('dateshop').style.display = "block";
+         win.document.getElementById('dateshopval').style.display = "block";
+        
          win.print();
          win.close();
  

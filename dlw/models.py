@@ -3758,3 +3758,20 @@ class MG22new(models.Model):
 
     class Meta:
         db_table = 'MG22new'
+
+
+
+class MG20(models.Model):
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    name = models.CharField(db_column='NAME', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    desgn = models.CharField(db_column='DESIGNATION', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CATEGORY', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    emp_type = models.CharField(db_column='EMPLOYEE_TYPE', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    no_of_days = models.CharField(db_column='NO_OF_DAYS', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    nature = models.CharField(db_column='NATURE_OF_INJURY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    appr_datej = models.CharField(db_column='APPROX_DATE_OF_JOINING', max_length=10, blank=True, null=True, default='0')  # Field name made lowercase.
+    current_date= models.CharField(db_column='CURRENT_DATE', max_length=10, blank=True, null=True, default='0')  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'MG20'
