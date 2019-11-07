@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block content %}
  
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" /> -->
  
  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
@@ -115,17 +115,17 @@ th, td {
  
  
 <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
-<div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम जी -22/MG.-22 </h6></div><br>
+<div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम. जी. - 22/ M. G. - 22 </h6></div><br>
  
  
         <td>
-            <label for="sno"><b>Date/ दिनांक.:</b></label>            
+            <label for="sno"><b>Date/ दिनांक </b></label>            
           <input type="text" id="updt_date" style="width: 150px;" name="updt_date" value="{{lvdate}}" placeholder="yyyy-mm-dd" readonly required/>
         </td> 
  
         <td>
-            <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
-          <select class="form-control ll" id="shop_sec" name="shop_sec" required style="width: 150px;">   
+            <label for="sno"><b>Shop Section NO/ शॉप अधी..:</b></label>
+          <select class="form-control ll" id="shop_sec" name="shop_sec" required style="width: 150px;" required>   
           <option id="op_shop" selected disabled hidden>Shop Section</option>  
          
           {% if lenm == 1 %}
@@ -142,7 +142,7 @@ th, td {
           </td>   
  
           <!-- <td>
-              <label for="sno"><b>Staff No/ स्टाफ न .:</b></label>
+              <label for="sno"><b>Staff No/ ????? ? .:</b></label>
               <select class="form-control ll" id="staff_no" name="staff_no" required style="width: 150px;">       
                   <option id="staff_no" selected disabled hidden>Staff Number</option>    
             </select>
@@ -183,9 +183,9 @@ th, td {
       <thead>
           <input type="text" name="empname" value="{{empname}}" style="display: none" />
         <tr>
-          <th>Name नाम</th> 
+          <th>Name ???</th> 
           
-          <th>Ticket No.  टिकट स.</th>       
+          <th>Ticket No.  ???? ?.</th>       
         </tr>
         <tr>
           <td>{{empname}}</td>
@@ -202,7 +202,7 @@ th, td {
     <table class="table">
       <thead>
         <tr>
-          <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>          
+          <th>Date of leave to be given ???? ??? ?? ???? ???? ?????? ?? ????? </th>          
         </tr>
       </thead>  
      
@@ -216,9 +216,9 @@ th, td {
 {% if totindb %}
 <!-- <table border="2" align="center">
 <tr>
-  <th>Name नाम</th>
-  <th>Ticket No.  टिकट स.</th>
-  <th>Date of Accident दुर्घटना का दिन </th>
+  <th>Name ???</th>
+  <th>Ticket No.  ???? ?.</th>
+  <th>Date of Accident ???????? ?? ??? </th>
 </tr>
 {% for key, values in dictemper.items %}
 <tr>
@@ -240,9 +240,9 @@ th, td {
 </table>  -->
 {% endif %}
 <div id="items"> </div>
-    </div>
+    
  
- 
+ here
 <div id="print" style="text-align:center" hidden>
  
     <table class="table">
@@ -250,8 +250,8 @@ th, td {
             <input type="text" name="empname" value="{{empname}}" style="display: none" />
           <tr>
             <th id="head1">Name नाम</th>
-            <th id="head2">Ticket No.  टिकट स.</th>
-            <th id="head3">Date of Accident दुर्घटना का दिन </th>         
+            <th id="head2">Ticket No.  टिकट नंबर .</th>
+            <th id="head3">Date of Accident - दुर्घटना की तिथि  </th>         
           </tr>
           <tr>
             <td>{{empname}}</td>
@@ -271,17 +271,17 @@ th, td {
         
       
         <label for="cause">What was the the accident due to ?</label>
-        <input id="cause" type="text" name="cause" placeholder="Cause of the accident.."><br>
+        <input id="cause" type="text" name="cause" placeholder="Cause of the accident.." required><br>
  
       
         <label for="reason">Is it due to negligence, if yes, state reasons ?</label>
         <label class="container">Yes
-                <input id="reason_y" type="radio"  name="reason_neg" value="yes">
+                <input id="reason_y" type="radio"  name="reason_neg" value="yes" required>
                 <span class="checkmark"></span>
               </label>
  
               <label id="reason" class="container">No
-                <input id="reason_n" type="radio" name="reason_neg" value="no">
+                <input id="reason_n" type="radio" name="reason_neg" value="no" required>
                 <span class="checkmark"></span>
               </label>
  
@@ -290,29 +290,29 @@ th, td {
  
         <label for="equip_check">Was the employee wearing the protective equipment he was entitled to ?</label>
         <label class="container">Yes
-                <input type="radio" name="equip_check" value="yes">
+                <input type="radio" name="equip_check" value="yes" required>
                 <span class="checkmark"></span>
               </label>
  
               <label id="reason" class="container">No
-                <input type="radio" name="equip_check" value="no">
+                <input type="radio" name="equip_check" value="no" required>
                 <span class="checkmark"></span>
               </label>
        
               <br>  <br>
         <label for="suggestion">Can you suggest any saftey devices to prevent similar accidents ? </label>
-        <input id="suggestion" type="text" id="cause" name="suggestion" placeholder="Suggest saftey devices"><br>
+        <input id="suggestion" type="text" id="cause" name="suggestion" placeholder="Suggest saftey devices" required><br>
         
         <label for="bgc">Is it the first accident of its nature to this employee ? </label>
         
         
         <label class="container">Yes
-          <input type="radio" name="bgc" value="yes">
+          <input type="radio" name="bgc" value="yes" required>
           <span class="checkmark"></span>
         </label>
  
         <label class="container">No
-          <input type="radio" name="bgc" value="no">
+          <input type="radio" name="bgc" value="no" required>
           <span class="checkmark"></span>
         </label>
       
@@ -320,17 +320,17 @@ th, td {
               <br>
       
           <label for="bgc2">Any more information with regards to previous accident. If any, to the employee</label>
-          <input type="text" id="bgc2" name="bgc2" placeholder="Information regarding previous accident ..."></textarea>
+          <input type="text" id="bgc2" name="bgc2" placeholder="Information regarding previous accident ..." required></textarea>
       
     
-         <label for="sno"><b> Name of section supervisor in whose shift the accident took place: Shop Section NO/शॉप अधी.:</b></label><br>
+         <label for="sno"><b> Name of section supervisor in whose shift the accident took place: Shop Section NO/??? ???.:</b></label><br>
             
          <table style="width: 100%;">
            <tr>
              <td>
                 <label for="sno"><b>Section supervisor</b></label>
  
-              <select class="form-control ll" id="shop_sec" name="sec_sup" required style="width: 150px;">
+              <select class="form-control ll" id="shop_sec" name="sec_sup" required style="width: 150px;" required>
               <option id="op_shop" name="sec_sup" value="{{lc}}" selected disabled hidden>Section Supervisor</option> 
               
                   {% for lj in empname %}
@@ -344,7 +344,7 @@ th, td {
  
                 <label for="sno"><b>Chargeman</b></label>
  
-                <select class="form-control ll" id="shop_sec" name="Chargeman" required style="width: 150px;">
+                <select class="form-control ll" id="shop_sec" name="Chargeman" required style="width: 150px;" required>
                 <option id="op_shop" name="Chargeman" selected disabled hidden>Chargeman</option> 
                 {% for lc in names %}
                   <option value="{{lc}}">{{lc}}</option>
@@ -356,7 +356,7 @@ th, td {
  
                 <label for="sno"><b>Mistry</b></label>
  
-                <select class="form-control ll" id="shop_sec" name="Mistry" required style="width: 150px;">
+                <select class="form-control ll" id="shop_sec" name="Mistry" required style="width: 150px;" required>
                 <option id="op_shop" name="Mistry" selected disabled hidden>Mistry</option> 
                 {% for lc in names %}
                   <option value="{{lc}}">{{lc}}</option>
@@ -375,26 +375,26 @@ th, td {
             <label for="Certification">Certified that :- </label><br>
  
           <ol> 
-            <li><input type="checkbox" name="c1" value="The accident arose out of and in the course of his employement">  The accident arose out of and in the course of his employement</li>
-            <li><input type="checkbox" name="c2" value="The work man was not under the influence of drink or drugs at the time time if accident">   The work man was not under the influence of drink or drugs at the time time if accident</li>
-            <li><input type="checkbox" name="c3" value="The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman">   The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman</li>
-            <li><input type="checkbox" name="c4" value="The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman">  The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman</li>       
+            <li><input type="checkbox" name="c1" value="The accident arose out of and in the course of his employement" required>  The accident arose out of and in the course of his employement</li>
+            <li><input type="checkbox" name="c2" value="The work man was not under the influence of drink or drugs at the time time if accident" required>   The work man was not under the influence of drink or drugs at the time time if accident</li>
+            <li><input type="checkbox" name="c3" value="The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman" required>   The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman</li>
+            <li><input type="checkbox" name="c4" value="The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman" required>  The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman</li>       
           </ol>
             <br>
  
  
             <label for="Certification">ANNEXURE </label><br>
           <ol> 
-              <li><input type="checkbox" name="a1" value="This is an eye injury">  This is an eye injury</li>
-              <li> The emplpoyee was <input type="radio" name="a2" value="yes"> was not <input type="radio" name="a2" value="no">  provided with goggles </li>
-            <li> He was <input type="radio" name="a3" value="yes"> was not <input type="radio" name="a3" value="no">  wearing them at the time of accident</li>
+              <li><input type="checkbox" name="a1" value="This is an eye injury" required>  This is an eye injury</li>
+              <li> The emplpoyee was <input type="radio" name="a2" value="yes" required> was not <input type="radio" name="a2" value="no" required>  provided with goggles </li>
+            <li> He was <input type="radio" name="a3" value="yes" required> was not <input type="radio" name="a3" value="no" required>  wearing them at the time of accident</li>
           </ol>
           <table style="float: right;">
             <tr>
               <td>
                   <label style="width: 150px;" for="sno"><b>SS/ FO</b></label><br>
  
-                <select class="form-control ll" id="ssfo" name="SSFO" required style="width: 150px;">
+                <select class="form-control ll" id="ssfo" name="SSFO" style="width: 150px;" required>
                 <option  id="op_shop" name="Chargeman" selected disabled hidden >SS/ FO</option> 
                 {% for lc in empname %}
                   <option value="{{lc}}">{{lc}}</option>
@@ -415,6 +415,7 @@ th, td {
   <input id="print" type="button" onclick="printDiv()" value="Print"> 
 </center>
 {% endif %}
+</div>
 </div>
 </form>
  
@@ -474,7 +475,7 @@ $( document ).ready(function() {
       
         if(j==1 && totindb == 0)
         {
-            var happ='<div><table id="customers">'+'<tr><th>Name नाम</th><th>Ticket No.  टिकट स.</th><th>Date of Accident दुर्घटना का दिन  </th>';
+            var happ='<div><table id="customers">'+'<tr><th>Name नाम</th><th>Ticket No.  टिकट नंबर </th><th>Date of Accident दुर्घटना की तिथि  </th>';
  
     happ=happ+'</tr></table></div>';
         $('#items').append(happ);
@@ -550,9 +551,7 @@ function find(th)
          win.close();
  
  
- 
  }
- 
- 
+
 </script>    
 {% endblock content %}

@@ -7537,9 +7537,8 @@ def bogieassemb_editsno(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+@role_required(allowed_roles=["Superuser"])
 def MG22view(request):
-    
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -7617,7 +7616,6 @@ def MG22view(request):
                     print(dictemper)
 
             emp=[]
-            
             staff_name = request.GET.get('empname')
             print(staff_name)
             empname = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname')
@@ -7809,6 +7807,59 @@ def mg22getstaffName(request):
         print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+def MG22report(request,prtno,shopsec):
+    from .models import Part,Partalt
+    today = date.today()
+    # dd/mm/YY
+    d1 = today.strftime("%d/%m/%Y")
+    # print("d1 =", d1)
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    # obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
+    # obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
+    # print(obj)
+    obj2 = MG22new.objects.filter(shop_sec=shop_sec).values('updt_date', 'shop_sec', 'name', 'staff_no', 'ticketno', 'acc_Date', 'cause', 'reason_neg', 'reason_y_neg', 'equip_check', 'suggestions', 'bgc', 'bgc2', 'sec_sup', 'chargeman', 'mistry', 'c1', 'c2', 'c3', 'c4', 'a1', 'a2', 'a3', 'SSFO')
+    print(obj2)
+    w1=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
+    print("w1",w1)
+    name=[]
+    for w in range(len(w1)):
+        name.append(w1[w]['name'])
+                # print(w1[w]['name'])
+    print("name",name)
+    
+    
+    # patotal=0
+    # attotal=0
+    # if len(obj2):
+    #     for op in obj2:
+    #         patotal=patotal+op['pa']
+    #         attotal=attotal+op['at']
+    context={
+        # 'obj1':obj,
+        'prtno':prtno,
+        'obj':obj2,
+        'nav':nav,
+        'subnav':subnav,
+        'obj3':obj3,
+        'ip':get_client_ip(request),
+        'roles' :rolelist,
+        'pttl':patotal,
+        'attl':attotal,
+        'dt':d1,
+    }
+    return render(request,"MG22report.html",context)
 
 
 @login_required
