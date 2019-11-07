@@ -10,26 +10,12 @@
                     });
                 </script>
                 <script>
-                    $(document).ready(function () {
-                         $('#in_date').datepicker({
-                             dateFormat: 'dd-mm-yy'
-                         });
-                     });
-                 </script>
-                <script>
                         $(document).ready(function () {
                              $('#editdate').datepicker({
                                  dateFormat: 'dd-mm-yy'
                              });
                          });
                 </script>
-                <script>
-                    $(document).ready(function () {
-                         $('#editin_date').datepicker({
-                             dateFormat: 'dd-mm-yy'
-                         });
-                     });
-            </script>
         </head>    
    
     <style>
@@ -85,7 +71,7 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
@@ -98,8 +84,8 @@ footer, .page-content::after{
                         <a href="#" class="btn btn-primary" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false"  style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% "><font color="white">Inspect</font></a>
                         <ul class="dropdown-menu">
-                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#inspectmodal"> WAP/WAG</button></li>
-                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#inspectmodalhhp"> HHP</button></li>
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#inspectmodal">Inspect</button></li>
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#inspectmodalhhp">Inspect HHP</button></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -138,11 +124,10 @@ footer, .page-content::after{
                 <th>Batch Order No.</th>
                 <th>Batch Order Date &nbsp;</th>
                 <th>Loco Type </th>
-                <th>In Date &nbsp;</th>
-                <th>Frame Serial No.</th>
-                <th>Frame Make</th>
-                <th>Frame Type</th>
-                <th>Dispatch To</th>
+                <th>Date &nbsp;</th>
+                <th>Frameserial No &nbsp;</th>
+                <th>Frame Make &nbsp;</th>
+                <th>Frame Type &nbsp;</th>
                 </tr>
                 {% for objec in object %}
                 <tr>
@@ -150,11 +135,10 @@ footer, .page-content::after{
                 <td>{{objec.bo_no}} <br><br></td>
                 <td>{{objec.bo_date}} <br><br></td>
                 <td>{{objec.loco_type}} <br><br></td>
-                <td>{{objec.in_date}} <br><br></td>
+                <td>{{objec.date}} <br><br></td>
                 <td>{{objec.frameserial_no}} <br><br></td>
                 <td>{{objec.frame_make}} <br><br></td>
                 <td>{{objec.frame_type}} <br><br></td>
-                <td>{{objec.dispatch_to}} <br><br></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -196,15 +180,15 @@ footer, .page-content::after{
                                                 <input type="text" class="form-control" name="locos" id="locos" required readonly>
                                             </div>
                                        <div class="col-6">
-                                            <label for="">Date(Manually)</label>
+                                            <label for="">Date</label>
                                             <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                       </div>
                                    </div>
                                     
                                     <div class="row">
                                             <div class="col-6">
-                                                    <label for="">In Date(Manually)</label>
-                                                    <input type="text" name="in_date" id="in_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                    <label for="">In Date</label>
+                                                    <input type="text" name="in_date" id="in_date" class="form-control" placeholder="dd-mm-yyyy" required>
                                       
                                             </div>
                                             <div class="col-6">
@@ -222,7 +206,7 @@ footer, .page-content::after{
                                 </div> 
                                 <div class="col-6">
                                         <label for="">Frame Type</label>
-                                        <select id="frame_type" name="frame_type" class="form-control ll" required >
+                                        <select name="frame_type" id="frame_type" class="form-control ll" required >
                                             <option>Front</option>
                                             <option>Rear</option>
                                         </select>
@@ -285,8 +269,8 @@ footer, .page-content::after{
                                             </div>
 
                                     <div class="col-6">
-                                            <label for="">In date</label>
-                                            <input type="text" name="editin_date" id="editin_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                            <label for="">In_date</label>
+                                            <input type="text" class="form-control" name="editin_date" id="editin_date" required>
                                     </div>
                                     <div class="col-6">
                                         <label for="">Frame Serial No.</label>
@@ -298,7 +282,7 @@ footer, .page-content::after{
                                     </div>
                                     <div class="col-6">
                                         <label for="">Frame Type</label>
-                                        <select id="editframe_type" name="editframe_type" class="form-control ll" required >
+                                        <select name="editframe_type" id="editframe_type" class="form-control ll" required >
                                             <option>Front</option>
                                             <option>Rear</option>
                                         </select>
@@ -313,7 +297,34 @@ footer, .page-content::after{
         </div>
       </div>
     </div>
-
+<!--Delete-->
+<!-- Modal -->
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel3">BogieAssembly</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+  <form method="POST" class="needs-validation" > {% csrf_token %}
+         <div class="modal-body">
+                  <div class="row">
+                      <div class="col">
+                              <label for="">Serial No.</label>
+                              <input type="number" class="form-control" id="delsno" name="delsno"  required>
+                      </div> 
+                  </div>
+          </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
+      </div>
+      </form>
+  </div>
+</div>
+</div>   
  <!--Dispatch-->
     <!-- Modal -->
     <div class="modal fade" id="DispatchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
@@ -328,10 +339,15 @@ footer, .page-content::after{
             <form method="POST" class="needs-validation" > {% csrf_token %}
              <div class="modal-body">       
                                     <div class="row">
-                                        <div class="col-6">
-                                            <label for="">Serial No.</label>
-                                            <input type="number" class="form-control" id="dissno" name="dissno" required>
-                                        </div>
+                                      <div class="col-6">
+                                        <label for="">Serial No.</label>
+                                        <select name="dissno" id="dissno" class="form-control ll" required>
+                                                <option value="" hidden selected>Select S.No.</option>  
+                                                {% for x in mysno %}
+                                                <option>{{x.sno}}</option>
+                                                {% endfor %}
+                                        </select> 
+                                </div>
                                     </div>
                                     <br>
                                     <div class="row">
@@ -371,7 +387,7 @@ footer, .page-content::after{
                   <div class="row">
                   <div class="col-6">
                           <label for="">Serial No.</label>
-                          <select name="snowheel" id="addsno" class="form-control ll" required>
+                          <select name="sno" id="addsno" class="form-control ll" required>
                                   <option value="" hidden selected>Select S.No.</option>  
                                   {% for x in mysno %}
                                   <option>{{x.sno}}</option>
@@ -384,7 +400,7 @@ footer, .page-content::after{
                         <div class="col-6">
                                 <label for="">Axle No.</label>
                                 <select name="axle_no" id="axle_no" class="form-control ll" required>
-                                    <option value="" hidden selected>Select Axle No.</option>  
+                                    <option value="" hidden selected>Select S.No.</option>  
                                     {% for y in myaxle %}
                                     <option>{{y.axle_no}}</option>
                                     {% endfor %}
@@ -392,7 +408,7 @@ footer, .page-content::after{
                             </div>
                               <div class="col-6">
                                     <label for="Axle">Axle Location</label>
-                                    <select id="axle_location" class="form-control ll" required >
+                                    <select name="axle_location" id="axle_location" class="form-control ll" required >
                                         <option>1</option>
                                         <option>2</option>
                                         <option>3</option>
@@ -400,8 +416,8 @@ footer, .page-content::after{
                                   </div>  
                                   <div class="col-6">
                                     <label for="">Traction motor no. </label>
-                                    <select name="traction_motor_no" id="traction_motor_no" class="form-control ll" required>
-                                        <option value="" hidden selected>Select TM No.</option>  
+                                    <select name="tm_no" id="tm_no" class="form-control ll" required>
+                                        <option value="" hidden selected>Select S.No.</option>  
                                         {% for z in mytm %}
                                         <option>{{z.tm_no}}</option>
                                         {% endfor %}
@@ -416,7 +432,7 @@ footer, .page-content::after{
                                     <input type="text" class="form-control" name="gear_case_make" id="gear_case_make" placeholder="" required>
                                   </div>          
                                   <div class="col-6">
-                                    <label for="">MSU unit no.</label>
+                                    <label for="">MSU unit no. </label>
                                     <select name="msu_unit_no" id="msu_unit_no" class="form-control ll" required>
                                         <option value="" hidden selected>Select S.No.</option>  
                                         {% for a in mymsu %}
@@ -465,7 +481,7 @@ footer, .page-content::after{
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                             <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="InspectHPP" />
+                             <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Inspect HHP" />
                         </div>
               </form>
      </div>
@@ -489,7 +505,7 @@ footer, .page-content::after{
                   <div class="row">
                   <div class="col-6">
                           <label for="">Serial No.</label>
-                          <select name="snowheel" id="addsno" class="form-control ll" required>
+                          <select name="sno" id="addsno" class="form-control ll" required>
                                   <option value="" hidden selected>Select S.No.</option>  
                                   {% for x in mysno %}
                                   <option>{{x.sno}}</option>
@@ -510,7 +526,7 @@ footer, .page-content::after{
                     </div>
                               <div class="col-6">
                                     <label for="Axle">Axle Location</label>
-                                    <select id="axle_location" class="form-control ll" required >
+                                    <select name="axle_location" id="axle_location" class="form-control ll" required >
                                         <option>1</option>
                                         <option>2</option>
                                         <option>3</option>
@@ -518,7 +534,7 @@ footer, .page-content::after{
                                   </div>  
                                   <div class="col-6">
                                     <label for="">Traction motor no. </label>
-                                    <select name="traction_motor_no" id="traction_motor_no" class="form-control ll" required>
+                                    <select name="tm_no" id="tm_no" class="form-control ll" required>
                                         <option value="" hidden selected>Select S.No.</option>  
                                         {% for z in mytm %}
                                         <option>{{z.tm_no}}</option>
@@ -535,14 +551,11 @@ footer, .page-content::after{
                                   </div>          
                                   <div class="col-6">
                                     <label for="">MSU unit no. </label>
-                                    <input type="text" class="form-control" name="msu_unit_no" id="msu_unit_no" placeholder="" required>
-                                    <!-- <select name="msu_unit_no" id="msu_unit_no" class="form-control ll" required>
+                                    <select name="msu_unit_no" id="msu_unit_no" class="form-control ll" required>
                                         <option value="" hidden selected>Select S.No.</option>  
                                         {% for a in mymsu %}
                                         <option>{{a.msu_unit_no}}</option>
                                         {% endfor %}
-                                </select>
-                                </div>                       -->
                                   </div>  
                                 <div class="col-6">
                                     <label for=""> Break Rigging make</label>
@@ -589,40 +602,12 @@ footer, .page-content::after{
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                             <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Inspect"/>
+                             <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Inspect" />
                         </div>
               </form>
      </div>
  </div>
 </div> 
-<!--Delete-->
-<!-- Modal -->
-<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel3">AxleWheelMachining</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-    <form method="POST" class="needs-validation" > {% csrf_token %}
-           <div class="modal-body">
-                    <div class="row">
-                        <div class="col">
-                                <label for="">Serial No.</label>
-                                <input type="number" class="form-control" id="delsno" name="delsno"  required>
-                        </div> 
-                    </div>
-            </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
-        </div>
-        </form>
-    </div>
-</div>
-</div>   
 
 </form>
 
@@ -671,7 +656,7 @@ footer, .page-content::after{
                     type: 'GET',
                     url: "{% url 'bogieassemb_editsno' %}",
                     dataType: 'json',
-                    data: data,
+                    data:data,
                     success:function(response){
                         console.log(response);
                         $("#editbo_no").val(`${response[0].bo_no}`);
@@ -689,4 +674,4 @@ footer, .page-content::after{
         
 </script>
 </html>  
-{% endblock content %}
+                     {% endblock content %}

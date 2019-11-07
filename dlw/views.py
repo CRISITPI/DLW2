@@ -6040,7 +6040,7 @@ def M20view(request):
             for w in range(len(w1)):
                 wono.append(w1[w]['name'])
                 # print(w1[w]['name'])
-            print("wono",wono)
+            # print("wono",wono)
             # w1=M5SHEMP.objects.filter(staff_no=staffno).values('staff_no','name').distinct()
             # wono = list(w1)
             # ename=wono[0]['name']
@@ -6119,6 +6119,7 @@ def M20view(request):
             # M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(staff_no), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(alt_date))
             tot=0
             tot=request.POST.get('totmebs')
+            print("total members",tot)
 
 
             totindb=request.POST.get('totindb')
@@ -6136,6 +6137,7 @@ def M20view(request):
                 name=request.POST.get('name'+str(t))
                 ticketno=request.POST.get('ticket'+str(t))
                 date=request.POST.get('date'+str(t))
+                print(name,ticketno,date)
                 M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
                 print(shop_sec,lv_date,name,ticketno,date)
             messages.success(request, 'Successfully Saved !!!, Select new values to update')
@@ -6148,7 +6150,7 @@ def m20getstaffno(request):
         from.models import Batch      
         shop_sec = request.GET.get('shop_sec')
         name=request.GET.get('name')
-        print("ths is",shop_sec)
+        # print("ths is",shop_sec)
         w1=M5SHEMP.objects.filter(shopsec=shop_sec,name=name).values('staff_no').distinct()
         wono = w1[0]['staff_no']
         cont ={
@@ -6164,10 +6166,10 @@ def m20getstaffName(request):
         from.models import Batch     
         shop_sec = request.GET.get('shop_sec')
         staff_no = request.GET.get('staff_no')
-        print(staff_no)
+        # print(staff_no)
         w1=M5SHEMP.objects.filter(staff_no=staff_no).values('staff_no','name').distinct()
         wono = list(w1)
-        print("ths is",shop_sec)
+        # print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -7355,8 +7357,11 @@ def bogieassembly_section(request):
     obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
-    myaxle=AxleWheelMachining.objects.filter(inspection_status=True,dispatch_status=True).values('axle_no')
-    mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
+    # myaxle=AxleWheelMachining.objects.filter(inspection_status=True,dispatch_status=True).values('axle_no')
+    # mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
+    myaxle=AxleWheelMachining.objects.all().values('axle_no')
+    mytm=PinionPressing.objects.all().values('tm_no')
+    mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
     # mymsu=AxleWheelPressing.objects.filter(inspection_status=True,dispatch_status=True).values('msu_unit_no')
     my_context={
        'object':obj2,
@@ -7368,7 +7373,7 @@ def bogieassembly_section(request):
        'mysno':mysno,
        'myaxle':myaxle,
        'mytm':mytm,
-    #    'mymsu':mymsu,
+        'mymsu':mymsu,
     }
 
     if request.method=="POST":
@@ -7451,12 +7456,36 @@ def bogieassembly_section(request):
                 messages.error(request,"Please Enter S.No.!")
 
         if submit=='InspectHHP':
-            sno=int(request.POST.get('mysno'))
-            # print(sno)
+            sno=int(request.POST.get('sno'))
+            print(sno)
             axle_no=request.POST.get('axle_no')
             axle_location=request.POST.get('axle_location')
             gear_case_no=request.POST.get('gear_case_no')
-            traction_motor_no=request.POST.get('traction_motor_no')
+            tm_no=request.POST.get('tm_no')
+            gear_case_make=request.POST.get('gear_case_make')
+            msu_unit_no=request.POST.get('msu_unit_no')
+            break_rigging_make=request.POST.get('break_rigging_make')
+            coil_spring_make=request.POST.get('coil_spring_make')
+            sand_box_make=request.POST.get('sand_box_make')
+            spheri_block_make=request.POST.get('spheri_block_make')
+            elastic_shop_make=request.POST.get('elastic_shop_make')
+            secondary_coil_make=request.POST.get('secondary_coil_make')
+            thrust_pad_make=request.POST.get('thrust_pad_make')
+            break_cylinder_make=request.POST.get('break_cylinder_make')
+            lateral_damper=request.POST.get('lateral_damper')
+            if axle_no and axle_location and gear_case_no and tm_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and secondary_coil_make and thrust_pad_make and break_cylinder_make and lateral_damper :
+                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper) 
+                messages.success(request,'Successfully Inspected!')
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+        if submit=='Inspect':
+            sno=int(request.POST.get('sno'))
+            print(sno)
+            axle_no=request.POST.get('axle_no')
+            axle_location=request.POST.get('axle_location')
+            gear_case_no=request.POST.get('gear_case_no')
+            tm_no=request.POST.get('tm_no')
             gear_case_make=request.POST.get('gear_case_make')
             msu_unit_no=request.POST.get('msu_unit_no')
             break_rigging_make=request.POST.get('break_rigging_make')
@@ -7465,12 +7494,12 @@ def bogieassembly_section(request):
             spheri_block_make=request.POST.get('spheri_block_make')
             elastic_shop_make=request.POST.get('elastic_shop_make')
             horizontal_damper=request.POST.get('horizontal_damper')
-            secondary_coil_make=request.POST.get('secondary_coil_make')
-            thrust_pad_make=request.POST.get('thrust_pad_make')
-            break_cylinder_make=request.POST.get('break_cylinder_make')
-            lateral_damper=request.POST.get('lateral_damper')
-            if axle_no and axle_location and gear_case_no and traction_motor_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper and secondary_coil_make and thrust_pad_make and break_cylinder_make and lateral_damper :
-                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=traction_motor_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper,inspection_status=True) 
+            # secondary_coil_make=request.POST.get('secondary_coil_make')
+            # thrust_pad_make=request.POST.get('thrust_pad_make')
+            # break_cylinder_make=request.POST.get('break_cylinder_make')
+            # lateral_damper=request.POST.get('lateral_damper')
+            if axle_no and axle_location and gear_case_no and tm_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper:
+                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper) 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")

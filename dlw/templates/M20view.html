@@ -142,6 +142,7 @@ input[type=text],
                 {% endfor %}
             </datalist>
     <input type="button" id="add" value="Add Member" />
+    <div id="items"> </div>
     <h3 align="center">कर्मशाला कर्मचारियों की रविवार की बुकिंग </h3>
 <h4 align="center">SUNDAY BOOKING OF WORKSHOP STAFF</h4>
 <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
@@ -153,42 +154,6 @@ input[type=text],
   <div id="printdata">
     <h4 align="center">Particulars of Staff booked to work on Sunday</h4>
     <h4 align="center">रविवार को काम करने के लिए बुक किये गए कर्मचारियों का विवरण </h4>
-   <div class="row">
-  <!-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-    <table class="table">
-      <thead>
-          <input type="text" name="empname" value="{{empname}}" style="display: none" />
-        <tr>
-          <th>Name नाम</th> 
-          
-          <th>Ticket No.  टिकट स.</th>       
-        </tr>
-        <tr>
-          <td>{{empname}}</td>
-          <td>{{ticketno}}</td> 
-        </tr>
-    
-      </thead>
-      <tbody id="projectData">
-          
-      </tbody> 
-    </table>
-  </div>
-  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>          
-        </tr>
-      </thead>
-     
-      <tbody >  
-          <tr><td><input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="yy-mm-dd" value="{{alt_date}}" readonly required /></td></tr>
-      </tbody> 
-
-    </table>
-  </div> -->
-</div>
 {% if totindb %}
 <table border="2" align="center">
 <tr>
@@ -213,16 +178,14 @@ input[type=text],
   <input type="hidden" name="datehid{{forloop.counter}}" id="datehid{{forloop.counter}}" value='{{values.date}}'>
    <td><input type="text" id="datedb{{forloop.counter}}" class="datepicker2" style="width: 150px;"  name="datedb{{forloop.counter}}" placeholder="yy-mm-dd" value="{{values.date}}" readonly/></td>
 </tr>
+ <input type="hidden" name="totmebs" id="totmebs" value="0">
 {% endfor %}
 </table> 
 {% endif %}
-<div id="items"> </div>
+
     </div>
-
-{% comment %} 
-<div id="print" style="text-align:center" hidden>
-
-    <table class="table">
+{% comment %} <div id="print" style="text-align:center" hidden>
+  <table class="table">
         <thead>
             <input type="text" name="empname" value="{{empname}}" style="display: none" />
           <tr>
@@ -240,13 +203,7 @@ input[type=text],
             
         </tbody> 
       </table>
-      <input type="hidden" name="totmebs" id="totmebs" value="0">
-
-      
-
-
-
-
+     
 </div> {% endcomment %}
 
 <center>
@@ -329,6 +286,7 @@ var htAppend='<div><table id="customers"><tr>'+'<td><select name='+nameoname+' i
  htAppend=htAppend+'</tr></table>'+'</div>';
      $('#items').append(htAppend);
      document.getElementById("totmebs").value=j;
+     console.log(document.getElementById('totmebs').value);
      var x=document.getElementById("names");
      var pp=0;
      for (pp = 0; pp < x.options.length; pp++) {

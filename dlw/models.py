@@ -3724,6 +3724,7 @@ class BogieAssembly(models.Model):
     spheri_block_make=models.CharField(max_length=20,null=True)
     thrust_pad_make=models.CharField(max_length=20,null=True)
     break_cylinder_make=models.CharField(max_length=20,null=True)
+    elastic_shop_make=models.CharField(max_length=30,null=True)
     lateral_damper=models.CharField(max_length=20,null=True)
     horizontal_damper=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
