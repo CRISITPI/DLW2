@@ -178,10 +178,11 @@ input[type=text],
   <input type="hidden" name="datehid{{forloop.counter}}" id="datehid{{forloop.counter}}" value='{{values.date}}'>
    <td><input type="text" id="datedb{{forloop.counter}}" class="datepicker2" style="width: 150px;"  name="datedb{{forloop.counter}}" placeholder="yy-mm-dd" value="{{values.date}}" readonly/></td>
 </tr>
- <input type="hidden" name="totmebs" id="totmebs" value="0">
+ 
 {% endfor %}
 </table> 
 {% endif %}
+<input type="hidden" name="totmebs" id="totmebs" value="0">
 
     </div>
 {% comment %} <div id="print" style="text-align:center" hidden>
