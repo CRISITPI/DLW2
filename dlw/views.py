@@ -5271,7 +5271,8 @@ def axlewheelmachining_section(request):
                 obj.axle_no=eighth
                 obj.axle_make=ninth
                 obj.axle_heatcaseno=tenth
-                obj.inspection_status=False
+                obj.wheelinspection_status=False
+                obj.axleinspection_status=False
                 obj.save()
                 messages.success(request, 'Successfully Added!')
             else:
@@ -5331,7 +5332,7 @@ def axlewheelmachining_section(request):
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
             if oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl,inspection_status=True)
+                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True)
                 messages.success(request, 'Wheel Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -5357,7 +5358,7 @@ def axlewheelmachining_section(request):
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
             if ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,inspection_status=True)
+                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True)
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -5883,7 +5884,7 @@ def pinionpressing_section(request):
             blue_match=request.POST.get('blue_match')
             # loco_type=request.POST.get('locos')
             if pinion_no and pinion_make and pinion_travel and pinion_pressure and blue_match :
-                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match) 
+                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match,inspection_status=True) 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
@@ -7357,12 +7358,10 @@ def bogieassembly_section(request):
     obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
-    # myaxle=AxleWheelMachining.objects.filter(inspection_status=True,dispatch_status=True).values('axle_no')
-    # mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
-    myaxle=AxleWheelMachining.objects.all().values('axle_no')
-    mytm=PinionPressing.objects.all().values('tm_no')
-    mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
-    # mymsu=AxleWheelPressing.objects.filter(inspection_status=True,dispatch_status=True).values('msu_unit_no')
+    myaxle=AxleWheelMachining.objects.filter(axleinspection_status=True,dispatch_status=True).values('axle_no')
+    mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
+    # mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
+    mymsu=AxleWheelPressing.objects.filter(inspection_status=True,dispatch_status=True).values('msu_unit_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -7446,7 +7445,6 @@ def bogieassembly_section(request):
             }
 
         if submit=="Dispatch":
-            
             sno=int(request.POST.get('dissno'))
             dislocos=request.POST.get('dislocos')
             if sno and dislocos:
@@ -7849,9 +7847,9 @@ def axlewheelpressing_section(request):
     obj2=AxleWheelPressing.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
-    axle=AxleWheelMachining.objects.filter(axlefitting_status=False,inspection_status=True).values('axle_no')
-    wheelde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
-    wheelnde=AxleWheelMachining.objects.filter(wheelfitting_status=False,inspection_status=True).values('wheel_no')
+    axle=AxleWheelMachining.objects.filter(axlefitting_status=False,axleinspection_status=True).values('axle_no')
+    wheelde=AxleWheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no')
+    wheelnde=AxleWheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -7942,7 +7940,7 @@ def axlewheelpressing_section(request):
             if bo_no and bo_date and date and loco_type and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
                AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,axle_no=axle_no,in_qty=in_qty,out_qty=out_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make)
                AxleWheelMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True)
-               AxleWheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)  
+               AxleWheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)
                messages.success(request, 'Successfully Edited!')
             else:
                messages.error(request,"Please Enter S.No.!")
@@ -7983,7 +7981,7 @@ def axlewheelpressing_section(request):
             journal_make_nde=request.POST.get('journal_make_nde')
             
             if wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and locos and inspector_name and cru_bearing_no_nde and cru_bearing_pressure_nde and cru_bearing_make_nde and journal_no_de and journal_make_de and journal_no_nde and journal_make_nde:
-                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bull_gear_no=bullgear_no,bull_gear_make=bullgear_make,bull_gear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,locos=locos,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde)
+                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bull_gear_no=bullgear_no,bull_gear_make=bullgear_make,bull_gear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,locos=locos,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,inspection_status=True,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde)
                 messages.success(request,'Successfully Edited!')
             else:
                 messages.error(request,"Please Enter the all the records!")    
