@@ -3404,6 +3404,8 @@ class AxleWheelMachining(models.Model):
   dispatch_status=models.BooleanField(default=False)
   axlefitting_status=models.BooleanField(default=False) 
   wheelfitting_status=models.BooleanField(default=False)
+  axleinspection_status=models.BooleanField(default=False) 
+  wheelinspection_status=models.BooleanField(default=False)
   inspection_status=models.NullBooleanField()
 
 
