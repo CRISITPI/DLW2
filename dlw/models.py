@@ -3583,8 +3583,9 @@ class AxleWheelPressing(models.Model):
     journal_make_de=models.CharField(max_length=20,null=True)
     journal_no_nde=models.CharField(max_length=20,null=True)
     journal_make_nde=models.CharField(max_length=20,null=True)
-    wheelinspection_status=models.NullBooleanField()
-    axleinspection_status=models.NullBooleanField()
+    inspectinspection_status=models.NullBooleanField()
+    hhpinspection_status=models.NullBooleanField()
+    
 
      
 class M11(models.Model):

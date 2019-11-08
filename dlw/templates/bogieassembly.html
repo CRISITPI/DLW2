@@ -434,7 +434,7 @@ footer, .page-content::after{
                                   <div class="col-6">
                                     <label for="">MSU unit no. </label>
                                     <select name="msu_unit_no" id="msu_unit_no" class="form-control ll" required>
-                                        <option value="" hidden selected>Select S.No.</option>  
+                                        <option value="" hidden selected>Select MSU Unit No.</option>  
                                         {% for a in mymsu %}
                                         <option>{{a.msu_unit_no}}</option>
                                         {% endfor %}
@@ -481,7 +481,7 @@ footer, .page-content::after{
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                             <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="Inspect HHP" />
+                             <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="InspectHHP" />
                         </div>
               </form>
      </div>
@@ -552,10 +552,11 @@ footer, .page-content::after{
                                   <div class="col-6">
                                     <label for="">MSU unit no. </label>
                                     <select name="msu_unit_no" id="msu_unit_no" class="form-control ll" required>
-                                        <option value="" hidden selected>Select S.No.</option>  
+                                        <option value="" hidden selected>Select MSU Unit No.</option>  
                                         {% for a in mymsu %}
                                         <option>{{a.msu_unit_no}}</option>
                                         {% endfor %}
+                                  </select>
                                   </div>  
                                 <div class="col-6">
                                     <label for=""> Break Rigging make</label>
