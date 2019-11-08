@@ -7361,7 +7361,7 @@ def bogieassembly_section(request):
     myaxle=AxleWheelMachining.objects.filter(axleinspection_status=True,dispatch_status=True).values('axle_no')
     mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
     # mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
-    mymsu=AxleWheelPressing.objects.filter(inspection_status=True,dispatch_status=True).values('msu_unit_no')
+    mymsu=AxleWheelPressing.objects.filter(dispatch_status=True).values('msu_unit_no')
     my_context={
        'object':obj2,
        'nav':nav,
