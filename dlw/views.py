@@ -15,7 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
+from dlw.models import roleMenu,cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
 from dlw.models import MG20,M18,empmast,M14M4,BogieAssembly,Cst,testc,navbar,M20new,MG22new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
 from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
@@ -127,7 +127,7 @@ def homeadmin(request):
 
 
 @login_required
-@role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge","2301","2302","Dy_CME/Plg","Dy_CME_Spares","Dy_CMgm","0401","0402","0403"])
+@role_required(allowed_roles=["Myrole","Wheel_shop_incharge","Bogie_shop_incharge","2301","2302","Dy_CME/Plg","Dy_CME_Spares","Dy_CMgm","0401","0402","0403"])
 def homeuser(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8438,3 +8438,104 @@ def mg20getstaff(request):
         staff_no = list(staff)
         return JsonResponse(staff_no, safe=False)
     return JsonResponse({"success": False}, status=400)
+
+
+
+
+
+
+
+@login_required
+@role_required(allowed_roles=["Superuser"])
+def RoleGeneration(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    rolemenulist = roleMenu.objects.all().values('navitem').order_by('navitem').distinct()
+    originalitems = navbar.objects.all().values('navitem').order_by('navitem').distinct()
+    originalmenu = navbar.objects.all().values('navmenu').order_by('navmenu').distinct()
+    originalnavitem = []
+    originalnavmenu = []
+    for i in range(len(originalitems)):
+        originalnavitem.append(originalitems[i]['navitem'])
+    for i in range(len(originalmenu)):
+        originalnavmenu.append(originalmenu[i]['navmenu'])
+    originalnavitem.remove('Under Production')
+    originalnavitem.remove('Not Authorized')
+    originalnavitem.remove('Update Permission Incharge')
+    notpresent = []
+    present = []
+    if request.method=='POST':
+        rolename = request.POST.get('rolename')
+        perlist = request.POST.getlist('permissions')
+        if rolename and perlist:
+            roles.objects.create(role=rolename,parent=rolename)
+            for i in range(len(perlist)):
+                toinsert = roleMenu.objects.all().filter(navitem=perlist[i]).first()
+                present.append(toinsert.navmenu)
+                navbar.objects.create(role=rolename,navmenu=toinsert.navmenu,navitem=toinsert.navitem,link=toinsert.link)
+            for j in range(len(originalnavmenu)):
+                if originalnavmenu[j] not in present:
+                    notpresent.append(originalnavmenu[j])
+            for i in range(len(notpresent)):
+                navbar.objects.create(role=rolename,navmenu=notpresent[i],navitem='Not Authorized',link='#')
+            present.clear()
+            notpresent.clear()
+            originalnavmenu.clear()
+            originalnavitem.clear()
+            messages.success(request, 'Successfully Created!')
+        else:
+            messages.error(request,"Error")
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
+        'rolemenulist':rolemenulist,
+    }
+    return render(request,'RoleGeneration.html',context)
+
+
+@login_required
+@role_required(allowed_roles=["Superuser"])
+def RoleDelete(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    role = roles.objects.all().values('role').order_by('role').distinct()
+    users = []
+    if request.method=="POST":
+        rolename = request.POST.get('roldel')
+        if rolename:
+            navbar.objects.all().filter(role=rolename).delete()
+            roles.objects.all().filter(role=rolename).delete()
+            userremove = empmast.objects.all().values('empno').filter(role=rolename)
+            for i in range(len(userremove)):
+                users.append(userremove[i]['empno'])
+                empmast.objects.filter(empno=userremove[i]['empno']).update(role=None,parent=None)
+            User.objects.filter(username__in=users).delete()
+            messages.success(request, 'Successfully Deleted!')
+        else:
+            messages.error(request,"Error")
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
+        'roles' : role,
+    }
+    return render(request,'RoleDelete.html',context)
+
+
+
+

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br>
+<h3><center>Role Deletion</center></h3>
+<center>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <font size="3">
+            <li>
+                {{ message }}
+            </li>
+        </font>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</center>
+<br>
+
+<center>
+    <form method="POST">{%csrf_token%}
+
+        <div class="col-4">
+
+            <label><h5>Select Role to Delete</h5></label>
+            <select class="form-control" name="roldel" required>
+            <option selected disabled hidden>Select Role</option>
+            {% for list in roles %}
+            <option>{{list.role}}</option>
+            {% endfor %}
+            </select>
+            <br>
+
+
+        <center><button type="submit" name="rolebutton" value="Generate Roles" class="btn btn-primary">Delete Role</button></center>
+        <br>
+        </div>
+    </form>
+</center>
+
+{% endblock content %}

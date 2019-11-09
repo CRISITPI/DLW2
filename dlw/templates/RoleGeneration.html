@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br>
+<h3><center>Role Generation</center></h3>
+<center>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <font size="3">
+            <li>
+                {{ message }}
+            </li>
+        </font>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</center>
+<br>
+
+<center>
+    <form method="POST">{%csrf_token%}
+
+        <div class="col-4">
+
+            <label><h5>Give Role Name(Don't Use Space in between, Can use underscore)</h5></label>
+            <input type="text" name="rolename" placeholder="Enter Role Name" style="width:80%;" class="form-control" required>
+            <br>
+
+            <label><h5>Select Permissions for Role</h5></label>
+            <select class="form-control" name="permissions" required multiple style="height:40vh;">
+            {% for list in rolemenulist %}
+            <option>{{list.navitem}}</option>
+            {% endfor %}
+            </select>
+            <br><br>
+
+
+        <center><button type="submit" name="rolebutton" value="Generate Roles" class="btn btn-primary">Generate Role</button></center>
+        <br>
+        </div>
+    </form>
+</center>
+
+{% endblock content %}

@@ -3780,3 +3780,8 @@ class MG20(models.Model):
 
     class Meta:
         db_table = 'MG20'
+
+class roleMenu(models.Model):
+    navmenu = models.CharField(max_length=30,blank=True,null=True)
+    navitem = models.CharField(max_length=30,blank=True,null=True)
+    link = models.CharField(max_length=50,blank=True,null=True)
