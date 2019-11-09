@@ -3785,3 +3785,8 @@ class roleMenu(models.Model):
     navmenu = models.CharField(max_length=30,blank=True,null=True)
     navitem = models.CharField(max_length=30,blank=True,null=True)
     link = models.CharField(max_length=50,blank=True,null=True)
+
+class viewUrlPermission(models.Model):
+    navitem = models.CharField(max_length=50,null=True,blank=True)
+    urlname = models.CharField(max_length=50,null=True,blank=True)
+    rolespermission = models.CharField(max_length=500,null=True,blank=True)

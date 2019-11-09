@@ -15,7 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import roleMenu,cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
+from dlw.models import viewUrlPermission,roleMenu,cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
 from dlw.models import MG20,M18,empmast,M14M4,BogieAssembly,Cst,testc,navbar,M20new,MG22new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
 from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
 from dlw.serializers import testSerializer
@@ -43,6 +43,119 @@ from random import randint
 #
 #
 #
+
+
+def viewsPermission(request):
+    rolelist = roles.objects.all().values('role').order_by('role').distinct('role')
+    urlfirst = navbar.objects.all().values('link').distinct('link')
+    first = []
+    for i in range(len(urlfirst)):
+        if urlfirst[i]['link']!='#':
+            first.append(urlfirst[i]['link'])
+    urlsecond = subnavbar.objects.all().values('link').distinct('link')
+    second = []
+    for i in range(len(urlsecond)):
+        if urlsecond[i]['link']!='#':
+            second.append(urlsecond[i]['link'])
+    urlfinal = first + second
+    parentmenu = navbar.objects.all().values('navitem').distinct('navitem')
+    parent = []
+    for i in range(len(parentmenu)):
+        if parentmenu[i]['navitem']!='Under Production' and parentmenu[i]['navitem']!='Not Authorized':
+            parent.append(parentmenu[i]['navitem'])
+    if request.method=="POST":
+        inputurl = request.POST.get('inpurl')
+        rolesassign = request.POST.getlist('rolesassign')
+        navbarparent = request.POST.get('navbarparent')
+        rolesassignlist= ", ".join(rolesassign)
+        if inputurl and rolesassign and navbarparent:
+            viewUrlPermission.objects.create(navitem=navbarparent,urlname=inputurl,rolespermission=rolesassignlist)
+            messages.success(request,'Successful')
+        else:
+            messages.error(request,'error')
+    context = {
+        'ip':get_client_ip(request),
+        'rolelist':rolelist,
+        'urlfinal' : urlfinal,
+        'parentmenu':parent,
+    }
+    return render(request,'viewsPermission.html',context)
+
+
+
+
+
+def viewsPermissiondelete(request):
+    urlfirst = navbar.objects.all().values('link').distinct('link')
+    first = []
+    for i in range(len(urlfirst)):
+        if urlfirst[i]['link']!='#':
+            first.append(urlfirst[i]['link'])
+    urlsecond = subnavbar.objects.all().values('link').distinct('link')
+    second = []
+    for i in range(len(urlsecond)):
+        if urlsecond[i]['link']!='#':
+            second.append(urlsecond[i]['link'])
+    urlfinal = first + second
+    if request.method=="POST":
+        inputurl = request.POST.get('inpurl')
+        if inputurl:
+            viewUrlPermission.objects.filter(urlname=inputurl).delete()
+            messages.success(request,'Successful')
+        else:
+            messages.error(request,'error')
+    context = {
+        'ip':get_client_ip(request),
+        'urlfinal' : urlfinal,
+    }
+    return render(request,'viewsPermissiondel.html',context)
+
+
+
+
+
+def viewsPermissionUpdate(request):
+    rolelist = roles.objects.all().values('role').order_by('role').distinct('role')
+    urlfirst = navbar.objects.all().values('link').distinct('link')
+    first = []
+    for i in range(len(urlfirst)):
+        if urlfirst[i]['link']!='#':
+            first.append(urlfirst[i]['link'])
+    urlsecond = subnavbar.objects.all().values('link').distinct('link')
+    second = []
+    for i in range(len(urlsecond)):
+        if urlsecond[i]['link']!='#':
+            second.append(urlsecond[i]['link'])
+    urlfinal = first + second
+    parentmenu = navbar.objects.all().values('navitem').distinct('navitem')
+    parent = []
+    for i in range(len(parentmenu)):
+        if parentmenu[i]['navitem']!='Under Production' and parentmenu[i]['navitem']!='Not Authorized':
+            parent.append(parentmenu[i]['navitem'])
+    if request.method=="POST":
+        inputurl = request.POST.get('inpurl')
+        rolesassign = request.POST.getlist('rolesassign')
+        navbarparent = request.POST.get('navbarparent')
+        rolesassignlist= ", ".join(rolesassign)
+        if inputurl and rolesassign and navbarparent:
+            toupdate = viewUrlPermission.objects.filter(urlname=inputurl).first()
+            toupdate.rolespermission = rolesassignlist
+            toupdate.navitem = navbarparent
+            toupdate.save()
+            messages.success(request,'Successful')
+        else:
+            messages.error(request,'error')
+    context = {
+        'ip':get_client_ip(request),
+        'rolelist':rolelist,
+        'urlfinal' : urlfinal,
+        'parentmenu':parent,
+    }
+    return render(request,'viewsPermissionUpdate.html',context)
+
+
+
+
 
 def login_request(request):
     if request.method=='POST':
@@ -125,9 +238,11 @@ def homeadmin(request):
 
 
 
-
+homeuserrole = viewUrlPermission.objects.all().filter(urlname='/homeuser/').first()
+homeuserroles = []
+homeuserrolelist = homeuserrole.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Myrole","Wheel_shop_incharge","Bogie_shop_incharge","2301","2302","Dy_CME/Plg","Dy_CME_Spares","Dy_CMgm","0401","0402","0403"])
+@role_required(allowed_roles=homeuserrolelist)
 def homeuser(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -172,9 +287,11 @@ def dynamicnavbar(request,rolelist=[]):
 
 
 
-
+createuserrole = viewUrlPermission.objects.all().filter(urlname='/createuser/').first()
+createuserrolelist = []
+createuserrolelist = createuserrole.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=createuserrolelist)
 def create(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -238,9 +355,11 @@ def create(request):
 
 
 
-
+updatepermissionrole = viewUrlPermission.objects.all().filter(urlname="/update_permission/").first()
+updatepermissionrolelist = []
+updatepermissionrolelist = updatepermissionrole.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=updatepermissionrolelist)
 def update_permission(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -556,9 +675,11 @@ def getshopempinfo(request):
 
 
 
-
+deleteuserrole = viewUrlPermission.objects.all().filter(urlname="/delete_user/").first()
+deleteuserrolelist = []
+deleteuserrolelist = deleteuserrole.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=deleteuserrolelist)
 def delete_user(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -599,9 +720,11 @@ def delete_user(request):
 
 
 
-
+forgetpasswordroles = viewUrlPermission.objects.all().filter(urlname="/forget_password/").first()
+forgetpasswordroleslist = []
+forgetpasswordroleslist = forgetpasswordroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=forgetpasswordroleslist)
 def forget_password(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -658,9 +781,11 @@ class ChartData(APIView):
         serializer=testSerializer(obj,many=True)
         return Response(serializer.data)
 
-
+m2viewroles = viewUrlPermission.objects.all().filter(urlname="/m2view/").first()
+m2viewroleslist = []
+m2viewroleslist = m2viewroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m2viewroleslist)
 def m2view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -911,9 +1036,11 @@ def m2getdoc_no(request):
 
 
 
-
+m4viewroles = viewUrlPermission.objects.all().filter(urlname="/m4view/").first()
+m4viewroleslist = []
+m4viewroleslist = m4viewroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m4viewroleslist)
 def m4view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -1167,9 +1294,11 @@ def m4getdoc_no(request):
 
 
 
-
+m14viewroles = viewUrlPermission.objects.all().filter(urlname="/m14view/").first()
+m14viewroleslist = []
+m14viewroleslist = m14viewroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m14viewroleslist)
 def m14view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -1421,9 +1550,11 @@ def m14getdoc_no(request):
 
 
 
-
+aprodroles = viewUrlPermission.objects.all().filter(urlname="/aprodplan/").first()
+aprodroleslist = []
+aprodroleslist = aprodroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+@role_required(allowed_roles=aprodroleslist)
 def bprodplan(request):
     from .models import annual_production,jpo,namedgn,loconame,materialname
     from datetime import date
@@ -2030,9 +2161,11 @@ def bprodplan(request):
 
 
 
-
+jporoles = viewUrlPermission.objects.all().filter(urlname="/jpo/").first()
+jporoleslist = []
+jporoleslist = jporoles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+@role_required(allowed_roles=jporoleslist)
 def jpo(request):
     from .models import annual_production,jpo,namedgn
     cuser=request.user
@@ -3833,9 +3966,11 @@ def dpo(request):
 
     return render(request, 'dpo.html', context)
 
-
+dpoinputroles = viewUrlPermission.objects.all().filter(urlname="/dpoinput/").first()
+dpoinputroleslist = []
+dpoinputroleslist = dpoinputroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+@role_required(allowed_roles=dpoinputroleslist)
 def dpoinput(request):
     from datetime import date
     
@@ -4064,9 +4199,11 @@ def dpoinput(request):
 
     return render(request, 'dpof.html', context)
 
-
+dporeportroles = viewUrlPermission.objects.all().filter(urlname="/dporeport/").first()
+dporeportroleslist = []
+dporeportroleslist = dporeportroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+@role_required(allowed_roles=dporeportroleslist)
 def dporeport(request):
     from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
     from django.db.models import Max
@@ -4533,9 +4670,11 @@ def getcumino(request):
 
     return JsonResponse({"success":False}, status=400)
 
-
+m1roles = viewUrlPermission.objects.all().filter(urlname="/m1view/").first()
+m1roleslist = []
+m1roleslist = m1roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m1roleslist)
 def m1view(request):
     pa_no = empmast.objects.none()
     cuser=request.user
@@ -4660,9 +4799,11 @@ def m1getpano(request):
         return JsonResponse(pano, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+m1roles = viewUrlPermission.objects.all().filter(urlname="/m1view/").first()
+m1roleslist = []
+m1roleslist = m1roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m1roleslist)
 def m1genrept1(request,prtno,shopsec):
     from .models import Part,Partalt
     today = date.today()
@@ -4703,8 +4844,12 @@ def m1genrept1(request,prtno,shopsec):
     }
     return render(request,"M1report.html",context)
 
+
+m5roles = viewUrlPermission.objects.all().filter(urlname="/m5view/").first()
+m5roleslist = []
+m5roleslist = m5roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m5roleslist)
 def m5view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -4989,9 +5134,11 @@ def m5getstaff_no(request):
 
 
 
-
+mairroles = viewUrlPermission.objects.all().filter(urlname="/machining_of_air_box/").first()
+mairroleslist = []
+mairroleslist = mairroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=mairroleslist)
 def insert_machining_of_air_box(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5107,8 +5254,12 @@ def airbox_editsno(request):
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400) 
 
+
+miscroles = viewUrlPermission.objects.all().filter(urlname="/miscellaneous_section/").first()
+miscroleslist = []
+miscroleslist = miscroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=miscroleslist)
 def miscellaneous_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5218,9 +5369,11 @@ def miscell_editsno(request):
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400) 
 
-
+awmacroles = viewUrlPermission.objects.all().filter(urlname="/axlewheelmachining_section/").first()
+awmacroleslist = []
+awmacroleslist = awmacroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=awmacroleslist)
 def axlewheelmachining_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5383,9 +5536,11 @@ def axle_editsno(request):
     return JsonResponse({"success":False}, status=400) 
 
 
-
+m3roles = viewUrlPermission.objects.all().filter(urlname="/m3view/").first()
+m3roleslist = []
+m3roleslist = m3roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m3roleslist)
 def m3view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5641,9 +5796,11 @@ def m3sub(request):
 
     return render(request, "m3view.html", context)
 
-
+m7roles = viewUrlPermission.objects.all().filter(urlname="/m7view/").first()
+m7roleslist = []
+m7roleslist = m7roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m7roleslist)
 def m7view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5796,9 +5953,11 @@ def m7getpart_no(request):
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+pproles = viewUrlPermission.objects.all().filter(urlname="/PinionPress/").first()
+pproleslist = []
+pproleslist = pproles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=pproleslist)
 def pinionpressing_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5952,9 +6111,11 @@ def wheelnde(request):
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+m20roles = viewUrlPermission.objects.all().filter(urlname="/M20view/").first()
+m20roleslist = []
+m20roleslist = m20roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m20roleslist)
 def M20view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6175,9 +6336,11 @@ def m20getstaffName(request):
     return JsonResponse({"success":False}, status=400)
 
 
-    
+m26roles = viewUrlPermission.objects.all().filter(urlname="/m26view/").first()
+m26roleslist = []
+m26roleslist = m26roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m26roleslist)
 def m26view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6204,7 +6367,11 @@ def m26view(request):
         }
     return render(request,'m26view.html',context)
 
-
+m27roles = viewUrlPermission.objects.all().filter(urlname="/m27view/").first()
+m27roleslist = []
+m27roleslist = m27roles.rolespermission.split(", ")
+@login_required
+@role_required(allowed_roles=m27roleslist)
 def m27view(request):
     pa_no = empmast.objects.none()
     cuser=request.user
@@ -6255,9 +6422,11 @@ def m27view(request):
         }
     return render(request,'m27view.html',context)    
 
-
+m18roles = viewUrlPermission.objects.all().filter(urlname="/m18view/").first()
+m18roleslist = []
+m18roleslist = m18roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m18roleslist)
 def m18view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6326,34 +6495,6 @@ def m18view(request):
             M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
             messages.success(request, 'Successfully Saved ! Select new values to update')    
     return render(request,"m18view.html",context)
-	
-	
-def m26view(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-    if "Superuser" in rolelist:
-        tm=Shemp.objects.all().values('shopsec').distinct()
-        tmp=[]
-        for on in tm:
-            tmp.append(on['shopsec'])
-        context={
-            'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'roles':tmp,
-            'subnav':subnav,
-        }
-    return render(request,'m26view.html',context)  
-
 
 
 def m26getwono(request):
@@ -6377,8 +6518,12 @@ def m26getStaffCatWorkHrs(request):
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
+m22roles = viewUrlPermission.objects.all().filter(urlname="/m22view/").first()
+m22roleslist = []
+m22roleslist = m22roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m22roleslist)
 def m22view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6650,8 +6795,12 @@ def m22getstaff(request):
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
+m15roles = viewUrlPermission.objects.all().filter(urlname="/m15view/").first()
+m15roleslist = []
+m15roleslist = m15roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m15roleslist)
 def m15view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6788,8 +6937,12 @@ def m18getoperation_desc(request):
         return JsonResponse(opndesc, safe = False)
     return JsonResponse({"success":False}, status=400) 
 
+
+m13roles = viewUrlPermission.objects.all().filter(urlname="/m13view/").first()
+m13roleslist = []
+m13roleslist = m13roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m13roleslist)
 def m13view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6941,9 +7094,11 @@ def ShowLeaf(request,part,res):
     return res
     
 
-
+cardgenroles = viewUrlPermission.objects.all().filter(urlname="/CardGeneration/").first()
+cardgenroleslist = []
+cardgenroleslist = cardgenroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=cardgenroleslist)
 def CardGeneration(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6979,8 +7134,12 @@ def CardGeneration(request):
     return render(request,'CardGeneration.html',context)
 
 
+
+mg7roles = viewUrlPermission.objects.all().filter(urlname="/mg7view/").first()
+mg7roleslist = []
+mg7roleslist = mg7roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=mg7roleslist)
 def mg7view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7219,8 +7378,11 @@ def mg7getpartno(request):
     return JsonResponse({"success": False}, status=400)
 
 
+m23roles = viewUrlPermission.objects.all().filter(urlname="/m23view/").first()
+m23roleslist = []
+m23roleslist = m23roles.rolespermission.split(", ")
 @login_required
-#@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=m23roleslist)
 def m23view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7342,9 +7504,11 @@ def m23getempno(request):
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+baroles = viewUrlPermission.objects.all().filter(urlname="/bogieassembly/").first()
+baroleslist = []
+baroleslist = baroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=baroleslist)
 def bogieassembly_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7534,9 +7698,11 @@ def bogieassemb_editsno(request):
     return JsonResponse({"success":False}, status=400)
 
 
-
+mg22roles = viewUrlPermission.objects.all().filter(urlname="/MG22view/").first()
+mg22roleslist = []
+mg22roleslist = mg22roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=mg22roleslist)
 def MG22view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7807,9 +7973,11 @@ def mg22getstaffName(request):
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+mg22reproles = viewUrlPermission.objects.all().filter(urlname="/MG22report/").first()
+mg22reproleslist = []
+mg22reproleslist = mg22reproles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=mg22roleslist)
 def MG22report(request,prtno,shopsec):
     from .models import Part,Partalt
     today = date.today()
@@ -7860,9 +8028,11 @@ def MG22report(request,prtno,shopsec):
     }
     return render(request,"MG22report.html",context)
 
-
+worelroles = viewUrlPermission.objects.all().filter(urlname="/demandreg/").first()
+worelroleslist = []
+worelroleslist = worelroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
+@role_required(allowed_roles=worelroleslist)
 def wogen(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7881,9 +8051,11 @@ def wogen(request):
     }
     return render(request,'wogeneration.html',context)
 
-
+axpressroles = viewUrlPermission.objects.all().filter(urlname="/axlewheelpressing_section/").first()
+axpressroleslist = []
+axpressroleslist = axpressroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302"])
+@role_required(allowed_roles=axpressroleslist)
 def axlewheelpressing_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8113,9 +8285,11 @@ def wheelpress_inspectsno(request):
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+m13roles = viewUrlPermission.objects.all().filter(urlname="/m13insert/").first()
+m13roleslist = []
+m13roleslist = m13roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=m13roleslist)
 def m13insert(request):
     from .models import M13
     cuser=request.user
@@ -8272,9 +8446,11 @@ def m13insert(request):
     return render(request,"m13insert.html",context)
 
 
-
+mg20roles = viewUrlPermission.objects.all().filter(urlname="/mg20view/").first()
+mg20roleslist = []
+mg20roleslist = mg20roles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
+@role_required(allowed_roles=mg20roleslist)
 def mg20view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8444,9 +8620,11 @@ def mg20getstaff(request):
 
 
 
-
+rolesgenroles = viewUrlPermission.objects.all().filter(urlname="/RoleGeneration/").first()
+rolesgenroleslist = []
+rolesgenroleslist = rolesgenroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=rolesgenroleslist)
 def RoleGeneration(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8474,6 +8652,7 @@ def RoleGeneration(request):
     if request.method=='POST':
         rolename = request.POST.get('rolename')
         perlist = request.POST.getlist('permissions')
+        viewper = viewUrlPermission.objects.filter(navitem__in=perlist).values('rolespermission','id')
         if rolename and perlist:
             roles.objects.create(role=rolename,parent=rolename)
             for i in range(len(perlist)):
@@ -8485,6 +8664,14 @@ def RoleGeneration(request):
                     notpresent.append(originalnavmenu[j])
             for i in range(len(notpresent)):
                 navbar.objects.create(role=rolename,navmenu=notpresent[i],navitem='Not Authorized',link='#')
+            for i in range(len(viewper)):
+                tempper = viewper[i]['rolespermission']
+                restemp = tempper.split(",")
+                restemp.append(rolename)
+                final = ", ".join(restemp)
+                toupdate=viewUrlPermission.objects.get(id=viewper[i]['id'])
+                toupdate.rolespermission = final
+                toupdate.save()
             present.clear()
             notpresent.clear()
             originalnavmenu.clear()
@@ -8501,8 +8688,12 @@ def RoleGeneration(request):
     return render(request,'RoleGeneration.html',context)
 
 
+
+rolesdelroles = viewUrlPermission.objects.all().filter(urlname="/RoleDelete/").first()
+rolesdelroleslist = []
+rolesdelroleslist = rolesdelroles.rolespermission.split(", ")
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(allowed_roles=rolesdelroleslist)
 def RoleDelete(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8518,6 +8709,16 @@ def RoleDelete(request):
     if request.method=="POST":
         rolename = request.POST.get('roldel')
         if rolename:
+            perlist = navbar.objects.filter(role=rolename).values('navitem').distinct()
+            viewper = viewUrlPermission.objects.filter(navitem__in=perlist).values('rolespermission','id')
+            for i in range(len(viewper)):
+                tempper = viewper[i]['rolespermission']
+                restemp = tempper.split(", ")
+                restemp.remove(rolename)
+                final = ", ".join(restemp)
+                toupdate=viewUrlPermission.objects.get(id=viewper[i]['id'])
+                toupdate.rolespermission = final
+                toupdate.save()
             navbar.objects.all().filter(role=rolename).delete()
             roles.objects.all().filter(role=rolename).delete()
             userremove = empmast.objects.all().values('empno').filter(role=rolename)
@@ -8535,7 +8736,3 @@ def RoleDelete(request):
         'roles' : role,
     }
     return render(request,'RoleDelete.html',context)
-
-
-
-
