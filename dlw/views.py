@@ -7697,9 +7697,9 @@ def bogieassembly_section(request):
     obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
-    myaxle=AxleWheelMachining.objects.filter(axleinspection_status=True,dispatch_status=True).values('axle_no')
-    mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
-    mymsu=AxleWheelPressing.objects.filter(dispatch_status=True).values('msu_unit_no')
+    myaxle=AxleWheelMachining.objects.all().values('axle_no')
+    mytm=PinionPressing.objects.all().values('tm_no')
+    mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
     my_context={
        'object':obj2,
        'nav':nav,
