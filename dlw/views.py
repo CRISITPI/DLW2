@@ -15,9 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import viewUrlPermission,roleMenu,cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
-from dlw.models import MG20,M18,empmast,M14M4,BogieAssembly,Cst,testc,navbar,M20new,MG22new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
-from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+from dlw.models import *
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -8311,12 +8309,7 @@ mg22reproleslist = mg22reproles.rolespermission.split(", ")
 mg22reproleslist = [x.strip() for x in mg22reproleslist]
 @login_required
 @role_required(allowed_roles=mg22roleslist)
-def MG22report(request,prtno,shopsec):
-    from .models import Part,Partalt
-    today = date.today()
-    # dd/mm/YY
-    d1 = today.strftime("%d/%m/%Y")
-    # print("d1 =", d1)
+def mg22report(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -8326,70 +8319,146 @@ def MG22report(request,prtno,shopsec):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    # obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
-    # obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
-    # print(obj)
-    obj2 = MG22new.objects.filter(shop_sec=shop_sec).values('updt_date', 'shop_sec', 'name', 'staff_no', 'ticketno', 'acc_Date', 'cause', 'reason_neg', 'reason_y_neg', 'equip_check', 'suggestions', 'bgc', 'bgc2', 'sec_sup', 'chargeman', 'mistry', 'c1', 'c2', 'c3', 'c4', 'a1', 'a2', 'a3', 'SSFO')
-    print(obj2)
-    w1=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
-    print("w1",w1)
-    name=[]
-    for w in range(len(w1)):
-        name.append(w1[w]['name'])
-                # print(w1[w]['name'])
-    print("name",name)
-# @login_required
-# @role_required(allowed_roles=["Superuser","2301","2302","0401","0402","0403"])
-# def MG22report(request,prtno,shopsec):
-#     from .models import Part,Partalt
-#     today = date.today()
-#     # dd/mm/YY
-#     d1 = today.strftime("%d/%m/%Y")
-#     # print("d1 =", d1)
-#     cuser=request.user
-#     usermaster=empmast.objects.filter(empno=cuser).first()
-#     rolelist=usermaster.role.split(", ")
-#     nav=dynamicnavbar(request,rolelist)
-#     menulist=set()
-#     for ob in nav:
-#         menulist.add(ob.navitem)
-#     menulist=list(menulist)
-#     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-#     # obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
-#     # obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
-#     # print(obj)
-#     obj2 = MG22new.objects.filter(shop_sec=shop_sec).values('updt_date', 'shop_sec', 'name', 'staff_no', 'ticketno', 'acc_Date', 'cause', 'reason_neg', 'reason_y_neg', 'equip_check', 'suggestions', 'bgc', 'bgc2', 'sec_sup', 'chargeman', 'mistry', 'c1', 'c2', 'c3', 'c4', 'a1', 'a2', 'a3', 'SSFO')
-#     print(obj2)
-#     w1=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
-#     print("w1",w1)
-#     name=[]
-#     for w in range(len(w1)):
-#         name.append(w1[w]['name'])
-#                 # print(w1[w]['name'])
-#     print("name",name)
-    
-    
-#     # patotal=0
-#     # attotal=0
-#     # if len(obj2):
-#     #     for op in obj2:
-#     #         patotal=patotal+op['pa']
-#     #         attotal=attotal+op['at']
-#     context={
-#         # 'obj1':obj,
-#         'prtno':prtno,
-#         'obj':obj2,
-#         'nav':nav,
-#         'subnav':subnav,
-#         'obj3':obj3,
-#         'ip':get_client_ip(request),
-#         'roles' :rolelist,
-#         'pttl':patotal,
-#         'attl':attotal,
-#         'dt':d1,
-#     }
-#     return render(request,"MG22report.html",context)
+    wo_nop = empmast.objects.none()
+    dictemper={}
+    totindb=0
+    emp=[]
+    empname = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname')
+    if empname is not None and len(empname):
+        for i in range(len(empname)):
+            emp.append(empname[i]['empname'])
 
+    w1=M5SHEMP.objects.all().values('name').distinct().exclude(name__isnull=True)
+    wono=[]
+    for w in range(len(w1)):
+        wono.append(w1[w]['name'])
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'names':wono,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+            'names':wono,
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+            'names':wono,
+        }
+    if request.method=="POST":
+        bvalue=request.POST.get('proceed')
+        shop_sec=request.POST.get('shop_sec')
+        lvdate=request.POST.get('updt_date')
+        empname=request.POST.get('emp_name')
+        accdate=request.POST.get('accdate')
+        if bvalue=='Proceed':
+            m2=MG22new.objects.filter(shop_sec=shop_sec,updt_date=lvdate,name=empname,acc_Date=accdate).first()
+            nocertf=0
+            mm=0
+            # print(m2)
+            if m2 is not None:
+                if m2.c1 or m2.c2 or m2.c3 or m2.c4 is not None:
+                    nocertf=1
+                temper = {str(mm):{"name":m2.name,
+                                               "ticketno":m2.ticketno,"cause":m2.cause,"bgc2":m2.bgc2,
+                        "acdate":m2.acc_Date,"superv":m2.sec_sup,"mistry":m2.mistry,"chargeman":m2.chargeman,"ssfoname":m2.ssfo,
+                        "reasonneg":m2.reason_neg,"epchck":m2.equip_check,"sugg":m2.suggestions,
+                        "cert1":m2.c1,"cert2":m2.c2,"cert3":m2.c3,"cert4":m2.c4,"firstacc":m2.bgc,
+                        "anex1":m2.a1,"anex2":m2.a2,"anex3":m2.a3,
+                                               }}
+
+                totindb=1
+                dictemper.update(copy.deepcopy(temper))
+                # print("dictionary")
+                # print(dictemper)
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'names':wono,
+                    'dictemper':dictemper,
+                    'totindb':totindb,
+                    'empname':emp,
+                    "nocertf":nocertf,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+
+    return render(request,"mg22report.html",context)
 
 
 
