@@ -4,10 +4,10 @@
  
  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{% comment %} <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> {% endcomment %}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+{% comment %} <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> {% endcomment %}
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
  
   <script>
@@ -213,65 +213,28 @@ th, td {
     </table> -->
   </div> 
 </div>
+<input type="hidden" name="totmebs" id="totmebs" value="0">
 {% if totindb %}
-<!-- <table border="2" align="center">
-<tr>
-  <th>Name ???</th>
-  <th>Ticket No.  ???? ?.</th>
-  <th>Date of Accident ???????? ?? ??? </th>
-</tr>
 {% for key, values in dictemper.items %}
+<table>
+<tr><th>Name नाम</th><th>Ticket No.  टिकट नंबर </th><th>Date of Accident दुर्घटना की तिथि  </th></tr>
 <tr>
- <input type="hidden" name="namedb{{forloop.counter}}" id="namedb{{forloop.counter}}" value="{{values.name}}">
-  <input type="hidden" name="ticketnodb{{forloop.counter}}" id="ticketnodb{{forloop.counter}}" value="{{values.ticketno}}">
- 
  <td>{{values.name}}</td>
   <td>{{values.ticketno}}</td>
- 
-  <input type="hidden" name="datehid{{forloop.counter}}" id="datehid{{forloop.counter}}" value='{{values.date}}'>
- 
-   <td> <input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="yy-mm-dd" value={{alt_date}} readonly required /></td>
-    <td><input type="text" id="lv_date" style="width: 150px;" name="lv_date" value="here" placeholder="yyyy-mm-dd" readonly required/></td>
-  </tr>
-{% endfor %}
-<tbody><tr>
-  <td><input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" readonly required/></td>
-</tr></tbody>
-</table>  -->
+  <td><input type="text" id="lv_date" style="width: 150px;" name="lv_date" value="{{values.acdate}}" placeholder="yyyy-mm-dd" readonly required/></td>
+</tr>
+</table>
+ {% endfor %}     
 {% endif %}
+
 <div id="items"> </div>
-    
- 
- here
-<div id="print" style="text-align:center" hidden>
- 
-    <table class="table">
-        <thead>
-            <input type="text" name="empname" value="{{empname}}" style="display: none" />
-          <tr>
-            <th id="head1">Name नाम</th>
-            <th id="head2">Ticket No.  टिकट नंबर .</th>
-            <th id="head3">Date of Accident - दुर्घटना की तिथि  </th>         
-          </tr>
-          <tr>
-            <td>{{empname}}</td>
-            <td>{{ticketno}}</td> 
-          </tr>
-      
-        </thead>
-        <tbody id="projectData">
-            
-        </tbody> 
-      </table>
-      <input type="hidden" name="totmebs" id="totmebs" value="0">
- 
-</div>
+
  
 <div class="container" id="accident_info">
         
       
         <label for="cause">What was the the accident due to ?</label>
-        <input id="cause" type="text" name="cause" placeholder="Cause of the accident.." required><br>
+        <input id="cause" type="text" name="cause" placeholder="Cause of the accident.." required value="{{values.cause}}"><br>
  
       
         <label for="reason">Is it due to negligence, if yes, state reasons ?</label>
@@ -367,7 +330,7 @@ th, td {
                 
                   </tr>
                     </table>
-              </table>
+              </br>
           
       
           <br><br>
@@ -383,17 +346,23 @@ th, td {
             <br>
  
  
-            <label for="Certification">ANNEXURE </label><br>
+            <label for="Certification">ANNEXURE </label><b>
           <ol> 
               <li><input type="checkbox" name="a1" value="This is an eye injury" required>  This is an eye injury</li>
-              <li> The emplpoyee was <input type="radio" name="a2" value="yes" required> was not <input type="radio" name="a2" value="no" required>  provided with goggles </li>
+              <li> The employee was <input type="radio" name="a2" value="yes" required> was not <input type="radio" name="a2" value="no" required>  provided with goggles </li>
             <li> He was <input type="radio" name="a3" value="yes" required> was not <input type="radio" name="a3" value="no" required>  wearing them at the time of accident</li>
           </ol>
-          <table style="float: right;">
+          <label style="width: 150px;float:right;" for="sno"><b>SS/ FO</b></label><br>
+          <select class="form-control ll" id="ssfo" name="SSFO" style="width: 150px;float:right;" required>
+                <option  id="op_shop" name="Chargeman" selected disabled hidden >SS/ FO</option> 
+                {% for lc in empname %}
+                  <option value="{{lc}}">{{lc}}</option>
+                  {% endfor %}
+                  </select><br>
+         {% comment %}  <table style="float: right;">
             <tr>
               <td>
-                  <label style="width: 150px;" for="sno"><b>SS/ FO</b></label><br>
- 
+                  <label style="width: 150px;" for="sno"><b>SS/ FO</b></label><br> 
                 <select class="form-control ll" id="ssfo" name="SSFO" style="width: 150px;" required>
                 <option  id="op_shop" name="Chargeman" selected disabled hidden >SS/ FO</option> 
                 {% for lc in empname %}
@@ -402,14 +371,9 @@ th, td {
                   </select>
               </td>
             </tr>
- 
- 
-          </table>
-          
- 
-        
-      </div>
- 
+          </table>{% endcomment %}
+      </div> 
+
 <center>
   <input id="submit" type="submit" name="proceed" value="Save" id="submitted"> 
   <input id="print" type="button" onclick="printDiv()" value="Print"> 
