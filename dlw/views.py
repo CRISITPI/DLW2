@@ -5575,6 +5575,7 @@ def axlewheelmachining_section(request):
         if submit=='InspectAxle':
             
             sno=int(request.POST.get('snoaxle'))
+            print("sno",sno)
             ustaxle=request.POST.get('ustaxle')
             axlelength=request.POST.get('axlelength')
             journalaxle=request.POST.get('journalaxle')
@@ -5596,7 +5597,7 @@ def axlewheelmachining_section(request):
                 AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True)
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
-                messages.error(request,"Please Select S.No.!")
+                messages.error(request,"Please Enter all records!")
 
         
         return HttpResponseRedirect("/axlewheelmachining_section/")

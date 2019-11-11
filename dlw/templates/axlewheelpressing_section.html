@@ -681,7 +681,57 @@ footer, .page-content::after{
       </div>
     </div>
   </div>
-    
+    <!--Dispatch-->
+    <!-- Modal -->
+    <div class="modal fade" id="DispatchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel2">AxleWheelPressing</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+             <div class="modal-body">       
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="">Serial No.</label>
+                                            <input type="number" class="form-control" id="dissno" name="dissno" required>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                   <div class="col-6">
+                                    <div class="dropdown">
+                                      <select name="dislocos" type="form-control ll" required>
+                                        <option value="" hidden selected>Dispatch To</option>
+                                        <option value="Bogie Assembly">Bogie Assembly and Dispatch</option>
+                                      </select>
+                                      </div>
+                                    </div>  
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                     </div>    
+
+<!--Delete-->
+<!-- Modal -->
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel3">AxleWheelPressing</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
 
 </form>
 
