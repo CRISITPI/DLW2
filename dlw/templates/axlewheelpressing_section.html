@@ -81,12 +81,12 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Dispatch</font>
                          </button>
                     </li>
@@ -732,6 +732,24 @@ footer, .page-content::after{
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+               <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                    <label for="">Serial No.</label>
+                                    <input type="number" class="form-control" id="delsno" name="delsno"  required>
+                            </div> 
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
+            </div>
+            </form>
+        </div>
+      </div>
+    </div>   
+
 
 </form>
 
