@@ -3790,3 +3790,31 @@ class viewUrlPermission(models.Model):
     navitem = models.CharField(max_length=50,null=True,blank=True)
     urlname = models.CharField(max_length=50,null=True,blank=True)
     rolespermission = models.CharField(max_length=500,null=True,blank=True)
+
+
+class M30(models.Model):
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    part_no = models.CharField(db_column='PART_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    req = models.CharField(db_column='REQUEST', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(db_column='date', max_length=10, blank=True, null=True, default='0')  # Field name made lowercase.
+    waiver_date= models.CharField(db_column='WAIVER_DATE', max_length=10, blank=True, null=True, default='0')  # Field name made lowercase.
+    qty = models.CharField(db_column='QUANTITY', max_length=8, blank=True,null=True)  # Field name made lowercase.
+    dimension = models.CharField(db_column='DIMENSION', max_length=15, blank=True,null=True)
+    spe_val = models.CharField(db_column='SPECIFIED VALUE', max_length=10, blank=True, null=True)
+    obt_val = models.CharField(db_column='OBTAINED VALUE', max_length=10, blank=True, null=True)
+    interc = models.CharField(db_column='INTERCHANGEABLITY', max_length=50, blank=True, null=True)
+    waiver_no = models.CharField(db_column='WAIVER_NO', max_length=12, blank=True, null=True)
+    non_conf_des = models.CharField(db_column='NON_CONFORMANCE_DES', max_length=50, blank=True, null=True)
+    reason_for_non_conf = models.CharField(db_column='REASON_CONFORMANCE', max_length=50, blank=True, null=True)
+    corr_action_plan = models.CharField(db_column='CORRECTIVE_ACTION_PLAN', max_length=50, blank=True, null=True)
+    remarks_hod = models.CharField(db_column='REMARKS_HOD', max_length=50, blank=True, null=True)
+    remarks_cqam = models.CharField(db_column='REMARKS_CQAM', max_length=50, blank=True, null=True)
+    remarks_cde = models.CharField(db_column='REMARKS_CDE', max_length=50, blank=True, null=True)
+    loco_fr = models.CharField(db_column='LOCO_FROM', max_length=10, blank=True, null=True)
+    loco_to = models.CharField(db_column='LOCO_TO', max_length=10, blank=True, null=True)
+    request_no = models.CharField(db_column='REQUEST_NO', max_length=15, blank=True, null=True)
+    specification_no = models.CharField(db_column='SPECIFICATION_NUMBER', max_length=15, blank=True, null=True)
+
+    class Meta:
+        db_table = 'M30'
