@@ -158,6 +158,8 @@ urlpatterns = [
     path('maintain/', viewsPermission, name='viewsPermission'),
     path('maintain/delete/', viewsPermissiondelete, name='viewsPermissiondelete'),
     path('maintain/update/', viewsPermissionUpdate, name='viewsPermissionUpdate'),
-    path('MG33view/', MG33view, name='MG33view')
-
+    path('MG33view/', MG33view, name='MG33view'),
+    path('m30view/', m30view, name='m30view'),
+    path('ajax/m30getpartno/', m30getpartno, name='m30getpartno'),
+    path('ajax/m30getstaffno/', m30getstaffno, name='m30getstaffno'),
 ]
