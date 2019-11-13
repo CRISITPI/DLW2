@@ -114,9 +114,7 @@
 <table  align="center">
 <tr>
 <th>DOCUMENT NO:</th>
-{% for i in obj2 %}
-    <td><u>{{i.m2sln}}</u></td>
-{% endfor %}
+<th><input type="text" name="doc_no" value="" required></th>
 <th></th>
 <th></th>
 <th></th>
@@ -130,7 +128,9 @@
 {% for i in obj %}
     
     <td><u>{{i.m13_no}}</u></td>
+    <input type="hidden" name="m13_no" value="{{i.m13_no}}">
 {% endfor %}
+
 <th></th>
 <th></th>
 <th></th>
@@ -139,52 +139,89 @@
 <th></th>
 <th></th><th></th><th></th><th></th><th></th><th></th>
 
-<th>DATED:</th>
+{% comment %} <th>DATED:</th> {% endcomment %}
 
-{% for i in obj %}
+{% comment %} {% for i in obj %}
     
-    <td><u>{{i.m13_prtdt}}</u></td>
-{% endfor %}
+    <td><u>{{i. m13_prtdt}}</u></td>
+{% endfor %} {% endcomment %}
 </tr>
 </table>
 <table border="2" align="center">
 <tr>
     <th>SHOP SECTION</th>
-    <td>{{shop_sec}}</td>
-    <th>WORK ORDER NUMBER</th>
-    <td>{{wo_no}}</td>
+    
+    <th>ORDER & BATCH NUMBER</th>
+    
     <th>COST & DETAIL NO</th>
-    <td><input type="text" name="cd_no" value=""></td>
+    <th colspan="3" align="center">UNIT</th>
+    
 </tr>
 <tr>
-    <th>WT./QTY.RETURNED</th>
-    <td><input type="text" name="qty_ret" value=""></td>
-    <th>WT./QTY/RECD INWARD</th>
-    <td><input type="text" name="qty_recd" value="" maximum="5"></td>
-    <th>RATE</th>
-    <td><input type="text" name="rate" value=""></td>
+    <td>{{shop_sec}}</td>
+    <input type="hidden" name="shop_sec" value="{{shop_sec}}">
+    <td>{{wo_no}}</td>
+    <input type="hidden" name="wo_no" value="{{wo_no}}">
+    <td ><input type="text" name="c_d_no" value=""></td>
+    <td colspan="3" align="center"><input type="text" name="unit" value="" required></td>
+</tr>
+<tr>
+    <th colspan="2"><center>WT./QTY.RETURNED</center></th>
+    
+    <th colspan="2"><center>WT./QTY.RECD INWARD</center></th>
+    <th colspan="2"><center>VALUE</center></th>
 
+</tr>
+<tr>
+    <th>METRIC TON</th>
+    <th>QTY.</th>
+    <th>METRIC TON</th>
+    <th>QTY.</th>
+    <th>Rs.</th>
+    <th>P.</th>
+    
+</tr>
+<tr>
+    
+    <td><input type="text" name="metric_ton_returned" value="" required></td>
+    <td><input type="text" name="qty_ret" value="" required></td>
+    <td><input type="text" name="metric_ton_received" value="" required></td>
+    <td><input type="text" name="qty_rec_inward" value="" maximum="5" required></td>
+    <td><input type="text" name="rs" value="" required></td>
+    <td><input type="text" name="p" value="" required></td>
+    
 
 </tr>
 
 <tr>
     <th>DESCRIPTION</th>
+    
+    <th>P.L.NO & CLASS</th>
+    
+    <th>ALLOCATION</th>
+    <th colspan="3" align="center">RATE</th>
+    
+</tr>
+<tr> 
     {% for i in obj1 %}
         <td>{{i.des}}</td>
-    {% endfor %}
-    <th>P.L.NO & CLASS</th>
+        <input type="hidden" name="des" value="{{i.des}}">
+    {% endfor %} 
+    
     <td>{{part_no}}</td>
-    <th>ALLOCATION</th>
-    <td><input type="text" name="allo" value=""></td>
+    <input type="hidden" name="part_no" value="{{part_no}}"> 
+    <td><input type="text" name="allocation" value="" required></td>
+    <td colspan="3" align="center"><input type="text" name="rate" value="" required></td>
+
     
 </tr>
 </table>
 
 <table border="2" align="center">
 <tr>
-    <th colspan="2" align="center">MATERIAL RETURNED</th>
-    <th colspan="2" align="center">MATERIAL RECEIVED INWARD</th>
-    <th colspan="2" align="center">POSTED</th>
+    <th colspan="2"><center>MATERIAL RETURNED</center></th>
+    <th colspan="2"><center>MATERIAL RECEIVED INWARD</center></th>
+    <th colspan="2"><center>POSTED</center></th>
 
     
 </tr>
@@ -199,11 +236,11 @@
 
 <tr>
     
-    <td><input type="date" id="date"  value="0" name="date"></td>
+    <td><input type="date" id="date"  value="0" name="mat_ret_date" required></td>
     <td></td>
-    <td><input type="date" id="date"  value="0" name="date"></td>
+    <td><input type="date" id="date"  value="0" name="mat_rec_date" required></td>
     <td></td>
-    <td><input type="date" id="date"  value="0" name="date"></td>
+    <td><input type="date" id="date"  value="0" name="posted_date" required></td>
     <td></td>
     
 </tr>
@@ -215,7 +252,15 @@
 
 <center>
     <input type="submit" name="proceed" value="Submit">
+
+    {% if noprint == 0 %}
     <input type="button" onclick="printDiv()" value="Print">
+    {% endif %}
+
+    {% if noprint == 1 %}
+    <input type="button" disabled onclick="printDiv()" value="Print">
+    {% endif %}
+
 </center> 
 </div>
 {% endif %}

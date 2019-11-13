@@ -3822,3 +3822,29 @@ class M30(models.Model):
 
     class Meta:
         db_table = 'M30'
+
+
+
+class M15(models.Model):
+    login_id = models.CharField(max_length=10, blank=True, null=True)
+    last_modified = models.DateTimeField(blank=True, null=True)
+    shop = models.CharField(max_length=4, blank=True, null=True)
+    wo = models.CharField(max_length=7, blank=True, null=True)
+    part_no = models.CharField(max_length=8, blank=True, null=True)
+    unit = models.CharField(max_length=8, blank=True, null=True)
+    allocation = models.CharField(max_length=8, blank=True, null=True)
+    rate = models.CharField(max_length=8, blank=True, null=True)
+    rupees = models.CharField(max_length=10, blank=True, null=True)
+    paise = models.CharField(max_length=10, blank=True, null=True)
+    mat_ret_date = models.CharField(max_length=10, blank=True, null=True)
+    mat_rec_date = models.CharField(max_length=10, blank=True, null=True)
+    m13_no = models.CharField(max_length=50, blank=True, null=True)
+    des = models.CharField(max_length=50, blank=True, null=True)
+    posted_date = models.CharField(max_length=10, blank=True, null=True)
+    doc_no = models.CharField(max_length=50, blank=True, null=True)
+    c_d_no = models.CharField(max_length=10, blank=True, null=True)
+    #date = models.CharField(max_length=10, blank=True, null=True)
+    qty_ret = models.CharField(max_length=10, blank=True, null=True)
+    qty_rec_inward = models.CharField(max_length=10, blank=True, null=True)
+    metric_ton_returned = models.CharField(max_length=50, blank=True, null=True)
+    metric_ton_received = models.CharField(max_length=50, blank=True, null=True)
