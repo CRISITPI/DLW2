@@ -83,7 +83,6 @@
                         </td>
                         </tr>
 
-
                     </table>
                     
                     <center><input type="submit" value="Proceed" name="proceed" id="proceed" style="display: none"/></center>
@@ -97,6 +96,9 @@
         <tr>
             <th>SHOP SECTION</th>
             <th>Part NO</th>
+            <th>RM PART NO</th>
+            <th>EPC </th>
+            <th>PTC</th>
            
         </tr>
         <tr>
@@ -106,8 +108,9 @@
             
             <td>{{part_no}}</td>
             <input type="hidden" name="partno" value="{{part_no}}">
-            
-            
+            <td>{{rmpart}}</td>
+            <td>{{epcv}}</td>
+            <td>{{ptcv}}</td>
         </tr>
     </table>
 </br>
@@ -146,7 +149,7 @@
         <td>
             {{i.ncp_jbs}}
         </td>
-        
+       
         
     </tr>
     {% endfor %}

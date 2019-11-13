@@ -4735,6 +4735,15 @@ def m1view(request):
         part_no = request.POST.get('part_nop')
         obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec','opn')
         leng = obj.count()
+        epcv=0
+        ptcv=0
+        rmpart=0
+        obj3=Nstr.objects.filter(pp_part=part_no).values('epc','ptc','cp_part').distinct()
+        # print(obj3[0])
+        if len(obj3):
+            epcv=obj3[0]['epc']
+            ptcv=obj3[0]['ptc']
+            rmpart=obj3[0]['cp_part']
         if submitvalue=='Proceed':
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
@@ -4752,6 +4761,7 @@ def m1view(request):
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'obj': obj,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
                 }
             elif(len(rolelist)==1):
                 lent=len(rolelist)
@@ -4769,7 +4779,7 @@ def m1view(request):
                     'len': leng,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
-                    'obj': obj,
+                    'obj': obj,'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -4783,7 +4793,7 @@ def m1view(request):
                     'len': leng,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
-                    'obj': obj,
+                    'obj': obj,'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
                 }
         if submitvalue=='Generate Report':
             shopsec= request.POST.get('shopsec')
@@ -4857,6 +4867,10 @@ def m1genrept1(request,prtno,shopsec):
         'dt':d1,
         'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
     }
+    if request.method=='POST':
+        bckbtn=request.POST.get('backbutton')
+        if bckbtn=='Back':
+            return render(request,"m1view.html",{})
     return render(request,"M1report.html",context)
 
 
