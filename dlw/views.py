@@ -55,7 +55,15 @@ def viewsPermission(request):
     for i in range(len(urlsecond)):
         if urlsecond[i]['link']!='#':
             second.append(urlsecond[i]['link'])
-    urlfinal = first + second
+    urlprefinal = first + second
+    urlmade1 = viewUrlPermission.objects.all().values('urlname').distinct('urlname')
+    urlmade = []
+    for i in range(len(urlmade1)):
+        urlmade.append(urlmade1[i]['urlname'])
+    urlnotmade = []
+    for i in range(len(urlprefinal)):
+        if urlprefinal[i] not in urlmade:
+            urlnotmade.append(urlprefinal[i])
     parentmenu = navbar.objects.all().values('navitem').distinct('navitem')
     parent = []
     for i in range(len(parentmenu)):
@@ -74,7 +82,7 @@ def viewsPermission(request):
     context = {
         'ip':get_client_ip(request),
         'rolelist':rolelist,
-        'urlfinal' : urlfinal,
+        'urlnotmade' : urlnotmade,
         'parentmenu':parent,
     }
     return render(request,'viewsPermission.html',context)
@@ -84,17 +92,7 @@ def viewsPermission(request):
 
 
 def viewsPermissiondelete(request):
-    urlfirst = navbar.objects.all().values('link').distinct('link')
-    first = []
-    for i in range(len(urlfirst)):
-        if urlfirst[i]['link']!='#':
-            first.append(urlfirst[i]['link'])
-    urlsecond = subnavbar.objects.all().values('link').distinct('link')
-    second = []
-    for i in range(len(urlsecond)):
-        if urlsecond[i]['link']!='#':
-            second.append(urlsecond[i]['link'])
-    urlfinal = first + second
+    urlmade = viewUrlPermission.objects.all().values('urlname').distinct('urlname')
     if request.method=="POST":
         inputurl = request.POST.get('inpurl')
         if inputurl:
@@ -104,7 +102,7 @@ def viewsPermissiondelete(request):
             messages.error(request,'error')
     context = {
         'ip':get_client_ip(request),
-        'urlfinal' : urlfinal,
+        'urlmade' : urlmade,
     }
     return render(request,'viewsPermissiondel.html',context)
 
@@ -114,17 +112,7 @@ def viewsPermissiondelete(request):
 
 def viewsPermissionUpdate(request):
     rolelist = roles.objects.all().values('role').order_by('role').distinct('role')
-    urlfirst = navbar.objects.all().values('link').distinct('link')
-    first = []
-    for i in range(len(urlfirst)):
-        if urlfirst[i]['link']!='#':
-            first.append(urlfirst[i]['link'])
-    urlsecond = subnavbar.objects.all().values('link').distinct('link')
-    second = []
-    for i in range(len(urlsecond)):
-        if urlsecond[i]['link']!='#':
-            second.append(urlsecond[i]['link'])
-    urlfinal = first + second
+    urlmade = viewUrlPermission.objects.all().values('urlname').distinct('urlname')
     parentmenu = navbar.objects.all().values('navitem').distinct('navitem')
     parent = []
     for i in range(len(parentmenu)):
@@ -146,7 +134,7 @@ def viewsPermissionUpdate(request):
     context = {
         'ip':get_client_ip(request),
         'rolelist':rolelist,
-        'urlfinal' : urlfinal,
+        'urlmade' : urlmade,
         'parentmenu':parent,
     }
     return render(request,'viewsPermissionUpdate.html',context)
