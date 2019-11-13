@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
-from dlw.models import empmast,empmast
+from dlw.models import *
 
 
 
@@ -17,18 +17,28 @@ from dlw.models import empmast,empmast
 
 
 
-def role_required(allowed_roles=[]):
+def role_required(urlpass):
     def decorator(func):
         def wrap(request,*args,**kwargs):
             cuser=request.user
             usermaster=empmast.objects.get(empno=cuser)
             rolelist=usermaster.role.split(", ")
+            allowed_roles = []
+            allowed_roles = refpermission(urlpass)
             if(all (x in allowed_roles for x in rolelist)):
                 return func(request,*args,**kwargs)
             else:
                 raise PermissionDenied
         return wrap
     return decorator
+
+
+def refpermission(urlpass):
+    roles = viewUrlPermission.objects.all().filter(urlname=urlpass).first()
+    roleslist = []
+    roleslist = roles.rolespermission.split(",")
+    roleslist = [x.strip() for x in roleslist]
+    return roleslist
 
 
 
