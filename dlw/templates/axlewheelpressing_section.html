@@ -216,7 +216,7 @@ footer, .page-content::after{
                                             </div>
                                             <div class="col-6">
                                               <label for="">Wheel No(DE)</label>
-                                              <select name="wheelno_de" id="wheellist" class="form-control ll" required>
+                                              <select name="wheelno_de" id="wheelno_de" class="form-control ll" required>
                                                 <datalist id="optionsdata">
                                                   <option value="" hidden selected>Select Wheel No.</option>  
                                                       {% for c in mywheel %}
@@ -230,19 +230,10 @@ footer, .page-content::after{
 
                                 <div class="row">   
                                 <div class="col-6">
-                                    <label for="">Wheel No(NDE)</label>
-                                              <!-- <select name="wheelno_nde" id="wheelno_nde" class="form-control ll" required>
-                                                      <option value="" hidden selected>Select Wheel No.</option>  
-                                                      {% for e in mywheel %}
-                                                      <option>{{e.wheel_no}}</option>
-                                                      {% endfor %}
-                                              </select>  -->
-                                              <select name="wheelno_nde" id="wheelno_nde" class="form-control ll" onchange="update(this);">
-                                                      <option value="" hidden selected>Select Wheel No.</option>  
-                                                      {% for e in mywheel %}
-                                                      <option>{{e.wheel_no}}</option>
-                                                      {% endfor %}
-                                            </select>
+                                <label for="">Wheel No(NDE)</label>
+                                          <select name="wheelno_nde" id="wheelno_nde" class="form-control ll">
+                                                  <option value="" hidden selected>Select Wheel No.</option>
+                                        </select>
                                 </div> 
                                 <div class="col-6">
                                         <label for="">Bull Gear No.</label>
@@ -661,7 +652,9 @@ footer, .page-content::after{
                                   </div> 
                                   <div class="col-6">
                                           <label for="">Wheel No(NDE)</label>
-                                          <input type="text" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
+                                          <select input type="number" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
+                                          <option value="" hidden selected>Select Wheel No(NDE)</option> 
+                                          </select>
                                   </div> 
                                   <div class="col-6">
                                           <label for="">Bull Gear No.</label>
@@ -825,6 +818,7 @@ footer, .page-content::after{
                         dataType : 'json',
                         data : data,
                         success : function(response){
+                          console.log(response);
                                   var elementsadded = document.querySelectorAll(".neweledoc");
                                       if(elementsadded.length>0){
                                           var elementsaddedarr = Array.from(elementsadded);
