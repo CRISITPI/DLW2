@@ -15,6 +15,34 @@
                              });
                          });
                      </script>
+                <script>
+                    $(document).ready(function () {
+                         $('#in_qty').datepicker({
+                             dateFormat: 'dd-mm-yy'
+                         });
+                     });
+                 </script> 
+                 <script>
+                    $(document).ready(function () {
+                         $('#out_qty').datepicker({
+                             dateFormat: 'dd-mm-yy'
+                         });
+                     });
+                 </script>
+                 <script>
+                    $(document).ready(function () {
+                         $('#editout_qty').datepicker({
+                             dateFormat: 'dd-mm-yy'
+                         });
+                     });
+                 </script>
+                 <script>
+                    $(document).ready(function () {
+                         $('#editin_qty').datepicker({
+                             dateFormat: 'dd-mm-yy'
+                         });
+                     });
+                 </script>     
                      
         </head> 
 
@@ -181,7 +209,7 @@
                                                 <input type="text" class="form-control" name="locos" id="locos" required readonly>
                                                 </div>
                                     <div class="col-6">
-                                        <label for="Axle">Serial Make</label>
+                                        <label for="Axle">Make</label>
                                         <input type="text" class="form-control" name="airbox_make" id="airbox_make" required>
                                     </div>
                                     </div>
@@ -192,19 +220,19 @@
                                             <input type="text" class="form-control" name="airbox_sno" id="airbox_sno" required>
                                     </div>
                                         <div class="col-6">
-                                            <label for="">In Quantity</label>
-                                            <input type="number" class="form-control" name="in_qty" id="in_qty" required>
+                                            <label for="">Machine In Date</label>
+                                            <input type="text" class="form-control" name="in_qty" id="in_qty" placeholder="dd-mm-yyyy" readonly>
                                         </div>
                                         </div>
 
                                         <div class="row">
                                         <div class="col-6">
-                                                <label for="">Out Quantity</label>
-                                                <input type="number" class="form-control" name="out_qty" id="out_qty" required>
+                                                <label for="">Machine Out Date</label>
+                                                <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
                                          </div>
                                          <div class="col-6">
                                                 <label for="">Date(Manually)</label>
-                                                <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" readonly>
                                           </div>
                                         </div>            
 
@@ -271,18 +299,18 @@
                                 
                                         <div class="row">
                                             <div class="col-6">
-                                                <label for="Axle">Serial Make</label>
+                                                <label for="Axle">Make</label>
                                                 <input type="text" class="form-control" name="editairbox_make" id="editairbox_make" required>
                                             </div>
                                             <div class="col-6">
-                                                <label for="">In Quantity</label>
-                                                <input type="number" class="form-control" name="editin_qty" id="editin_qty" required>
+                                                <label for="">Machine In Date</label> 
+                                                <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" required>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
-                                                <label for="">Out Quantity</label>
-                                                <input type="number" class="form-control" name="editout_qty" id="editout_qty" required>
+                                                <label for="">Machine Out Date</label>
+                                                <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" required>
                                             </div>
                                         </div>
                         </div>

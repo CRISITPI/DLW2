@@ -5247,7 +5247,6 @@ def insert_machining_of_air_box(request):
         submit=request.POST.get('submit')
         if submit=='Save':
         
-            
             bo_no=request.POST.get('bo_no')
             bo_date=request.POST.get('bo_date')
             date=request.POST.get('date')
@@ -5256,6 +5255,7 @@ def insert_machining_of_air_box(request):
             airbox_make=request.POST.get('airbox_make')
             in_qty=request.POST.get('in_qty')
             out_qty=request.POST.get('out_qty')
+            print(bo_no,bo_date,date,loco_type,in_qty,out_qty,airbox_make,airbox_sno)
             if bo_no and bo_date and date and loco_type and airbox_sno and airbox_make and in_qty and out_qty:
                obj=MachiningAirBox.objects.create()
                obj.bo_no=bo_no
@@ -5569,14 +5569,16 @@ def axlewheelmachining_section(request):
     
             sno=int(request.POST.get('snowheel'))
             oustwhl=request.POST.get('ustwhl')
+            oustwhl_date=request.POST.get('ustwhl_date')
+            oustwhl_status=request.POST.get('ustwhl_status')
             ohub_lengthwhl=request.POST.get('hub_lengthwhl')
             otread_diawhl=request.POST.get('tread_diawhl')
             orim_thicknesswhl=request.POST.get('rim_thicknesswhl')
             obore_diawhl=request.POST.get('bore_diawhl')
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
-            if oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True)
+            if oustwhl_status and oustwhl_date and oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
+                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True)
                 messages.success(request, 'Wheel Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -5586,6 +5588,8 @@ def axlewheelmachining_section(request):
             sno=int(request.POST.get('snoaxle'))
             print("sno",sno)
             ustaxle=request.POST.get('ustaxle')
+            ustaxle_date=request.POST.get('ustaxle_date')
+            ustaxle_status=request.POST.get('ustaxle_status')
             axlelength=request.POST.get('axlelength')
             journalaxle=request.POST.get('journalaxle')
             throweraxle=request.POST.get('throweraxle')
@@ -5602,8 +5606,8 @@ def axlewheelmachining_section(request):
             journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
-            if ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True)
+            if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
+                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True)
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all records!")
@@ -5626,6 +5630,7 @@ def axle_editsno(request):
         myval=list(AxleWheelMachining.objects.filter(sno=mysno).values('bo_no','bo_date','date','wheel_no','wheel_make','loco_type','wheel_heatcaseno','axle_no','axle_make','axle_heatcaseno'))
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400) 
+
 
 
 
@@ -7370,27 +7375,71 @@ def m13view(request):
             #leng2 = obj2.count()
             # print(obj)
             # print(obj1)
-
-            context = {
-                        'obj': obj,
-                        'obj1': obj1,
-                        #'obj2': obj2,
-                        'len': leng,
-                        'len1':leng1,
-                        #'len2':leng2,
-                        'shop_sec': shop_sec,
-                        'wo_no': wo_no,
-                        'part_no': part_no,
-                        
-                        'sub' : 1,
-                        'nav':nav,
-                        'ip':get_client_ip(request),  
-                        'subnav':subnav,
-            }
-
-
-
-
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+                
+            elif(len(rolelist)>1):
+                context = {
+                    'sub': 1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
 
         if submitvalue=='Save':
                 slno= request.POST.get('slno')
@@ -9016,30 +9065,72 @@ def m13insert(request):
             #obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
             leng = obj.count()
             leng1 = obj1.count()
-            #leng2 = obj2.count()
             print(obj)
             print(obj1)
-
-            context = {
-                        'obj': obj,
-                        'obj1': obj1,
-                        #'obj2': obj2,
-                        'len': leng,
-                        'len1':leng1,
-                        #'len2':leng2,
-                        'shop_sec': shop_sec,
-                        'wo_no': wo_no,
-                        'part_no': part_no,
-                        
-                        'sub' : 1,
-                        'nav':nav,
-                        'ip':get_client_ip(request),  
-                        'subnav':subnav,
-            }
-
-
-
-
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
 
         if submitvalue=='Save':
                 from decimal import Decimal
