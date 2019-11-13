@@ -62,7 +62,7 @@ def viewsPermission(request):
         urlmade.append(urlmade1[i]['urlname'])
     urlnotmade = []
     for i in range(len(urlprefinal)):
-        if urlprefinal[i] not in urlmade:
+        if urlprefinal[i] not in urlmade and urlprefinal[i]!='/password_reset_inside/':
             urlnotmade.append(urlprefinal[i])
     parentmenu = navbar.objects.all().values('navitem').distinct('navitem')
     parent = []
