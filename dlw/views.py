@@ -7621,9 +7621,9 @@ def m13getno(request):
 
 
 def ShowLeaf(request,part,res):
-    obj1 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='M',l_fr='0000',l_to='9999').values('cp_part').distinct()
-    obj2 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='Z',l_fr='0000',l_to='9999').values('cp_part').distinct()
-    obj3 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='C',l_fr='0000',l_to='9999').values('cp_part').distinct()
+    obj1 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='M',l_to='9999').values('cp_part').distinct()
+    obj2 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='Z',l_to='9999').values('cp_part').distinct()
+    obj3 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='C',l_to='9999').values('cp_part').distinct()
     final = obj1 | obj2 | obj3
     if final is not None and len(final):
         for i in range(len(final)):
