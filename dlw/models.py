@@ -2600,9 +2600,9 @@ class Shemp(models.Model):
     updt_by = models.CharField(db_column='UPDT_BY', max_length=6, blank=True, null=True)  # Field name made lowercase.
     updt_date = models.DateField(db_column='UPDT_DATE', blank=True, null=True)  # Field name made lowercase.
     rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    ticket_no = models.CharField(db_column='TICKET_NO', max_length=20, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'SHEMP'
 
 
