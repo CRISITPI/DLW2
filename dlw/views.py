@@ -7621,13 +7621,16 @@ def m13getno(request):
 
 
 def ShowLeaf(request,part,res):
-    obj1 = Cstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='M').values('cp_part').distinct()
-    if obj1 is not None and len(obj1):
-        for i in range(len(obj1)):
-            if obj1[i]['cp_part'] not in res:
-                res.append(obj1[i]['cp_part'])
+    obj1 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='M',l_fr='0000',l_to='9999').values('cp_part').distinct()
+    obj2 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='Z',l_fr='0000',l_to='9999').values('cp_part').distinct()
+    obj3 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='C',l_fr='0000',l_to='9999').values('cp_part').distinct()
+    final = obj1 | obj2 | obj3
+    if final is not None and len(final):
+        for i in range(len(final)):
+            if final[i]['cp_part'] not in res:
+                res.append(final[i]['cp_part'])
                 print(len(res))
-                ShowLeaf(request,obj1[i]['cp_part'],res)
+                ShowLeaf(request,final[i]['cp_part'],res)
     return res
     
 
@@ -7657,15 +7660,45 @@ def CardGeneration(request):
     if request.method=="POST":
         bval=request.POST.get('cardbutton')
         asmno=request.POST.get('asslyno')
-        if bval=="Generate Cards":
+        card = request.POST.get('cardno')
+        print(card)
+        if bval=="Generate Cards" and card=="M2":
             res = []
             obj1 = ShowLeaf(request,asmno,res)
-            print("len = ",len(obj1))
-            print("All is Revealed",obj1)
+            print("len = ",obj1)
             # try:
             #     for j in range(len(obj1)):
             #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
-            #         print(j)
+            #     messages.success(request, 'Successfully Done!')
+            # except:
+            #     messages.error(request,'Some Error Occurred')
+        elif bval=="Generate Cards" and card=="M4":
+            res = []
+            obj1 = ShowLeaf(request,asmno,res)
+            print("len = ",obj1)
+            # try:
+            #     for j in range(len(obj1)):
+            #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+            #     messages.success(request, 'Successfully Done!')
+            # except:
+            #     messages.error(request,'Some Error Occurred')
+        elif bval=="Generate Cards" and card=="M5":
+            res = []
+            obj1 = ShowLeaf(request,asmno,res)
+            print("len = ",obj1)
+            # try:
+            #     for j in range(len(obj1)):
+            #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+            #     messages.success(request, 'Successfully Done!')
+            # except:
+            #     messages.error(request,'Some Error Occurred')
+        elif bval=="Generate Cards" and card=="M14":
+            res = []
+            obj1 = ShowLeaf(request,asmno,res)
+            print("len = ",obj1)
+            # try:
+            #     for j in range(len(obj1)):
+            #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
             #     messages.success(request, 'Successfully Done!')
             # except:
             #     messages.error(request,'Some Error Occurred')

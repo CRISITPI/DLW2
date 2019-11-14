@@ -23,17 +23,22 @@
 
         <div class="col-4">
 
-            {% comment %} <label><h5>WorkOrder No.</h5></label>
-            <br><input type='text' class='form-control' id='wono' name='wono' required/>
-            <br> {% endcomment %}
-
             <label><h5>Assembly No.</h5></label>
             <select class="form-control" name="asslyno" id="asslyno" required>
 	   <option id="roleop" selected disabled hidden>Select Assembly No.</option>
         {% for i in assmno %}
             <option values='{{i.num_1}}'>{{i.num_1}}</option>
         {% endfor %}
-   	</select><br><br>
+   	</select><br>
+         <label><h5>Select Card to generate</h5></label>
+            <select class="form-control" name="cardno" id="cardno" required>
+                <option selected disabled hidden>Select Card</option>
+                <option>M2</option>
+                <option>M4</option>
+                <option>M5</option>
+                <option>M15</option>
+            </select>
+       <br>
 
 
         <center><button type="submit" name="cardbutton" value="Generate Cards" class="btn btn-primary">Generate Cards</button></center>
