@@ -77,8 +77,8 @@
             <label><h5>Select Url</h5></label>
             <select class="form-control" name="inpurl" required>
             <option selected disabled hidden>Select Url</option>
-            {% for list in urlfinal %}
-            <option>{{list}}</option>
+            {% for list in urlmade %}
+            <option>{{list.urlname}}</option>
             {% endfor %}
             </select>
             <br>

@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 <html lang="en">
+        <head>
+            <script>
+               $(document).ready(function () {
+                    $('#date').datepicker({
+                        dateFormat: 'dd-mm-yy'
+                    });
+                });
+            </script>
+            <script>
+                    $(document).ready(function () {
+                         $('#editdate').datepicker({
+                             dateFormat: 'dd-mm-yy'
+                         });
+                     });
+                 </script>
+
+        </head>
    
     <style>
         #customers {
@@ -88,16 +105,16 @@ footer, .page-content::after{
             <tr>
                 <center>
                     {% if messages %}
-                        <ul class="messages">
-                             {% for message in messages %}
-                             <font size="3">
-                             <li>
-                                <h4>{{ message }}</h4>
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <font size="3">
+                            <li>
+                               <h4>{{ message }}</h4>
                             </li>
-                            </font>
-                                {% endfor %}
-                        </ul>
-                            {% endif %}
+                        </font>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </center>
             </tr>
             <tr>
@@ -108,7 +125,8 @@ footer, .page-content::after{
                 <th>Date &nbsp; </th>
                 <th>Traction Motor No. </th>
                 <th>Traction Motor Make </th>
-                </tr>
+                <th>Dispatch To</th>
+            </tr>
         {% for objec in object %}
         <tr>
                 <td>{{objec.sno}} <br></td>
@@ -118,6 +136,7 @@ footer, .page-content::after{
                 <td>{{objec.date}} <br></td>
                 <td>{{objec.tm_no}} <br></td>
                 <td>{{objec.tm_make}} <br></td>
+                <td>{{objec.dispatch_to}} <br><br></td>
         </tr>
         {% endfor %}
         </tbody>
@@ -148,32 +167,29 @@ footer, .page-content::after{
                                         </div>
                                         <div class="col-6">
                                                 <h6><label for="">Batch Order Date</label></h6>
-                                                <input type="text" class="form-control" name="bo_date" id="bo_date" required readonly>
+                                                <input type="text" class="form-control" name="bo_date" id="bo_date" placeholder="yyyy-mm-dd" required readonly>
                                         </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-6">
                                                 <h6><label for="">Loco Type</label></h6>
-                                                <input type="text" class="form-control" name="locos" id="locos" required readonly>
+                                                <input type="text" class="form-control" name="locos" id="locos" placeholder="loco type" required readonly>
                                             </div>
                                        <div class="col-6">
                                             <label for="">Date</label>
-                                            <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
-                                            <input type="date" class="xDateContainer" onchange="setCorrect(this,'date');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-                                            <input type="text" id="date" name="date" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
-                                        </span>
+                                                <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                       </div>
                                    </div>
                                     
                                     <div class="row">   
                                         <div class="col-6">
                                             <label for="">Traction motor No.</label>
-                                            <input type="text" class="form-control" name="tm_no" id="tm_no" placeholder="" required>
+                                            <input type="text" class="form-control" name="tm_no" id="tm_no" placeholder="TM no." required>
                                         </div>   
                                         <div class="col-6">
                                             <label for="">Traction motor Make</label>
-                                            <input type="text" class="form-control" name="tm_make" id="tm_make" placeholder="" required>
+                                            <input type="text" class="form-control" name="tm_make" id="tm_make" placeholder="TM make" required>
                                         </div> 
                                 </div>
                             </div>
@@ -230,11 +246,8 @@ footer, .page-content::after{
                                    </div>
                                    <div class="col-6">
                                       <label for="">Date</label>
-                                      <span style="position: relative;display: inline-block;border: 1px solid #a9a9a9;height: 24px;width: 200px">
-                                      <input type="date" class="xDateContainer" onchange="setCorrect(this,'date');" style="position: absolute; opacity: 0.0;height: 150%;width: 100%;">
-                                      <input type="text" id="editdate" name="editdate" tabindex="-1"><span style="display: inline-block;width: 16px;z-index: 2;float:right;padding-top: 0px;" tabindex="-1">&#9660;</span>
-                                  </span>
-                                </div>
+                                      <input type="text" id="editdate" name="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly> 
+                                   </div>
                                 <div class="col-6">
                                     <label for="">Traction motor Make</label>
                                     <input type="text" class="form-control" id="edittm_make" name="edittm_make" placeholder="" required>
@@ -275,7 +288,7 @@ footer, .page-content::after{
                                 <div class="dropdown">
                                   <select name="dislocos" type="form-control ll" required>
                                     <option value="" hidden selected>Dispatch To</option>
-                                    <option value="Pinion Pressing">Axle & Wheel Pressing Section</option>
+                                    <option value="AxleWheel Pressing">Axle & Wheel Pressing Section</option>
                                   </select>
                                   </div>
                                 </div>  
@@ -439,40 +452,10 @@ footer, .page-content::after{
                                 
                             }
                         })
-                })
+                });
 
-    window.onload = function() {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'date');
-        input.setAttribute('value', 'some text');
-        if (input.value === "some text") {
-            allDates = document.getElementsByClassName("xDateContainer");
-            console.log(allDates);
-            matchEnterdDate = 1;
-            for (var i = 0; i < allDates.length; i++) {
-                allDates[i].style.opacity = "1";
-            }
-        }
-    };
-    //function to convert enterd date to any format
-function setCorrect(xObj, xTraget) {
-    var date = new Date(xObj.value);
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
-    var year = date.getFullYear();
-    if (month != 'NaN') {
-        document.getElementById(xTraget).value = day + "-" + month + "-" + year;
-    } else {
-        if (matchEnterdDate == 1) {
-            document.getElementById(xTraget).value = xObj.value;
-        }
-    }
-
-};
+    
 </script>
 
 </html>  
 {% endblock content %}
-  
-
-    

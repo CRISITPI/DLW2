@@ -15,9 +15,7 @@ from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.generic import View
-from dlw.models import viewUrlPermission,roleMenu,cstr_buffer,M18,empmast,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
-from dlw.models import MG20,M18,empmast,M14M4,BogieAssembly,Cst,testc,navbar,M20new,MG22new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22,m23doc,MG7
-from dlw.models import EpcCode,Cstr,empmast,M13,M14M4,Cst,testc,navbar,M20new,PinionPressing,roles,AxleWheelPressing,shift_history,shift,M2Doc,M5Doc,M5DOCnew,M5SHEMP,Batch,Hwm5,Part,dpo,Oprn,testing_purpose,shop_section,MachiningAirBox,MiscellSection,AxleWheelMachining,subnavbar,Shemp,M7,M22
+from dlw.models import *
 from dlw.serializers import testSerializer
 import re,uuid,copy
 from copy import deepcopy
@@ -33,7 +31,7 @@ from django.contrib.auth.decorators import user_passes_test
 from dlw.decorators import role_required
 from django.db.models import Max
 from django.http import HttpResponseRedirect
-import math
+import math,random
 from random import randint
 # Create your views here.
 #
@@ -57,7 +55,15 @@ def viewsPermission(request):
     for i in range(len(urlsecond)):
         if urlsecond[i]['link']!='#':
             second.append(urlsecond[i]['link'])
-    urlfinal = first + second
+    urlprefinal = first + second
+    urlmade1 = viewUrlPermission.objects.all().values('urlname').distinct('urlname')
+    urlmade = []
+    for i in range(len(urlmade1)):
+        urlmade.append(urlmade1[i]['urlname'])
+    urlnotmade = []
+    for i in range(len(urlprefinal)):
+        if urlprefinal[i] not in urlmade and urlprefinal[i]!='/password_reset_inside/':
+            urlnotmade.append(urlprefinal[i])
     parentmenu = navbar.objects.all().values('navitem').distinct('navitem')
     parent = []
     for i in range(len(parentmenu)):
@@ -76,7 +82,7 @@ def viewsPermission(request):
     context = {
         'ip':get_client_ip(request),
         'rolelist':rolelist,
-        'urlfinal' : urlfinal,
+        'urlnotmade' : urlnotmade,
         'parentmenu':parent,
     }
     return render(request,'viewsPermission.html',context)
@@ -86,17 +92,7 @@ def viewsPermission(request):
 
 
 def viewsPermissiondelete(request):
-    urlfirst = navbar.objects.all().values('link').distinct('link')
-    first = []
-    for i in range(len(urlfirst)):
-        if urlfirst[i]['link']!='#':
-            first.append(urlfirst[i]['link'])
-    urlsecond = subnavbar.objects.all().values('link').distinct('link')
-    second = []
-    for i in range(len(urlsecond)):
-        if urlsecond[i]['link']!='#':
-            second.append(urlsecond[i]['link'])
-    urlfinal = first + second
+    urlmade = viewUrlPermission.objects.all().values('urlname').distinct('urlname')
     if request.method=="POST":
         inputurl = request.POST.get('inpurl')
         if inputurl:
@@ -106,7 +102,7 @@ def viewsPermissiondelete(request):
             messages.error(request,'error')
     context = {
         'ip':get_client_ip(request),
-        'urlfinal' : urlfinal,
+        'urlmade' : urlmade,
     }
     return render(request,'viewsPermissiondel.html',context)
 
@@ -116,17 +112,7 @@ def viewsPermissiondelete(request):
 
 def viewsPermissionUpdate(request):
     rolelist = roles.objects.all().values('role').order_by('role').distinct('role')
-    urlfirst = navbar.objects.all().values('link').distinct('link')
-    first = []
-    for i in range(len(urlfirst)):
-        if urlfirst[i]['link']!='#':
-            first.append(urlfirst[i]['link'])
-    urlsecond = subnavbar.objects.all().values('link').distinct('link')
-    second = []
-    for i in range(len(urlsecond)):
-        if urlsecond[i]['link']!='#':
-            second.append(urlsecond[i]['link'])
-    urlfinal = first + second
+    urlmade = viewUrlPermission.objects.all().values('urlname').distinct('urlname')
     parentmenu = navbar.objects.all().values('navitem').distinct('navitem')
     parent = []
     for i in range(len(parentmenu)):
@@ -148,7 +134,7 @@ def viewsPermissionUpdate(request):
     context = {
         'ip':get_client_ip(request),
         'rolelist':rolelist,
-        'urlfinal' : urlfinal,
+        'urlmade' : urlmade,
         'parentmenu':parent,
     }
     return render(request,'viewsPermissionUpdate.html',context)
@@ -213,7 +199,7 @@ def logout_request(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser"])
+@role_required(urlpass='/homeadmin/')
 def homeadmin(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -238,12 +224,8 @@ def homeadmin(request):
 
 
 
-homeuserrole = viewUrlPermission.objects.all().filter(urlname='/homeuser/').first()
-homeuserroles = []
-homeuserrolelist = homeuserrole.rolespermission.split(",  ")
-homeuserrolelist = [x.strip() for x in homeuserrolelist]
 @login_required
-@role_required(allowed_roles=homeuserrolelist)
+@role_required(urlpass='/homeuser/')
 def homeuser(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -288,12 +270,9 @@ def dynamicnavbar(request,rolelist=[]):
 
 
 
-createuserrole = viewUrlPermission.objects.all().filter(urlname='/createuser/').first()
-createuserrolelist = []
-createuserrolelist = createuserrole.rolespermission.split(", ")
-createuserrolelist = [x.strip() for x in createuserrolelist]
+
 @login_required
-@role_required(allowed_roles=createuserrolelist)
+@role_required(urlpass='/createuser/')
 def create(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -357,12 +336,8 @@ def create(request):
 
 
 
-updatepermissionrole = viewUrlPermission.objects.all().filter(urlname='/update_permission/').first()
-updatepermissionrolelist = []
-updatepermissionrolelist = updatepermissionrole.rolespermission.split(", ")
-updatepermissionrolelist = [x.strip() for x in updatepermissionrolelist]
 @login_required
-@role_required(allowed_roles=updatepermissionrolelist)
+@role_required(urlpass='/update_permission/')
 def update_permission(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -404,7 +379,6 @@ def update_permission(request):
 
 
 @login_required
-@role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge"])
 def update_permission_incharge(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -445,7 +419,6 @@ def update_permission_incharge(request):
 
 
 @login_required
-@role_required(allowed_roles=["Wheel_shop_incharge","Bogie_shop_incharge"])
 def update_emp_shift(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -518,7 +491,6 @@ def shiftsave(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser"])
 def update_emp_shift_admin(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -678,12 +650,9 @@ def getshopempinfo(request):
 
 
 
-deleteuserrole = viewUrlPermission.objects.all().filter(urlname='/delete_user/').first()
-deleteuserrolelist = []
-deleteuserrolelist = deleteuserrole.rolespermission.split(", ")
-deleteuserrolelist = [x.strip() for x in deleteuserrolelist]
+
 @login_required
-@role_required(allowed_roles=deleteuserrolelist)
+@role_required(urlpass='/delete_user/')
 def delete_user(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -724,12 +693,10 @@ def delete_user(request):
 
 
 
-forgetpasswordroles = viewUrlPermission.objects.all().filter(urlname='/forget_password/').first()
-forgetpasswordroleslist = []
-forgetpasswordroleslist = forgetpasswordroles.rolespermission.split(", ")
-forgetpasswordroleslist = [x.strip() for x in forgetpasswordroleslist]
+
+
 @login_required
-@role_required(allowed_roles=forgetpasswordroleslist)
+@role_required(urlpass='/forget_password/')
 def forget_password(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -792,12 +759,8 @@ class ChartData(APIView):
 
 
 
-m2viewroles = viewUrlPermission.objects.all().filter(urlname='/m2view/').first()
-m2viewroleslist = []
-m2viewroleslist = m2viewroles.rolespermission.split(", ")
-m2viewroleslist = [x.strip() for x in m2viewroleslist]
 @login_required
-@role_required(allowed_roles=m2viewroleslist)
+@role_required(urlpass='/m2view/')
 def m2view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -1048,12 +1011,8 @@ def m2getdoc_no(request):
 
 
 
-m4viewroles = viewUrlPermission.objects.all().filter(urlname='/m4view/').first()
-m4viewroleslist = []
-m4viewroleslist = m4viewroles.rolespermission.split(", ")
-m4viewroleslist = [x.strip() for x in m4viewroleslist]
 @login_required
-@role_required(allowed_roles=m4viewroleslist)
+@role_required(urlpass='/m4view/')
 def m4view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -1310,12 +1269,9 @@ def m4getdoc_no(request):
 
 
 
-m14viewroles = viewUrlPermission.objects.all().filter(urlname='/m14view/').first()
-m14viewroleslist = []
-m14viewroleslist = m14viewroles.rolespermission.split(", ")
-m14viewroleslist = [x.strip() for x in m14viewroleslist]
+
 @login_required
-@role_required(allowed_roles=m14viewroleslist)
+@role_required(urlpass='/m14view/')
 def m14view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -1570,12 +1526,9 @@ def m14getdoc_no(request):
 
 
 
-aprodroles = viewUrlPermission.objects.all().filter(urlname='/aprodplan/').first()
-aprodroleslist = []
-aprodroleslist = aprodroles.rolespermission.split(", ")
-aprodroleslist = [x.strip() for x in aprodroleslist]
+
 @login_required
-@role_required(allowed_roles=aprodroleslist)
+@role_required(urlpass='/aprodplan/')
 def bprodplan(request):
     from .models import annual_production,jpo,namedgn,loconame,materialname
     from datetime import date
@@ -2187,12 +2140,8 @@ def bprodplan(request):
 
 
 
-jporoles = viewUrlPermission.objects.all().filter(urlname='/jpo/').first()
-jporoleslist = []
-jporoleslist = jporoles.rolespermission.split(", ")
-jporoleslist = [x.strip() for x in jporoleslist]
 @login_required
-@role_required(allowed_roles=jporoleslist)
+@role_required(urlpass='/jpo/')
 def jpo(request):
     from .models import annual_production,jpo,namedgn
     cuser=request.user
@@ -3888,7 +3837,6 @@ def test(request):
 
 
 @login_required
-@role_required(allowed_roles=["Superuser","Dy_CME/Plg","Dy_CMgm","Dy_CME_Spares"])
 def dpo(request):
     from .models import annual_production
     # locodpo,barrelfirst
@@ -4004,12 +3952,9 @@ def dpo(request):
 
 
 
-dpoinputroles = viewUrlPermission.objects.all().filter(urlname='/dpoinput/').first()
-dpoinputroleslist = []
-dpoinputroleslist = dpoinputroles.rolespermission.split(", ")
-dpoinputroleslist = [x.strip() for x in dpoinputroleslist]
+
 @login_required
-@role_required(allowed_roles=dpoinputroleslist)
+@role_required(urlpass='/dpoinput/')
 def dpoinput(request):
     from datetime import date
     
@@ -4246,12 +4191,9 @@ def dpoinput(request):
 
 
 
-dporeportroles = viewUrlPermission.objects.all().filter(urlname='/dporeport/').first()
-dporeportroleslist = []
-dporeportroleslist = dporeportroles.rolespermission.split(", ")
-dporeportroleslist = [x.strip() for x in dporeportroleslist]
+
 @login_required
-@role_required(allowed_roles=dporeportroleslist)
+@role_required(urlpass='/dporeport/')
 def dporeport(request):
     from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
     from django.db.models import Max
@@ -4724,12 +4666,8 @@ def getcumino(request):
 
 
 
-m1roles = viewUrlPermission.objects.all().filter(urlname='/m1view/').first()
-m1roleslist = []
-m1roleslist = m1roles.rolespermission.split(", ")
-m1roleslist = [x.strip() for x in m1roleslist]
 @login_required
-@role_required(allowed_roles=m1roleslist)
+@role_required(urlpass='/m1view/')
 def m1view(request):
     pa_no = empmast.objects.none()
     cuser=request.user
@@ -4785,6 +4723,15 @@ def m1view(request):
         part_no = request.POST.get('part_nop')
         obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec','opn')
         leng = obj.count()
+        epcv=0
+        ptcv=0
+        rmpart=0
+        obj3=Nstr.objects.filter(pp_part=part_no).values('epc','ptc','cp_part').distinct()
+        # print(obj3[0])
+        if len(obj3):
+            epcv=obj3[0]['epc']
+            ptcv=obj3[0]['ptc']
+            rmpart=obj3[0]['cp_part']
         if submitvalue=='Proceed':
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
@@ -4802,6 +4749,7 @@ def m1view(request):
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'obj': obj,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
                 }
             elif(len(rolelist)==1):
                 lent=len(rolelist)
@@ -4819,7 +4767,7 @@ def m1view(request):
                     'len': leng,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
-                    'obj': obj,
+                    'obj': obj,'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -4833,7 +4781,7 @@ def m1view(request):
                     'len': leng,
                     'shop_sec': shop_sec,
                     'part_no': part_no,
-                    'obj': obj,
+                    'obj': obj,'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
                 }
         if submitvalue=='Generate Report':
             shopsec= request.POST.get('shopsec')
@@ -4858,14 +4806,10 @@ def m1getpano(request):
 
 
 
-m1roles = viewUrlPermission.objects.all().filter(urlname='/m1view/').first()
-m1roleslist = []
-m1roleslist = m1roles.rolespermission.split(", ")
-m1roleslist = [x.strip() for x in m1roleslist]
 @login_required
-@role_required(allowed_roles=m1roleslist)
+@role_required(urlpass='/m1view/')
 def m1genrept1(request,prtno,shopsec):
-    from .models import Part,Partalt
+    from .models import Part,Partalt,Nstr
     today = date.today()
     # dd/mm/YY
     d1 = today.strftime("%d/%m/%Y")
@@ -4879,9 +4823,17 @@ def m1genrept1(request,prtno,shopsec):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
-    obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
-    # print(obj)
+    epcv=0
+    ptcv=0
+    rmpart=0
+    obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight').distinct()
+    print(obj)
+    obj3=Nstr.objects.filter(pp_part=prtno).values('epc','ptc','cp_part').distinct()
+    print(obj3[0])
+    if len(obj3):
+        epcv=obj3[0]['epc']
+        ptcv=obj3[0]['ptc']
+        rmpart=obj3[0]['cp_part']
     obj2 = Oprn.objects.filter(part_no=prtno).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('shop_sec','opn')
     patotal=0
     attotal=0
@@ -4901,7 +4853,12 @@ def m1genrept1(request,prtno,shopsec):
         'pttl':patotal,
         'attl':attotal,
         'dt':d1,
+        'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
     }
+    if request.method=='POST':
+        bckbtn=request.POST.get('backbutton')
+        if bckbtn=='Back':
+            return render(request,"m1view.html",{})
     return render(request,"M1report.html",context)
 
 
@@ -4911,12 +4868,8 @@ def m1genrept1(request,prtno,shopsec):
 
 
 
-m5roles = viewUrlPermission.objects.all().filter(urlname='/m5view/').first()
-m5roleslist = []
-m5roleslist = m5roles.rolespermission.split(", ")
-m5roleslist = [x.strip() for x in m5roleslist]
 @login_required
-@role_required(allowed_roles=m5roleslist)
+@role_required(urlpass='/m5view/')
 def m5view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5203,13 +5156,8 @@ def m5getstaff_no(request):
 
 
 
-
-mairroles = viewUrlPermission.objects.all().filter(urlname='/machining_of_air_box/').first()
-mairroleslist = []
-mairroleslist = mairroles.rolespermission.split(", ")
-mairroleslist = [x.strip() for x in mairroleslist]
 @login_required
-@role_required(allowed_roles=mairroleslist)
+@role_required(urlpass='/machining_of_air_box/')
 def insert_machining_of_air_box(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5240,7 +5188,6 @@ def insert_machining_of_air_box(request):
         submit=request.POST.get('submit')
         if submit=='Save':
         
-            
             bo_no=request.POST.get('bo_no')
             bo_date=request.POST.get('bo_date')
             date=request.POST.get('date')
@@ -5249,6 +5196,7 @@ def insert_machining_of_air_box(request):
             airbox_make=request.POST.get('airbox_make')
             in_qty=request.POST.get('in_qty')
             out_qty=request.POST.get('out_qty')
+            print(bo_no,bo_date,date,loco_type,in_qty,out_qty,airbox_make,airbox_sno)
             if bo_no and bo_date and date and loco_type and airbox_sno and airbox_make and in_qty and out_qty:
                obj=MachiningAirBox.objects.create()
                obj.bo_no=bo_no
@@ -5332,12 +5280,9 @@ def airbox_editsno(request):
 
 
 
-miscroles = viewUrlPermission.objects.all().filter(urlname='/miscellaneous_section/').first()
-miscroleslist = []
-miscroleslist = miscroles.rolespermission.split(", ")
-miscroleslist = [x.strip() for x in miscroleslist]
+
 @login_required
-@role_required(allowed_roles=miscroleslist)
+@role_required(urlpass='/miscellaneous_section/')
 def miscellaneous_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5452,12 +5397,9 @@ def miscell_editsno(request):
 
 
 
-awmacroles = viewUrlPermission.objects.all().filter(urlname='/axlewheelmachining_section/').first()
-awmacroleslist = []
-awmacroleslist = awmacroles.rolespermission.split(", ")
-awmacroleslist = [x.strip() for x in awmacroleslist]
+
 @login_required
-@role_required(allowed_roles=awmacroleslist)
+@role_required(urlpass='/axlewheelmachining_section/')
 def axlewheelmachining_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5562,14 +5504,16 @@ def axlewheelmachining_section(request):
     
             sno=int(request.POST.get('snowheel'))
             oustwhl=request.POST.get('ustwhl')
+            oustwhl_date=request.POST.get('ustwhl_date')
+            oustwhl_status=request.POST.get('ustwhl_status')
             ohub_lengthwhl=request.POST.get('hub_lengthwhl')
             otread_diawhl=request.POST.get('tread_diawhl')
             orim_thicknesswhl=request.POST.get('rim_thicknesswhl')
             obore_diawhl=request.POST.get('bore_diawhl')
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
-            if oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True)
+            if oustwhl_status and oustwhl_date and oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
+                AxleWheelMachining.objects.filter(sno=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_nameaxle=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True)
                 messages.success(request, 'Wheel Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -5577,7 +5521,10 @@ def axlewheelmachining_section(request):
         if submit=='InspectAxle':
             
             sno=int(request.POST.get('snoaxle'))
+            print("sno",sno)
             ustaxle=request.POST.get('ustaxle')
+            ustaxle_date=request.POST.get('ustaxle_date')
+            ustaxle_status=request.POST.get('ustaxle_status')
             axlelength=request.POST.get('axlelength')
             journalaxle=request.POST.get('journalaxle')
             throweraxle=request.POST.get('throweraxle')
@@ -5594,11 +5541,11 @@ def axlewheelmachining_section(request):
             journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
-            if ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
-                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True)
+            if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
+                AxleWheelMachining.objects.filter(sno=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True)
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
-                messages.error(request,"Please Select S.No.!")
+                messages.error(request,"Please Enter all records!")
 
         
         return HttpResponseRedirect("/axlewheelmachining_section/")
@@ -5617,19 +5564,16 @@ def axle_editsno(request):
         mysno=request.GET.get('sels_no')
         myval=list(AxleWheelMachining.objects.filter(sno=mysno).values('bo_no','bo_date','date','wheel_no','wheel_make','loco_type','wheel_heatcaseno','axle_no','axle_make','axle_heatcaseno'))
         return JsonResponse(myval, safe=False)
-    return JsonResponse({"success":False}, status=400) 
+    return JsonResponse({"success":False}, status=400)
 
 
 
 
 
 
-m3roles = viewUrlPermission.objects.all().filter(urlname='/m3view/').first()
-m3roleslist = []
-m3roleslist = m3roles.rolespermission.split(", ")
-m3roleslist = [x.strip() for x in m3roleslist]
+
 @login_required
-@role_required(allowed_roles=m3roleslist)
+@role_required(urlpass='/m3view/')
 def m3view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5890,12 +5834,8 @@ def m3sub(request):
 
 
 
-m7roles = viewUrlPermission.objects.all().filter(urlname='/m7view/').first()
-m7roleslist = []
-m7roleslist = m7roles.rolespermission.split(", ")
-m7roleslist = [x.strip() for x in m7roleslist]
 @login_required
-@role_required(allowed_roles=m7roleslist)
+@role_required(urlpass='/m7view/')
 def m7view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -5918,7 +5858,7 @@ def m7view(request):
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
-            'roles':tmp
+            'roles':tmp,
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -5945,6 +5885,7 @@ def m7view(request):
             'usermaster':usermaster,
             'roles' :rolelist,
             'subnav':subnav,
+            
         }
     if request.method == "POST":
         
@@ -5961,22 +5902,103 @@ def m7view(request):
             leng2 = obj2.count()
             print(obj1,"obj1")
             print(obj2,"obj2")
-            context = {
-                'obj1': obj1,
-                'obj2': obj2,
-                'ran':range(1,32),
-                'len': 31,
-                'len2': leng2,
-                'shop_sec': shop_sec,
-                'wo_no': wo_no,
-                'staff_no': staff_no,
-                'part_no': part_no, 
-                'mon': mon,
-                'sub':1,
-                'nav':nav,
-                'ip':get_client_ip(request),  
-                'subnav':subnav,     
-            }
+            # context = {
+            #     'obj1': obj1,
+            #     'obj2': obj2,
+            #     'ran':range(1,2),
+            #     'len': 31,
+            #     'len2': leng2,
+            #     'shop_sec': shop_sec,
+            #     'wo_no': wo_no,
+            #     'staff_no': staff_no,
+            #     'part_no': part_no, 
+            #     'mon': mon,
+            #     'sub':1,
+            #     'nav':nav,
+            #     'ip':get_client_ip(request),  
+            #     'subnav':subnav,     
+            # }
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':0,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'ran':range(1,2),
+                    'len': 31,
+                    'len2': leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no': staff_no,
+                    'part_no': part_no, 
+                    'mon': mon,
+                    'sub':1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav, 
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'sub':0,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'ran':range(1,2),
+                    'len': 31,
+                    'len2': leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no': staff_no,
+                    'part_no': part_no, 
+                    'mon': mon,
+                    'sub':1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav, 
+                }
+        # return render(request,"m2view.html",context)
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':0,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'ran':range(1,2),
+                    'len': 31,
+                    'len2': leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no': staff_no,
+                    'part_no': part_no, 
+                    'mon': mon,
+                    'sub':1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav, 
+                }
 
         if submitvalue =='Submit':
                 print("hi")
@@ -5985,6 +6007,7 @@ def m7view(request):
                 staff_no = request.POST.get('staff_no')
                 wo_no = request.POST.get('wo_no')
                 part_no = request.POST.get('part_no')
+                inoutnum=request.POST.get("inoutnum")
             
                 m7obj = M7.objects.filter(shop_sec=shop_sec,staff_no=staff_no,part_no=part_no).distinct()
                 print(m7obj)
@@ -6014,6 +6037,26 @@ def m7view(request):
                         objjj.save()
                     #print(in1)
                     #print(date)
+
+                for i in range(1, int(inoutnum)+1):
+                    in1 = request.POST.get('in1add'+str(i))
+                    out = request.POST.get('outadd'+str(i))
+                    month = request.POST.get('month_add'+str(i))
+                    #total_time = request.POST.get('total_time_add'+str(i))
+                    #name = request.POST.get('name'+str(i))
+                    date = request.POST.get('dateadd'+str(i))
+
+                    if in1 and out and date and mon :
+                        obj5=M7.objects.create()
+                        obj5.shop_sec=shop_sec
+                        obj5.staff_no=staff_no
+                        obj5.part_no=part_no
+                        obj5.in1=in1
+                        obj5.out=out
+                        obj5.mon=mon
+                        obj5.date=date
+                        obj5.save()
+
                     
                 wo_nop=Batch.objects.all().values('bo_no').distinct()
  
@@ -6054,12 +6097,9 @@ def m7getpart_no(request):
 
 
 
-pproles = viewUrlPermission.objects.all().filter(urlname='/PinionPress/').first()
-pproleslist = []
-pproleslist = pproles.rolespermission.split(", ")
-pproleslist = [x.strip() for x in pproleslist]
+
 @login_required
-@role_required(allowed_roles=pproleslist)
+@role_required(urlpass='/PinionPress/')
 def pinionpressing_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6209,7 +6249,8 @@ def wheelnde(request):
     if request.method=="GET" and request.is_ajax():
         mybo = request.GET.get('wheel_no')
         print("wheel no:",mybo)
-        myval = list(AxleWheelMachining.objects.filter(wheelfitting_status=False).values('wheel_no').exclude(wheel_no=mybo))
+        myval = list(AxleWheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no').exclude(wheel_no=mybo))
+        print(myval)
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -6218,12 +6259,8 @@ def wheelnde(request):
 
 
 
-m20roles = viewUrlPermission.objects.all().filter(urlname='/M20view/').first()
-m20roleslist = []
-m20roleslist = m20roles.rolespermission.split(", ")
-m20roleslist = [x.strip() for x in m20roleslist]
 @login_required
-@role_required(allowed_roles=m20roleslist)
+@role_required(urlpass='/M20view/')
 def M20view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6449,12 +6486,205 @@ def m20getstaffName(request):
 
 
 
-m26roles = viewUrlPermission.objects.all().filter(urlname='/m26view/').first()
-m26roleslist = []
-m26roleslist = m26roles.rolespermission.split(", ")
-m26roleslist = [x.strip() for x in m26roleslist]
 @login_required
-@role_required(allowed_roles=m26roleslist)
+@role_required(urlpass='/MG33view/')
+def MG33view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    dictemper={}
+    totindb=0
+    
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Add':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            #staffno=request.POST.get('staff_no')
+            lvdate=request.POST.get('lv_date')
+            
+            m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
+            # print(m2)
+            if m2 is not None and len(m2):
+                for mm in range(len(m2)):
+                    temper = {str(mm):{"name":m2[mm].name,
+                                               "ticketno":m2[mm].ticketno,
+                                               "date":m2[mm].alt_date,
+                                               }}
+
+
+                    totindb=totindb+1
+
+                    dictemper.update(copy.deepcopy(temper))
+                    print(dictemper)
+
+            w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('name').distinct()
+            # print("w1",w1)
+            wono=[]
+            for w in range(len(w1)):
+                wono.append(w1[w]['name'])
+                # print(w1[w]['name'])
+            # print("wono",wono)
+            # w1=M5SHEMP.objects.filter(staff_no=staffno).values('staff_no','name').distinct()
+            # wono = list(w1)
+            # ename=wono[0]['name']
+            # obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
+            # print(obj1)
+            
+            alt_date="yyyy-mm-dd"
+            # if obj1 is not None:
+            #     ename=obj1[0].name
+            #     alt_date=obj1[0].alt_date
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    # 'obj1':obj1,
+                    # 'empname':ename,
+                    # 'ticketno':staffno,
+                    'names':wono,
+                    'dictemper':dictemper,
+                    'totindb':totindb,
+                    'alt_date':alt_date,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+        
+        if submitvalue=='Save':
+            print("data saved")
+            shop_sec= request.POST.get('shop_sec')
+            # staff_no=request.POST.get('stffno')
+            lv_date= request.POST.get('lv_date')
+            # name=request.POST.get('empname')
+            # ticketno = request.POST.get('stffno')
+            # alt_date = request.POST.get('alt_date')
+            # M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(staff_no), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(alt_date))
+            tot=0
+            tot=request.POST.get('totmebs')
+            print("total members",tot)
+
+
+            totindb=request.POST.get('totindb')
+            for tb in range(1,int(totindb)+1):
+                namedb=request.POST.get('namedb'+str(tb))
+                ticketnodb=request.POST.get('ticketnodb'+str(tb))
+                datedb=request.POST.get('datedb'+str(tb))
+                print("Dateindb"+str(tb),datedb)
+                M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
+
+
+
+
+            for t in range(1,int(tot)+1):
+                name=request.POST.get('name'+str(t))
+                ticketno=request.POST.get('ticket'+str(t))
+                date=request.POST.get('date'+str(t))
+                print(name,ticketno,date)
+                M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
+                print(shop_sec,lv_date,name,ticketno,date)
+            messages.success(request, 'Successfully Saved !!!, Select new values to update')
+    return render(request, "MG33view.html", context)
+
+
+
+
+
+
+
+@login_required
+@role_required(urlpass='/m26view/')
 def m26view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6488,12 +6718,9 @@ def m26view(request):
 
 
 
-m27roles = viewUrlPermission.objects.all().filter(urlname='/m27view/').first()
-m27roleslist = []
-m27roleslist = m27roles.rolespermission.split(", ")
-m27roleslist = [x.strip() for x in m27roleslist]
+
 @login_required
-@role_required(allowed_roles=m27roleslist)
+@role_required(urlpass='/m27view/')
 def m27view(request):
     pa_no = empmast.objects.none()
     cuser=request.user
@@ -6551,12 +6778,8 @@ def m27view(request):
 
 
 
-m18roles = viewUrlPermission.objects.all().filter(urlname='/m18view/').first()
-m18roleslist = []
-m18roleslist = m18roles.rolespermission.split(", ")
-m18roleslist = [x.strip() for x in m18roleslist]
 @login_required
-@role_required(allowed_roles=m18roleslist)
+@role_required(urlpass='/m18view/')
 def m18view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6656,12 +6879,8 @@ def m26getStaffCatWorkHrs(request):
 
 
 
-m22roles = viewUrlPermission.objects.all().filter(urlname='/m22view/').first()
-m22roleslist = []
-m22roleslist = m22roles.rolespermission.split(", ")
-m22roleslist = [x.strip() for x in m22roleslist]
 @login_required
-@role_required(allowed_roles=m22roleslist)
+@role_required(urlpass='/m22view/')
 def m22view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -6940,13 +7159,8 @@ def m22getstaff(request):
 
 
 
-
-m15roles = viewUrlPermission.objects.all().filter(urlname='/m15view/').first()
-m15roleslist = []
-m15roleslist = m15roles.rolespermission.split(", ")
-m15roleslist = [x.strip() for x in m15roleslist]
 @login_required
-@role_required(allowed_roles=m15roleslist)
+@role_required(urlpass='/m15view/')
 def m15view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7000,16 +7214,21 @@ def m15view(request):
         
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
-            
+            print(request.user)
             shop_sec = request.POST.get('shop_sec')
             wo_no = request.POST.get('wo_no')
             part_no = request.POST.get('part_no')
-            obj = M13.objects.filter(shop=shop_sec,part_no=part_no).values('m13_no','m13_prtdt','plno_class','rate')
+            obj = M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no','rate','allocation').distinct()
             obj1 = Part.objects.filter(partno=part_no).values('des')
-            obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
+            obj2 = M15.objects.filter(shop=shop_sec,wo=wo_no,part_no=part_no).values('doc_no','c_d_no','unit','metric_ton_returned','qty_ret','metric_ton_received','qty_rec_inward','rupees','paise','allocation','rate','mat_ret_date','mat_rec_date','posted_date')
+            noprint=0
+            #obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
             leng = obj.count()
             leng1 = obj1.count()
             leng2 = obj2.count()
+            if len(obj2) == 0:
+                noprint=1
+            #leng2 = obj2.count()
 
             context = {
                         'obj': obj,
@@ -7021,12 +7240,137 @@ def m15view(request):
                         'shop_sec': shop_sec,
                         'wo_no': wo_no,
                         'part_no': part_no,
-                        
+                        'noprint':noprint,
                         'sub' : 1,
                         'nav':nav,
                         'ip':get_client_ip(request),  
                         'subnav':subnav,
             }
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':0,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                    'noprint':noprint,
+                    'sub' : 1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'sub':0,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                    'noprint':noprint,
+                    'sub' : 1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+        
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':0,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                    'noprint':noprint,
+                    'sub' : 1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+        if submitvalue =='Submit':
+                #print("hi")
+                leng=request.POST.get('len')
+                #login_id = request.POST.get('login_id')
+                #last_modified = request.POST.get('last_modified')
+                shop_sec= request.POST.get('shop_sec')
+                wo_no = request.POST.get('wo_no')
+                part_no = request.POST.get('part_no')
+                unit = request.POST.get('unit')
+                allocation = request.POST.get('allocation')
+                rate = request.POST.get('rate')
+                rupees = request.POST.get('rs')
+                paise = request.POST.get('p')
+                mat_ret_date = request.POST.get('mat_ret_date')
+                mat_rec_date = request.POST.get('mat_rec_date')
+                m13_no = request.POST.get('m13_no')
+                #m13_prtdt = request.POST.get('m13_prtdt')
+                des = request.POST.get('des')
+                posted_date = request.POST.get('posted_date')
+                doc_no = request.POST.get('doc_no')
+                c_d_no = request.POST.get('c_d_no')
+                #date = request.POST.get('date')
+                qty_ret = request.POST.get('qty_ret')
+                qty_rec_inward = request.POST.get('qty_rec_inward')
+                metric_ton_returned = request.POST.get('metric_ton_returned')
+                metric_ton_received = request.POST.get('metric_ton_received')
+                now = datetime.datetime.now()
+
+                m15obj = M15.objects.filter(shop=shop_sec,wo=wo_no).distinct()
+                if len(m15obj) == 0:
+                    
+                    M15.objects.create(login_id=request.user,shop=str(shop_sec),wo=str(wo_no),part_no=str(part_no),last_modified=str(now),unit=str(unit),allocation=str(allocation),rate=str(rate),rupees=str(rupees),paise=str(paise),mat_ret_date=str(mat_ret_date),
+                    mat_rec_date=str(mat_rec_date),m13_no=str(m13_no),metric_ton_returned=str(metric_ton_returned),metric_ton_received=str(metric_ton_received),des=str(des),posted_date=str(posted_date),doc_no=str(doc_no),c_d_no=str(c_d_no),qty_ret=str(qty_ret),qty_rec_inward=str(qty_rec_inward))
+                    
+                
+
+                else:
+                    M15.objects.filter(shop=shop_sec,wo=wo_no,part_no=str(part_no)).update(unit=str(unit),allocation=str(allocation),rate=str(rate),rupees=str(rupees),paise=str(paise),mat_ret_date=str(mat_ret_date),
+                    mat_rec_date=str(mat_rec_date),last_modified=str(now),login_id=request.user,posted_date=str(posted_date),metric_ton_returned=str(metric_ton_returned),metric_ton_received=str(metric_ton_received),m13_no=str(m13_no),des=str(des),doc_no=str(doc_no),c_d_no=str(c_d_no),qty_ret=str(qty_ret),qty_rec_inward=str(qty_rec_inward))
+            
+                wo_nop=M13.objects.all().values('wo').distinct()
+
+    
+ 
+    
     return render(request,"m15view.html",context)
 
 def m15getwono(request):
@@ -7090,12 +7434,8 @@ def m18getoperation_desc(request):
 
 
 
-m13roles = viewUrlPermission.objects.all().filter(urlname='/m13view/').first()
-m13roleslist = []
-m13roleslist = m13roles.rolespermission.split(", ")
-m13roleslist = [x.strip() for x in m13roleslist]
 @login_required
-@role_required(allowed_roles=m13roleslist)
+@role_required(urlpass='/m13view/')
 def m13view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7161,27 +7501,71 @@ def m13view(request):
             #leng2 = obj2.count()
             # print(obj)
             # print(obj1)
-
-            context = {
-                        'obj': obj,
-                        'obj1': obj1,
-                        #'obj2': obj2,
-                        'len': leng,
-                        'len1':leng1,
-                        #'len2':leng2,
-                        'shop_sec': shop_sec,
-                        'wo_no': wo_no,
-                        'part_no': part_no,
-                        
-                        'sub' : 1,
-                        'nav':nav,
-                        'ip':get_client_ip(request),  
-                        'subnav':subnav,
-            }
-
-
-
-
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+                
+            elif(len(rolelist)>1):
+                context = {
+                    'sub': 1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
 
         if submitvalue=='Save':
                 slno= request.POST.get('slno')
@@ -7236,14 +7620,15 @@ def m13getno(request):
 
 
 
-def ShowLeaf(request,part,res):
-    obj1 = Cstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc='M').values('cp_part').distinct()
-    if obj1 is not None and len(obj1):
-        for i in range(len(obj1)):
-            if obj1[i]['cp_part'] not in res:
-                res.append(obj1[i]['cp_part'])
+def ShowLeaf(request,part,res,code):
+    obj1 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc=code,l_to='9999').values('cp_part').distinct()
+    final = obj1
+    if final is not None and len(final):
+        for i in range(len(final)):
+            if final[i]['cp_part'] not in res:
+                res.append(final[i]['cp_part'])
                 print(len(res))
-                ShowLeaf(request,obj1[i]['cp_part'],res)
+                ShowLeaf(request,final[i]['cp_part'],res,code)
     return res
     
 
@@ -7251,13 +7636,8 @@ def ShowLeaf(request,part,res):
 
 
 
-
-cardgenroles = viewUrlPermission.objects.all().filter(urlname='/CardGeneration/').first()
-cardgenroleslist = []
-cardgenroleslist = cardgenroles.rolespermission.split(", ")
-cardgenroleslist = [x.strip() for x in cardgenroleslist]
 @login_required
-@role_required(allowed_roles=cardgenroleslist)
+@role_required(urlpass='/CardGeneration/')
 def CardGeneration(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7276,20 +7656,53 @@ def CardGeneration(request):
         'assmno':assmno,
     }
     if request.method=="POST":
+        batch = request.POST.get('batchno')
         bval=request.POST.get('cardbutton')
         asmno=request.POST.get('asslyno')
-        if bval=="Generate Cards":
-            res = []
-            obj1 = ShowLeaf(request,asmno,res)
-            print("len = ",len(obj1))
-            print("All is Revealed",obj1)
-            # try:
-            #     for j in range(len(obj1)):
-            #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
-            #         print(j)
-            #     messages.success(request, 'Successfully Done!')
-            # except:
-            #     messages.error(request,'Some Error Occurred')
+        card = request.POST.get('cardno')
+        if batch and bval and asmno and card:
+            if bval=="Generate Cards" and card=="M2":
+                res = []
+                obj1 = ShowLeaf(request,asmno,res,'M')
+                print("len = ",obj1)
+                # try:
+                #     for j in range(len(obj1)):
+                #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+                #     messages.success(request, 'Successfully Done!')
+                # except:
+                #     messages.error(request,'Some Error Occurred')
+            elif bval=="Generate Cards" and card=="M4":
+                res = []
+                obj1 = ShowLeaf(request,asmno,res)
+                print("len = ",obj1)
+                # try:
+                #     for j in range(len(obj1)):
+                #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+                #     messages.success(request, 'Successfully Done!')
+                # except:
+                #     messages.error(request,'Some Error Occurred')
+            elif bval=="Generate Cards" and card=="M5":
+                res = []
+                obj1 = ShowLeaf(request,asmno,res)
+                print("len = ",obj1)
+                # try:
+                #     for j in range(len(obj1)):
+                #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+                #     messages.success(request, 'Successfully Done!')
+                # except:
+                #     messages.error(request,'Some Error Occurred')
+            elif bval=="Generate Cards" and card=="M14":
+                res = []
+                obj1 = ShowLeaf(request,asmno,res)
+                print("len = ",obj1)
+                # try:
+                #     for j in range(len(obj1)):
+                #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+                #     messages.success(request, 'Successfully Done!')
+                # except:
+                #     messages.error(request,'Some Error Occurred')
+            else:
+                messages.error(request,'Enter all values!')
     return render(request,'CardGeneration.html',context)
 
 
@@ -7298,12 +7711,9 @@ def CardGeneration(request):
 
 
 
-mg7roles = viewUrlPermission.objects.all().filter(urlname='/mg7view/').first()
-mg7roleslist = []
-mg7roleslist = mg7roles.rolespermission.split(", ")
-mg7roleslist = [x.strip() for x in mg7roleslist]
+
 @login_required
-@role_required(allowed_roles=mg7roleslist)
+@role_required(urlpass='/mg7view/')
 def mg7view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7547,12 +7957,8 @@ def mg7getpartno(request):
 
 
 
-m23roles = viewUrlPermission.objects.all().filter(urlname='/m23view/').first()
-m23roleslist = []
-m23roleslist = m23roles.rolespermission.split(", ")
-m23roleslist = [x.strip() for x in m23roleslist]
 @login_required
-@role_required(allowed_roles=m23roleslist)
+@role_required(urlpass='/m23view/')
 def m23view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7680,12 +8086,9 @@ def m23getempno(request):
 
 
 
-baroles = viewUrlPermission.objects.all().filter(urlname='/bogieassembly/').first()
-baroleslist = []
-baroleslist = baroles.rolespermission.split(", ")
-baroleslist = [x.strip() for x in baroleslist]
+
 @login_required
-@role_required(allowed_roles=baroleslist)
+@role_required(urlpass='/bogieassembly/')
 def bogieassembly_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7699,9 +8102,9 @@ def bogieassembly_section(request):
     obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
-    myaxle=AxleWheelMachining.objects.filter(axleinspection_status=True,dispatch_status=True).values('axle_no')
-    mytm=PinionPressing.objects.filter(inspection_status=True,dispatch_status=True).values('tm_no')
-    mymsu=AxleWheelPressing.objects.filter(dispatch_status=True).values('msu_unit_no')
+    myaxle=AxleWheelMachining.objects.all().values('axle_no')
+    mytm=PinionPressing.objects.all().values('tm_no')
+    mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -7874,18 +8277,167 @@ def bogieassemb_editsno(request):
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
-
-mg22roles = viewUrlPermission.objects.all().filter(urlname='/MG22view/').first()
-mg22roleslist = []
-mg22roleslist = mg22roles.rolespermission.split(", ")
-mg22roleslist = [x.strip() for x in mg22roleslist]
 @login_required
-@role_required(allowed_roles=mg22roleslist)
+@role_required(urlpass='/homeadmin/')
+def mg22report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    dictemper={}
+    totindb=0
+    emp=[]
+    empname = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname')
+    if empname is not None and len(empname):
+        for i in range(len(empname)):
+            emp.append(empname[i]['empname'])
+
+    w1=M5SHEMP.objects.all().values('name').distinct().exclude(name__isnull=True)
+    wono=[]
+    for w in range(len(w1)):
+        wono.append(w1[w]['name'])
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'names':wono,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+            'names':wono,
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+            'names':wono,
+        }
+    if request.method=="POST":
+        bvalue=request.POST.get('proceed')
+        shop_sec=request.POST.get('shop_sec')
+        lvdate=request.POST.get('updt_date')
+        empname=request.POST.get('emp_name')
+        accdate=request.POST.get('accdate')
+        if bvalue=='Proceed':
+            m2=MG22new.objects.filter(shop_sec=shop_sec,updt_date=lvdate,name=empname,acc_Date=accdate).first()
+            nocertf=0
+            mm=0
+            # print(m2)
+            if m2 is not None:
+                if m2.c1 or m2.c2 or m2.c3 or m2.c4 is not None:
+                    nocertf=1
+                temper = {str(mm):{"name":m2.name,
+                                               "ticketno":m2.ticketno,"cause":m2.cause,"bgc2":m2.bgc2,
+                        "acdate":m2.acc_Date,"superv":m2.sec_sup,"mistry":m2.mistry,"chargeman":m2.chargeman,"ssfoname":m2.ssfo,
+                        "reasonneg":m2.reason_neg,"epchck":m2.equip_check,"sugg":m2.suggestions,
+                        "cert1":m2.c1,"cert2":m2.c2,"cert3":m2.c3,"cert4":m2.c4,"firstacc":m2.bgc,
+                        "anex1":m2.a1,"anex2":m2.a2,"anex3":m2.a3,
+                                               }}
+                           
+                totindb=1
+                dictemper.update(copy.deepcopy(temper))
+                # print("dictionary")
+                # print(dictemper)
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'names':wono,
+                    'dictemper':dictemper,
+                    'totindb':totindb,
+                    'empname':emp,
+                    "nocertf":nocertf,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    "nocertf":nocertf,
+                    'dictemper':dictemper,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    "nocertf":nocertf,
+                    'dictemper':dictemper,
+                }
+
+    return render(request,"mg22report.html",context)
+
+
+
+
+
+@login_required
+@role_required(urlpass='/MG22view/')
 def MG22view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -7949,19 +8501,18 @@ def MG22view(request):
             shop_sec = request.POST.get('shop_sec')
             # staffno=request.POST.get('staff_no')
             lvdate=request.POST.get('updt_date')
-            m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
-            if m2 is not None and len(m2):
-                for mm in range(len(m2)):
-                    temper = {str(mm):{"name":m2[mm].name,
-                                               "ticketno":m2[mm].ticketno,
-                                               "date":m2[mm].alt_date,
+            m2=MG22new.objects.filter(shop_sec=shop_sec,updt_date=lvdate).last()
+            mm=0
+            if m2 is not None:
+                temper = {str(mm):{"name":m2.name,
+                                               "ticketno":m2.ticketno,"cause":m2.cause,
+                        "acdate":m2.acc_Date,"superv":m2.sec_sup,"mistry":m2.mistry,"chargeman":m2.chargeman,
                                                }}
-                    
-                            
-                    totindb=totindb+1
+                           
+                totindb=totindb+1
 
-                    dictemper.update(copy.deepcopy(temper))
-                    print(dictemper)
+                dictemper.update(copy.deepcopy(temper))
+                print(dictemper)
 
             emp=[]
             staff_name = request.GET.get('empname')
@@ -7970,20 +8521,13 @@ def MG22view(request):
             if empname is not None and len(empname):
                 for i in range(len(empname)):
                     emp.append(empname[i]['empname'])
-            print(emp)
+            # print(emp)
 
             w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('name').distinct()
-            print("w1",w1)
+            # print("w1",w1)
             wono=[]
             for w in range(len(w1)):
                 wono.append(w1[w]['name'])
-                # print(w1[w]['name'])
-            print("wono",wono)
-            # wono = list(w1)
-            # print(wono)
-            # ename=wono[0]['name']
-            # obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
-            # print(obj1)
             alt_date="yyyy-mm-dd"
             # if obj1 is not None:
             #     ename=obj1[0].name
@@ -8121,7 +8665,7 @@ def MG22view(request):
             a1 = request.POST.get('a1')
             a2 = request.POST.get('a2')
             a3 = request.POST.get('a3')
-            SSFO = request.POST.get('ssfo')
+            SSFO = request.POST.get('SSFO')
               
             
             MG22new.objects.create(updt_date=str(updt_date), shop_sec = str(shop_sec),name=str(name),staff_no=str(staff_no), ticketno=str(ticketno), acc_Date =str(acc_Date),cause = str(cause), reason_neg = str(reason_neg), reason_y_neg= str(reason_y_neg),equip_check= str(equip_check), suggestions = str(suggestions), bgc= str(bgc), bgc2= str(bgc2), sec_sup= str(sec_sup), chargeman = str(chargeman), mistry= str(mistry),c1 = str(c1), c2 = str(c2), c3 = str(c3), c4 =str(c4), a1= str(a1), a2= str(a2), a3= str(a3), ssfo= str(SSFO) )
@@ -8162,18 +8706,10 @@ def mg22getstaffName(request):
 
 
 
-mg22reproles = viewUrlPermission.objects.all().filter(urlname='/MG22report/').first()
-mg22reproleslist = []
-mg22reproleslist = mg22reproles.rolespermission.split(", ")
-mg22reproleslist = [x.strip() for x in mg22reproleslist]
+
 @login_required
-@role_required(allowed_roles=mg22roleslist)
-def MG22report(request,prtno,shopsec):
-    from .models import Part,Partalt
-    today = date.today()
-    # dd/mm/YY
-    d1 = today.strftime("%d/%m/%Y")
-    # print("d1 =", d1)
+@role_required(urlpass='/MG22report/')
+def mg22report(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -8183,52 +8719,154 @@ def MG22report(request,prtno,shopsec):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    # obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight','ptc').distinct()
-    # obj3=Partalt.objects.filter(partno=prtno).values('epc').distinct()
-    # print(obj)
-    obj2 = MG22new.objects.filter(shop_sec=shop_sec).values('updt_date', 'shop_sec', 'name', 'staff_no', 'ticketno', 'acc_Date', 'cause', 'reason_neg', 'reason_y_neg', 'equip_check', 'suggestions', 'bgc', 'bgc2', 'sec_sup', 'chargeman', 'mistry', 'c1', 'c2', 'c3', 'c4', 'a1', 'a2', 'a3', 'SSFO')
-    print(obj2)
-    w1=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
-    print("w1",w1)
-    name=[]
+    wo_nop = empmast.objects.none()
+    dictemper={}
+    totindb=0
+    emp=[]
+    empname = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname')
+    if empname is not None and len(empname):
+        for i in range(len(empname)):
+            emp.append(empname[i]['empname'])
+
+    w1=M5SHEMP.objects.all().values('name').distinct().exclude(name__isnull=True)
+    wono=[]
     for w in range(len(w1)):
-        name.append(w1[w]['name'])
-                # print(w1[w]['name'])
-    print("name",name)
-    
-    
-    # patotal=0
-    # attotal=0
-    # if len(obj2):
-    #     for op in obj2:
-    #         patotal=patotal+op['pa']
-    #         attotal=attotal+op['at']
-    context={
-        # 'obj1':obj,
-        'prtno':prtno,
-        'obj':obj2,
-        'nav':nav,
-        'subnav':subnav,
-        'obj3':obj3,
-        'ip':get_client_ip(request),
-        'roles' :rolelist,
-        'pttl':patotal,
-        'attl':attotal,
-        'dt':d1,
-    }
-    return render(request,"MG22report.html",context)
+        wono.append(w1[w]['name'])
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'names':wono,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+            'names':wono,
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+            'names':wono,
+        }
+    if request.method=="POST":
+        bvalue=request.POST.get('proceed')
+        shop_sec=request.POST.get('shop_sec')
+        lvdate=request.POST.get('updt_date')
+        empname=request.POST.get('emp_name')
+        accdate=request.POST.get('accdate')
+        if bvalue=='Proceed':
+            m2=MG22new.objects.filter(shop_sec=shop_sec,updt_date=lvdate,name=empname,acc_Date=accdate).first()
+            nocertf=0
+            mm=0
+            # print(m2)
+            if m2 is not None:
+                if m2.c1 or m2.c2 or m2.c3 or m2.c4 is not None:
+                    nocertf=1
+                temper = {str(mm):{"name":m2.name,
+                                               "ticketno":m2.ticketno,"cause":m2.cause,"bgc2":m2.bgc2,
+                        "acdate":m2.acc_Date,"superv":m2.sec_sup,"mistry":m2.mistry,"chargeman":m2.chargeman,"ssfoname":m2.ssfo,
+                        "reasonneg":m2.reason_neg,"epchck":m2.equip_check,"sugg":m2.suggestions,
+                        "cert1":m2.c1,"cert2":m2.c2,"cert3":m2.c3,"cert4":m2.c4,"firstacc":m2.bgc,
+                        "anex1":m2.a1,"anex2":m2.a2,"anex3":m2.a3,
+                                               }}
+
+                totindb=1
+                dictemper.update(copy.deepcopy(temper))
+                # print("dictionary")
+                # print(dictemper)
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'names':wono,
+                    'dictemper':dictemper,
+                    'totindb':totindb,
+                    'empname':emp,
+                    "nocertf":nocertf,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shop_sec,
+                    'lvdate':lvdate,
+                    'empname':wono[0]['name'],
+                    # 'ticket':wono[0]['staff_no'],
+                }
+
+    return render(request,"mg22report.html",context)
 
 
 
 
 
 
-worelroles = viewUrlPermission.objects.all().filter(urlname='/demandreg/').first()
-worelroleslist = []
-worelroleslist = worelroles.rolespermission.split(", ")
-worelroleslist = [x.strip() for x in worelroleslist]
 @login_required
-@role_required(allowed_roles=worelroleslist)
+@role_required(urlpass='/demandreg/')
 def wogen(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8252,12 +8890,8 @@ def wogen(request):
 
 
 
-axpressroles = viewUrlPermission.objects.all().filter(urlname='/axlewheelpressing_section/').first()
-axpressroleslist = []
-axpressroleslist = axpressroles.rolespermission.split(", ")
-axpressroleslist = [x.strip() for x in axpressroleslist]
 @login_required
-@role_required(allowed_roles=axpressroleslist)
+@role_required(urlpass='/axlewheelpressing_section/')
 def axlewheelpressing_section(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8493,12 +9127,8 @@ def wheelpress_inspectsno(request):
 
 
 
-m13roles = viewUrlPermission.objects.all().filter(urlname='/m13insert/').first()
-m13roleslist = []
-m13roleslist = m13roles.rolespermission.split(", ")
-m13roleslist = [x.strip() for x in m13roleslist]
 @login_required
-@role_required(allowed_roles=m13roleslist)
+@role_required(urlpass='/m13insert/')
 def m13insert(request):
     from .models import M13
     cuser=request.user
@@ -8562,30 +9192,72 @@ def m13insert(request):
             #obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
             leng = obj.count()
             leng1 = obj1.count()
-            #leng2 = obj2.count()
             print(obj)
             print(obj1)
-
-            context = {
-                        'obj': obj,
-                        'obj1': obj1,
-                        #'obj2': obj2,
-                        'len': leng,
-                        'len1':leng1,
-                        #'len2':leng2,
-                        'shop_sec': shop_sec,
-                        'wo_no': wo_no,
-                        'part_no': part_no,
-                        
-                        'sub' : 1,
-                        'nav':nav,
-                        'ip':get_client_ip(request),  
-                        'subnav':subnav,
-            }
-
-
-
-
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+                    wo_nop =wo_nop | req
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    #'obj2': obj2,
+                    'len': leng,
+                    'len1':leng1,
+                    #'len2':leng2,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'part_no': part_no,
+                }
 
         if submitvalue=='Save':
                 from decimal import Decimal
@@ -8660,12 +9332,8 @@ def m13insert(request):
 
 
 
-mg20roles = viewUrlPermission.objects.all().filter(urlname='/mg20view/').first()
-mg20roleslist = []
-mg20roleslist = mg20roles.rolespermission.split(", ")
-mg20roleslist = [x.strip() for x in mg20roleslist]
 @login_required
-@role_required(allowed_roles=mg20roleslist)
+@role_required(urlpass='/mg20view/')
 def mg20view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8835,12 +9503,8 @@ def mg20getstaff(request):
 
 
 
-rolesgenroles = viewUrlPermission.objects.all().filter(urlname='/RoleGeneration/').first()
-rolesgenroleslist = []
-rolesgenroleslist = rolesgenroles.rolespermission.split(", ")
-rolesgenroleslist = [x.strip() for x in rolesgenroleslist]
 @login_required
-@role_required(allowed_roles=rolesgenroleslist)
+@role_required(urlpass='/RoleGeneration/')
 def RoleGeneration(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8908,12 +9572,8 @@ def RoleGeneration(request):
 
 
 
-rolesdelroles = viewUrlPermission.objects.all().filter(urlname='/RoleDelete/').first()
-rolesdelroleslist = []
-rolesdelroleslist = rolesdelroles.rolespermission.split(", ")
-rolesdelroleslist = [x.strip() for x in rolesdelroleslist]
 @login_required
-@role_required(allowed_roles=rolesdelroleslist)
+@role_required(urlpass='/RoleDelete/')
 def RoleDelete(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -8956,3 +9616,229 @@ def RoleDelete(request):
         'roles' : role,
     }
     return render(request,'RoleDelete.html',context)
+
+
+@login_required
+@role_required(urlpass='/m30view/')
+def m30view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            req = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            #req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            part_no = request.POST.get('part_nop')
+            staff_no = request.POST.get('staff_no')
+            date = request.POST.get('date')
+            req = request.POST.get('req')
+            print(req)
+            print(date)
+            obj = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
+            rand=random.randint(0, 100000000)
+            print(rand)
+            obj1= Shemp.objects.filter(shopsec=shop_sec, staff_no=staff_no).values('name', 'desgn', 'cat', 'emp_type').distinct()
+            obj2=Batch.objects.filter(part_no=part_no).values('loco_fr', 'loco_to').distinct()
+            obj3 = M30.objects.filter(shop_sec=shop_sec, staff_no=staff_no, part_no=part_no, date=date).values('qty', 'dimension','spe_val','obt_val','interc', 'waiver_no', 'waiver_date','non_conf_des','reason_for_non_conf','corr_action_plan','remarks_hod','remarks_cde','remarks_cqam','request_no').distinct()
+            if len(obj3) == 0:
+                obj3 =range(0, 1)
+
+            if "Superuser" in rolelist:
+                  tm=shop_section.objects.all()
+                  tmp=[]
+                  for on in tm:
+                      tmp.append(on.section_code)
+                  context = {
+                        'roles':tmp,
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'obj2': obj2,
+                        'obj3': obj3,
+                        'req': req,
+                        'staff_no': staff_no,
+                        'rand': rand,
+
+                        'sub': 1,
+
+                        'date': date,
+
+                        'shop_sec': shop_sec,
+                        'part_no': part_no,
+
+                        'subnav':subnav
+                  }
+            elif(len(rolelist)==1):
+                  for i in range(0,len(rolelist)):
+                        # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                        # wo_nop =wo_nop | req
+
+                        req = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                       # req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                        wo_nop = wo_nop | req
+                  context = {
+                        'wo_nop':wo_nop,
+                        'roles' :rolelist,
+                        'usermaster':usermaster,
+                        'lenm' :len(rolelist),
+                        'nav': nav,
+                        'ip': get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'obj2': obj2,
+                        'obj3': obj3,
+
+
+                        'req': req,
+                        'staff_no': staff_no,
+                        'rand': rand,
+
+                        'sub': 1,
+
+                        'date': date,
+
+                        'shop_sec': shop_sec,
+                        'part_no': part_no,
+
+                        'subnav':subnav
+                  }
+            elif(len(rolelist)>1):
+                  context = {
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'usermaster':usermaster,
+                        'roles' :rolelist,
+                        'obj': obj,
+                        'obj1': obj1,
+                        'obj2': obj2,
+                        'obj3': obj3,
+                        'req': req,
+                        'staff_no': staff_no,
+                        'rand': rand,
+
+                        'sub': 1,
+
+                        'date': date,
+
+                        'shop_sec': shop_sec,
+                        'part_no': part_no,
+
+                        'subnav':subnav
+                  }
+
+        if submitvalue=='Save':
+
+            shop_sec= request.POST.get('shop_sec')
+            part_no= request.POST.get('part_no')
+            staff_no = request.POST.get('staff_no')
+            req = request.POST.get('req')
+            date = request.POST.get('date')
+
+
+            qty = request.POST.get('qty')
+            dimension = request.POST.get('dimension')
+            spe_val = request.POST.get('spe_val')
+            obt_val = request.POST.get('obt_val')
+            loco_fr = request.POST.get('loco_fr')
+            loco_to = request.POST.get('loco_to')
+            interc = request.POST.get('interc')
+            waiver_no = request.POST.get('waiver_no')
+            waiver_date = request.POST.get('waiver_date')
+            non_conf_des = request.POST.get('non_conf_des')
+            reason_for_non_conf = request.POST.get('reason_for_non_conf')
+            corr_action_plan = request.POST.get('corr_action_plan')
+            remarks_hod = request.POST.get('remarks_hod')
+            remarks_cqam = request.POST.get('remarks_cqam')
+            remarks_cde = request.POST.get('remarks_cde')
+            request_no = request.POST.get('rand')
+            specification_no=request.POST.get('spec_no')
+            print(obt_val)
+
+            obj5 = M30.objects.filter(shop_sec=shop_sec, staff_no=staff_no, part_no=part_no, date=date).distinct()
+            print(len(obj5))
+            if len(obj5) == 0:
+                M30.objects.create(shop_sec=str(shop_sec), staff_no=str(staff_no), part_no=str(part_no), specification_no=str(specification_no),  request_no=str(request_no), loco_fr=str(loco_fr), loco_to=str(loco_to), req=str(req), date=str(date), qty=str(qty), dimension=str(dimension), spe_val=str(spe_val), obt_val=str(obt_val), interc=str(interc), waiver_no=str(waiver_no), waiver_date=str(waiver_date), non_conf_des=str(non_conf_des), reason_for_non_conf=str(reason_for_non_conf),  corr_action_plan=str( corr_action_plan), remarks_hod=str(remarks_hod), remarks_cqam=str(remarks_cqam), remarks_cde=str(remarks_cde))
+
+            else:
+
+                M30.objects.filter(shop_sec=shop_sec, staff_no=staff_no, part_no=part_no, date=date).update(specification_no=str(specification_no),  request_no=str(request_no), loco_fr=str(loco_fr), loco_to=str(loco_to), req=str(req), qty=str(qty), dimension=str(dimension), spe_val=str(spe_val), obt_val=str(obt_val), interc=str(interc), waiver_no=str(waiver_no), waiver_date=str(waiver_date), non_conf_des=str(non_conf_des), reason_for_non_conf=str(reason_for_non_conf),  corr_action_plan=str( corr_action_plan), remarks_hod=str(remarks_hod), remarks_cqam=str(remarks_cqam), remarks_cde=str(remarks_cde))
+            wo_no=M2Doc.objects.all().values('batch_no').distinct()
+        messages.success(request, 'Successfully Updated!, Select new values to update')
+    return render(request, "m30view.html", context)
+
+
+def m30getpartno(request):
+    if request.method == "GET" and request.is_ajax():
+
+        shop_sec = request.GET.get('shop_sec')
+        w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
+        partno = list(w1)
+        return JsonResponse(partno, safe = False)
+    return JsonResponse({"success": False}, status=400)
+
+
+
+
+def m30getstaffno(request):
+    if request.method == "GET" and request.is_ajax():
+
+        shop_sec = request.GET.get('shop_sec')
+
+        staff = Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+        staff_no = list(staff)
+        return JsonResponse(staff_no, safe=False)
+    return JsonResponse({"success": False}, status=400)

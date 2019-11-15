@@ -81,12 +81,12 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Dispatch</font>
                          </button>
                     </li>
@@ -216,7 +216,7 @@ footer, .page-content::after{
                                             </div>
                                             <div class="col-6">
                                               <label for="">Wheel No(DE)</label>
-                                              <select name="wheelno_de" id="wheellist" class="form-control ll" required>
+                                              <select name="wheelno_de" id="wheelno_de" class="form-control ll" required>
                                                 <datalist id="optionsdata">
                                                   <option value="" hidden selected>Select Wheel No.</option>  
                                                       {% for c in mywheel %}
@@ -230,19 +230,10 @@ footer, .page-content::after{
 
                                 <div class="row">   
                                 <div class="col-6">
-                                    <label for="">Wheel No(NDE)</label>
-                                              <!-- <select name="wheelno_nde" id="wheelno_nde" class="form-control ll" required>
-                                                      <option value="" hidden selected>Select Wheel No.</option>  
-                                                      {% for e in mywheel %}
-                                                      <option>{{e.wheel_no}}</option>
-                                                      {% endfor %}
-                                              </select>  -->
-                                              <select name="wheelno_nde" id="wheelno_nde" class="form-control ll" onchange="update(this);">
-                                                      <option value="" hidden selected>Select Wheel No.</option>  
-                                                      {% for e in mywheel %}
-                                                      <option>{{e.wheel_no}}</option>
-                                                      {% endfor %}
-                                            </select>
+                                <label for="">Wheel No(NDE)</label>
+                                          <select name="wheelno_nde" id="wheelno_nde" class="form-control ll">
+                                                  <option value="" hidden selected>Select Wheel No.</option>
+                                        </select>
                                 </div> 
                                 <div class="col-6">
                                         <label for="">Bull Gear No.</label>
@@ -661,7 +652,9 @@ footer, .page-content::after{
                                   </div> 
                                   <div class="col-6">
                                           <label for="">Wheel No(NDE)</label>
-                                          <input type="text" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
+                                          <select input type="number" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
+                                          <option value="" hidden selected>Select Wheel No(NDE)</option> 
+                                          </select>
                                   </div> 
                                   <div class="col-6">
                                           <label for="">Bull Gear No.</label>
@@ -681,11 +674,80 @@ footer, .page-content::after{
       </div>
     </div>
   </div>
-    
+    <!--Dispatch-->
+    <!-- Modal -->
+    <div class="modal fade" id="DispatchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel2">AxleWheelPressing</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+             <div class="modal-body">       
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="">Serial No.</label>
+                                            <input type="number" class="form-control" id="dissno" name="dissno" required>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                   <div class="col-6">
+                                    <div class="dropdown">
+                                      <select name="dislocos" type="form-control ll" required>
+                                        <option value="" hidden selected>Dispatch To</option>
+                                        <option value="Bogie Assembly">Bogie Assembly and Dispatch</option>
+                                      </select>
+                                      </div>
+                                    </div>  
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                     </div>    
+
+<!--Delete-->
+<!-- Modal -->
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel3">AxleWheelPressing</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+               <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                    <label for="">Serial No.</label>
+                                    <input type="number" class="form-control" id="delsno" name="delsno"  required>
+                            </div> 
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
+            </div>
+            </form>
+        </div>
+      </div>
+    </div>   
+
 
 </form>
 
 <script>
+    var i=0;
         $(document).ready(function() {
             $('#delform').bootstrapValidator({
                 feedbackIcons: {
@@ -721,81 +783,96 @@ footer, .page-content::after{
             })
         });
 
-        $("#wheelpress").change(function(e){
+        $("#editsno").change(function(e){
             e.preventDefault();
-            var sels_no = $(this).val();
-            var data = {sels_no};
-              $.ajax({
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'axlepress_editsno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        console.log(response);
+                        $("#editbo_no").val(`${response[0].bo_no}`);
+                        $("#editbo_date").val(`${response[0].bo_date}`);
+                        $("#editlocos").val(`${response[0].loco_type}`);
+                        $("#editdate").val(`${response[0].date}`);
+                        $("#editaxle_no").val(`${response[0].axle_no}`);
+                        $("#editwheelno_de").val(`${response[0].wheelno_de}`);
+                        $("#editwheelno_nde").val(`${response[0].wheelno_nde}`);
+                        $("#editbullgear_no").val(`${response[0].bullgear_no}`);
+                        $("#editbullgear_make").val(`${response[0].bullgear_make}`);
+
+                    }
+                })
+        });   
+
+        document.querySelector("#wheelno_de").addEventListener('change',(e)=>{
+            e.preventDefault();
+            var wheel_no = $("#wheelno_de").val();
+            var data = {wheel_no};
+                  $.ajax({
+                        type : 'GET',
+                        url : "{% url 'wheelnde' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          console.log(response);
+                                  var elementsadded = document.querySelectorAll(".neweledoc");
+                                      if(elementsadded.length>0){
+                                          var elementsaddedarr = Array.from(elementsadded);
+                                          elementsaddedarr.forEach((el)=> el.remove());
+                                          document.querySelector("#wheelnonde").selected = true; 
+                                       }
+                                      var brarr,mystr,html;
+                                      brarr = response.map((el)=>el.wheel_no);
+                                      mystr = "";
+                                      brarr.forEach((el,index)=>{
+                                        html = `<option class="neweledoc">${brarr[index]}</option>`
+                                        mystr = html.concat(mystr);
+                                      });
+                                      html = "";
+                                      document.querySelector("#wheelno_nde").insertAdjacentHTML('beforeend',mystr);
+                                      mystr=""; 
+                                }
+                                  })
+                        });
+if(i>1)
+{
+    
+}
+document.querySelector("#editwheelno_de").addEventListener('change',(e)=>{
+    e.preventDefault();
+    var wheel_no = $("#editwheelno_de").val();
+    var data = {wheel_no};
+            $.ajax({
                 type : 'GET',
-                url : "{% url 'wheelpress_inspectsno' %}",
+                url : "{% url 'wheelnde' %}",
                 dataType : 'json',
                 data : data,
                 success : function(response){
-                    console.log(response);
-                    console.log(response[0].wheelno_de);
-                    console.log(response[0].wheelno_nde);
-                    console.log(response[0].bullgear_no);
-                    console.log(response[0].bullgear_make);
-                    console.log(response[0].axle_no);
+                            var elementsadded = document.querySelectorAll(".neweledoc");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#wheelnonde").selected = true; 
+                             }
+                                var brarr,mystr,html;
+                                brarr = response.map((el)=>el.wheel_no);
+                                mystr = "";
+                                brarr.forEach((el,index)=>{
+                                html = `<option class="neweledoc">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                                });
+                                html = "";
+                                document.querySelector("#editwheelno_nde").insertAdjacentHTML('beforeend',mystr);
+                                mystr=""; 
+                        }
+                            })
+                })
 
-
-                    $("#inspectwheelno_de").val(`${response[0].wheelno_de}`);
-                    $("#inspectwheelno_nde").val(`${response[0].wheelno_nde}`);
-                    $("#inspectaxle_no").val(`${response[0].axle_no}`);
-                    $("#inspectbullgear_no").val(`${response[0].bullgear_no}`);
-                    $("#inspectbullgear_make").val(`${response[0].bullgear_make}`);
-                    
-                }
-            })
-        });
-
-        $("#wheelpresshhp").change(function(e){
-            e.preventDefault();
-            var sels_no = $(this).val();
-            var data = {sels_no};
-              $.ajax({
-                type : 'GET',
-                url : "{% url 'wheelpress_inspectsno' %}",
-                dataType : 'json',
-                data : data,
-                success : function(response){
-                    console.log(response);
-                    console.log(response[0].wheelno_de);
-                    console.log(response[0].wheelno_nde);
-                    console.log(response[0].bullgear_no);
-                    console.log(response[0].bullgear_make);
-                    console.log(response[0].axle_no);
-
-
-                    $("#hhpwheelno_de").val(`${response[0].wheelno_de}`);
-                    $("#hhpwheelno_nde").val(`${response[0].wheelno_nde}`);
-                    $("#hhpaxle_no").val(`${response[0].axle_no}`);
-                    $("#hhpbullgear_no").val(`${response[0].bullgear_no}`);
-                    $("#hhpbullgear_make").val(`${response[0].bullgear_make}`);
-                    
-                }
-            })
-        });
-      //   $("#wheelpress").change(function(e){
-      //     e.preventDefault();
-      //     var selbo_no = $(this).val();
-      //     var data = {selbo_no};
-      //       $.ajax({
-      //         type : 'GET',
-      //         url : "{% url 'wheelpress_inspectsno'%}",
-      //         dataType : 'json',
-      //         data : data,
-      //         success : funtion(response){
-      //           $("#wheelno_de").val(`${response[0].wheelno_de}`);
-      //           $("#wheelno_nde").val(`${response[0].wheelno_nde}`);
-      //           $("#axle_no").val(`${response[0].axle_no}`);  
-      //           $("#bullgear_no").val(`${response[0].bullgear_no}`);  
-      //           $("#bullgear_make").val(`${response[0].bullgear_make}`);    
-      //         }
-      //       })
-      //   });
-
-      // </script>
+</script>
 
     </html>  
 {% endblock content %}

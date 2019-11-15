@@ -1,9 +1,56 @@
 {% extends 'base.html' %} 
 {% block content %}
-
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+         width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
 <!-- <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M1 - MASTER PROCESS SHEET</h1> -->
-<form action='.' method="POST">
+<form action='.' method="POST"> {% csrf_token %}
  <div class="container" style="width: 100%">
+    <div id="print"  style="align:center" >
+  
 <br>
 <h5 style="float: left"><b>Date: </b>{{dt}}</h5>
 <center><h4><u><B>DIESEL LOCOMOTIVE WORKS, VARANASI</B></u></h4></center>
@@ -16,16 +63,15 @@
 <td><h5><b>DRG-NO.:</b> {{i.drgno}}</h5></td>
 </tr><tr></tr>
 <tr>
-<td><h5><b>RM PART NO:</b></h5></td>
-<td><h5><b>EPC: </b>{{obj3.epc}}</b></h5></td><td></td>
-<td><h5><b>PTC: </b>{{obj.ptc}}</h5></td>
+<td><h5><b>RM PART NO:</b>{{rmpart}}</h5></td>
+<td><h5><b>EPC: </b>{{epcv}}</b></h5></td><td></td>
+<td><h5><b>PTC: </b>{{ptcv}}</h5></td>
 </tr>
 </table>
 <table class="table table-stripped">
 <tr></tr>
 {% endfor %}
 </table>
-</div>
 <table>
 <div class="table-responsive">
 <table class="table table-stripped">
@@ -76,16 +122,42 @@
 </div>
 
 <br>
-<br><br><br>
-
-
-<br>
-
 
 
 </div></table>
-</form>
 
+<center>
+    <input type="button" onclick="printDiv()" value="print">
+    <input type="submit" value="Back" name="backbutton"/>
+</center>
+</form>
+<script type="text/javaScript">
+function printDiv() {
+    var printContents = document.getElementById("print").innerHTML;
+
+      var style = "<style>";
+       style = style + "table {width: 100%;font: 17px Calibri;}";
+       style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+       style = style + "padding: 2px 3px;text-align: left;}";
+       style = style + "</style>";
+     var win = window.open('', '', 'height=500,width=500');
+
+       win.document.write('<html><head>');
+
+       win.document.write('<title>M1(INSPECION NOTE) Card</title>');
+       win.document.write(style);
+       win.document.write('</head>');
+       win.document.write('<body>');
+       win.document.write(printContents);
+       win.document.write('</body></html>');
+
+       win.print();
+       win.close();
+
+
+
+}
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
  
 
