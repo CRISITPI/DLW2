@@ -1,0 +1,360 @@
+{% block content %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+{% comment %}
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+{% endcomment %}
+<style>
+input[type=text], select,textarea {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+h2 {
+  font-size: 25px;
+}
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+label {
+  font-size: 17px;  
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+input[type=submit] {
+    width: 20%;
+    text-align: center;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+    background-color: #45a049;
+    text-align: center;
+    }
+</style>
+<br>
+<br>
+<h4 align="center"><b>* Form No. 18</b></h4>
+<h3 align="center"><b>( Section 88, Rule 110 )</b></h3>
+<h1 align="center" >REPORT OF ACCIDENT</h1>
+<br><br>
+<form action="{% url 'mg18view' %}" method="POST"> {% csrf_token %}
+    <div class="container" style="width: 100%">
+        <p>To,<br>
+        <tr>
+            <td style="width:80%" ><input type="text" name="toadrr" maxlength="25" required>
+            </td>
+        </tr>
+        <p align="right">Date:
+        <tr>
+            <td style="width: 50%"><input type="date" name="dated" maxlength="20" required>
+            </td>
+        </tr>
+        <div>
+        </div>
+        <p>Sir,</p>
+        <p>I hereby give notice under Section 88 of the Factories Act,1948 that fatal/non fatal accident occured in this Factory to the person mentioned below:</p>
+        <br>
+        <table class="table">
+            <tr>
+                <td><label for="id_nameaddr">1. Name and Address of Occupier(of factory) :</label>
+                    <textarea id="id_nameaddr" type="text" name="nameadrr" maxlength="100" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_empcode">Employer's Code No. :</label>
+                    <input id="id_empcode" type="text" name="empcode" maxlength="100" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_natindus">2. Nature of Industry :</label>
+                    <input id="id_natindus" type="text" name="natindus" maxlength="100" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_addraccd">3. Full address of the place where accident or dangerous occurence happened:</label>
+                    <textarea id="id_addraccd" type="text" name="addraccd" maxlength="100" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_brdept">4. Branch or Department and exact place, where accident or dangerous occurence happened:</label>
+                    <input id="id_brdept" type="text" name="brdept" maxlength="100" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_injadrr">5. Injured person's full Name and Address:</label>
+                    <textarea id="id_injadrr" type="text" name="injadrr" maxlength="100" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_insur">5A. Insurance No.:</label>
+                    <input id="id_insur" type="text" name="insur" maxlength="30" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_sex">6. (a) Sex :</label>
+                    <input id="id_sex" type="text" name="sex" maxlength="10" required>
+                </td>
+                <td><label for="id_agebirth">(b) Age last birthday:</label>
+                    <input id="id_agebirth" type="text" name="agebirth" maxlength="30" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_occinj">(c) Occupation of injured person:</label>
+                    <input id="id_occinj" type="text" name="occinj" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_dthrsacc">7. Date and hours of accident or dangerous occurence :</label>
+                    <input id="id_dthrsacc" type="text" name="dthrsacc" maxlength="100" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_hrwork">8. Hour at which he started work on day of occurence:</label>
+                    <input id="id_hrwork" type="text" name="hrwork" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_cosacc">9. (a) Cause or nature of accident or dangerous occurence:</label>
+                    <input id="id_cosacc" type="text" name="cosacc" maxlength="30" required>
+                </td>
+            </tr>
+            <tr>
+                <td>(b) If caused by machinery :</td>
+            </tr>
+            <tr>
+                <td><label for="id_namemach">(i) Give name of the machine and part causing the accident:</label>
+                    <input id="id_namemach" type="text" name="namemach" maxlength="30" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_movmachpwr">(ii) State whether it was moved by mechanical power at the time:</label>
+                    <input id="id_movmachpwr" type="text" name="movmachpwr" maxlength="30" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_injdoin">(iii) State exactly what injured person was doing at the time:</label>
+                    <input id="id_injdoin" type="text" name="injdoin" maxlength="30" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_natextinj">10. Nature and extent of injuries(e.g. fatal,loss of finger,fracture of leg,scaled,scratch followed by sepsis):</label>
+                    <input id="id_natextinj" type="text" name="natextinj" maxlength="30" required>
+                </td>
+            </tr>
+            <tr><td><b><i>* Form No. 18-Substituted,vide Labour (B) Department Notiication No. 2179 (LL) XXXVI-B-498 (LL)-52,</i></b></td></tr>
+            <tr><td><b><i>dt. Oct 13, 1953.</i></b></td></tr>
+            <tr>
+                <td><label for="id_injoffwrk">11. Number of days from which the injured person is likely to be off work:</label>
+                    <input id="id_injoffwrk" type="text" name="injoffwrk" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_namedoct">12. Name of the doctor, dispensary or hospital from which the injured person recieved or is recieving treatment:</label>
+                    <input id="id_namedoct" type="text" name="namedoct" maxlength="30" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_nameprsn">13. Name of the person who saw the accident and can give important evidence:</label>
+                    <input id="id_nameprsn" type="text" name="nameprsn" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td>14. In your opinion,was the accident directly attributable to:</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="op1" value="opinion1">(i) the injured person having been at the thereof under the influnce of drink or drug; or<br></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="op2" value="opinion2">(ii) the wilful disobedience of the injured person to an order expressly given to a rule expressly framed for a purpose of securing the safety of employee, or <br></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="op3" value="opinion3">(iii) the wilful removal or disregard by the injured person of any safety guard or other devices which he knew to have been providd for the purpose of securing the safety of employees<br></td>
+            </tr>
+            <tr>
+                <td><label for="id_howaccoccrd">15. Describe briefly how accident occured </label>
+                    <textarea id="id_howaccoccrd" type="text" name="howaccoccrd" maxlength="100" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_locinj">16. Location of injury(right leg,left hand or left eye etc.)</label>
+                    <input id="id_locinj" type="text" name="locinj" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_injretrn">17. (i) If the accident is not fatal,state whether the injured person has returned to work</label>
+                    <input id="id_injretrn" type="text" name="injretrn" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_dthrrtrn">(ii) If so,date and hour of return to work</label>
+                    <input id="id_dthrrtrn" type="text" name="dthrrtrn" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_injdied">18. (i) Has the injured person died ?</label>
+                    <input id="id_injdied" type="text" name="injdied" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_dtdeath">(ii) If so,Date of death </label>
+                    <input id="id_dtdeath" type="date" name="dtdeath" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_namstins">19. Name of the State Insurance Local office to which the injured person is attached</label>
+                    <input id="id_namstins" type="text" name="namstins" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_stinsdisp">20. Name of the State Insurance Dispensary to which the injured person is attached</label>
+                    <input id="id_stinsdisp" type="text" name="stinsdisp" maxlength="20" required>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="container">
+        <h4 align="center"><b>This space to be completed</h4>
+        <h4 align="center"><b>by Inspector of Factories</h4>
+        <table class="table">
+            <tr>
+                <td><label for="id_distrct">District :</label>
+                    <input id="id_distrct" type="text" name="distrct" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_dtrct">Date of Receipt :</label>
+                    <input id="id_dtrct" type="text" name="dtrct" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_acdntno">Accident No. :</label>
+                    <input id="id_acdntno" type="text" name="acdntno" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_indusno">Industry No. :</label>
+                    <input id="id_indusno" type="text" name="indusno" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_causno">Causation No. :</label>
+                    <input id="id_causno" type="text" name="causno" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_sex">(Sex/ M,W,B or G) :</label>
+                    <input id="id_sex" type="text" name="sex" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_othrparti">other particulars,e.g.fatal,leg injury,arm injury etc. :</label>
+                    <input id="id_othrparti" type="text" name="othrparti" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_dtinvest">Date of Investigation :</label>
+                    <input id="id_dtinvest" type="date" name="dtinvest" maxlength="20" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="id_rsltinvest">Result of Investigation :</label>
+                    <input id="id_rsltinvest" type="text" name="rsltinvest" maxlength="20" required>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <br>
+    <div class="container">
+        <h3 align="center">FOR INTER OFFICE USE ONLY</h3>
+        <br>
+        <br>
+        <br>
+        <p align="left"><b>Subject:</b> Hospital Leave</p>
+        <br>
+        <br>
+        <label for="id_subj">The staff whose particulars ae given overleaf was taken in sick list by Assistant Medical Officer,Diesel Locomotive Works,Varanasi.As the injury was not/due to his negligence,he is granted hospital leave on full/half pay with effect from</label>
+        <input id="id_subj" type="text" name="subj" maxlength="20" required>
+    </div>
+    <center>
+        <input type="submit" name="proceed" value="Submit">
+    </center>
+</form>
+
+
+
+
+{% endblock content %}        
+
+
+        
+
+        
+
+

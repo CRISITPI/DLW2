@@ -3617,30 +3617,6 @@ class M11(models.Model):
 
     class Meta:
         db_table = 'M11'
-    
-class M12DOC(models.Model):
-    yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    shopsec = models.CharField(db_column='SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    staff_no = models.CharField(db_column='STAFF_NO', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
-    desgn = models.CharField(db_column='DESGN', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    emp_type = models.CharField(db_column='EMP_TYPE', max_length=3, blank=True, null=True)  # Field name made lowercase.
-    status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    remark = models.CharField(db_column='REMARK', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    updt_by = models.CharField(db_column='UPDT_BY', max_length=6, blank=True, null=True)  # Field name made lowercase.
-    updt_date = models.DateField(db_column='UPDT_DATE', blank=True, null=True)  # Field name made lowercase.
-    rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    in1 = models.CharField(db_column='IN1', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    out = models.CharField(db_column='OUT', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    month = models.CharField(db_column='MONTH', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    total_time = models.CharField(db_column='TOTAL_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    idle_time = models.CharField(db_column='IDLE_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    reasons_for_idle_time = models.CharField(db_column='REASONS_FOR_IDLE_TIME', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    
-    class Meta:
-        db_table = 'M12DOC'
 
 
 class M22(models.Model):
@@ -4003,6 +3979,34 @@ class MG15(models.Model):
         db_table = 'MG15'
 
 
+class M12DOC(models.Model):
+    yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    shopsec = models.CharField(db_column='SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    desgn = models.CharField(db_column='DESGN', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    emp_type = models.CharField(db_column='EMP_TYPE', max_length=3, blank=True, null=True)  # Field name made lowercase.
+    status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    remark = models.CharField(db_column='REMARK', max_length=1000, blank=True, null=True)  # Field name made lowercase.
+    updt_by = models.CharField(db_column='UPDT_BY', max_length=6, blank=True, null=True)  # Field name made lowercase.
+    updt_date = models.DateField(db_column='UPDT_DATE', blank=True, null=True)  # Field name made lowercase.
+    rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    in1 = models.CharField(db_column='IN1', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    out = models.CharField(db_column='OUT', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    month = models.CharField(db_column='MONTH', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    total_time = models.CharField(db_column='TOTAL_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    idle_time = models.CharField(db_column='IDLE_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    reasons_for_idle_time = models.CharField(db_column='REASONS_FOR_IDLE_TIME', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    time_hrs = models.CharField(db_column='TIME_HRS', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    amt = models.DecimalField(db_column='AMT', max_digits=6, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'M12DOC'
+    
+
+
 class MG49(models.Model):
     shopsec=models.CharField(max_length=4, blank=True, null=True)  # Field name made lowercase.
     staff_no=models.CharField( max_length=5, blank=True, null=True)  # Field name made lowercase.
@@ -4014,3 +4018,63 @@ class MG49(models.Model):
     login_id=models.CharField( max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     last_modified=models.CharField(max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
     unit=models.CharField(max_length=25, blank=True, null=True,default=0)  # Field name made lowercase.
+
+
+
+class Rates(models.Model):
+   # sno=models.AutoField(primary_key=True)#Field name made lowercase.
+    avg_rate = models.DecimalField(db_column='AVG_RATE', max_digits=6, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
+    login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    #staff_no = models.CharField(db_column='STAFF_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'RATES'  
+
+
+class MG18(models.Model):
+    to = models.CharField(db_column='TO', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(db_column='DATE', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    namaddr=models.CharField(db_column='NAME_FACT', max_length=30, blank=True, null=True)#Field name made lowercase.
+    empcode = models.CharField(db_column='EMP_CODE', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    natindus = models.CharField(db_column='NATUREINDUS', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    addr_accdnt = models.CharField(db_column='ADDR_ACCDNT', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    brnchdept = models.CharField(db_column='BRANCH', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    namadrr_inj = models.CharField(db_column='INJ_ADDR', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    insur_no=models.CharField(db_column='INSURANCE', max_length=30, blank=True, null=True)#Field name made lowercase.
+    sex = models.CharField(db_column='SEX', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    age_lstbrth = models.CharField(db_column='AGE', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    occup_inj = models.CharField(db_column='OCCUPATION', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    dthrs_accdnt = models.CharField(db_column='DTHRS_ACCD', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    hr_strtwrk = models.CharField(db_column='STRTWORK', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    #namaddr=models.CharField(db_column='', max_length=10, blank=True, null=True)#Field name made lowercase.
+    cause_accndt = models.CharField(db_column='CAUSE_ACCDNT', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    mach_accdnt = models.CharField(db_column='MACHINE_PART', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    mach_mov = models.CharField(db_column='MACHINE_MOV',  max_length=30, blank=True, null=True)  # Field name made lowercase.
+    inj_doing = models.CharField(db_column='INJR_DOING', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    inj_extent = models.CharField(db_column='EXTENT', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    inj_off=models.CharField(db_column='DAYSOFF', max_length=30, blank=True, null=True) #Field name made lowercase.
+    name_doct = models.CharField(db_column='DOCTORNAME', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    inj_evid = models.CharField(db_column='EVIDENCE', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    how_accdnt = models.CharField(db_column='HOW', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    inj_loc = models.CharField(db_column='LOCATION', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    inj_retrn = models.CharField(db_column='RETURN_NOT', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    dthr_retrn=models.CharField(db_column='RETURN_DTHRS', max_length=20, blank=True, null=True)#Field name made lowercase.
+    inj_died = models.CharField(db_column='DIED_INJ', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    dt_death = models.CharField(db_column='DEATH_DT', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    stloc_insur = models.CharField(db_column='LOCAL_INSUR', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    stinsur_dispns = models.CharField(db_column='LOCAL_DISPENS', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    distrct = models.CharField(db_column='DISTRICT', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    dt_receipt = models.CharField(db_column='RECIEPT_DT', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    accdnt_no = models.CharField(db_column='ACCNDT_NO', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    indus_no = models.CharField(db_column='INDUSTRY_NO', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    cause_no = models.CharField(db_column='CAUSATION', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    sex_1 = models.CharField(db_column='SEX_11', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    particulars = models.CharField(db_column='PARTICUL', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    dt_invstgtn = models.CharField(db_column='INVESTIGATION_DT', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    rslt_invstgtn = models.CharField(db_column='RESLT_INVST', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    effct_frm = models.CharField(db_column='EFFECT', max_length=30, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'MG18'

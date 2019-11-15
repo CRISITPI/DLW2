@@ -511,8 +511,8 @@
           
                 </td> 
                 <td>
-                    {{total1}}
-                    <input type="text" id="total_time_taken{{ forloop.counter }}"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" >
+                    
+                    <input type="text" id="total_time_taken{{ forloop.counter }}"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" readonly> 
             
                   </td> 
                
@@ -616,7 +616,7 @@ $(document).ready(function(){
         // $('#items').append(happ);
 
         }
-var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><input type="date" id='+date+' name='+date+'  /></td >'+'<td ><input type="time" id='+in1+' name='+in1+' onchange="tottime('+in1id+')" /></td >'+'<td  height="50"><input type="time" id='+out+' name='+out+'  onchange="tottime('+outid+')" /></td>'+' <td  height="50"><input type="text" id="ticket_no" name='+ticket_no+'></td>'+'<td  height="50"><input type="text" id="cat" name='+cat+'></td>'+'<td  height="50"><input type="text" id="month_hrs" name='+month_hrs+'></td>'+'<td  height="50"><input type="text" id='+total_time_taken+' name='+total_time_taken+'></td>';
+var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><input type="date" id='+date+' name='+date+'  /></td >'+'<td ><input type="time" id='+in1+' name='+in1+' onchange="tottime('+in1id+')" /></td >'+'<td  height="50"><input type="time" id='+out+' name='+out+'  onchange="tottime('+outid+')" /></td>'+' <td  height="50"><input type="text" id="ticket_no" name='+ticket_no+'></td>'+'<td  height="50"><input type="text" id="cat" name='+cat+'></td>'+'<td  height="50"><input type="text" id="month_hrs" name='+month_hrs+'></td>'+'<td  height="50"><input type="text" id='+total_time_taken+' name='+total_time_taken+' readonly></td>';
 
         htAppend=htAppend+'</tr></table></div>';
 
