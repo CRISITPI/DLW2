@@ -4361,7 +4361,7 @@ def dporeport(request):
                         print(dictemper)
                         data=1
 
-            else:
+            elif((loco!=None and  len(loco)) and (b2!=None and  len(b2))):
                 obj1=barrelfirst.objects.filter(locotype=loco)
                 b1=obj1[0].code
                 
