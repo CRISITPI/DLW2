@@ -3472,6 +3472,8 @@ class M5DOCnew(models.Model):
     date = models.CharField(db_column='DATE', blank='True', max_length=10, null='True')  # Field name made lowercase.
     remarks = models.CharField(db_column='REMARKS',max_length=50, blank='True', null='True')  # Field name made lowercase.
     worker = models.CharField(db_column='WORKER',  max_length=15, blank=True, null=True)  # Field name made lowercase.
+    rej_qty = models.IntegerField(db_column='REJ_QTY', default=0, blank=True, null=True)  # Field name made lowercase.
+    rev_qty = models.IntegerField(db_column='REV_QTY', default=0, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         db_table = 'M5DOCnew'

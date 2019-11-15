@@ -4879,7 +4879,7 @@ def m1genrept1(request,prtno,shopsec):
 @role_required(urlpass='/m5view/')
 def m5view(request):
     cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -4887,7 +4887,7 @@ def m5view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
+    wo_nop = user_master.objects.none()
     if "Superuser" in rolelist:
         tm=M5SHEMP.objects.all().values('shopsec').distinct()
         tmp=[]
@@ -4936,20 +4936,26 @@ def m5view(request):
             staff_no = request.POST.get('staff_no')
             ticket_no = request.POST.get('ticket_no')
             name = request.POST.get('name')
+            doc_no =request.POST.get('doc_no')
+
+           # print(doc_no)
             
             obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').distinct()
-            obj1 = M5DOCnew.objects.filter(shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty').order_by('opn').distinct()
+            obj1 = M5DOCnew.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty').distinct()
             obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,part_no=part_no).values('batch_type','part_no').order_by('part_no').distinct()
             obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
             obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
-            # print(obj3)
+            print("obj1",obj1)
+            print("obj4",obj4)
+           # print("oj4 len",len(obj4))
             ticket= randint(1111,9999)
             leng = obj.count()
             leng1=obj1.count()
             leng2=obj2.count()
             leng3=obj3.count()
             leng4=obj4.count()
+            #print("lengg4",leng4)
             
             
             if obj != None:
@@ -4968,6 +4974,7 @@ def m5view(request):
                         'obj2':obj2,
                         'obj3':obj3,
                         'obj4':obj4,
+            
                         'obj5':obj5,
                         'ticket1':ticket,
                         'sub': 1,
@@ -5052,61 +5059,121 @@ def m5view(request):
             partno= request.POST.get('partno')
             brn_no = request.POST.get('brn_no')
             inoutnum=request.POST.get("inoutnum")
-            #name = request.Post.get('name')
+            len4=request.POST.get('len4')
+            qty_insp = request.POST.get('qty_insp')
+            inspector = request.POST.get('inspector')
+            date = request.POST.get('date')
+            remarks = request.POST.get('remarks')
+            #worker = request.POST.get('worker')
             
-            for i in range(1, int(leng)+1):
-                qtyac = request.POST.get('qtyac'+str(i))
-                matrej = request.POST.get('matrej'+str(i))
-                qtyinsp = request.POST.get('qtyinsp'+str(i))
-                inspector = request.POST.get('inspector'+str(i))
-                date = request.POST.get('date'+str(i))
-                remarks = request.POST.get('remarks'+str(i))
-                worker = request.POST.get('worker'+str(i))
+            in1 = request.POST.get('in1')
+            out = request.POST.get('out')
+            cat = request.POST.get('cat')
+            staff_no = request.POST.get('staff_no')
+            ticket_no = request.POST.get('ticket_no')
+            month_hrs = request.POST.get('month_hrs')
+            total_time_taken = request.POST.get('total_time_taken')
+            date =  request.POST.get('date1')
+            rm_ut =  request.POST.get('rm_ut')
+            rev_qty=request.POST.get('rev_qty')
+            rej_qty=request.POST.get('rej_qty')
+            print("revqty",rev_qty)
+            print("rejqty",rej_qty)
+
+
+           # print(remarks)
+           # print(qty_insp)
+           # print(inspector)
+           # print(worker)
+            print(date)
+
+            print("@")
+            #print(in1)
+            #print(out)
+           # print(date)
+
+            M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=int(qty_insp),inspector=int(inspector),date=str(date),remarks=str(remarks),rev_qty=int(rev_qty),rej_qty=int(rej_qty))             
+            staff_no = request.POST.get('staff_nohid')
+            name = request.POST.get('namehid')
+            ticket_no = request.POST.get('ticket_nohid')
+            cat = request.POST.get('cat1')
+            m5upd=M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat)
+            print("m5upd",m5upd)
+            
+            for i in range(1, int(len4)+1):
+
+                print("i",i)
                 in1 = request.POST.get('in1'+str(i))
+
+                
+
                 out = request.POST.get('out'+str(i))
                 lc_no = request.POST.get('lc_no'+str(i))
                # brn_no = request.POST.get('brn_no'+str(i))
                 cat = request.POST.get('cat'+str(i))
-                staff_no = request.POST.get('staff_no'+str(i))
-                ticket_no = request.POST.get('ticket_no'+str(i))
+                # staff_no = request.POST.get('staff_no'+str(i))
+                # ticket_no = request.POST.get('ticket_no'+str(i))
                 month_hrs = request.POST.get('month_hrs'+str(i))
                 total_time_taken = request.POST.get('total_time_taken'+str(i))
-                date =  request.POST.get('date'+str(i))
-                Oprn.objects.filter(shop_sec=shopsec, part_no=partno,lc_no=lc_no).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
-              
-                M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=int(qtyinsp),inspector=int(inspector),date=str(date),remarks=str(remarks),worker=str(worker))
-                
-                M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat).update(in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),date=str(date),ticket_no=int(ticket_no))
-               
+                # name = request.POST.get('name'+str(i))
+                date = request.POST.get('date'+str(i))
+
+                # M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat).update(in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),date=str(date),ticket_no=int(ticket_no))
+
+           # print(worker)
+           # print(date)
+            print("leng",leng)
             
-            for i in range(1, int(inoutnum)+1):
+            for i in range(1, int(leng)+1):
                 qtyac = request.POST.get('qtyac'+str(i))
                 matrej = request.POST.get('matrej'+str(i))
-                qtyinsp = request.POST.get('qtyinsp'+str(i))
-                inspector = request.POST.get('inspector'+str(i))
-                date = request.POST.get('date'+str(i))
-                remarks = request.POST.get('remarks'+str(i))
-                worker = request.POST.get('worker'+str(i))
+                lc_no = request.POST.get('lc_no'+str(i))
+                pa = request.POST.get('pa'+str(i))
+                at = request.POST.get('at'+str(i))
+                
+               
+                print("staff No",staff_no)
+                print(lc_no)
+                print(qtyac)
+                print(matrej)
+                print(at)
+                print(pa)
+                Oprn.objects.filter(shop_sec=shopsec, part_no=partno,lc_no=lc_no,pa=pa,at=at).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
+                
+               
+                 
+
+            print("len4",len4,"inoutnum",inoutnum)
+            
+            for i in range(int(len4)+1, int(inoutnum)+1):
                 in1 = request.POST.get('in1add'+str(i))
                 out = request.POST.get('outadd'+str(i))
                 lc_no = request.POST.get('lc_no'+str(i))
                # brn_no = request.POST.get('brn_no'+str(i))
                 cat = request.POST.get('catadd'+str(i))
-                staff_no = request.POST.get('staff_no'+str(i))
-                ticket_no = request.POST.get('ticket_noadd'+str(i))
+                # staff_no = request.POST.get('staff_no'+str(i))
+                # ticket_no = request.POST.get('ticket_noadd'+str(i))
                 month_hrs = request.POST.get('month_hrsadd'+str(i))
                 total_time_taken = request.POST.get('total_time_takenadd'+str(i))
-                name = request.POST.get('name'+str(i))
+                # name = request.POST.get('name'+str(i))
                 date = request.POST.get('dateadd'+str(i))
+                print("j",i)
                
                 if len(cat)==1:
                     cat="0"+cat
+                print(name)
+                print(in1)
+                print(out) 
+                print(month_hrs)   
+                print(cat,staff_no,ticket_no,total_time_taken)
+                print("Create new row")
                 M5SHEMP.objects.create(shopsec=shopsec,staff_no=staff_no,name=name,in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),cat=int(cat),date=str(date),ticket_no=int(ticket_no))
                
                 
                 wo_no=M5DOCnew.objects.all().values('batch_no').distinct()
 
     return render(request,"m5view.html",context)
+
 
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
