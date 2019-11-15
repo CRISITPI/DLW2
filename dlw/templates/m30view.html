@@ -99,22 +99,22 @@
                 </td>
                   <td>
                     <label for="staff_no"><b>STAFF NO/स्टाफ संख्या:</b></label>
-                    <select class="form-control" id="staff_no" name="staff_no" required>
+                    <select class="form-control" id="staff_no" name="staff_no" onchange="waiver()"  required>
         <option id="op_staff" selected disabled hidden>Select Staff NO</option>
         </select>
                   </td></tr>
             <tr>
              <td>
                  <label for="request"><b>Waiver Request:</b></label>
-                    <select class="form-control" id="req" name="req" required>
+                    <select class="form-control" id="req" name="req" onchange="datee()" disabled required>
                     <option  selected disabled hidden>Select Waiver Request For</option>
                     <option value='Critical Items'>Critical Items</option>
                     <option value='Non-Critical Items'>Non-Critical Items</option>
                     </select>
              </td>
              <td>
-                    <label for="date"><b>Date:</b></label>
-                    <input type="date" class="form-control" id="date" name="date" value="date">
+                    <label for="date"><b>Date/दिनक:</b></label>
+                    <input type="date" class="form-control" id="date" name="date" value="date" disabled required>
              </td>
             </tr>
 
@@ -148,20 +148,20 @@
         <tr>
              <td>
                 {{date}}
-            </td><input type="hidden" name="date" value="{{date}}">
-            <td>{{shop_sec}}</td><input type="hidden" name="shop_sec" value="{{shop_sec}}">
-            <td>{{part_no}}</td><input type="hidden" name="part_no" value="{{part_no}}">
+            </td><input type="hidden" name="date1" value="{{date}}">
+            <td>{{shop_sec}}</td><input type="hidden" name="shop_sec1" value="{{shop_sec}}">
+            <td>{{part_no}}</td><input type="hidden" name="part_no1" value="{{part_no}}">
               {% for k in obj %}
             <td>{{k.des}}</td>
             <td>{{k.drgno}}</td>{% endfor %}
             {% for k in obj2 %}
-            <td>{{k.loco_fr}}</td><input type="hidden" name="loco_fr" value="k.loco_fr">
-            <td>{{k.loco_to}}</td><input type="hidden" name="loco_to" value="k.loco_to">
+            <td>{{k.loco_fr}}</td><input type="hidden" name="loco_fr1" value="k.loco_fr">
+            <td>{{k.loco_to}}</td><input type="hidden" name="loco_to1" value="k.loco_to">
             {% endfor %}
         </tr>
         <tr>
-            <th>Initiated By</th><input type="hidden" name="staff_no" value="{{staff_no}}">
-            <th>Request NO:</th>
+            <th>Initiated By</th><input type="hidden" name="staff_no1" value="{{staff_no}}">
+            <th>Request NO:</th><input type="hidden" name="req1" value="{{req}}">
             <th>Name</th>
             <th>Designation</th>
             <th>Category</th>
@@ -170,13 +170,13 @@
         </tr>
         <tr>
             <td>{{staff_no}}</td>
-            <td>{{rand}}</td><input type="hidden" name="rand" value="{{rand}}">
+            <td>{{rand}}</td><input type="hidden" name="rand1" value="{{rand}}">
             {% for i in obj1 %}
             <td>{{i.name}}</td>
             <td>{{i.desgn}}</td>
             <td>{{i.cat}}</td>
             <td>{{i.emp_type}}</td>{% endfor %}
-            <td></td><input type="hidden" name="spec_no" value="{{specification_no}}">
+            <td></td><input type="hidden" name="spec_no1" value="{{specification_no}}">
         </tr>
 
     </table>
@@ -392,6 +392,22 @@ $("#part_nop").change(function(e){
         }
            })
            })
+
+
+function waiver(){
+
+document.getElementById("req").disabled = false;
+
+}
+
+
+function datee(){
+
+document.getElementById("date").disabled = false;
+
+}
+
+
 
 document.querySelector("#date").addEventListener('change',(e)=>{
 

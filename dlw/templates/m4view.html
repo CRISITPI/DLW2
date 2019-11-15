@@ -50,7 +50,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">M4 Card</h3>
+<h3 align="center">Material Requition (M4) Card</h3>
 <br>
 <center>
         {% if messages %}
@@ -160,9 +160,9 @@
                 {% endif %}
             </td>
             <td>{{wo_no}}</td>
-            <input type="hidden" name="wo_no" value="{{wo_no}}">
+            <input type="hidden" name="wo_no1" value="{{wo_no}}">
             <td>{{brn_no}}</td>
-            <input type="hidden" name="brn_no" value="{{brn_no}}">
+            <input type="hidden" name="brn_no1" value="{{brn_no}}">
              <td>
                 {% if datel == 0   %}
                        None
@@ -189,13 +189,13 @@
         <tr>
              <td>{{shop_sec}}</td>
             <td>{{part_no}}</td>
-            <input type="hidden" name="part_no" value="{{part_no}}">
+            <input type="hidden" name="part_no1" value="{{part_no}}">
             {% for ii in obj1 %}
             <td>{{ii.des}}</td>
             <td>{{ii.drgno}}</td>
             {% endfor %}
             <td>{{doc_no}}</td>
-            <input type="hidden" name="doc_no" value="{{doc_no}}">
+            <input type="hidden" name="doc_no1" value="{{doc_no}}">
             {% for k in obj3 %}
             <td>{{k.batch_type}}</td>{% endfor %}
         </tr>
@@ -253,7 +253,7 @@
             {% if obj.line %}
               <input type="text" id="line" class="myinp" value="{{obj.line}}" name="line" >
                 {% else %}
-              <input type="text" id="line" class="myinp" value="0" name="line" >
+              <input type="text" id="line" class="myinp" value="" name="line" >
                 {% endif %}
             </td>
             <td>
@@ -268,7 +268,7 @@
             {% if obj.remarks %}
               <input type="text" id="remarks" class="myinp" value="{{obj.remarks}}" name="remarks" >
                 {% else %}
-              <input type="text" id="remarks" class="myinp" value="0" name="remarks" >
+              <input type="text" id="remarks" class="myinp" value="" name="remarks" >
                 {% endif %}
         </td>
 
@@ -286,9 +286,9 @@
 
             <td>
             {% if obj.posted_date %}
-                <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date}}" name="posted_date" min="2015-01-01" max="2020-12-31" >
+                <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date}}" name="posted_date" min="2015-01-01" max="2020-12-31" required>
                 {% else %}
-                <input type="date" id="posted_date" class="myinp" value="0" name="posted_date" min="2015-01-01" max="2020-12-31"  >
+                <input type="date" id="posted_date" class="myinp" value="0" name="posted_date" min="2015-01-01" max="2020-12-31"  required>
                 {% endif %}
 
             </td>
@@ -309,9 +309,9 @@
 
             <td>
             {% if obj.posted1_date %}
-                <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date}}" name="posted1_date" min="2015-01-01" max="2020-12-31" >
+                <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date}}" name="posted1_date" min="2015-01-01" max="2020-12-31" required>
                 {% else %}
-                 <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date" min="2015-01-01" max="2020-12-31" >
+                 <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date" min="2015-01-01" max="2020-12-31" required>
             {% endif %}
             </td>
                 {% endfor %}

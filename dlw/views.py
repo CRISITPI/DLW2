@@ -828,6 +828,7 @@ def m2view(request):
             kkk=Oprn.objects.all()
             obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
+            # print(obj2)
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
             # obgg = Oprn.objects.filter(part_no=part_no, shop_sec=shop_sec).values('shop_sec').distinct()
@@ -922,19 +923,21 @@ def m2view(request):
                   }
             # else:
             #     messages.error(request,'Corresponding Data For Shop-Section and PartNumber Not Found!, Select other values to check')
-            if submitvalue=='Save':
-                leng=request.POST.get('len')
-                shopsec= request.POST.get('shopsec')
-                partno= request.POST.get('partno')
-                for i in range(1, int(leng)+1):
-                    qtypr=request.POST.get('qtypr'+str(i))
-                    qtyac = request.POST.get('qtyac'+str(i))
-                    wrrej = request.POST.get('wrrej'+str(i))
-                    matrej = request.POST.get('matrej'+str(i))
-                    opn=request.POST.get('opn'+str(i))
-                    Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=int(qtypr),qtr_accep=int(qtyac),work_rej=int(wrrej),mat_rej=int(matrej))
-                    wo_no=M2Doc.objects.all().values('batch_no').distinct()
-                messages.success(request, 'Successfully Updated!, Select new values to update')
+        if submitvalue=='Save':
+            leng=request.POST.get('len')
+            shopsec= request.POST.get('shopsec')
+            partno= request.POST.get('partno')
+            for i in range(1, int(leng)+1):
+                qtypr=request.POST.get('qtypr'+str(i))
+                qtyac = request.POST.get('qtyac'+str(i))
+                wrrej = request.POST.get('wrrej'+str(i))
+                matrej = request.POST.get('matrej'+str(i))
+                opn=request.POST.get('opn'+str(i))
+                print(shopsec)
+
+                Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=qtypr, qtr_accep=qtyac, work_rej=wrrej, mat_rej=matrej)
+                wo_no=M2Doc.objects.all().values('batch_no').distinct()
+            messages.success(request, 'Successfully Updated!, Select new values to update')
     return render(request, "m2view.html", context)
 
 
@@ -1083,6 +1086,8 @@ def m4view(request):
             obj = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
             print("hh")
             print(obj)
+            if len(obj) == 0:
+                obj = range(0,1)
             date = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('prtdt','qty').distinct()
             leng = obj.count()
             datel = date.count()
@@ -1179,12 +1184,12 @@ def m4view(request):
         #     }
 
         if submitvalue=='Save':
-            doc_no= request.POST.get('doc_no')
-            part_no= request.POST.get('part_no')
-            wo_no=request.POST.get('wo_no')
-            brn_no=request.POST.get('brn_no')
+            doc_no= request.POST.get('doc_no1')
+            part_no= request.POST.get('part_no1')
+            wo_no=request.POST.get('wo_no1')
+            brn_no=request.POST.get('brn_no1')
             # print("hh")
-            # print(doc_no)
+            print(doc_no)
             # print(part_no)
             # print(wo_no)
             # print(brn_no)
@@ -1341,6 +1346,8 @@ def m14view(request):
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
             obj = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('received_mat14', 'issued_qty14', 'received_qty14', 'laser_pst14', 'line14', 'closing_bal14', 'remarks14', 'posted_date14', 'wardkp_date14', 'shopsup_date14', 'posted1_date14')
             print(doc_no)
+            if len(obj) == 0:
+                obj = range(0, 1)
             print("HH")
             # print(assembly_no)
             date = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no).values('prtdt','qty').distinct()
@@ -1433,12 +1440,12 @@ def m14view(request):
                     'doc_no': doc_no,
                 }
         if submitvalue=='Save':
-            doc_no= request.POST.get('doc_no')
-            part_no= request.POST.get('part_no')
-            wo_no=request.POST.get('wo_no')
-            brn_no=request.POST.get('brn_no')
+            doc_no= request.POST.get('doc_no1')
+            part_no= request.POST.get('part_no1')
+            wo_no=request.POST.get('wo_no1')
+            brn_no=request.POST.get('brn_no1')
             # print("hh")
-            # print(doc_no)
+            print(doc_no)
             # print(part_no)
             # print(wo_no)
             # print(brn_no)
@@ -7158,7 +7165,6 @@ def m22getstaff(request):
 
 
 
-
 @login_required
 @role_required(urlpass='/m15view/')
 def m15view(request):
@@ -7870,13 +7876,13 @@ def mg7view(request):
 
         if submitvalue=='Save':
 
-                shop_sec= request.POST.get('shop_sec')
-                shop_sec1 = request.POST.get('shop_sec1')
-                part_no= request.POST.get('part_no')
-                wo_no = request.POST.get('wo_no')
-                m5no = request.POST.get('m5no1')
-                des = request.POST.get('des')
-                m13_no = request.POST.get('m13_no1')
+                shop_sec= request.POST.get('shop_sec11')
+                shop_sec1 = request.POST.get('shop_sec12')
+                part_no= request.POST.get('part_no1')
+                wo_no = request.POST.get('wo_no1')
+                m5no = request.POST.get('m5no11')
+                des = request.POST.get('des1')
+                m13_no = request.POST.get('m13_no11')
                 print(wo_no)
                 print(shop_sec)
                 print(part_no)
@@ -9393,7 +9399,8 @@ def mg20view(request):
             shop_sec = request.POST.get('shop_sec')
             staff_no = request.POST.get('staff_no')
             current_date = date.today()
-
+            print(staff_no)
+            print(shop_sec)
             obj = Shemp.objects.filter(shopsec=shop_sec, staff_no=staff_no).values('name', 'desgn', 'cat', 'emp_type').distinct()
             print(obj)
             obj1 = MG20.objects.filter(shop_sec=shop_sec, staff_no=staff_no).values('no_of_days', 'nature', 'appr_datej').distinct()
@@ -9463,12 +9470,12 @@ def mg20view(request):
 
         if submitvalue=='Save':
 
-                shop_sec= request.POST.get('shop_sec')
-                staff_no = request.POST.get('staff_no')
-                name= request.POST.get('name')
-                desgn = request.POST.get('desgn')
-                cat = request.POST.get('cat')
-                emp_type = request.POST.get('emp_type')
+                shop_sec= request.POST.get('shop_sec1')
+                staff_no = request.POST.get('staff_no1')
+                name= request.POST.get('name1')
+                desgn = request.POST.get('desgn1')
+                cat = request.POST.get('cat1')
+                emp_type = request.POST.get('emp_type1')
                 no_of_days = request.POST.get('no_of_days')
                 nature = request.POST.get('nature')
                 appr_datej = request.POST.get('appr_datej')
@@ -9486,6 +9493,9 @@ def mg20view(request):
                 wo_no=MG20.objects.all().values('staff_no').distinct()
                 messages.success(request, 'Successfully Done!, Select new values to proceed')
     return render(request, "mg20view.html", context)
+
+
+
 
 
 def mg20getstaff(request):
@@ -9687,10 +9697,13 @@ def m30view(request):
             print(date)
             obj = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
             rand=random.randint(0, 100000000)
-            print(rand)
+
             obj1= Shemp.objects.filter(shopsec=shop_sec, staff_no=staff_no).values('name', 'desgn', 'cat', 'emp_type').distinct()
             obj2=Batch.objects.filter(part_no=part_no).values('loco_fr', 'loco_to').distinct()
             obj3 = M30.objects.filter(shop_sec=shop_sec, staff_no=staff_no, part_no=part_no, date=date).values('qty', 'dimension','spe_val','obt_val','interc', 'waiver_no', 'waiver_date','non_conf_des','reason_for_non_conf','corr_action_plan','remarks_hod','remarks_cde','remarks_cqam','request_no').distinct()
+
+            # if len(obj1) > 1:
+            #     obj1=obj1[0]
             if len(obj3) == 0:
                 obj3 =range(0, 1)
 
@@ -9782,19 +9795,19 @@ def m30view(request):
 
         if submitvalue=='Save':
 
-            shop_sec= request.POST.get('shop_sec')
-            part_no= request.POST.get('part_no')
-            staff_no = request.POST.get('staff_no')
-            req = request.POST.get('req')
-            date = request.POST.get('date')
+            shop_sec= request.POST.get('shop_sec1')
+            part_no= request.POST.get('part_no1')
+            staff_no = request.POST.get('staff_no1')
+            req = request.POST.get('req1')
+            date = request.POST.get('date1')
 
 
             qty = request.POST.get('qty')
             dimension = request.POST.get('dimension')
             spe_val = request.POST.get('spe_val')
             obt_val = request.POST.get('obt_val')
-            loco_fr = request.POST.get('loco_fr')
-            loco_to = request.POST.get('loco_to')
+            loco_fr = request.POST.get('loco_fr1')
+            loco_to = request.POST.get('loco_to1')
             interc = request.POST.get('interc')
             waiver_no = request.POST.get('waiver_no')
             waiver_date = request.POST.get('waiver_date')
@@ -9804,8 +9817,8 @@ def m30view(request):
             remarks_hod = request.POST.get('remarks_hod')
             remarks_cqam = request.POST.get('remarks_cqam')
             remarks_cde = request.POST.get('remarks_cde')
-            request_no = request.POST.get('rand')
-            specification_no=request.POST.get('spec_no')
+            request_no = request.POST.get('rand1')
+            specification_no=request.POST.get('spec_no1')
             print(obt_val)
 
             obj5 = M30.objects.filter(shop_sec=shop_sec, staff_no=staff_no, part_no=part_no, date=date).distinct()
@@ -9817,7 +9830,7 @@ def m30view(request):
 
                 M30.objects.filter(shop_sec=shop_sec, staff_no=staff_no, part_no=part_no, date=date).update(specification_no=str(specification_no),  request_no=str(request_no), loco_fr=str(loco_fr), loco_to=str(loco_to), req=str(req), qty=str(qty), dimension=str(dimension), spe_val=str(spe_val), obt_val=str(obt_val), interc=str(interc), waiver_no=str(waiver_no), waiver_date=str(waiver_date), non_conf_des=str(non_conf_des), reason_for_non_conf=str(reason_for_non_conf),  corr_action_plan=str( corr_action_plan), remarks_hod=str(remarks_hod), remarks_cqam=str(remarks_cqam), remarks_cde=str(remarks_cde))
             wo_no=M2Doc.objects.all().values('batch_no').distinct()
-        messages.success(request, 'Successfully Updated!, Select new values to update')
+            messages.success(request, 'Successfully Updated!, Select new values to update')
     return render(request, "m30view.html", context)
 
 
@@ -9842,3 +9855,471 @@ def m30getstaffno(request):
         staff_no = list(staff)
         return JsonResponse(staff_no, safe=False)
     return JsonResponse({"success": False}, status=400)
+
+
+
+@login_required
+@role_required(urlpass='/mg15view/')
+def mg15view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0, len(rolelist)):
+            req = Shemp.objects.all().filter(shopsec=rolelist[i]).values('staff_no').exclude(staff_no__isnull=True).distinct()
+            wo_nop =wo_nop | req
+
+
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            staff_no = request.POST.get('staff_no')
+            date = request.POST.get('date')
+            # print(staff_no)
+            # print(shop_sec)
+            obj = Shemp.objects.filter(shopsec=shop_sec, staff_no=staff_no).values('name', 'desgn', 'cat', 'emp_type').distinct()
+            # print(obj)
+            obj1 = MG15.objects.filter(shop_sec=shop_sec, staff_no=staff_no, date=date).values('remarks', 'h1a', 'h2a', 'causeofab', 'ticket_no').distinct()
+            tt = Shemp.objects.filter(shopsec=shop_sec, staff_no=staff_no).values('ticket_no').distinct()
+            # print(tt)
+            print("jj")
+            print(obj1)
+            if len(obj1)== 0:
+                obj1=range(0, 1)
+
+            if "Superuser" in rolelist:
+                  tm=shop_section.objects.all()
+                  tmp=[]
+                  for on in tm:
+                      tmp.append(on.section_code)
+                  context = {
+                        'roles':tmp,
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'tt': tt,
+
+                        'date' : date,
+
+
+                        'sub': 1,
+
+                        'staff_no': staff_no,
+                        'shop_sec': shop_sec,
+
+                        'subnav':subnav
+                  }
+            elif(len(rolelist)==1):
+                  for i in range(0, len(rolelist)):
+                      req = Shemp.objects.all().filter(shopsec=rolelist[i]).values('staff_no').exclude(staff_no__isnull=True).distinct()
+                      wo_nop = wo_nop | req
+                  context = {
+                        'wo_nop':wo_nop,
+                        'roles' :rolelist,
+                        'usermaster':usermaster,
+                        'lenm' :len(rolelist),
+                        'nav': nav,
+                        'ip': get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'tt': tt,
+
+                        'sub': 1,
+                        'date': date,
+
+                        'staff_no': staff_no,
+                        'shop_sec': shop_sec,
+
+                        'subnav': subnav
+                  }
+            elif(len(rolelist)>1):
+                  context = {
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'usermaster':usermaster,
+                        'roles' :rolelist,
+                        'obj': obj,
+                        'obj1': obj1,
+                        'tt': tt,
+
+                        'date': date,
+                        'sub': 1,
+
+                        'staff_no': staff_no,
+                        'shop_sec': shop_sec,
+
+                        'subnav':subnav
+                  }
+
+        if submitvalue=='Save':
+
+                shop_sec= request.POST.get('shop_sec1')
+                staff_no = request.POST.get('staff_no1')
+                date = request.POST.get('date1')
+                name= request.POST.get('name1')
+                desgn = request.POST.get('desgn1')
+                emp_type = request.POST.get('emp_type1')
+                cat = request.POST.get('cat1')
+                ticket_no = request.POST.get('ticket_no')
+                h1a = request.POST.get('h1a')
+                h2a = request.POST.get('h2a')
+                remarks = request.POST.get('remarks')
+                causeofab = request.POST.get('causeofab')
+
+                print(h1a)
+
+                obj2 = MG15.objects.filter(shop_sec=shop_sec, staff_no=staff_no, date=date, ).distinct()
+                print(len(obj2))
+                if len(obj2) == 0:
+                    MG15.objects.create(date=str(date), shop_sec=str(shop_sec), staff_no=str(staff_no), cat=str(cat), name=str(name), desgn=str(desgn), emp_type=str(emp_type), remarks=str(remarks), causeofab=str(causeofab), ticket_no=str(ticket_no), h1a=str(h1a), h2a=str(h2a))
+
+                else:
+                    MG15.objects.filter(shop_sec=shop_sec, staff_no=staff_no, date=date).update(cat=str(cat), ticket_no=str(ticket_no), name=str(name), desgn=str(desgn), emp_type=str(emp_type), remarks=str(remarks), causeofab=str(causeofab), h1a=str(h1a), h2a=str(h2a))
+
+                wo_no=MG15.objects.all().values('staff_no').distinct()
+                messages.success(request, 'Successfully Done!, Select new values to proceed')
+    return render(request, "mg15view.html", context)
+
+
+
+
+
+def mg15getstaff(request):
+    if request.method == "GET" and request.is_ajax():
+
+        shop_sec = request.GET.get('shop_sec')
+
+        staff = Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+        staff_no = list(staff)
+        print(staff_no)
+        return JsonResponse(staff_no, safe=False)
+    return JsonResponse({"success": False}, status=400)
+
+
+
+@login_required
+@role_required(urlpass='/mg49view/')
+def mg49view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=Shemp.objects.all().values('shopsec').distinct()
+        
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = Shemp.objects.all().filter(shop_sec=rolelist[i]).values('staff_no').distinct()
+            staff_no =staff_no | req
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'staff_no':staff_no,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+        
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            tm1=Part.objects.all().values('partno').distinct()
+            
+            temp=Part.objects.all().values('shop_ut').distinct()
+            tm2=Code.objects.filter(code__in=temp,cd_type='51').values('alpha_1').distinct()
+            
+            shop_sec = request.POST.get('shop_sec')
+            updt_date = request.POST.get('updt_date')
+            staff_no = request.POST.get('staff_no')
+
+            obj = Shemp.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name','desgn').distinct().order_by('-yymm')[0];
+            leng = 1
+            if "Superuser" in rolelist:
+                tm=Shemp.objects.all().values('shopsec').distinct()
+                
+                tmp=[]
+                for on in tm:
+                    tmp.append(on['shopsec'])
+                context={
+                    'tm1':tm1,
+                    'tm2':tm2,
+                    'obj': obj,
+                    'len': leng,
+                    'updt_date':updt_date,
+                    'shop_sec': shop_sec,
+                    'staff_no':staff_no,
+                    'sub' : 1,
+                    'lenm' :2,
+                    'roles':tmp,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = Shemp.objects.all().filter(shop_sec=rolelist[i]).values('staff_no').distinct()
+                    staff_no =staff_no | req
+                context = {
+                    'tm1':tm1,
+                    'tm2':tm2,
+                    'obj': obj,
+                    'len': leng,
+                    'updt_date':updt_date,
+                    'shop_sec': shop_sec,
+                    'staff_no':staff_no,
+                    'sub' : 1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'tm1':tm1,
+                    'tm2':tm2,
+                    'obj': obj,
+                    'len': leng,
+                    'updt_date':updt_date,
+                    'shop_sec': shop_sec,
+                    'staff_no':staff_no,
+                    'sub' : 1,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+            
+
+
+            # context = {
+            #             'tm1':tm1,
+            #             'tm2':tm2,
+            #             'obj': obj,
+            #             'len': leng,
+            #             'updt_date':updt_date,
+            #             'shop_sec': shop_sec,
+            #             'staff_no':staff_no,
+            #             'sub' : 1,
+            #             'nav':nav,
+            #             'ip':get_client_ip(request),  
+            #             'subnav':subnav,
+            # }
+        if submitvalue=='submit':
+            updt_date = request.POST.get('update')
+            shop_sec= request.POST.get('shopsec')
+            staff_no = request.POST.get('staffno')
+            part_no = request.POST.get('part_no')
+            matdes = request.POST.get('matdes')
+            quantity = request.POST.get('quantity')
+            weight = request.POST.get('weight')
+            unit = request.POST.get('unit')
+            now = datetime.datetime.now()
+            user=request.user
+            if(part_no==None or matdes==None or quantity==None or weight==None or unit==None):
+                pass;
+            else:
+                # print(updt_date,shop_sec,staff_no,part_no,quantity,weight,unit,now,user)
+                MG49.objects.create(shopsec=str(shop_sec), staff_no=str(staff_no), date=str(updt_date), part_no=str(part_no), desc=str(matdes), quan=str(quantity), weight=str(weight),login_id=str(user), last_modified=str(now), unit=str(unit))
+
+            totindb=request.POST.get('totmebs')
+            
+            for tb in range(2,int(totindb)+1):
+                part_no=request.POST.get('part_no'+str(tb))
+                shop_sec= request.POST.get('shopsec')
+                staff_no = request.POST.get('staffno')
+                matdes=request.POST.get('matdes'+str(tb))
+                quantity=request.POST.get('quan'+str(tb))
+                weight=request.POST.get('weight'+str(tb))
+                unit=request.POST.get('unit'+str(tb))
+                now = datetime.datetime.now()
+                user=request.user
+                updt_date = request.POST.get('update')
+                if(part_no==None or matdes==None or quantity==None or weight==None or unit==None):
+                    pass;
+                else:
+                    # print(updt_date,shop_sec,staff_no,part_no,quantity,weight,unit,now,user)
+                    MG49.objects.create(shopsec=str(shop_sec), staff_no=str(staff_no), date=str(updt_date), part_no=str(part_no),desc=str(matdes), quan=str(quantity), weight=str(weight),login_id=str(user), last_modified=str(now), unit=str(unit))
+
+        
+        ###################################
+    return render(request,"mg49view.html",context)
+
+def mg49getstaff_no(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        # tablecolumnname=same var name
+        staff_no = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
+        return JsonResponse(staff_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg49getmat_des(request):
+    
+    if request.method == "GET" and request.is_ajax():
+        part_no = request.GET.get('part_no')
+        print(part_no,"part_no")
+        w1 = list(Part.objects.filter(partno=part_no).values('des').distinct())
+        wono = w1[0]['des']
+        cont ={
+            "wono":wono,
+        }
+
+        return JsonResponse({"cont":cont}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def mg49report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    tm1=Part.objects.all().values('partno').distinct()
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    staff_no = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=Shemp.objects.all().values('shopsec').distinct()
+        
+        tmp=[]
+    
+        for on in tm:
+            tmp.append(on['shopsec'])
+        
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'tm1':tm1,
+            'subnav':subnav,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = Shemp.objects.all().filter(shop_sec=rolelist[i]).values('staff_no').distinct()
+            staff_no =staff_no | req
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'staff_no':staff_no,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            
+            
+            shop_sec = request.POST.get('shop_sec')
+            updt_date = request.POST.get('updt_date')
+            staff_no = request.POST.get('staff_no')
+            part_no=request.POST.get('part_no')
+            print(shop_sec,updt_date,staff_no,part_no)
+            obj = Shemp.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name','desgn').distinct().order_by('-yymm')[0];
+            leng = 1
+            alldata = MG49.objects.filter(shopsec=shop_sec,staff_no=staff_no,date=updt_date).values('shopsec','staff_no','date','part_no','quan','weight','login_id','unit','desc').distinct();
+            
+            leng2 = alldata.count()
+            print(obj)
+            print(alldata)
+            context = {
+                        'tm1':tm1,
+                        'alldata':alldata,
+                        'tm1':tm1,
+                        'obj': obj,
+                        'len': leng,
+                        'len2':leng2,
+                        'updt_date':updt_date,
+                        'shop_sec': shop_sec,
+                        'staff_no':staff_no,
+                        'sub' : 1,
+                        'nav':nav,
+                        'ip':get_client_ip(request),  
+                        'subnav':subnav,
+            }
+    return render(request,"mg49report.html",context)

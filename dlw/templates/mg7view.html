@@ -55,7 +55,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">MG7 Card</h3>
+<h3 align="center">Material Movement Slip (MG7) Card</h3>
 <br>
 <center>
         {% if messages %}
@@ -157,20 +157,20 @@
 
         <tr>
             <td>{{shop_sec}}</td>
-            <input type="hidden" value="{{shop_sec}}" name="shop_sec">
+            <input type="hidden" value="{{shop_sec}}" name="shop_sec11">
             <td>{{shop_sec1}}</td>
-            <input type="hidden" value="{{shop_sec1}}" name="shop_sec1">
+            <input type="hidden" value="{{shop_sec1}}" name="shop_sec12">
             <td>{{wo_no}}</td>
-            <input type="hidden" value="{{wo_no}}" name="wo_no">
+            <input type="hidden" value="{{wo_no}}" name="wo_no1">
              <td>{{part_no}}</td>
-            <input type="hidden" value="{{part_no}}" name="part_no">
+            <input type="hidden" value="{{part_no}}" name="part_no1">
             {% for i in obj %}
              <td>{{i.des}}</td>
-            <input type="hidden" value="{{i.des}}" name="des">
+            <input type="hidden" value="{{i.des}}" name="des1">
             {% endfor %}
 
              <td>{{m5no}}</td>
-            <input type="hidden" value="{{m5no}}" name="m5no1">
+            <input type="hidden" value="{{m5no}}" name="m5no11">
             <td>
                 {% if date == 0   %}
                        None
@@ -178,7 +178,7 @@
                    {% for i in obj2 %}
 
                       {{i.m13_no}}
-                <input type="hidden" value="{{i.m13_no}}" name="m13_no1">
+                <input type="hidden" value="{{i.m13_no}}" name="m13_no11">
                    {% endfor %}
                 {% endif %}
             </td>
@@ -205,11 +205,11 @@
         <td>
             {% if i.date %}
 
-                <input type="date"  value="{{i.date}}" name="date" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="{{i.date}}" name="date" min="2015-01-01" max="2020-12-31" required>
 
                 {% else %}
 
-                <input type="date"  value="0" name="date" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="0" name="date" min="2015-01-01" max="2020-12-31" required>
             {% endif %}
             </td>
 

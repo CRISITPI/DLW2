@@ -1,0 +1,263 @@
+{% extends 'base.html' %} 
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+  input[type=text],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 20%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 20%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+</style>
+<br>
+<br>
+<h3 align="center">दैनिक निर्गम बाउचर/एम. जी. - 49 </h3>
+<h3 align="center">Daily Issue Voucher (M.G.- 49)</h3>
+
+
+
+<br><br>
+<form action="{% url 'mg49report' %}" method="POST"> 
+    {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                
+                    
+                <td>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+                        <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                        {% if lenm == 1 %}
+                            <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                        {% endif %}
+                        {% if lenm > 1 %}
+                        {% for role in roles %}
+                        <option>{{role}}</option>
+                        {% endfor %}
+                        {% endif %}
+                    </select>
+                </td> 
+                <td>
+                    <label for="staff_no"><b>Staff NO/प्रमुख कर्मचारी :</b></label>
+                    <select class="form-control" id="staff_no" name="staff_no" required>
+                        <option id="op_staff" selected disabled hidden>Select Staff No</option>
+                    </select>
+                </td>
+                <!-- <td>
+                    <label for="part_no"><b>Part No:</b></label>
+                    <select class="form-control" id="part_no1" name="part_no" onchange="find(this)" required>
+                        <option id="op_unit" selected disabled hidden>Select Part No</option>
+                        {% for i in tm1 %}
+                        <option>{{i.partno}}</option>
+                        {%endfor%}
+                    </select>
+                </td> -->
+                <td>
+                    <label for="sno"><b>Date/ दिनांक.:</b></label>            
+                    <input type="date" class="form-control" id="updt_date" style="width: 150px;" name="updt_date" value="{{updt_date}}" required/>
+                </td>
+                
+            </tr>
+    </table>
+    <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+
+  
+
+<br><br> 
+{% if sub == 1 %}
+<div id="print" style="align:center" class="table">
+        <center><b><h4>डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h4></b></center></br></br></br>
+    <input type="hidden" name="len" value="{{len}}">
+        <table align="center" border="1">
+            <tr>
+                <th>Shop_sec</th>
+                <th>Staff No</th>
+                <th>Worker Name</th>
+                <th>Designation</th>
+            </tr>
+            <tr>
+                <td>{{shop_sec}}</td>
+                <td>{{staff_no}}</td>
+                <td>{{obj.name}}</td>
+                <td>{{obj.desgn}}</td>
+                
+                        
+            
+            </tr>
+        </table>
+        
+        <br>
+    <div>
+            <table border="1" align="center">
+                <thead>
+                    <th>Login:</th>
+                    <th>Part NO:</th>
+                    <th>Description:</th>
+                    <th>Quantity:</th>
+                    <th>weight:</th>
+                    <th>Unit:</th>
+                    
+                </thead>
+                <tbody>
+                    {% for i in alldata %}
+                    <tr>
+                        <td>{{i.login_id}}</td>
+                        <td>{{i.part_no}}</td>
+                        <td>{{i.desc}}</td>
+                        <td>{{i.quan}}</td>
+                        <td>{{i.weight}}</td>
+                        <td>{{i.unit}}</td>
+                        
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+        <br><br><br>
+            <table style="width:100%;">            
+                <tr>                                          
+                    <td align="left">
+                        ({{obj.name}})<br>
+                        ______________<br>
+                        Worker's Signature
+                    </td>
+                    
+                    <td align="right">                       
+                        ({{request.user}})<br>
+                        _________________<br>
+                        Chargeman's Signature
+                    </td>
+                </tr>
+            
+        </table>
+        
+</div>
+    <br>
+</div>  
+    
+{% endif %}
+<br>
+    <center><input type="button"  value="print" onclick="printDiv()"></center>
+</form>
+<script> 
+    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+        //console.log("hi");
+                        e.preventDefault();
+                        var shop_sec = $("#shop_sec").val()
+                        console.log("in ajax shopsec");
+                        var data = {shop_sec};
+                            $.ajax({
+                            type : 'GET',
+                            url : "{% url 'mg49getstaff_no' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){
+                                var elementsadded = document.querySelectorAll(".newelestaff");
+                                    if(elementsadded.length>0){
+                                        var elementsaddedarr = Array.from(elementsadded);
+                                        elementsaddedarr.forEach((el)=> el.remove());
+                                        document.querySelector("#op_staff").selected = true; 
+                                    }
+                                    var brarr,mystr,html;
+                                    brarr = response.map((el)=>el.staff_no);
+                                    mystr = "";
+                                    brarr.forEach((el,index)=>{
+                                    html = `<option class="newelestaff">${brarr[index]}</option>`
+                                    mystr = html.concat(mystr);
+                                    });
+                                    html = "";
+                                    document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                                    mystr=""; 
+                            }
+                                })
+                    })  
+    
+                    document.querySelector("#updt_date").addEventListener('change',(e)=>{
+                        
+                        document.querySelector("#myproceed").click();
+                        
+                        })
+                            document.addEventListener('keypress',(event)=>{
+                        if(event.keyCode===13){
+                            event.preventDefault();
+                        }
+                        }) 
+
+                        function printDiv() {
+                            var printContents = document.getElementById("print").innerHTML;
+                       
+                              var style = "<style>";
+                               style = style + "table {width: 100%;font: 17px Calibri;}";
+                               //style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+                               style = style + "padding: 2px 3px;text-align: left;}";
+                               style = style + "</style>";
+                             var win = window.open('', '', 'height=500,width=500');
+                       
+                               win.document.write('<html><head>');
+                       
+                               win.document.write('<title>MG49 Card</title>');
+                               win.document.write(style);
+                               win.document.write('</head>');
+                               win.document.write('<body>');
+                               win.document.write(printContents);
+                               win.document.write('</body></html>');
+                       
+                               win.print();
+                               win.close();
+                       
+                       
+                       
+                       }
+
+
+
+         //////////////to show material description
+
+    
+                           
+</script>
+
+{% endblock content %}
+<!-- javascript written inside script tag -->

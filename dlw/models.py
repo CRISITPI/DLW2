@@ -3980,3 +3980,35 @@ class M14M4new1(models.Model):
 
     class Meta:
         db_table = 'M14M4NEW1'
+
+
+
+class MG15(models.Model):
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    name = models.CharField(db_column='NAME', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    desgn = models.CharField(db_column='DESIGNATION', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CATEGORY', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    emp_type = models.CharField(db_column='EMPLOYEE_TYPE', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    remarks = models.CharField(db_column='REMARKS', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    h1a = models.CharField(db_column='FIRST HALF ABSENT', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    h2a = models.CharField(db_column='SECOND HALF ABSENT', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    causeofab = models.CharField(db_column='CAUSE OF ABSENT', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    ticket_no = models.CharField(db_column='TICKET_NUMBER', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    date= models.CharField(db_column='DATE', max_length=10, blank=True, null=True, default='0')  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'MG15'
+
+
+class MG49(models.Model):
+    shopsec=models.CharField(max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no=models.CharField( max_length=5, blank=True, null=True)  # Field name made lowercase.
+    date=models.CharField( max_length=50, blank=True, null=True)  # Field name made lowercase.
+    part_no=models.CharField(max_length=8, blank=True, null=True)  # Field name made lowercase.
+    desc=models.CharField(max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    quan=models.FloatField(max_length=25, blank=True, null=True,default=0)  # Field name made lowercase.
+    weight=models.CharField(max_length=25, blank=True, null=True,default=0)  # Field name made lowercase.
+    login_id=models.CharField( max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    last_modified=models.CharField(max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    unit=models.CharField(max_length=25, blank=True, null=True,default=0)  # Field name made lowercase.
