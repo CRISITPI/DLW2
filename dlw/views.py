@@ -7738,6 +7738,16 @@ def CardGeneration(request):
                 res = []
                 obj1 = ShowLeaf(request,asmno,res,'M')
                 print("len = ",obj1)
+                for i in range(len(obj1)):
+                    # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
+                    # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
+                    # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
+                    # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                    # if len(obj2):
+                    #     print(obj2[0])
+                    print(i)
+                    M2Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
+
                 # try:
                 #     for j in range(len(obj1)):
                 #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
@@ -7746,8 +7756,17 @@ def CardGeneration(request):
                 #     messages.error(request,'Some Error Occurred')
             elif bval=="Generate Cards" and card=="M4":
                 res = []
-                obj1 = ShowLeaf(request,asmno,res)
+                obj1 = ShowLeaf(request,asmno,res,'R')
                 print("len = ",obj1)
+                for i in range(len(obj1)):
+                    # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
+                    # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
+                    # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
+                    # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                    # if len(obj2):
+                    #     print(obj2[0])
+                    print(i)
+                    M14M4new1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='R',batch_no=batch)
                 # try:
                 #     for j in range(len(obj1)):
                 #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
@@ -7756,8 +7775,17 @@ def CardGeneration(request):
                 #     messages.error(request,'Some Error Occurred')
             elif bval=="Generate Cards" and card=="M5":
                 res = []
-                obj1 = ShowLeaf(request,asmno,res)
+                obj1 = ShowLeaf(request,asmno,res,'M')
                 print("len = ",obj1)
+                for i in range(len(obj1)):
+                    # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
+                    # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
+                    # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
+                    # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                    # if len(obj2):
+                    #     print(obj2[0])
+                    print(i)
+                    M5Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
                 # try:
                 #     for j in range(len(obj1)):
                 #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
@@ -7766,8 +7794,17 @@ def CardGeneration(request):
                 #     messages.error(request,'Some Error Occurred')
             elif bval=="Generate Cards" and card=="M14":
                 res = []
-                obj1 = ShowLeaf(request,asmno,res)
+                obj1 = ShowLeaf(request,asmno,res,'P')
                 print("len = ",obj1)
+                for i in range(len(obj1)):
+                    # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
+                    # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
+                    # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
+                    # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                    # if len(obj2):
+                    #     print(obj2[0])
+                    print(i)
+                    M14M4new1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='P',batch_no=batch)
                 # try:
                 #     for j in range(len(obj1)):
                 #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
