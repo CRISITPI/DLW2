@@ -77,8 +77,10 @@ def viewsPermission(request):
         if inputurl and rolesassign and navbarparent:
             viewUrlPermission.objects.create(navitem=navbarparent,urlname=inputurl,rolespermission=rolesassignlist)
             messages.success(request,'Successful')
+            return redirect('viewsPermission')
         else:
             messages.error(request,'error')
+            return redirect('viewsPermission')
     context = {
         'ip':get_client_ip(request),
         'rolelist':rolelist,
@@ -98,8 +100,10 @@ def viewsPermissiondelete(request):
         if inputurl:
             viewUrlPermission.objects.filter(urlname=inputurl).delete()
             messages.success(request,'Successful')
+            return redirect('viewsPermissiondelete')
         else:
             messages.error(request,'error')
+            return redirect('viewsPermissiondelete')
     context = {
         'ip':get_client_ip(request),
         'urlmade' : urlmade,
@@ -129,8 +133,10 @@ def viewsPermissionUpdate(request):
             toupdate.navitem = navbarparent
             toupdate.save()
             messages.success(request,'Successful')
+            return redirect('viewsPermissionUpdate')
         else:
             messages.error(request,'error')
+            return redirect('viewsPermissionUpdate')
     context = {
         'ip':get_client_ip(request),
         'rolelist':rolelist,
