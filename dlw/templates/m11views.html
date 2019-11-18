@@ -1,0 +1,610 @@
+{% block content %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+<br>
+<br>
+<h1 align="center" >कर्मचारी निष्कर्य समय कार्ड</h1>
+<h1 align="center" >MAN IDLE TIME CARD</h1>
+<br><br>
+<form action="{% url 'm11views' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+                <tr>
+                        <td>
+                            <label for="month"><b>Month/माह :</b></label>
+                            <select id="month" name="monthdrop">
+                                    <option value="select">SELECT MONTH</option>
+                                    <option value="JAN">JAN</option>
+                                    <option value="FEB">FEB</option>
+                                    <option value="MAR">MAR</option>
+                                    <option value="APR">APR</option>
+                                    <option value="MAY">MAY</option>
+                                    <option value="JUN">JUN</option>
+                                    <option value="JUL">JUL</option>
+                                    <option value="AUG">AUG</option>
+                                    <option value="SEPT">SEPT</option>
+                                    <option value="OCT">OCT</option>
+                                    <option value="NOV">NOV</option>
+                                    <option value="DEC">DEC</option>
+                            </select>
+                        </td>
+                        <td>
+                            <label for="sno"><b>Shop Section/शॉप अनुभाग :</b></label>
+                            <select class="form-control" id="shop_sec" name="shop_sec" required>
+                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                {% if len == 1 %}
+                        <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                        {{role}}
+                        {% endif %}
+                        {% if len > 1 %}
+                        {% for role in roles %}
+                        {{role}}
+                            <option>{{role}}</option>
+                        {% endfor %}
+                        {% endif %}
+                            </select>
+                        </td>
+                        <td>
+                            <label for="wk_ord_no"><b>WORK ORDER NO/कार्यादेश सं. :</b></label>
+                            <select class="form-control" id="wno" name="wo_no" required>
+                            <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+                        {% if len == 1 %}
+                        {% for i in wo_no %}
+                        <option>{{i.bo_no}}</option>
+                        {% endfor %}
+                        {% endif %}
+                            </select>
+                        </td>
+                        <td>
+                            <label for="staff_no"><b>STAFF NO/कर्मचारी सं:</b></label>
+                            <select class="form-control" id="staff_no" name="staff_no" required>
+                            <option id="op_emp" selected disabled hidden>Select STAFF NO</option>
+                        
+                            </select>
+                        </td>
+                </tr>
+        </table>
+        <!-- <center><input type="submit" value="Proceed" name="proceed" /></center> -->
+        <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
+
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+
+<input type="hidden" name="len" id="len" value="{{leng}}">
+<input type="hidden" name="subb" id="subb" value="{{sub}}">
+
+    </div>
+<br><br> 
+{% if sub == 1 %}
+<table align="center">  
+    <tr>
+        <th>SHOP SECTION/शाप विभाग:</th> 
+        <td><u>{{shop_sec}}</u></td>
+        <input type="hidden" name="shopsec" value="{{shop_sec}}">
+        <th>MONTH/माह:</th> 
+        <td><u>{{month}}</u></td>
+        <input type="hidden" name="month" value="{{month}}">
+    </tr>
+    
+    <tr>
+        <th>WORK ORDER NO/का.सं.:</th> 
+        <td><u>{{wo_no}}</u></td>
+        <input type="hidden" name="wo_no" value="{{wo_no}}">
+
+    </tr>
+    <tr>
+        <th>STAFF NO/क्रम सं.:</th> 
+        <td><u>{{staff_no}}</u></td>
+        <input type="hidden" name="staff_no" value="{{staff_no}}">
+
+    </tr>
+    {% comment %}
+    <tr>
+        <th>EMPLOYEE NAME:</th>
+        
+        
+        {% for i in obj1 %}
+        {% if forloop.counter == 1 %}
+        <td>
+            <u>{{i.name}}</u>
+        </td>
+        {% endif %}
+        {% endfor %}
+        
+    </tr>
+    {% endcomment %}
+    <tr>
+        <th>CAT/कोटि सं:</th>
+        {% for i in obj1 %}
+        {% if forloop.counter == 1 %}
+        <td>
+            <u>{{i.cat}}</u>
+        </td>
+        {% endif %}
+        {% endfor %}
+    </tr>
+
+    <tr>
+        <th>TOTAL NO OF HOURS /कुल घंटे:</th> 
+        <td><u>{{r1}}</u></td>
+    </tr>
+    <tr>
+        <th>AMT/धनराशि :</th>
+        <td><u>{{amt1}}</u></td>
+        
+        <input type="hidden" name="amt" value="{{amt1}}">
+    </tr>  
+       
+    
+</table> 
+</br>
+
+<br><br>
+
+<div class="container" style="width: 100%">                  
+<table border="4" align="center">
+    <tr>
+        
+        <th>DATE</th>
+        <th>MONTH</th>
+        <th>IN</th>
+        <th>OUT</th>
+        <th>TOTAL TIME</th>
+        <th>DETAIL NO.</th>
+        <th>IDLE TIME</th>
+    </tr>
+
+        
+            {% for i in obj1 %}
+            <tr>
+            
+            {% comment %}
+            {% if i.name %}
+                <input type="text" id="date"  class="myinp2" value="{{i.name}}" name="name{{ forloop.counter }}">         <!-- value="date" name="date"  -->
+            
+                {% else %}
+                <input type="text" id="date"  class="myinp2" value="0" name="name{{ forloop.counter }}">
+                {% endif %}
+            {% endcomment %}
+
+            <td>
+                {% if i.date %}
+                <input type="date" id="date"  class="myinp2" value="{{i.date}}" name="date{{ forloop.counter }}">         <!-- value="date" name="date"  -->
+                {% else %}
+                <input type="date" id="date"  class="myinp2" value="0" name="date{{ forloop.counter }}">
+                {% endif %}
+            </td>
+
+             <td>
+                {% if i.month %}
+                <input type="text" value="{{i.month}}" name="month{{ forloop.counter }}" title="Character Value">
+                {% else %}
+                <input type="text" value="{{month}}" name="month{{ forloop.counter }}" title="Character Value">
+                {% endif %}  
+            </td>
+            
+            <td>
+                {% if i.in1 %}
+                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}" onchange=tottime('in1{{ forloop.counter }}')  >
+                {% else %}
+                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1"  name="in1{{ forloop.counter }}" onchange=tottime('in1{{ forloop.counter }}')>
+                {% endif %}  
+             </td>
+             
+            <td>
+                {% if i.out %}
+                <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}" onchange=tottime('out{{ forloop.counter }}') >
+                {% else %}
+                <input type="time" id="out{{ forloop.counter }}"  class="myinps1"  name="out{{ forloop.counter }}"    onchange=tottime('out{{ forloop.counter }}')>
+                {% endif %}
+            </td>
+                         
+            {% comment %}  
+            <td>
+               {{month}}
+               <input type="text" id="month" value="{{i.month}}" name="month{{ forloop.counter }}"  title="Character Value">
+            </td>
+            {% endcomment %}
+
+            <td>
+                {% if i.total_time %}
+                <input type="text" id="total_time{{ forloop.counter }}"   value="{{i.total_time}}" name="total_time{{ forloop.counter }}"  >
+                {% else %}
+                <input type="text" id="total_time{{ forloop.counter }}"   value="0" name="total_time{{ forloop.counter }}">
+                {% endif %}  
+            </td> 
+
+            <td>
+            
+                <select name="detail_no{{ forloop.counter }}" id="detail_noid{{forloop.counter}}">
+                    <option value="select">SELECT REASON</option>
+                    <option value="machine_repair">MACHINE REPAIR</option>
+                    <option value="no_power">NO POWER</option>
+                    <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>
+                    <option value="lack_of_tools">LACK OF TOOLS</option>
+                    <option value="waiting_for_work">WAITING FOR WORK</option>
+                    <option value="failure_of_crane">FAILURE OF CRANE</option>
+                    <option value="waiting_for_crane">WAITING FOR CRANE</option>
+                    <option value="operator_absent">OPERATOR ABSENT</option>
+                    <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>
+                    <option value="lack_of_gas">LACK OF GAS OXY</option>
+                    <option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>
+                    <option value="lack_of_electrodes">LACK OF ELECTRODES</option>
+                    <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
+                    <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
+                </select>
+                <input type="hidden" id="detail_no{{forloop.counter}}" value="{{i.detail_no}}">
+            </td>
+
+            <td>
+                {% if i.idle_time %}
+                    <input type="time" value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}">
+                    {% else %}
+                    <input type="time"  name="idle_time{{ forloop.counter }}">
+                {% endif %}  
+            </td><td>
+
+           
+            {% endfor %}
+          
+        
+</table>
+<div id="inouttab">
+
+</div>
+    <br><br>
+</div>
+
+<center>
+    <input type="submit" name="proceed" value="Submit">
+</center>
+{% endif %} 
+
+<input  type="button" id="add" value="Add Operations" style="width: 150px;"/>
+<input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
+<div id="items">
+
+<br>
+    <br><br><br>
+
+<br>
+</div>
+
+</form>
+
+   
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script type="text/javaScript">
+  
+var j=0;
+
+$(document).ready(function(){
+    var sub =document.getElementById('subb').value;
+    if(sub==1)
+    {
+        var leng=document.getElementById('len').value;
+        for (i=1;i<=leng;i++)
+        {
+        var detail_no=document.getElementById('detail_no'+String(i)).value;
+        $('#detail_noid'+String(i)).val(detail_no);
+        }
+        
+    }
+    $("#add").click(function(e){
+        event.preventDefault()
+
+
+
+
+        j++;
+        console.log(j);
+        assign();
+
+       var date="dateadd"+String(j)
+       var month="month_add"+String(j)
+       var in1="in1add"+String(j);
+       var out="outadd"+String(j);
+       var outid="'"+out+"'";
+       var in1id="'"+out+"'";
+     
+       
+       //reasons_for_idle_time = "reasons_for_idle_timeadd"+String(j)
+
+       var total_time="total_time_add"+String(j);
+       var idle_time="idle_time_add"+String(j);
+       detail_no = "detail_noadd"+String(j)
+
+       
+      
+       var sno=j;
+        if(j==1)
+        {
+
+
+            var happ='<div class="table-responsive"><table id="customers" border="2" align="center">'+'<tr ><th  style="width:12%">Date</th>'+'<tr ><th  style="width:12%">Month</th>'+'<tr ><th  style="width:12%">In</th>'+
+'<th style="width:12%">Out</th>'+'<th  style="width:12%">Total Time</th>'+'<th  style="width:12%">Detail No.</th>'+'<th  style="width:12%">Idle Time</th>';
+
+     happ=happ+'</tr></table></div>';
+        // $('#items').append(happ);
+
+        }
+var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><input type="date" id='+date+' name='+date+'  /></td >'+'<td ><input type="text" id='+month+' name='+month+' /></td >'+'<td ><input type="time" id='+in1+' name='+in1+' onchange="tottime('+in1id+')" /></td >'+'<td  height="50"><input type="time" id='+out+' name='+out+'  onchange="tottime('+outid+')" /></td>'+'<td  height="50"><input type="text" id='+total_time+' name='+total_time+'></td>'+'<td  height="50"><select id='+detail_no+' name='+detail_no+'><option value="select">SELECT REASON</option>'+
+                    '<option value="machine_repair">MACHINE REPAIR</option>'+
+                    '<option value="no_power">NO POWER</option>'+
+                    '<option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>'+
+                    '<option value="lack_of_tools">LACK OF TOOLS</option>'+
+                    '<option value="waiting_for_work">WAITING FOR WORK</option>'+
+                    '<option value="failure_of_crane">FAILURE OF CRANE</option>'+
+                    '<option value="waiting_for_crane">WAITING FOR CRANE</option>'+
+                    '<option value="operator_absent">OPERATOR ABSENT</option>'+
+                    '<option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>'+
+                    '<option value="lack_of_gas">LACK OF GAS OXY</option>'+
+                    '<option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>'+
+                    '<option value="lack_of_electrodes">LACK OF ELECTRODES</option>'+
+                    '<option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>'+
+                    '<option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>'+
+'</select></td><td  height="50"><input type="time" id='+idle_time+' name='+idle_time+'></td>';
+
+        htAppend=htAppend+'</tr></table></div>';
+
+
+
+     $('#inouttab').append(htAppend);
+     document.getElementById("inoutnum").value=j;
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+});
+function assign(){
+        function operation()
+        {
+        console.log(j);
+        return j;
+        }
+       document.getElementById('myvalue').value =operation();
+    }
+  </script>
+
+
+
+ 
+    
+<script type="text/javaScript">
+$( document ).ready(function() {
+    // console.log( "ready!" );
+    tottime('in11');
+});
+    // console.log( "ready!" );
+    function tottime(id) {
+      console.log("id=");
+      console.log(id);
+      var ad=id.includes("add");
+      
+      if(ad==false)
+      {
+      var inn=id.includes("in");
+      console.log(inn);
+      if(inn)
+      {
+        var res = id.split("in1");
+        console.log(res[1]);
+        var outid="#out"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+        
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time=",hours + ':' + minutes,'#total_time'+String(res[1]));
+    $('#total_time'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("out");
+        console.log(res[1]);
+        var inid="#in1"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time=",hours + ':' + minutes,'#total_time'+String(res[1]));
+
+    $('#total_time'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+      else{
+      var inn=id.includes("in");
+
+        if(inn)
+      {
+        var res = id.split("in1add");
+        console.log(res[1]);
+        var outid="#outadd"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time_add=",hours + ':' + minutes,'#total_time_add'+String(res[1]));
+
+    $('#total_time_add'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("outadd");
+        console.log(res[1]);
+        var inid="#in1add"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time_add=",hours + ':' + minutes,'#total_time_add'+String(res[1]));
+
+    $('#total_time_add'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+    
+  }
+
+
+
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm11getwono' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_wo").selected=true;
+                                  document.querySelector("#op_emp").selected = true; 
+                                  
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.bo_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+
+
+
+document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm11getstaff_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelestaff");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_emp").selected = true;                //ye comment tha  
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.staff_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelestaff">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+
+document.querySelector("#staff_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+ 
+</script>    
+{% endblock content %}        
+ 
+                                  

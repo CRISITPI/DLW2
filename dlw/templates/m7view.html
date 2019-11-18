@@ -107,8 +107,8 @@
                         <td>
                             <label for="mon"><b>MONTH/माह :</b></label>
                             <select id="mon" name="mon" required>
-                                    <option selected disabled>SELECT MONTH</option>
-                                    <option  value="JAN">JAN</option>
+                                    <option  selected disabled hidden>SELECT MONTH</option>
+                                    <option  value="JAN" disabled>JAN</option>
                                     <option  value="FEB">FEB</option>
                                     <option  value="MAR">MAR</option>
                                     <option  value="APR">APR</option>
@@ -228,7 +228,13 @@
 
 <center>
     <input type="submit" name="proceed" value="Submit">
+    {% if noprint == 0 %}
     <input type="button" onclick="printDiv()" value="Print">
+    {% endif %}
+
+    {% if noprint == 1 %}
+    <input type="button" disabled onclick="printDiv()" value="Print">
+    {% endif %}
     <input type="hidden" name="mon" id="mon1" value="{{mon}}">
     <input type="hidden" name="inoutnum" id="inoutnum" value="0">
 
@@ -248,8 +254,9 @@
 
 
 
-
+document.getElementById("mon").disabled=true
     document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+        document.getElementById("mon").disabled=true;
                       e.preventDefault();
                       var shop_sec = $("#shop_sec").val()
                       var data = {shop_sec};
@@ -284,6 +291,7 @@
                   })
 
 document.querySelector("#wno").addEventListener('change',(e)=>{
+    document.getElementById("mon").disabled=true;
     e.preventDefault();
         
         var wo_no = $("#wno").val();
@@ -318,6 +326,8 @@ document.querySelector("#wno").addEventListener('change',(e)=>{
                   })
 
 document.querySelector("#staff_no").addEventListener('change',(e)=>{
+    document.getElementById("mon").disabled=true;
+
     e.preventDefault();
        
         var wo_no = $("#wno").val();
@@ -346,8 +356,11 @@ document.querySelector("#staff_no").addEventListener('change',(e)=>{
                                 });
                                 html = "";
                                 document.querySelector("#part_no").insertAdjacentHTML('beforeend',mystr);
-                                mystr=""; 
+                                mystr="";
+                                document.getElementById("mon").disabled=false;
+                               
                           }
+                           
                             })
                   })
 
@@ -375,7 +388,7 @@ function printDiv() {
 
         win.document.write('<html><head>');
 
-        win.document.write('<title>M2(ROUTE CARD) Card</title>');
+        win.document.write('<title>M7(JOB CARD FOR SQUAD WORK) Card</title>');
         win.document.write(style);
         win.document.write('</head>');
         win.document.write('<body>');

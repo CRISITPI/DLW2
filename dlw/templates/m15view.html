@@ -114,7 +114,15 @@
 <table  align="center">
 <tr>
 <th>DOCUMENT NO:</th>
-<th><input type="text" name="doc_no" value="" required></th>
+<td>
+{% if len2 %}
+    {% for i in obj2 %}
+    
+    <td><input type="number" min="0" id="doc_no" name="doc_no" class="myinp" value="{{i.doc_no}}"  required/></td>{% endfor %}
+    {% else %}
+    <td><input type="number" min="0" id="doc_no" name="doc_no" class="myinp" required/><td>
+{% endif %}
+</td>
 <th></th>
 <th></th>
 <th></th>
@@ -162,8 +170,25 @@
     <input type="hidden" name="shop_sec" value="{{shop_sec}}">
     <td>{{wo_no}}</td>
     <input type="hidden" name="wo_no" value="{{wo_no}}">
-    <td ><input type="text" name="c_d_no" value=""></td>
-    <td colspan="3" align="center"><input type="text" name="unit" value="" required></td>
+    <td >
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    
+    <input type="number" min="0" id="c_d_no" name="c_d_no" class="myinp" value="{{i.c_d_no}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="c_d_no" name="c_d_no" class="myinp" required/>
+    {% endif %}
+    </td>
+    <td colspan="3" align="center">
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number" min="0" id="unit" name="unit" class="myinp" value="{{i.unit}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="unit" name="unit" class="myinp" required/>
+    {% endif %}
+    </td>
 </tr>
 <tr>
     <th colspan="2"><center>WT./QTY.RETURNED</center></th>
@@ -183,12 +208,60 @@
 </tr>
 <tr>
     
-    <td><input type="text" name="metric_ton_returned" value="" required></td>
-    <td><input type="text" name="qty_ret" value="" required></td>
-    <td><input type="text" name="metric_ton_received" value="" required></td>
-    <td><input type="text" name="qty_rec_inward" value="" maximum="5" required></td>
-    <td><input type="text" name="rs" value="" required></td>
-    <td><input type="text" name="p" value="" required></td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number" min="0" id="metric_ton_returned" name="metric_ton_returned" class="myinp" value="{{i.metric_ton_returned}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="metric_ton_returned" name="metric_ton_returned" class="myinp" required/>
+    {% endif %}
+    </td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number"  min="0"id="qty_ret" name="qty_ret" class="myinp" value="{{i.qty_ret}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="qty_ret" name="qty_ret" class="myinp" required/>
+    {% endif %}
+    </td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number" min="0" id="metric_ton_received" name="metric_ton_received" class="myinp" value="{{i.metric_ton_received}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number"  min="0"id="metric_ton_received" name="metric_ton_received" class="myinp" required/>
+    {% endif %}
+    </td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+  
+    <input type="number" min="0" id="qty_rec_inward" name="qty_rec_inward" class="myinp" value="{{i.qty_rec_inward}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="qty_rec_inward" name="qty_rec_inward" class="myinp" required/>
+    {% endif %}
+    </td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number" min="0" id="rupees" name="rupees" class="myinp" value="{{i.rupees}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="rupees" name="rupees" class="myinp" required/>
+    {% endif %}
+    </td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number" min="0" id="paise" name="paise" class="myinp" value="{{i.paise}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="paise" name="paise" class="myinp" required/>
+    {% endif %}
+    </td>
     
 
 </tr>
@@ -210,8 +283,24 @@
     
     <td>{{part_no}}</td>
     <input type="hidden" name="part_no" value="{{part_no}}"> 
-    <td><input type="text" name="allocation" value="" required></td>
-    <td colspan="3" align="center"><input type="text" name="rate" value="" required></td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number" min="0" id="allocation" name="allocation" class="myinp" value="{{i.allocation}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="allocation" name="allocation" class="myinp" required/>
+    {% endif %}
+    </td>
+    <td colspan="3" align="center">
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="number"  min="0" id="rate" name="rate" class="myinp" value="{{i.rate}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number" min="0" id="rate" name="rate" class="myinp" required/>
+    {% endif %}
+    </td>
 
     
 </tr>
@@ -236,11 +325,35 @@
 
 <tr>
     
-    <td><input type="date" id="date"  value="0" name="mat_ret_date" required></td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+
+    <input type="date" id="mat_ret_date" name="mat_ret_date" class="myinp" value="{{i.mat_ret_date}}"  required/>{% endfor %}
+    {% else %}
+    <input type="date" id="mat_ret_date" name="mat_ret_date" class="myinp" required/>
+    {% endif %}
+    </td>
     <td></td>
-    <td><input type="date" id="date"  value="0" name="mat_rec_date" required></td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="date" id="mat_rec_date" name="mat_rec_date" class="myinp" value="{{i.mat_rec_date}}"  required/>{% endfor %}
+    {% else %}
+    <input type="date" id="mat_rec_date" name="mat_rec_date" class="myinp" required/>
+    {% endif %}
+    </td>
     <td></td>
-    <td><input type="date" id="date"  value="0" name="posted_date" required></td>
+    <td>
+    {% if len2 %}
+    {% for i in obj2 %}
+    
+    <input type="date" id="posted_date" name="posted_date" class="myinp" value="{{i.posted_date}}"  required/>{% endfor %}
+    {% else %}
+    <input type="date" id="posted_date" name="posted_date" class="myinp" required/>
+    {% endif %}
+    </td>
     <td></td>
     
 </tr>
@@ -359,7 +472,8 @@ function printDiv() {
 
         win.document.write('<html><head>');
 
-        win.document.write('<title>M15 Card</title>');
+        win.document.write('<title> Advice Note of Return Stores(M15 Card)</title>');
+        
         win.document.write(style);
         win.document.write('</head>');
         win.document.write('<body>');

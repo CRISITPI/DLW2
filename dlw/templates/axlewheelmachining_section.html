@@ -1,42 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
 <html lang="en">
-        <head>
-                <script>
-                   $(document).ready(function () {
-                        $('#date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                </script>
-                <script>
-                        $(document).ready(function () {
-                             $('#editdate').datepicker({
-                                 dateFormat: 'dd-mm-yy'
-                             });
-                         });
-                     </script>
-                        <script>
-                           $(document).ready(function () {
-                                $('#datewhl').datepicker({
-                                    dateFormat: 'dd-mm-yy'
-                                });
-                            });
-                        </script> 
-                            <script>
-                                   $(document).ready(function () {
-                                        $('#dateaxle').datepicker({
-                                            dateFormat: 'dd-mm-yy'
-                                        });
-                                    });
-                                </script>
-                                <script>
-                                   $(document).ready(function () {
-                                        $('#ustwhl_date').datepicker({
-                                            dateFormat: 'dd-mm-yy'
-                                        });
-                                    });
-                                </script>
+<head>
+<script>
+    $(document).ready(function () {
+        $('#date').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+        $('#editdate').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#datewhl').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script> 
+    <script>
+            $(document).ready(function () {
+                $('#dateaxle').datepicker({
+                    dateFormat: 'dd-mm-yy'
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#ustwhl_date').datepicker({
+                    dateFormat: 'dd-mm-yy'
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#dispatch_date').datepicker({
+                    dateFormat: 'dd-mm-yy'
+                });
+            });
+        </script>
     
             </head>
    
@@ -145,6 +152,8 @@ footer, .page-content::after{
         <tr>
         <th>Serial No.</th>
         <th>Batch Order No.</th>
+        <th>Part No. &nbsp;</th>
+        <th>Batch Qty &nbsp;</th>
         <th>Batch Order Date &nbsp;</th>
         <th>Loco Type </th>
         <th>Date &nbsp;</th>
@@ -155,11 +164,14 @@ footer, .page-content::after{
         <th>Axle Make &nbsp; </th>
         <th>Axle Heat Cast No. </th>
         <th>Dispatch To</th>
+        <th>Dispatch Date &nbsp; </th>
         </tr>
         {% for objec in object %}
         <tr>
         <td>{{objec.sno}} <br><br></td>
         <td>{{objec.bo_no}} <br><br></td>
+        <td>{{objec.pt_no}} <br><br></td>
+        <td>{{objec.bo_qty}} <br><br></td>
         <td>{{objec.bo_date}} <br><br></td>
         <td>{{objec.loco_type}} <br><br></td>
         <td>{{objec.date}} <br><br></td>
@@ -170,6 +182,7 @@ footer, .page-content::after{
         <td>{{objec.axle_make}} <br><br></td>
         <td>{{objec.axle_heatcaseno}} <br><br></td>
         <td>{{objec.dispatch_to}} <br><br></td>
+        <td>{{objec.dispatch_date}} <br><br></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -206,7 +219,16 @@ footer, .page-content::after{
                                                 <input type="text" class="form-control" name="bo_date" id="bo_date" required readonly>
                                         </div>
                                         </div>
-
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label>Part No.</label>
+                                                <input type="text" class="form-control" name="pt_no" id="pt_no" required readonly>
+                                                </div>
+                                    <div class="col-6">
+                                        <label>Batch Qty</label>
+                                        <input type="text" class="form-control" name="bo_qty" id="bo_qty" required readonly>
+                                    </div>
+                                    </div>
                                         <div class="row">
                                             <div class="col-6">
                                                 <h6><label for="">Loco Type</label></h6>
@@ -299,7 +321,16 @@ footer, .page-content::after{
                                             <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
                                         </div>  
                                    </div>
-                        
+                                   <div class="row">
+                                        <div class="col-6">
+                                            <label>Part No.</label>
+                                                <input type="text" class="form-control" name="editpt_no" id="editpt_no" required readonly>
+                                                </div>
+                                    <div class="col-6">
+                                        <label>Batch Qty</label>
+                                        <input type="text" class="form-control" name="editbo_qty" id="editbo_qty" required readonly>
+                                    </div>
+                                    </div>
                                     <div class="row">
                                             <div class="col-6">
                                                     <label for="">Date(Manually)</label>
@@ -367,6 +398,12 @@ footer, .page-content::after{
                                     </div>
                                 </div>
                                 <br>
+                                <div class="row">
+                                                <div class="col-6">
+                                                        <label for="">Dispatch Date(Manually)</label>
+                                                        <input type="text" name="dispatch_date" id="dispatch_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                  </div>
+                                </div><br>
                                 <div class="row">
                                <div class="col-6">
                                 <div class="dropdown">
@@ -659,6 +696,8 @@ footer, .page-content::after{
                 success : function(response){            
                     $("#bo_date").val(`${response[0].rel_date}`);
                     $("#loco_type").val(`${response[0].ep_type}`);
+                    $("#pt_no").val(`${response[0].part_no}`);
+                    $("#bo_qty").val(`${response[0].batch_qty}`);
                 }
             })
         });
@@ -676,6 +715,8 @@ footer, .page-content::after{
                         console.log(response);
                         $("#editbo_no").val(`${response[0].bo_no}`);
                         $("#editbo_date").val(`${response[0].bo_date}`);
+                        $("#editpt_no").val(`${response[0].pt_no}`);
+                        $("#editbo_qty").val(`${response[0].bo_qty}`);
                         $("#editlocos").val(`${response[0].loco_type}`);
                         $("#editdate").val(`${response[0].date}`);
                         $("#editwheel_no").val(`${response[0].wheel_no}`);
