@@ -3591,32 +3591,7 @@ class AxleWheelPressing(models.Model):
     journal_make_nde=models.CharField(max_length=20,null=True)
     inspectinspection_status=models.NullBooleanField()
     hhpinspection_status=models.NullBooleanField()
-    
 
-     
-class M11(models.Model):
-    yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    shopsec = models.CharField(db_column='SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    staff_no = models.CharField(db_column='STAFF_NO', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
-    desgn = models.CharField(db_column='DESGN', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    emp_type = models.CharField(db_column='EMP_TYPE', max_length=3, blank=True, null=True)  # Field name made lowercase.
-    status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    remark = models.CharField(db_column='REMARK', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    updt_by = models.CharField(db_column='UPDT_BY', max_length=6, blank=True, null=True)  # Field name made lowercase.
-    updt_date = models.DateField(db_column='UPDT_DATE', blank=True, null=True)  # Field name made lowercase.
-    rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    in1 = models.CharField(db_column='IN1', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    out = models.CharField(db_column='OUT', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    month = models.CharField(db_column='MONTH', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    total_time = models.CharField(db_column='TOTAL_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    idle_time = models.CharField(db_column='IDLE_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    detail_no=models.CharField(db_column='IT_reasons',null=True,max_length=70)
-
-    class Meta:
-        db_table = 'M11'
 
 
 class M22(models.Model):
@@ -4078,3 +4053,50 @@ class MG18(models.Model):
 
     class Meta:
         db_table = 'MG18'
+
+
+class M11(models.Model):
+    yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    shopsec = models.CharField(db_column='SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    desgn = models.CharField(db_column='DESGN', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    emp_type = models.CharField(db_column='EMP_TYPE', max_length=3, blank=True, null=True)  # Field name made lowercase.
+    status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    remark = models.CharField(db_column='REMARK', max_length=1000, blank=True, null=True)  # Field name made lowercase.
+    updt_by = models.CharField(db_column='UPDT_BY', max_length=6, blank=True, null=True)  # Field name made lowercase.
+    updt_date = models.DateField(db_column='UPDT_DATE', blank=True, null=True)  # Field name made lowercase.
+    rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    in1 = models.CharField(db_column='IN1', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    out = models.CharField(db_column='OUT', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    month = models.CharField(db_column='MONTH', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    total_time = models.CharField(db_column='TOTAL_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    idle_time = models.CharField(db_column='IDLE_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    amt = models.CharField(db_column='AMOUNT', max_length=7, blank=True, null=True)
+    detail_no=models.CharField(db_column='IT_reasons',null=True,max_length=70)
+
+    class Meta:
+        db_table = 'M11'
+
+
+
+class MG33new(models.Model):
+
+    updt_date = models.CharField(max_length=50, blank=True, null= True)
+    shop_sec = models.CharField(max_length=50, blank=True, null= True)
+    name = models.CharField(max_length=50, blank=True, null= True)
+    ticketno = models.CharField(max_length=10, blank = True, null= True)
+    acc_date = models.CharField(max_length=10,blank= True, null= True)
+    place = models.CharField(max_length=50, blank=True, null= True)
+    place_of_exam = models.CharField(max_length=50, blank=True, null= True)
+    sec_sup = models.CharField(max_length=50, blank=True, null= True)
+    prac_desc = models.CharField(max_length=200, blank=True, null= True)
+    oral_desc = models.CharField(max_length=200, blank=True, null= True)
+    prac_score = models.CharField(max_length=10, blank=True, null= True)
+    oral_score = models.CharField(max_length=10, blank=True, null= True)
+    total_marks = models.CharField(max_length=50, blank=True, null= True)
+    trade_test_officer = models.CharField(max_length=50, blank=True, null= True)
+    foreman = models.CharField(max_length=50, blank=True, null= True)
+    trade_test_admin = models.CharField(max_length=50, blank=True, null= True)

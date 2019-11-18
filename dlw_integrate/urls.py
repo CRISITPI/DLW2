@@ -171,4 +171,10 @@ urlpatterns = [
     path('mg49getstaff_no/', mg49getstaff_no, name='mg49getstaff_no'),
     path('mg49getmat_des/', mg49getmat_des, name='mg49getmat_des'),
     path('mg49report/', mg49report, name='mg49report'),
+    path('m11views/',m11views,name='m11views'),
+    path('ajax/m11getpart_no/',m11getpart_no,name='m11getpart_no'),
+    path('ajax/m11getstaff_no/',m11getstaff_no,name='m11getstaff_no'),              
+    path('ajax/m11getwono/',m11getwono,name='m11getwono'),
+    path('m11views/',m11views,name='m11views'),
+    path('mg18view/', mg18view, name='mg18view'),
 ]
