@@ -1,0 +1,650 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<style>
+  input[type=text],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 20%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 10%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 6px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+</style>
+<br>
+<br>
+<h3 align="center">MACHINE IDLE TIME CARD</h3>
+<br><br>
+<form action="{% url 'm12view' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td>
+                    <label for="month"><b>Month/माह :</b></label>
+                    <select class="form-control" id="month" name="month">
+                            <option value="select">SELECT MONTH</option>
+                            <option value="JAN">JAN</option>
+                            <option value="FEB">FEB</option>
+                            <option value="MAR">MAR</option>
+                            <option value="APR">APR</option>
+                            <option value="MAY">MAY</option>
+                            <option value="JUN">JUNE</option>
+                            <option value="JULY">JULY</option>
+                            <option value="AUG">AUG</option>
+                            <option value="SEPT">SEPT</option>
+                            <option value="OCT">OCT</option>
+                            <option value="NOV">NOV</option>
+                            <option value="DEC">DEC</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+            {% if len == 1 %}
+                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+            {% endif %}
+            {% if len > 1 %}
+            {% for role in roles %}
+              <option>{{role}}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+                </td>
+                <td>
+                    <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
+                    <select class="form-control" id="wno" name="wo_no" required>
+        <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+        {% if len == 1 %}
+        {% for i in wo_no %}
+          <option>{{i.bo_no}}</option>
+        {% endfor %}
+        {% endif %}
+    </select>
+                </td>
+                
+                  <td>
+                  <label for="staff_no"><b>Employee Number:</b></label>
+                  <select class="form-control" id="staff_no" name="staff_no" required>
+          <option id="op_staff" selected disabled hidden>Select Employee No</option>
+      </select>
+              </td>
+            </tr>
+
+
+        </table>
+        <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
+
+        
+        <center><input type="submit" value="Proceed" id="myproceed" name="proceed" hidden /></center>
+
+
+    </div>
+    <input type="hidden" name="len" id="len" value="{{lent}}">
+    <input type="hidden" name="subb" id="subb" value="{{sub}}">
+
+    <br><br> {% if sub == 1 %}
+    <div id="print" style="align:center" >
+    
+    
+    <div class="container" style="width: 100%">
+        
+        &nbsp;&nbsp;&nbsp;&nbsp;
+       <h5><b>SHOP SECTION: </b> {{shop_sec}}</h5>
+       <input type="hidden" name="shopsec" value="{{shop_sec}}">
+       
+       <h5><b>STAFF NO:</b> {{staff_no}}
+        <input type="hidden" name="staff_no" value="{{staff_no}}">
+         </h5>
+        
+       <h5><b>MONTH: </b>
+       {{obj3.month}}
+       <input type="hidden" name="month" value="{{month}}">
+       </h5>
+       
+       <h5><b>WORK ORDER NUMBER: </b>{{wo_no}}</h5>
+
+       <h5><b>TIME HOURS: </b>
+        
+         {{r1}}  
+         
+
+        
+              </h5>
+
+       <h5><b>AMOUNT: </b>
+         {{amt1}}  
+         <input type="hidden" name="amt" value="{{amt1}}">
+  
+      </h5>
+
+       
+       </h5>
+       
+       </div>
+       
+  
+  </br>
+
+ 
+
+    <!--<form action="." method = "POST">  {% csrf_token %}-->
+        <div class="container" style="width: 100%">
+        <table border="4" align="centre">
+            <tr >
+               <th>Date:</th>
+               <th>Month</th>
+               <th>In</th>
+               <th>Out</th>
+               <th>Category</th>
+               <th>Reasons for idle time</th>
+               <th>Total Time</th>
+               <th>Idle Time</th>
+                            
+             
+           </tr>
+            {% for i in obj1 %}
+            <tr>
+            <td>
+              {% if i.date %}
+                <input type="date" id="date"  class="myinp2" value="{{i.date}}" name="date{{ forloop.counter }}"  >
+                {% else %}
+                <input type="date" id="date"  class="myinp2" value="0" name="date{{ forloop.counter }}">
+              {% endif %}  
+            </td>
+            <td>
+
+              {% if i.month %}
+                <input type="text" id="month" value="{{i.month}}" name="month{{ forloop.counter }}"  title="Character Value"  pattern="[A-Z]*" title="Character Value" required>  
+                {% else %}
+                <input type="text" id="month" value="{{month}}" name="month{{ forloop.counter }}"  pattern="[A-Z]*"  title="Character Value" required>
+                {% endif %}  
+            </td>
+            <td>
+              {% if i.in1 %}
+                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}"  onchange="tottime('in1{{ forloop.counter }}');" >
+                {% else %}
+                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="0" name="in1{{ forloop.counter }}"  onchange="tottime('in1{{ forloop.counter }}');"   >
+                
+              {% endif %}  
+              
+              </td> 
+              <td>
+               {% if i.out %}
+                  <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}"   onchange="tottime('out{{ forloop.counter }}');"  >
+                  {% else %}
+                  
+                  <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="0" name="out{{ forloop.counter }}"   onchange="tottime('out{{ forloop.counter }}');"  >
+        
+                {% endif %}    
+          
+               </td> 
+               <td>
+                
+                  <input type="text" id="cat{{ forloop.counter }}"   value="{{i.cat}}"  name="cat{{ forloop.counter }}"   >
+                  
+                </td>
+               <td>
+
+                
+                      <select name="reasons_for_idle_time{{ forloop.counter }}" id="reasons_for_idle_time_noid{{forloop.counter}}">
+                          <option value="select">SELECT REASON</option>
+                          <option value="machine_repair">MACHINE REPAIR</option>
+                          <option value="no_power">NO POWER</option>
+                          <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>
+                          <option value="lack_of_tools">LACK OF TOOLS</option>
+                          <option value="waiting_for_work">WAITING FOR WORK</option>
+                          <option value="failure_of_crane">FAILURE OF CRANE</option>
+                          <option value="waiting_for_crane">WAITING FOR CRANE</option>
+                          <option value="operator_absent">OPERATOR ABSENT</option>
+                          <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>
+                          <option value="lack_of_gas">LACK OF GAS OXY</option>
+                          <option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>
+                          <option value="lack_of_electrodes">LACK OF ELECTRODES</option>
+                          <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
+                          <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
+                      </select>
+                      <input type="hidden" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}">
+                 
+                <!-- {% if i.reasons_for_idle_time %}
+                <input type="text" id="reasons_for_idle_time{{ forloop.counter }}"   value="{{i.reasons_for_idle_time}}"  name="reasons_for_idle_time{{ forloop.counter }}"   >
+                 {% else %}
+                <input type="text" id="reasons_for_idle_time{{ forloop.counter }}"   value="0"  name="reasons_for_idle_time{{ forloop.counter }}"  >
+               {% endif %}   -->
+              </td>
+               <td>
+                  {% if i.total_time %}
+                   <input type="text" id="total_time{{ forloop.counter }} "   value="{{i.total_time}}"  name="total_time{{ forloop.counter }}"  readonly >
+                    {% else %}
+                   <input type="text" id="total_time{{ forloop.counter }} "   value="0" name="total_time{{ forloop.counter }}" readonly >
+                  {% endif %}  
+                </td>
+                <td>
+                    {% if i.idle_time %}
+                     <input type="text" id="idle_time"  value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}"  >
+                      {% else %}
+                     <input type="text" id="idle_time"   value="0" name="idle_time{{ forloop.counter }}">
+                    {% endif %}  
+                  </td>
+                
+                
+</tr>
+            {% endfor %}
+        </table>
+        <div id="inouttab">
+
+       </div>
+                <br><br>
+
+<br><br>
+</div>
+</div>
+<center>
+    <input type="submit" name="proceed" value="submit">
+    <input type="button" onclick="printDiv()" value="print">
+</center>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<input  type="button" id="add" value="Add Operations" style="width: 150px;"/>
+
+<input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
+       
+    
+
+</form>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<div id="items">
+
+
+    </div>
+    {% endif %}
+
+<br>
+    <br><br><br>
+
+<br>
+
+
+
+
+
+
+
+
+
+
+</form>
+
+
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script language="javascript">
+// var j=0;
+
+// $(document).ready(function(){
+//     $("#add").click(function(e){
+//         event.preventDefault()
+
+var j=0;
+
+$(document).ready(function(){
+    var sub =document.getElementById('subb').value;
+    if(sub==1)
+    {
+        var leng=document.getElementById('len').value;
+        console.log(leng,"leng");
+        for (i=1;i<=leng;i++)
+        {
+        var detail_no=document.getElementById('reasons_for_idle_time'+String(i)).value;
+        console.log("detai_no",detail_no);
+        $("#reasons_for_idle_time_noid"+String(i)).val(detail_no);
+        }
+        
+    }
+    $("#add").click(function(e){
+        event.preventDefault()
+
+
+
+
+
+        j++;
+        console.log(j);
+        assign();
+ 
+       var date="dateadd"+String(j)
+       var month="month_add"+String(j)
+       var in1="in1add"+String(j);
+       var out="outadd"+String(j);
+       var cat="catadd"+String(j);
+       var outid="'"+out+"'";
+       var in1id="'"+out+"'";
+     
+       
+      var reasons_for_idle_time = "reasons_for_idle_timeadd"+String(j)
+
+       var total_time="total_time_add"+String(j);
+       var idle_time="idle_time_add"+String(j);
+       //reasons_for_idle_time = "reasons_for_idle_time_noadd"+String(j)
+
+       
+      
+       var sno=j;
+        if(j==1)
+        {
+
+
+            var happ='<div class="table-responsive"><table id="customers" border="2" align="center">'+'<tr ><th  style="width:12%">Date</th>'+'<tr ><th  style="width:12%">Month</th>'+'<tr ><th  style="width:12%">In</th>'+
+'<th style="width:12%">OUT</th>'+'<th  style="width:12%">Category</th>'+'<th  style="width:12%">Reasons</th>'+'<th  style="width:12%">Total Time.</th>'+'<th  style="width:12%">Idle Time</th></tr>';
+
+     happ=happ+'</tr></table></div>';
+        // $('#items').append(happ);
+
+        }
+var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><input type="date" id='+date+' name='+date+'  /></td >'+'<td ><input type="text" id='+month+' name='+month+' /></td >'+'<td ><input type="time" id='+in1+' name='+in1+' onchange="tottime('+in1id+')" /></td >'+'<td  height="50"><input type="time" id='+out+' name='+out+'  onchange="tottime('+outid+')" /></td>'+'<td  height="50"><input type="text" id='+cat+' name='+cat+'  /></td>'+' <td  height="50"><select name='+reasons_for_idle_time+' id='+reasons_for_idle_time+' > <option value="select">SELECT REASON</option><option value="machine_repair">MACHINE REPAIR</option> <option value="no_power">NO POWER</option> <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option><option value="lack_of_tools">LACK OF TOOLS</option><option value="waiting_for_work">WAITING FOR WORK</option> <option value="failure_of_crane">FAILURE OF CRANE</option> <option value="waiting_for_crane">WAITING FOR CRANE</option><option value="operator_absent">OPERATOR ABSENT</option> <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option> <option value="lack_of_gas">LACK OF GAS OXY</option><option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option><option value="lack_of_electrodes">LACK OF ELECTRODES</option><option value="waiting_for_lifter">WAITING FOR F./LIFTER</option><option value="drop_in_pressure">DROP IN Pn. PRESSURE</option></select><input type="hidden" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}"></td>'+'<td  height="50"><input type="text" id='+total_time+' name='+total_time+' readonly></td>'+'<td  height="50"><input type="text" id='+idle_time+' name='+idle_time+'></td>';
+
+        htAppend=htAppend+'</tr></table></div>';
+
+
+
+     $('#inouttab').append(htAppend);
+     document.getElementById("inoutnum").value=j;
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+});
+function assign(){
+        function operation()
+        {
+        console.log(j);
+        return j;
+        }
+       document.getElementById('myvalue').value =operation();
+    }
+  </script>
+
+
+
+ 
+    
+<script type="text/javaScript">
+$( document ).ready(function() {
+    // console.log( "ready!" );
+    tottime('in11');
+});
+    // console.log( "ready!" );
+    function tottime(id) {
+      console.log("id=");
+      console.log(id);
+      var ad=id.includes("add");
+      
+      if(ad==false)
+      {
+      var inn=id.includes("in");
+      console.log(inn);
+      if(inn)
+      {
+        var res = id.split("in1");
+        console.log(res[1]);
+        var outid="#out"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time=",hours + ':' + minutes,'#total_time'+String(res[1]));
+    $('#total_time'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("out");
+        console.log(res[1]);
+        var inid="#in1"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time=",hours + ':' + minutes,'#total_time'+String(res[1]));
+
+    $('#total_time'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+      else{
+      var inn=id.includes("in");
+
+        if(inn)
+      {
+        var res = id.split("in1add");
+        console.log(res[1]);
+        var outid="#outadd"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time_add=",hours + ':' + minutes,'#total_time_add'+String(res[1]));
+
+    $('#total_time_add'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("outadd");
+        console.log(res[1]);
+        var inid="#in1add"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    console.log("total_time_add=",hours + ':' + minutes,'#total_time_add'+String(res[1]));
+
+    $('#total_time_add'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+    
+  }
+
+
+
+
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm12getwono' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_wo").selected=true;
+                                  document.querySelector("#op_staff").selected = true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.bo_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm12getstaff_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelestaff");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+ 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.staff_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelestaff">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+                document.querySelector("#staff_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M15 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+       
+
+
+        win.print();
+        win.close();
+
+}
+
+    
+ 
+             </script>   
+
+
+
+
+    
+
+  
+  
+
+
+
+
+
+
+
+
+{% endblock content %}

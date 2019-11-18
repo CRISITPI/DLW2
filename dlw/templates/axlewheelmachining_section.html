@@ -30,6 +30,13 @@
                                         });
                                     });
                                 </script>
+                                <script>
+                                   $(document).ready(function () {
+                                        $('#ustwhl_date').datepicker({
+                                            dateFormat: 'dd-mm-yy'
+                                        });
+                                    });
+                                </script>
     
             </head>
    
@@ -436,9 +443,23 @@ footer, .page-content::after{
                                   <h4 class="mb-3">Wheel</h4>
                                   <div class="row">
                                           <div class="col-md-6 mb-3">
-                                                  <label for="Axle">UST</label>
-                                                  <input type="number" class="form-control" name="ustwhl" id="ustwhl" placeholder="" required>
+                                                  <label>UST</label>
+                                                   <select name="ustwhl" id="ustwhl" class="form-control ll" required >
+                                                    <option>Ok</option>
+                                                    <option>Not Ok</option>
+                                                    </select>
                                                 </div>
+                                                <div class="col-6">
+                                                    <label for="">UST Date</label>
+                                                    <input type="text" name="ustwhl_date" id="ustwhl_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Inspection Status</label>
+                                                <select name="ustwhl_status" id="ustwhl_status" class="form-control ll" required >
+                                                    <option>Pass</option>
+                                                    <option>Reject</option>
+                                                    </select>
+                                              </div>  
                                                 <div class="col-md-6 mb-3">
                                                       <label for="Axle">Hub Length</label>
                                                       <input type="number" class="form-control" name="hub_lengthwhl" id="hub_lengthwhl" placeholder="" required>
@@ -508,6 +529,17 @@ footer, .page-content::after{
                             <label for="Axle">UST</label>
                             <input type="number" class="form-control" name="ustaxle" id="ustaxle" placeholder="" value="" required>
                             </div>
+                            <div class="col-6">
+                                <label for="">UST Date</label>
+                                <input type="text" name="ustaxle_date" id="ustaxle_date" class="form-control" placeholder="dd-mm-yyyy" required>
+                          </div>
+                          <div class="col-6">
+                            <label for="">UST Status</label>
+                            <select name="ustaxle_status" id="ustaxle_status" class="form-control ll" required >
+                                <option>Ok</option>
+                                <option>Not Ok</option>
+                                </select>
+                          </div>
                             <div class="col-4">
                             <label for="Axle">Axle Length</label>
                             <input type="number" class="form-control" name="axlelength" id="axlelength" placeholder="" value="" required>

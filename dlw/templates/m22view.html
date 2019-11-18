@@ -55,7 +55,7 @@
 </style>
 <br>
 <br>
-<h3 align="center">M22 Card</h3>
+<h3 align="center">Duty Certificate (M22) Card</h3>
 <br>
 <center>
         {% if messages %}
@@ -116,16 +116,16 @@
 
                 <td>
                     <label for="staff_no"><b>STAFF NO/स्टाफ संख्या:</b></label>
-                    <select class="form-control" id="staff_no" name="staff_no" required>
+                    <select class="form-control" id="staff_no" name="staff_no" onchange="month()" required>
             <option id="op_staff" selected disabled hidden>Select STAFF NO</option>
-            
+
               </select>
                 </td>
 </tr>
             <tr>
                 <td>
                     <label for="month"><b>MONTH/महीना:</b></label>
-                    <select class="form-control" id="mon" name="mon" required>
+                    <select class="form-control" id="mon" name="mon"  disabled required>
                     <option  selected disabled hidden>Select MONTH</option>
                     <option value='1'>January</option>
                     <option value='2'>February</option>
@@ -212,22 +212,22 @@
         <td>
             {% if i.datelw %}
 
-                <input type="date"  value="{{i.datelw}}" name="datelw" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="{{i.datelw}}" name="datelw" min="2015-01-01" max="2020-12-31" required>
 
                 {% else %}
 
-                <input type="date"  value="0" name="datelw" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="0" name="datelw" min="2015-01-01" max="2020-12-31" required>
             {% endif %}
             </td>
 
         <td>
             {% if i.datecc %}
 
-                <input type="date"  value="{{i.datecc}}" name="datecc" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="{{i.datecc}}" name="datecc" min="2015-01-01" max="2020-12-31" required>
 
                 {% else %}
 
-                <input type="date"  value="0" name="datecc" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="0" name="datecc" min="2015-01-01" max="2020-12-31" required>
 
             {% endif %}
             </td>
@@ -236,11 +236,11 @@
         <td>
             {% if i.daterw %}
 
-                <input type="date"  value="{{i.daterw}}" name="daterw" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="{{i.daterw}}" name="daterw" min="2015-01-01" max="2020-12-31" required>
 
                 {% else %}
 
-                <input type="date"  value="0" name="daterw" min="2015-01-01" max="2020-12-31" >
+                <input type="date"  value="0" name="daterw" min="2015-01-01" max="2020-12-31" required>
 
             {% endif %}
             </td>
@@ -451,6 +451,11 @@ $("#wno").change(function(e){
            })
 
 
+function month(){
+
+document.getElementById("mon").disabled = false;
+
+}
 
 
 document.querySelector("#mon").addEventListener('change',(e)=>{
