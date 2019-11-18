@@ -6976,9 +6976,10 @@ def MG33view(request):
             trade_test_officer= request.POST.get('trade_test_officer')
             foreman = request.POST.get('foreman')
             trade_test_admin = request.POST.get('trade_test_admin')
-            print("object",m11obj)
             
-            #MG33view.objects.create(updt_date=str(updt_date), shop_sec = str(shop_sec),name=str(name), ticketno=str(ticketno), acc_date =str(acc_date),prac_desc = str(prac_desc), oral_desc = str(oral_desc), prac_score= str(prac_score),oral_score= str(oral_score), total_marks = str(total_marks),  sec_sup= str(sec_sup), trade_test_officer = str(trade_test_admin),  foreman= str(foreman), trade_test_admin= str(trade_test_officer) )
+            
+            MG33new.objects.create(updt_date=str(updt_date), shop_sec = str(shop_sec),name=str(name), ticketno=str(ticketno), acc_date =str(acc_date),prac_desc = str(prac_desc), oral_desc = str(oral_desc), prac_score= str(prac_score),oral_score= str(oral_score), total_marks = str(total_marks),  sec_sup= str(sec_sup), trade_test_officer = str(trade_test_admin),  foreman= str(foreman), trade_test_admin= str(trade_test_officer) )
+        
             # print(updt_date, shop_sec, name, staff_no, ticketno, acc_Date, cause, reason_neg, reason_y_neg, equip_check, suggestions, bgc, bgc2, sec_sup, chargeman, mistry, c1, c2, c3, c4, a1, a2, a3, SSFO)
 
             messages.success(request, 'Successfully Saved !!!, Select new values to update')
