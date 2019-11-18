@@ -222,15 +222,31 @@ th, td {
  <td>{{values.name}}</td>
   <td>{{values.ticketno}}</td>
   <td><input type="text" id="lv_date" style="width: 150px;" name="lv_date" value="{{values.acdate}}" placeholder="yyyy-mm-dd" readonly required/></td>
+
 </tr>
 </table>
  {% endfor %}     
 {% endif %}
 
+
+<td>
+
+    <label for="skill" name="skill">Skilled/ Un-Skilled/ Core</label>
+    <select class="form-control ll" name="skill" style="width: 150px;" required>
+      <option>Skilled</option>
+      <option>Un-Skilled</option>
+      <option>Core</option>
+      <option></option>
+      <option></option>
+    </select>
+
+
+</td>
 <div id="items"> </div>
 
  
-<div class="container" id="accident_info">
+
+<div class="container" id="exam_info">
         
           <table id="place">
             <tr>
@@ -267,6 +283,8 @@ th, td {
             </select>
             
            </td>
+
+
           </tr>
         </table>
           <table border='2' style="width: 100%;">
@@ -308,7 +326,8 @@ th, td {
             </tbody>
 
           </table>
-          <input type="button" name="Sumbit" value="Click here" onclick="javascript:addNumbers()"/>
+          <br>
+          <input type="button" name="Sumbit" value="Get Total Score" onclick="javascript:addNumbers()"/>
           <label for="tot_marks"><b>Total Marks</b></label>
           <input type="Number" id="tot_marks" placeholder="Total Marks" class="form-control ll" name="total_marks" style="width: 150px;"><br>
           
@@ -346,7 +365,7 @@ th, td {
  
                 <label  for="sno"><b>Foreman/ Trade Test</b></label>
  
-                <select class="form-control ll" id="shop_sec" name="foreman" required style="width: 210px;" required>
+                <select class="form-control ll" id="shop_sec" name="foreman" style="width: 210px;" required>
                 <option id="op_shop" name="Mistry" selected disabled hidden>Foreman/ Trade Test</option> 
                 {% for lc in names %}
                   <option value="{{lc}}">{{lc}}</option>
@@ -354,33 +373,41 @@ th, td {
                   </select>
  
              </td>
+
+             
                 
-                  </tr>
-                    </table>
+              </tr>
+
+              <td>
+
+              <label  for="trade_test_admin"><b>Trade Test Admin</b></label>
+              <select class="form-control ll" id="ssfo" name="trade_test_admin" style="width: 250px;" required>
+                  
+                    <option  id="op_shop" name="trade_test_admin" selected style="width: 250px; float:right;" >शिल्प परीक्षा नायिका</option> 
+                    {% for lc in empname %}
+                      <option value="{{lc}}">{{lc}}</option>
+                      {% endfor %}
+                      </select><br>
+
+
+
+
+
+
+              </td>
+
+                  
+
+
+
+            </table>
             
       
  
         
           
-          <select class="form-control ll" id="ssfo" name="trade_test_admin" style="width: 250px;float:right;" required>
-                <option  id="op_shop" name="trade_test_admin" selected disabled hidden >शिल्प परीक्षा नायिका की टिप्पणी</option> 
-                {% for lc in empname %}
-                  <option value="{{lc}}">{{lc}}</option>
-                  {% endfor %}
-                  </select><br>
-         {% comment %}  <table style="float: right;">
-            <!-- <tr>
-              <td>
-                  <label style="width: 150px;" for="sno"><b>SS/ FO</b></label><br> 
-                <select class="form-control ll" id="ssfo" name="SSFO" style="width: 150px;" required>
-                <option  id="op_shop" name="Chargeman" selected disabled hidden >SS/ FO</option> 
-                {% for lc in empname %}
-                  <option value="{{lc}}">{{lc}}</option>
-                  {% endfor %}
-                  </select>
-              </td>
-            </tr> -->
-          </table>{% endcomment %}
+          
+         
       </div> 
 
 <center>

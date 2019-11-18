@@ -6922,9 +6922,10 @@ def MG33view(request):
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
-                    w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
-                    req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
-                    wo_nop = wo_nop | req
+                    w1 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname').distinct()
+
+                    # req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                    # wo_nop = wo_nop | req
 
                 context = {
                     'sub':1,
