@@ -1,48 +1,62 @@
 {% extends 'base.html' %} {% block content %}
 <html>
         <head>
-                <script>
-                   $(document).ready(function () {
-                        $('#date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
+<script>
+$(document).ready(function () {
+    $('#date').datepicker({
+        dateFormat: 'dd-mm-yy'
+    });
+});
+</script>
+<script>
+    $(document).ready(function () {
+            $('#editdate').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+    </script>
+    <script>
+    $(document).ready(function () {
+            $('#dispatch_date').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+    </script>
+    <script>
+            $(document).ready(function () {
+                    $('#in_qty').datepicker({
+                        dateFormat: 'dd-mm-yy'
                     });
-                </script>
-                <script>
-                        $(document).ready(function () {
-                             $('#editdate').datepicker({
-                                 dateFormat: 'dd-mm-yy'
-                             });
-                         });
-                     </script>
-                <script>
-                    $(document).ready(function () {
-                         $('#in_qty').datepicker({
-                             dateFormat: 'dd-mm-yy'
-                         });
-                     });
-                 </script> 
-                 <script>
-                    $(document).ready(function () {
-                         $('#out_qty').datepicker({
-                             dateFormat: 'dd-mm-yy'
-                         });
-                     });
-                 </script>
-                 <script>
-                    $(document).ready(function () {
-                         $('#editout_qty').datepicker({
-                             dateFormat: 'dd-mm-yy'
-                         });
-                     });
-                 </script>
-                 <script>
-                    $(document).ready(function () {
-                         $('#editin_qty').datepicker({
-                             dateFormat: 'dd-mm-yy'
-                         });
-                     });
-                 </script>     
+                });
+            </script> 
+            <script>
+            $(document).ready(function () {
+                    $('#out_qty').datepicker({
+                        dateFormat: 'dd-mm-yy'
+                    });
+                });
+            </script>
+            <script>
+            $(document).ready(function () {
+                    $('#editout_qty').datepicker({
+                        dateFormat: 'dd-mm-yy'
+                    });
+                });
+            </script>
+            <script>
+            $(document).ready(function () {
+                    $('#editin_qty').datepicker({
+                        dateFormat: 'dd-mm-yy'
+                    });
+                });
+            </script> 
+        <script>
+$(document).ready(function () {
+$('#dispatch_date').datepicker({
+dateFormat: 'dd-mm-yy'
+});
+});
+</script>    
                      
         </head> 
 
@@ -146,19 +160,25 @@
             <th>Serial No. &nbsp; </th>
             <th>Batch order No. &nbsp; </th>
             <th>Batch Order Date &nbsp; </th>
+            <th>Part No. &nbsp;</th>
+            <th>Batch Qty &nbsp;</th>
             <th>Loco Type</th>
             <th>Sr. No. &nbsp;</th>
             <th>Make &nbsp;</th>
-            <th>In Quantity &nbsp; </th>
-            <th>Out Quantity &nbsp; </th>
+            <th>Machine In Date &nbsp; </th>
+            <th>Machine Out Date &nbsp; </th>
             <th>Date &nbsp; </th>
             <th>Dispatch To &nbsp; </th>
+            <th>Dispatch Date &nbsp; </th>
+
             </tr>
             {% for objec in object %}
             <tr>
                 <td>{{objec.sno}} <br><br></td>
                 <td>{{objec.bo_no}} <br><br></td>
                 <td>{{objec.bo_date}} <br><br></td>
+                <td>{{objec.pt_no}} <br><br></td>
+                <td>{{objec.bo_qty}} <br><br></td>
                 <td>{{objec.loco_type}} <br><br></td>
                 <td>{{objec.airbox_sno}} <br><br></td>
                 <td>{{objec.airbox_make}} <br><br></td>
@@ -166,6 +186,7 @@
                 <td>{{objec.out_qty}} <br><br></td>
                 <td>{{objec.date}} <br><br></td>
                 <td>{{objec.dispatch_to}} <br><br></td>
+                <td>{{objec.dispatch_date}} <br><br></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -205,11 +226,22 @@
 
                                 <div class="row">
                                         <div class="col-6">
+                                            <label>Part No.</label>
+                                                <input type="text" class="form-control" name="pt_no" id="pt_no" required readonly>
+                                                </div>
+                                    <div class="col-6">
+                                        <label>Batch Qty</label>
+                                        <input type="text" class="form-control" name="bo_qty" id="bo_qty" required readonly>
+                                    </div>
+                                    </div>
+
+                                <div class="row">
+                                        <div class="col-6">
                                             <label>Loco Type</label>
                                                 <input type="text" class="form-control" name="locos" id="locos" required readonly>
                                                 </div>
                                     <div class="col-6">
-                                        <label for="Axle">Make</label>
+                                        <label for="Axle">Serial Make</label>
                                         <input type="text" class="form-control" name="airbox_make" id="airbox_make" required>
                                     </div>
                                     </div>
@@ -232,9 +264,9 @@
                                          </div>
                                          <div class="col-6">
                                                 <label for="">Date(Manually)</label>
-                                                <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" readonly>
+                                                <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                           </div>
-                                        </div>            
+                                        </div>     
 
                                     </div>
 
@@ -276,6 +308,16 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                            <div class="col-6">
+                                                    <h6><label>Part No.</label></h6>
+                                                    <input type="text" class="form-control" name="editpt_no" id="editpt_no" required readonly>
+                                            </div>
+                                            <div class="col-6">
+                                                    <h6><label>Batch Qty</label></h6>
+                                                    <input type="text" class="form-control" name="editbo_qty" id="editbo_qty" required readonly>
+                                            </div>
+                                        </div>
+                                    <div class="row">
                                         <div class="col-6">
                                                 <h6><label for="">Batch Order Date</label></h6>
                                                 <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
@@ -299,11 +341,11 @@
                                 
                                         <div class="row">
                                             <div class="col-6">
-                                                <label for="Axle">Make</label>
+                                                <label for="Axle">Serial Make</label>
                                                 <input type="text" class="form-control" name="editairbox_make" id="editairbox_make" required>
                                             </div>
                                             <div class="col-6">
-                                                <label for="">Machine In Date</label> 
+                                                <label for="">Machine In Date</label>
                                                 <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" required>
                                             </div>
                                         </div>
@@ -343,9 +385,16 @@
                                             </div>
                                         </div>
                                         <br>
+                                        <div class="row">
+                                                <div class="col-6">
+                                                        <label for="">Dispatch Date(Manually)</label>
+                                                        <input type="text" name="dispatch_date" id="dispatch_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                  </div>
+                                        </div>
+                                        <br>
                                             <div class="col">
                                                 <div class="dropdown">
-                                                    <select name="dislocos" type="form-control ll" required>
+                                                    <select class="btn default" name="dislocos" type="form-control ll" required>
                                                     <option value="" hidden selected>Dispatch To</option>
                                                     <option value="BogieAssembly">Bogie Assembly and Dispatch</option>
                                                     </select>
@@ -394,24 +443,6 @@
             </form>
 
             <script>
-                $(document).ready(function() {
-                    $('#delform').bootstrapValidator({
-                        feedbackIcons: {
-                            valid: 'glyphicon glyphicon-ok',
-                            invalid: 'glyphicon glyphicon-remove',
-                            validating: 'glyphicon glyphicon-refresh'
-                        },
-                        fields: {
-                            delsno: {
-                                validators: {
-                                    notEmpty: {
-                                        message: 'The username is required'
-                                    }
-                                }
-                            }
-                        }
-                    });
-                });
                 
                 $("#addbono").change(function(e){
                     e.preventDefault();
@@ -425,6 +456,8 @@
                         success : function(response){            
                             $("#bo_date").val(`${response[0].rel_date}`);
                             $("#locos").val(`${response[0].ep_type}`);
+                            $("#pt_no").val(`${response[0].part_no}`);
+                            $("#bo_qty").val(`${response[0].batch_qty}`);
                         }
                     })
                 });
@@ -443,6 +476,8 @@
                                 $("#editbo_no").val(`${response[0].bo_no}`);
                                 $("#editbo_date").val(`${response[0].bo_date}`);
                                 $("#editlocos").val(`${response[0].loco_type}`);
+                                $("#editpt_no").val(`${response[0].pt_no}`);
+                                $("#editbo_qty").val(`${response[0].bo_qty}`);
                                 $("#editdate").val(`${response[0].date}`);
                                 $("#editairbox_sno").val(`${response[0].airbox_sno}`);
                                 $("#editairbox_make").val(`${response[0].airbox_make}`);

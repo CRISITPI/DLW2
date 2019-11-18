@@ -3301,6 +3301,8 @@ class MachiningAirBox(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)
     bo_date=models.DateField(null=True)
+    pt_no=models.CharField(max_length=20,null=True)
+    bo_qty=models.CharField(max_length=20,null=True)
     airbox_sno=models.CharField(max_length=20,null=True)
     airbox_make=models.CharField(max_length=20,null=True)
     in_qty=models.CharField(null=True,max_length=20)
@@ -3309,6 +3311,7 @@ class MachiningAirBox(models.Model):
     loco_type=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=20,null=True)
     dispatch_status = models.BooleanField(default=False)
+    dispatch_date=models.CharField(max_length=20,null=True)
 
 class barrelfirst(models.Model):
     locotype=models.CharField(max_length=100,null=True)
@@ -3354,6 +3357,8 @@ class MiscellSection(models.Model):
    sno=models.AutoField(primary_key=True)
    bo_no=models.CharField(max_length=20,null=True)
    bo_date=models.CharField(max_length=20,null=True)
+   pt_no=models.CharField(max_length=20,null=True)
+   bo_qty=models.CharField(max_length=20,null=True)
    shaft_m=models.CharField(max_length=20,null=True) 
    in_qty=models.IntegerField(null=True)
    out_qty=models.IntegerField(null=True)
@@ -3361,12 +3366,15 @@ class MiscellSection(models.Model):
    loco_type=models.CharField(max_length=20,null=True)
    dispatch_to=models.CharField(max_length=20,null=True)
    dispatch_status = models.BooleanField(default=False)
+   dispatch_date=models.CharField(max_length=20,null=True)
 
 
 class AxleWheelMachining(models.Model):
   sno=models.AutoField(primary_key=True)
   bo_no=models.CharField(max_length=20,null=True)
   bo_date=models.CharField(max_length=20,null=True)
+  pt_no=models.CharField(max_length=20,null=True)
+  bo_qty=models.CharField(max_length=20,null=True)
   wheel_no=models.CharField(max_length=20,null=True)
   wheel_make=models.CharField(max_length=20,null=True)
   wheel_heatcaseno=models.CharField(max_length=20,null=True)
@@ -3411,6 +3419,7 @@ class AxleWheelMachining(models.Model):
   axleinspection_status=models.BooleanField(default=False) 
   wheelinspection_status=models.BooleanField(default=False)
   inspection_status=models.NullBooleanField()
+  dispatch_date=models.CharField(max_length=20,null=True)
 
 
 class M5SHEMP(models.Model):
@@ -3482,6 +3491,8 @@ class PinionPressing(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)
     bo_date=models.CharField(max_length=20,null=True)
+    pt_no=models.CharField(max_length=20,null=True)
+    bo_qty=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
     tm_no=models.CharField(max_length=20,null=True)
     tm_make=models.CharField(max_length=20,null=True)
@@ -3493,6 +3504,7 @@ class PinionPressing(models.Model):
     loco_type=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
+    dispatch_date=models.CharField(max_length=20,null=True)
     inspection_status=models.NullBooleanField()
 
 
@@ -3552,6 +3564,8 @@ class AxleWheelPressing(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)
     bo_date=models.CharField(max_length=20,null=True)
+    pt_no=models.CharField(max_length=20,null=True)
+    bo_qty=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
     axle_no=models.CharField(max_length=20,null=True)
@@ -3591,6 +3605,7 @@ class AxleWheelPressing(models.Model):
     journal_make_nde=models.CharField(max_length=20,null=True)
     inspectinspection_status=models.NullBooleanField()
     hhpinspection_status=models.NullBooleanField()
+    dispatch_date=models.CharField(max_length=20,null=True)
 
 
 
@@ -3666,6 +3681,8 @@ class BogieAssembly(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)
     bo_date=models.CharField(max_length=20,null=True)
+    pt_no=models.CharField(max_length=20,null=True)
+    bo_qty=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
     in_date=models.CharField(max_length=20,null=True)
@@ -3691,6 +3708,7 @@ class BogieAssembly(models.Model):
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
     inspection_status=models.NullBooleanField()
+    dispatch_date=models.CharField(max_length=20,null=True)
 
 class MG22new(models.Model):
     updt_date = models.CharField(blank = True, null=True,max_length=10)
@@ -4100,3 +4118,46 @@ class MG33new(models.Model):
     trade_test_officer = models.CharField(max_length=50, blank=True, null= True)
     foreman = models.CharField(max_length=50, blank=True, null= True)
     trade_test_admin = models.CharField(max_length=50, blank=True, null= True)
+
+
+class m9(models.Model):
+    
+    shop_sec = models.CharField(max_length=4, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
+    wo_no = models.CharField( max_length=7, blank=True, null=True) 
+    part_no = models.CharField( max_length=8, blank=True, null=True)  # Field name made lowercase.
+    aff_opn = models.CharField(max_length=10, blank=True, null=True)  # Field name made lowercase.
+    on_off= models.CharField( max_length=4, blank=True, null=True) #idle time on off
+    cat = models.CharField( max_length=2, blank=True, null=True)  # cat of idle time
+    mw_no = models.CharField( max_length=8, blank=True, null=True) 
+    mg9_no = models.CharField( max_length=8, blank=True, null=True) 
+    empno=models.CharField(max_length=20,null=True) #optr no
+    sus_jbno=models.DecimalField(max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    res_jno=models.DecimalField( max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    idle_time_man_mac = models.CharField( max_length=7, blank=True, null=True) 
+    empname=models.CharField(max_length=50,null=True)  #change optr
+    prev_empno=models.CharField(max_length=20,null=True)  #prev optr
+    remark = models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
+
+
+
+class MG36(models.Model):
+    login_id = models.CharField(max_length=10, blank=True, null=True)
+    last_modified = models.DateTimeField(blank=True, null=True)
+    shop_sec = models.CharField(max_length=4, blank=True, null=True)
+    staff_no = models.CharField( max_length=50, blank=True, null=True)
+    shop_arr = models.CharField( max_length=10, blank=True, null=True)
+    shop_dept = models.CharField( max_length=10, blank=True, null=True)
+    time_arr = models.CharField( max_length=10, blank=True, null=True)
+    time_dept = models.CharField( max_length=10, blank=True, null=True)
+    hosp_arr = models.CharField( max_length=10, blank=True, null=True)
+    hosp_dept = models.CharField( max_length=10, blank=True, null=True)
+    date = models.CharField( max_length=10, blank=True, null=True)
+    resumed_time = models.CharField( max_length=10, blank=True, null=True)
+    resumed_date = models.CharField( max_length=10, blank=True, null=True)
+    dept = models.CharField( max_length=10, blank=True, null=True)
+    office = models.CharField( max_length=20, blank=True, null=True)
+    med_officer = models.CharField( max_length=30, blank=True, null=True)
+    pay_salary = models.CharField( max_length=10, blank=True, null=True)
+    ticket_no = models.CharField( max_length=10, blank=True, null=True)
+    date_app = models.CharField( max_length=10, blank=True, null=True)
