@@ -112,6 +112,7 @@ urlpatterns = [
     path('axlewheelpressing_section/',axlewheelpressing_section,name='axlewheelpressing_section'),
     path('M20view/',M20view,name='M20view'),
     path('m20getstaffno/',m20getstaffno,name='m20getstaffno'),
+    path('mg33getstaffno/',mg33getstaffno,name='mg33getstaffno'),
     path('m26view/',m26view,name='m26view'),
     path('m27view/',m27view,name='m27view'),
     path('m18view/',m18view,name='m18view'),

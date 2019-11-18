@@ -6534,11 +6534,19 @@ def MG33view(request):
                     dictemper.update(copy.deepcopy(temper))
                     print(dictemper)
 
-            w1=M5SHEMP.objects.filter(shopsec=shop_sec).values('name').distinct()
+            w1=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
             # print("w1",w1)
             wono=[]
             for w in range(len(w1)):
                 wono.append(w1[w]['name'])
+                
+
+            # w2=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
+            w2 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname')
+            # print("w1",w1)
+            names=[]
+            for w in range(len(w2)):
+                names.append(w2[w]['empname'])
                 # print(w1[w]['name'])
             # print("wono",wono)
             # w1=M5SHEMP.objects.filter(staff_no=staffno).values('staff_no','name').distinct()
@@ -6565,9 +6573,7 @@ def MG33view(request):
                     'roles':tmp,
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
-                    # 'obj1':obj1,
-                    # 'empname':ename,
-                    # 'ticketno':staffno,
+                    'empname':names,
                     'names':wono,
                     'dictemper':dictemper,
                     'totindb':totindb,
@@ -6590,7 +6596,8 @@ def MG33view(request):
                     'roles' :rolelist,
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
-                    'empname':wono[0]['name'],
+                    'empname':names,
+                    'names':wono
                     # 'ticket':wono[0]['staff_no'],
                 }
             elif(len(rolelist)>1):
@@ -6604,44 +6611,55 @@ def MG33view(request):
                     'roles' :rolelist,
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
-                    'empname':wono[0]['name'],
+                    'empname':names,
+                    'names':wono
                     # 'ticket':wono[0]['staff_no'],
                 }
         
         if submitvalue=='Save':
             print("data saved")
-            shop_sec= request.POST.get('shop_sec')
-            # staff_no=request.POST.get('stffno')
-            lv_date= request.POST.get('lv_date')
-            # name=request.POST.get('empname')
-            # ticketno = request.POST.get('stffno')
-            # alt_date = request.POST.get('alt_date')
-            # M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(staff_no), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(alt_date))
-            tot=0
-            tot=request.POST.get('totmebs')
-            print("total members",tot)
+             
+            updt_date = request.POST.get('updt_date')
+            shop_sec = request.POST.get('shop_sec')
+            name= request.POST.get('name1')
+            ticketno = request.POST.get('ticket1')
+            acc_date = request.POST.get('date1')
+            place = request.POST.get('place')
+            place_exam = request.POST.get('place_of_exam')
+            sec_sup = request.POST.get('sec_sup')
+            prac_desc = request.POST.get('prac_desc')
+            oral_desc = request.POST.get('oral_desc')
+            prac_score = request.POST.get('prac_score')
+            oral_score = request.POST.get('oral_score')
+            total_marks = request.POST.get('total_marks')
+            trade_test_officer= request.POST.get('trade_test_officer')
+            foreman = request.POST.get('foreman')
+            trade_test_admin = request.POST.get('trade_test_admin')
+            print("object",m11obj)
+            
+            #MG33view.objects.create(updt_date=str(updt_date), shop_sec = str(shop_sec),name=str(name), ticketno=str(ticketno), acc_date =str(acc_date),prac_desc = str(prac_desc), oral_desc = str(oral_desc), prac_score= str(prac_score),oral_score= str(oral_score), total_marks = str(total_marks),  sec_sup= str(sec_sup), trade_test_officer = str(trade_test_admin),  foreman= str(foreman), trade_test_admin= str(trade_test_officer) )
+            # print(updt_date, shop_sec, name, staff_no, ticketno, acc_Date, cause, reason_neg, reason_y_neg, equip_check, suggestions, bgc, bgc2, sec_sup, chargeman, mistry, c1, c2, c3, c4, a1, a2, a3, SSFO)
 
-
-            totindb=request.POST.get('totindb')
-            for tb in range(1,int(totindb)+1):
-                namedb=request.POST.get('namedb'+str(tb))
-                ticketnodb=request.POST.get('ticketnodb'+str(tb))
-                datedb=request.POST.get('datedb'+str(tb))
-                print("Dateindb"+str(tb),datedb)
-                M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
-
-
-
-
-            for t in range(1,int(tot)+1):
-                name=request.POST.get('name'+str(t))
-                ticketno=request.POST.get('ticket'+str(t))
-                date=request.POST.get('date'+str(t))
-                print(name,ticketno,date)
-                M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
-                print(shop_sec,lv_date,name,ticketno,date)
             messages.success(request, 'Successfully Saved !!!, Select new values to update')
     return render(request, "MG33view.html", context)
+
+def mg33getstaffno(request):
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch      
+        shop_sec = request.GET.get('shop_sec')
+        name=request.GET.get('name')
+        desgn=request.GET.get('desgn')
+        # print("ths is",shop_sec)
+        w1=Shemp.objects.filter(shopsec=shop_sec,name=name, ).values('staff_no','desgn').distinct()
+
+        wono = w1[0]['staff_no']
+        cont ={
+            "wono":wono,
+        }
+        # print("ths is",shop_sec)
+        return JsonResponse({"cont":cont}, safe = False)
+
+    return JsonResponse({"success":False}, status=400)
 
 
 

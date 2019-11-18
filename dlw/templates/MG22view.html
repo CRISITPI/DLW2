@@ -168,7 +168,7 @@ th, td {
       <option value="{{lj}}"></option>
       {% endfor %}
   </datalist>
-    <input type="button" id="add" value="Add Accident Information Worker wise" />
+    <!-- <input type="button" id="add" value="Add Accident Information Worker wise" /> -->
     
     <input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" />
     <input type="hidden" name="totindb" value={{totindb}} id="totindb">
@@ -214,7 +214,7 @@ th, td {
   </div> 
 </div>
 <input type="hidden" name="totmebs" id="totmebs" value="0">
-{% if totindb %}
+<!-- {% if totindb %}
 {% for key, values in dictemper.items %}
 <table>
 <tr><th>Name नाम</th><th>Ticket No.  टिकट नंबर </th><th>Date of Accident दुर्घटना की तिथि  </th></tr>
@@ -225,7 +225,7 @@ th, td {
 </tr>
 </table>
  {% endfor %}     
-{% endif %}
+{% endif %} -->
 
 <div id="items"> </div>
 
@@ -283,7 +283,7 @@ th, td {
               <br>
       
           <label for="bgc2">Any more information with regards to previous accident. If any, to the employee</label>
-          <input type="text" id="bgc2" name="bgc2" placeholder="Information regarding previous accident ..." required></textarea>
+          <input type="text" id="bgc2" name="bgc2" placeholder="Information regarding previous accident ..." ></textarea>
       
     
          <label for="sno"><b> Name of section supervisor in whose shift the accident took place: Shop Section NO/??? ???.:</b></label><br>
@@ -294,7 +294,7 @@ th, td {
                 <label for="sno"><b>Section supervisor</b></label>
  
               <select class="form-control ll" id="shop_sec" name="sec_sup" required style="width: 150px;" required>
-              <option id="op_shop" name="sec_sup" value="{{lc}}" selected disabled hidden>Section Supervisor</option> 
+              <option id="op_shop" name="sec_sup" value="{{lj}}" selected disabled hidden>Section Supervisor</option> 
               
                   {% for lj in empname %}
                   <option value="{{lj}}">{{lj}}</option>
@@ -307,7 +307,7 @@ th, td {
  
                 <label for="sno"><b>Chargeman</b></label>
  
-                <select class="form-control ll" id="shop_sec" name="Chargeman" required style="width: 150px;" required>
+                <select class="form-control ll" id="shop_sec" name="Chargeman" style="width: 150px;" required>
                 <option id="op_shop" name="Chargeman" selected disabled hidden>Chargeman</option> 
                 {% for lc in names %}
                   <option value="{{lc}}">{{lc}}</option>
@@ -319,7 +319,7 @@ th, td {
  
                 <label for="sno"><b>Mistry</b></label>
  
-                <select class="form-control ll" id="shop_sec" name="Mistry" required style="width: 150px;" required>
+                <select class="form-control ll" id="shop_sec" name="Mistry" style="width: 150px;" required>
                 <option id="op_shop" name="Mistry" selected disabled hidden>Mistry</option> 
                 {% for lc in names %}
                   <option value="{{lc}}">{{lc}}</option>
@@ -352,26 +352,15 @@ th, td {
               <li> The employee was <input type="radio" name="a2" value="yes" required> was not <input type="radio" name="a2" value="no" required>  provided with goggles </li>
             <li> He was <input type="radio" name="a3" value="yes" required> was not <input type="radio" name="a3" value="no" required>  wearing them at the time of accident</li>
           </ol>
-          <label style="width: 150px;float:right;" for="sno"><b>SS/ FO</b></label><br>
+         
+          
           <select class="form-control ll" id="ssfo" name="SSFO" style="width: 150px;float:right;" required>
                 <option  id="op_shop" name="Chargeman" selected disabled hidden >SS/ FO</option> 
                 {% for lc in empname %}
                   <option value="{{lc}}">{{lc}}</option>
                   {% endfor %}
                   </select><br>
-         {% comment %}  <table style="float: right;">
-            <tr>
-              <td>
-                  <label style="width: 150px;" for="sno"><b>SS/ FO</b></label><br> 
-                <select class="form-control ll" id="ssfo" name="SSFO" style="width: 150px;" required>
-                <option  id="op_shop" name="Chargeman" selected disabled hidden >SS/ FO</option> 
-                {% for lc in empname %}
-                  <option value="{{lc}}">{{lc}}</option>
-                  {% endfor %}
-                  </select>
-              </td>
-            </tr>
-          </table>{% endcomment %}
+         
       </div> 
 
 <center>
