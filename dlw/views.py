@@ -6769,11 +6769,82 @@ def m27view(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
         }
+
+
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='submit':
+            print("data saved test")    
+            # date1 shop_sec staffNo staffName staffDesg staffRate wono date2 date3 totalHr         
+            date1       = request.POST.get('date1')
+            print(date1)
+            shop_sec    = request.POST.get('shop_sec')
+            print(shop_sec)
+            staffNo     = request.POST.get('staffNo')
+            print(staffNo)
+            staffName   = request.POST.get('staffName')
+            print(staffName)
+            staffDesg   = request.POST.get('staffDesg')
+            print(staffDesg)
+            staffRate   = request.POST.get('staffRate')
+            print(staffRate)
+            wono        = request.POST.get('wono')
+            print(wono)
+            date2       = request.POST.get('date2')
+            print(date2)
+            date3       = request.POST.get('date3')
+            print(date3)
+            totalHr     = request.POST.get('totalHr')
+            print(totalHr)
+            
+
+           # M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
+   
     return render(request,'m27view.html',context)    
 
 
 
+def m27getStaffNo(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        date = request.GET.get('date')
+        print(shop_sec)
+        print(date)
+        staff_no = list(M5SHEMP.objects.filter(shopsec = shop_sec).values('staff_no').distinct())
+        return JsonResponse(staff_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
+def m27getDetails(request):
+    if request.method == "GET" and request.is_ajax():
+        staffNo = request.GET.get('staffNo')        
+        getdetail = list(M5SHEMP.objects.filter(staff_no = staffNo).values('name').exclude(name__isnull=True).distinct())
+        return JsonResponse(getdetail, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def m27getDesignation(request): 
+    if request.method == "GET" and request.is_ajax():
+        staffNo = request.GET.get('staffNo')    
+        staffName = request.GET.get('staffName')      
+        getdetaildesgn = list(M5SHEMP.objects.filter(staff_no = staffNo, name = staffName).values('desgn').exclude(staff_no__isnull=True).distinct())
+        return JsonResponse(getdetaildesgn, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m27getWorkOrder(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        print(shop_sec);
+        wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m27getWorkOrderDate(request):
+    if request.method == "GET" and request.is_ajax():
+        wono = request.GET.get('wono')
+        print(wono);
+        wono1 = list(M5DOCnew.objects.filter(batch_no = wono).values('date').exclude(batch_no__isnull=True).exclude(date__isnull=True).distinct())
+        return JsonResponse(wono1, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 
 
@@ -6834,6 +6905,7 @@ def m18view(request):
             shop_sec        = request.POST.get('shop_sec')
             wo_no           = request.POST.get('wo_no')
             part_nop        = request.POST.get('part_nop')
+            refNo           = request.POST.get('refNo')
             extraTimePartNo = request.POST.get('extraTimePartNo')
             reasonSpecialAllowance = request.POST.get('reasonSpecialAllowance')
             forSpecialAllowance    = request.POST.get('forSpecialAllowance')
@@ -6846,7 +6918,8 @@ def m18view(request):
             setno           = request.POST.get('setno')  
 
             M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
-            messages.success(request, 'Successfully Saved ! Select new values to update')    
+            #messages.success(request, 'Successfully Saved ! Select new values to update')   
+            messages.success(request, 'Successfully Saved ! Your ref No is :'+refNo) 
     return render(request,"m18view.html",context)
 
 
@@ -7427,7 +7500,14 @@ def m18getoperation_desc(request):
         return JsonResponse(opndesc, safe = False)
     return JsonResponse({"success":False}, status=400) 
 
-
+def m18getRef_no(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        shop_sec = request.GET.get('shop_sec')
+        part_nop = request.GET.get('part_nop')
+        refno = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec,part_no =part_nop).values('m5glsn').exclude(part_no__isnull=True).distinct())
+        return JsonResponse(refno, safe = False)
+    return JsonResponse({"success":False}, status=400) 
 
 
 

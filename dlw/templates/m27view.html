@@ -1,4 +1,22 @@
 {% extends 'base.html' %} {% block content %}
+
+<style>
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 125%;
+  border: none;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(odd){background-color: #f2f2f2}
+
+tr:nth-child(even){background-color: #f2f2f2}
+</style>
+
 <style>
 table, td, th {  
   
@@ -7,11 +25,11 @@ table, td, th {
 
 table {
   border-collapse: collapse;
-  width: 100%;
+  width: 125%;
 }
 
 th, td {
-  padding: 15px;
+  padding: 8px;
 }
 </style>
 
@@ -27,7 +45,7 @@ th, td {
         box-sizing: border-box;
     }
     
-    input[type=submit] {
+    input[type=submit], [type=reset], [type=button]  {
         width: 10%;
         text-align: center;
         background-color: #4CAF50;
@@ -42,24 +60,7 @@ th, td {
     input[type=submit]:hover {
         background-color: #45a049;
         text-align: center;
-    }
-    
-    input[type=button] {
-        width: 10%;
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 6px 6px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    input[type=button]:hover {
-        background-color: #45a049;
-        text-align: center;
-    }
+    } 
 </style>
 <br>
 <h3 align="center">समय-पत्रक/Time Sheet</h3>
@@ -86,21 +87,7 @@ th, td {
             <tr>
                  <td>
                     <label for="br_no"><b>महीनो के लिय/For The Month Of</b></label>
-                    <select class="form-control" id="" name="" required>
-                        <option value="" >--Select--</option>  
-                        <option value="January">January</option>
-                        <option value="February">February</option>
-                        <option value="March">March</option>
-                        <option value="April">April</option>
-                        <option value="May">May</option>
-                        <option value="June">June</option>
-                        <option value="July">July</option>
-                        <option value="August">August</option>                          
-                        <option value="September">September</option>
-                        <option value="October">October</option>
-                        <option value="November">November</option>
-                        <option value="December">December</option>
-                    </select>
+                    <input type="text" name="date1" id="date1" readonly class="form-control" required>
                 </td>
                 <td>
                     <label for="sno"><b>Shop Section NO/शॉप न०</b></label>
@@ -118,37 +105,284 @@ th, td {
                 </td>
                 <td>
                     <label for="wk_ord_no"><b>Staff NO:/क्रम सं०</b></label>
-                    <input type="text" class="form-control" name="" id="">
+                    <select class="form-control" id="staffNo" name="staffNo" required>
+                              <option id="op_staffNo" selected disabled hidden>Select Staff NO</option>
+                              {% if lenm == 1 %}
+                              {% for i in wo_nop %}
+                                <option>{{i.staff_no}}</option>
+                              {% endfor %}
+                              {% endif %}
+                     </select>
                 </td>                          
-            </tr>      
-
-            <tr>
+            
                  <td>
-                    <label for="br_no"><b>नाम/Name</b></label>
-                    <input type="text" class="form-control" name="" id="">
+                    <label for="br_no"><b>नाम/Name</b></label>                   
+                    <select class="form-control" id="staffName" name="staffName" required>
+                              <option id="op_staffName" selected disabled hidden>Select Staff Name</option>
+                              {% if lenm == 1 %}
+                              {% for i in wo_nop %}
+                                <option>{{i.name}}</option>
+                              {% endfor %}
+                              {% endif %}
+                     </select>
                 </td>
                 <td>
                     <label for="br_no"><b>पदनाम/Designation</b></label>
-                    <input type="text" class="form-control" name="" id="">
+                    <select class="form-control" id="staffDesg" name="staffDesg" required>
+                              <option id="op_staffDesg" selected disabled hidden>Select Designation</option>
+                              {% if lenm == 1 %}
+                              {% for i in wo_nop %}
+                                <option>{{i.desgn}}</option>
+                              {% endfor %}
+                              {% endif %}
+                     </select>
                 </td>
                 <td>
                     <label for="br_no"><b>दर/Rate</b></label>
-                    <input type="text" class="form-control" name="" id="">
+                    <input type="text" class="form-control" name="staffRate" id="staffRate">
                 </td>                       
-            </tr>       
-    </table>
-    </div>
-    <center>
-        <input type="submit" name="submit" value="submit" id="submit">
-    </center>
-
-<hr style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
-
-
-
-
-
+            </tr>  
+            <tr>
+                <th>Select</th>
+                <th>Work Order No.</th>
+                <th>Work Order Date</th>
+                <th>Office Date</th>
+                <th>Total Hrs. Including Over-Time</th>
+                <th><button type="button" class="delete-row">-</button>  </th>
+            </tr>     
+    </table>    
+    <br>   
+   
+    <table>
+        <thead>
+            <tr>
+                <th>                  
+                  <select class="form-control" id="wono" name="wono" required>
+                              <option id="op_wono" selected disabled hidden>Select Work Order No.</option>
+                              {% if lenm == 1 %}
+                              {% for i in wo_nop %}
+                                <option>{{i.batch_no}}</option>
+                              {% endfor %}
+                              {% endif %}
+                  </select>
+                </th>
+                <th><select class="form-control" id="date2" name="date2" required>
+                              <option id="op_date2" selected disabled hidden>Select Date</option>
+                              {% if lenm == 1 %}
+                              {% for i in wo_nop %}
+                                <option>{{i.date}}</option>
+                              {% endfor %}
+                              {% endif %}
+                  </select>
+                </th>
+                <th><input type="text" name="date3" id="date3" readonly class="form-control"  style="width:150px;" placeholder="Office Date"></th>
+                <th><input type="text" name="totalHr" id="totalHr"  class="form-control"  style="width:150px;" placeholder="Total Hrs. Including Over-Time"></th>
+                <th><input type="button" class="add-row" value="+"></th>
+            </tr>
+        </thead>        
+    </table>   
+  </div>
+  <center><input type="submit" name="proceed" value="submit"  /></center>  
 </form>
 
+
+<script>
+     $(document).ready(function () {
+        $('#date1').datepicker({ dateFormat: 'yy-mm', }); 
+   });
+    
+    $(document).ready(function () {
+        $('#date3').datepicker({ dateFormat: 'yy-mm-dd', }); 
+   });
+</script>
+<script>
+    $(document).ready(function(){
+        $(".add-row").click(function(){
+            var wono = $("#wono").val();
+            var date2 = $("#date2").val();
+            var date3 = $("#date3").val();
+            var totalHr = $("#totalHr").val();
+            var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + wono + "</td><td>" + date2 + "</td><td>" + date3 + "</td><td>" + totalHr + "</td></tr>";
+            $("table tbody").append(markup);
+        });
+        
+        // Find and remove selected table rows
+        $(".delete-row").click(function(){
+            $("table tbody").find('input[name="record"]').each(function(){
+            	if($(this).is(":checked")){
+                    $(this).parents("tr").remove();
+                }
+            });
+        });
+    });    
+</script>
+<script>
+   document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val();
+                    var date = $("#date").val();
+                    var data = {date,shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm27getStaffNo' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart2");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());       
+                                  document.querySelector("#op_staffNo").selected=true;      
+                                  document.querySelector("#op_staffName").selected=true;   
+                                  document.querySelector("#op_staffDesg").selected=true;   
+                                  document.querySelector("#op_wono").selected=true;  
+                                  document.querySelector("#op_date2").selected=true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.staff_no); 
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart2">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staffNo").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                   })
+                })
+
+
+    document.querySelector("#staffNo").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val();
+                    var staffNo = $("#staffNo").val();
+                    var data = {shop_sec,staffNo};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm27getDetails' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart1");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());       
+                                  document.querySelector("#op_staffName").selected=true;    
+                                  document.querySelector("#op_staffDesg").selected=true;   
+                                  document.querySelector("#op_wono").selected=true;  
+                                  document.querySelector("#op_date2").selected=true;                                  
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.name);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart1">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staffName").insertAdjacentHTML('beforeend',mystr);
+                              mystr="";                              
+                        }
+                   })
+                })
+
+                document.querySelector("#staffName").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var staffName = $("#staffName").val();
+                    var staffNo = $("#staffNo").val();
+                    var data = {staffName,staffNo};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm27getDesignation' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart3");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());       
+                                  document.querySelector("#op_staffDesg").selected=true;  
+                                  document.querySelector("#op_wono").selected=true;   
+                                  document.querySelector("#op_date2").selected=true;                                    
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.desgn);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart3">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staffDesg").insertAdjacentHTML('beforeend',mystr);
+                              mystr="";                              
+                        }
+                   })
+                })
+
+              document.querySelector("#staffDesg").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val();
+                    var data = {shop_sec};
+                    alert(shop_sec);
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm27getWorkOrder' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart4");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());         
+                                  document.querySelector("#op_wono").selected=true;
+                                  document.querySelector("#op_date2").selected=true;                                                                      
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.batch_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart4">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wono").insertAdjacentHTML('beforeend',mystr);
+                              mystr="";                              
+                        }
+                   })
+                })
+
+                document.querySelector("#wono").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var wono = $("#wono").val();
+                    var data = {wono};
+                    alert(shop_sec);
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm27getWorkOrderDate' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart5");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());         
+                                  document.querySelector("#op_date2").selected=true;                                                                     
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.date);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart5">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#date2").insertAdjacentHTML('beforeend',mystr);
+                              mystr="";                              
+                        }
+                   })
+                })
+
+</script>
 {% endblock content %}
 
