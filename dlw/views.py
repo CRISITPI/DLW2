@@ -11865,7 +11865,7 @@ def exam_detail(request):
                         exam_master.objects.create(exam_code=ecode,exam_type=etype,exam_date=edate,prac_desc=prctd,prac_max=prcmarks,oral_desc=orald,oral_max=oralmarks)
             ex1=request.POST.get('length')
             print("exist",ex1)
-            for j in range(len(ex1)+1):
+            for j in range(1,len(ex1)+1):
                 print(j)
                 if (request.POST.get("code"+str(j))):
                     ecode=request.POST.get("code"+str(j))
@@ -11883,9 +11883,8 @@ def exam_detail(request):
 def m3a(request):
     return render(request,"m3a.html")
 
-
-
+def mg6view(request):
+    return render(request,"mg6view.html")
 
 def performaA(request):
-
     return render(request,"performaA.html")
