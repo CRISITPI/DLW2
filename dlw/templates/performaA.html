@@ -1,0 +1,53 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+<!-- <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M1 - MASTER PROCESS SHEET</h1> -->
+<form action='.' method="POST">
+ <div class="container" style="width: 100%">
+<br>
+<h6> <center><u><B> Form for generation Proforma “A” (Inspection report)</B></u></center></h6>
+<h6> <center><B> Sub: -Request for rectification by shop of trade supplied items.</B></center></h6>
+
+<br>
+<br>
+<h5 ><b>The following item (s)  is/are having quantitative/qualitative/dimension problems. Approval is sought for rectification because (tick the reason).  </b></h5>
+
+<h5 >1. Stock position is critical<input type="checkbox" name="stckpsn"><br>2. Assembly has already been taken in hand and removal will result in loss.<input type="checkbox" name="assbly" > <br>3. Item is bulky and rejection will lead to loss of space.<input type="checkbox" name="itm"><br>
+<br>
+
+<br>
+<h5><b>The details are as under- </b></h5>
+
+<h5><b>1-Items description/Sl no<input type="textbox" name="itmdes" > Part no <input type="textbox" name="prtno" >
+  <br>  Qty<input type="textbox" name="qty" ></b></h5>
+<h5><b>2-Supplier<input type="textbox" name="supl" >PO no <input type="textbox" name="pono" > date <input type="date" name="date" >   <br>  (Attach Stock position)  <input type="file" name="stkpsn" accept="image/*">      </b></h5>
+
+<h5><b>3-List of defects rectified. Please mention whether defect found at RI or Shop Floor.   <input type="textbox" name="list" > <br> (Attach Inspection Report if rejection in RI)   <input type="file" name="insprep" accept="image/*">  </b></h5>
+
+<h5><b>4- Total ESTIMATED ALLOWED TIME for above rectification is    <input type="textbox" name="time" >     hrs </b></h5>
+
+<h5><b>5- Cost of the material, if required, for rectification <input type="textbox" name="costm" > </b></h5>
+
+<h5><b>6- Unit cost of the items as per P.O  <input type="textbox" name="costi" > </b></h5>
+<h5><b>7- Rectification cost as per rate sheet Rs.  <input type="textbox" name="rectc" ></b></h5>
+<h5><b>8- % of rectification cost to P.O cost of the item <input type="textbox" name="percost" ></b></h5>
+
+<h5><b>It is proposed that the item has been processed for rectification by shop utilizing DLW sources. CQAM will be appraised to initiate Proforma “A” on receipt of approval.
+     <br>  May, please approve the proposal.</b></h5>
+
+     <h5 style="float: left"><b>  WM/Block  </h5> <h5 style="float: right"><b>    SSE/HMS </b></h5>
+<br>
+
+<h5><b> Dy.CME/Block </b> </h5>
+<h5><b> CME/P </b> </h5>
+<h5><b> CME/P’s approval for rectification is available as above. Please process for Proforma “A”. </b> </h5>
+
+<h5 style="float: left"><b> CQAM </h5> <h5 style="float: right"><b>   WM/Block </b></h5>
+<br>
+</form>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ 
+
+{% endblock content %}

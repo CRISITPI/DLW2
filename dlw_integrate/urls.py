@@ -189,4 +189,12 @@ urlpatterns = [
     path('ajax/m9getwono',m9getwono,name='m9getwono'),
     path('ajax/m9getpart_no',m9getpart_no,name='m9getpart_no'),
     path('ajax/m9getopno',m9getopno,name='m9getopno'),
+    path('m5hwview/', m5hwview, name='m5hwview'),
+    path('examdetail/',exam_detail,name='examdetail'),
+    path('m23view/',m23view,name='m23view'),
+    path('m23report/',m23report,name='m23report'),
+    path('m23getempno/',m23getempno,name='m23getempno'),
+    path('ajax/getm23date',getm23date,name='getm23date'),
+    path('performaA/',performaA,name='performaA'),
+    path('m3a/',m3a,name='m3a'),
 ]

@@ -108,7 +108,7 @@
                             <label for="mon"><b>MONTH/माह :</b></label>
                             <select id="mon" name="mon" required>
                                     <option  selected disabled hidden>SELECT MONTH</option>
-                                    <option  value="JAN" disabled>JAN</option>
+                                    <option  value="JAN" >JAN</option>
                                     <option  value="FEB">FEB</option>
                                     <option  value="MAR">MAR</option>
                                     <option  value="APR">APR</option>
@@ -137,33 +137,41 @@
     <tr>
         <th>SHOP SECTION/शाप विभाग:</th> 
         <td><u>{{shop_sec}}</u></td>
+        <input type="hidden" name="shop_sec" value="{{shop_sec}}">
         <th>MONTH/माह:</th> 
         <td><u>{{mon}}</u></td>
+        <input type="hidden" name="mon" value="{{mon}}">
     </tr>
     
     <tr>
         <th>WORK ORDER NO/का.अ.स:</th> 
         <td><u>{{wo_no}}</u></td>
+        <input type="hidden" name="wo_no" value="{{wo_no}}">
     </tr>
     <tr>
         <th>EMPLOYEE NO/क्रम सं.:</th> 
         <td><u>{{staff_no}}</u></td>
+        <input type="hidden" name="staff_no" value="{{staff_no}}">
         <th>CAT/को.:</th>
         {% for i in obj2 %}
         <td>
             <u>{{i.cat}}</u>
+            <input type="hidden" name="cat" value="{{i.cat}}">
         </td>
         {% endfor %}
     </tr>
     <tr>
         <th>C.& D.NO/सी .एण्ड डी.सं:</th> 
         <td><u>{{part_no}}</u></td>
+        <input type="hidden" name="part_no" value="{{part_no}}">
+
     </tr>
     <tr>
         <th>NAME/नाम:</th>
         {% for i in obj2 %}
         <td>
             <u>{{i.name}}</u>
+            <input type="hidden" name="name" value="{{i.name}}">
         </td>
         {% endfor %}
     </tr>  
