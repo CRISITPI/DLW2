@@ -102,6 +102,13 @@ th, td {
                 </td>
              </tr>
            </table>
+           <tabele>
+              <tr> 
+                  <td>
+                    <span>Note : Here data is filltaring on the selection of <b>Month</b> and <b>Shop</b>.</span> 
+                  </td>
+              </tr>
+           </table>
 
 </div>                
 </h6>
@@ -120,7 +127,7 @@ th, td {
     </center>
 <br>
     <div >
-      <table class="table table-striped table-bordered table-hover table-condensed" style="width:90%; margin-right: 100px; margin-left: 100px;" align="center">
+      <table class="table table-striped table-bordered table-hover table-condensed" style="width:80%; margin-right: 200px; margin-left: 100px;" align="center">
         <thead>
           <tr class="w3-light-grey">
             <th>Staff No./कर्मचारी सं</th>
@@ -138,6 +145,13 @@ th, td {
   <h6 align="right" style="margin-right: 100px;">समय पाल के हस्ताछर </h6>
   <h6 align="right" style="margin-right: 100px;">Signature of Time Keepar</h6>
 </div><br>
+<center><input type="submit" name="proceed" value="Print/Save"  onclick="myFunction()"/></center>  
+
+<script>
+function myFunction() {
+  window.print();
+}
+</script>
    <script>
    $(document).ready(function () {
         $('#date').datepicker({ dateFormat: 'yy-mm', }); 
