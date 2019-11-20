@@ -6848,8 +6848,11 @@ def MG33view(request):
             wo_nop = empmast.objects.none()
             shop_sec = request.POST.get('shop_sec')
             #staffno=request.POST.get('staff_no')
-            lvdate=request.POST.get('lv_date')
-            
+            lvdate=request.POST.get('updt_date')
+            examcode = []
+            ex = MG33examMaster.objects.all().values('exam_code')
+            for i in ex:
+                examcode.append(i['exam_code']) 
             m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
             # print(m2)
             if m2 is not None and len(m2):
@@ -6909,10 +6912,11 @@ def MG33view(request):
                     'dictemper':dictemper,
                     'totindb':totindb,
                     'alt_date':alt_date,
+                    'examcode': examcode
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
-                    w1 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname').distinct()
+                    w1 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname').distinct
 
                     # req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
                     # wo_nop = wo_nop | req
@@ -6929,7 +6933,8 @@ def MG33view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'empname':names,
-                    'names':wono
+                    'names':wono,
+                    'examcode': examcode
                     # 'ticket':wono[0]['staff_no'],
                 }
             elif(len(rolelist)>1):
@@ -6944,32 +6949,44 @@ def MG33view(request):
                     'shopsec':shop_sec,
                     'lvdate':lvdate,
                     'empname':names,
-                    'names':wono
+                    'names':wono,
+                    'examcode': examcode
                     # 'ticket':wono[0]['staff_no'],
                 }
         
         if submitvalue=='Save':
             print("data saved")
-             
-            updt_date = request.POST.get('updt_date')
-            shop_sec = request.POST.get('shop_sec')
-            name= request.POST.get('name1')
-            ticketno = request.POST.get('ticket1')
-            acc_date = request.POST.get('date1')
-            place = request.POST.get('place')
-            place_exam = request.POST.get('place_of_exam')
-            sec_sup = request.POST.get('sec_sup')
-            prac_desc = request.POST.get('prac_desc')
-            oral_desc = request.POST.get('oral_desc')
-            prac_score = request.POST.get('prac_score')
-            oral_score = request.POST.get('oral_score')
-            total_marks = request.POST.get('total_marks')
-            trade_test_officer= request.POST.get('trade_test_officer')
-            foreman = request.POST.get('foreman')
-            trade_test_admin = request.POST.get('trade_test_admin')
+            tot=request.POST.get('totmebs')
+            print("tot",tot)
+            tot=int(tot)+1
+            pract="prac"
+            oral="oral"
+            ttl="total"
+            ename="name"
+            stffn="ticket"
+            skill="skill"
+            remkr="remk"
+            for i in range(1,int(tot)):
+                pscore=request.POST.get(pract+str(i))
+                orscore=request.POST.get(oral+str(i))
+                tscore=request.POST.get(ttl+str(i))
+                skills=request.POST.get(skill+str(i))
+                epname=request.POST.get(ename+str(i))
+                stfno=request.POST.get(stffn+str(i))
+                remk=request.POST.get(remkr+str(i))
+                place_exam = request.POST.get('place')
+                prac_desc = request.POST.get('prac_desc')
+                oral_desc = request.POST.get('oral_desc')
+                sec_sup = request.POST.get('sec_sup')
+                trade_test_officer= request.POST.get('trade_test_officer')
+                foreman = request.POST.get('foreman')
+                trade_test_admin = request.POST.get('trade_test_admin')
+                examdate = request.POST.get('exam_date')
+                shop_sec = request.POST.get('shop_sec')
+                acc_date = request.POST.get('updt_date')
+                examcode = request.POST.get('exam_code')
             
-            
-            MG33new.objects.create(updt_date=str(updt_date), shop_sec = str(shop_sec),name=str(name), ticketno=str(ticketno), acc_date =str(acc_date),prac_desc = str(prac_desc), oral_desc = str(oral_desc), prac_score= str(prac_score),oral_score= str(oral_score), total_marks = str(total_marks),  sec_sup= str(sec_sup), trade_test_officer = str(trade_test_admin),  foreman= str(foreman), trade_test_admin= str(trade_test_officer) )
+                MG33new.objects.create(exam_date=str(examdate),result=str(remk),exam_code=str(examcode),shop_sec = str(shop_sec),name=str(epname), skill=str(skills),staff_no=str(stfno), updt_date =str(acc_date),prac_score= str(pscore),oral_score= str(orscore), total_marks = str(tscore),  sec_sup= str(sec_sup), trade_test_officer = str(trade_test_officer),  foreman= str(foreman), trade_test_admin= str(trade_test_admin), place_of_exam=str(place_exam))
         
             # print(updt_date, shop_sec, name, staff_no, ticketno, acc_Date, cause, reason_neg, reason_y_neg, equip_check, suggestions, bgc, bgc2, sec_sup, chargeman, mistry, c1, c2, c3, c4, a1, a2, a3, SSFO)
 
@@ -6995,9 +7012,71 @@ def mg33getstaffno(request):
     return JsonResponse({"success":False}, status=400)
 
 
+def mg33getexam(request):
+    if request.method == "GET" and request.is_ajax():  
+        examcode= request.GET.get('two')
+
+        ex = MG33examMaster.objects.filter(exam_code= examcode).all()    
+     
+        exam ={
+
+            "exam_type":ex[0].exam_type,
+            "exam_date":ex[0].exam_date,
+            "prac_exam":ex[0].prac_desc,
+            "oral_exam":ex[0].oral_desc,
+        }
+        
+        return JsonResponse({"exam":exam}, safe = False)
+
+    return JsonResponse({"success":False}, status=400)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 @login_required

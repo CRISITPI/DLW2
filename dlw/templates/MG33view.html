@@ -16,6 +16,10 @@
    <script>
       $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'yy-mm-dd'}); });
     </script>
+
+    <script>
+        $(document).ready(function () { $('#exam_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+      </script>
  
 <style>
 table, td, th {  
@@ -69,6 +73,20 @@ th, td {
         border-radius: 4px;
         cursor: pointer;
     }
+
+    #master {
+      width: 200px;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 6px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+
+
  
     #print {
         width: 10%;
@@ -90,6 +108,35 @@ th, td {
     .container input:checked ~ .checkmark:after {
                 display: inline;
               }
+              #customers {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                border-collapse: collapse;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+            }
+            
+            #customers td,
+            #customers th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            
+            #customers tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            
+            /* #customers tr:hover {
+                background-color: #ddd;
+            } */
+            
+            #customers th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color:olivedrab;
+                color: white;
+            }
 </style>
 <<form action="{% url 'MG33view' %}" method="POST"> {% csrf_token %}
     <div class="container">
@@ -139,7 +186,25 @@ th, td {
                   {% endfor %}
                 {% endif %}
             </select>
-          </td>   
+          </td>  
+
+
+          <td>
+              <a class="btn btn-primary" id="master" href="/MG33master">Trade Test Master Screen</a>
+              
+
+          </td>
+
+          <script>
+            function redirect(){
+              document.getElementById("master")
+              document.redirect("mg33Master.html");
+
+            }
+          </script>
+         
+          
+          
  
           <!-- <td>
               <label for="sno"><b>Staff No/ ????? ? .:</b></label>
@@ -157,6 +222,118 @@ th, td {
     <input type="hidden" id="sub" name="sub" value={{sub}}>
   
   {% if sub == 1 %}
+
+<table>
+
+  
+  <th><b>Place Of Exam</b></th>
+  <th><b>Subordinate Supervisor-अधीनस्थ पर्यवेक्षक </b></th>
+  <th><b>Exam Code</b></th>
+  <th><b>Exam Type</b></th>
+  <th><b>Date of Exam/ परीक्षा की तिथि</b></th>
+  <th><b>Practical Exam Desc</b></th>
+  <th><b>Oral Exam Desc</b></th>
+
+  <tr>
+
+      
+
+      <td>
+         
+         
+          <select class="form-control ll" name="place" style="width: 150px;" required>
+            <option>DLW</option>
+            <option>Other</option>
+            <option>Other</option>
+            
+          </select>  
+        </td>  
+        
+        <td>
+            
+
+          <select class="form-control ll" id="shop_sec" name="sec_sup" style="width: 150px;" required>
+          <option id="op_shop" name="sec_sup" value="{{lj}}" selected disabled hidden>Section Supervisor</option> 
+          
+              {% for lj in empname %}
+              <option value="{{lj}}">{{lj}}</option>
+              {% endfor %}
+          </select>
+          
+         </td>
+
+         <td>
+           
+            <select class="form-control ll" id="exam_code" name="exam_code" style="width: 150px;" onchange="exam_detail(this)" required>
+                <option id="exam_code" name="exam_code" selected disabled hidden>Exam Code</option> 
+          
+              {% for ex in examcode %}
+              <option value="{{ex}}">{{ex}}</option>
+              {% endfor %}
+
+                <!-- Ajax function to get exam data from data base  -->
+
+
+              <script>
+                function exam_detail(th){
+
+
+                  var id = th.id;
+                  var two=document.getElementById(id).value;
+                  
+                 
+                 
+                 
+                  var data = {two};
+                                      $.ajax({
+                                        type : 'GET',
+                                        url : "{% url 'mg33getexam' %}",
+                                        dataType : 'json',
+                                        data : data,
+                                        success : function(response){
+                                            console.log(response);
+                                         document.getElementById('exam_type').value= response.exam.exam_type;
+                                         document.getElementById('exam_date').value= response.exam.exam_date;
+                                         document.getElementById('prac_exam').value= response.exam.prac_exam;
+                                         document.getElementById('oral_exam').value= response.exam.oral_exam;
+                
+                                        }
+                                          })
+
+                }
+
+              </script>
+                
+              </select>
+         </td>
+         <td>
+           
+            <input id="exam_type" type="text" name="exam_type" style="width: 150px;" placeholder="Exam Type" required>
+         </td>
+         
+
+
+            <td>
+                  
+                <input type="text" id="exam_date" style="width: 150px;" name="exam_date" placeholder="yyyy-mm-dd" readonly required/>
+              </td> 
+           <td>
+            <input id="prac_exam" type="text" name="prac_exam" style="width: 150px;" placeholder="Prac Exam" required>
+         </td>
+         <td>
+           
+            <input id="oral_exam" type="text" name="oral_exam" style="width: 150px;" placeholder="Oral Exam" required>
+         </td>
+
+
+  </tr>
+
+
+
+</table>
+ 
+
+
   <datalist id="names">
                 {% for lc in names %}
                 <option value="{{lc}}"></option>
@@ -229,19 +406,18 @@ th, td {
 {% endif %}
 
 
-<td>
+<!-- <td>
 
     <label for="skill" name="skill">Skilled/ Un-Skilled/ Core</label>
     <select class="form-control ll" name="skill" style="width: 150px;" required>
       <option>Skilled</option>
       <option>Un-Skilled</option>
       <option>Core</option>
-      <option></option>
-      <option></option>
+     
     </select>
 
 
-</td>
+</td> -->
 <div id="items"> </div>
 
  
@@ -250,100 +426,11 @@ th, td {
         
           <table id="place">
             <tr>
-              <td>
-            <label for="place" name="place">Place</label>
-            <select class="form-control ll" name="place" style="width: 150px;" required>
-              <option>DLW</option>
-              <option>Other</option>
-              <option>Other</option>
-              <option></option>
-              <option></option>
-            </select>      
-          </td>
-            <td>
-            <label for="place" name="place_of_exam">Place Of Exam</label>
-            <select class="form-control ll" name="place" style="width: 150px;" required>
-              <option>DLW</option>
-              <option>Other</option>
-              <option>Other</option>
-              <option></option>
-              <option></option>
-            </select>  
-          </td>  
-          
-          <td>
-              <label for="sno"><b>Subordinate Supervisor</b></label>
-
-            <select class="form-control ll" id="shop_sec" name="sec_sup" required style="width: 150px;" required>
-            <option id="op_shop" name="sec_sup" value="{{lj}}" selected disabled hidden>Section Supervisor</option> 
-            
-                {% for lj in empname %}
-                <option value="{{lj}}">{{lj}}</option>
-                {% endfor %}
-            </select>
-            
-           </td>
-
-
+     
           </tr>
         </table>
-          <table border='2' style="width: 100%;">
-
-            <tbody>
-              <th>Practical Exam Result: Marks 60 - Passing 40</th>
-                              
-              <th>Oral Exam Result: Marks 40 - Passing 15</th>
-
-              <tr>
-                <td>
-                  
-                   <input id="prac_desc" type="text" name="prac_desc" placeholder="Enter Practical Exam Description" required>
-                
-                </td>
-                
-                
-                <td>
-                  
-                    <input id="oral_desc" type="text" name="oral_desc" placeholder="Enter Oral Exam Description" required>
-                 
-                 </td>
-                
-              </tr>
-
-              <tr>
-                <td>
-                <label for="prac_score"><b>Score (Practical)</b></label>
-          <input type="Number" id="prac_score" size="3" placeholder="Enter Score" class="form-control ll" name="prac_score" style="width: 150px;" min="0" max="99" title="Numeric Value" maxlength="2">
-        </td>
-      <td>
-                
-          <label for="oral_Score"><b>Score (Oral)</b></label>
-          <input type="Number" id="or_score" size="3" placeholder="Enter Score" class="form-control ll" name="oral_score" style="width: 150px;" min="0" max="99" title="Numeric Value" maxlength="2">
-       </td>
-
-              </tr>
-              
-            </tbody>
-
-          </table>
-          <br>
-          <input type="button" name="Sumbit" value="Get Total Score" onclick="javascript:addNumbers()"/>
-          <label for="tot_marks"><b>Total Marks</b></label>
-          <input type="Number" id="tot_marks" placeholder="Total Marks" class="form-control ll" name="total_marks" style="width: 150px;"><br>
-          
-          
-          
-          <script language="javascript">
-              function addNumbers()
-              {
-                      var val1 = parseInt(document.getElementById("prac_score").value);
-                      var val2 = parseInt(document.getElementById("or_score").value);
-                      var ansD = document.getElementById("tot_marks");
-                      ansD.value = val1 + val2;
-              }
-          </script>
-      
-      
+         
+  
          <table style="width: 100%;">
            <tr>
              <td>
@@ -457,6 +544,10 @@ $( document ).ready(function() {
  
 });
   var j=0;
+  var prac="prac";
+  var oral="oral";
+  var total="total";
+  var remk="remk";
   
  
   $("#add").click(function(e) {
@@ -468,7 +559,12 @@ $( document ).ready(function() {
  
         var nameoname="name"+String(j);
         var ticketfname="ticket"+String(j);
-        var datename="date"+String(j);
+        var skillname="skill"+String(j);
+        prac="prac"+String(j);
+        oral="oral"+String(j);
+        total="total"+String(j);
+        remk="remk"+String(j);
+        console.log(prac);
         
        
         var sno=j;
@@ -476,13 +572,16 @@ $( document ).ready(function() {
       
         if(j==1 && totindb == 0)
         {
-            var happ='<div><table id="customers">'+'<tr><th>  Worker Name नाम</th><th>Application Number प्रमेदक न.</th><th>Date of Exam परीक्षा की तिथि    </th>';
+            var happ='<div><table id="customers">'+'<tr><th style="width: 160px;">  Worker Name नाम</th><th style="width: 170px;">Staff Number स्टाफ न </th>'+'<th style="width: 170px;">Skill</th><th style="width: 170px;">Practical Score</th><th style="width: 160px;">Oral Score</th><th style="width: 150px;">Total Score</th><th style="width: 150px;">Remark</th>';
  
     happ=happ+'</tr></table></div>';
         $('#items').append(happ);
  
         }
-        var htAppend='<div><table id="customers"><tr>'+'<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" required ><option  value="">name</option></select></td>'+'<td><input type="text" id="'+ticketfname+'" name="'+ticketfname+'"  readonly></td>'+'<td><input type="date" id='+datename+' name='+datename+' required></td>';
+        var htAppend='<div><table id="customers"><tr>'+'<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" style="width: 150px;" required ><option  value="">name</option></select></td>'+'<td><input type="text" id="'+ticketfname+'" name="'+ticketfname+'" style="width: 150px;" readonly></td>'+
+          '<td><select class="form-control ll" id='+skillname+' style="width: 150px;" name='+skillname+' style="width: 150px;" required><option value="Skilled">Skilled</option><option value="Un-Skilled">Un-Skilled</option><option value="Un-Skilled">Core</option></select></td>'+
+          '<td><input type="text" id="'+prac+'" style="width: 150px;" name="'+prac+'" ></td><td><input type="text" id="'+oral+'" style="width: 150px;" name="'+oral+'" onblur="javascript:addNumbers()" ></td><td><input type="text" id="'+total+'" style="width: 150px;" name="'+total+'" ></td>'+
+          '<td><input type="text" id="'+remk+'" style="width: 150px;" name="'+remk+'" readonly></td>';
  
      htAppend=htAppend+'</tr></table>'+'</div>';
      $('#items').append(htAppend);
@@ -495,6 +594,42 @@ $( document ).ready(function() {
      }
  
 });
+
+
+
+    function addNumbers()
+    {
+            console.log(prac,oral);
+            //var total= parseInt(document.getElementById(total).value);
+            var val1 = parseInt(document.getElementById(prac).value);
+            var val2 = parseInt(document.getElementById(oral).value);
+            var temp=val1+val2;
+            if (val1>60 || val2 >40){
+              alert("Please enter valid score for practical and oral score ");              
+            }
+
+       
+            else{
+              var ansD = document.getElementById(total);
+              ansD.value = val1 + val2;
+            
+            if (temp>=55)
+            {
+              document.getElementById(remk).value="PASS";
+            }
+            else
+            {
+              document.getElementById(remk).value="FAIL";
+            }
+          }
+            
+    }
+
+
+   
+
+
+
  
 function find(th)
 {
@@ -521,10 +656,6 @@ function find(th)
  
  
 }
-  
- 
- 
- 
                 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
  
                   document.querySelector("#proceed").click();
