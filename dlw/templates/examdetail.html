@@ -79,7 +79,7 @@ input[type=submit] {
 <tr>
 <td><input type="text" name="code{{forloop.counter}}" class="form-control ll" value="{{i.exam_code}}" readonly /></td>
 <td><input type="text" name="type{{forloop.counter}}" class="form-control ll" value="{{i.exam_type}}" required /></td>
-<td><input type="text" name="date{{forloop.counter}}" id="date{{forloop.counter}}" class="datepick" value="{{i.exam_date}}" readonly required /></td>
+<td><input type="text" name="date{{forloop.counter}}" class="datepick" value="{{i.exam_date}}" readonly required /></td>
 <td><input type="text" name="prc{{forloop.counter}}" class="form-control ll" value="{{i.prac_desc}}" required /></td>
 <td><input type="text" name="pmax{{forloop.counter}}" class="form-control ll" value="{{i.prac_max}}" required /></td>
 <td><input type="text" name="orl{{forloop.counter}}" class="form-control ll" value="{{i.oral_desc}}" required /></td>
@@ -99,7 +99,6 @@ input[type=submit] {
 <br>
 <center><input type="submit" name="btn" value="Save" class="form-control ll" required style="width:80px;"/></center>
 </form>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script type="text/javascript">
 var j=0;
@@ -137,22 +136,26 @@ $("#add").click(function(e) {
 
         }
 var htAppend='<div><table id="customers"><tr>'+'<td><input type="text" id='+ecode+' name='+ecode+' class="form-control ll" placeholder="exam code" required /></td>'+'<td><input type="text" id="'+etype+'" name="'+etype+'" class="form-control ll" required></td>'+
-'<td><input type="text" id='+edate+' name='+edate+' class="form-control ll" required></td>'+
+'<td><input type="text" id='+edate+' name='+edate+' class="edatec" required></td>'+
 '<td><input type="text" id='+pdesc+' name='+pdesc+' class="form-control ll" required></td><td><input type="text" id='+pmax+' name='+pmax+' value="60" class="form-control ll" required></td>'+
 '<td><input type="text" id='+odesc+' name='+odesc+' class="form-control ll" required></td><td><input type="text" id='+omax+' name='+omax+' value="40" class="form-control ll" required></td>';
  htAppend=htAppend+'<td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>'+'</tr></table>'+'</div>';
      $('#items').append(htAppend);
      document.getElementById("total").value=j;
+     $('.edatec').each(function(){
+    $(this).datepicker({ dateFormat: 'dd/mm/yy' });
+    $(this).addClass("form-control ll");
+});
 });
 
 
 $(document).on("click", ".delete", function(){
             $(this).parents("tr").remove();
-    $(".add-new").removeAttr("disabled");
-    j--;
     var x=document.getElementById('length').value;
+    console.log(x);
     x=x-1;
     document.getElementById('length').value=x;
+    console.log(document.getElementById('length'));
 });
 </script>
 
