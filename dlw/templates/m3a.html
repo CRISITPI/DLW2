@@ -1,0 +1,46 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+<!-- <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M1 - MASTER PROCESS SHEET</h1> -->
+<form action='.' method="POST">
+ <div class="container" style="width: 100%">
+<br>
+<h5 style="float: left"><b>DLW</b></h5> <h5 style="float: right"><b>M3-A</b></h5> <center><h5><u><B>INDIAN RAILWAYS <BR><BR>COMPLETION REPORT</B></u></h5></center>
+
+<br>
+<br>
+<h5 ><b>ITEM <input type="textbox" name="item" ></b></h5>
+<h5 ><b>PART NO.<input type="textbox" name="partno" >DRG NO.<input type="textbox" name="drgno" ></b></h5>
+
+<h5><b>C&D NO. <input type="textbox" name="cd" ></b></h5>
+<h5><b>WORK ORDER NO.<input type="textbox" name="wo" >QTY ON ORDER<input type="textbox" name="qtyo" ></b></h5>
+<h5><b>QUANTITY COMPLETED AND DELEIVERD TO STORES(ON PRESENT LOT)<input type="textbox" name="qtyc" ></b></h5>
+<h5 style="float: right">As this: part qty<input type="checkbox" name="asthisqty"><br>Full qty<input type="checkbox" name="fullqty" > <br>
+    <br>
+    <br>
+<br>
+<br>
+<br>
+<h5><b>RECEIVED STORES BY <input type="textbox" name="recv" ></b></h5>
+<h5><b>DESIGNATION <input type="textbox" name="desg" ></b></h5>
+
+<br>
+<br>
+<h5 style="float: left"><b>PHYSICAL COMPLETION OF WORK </b></h5><h5 style="float: right"><b>(if part gives cumulation compliance)</b></h5><center><h5 >Stores<input type="checkbox" name="store"><br>Full <input type="checkbox" name="ful" ></center>
+
+<h5 style="float: left" ><b>Cost booking against work order completed </b></h5> <h5 style="float: right"><b>YES/NO</b></h5>
+
+<h5 style="float: left" ><b>IF DISPATCHED/HANDED OVER TO RAILWAYS/OTHER GIVE DISPATCHED TO PARTICULARS(IF KNOWN):-<input type="textfield" name="TEXT" ></b></h5>
+
+<h5><b>DATE<input type="date" name="date" ></b></h5>
+
+<h5  ><b>ESTIMATED COST OF SUPPLY <BR><br> DEBITS TO BE RAISED AGAINST</b></h5><h5  ><b>RS <BR><input type="checkbox" name="stores"> STORES(9500)<input type="textfield"><br><input type="checkbox" name="railways" >RAILWAYS<input type="textfield"><br><input type="checkbox" name="other" >Other <input type="textfield"><br></b></h5>
+
+   
+</form>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ 
+
+{% endblock content %}

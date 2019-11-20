@@ -1,0 +1,243 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<style>
+  input[type=text],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 1.5px solid rgb(14, 12, 12);
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 20%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: rgb(15, 12, 12);
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 10%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 6px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+</style>
+
+<h1 align="center" >M5 HW CARD</h1>
+
+<br><br>
+<form action="{% url 'm5hwview' %}" method="POST"> {% csrf_token %}
+    <div class="container" style="width: 40000px;">
+        
+       <!-- <table class="table"  style="width:100%"> -->
+           
+            <table class="table"  style=" width:100%" >
+
+            <tr>
+                
+               <td><b>HW-CD</b><input id="hw_cd" type="text" name="hw_cd" size="40" required/></td>
+
+               <td></td>
+               <td></td>
+
+               
+               <td ><b> PART-NO:</b>&nbsp; <select class="form-control" id="part_nop" name="part_nop" required>
+                <option id="op_part" selected disabled hidden>Select Part No</option>
+    
+                 <!-- <input id="part_no" type="text" name="part_no" size="40" required/></td> -->
+
+            </tr>
+            <tr>
+                    <td><b>DES:</b>&nbsp; <input id="des" type="text" name="des" size="100" required/></td>
+                   
+            </tr>
+           
+            <tr>
+                    <td> <b>SET:</b>&nbsp; <input id="set" type="text" name="set" size="40" required/></td>
+                    <td></td>
+                    <td></td>
+                    <td><b> OPN:</b>&nbsp; <input id="opn" type="text" name="opn" size="40" required/></td>
+                    
+     
+            </tr>
+            <tr>
+                    <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+                    <td><b> OPN Desc:</b>&nbsp; <input id="opn_des" type="text" name="opn_des" size="60" required/></td>
+     
+            </tr>
+            <tr>
+                    <td> <b>SHOP-SEC:</b>&nbsp; <input id="shop_sec" type="text" name="shop_sec" size="40" required/></td>
+                    <td></td> <td></td>
+                    <td><b>LC-NO:</b>&nbsp; <input id="lc_no" type="text" name="lc_no" size="40" required/></td>
+                    <td></td> <td></td>
+                    <td><b> PA:</b>&nbsp; <input id="pa" type="text" name="pa" size="40" required/></td>
+                    
+            </tr>
+            <tr>
+                    <td><b> AT:</b>&nbsp; <input id="at" type="text" name="at" size="40" required/></td>
+                    <td></td> <td></td>
+                    <td> <b>NO-OFF:</b>&nbsp; <input id="no_off" type="text" name="no_off" size="40" required/></td>
+                    <td></td>> <td></td>
+                    <td><b> TIME_PCPLS:</b>&nbsp; <input id="time_pcpls" type="text" name="time_pcpls" size="40" required/></td>
+                    
+            </tr>
+           
+            <tr>
+                    <td><b>TOT-HRSPLS:</b>&nbsp; <input id="tot_hrspls" type="text" name="tot_hrspls" size="40" required/></td>
+                   <td></td> <td></td>
+                    <td><b>BATCH-NO (9999999):</b>&nbsp; <input id="batch_no" type="text" name="batch_no" size="40" required/></td>
+                    <td></td> <td></td>
+                    <td><b>ORG-BATCH (9999999):</b>&nbsp; <input id="org_batch" type="text" name="org_batch" size="40" required/></td>
+                    
+            </tr>
+       </table>
+            <br><br><br>
+            <table class="table"  style=" width:100%" >
+            <tr>
+                    <td><b>EPC:</b>&nbsp; <input id="epc" type="text" name="epc" size="40" required/></td>
+                    <td></td> <td></td>
+                    <td><b>SEQ:</b>&nbsp; <input id="seq" type="text" name="seq" size="40" required/></td>
+                    <td></td>
+                    <td><b>QTY-ORD:&nbsp; <input id="qty_ord" type="text" name="qty_ord" size="30" required/></td>
+                    
+            </tr>
+           
+            <tr>
+                    <td><b>L-FR:</b>&nbsp; <input id="l_fr" type="text" name="l_fr" size="40" required/></td>
+                    <td></td><td></td>
+                    <td><b>L_TO:</b>&nbsp; <input id="l_to" type="text" name="l_to" size="40" required/></td>
+                    <td></td> 
+                    <td><b>M13-NO (999/9/9999):</b>&nbsp; <input id="m13_no" type="text" name="m13_no" size="40" required/></td>
+                    
+           
+            </tr>
+            <tr>
+                    <td><b>M13-DATE:</b>&nbsp; <input id="m13_date" type="text" name="m13_date" size="40" required/></td>
+                    <td></td><td></td>
+                    <td><b>BRN-NO:</b>&nbsp; <input id="brn_no" type="text" name="brn_no" size="40" required/></td>
+                    <td></td>
+                    <td><b>ORG-BRN-NO:</b>&nbsp; <input id="org_brn" type="text" name="org_brn" size="40" required/></td>
+                    
+            </tr>
+            <tr>
+                    <td><b>P-SHOP:</b>&nbsp; <input id="p_shop" type="text" name="p_shop" size="40" required/></td>
+                    <td></td><td></td>
+                    <td><b>N-SHOP:</b>&nbsp; <input id="n_shop" type="text" name="n_shop" size="40" required/></td>
+                    <td></td>
+                    <td><b>M5-CD:</b>&nbsp; <input id="m5_cd" type="text" name="m5_cd" size="40" required/></td>
+                    
+            </tr>
+            </table>
+            <br><br><br>
+            <table class="table"  style=" width:100%" >
+            <tr>
+                    <td><b>NCP-JBS:</b>&nbsp; <input id="ncp_jbs" type="text" name="ncp_jbs" size="40" required/></td>
+                    <td></td><td></td>
+                    <td><b>OKMRQ:</b>&nbsp; <input id="okmrq" type="text" name="okmrq" size="40" required/></td>
+                    <td></td>
+                    <td><b>RM_PART-NO:</b>&nbsp; <input id="rm_partno" type="text" name="rm_opartno" size="40" required/></td>
+                    
+            </tr>
+           
+            <tr>
+                    <td><b>RM-DESC:</b>&nbsp; <input id="rm_des" type="text" name="rm_des" size="40" required/></td>
+
+                               
+            </tr>
+            <tr>
+                    <td><b>RM-QTY:</b>&nbsp; <input id="rm_qty" type="text" name="rm_qty" size="40" required/></td>
+                    <td></td><td></td>
+                    <td><b>RM-UNIT:</b>&nbsp; <input id="rm_unit" type="text" name="rm_unit" size="40" required/></td>
+                    <td></td>
+                    <td><b>SN:&nbsp; </b><input id="sn" type="text" name="sn" size="40" required/></td>
+                    
+            </tr>
+            <tr>
+                    <td><b>P-SHOP:</b>&nbsp; <input id="p_shop" type="text" name="p_shop" size="40" required/></td>
+                    <td></td><td></td>
+                    <td><b>N-SHOP:</b>&nbsp; <input id="n_shop" type="text" name="n_shop" size="40" required/></td>
+                    <td></td>
+                    <td><b>M5-CD:</b>&nbsp; <input id="m5_cd" type="text" name="m5_cd" size="40" required/></td>
+                    
+            </tr>
+            <tr>
+                    <td><b>PL-REG NO:</b>&nbsp; <input id="pl_regno" type="text" name="pl_regno" size="40" required/></td>
+                   <td></td><td></td>
+                    <td><b>REMARKS:</b>&nbsp; <input id="remarks" type="text" name="remarks" size="40" required/></td>
+                   
+            </tr>
+            </table>
+    </div>
+
+    <center>
+        <input type="submit" name="proceed" value="Submit">
+    </center>
+</form>
+<script>
+document.querySelector("#part_no").addEventListener('change',(e)=>{
+        //console.log("hi");
+                        e.preventDefault();
+                        // var shop_sec = $("#shop_sec").val()
+                        // var data = {shop_sec};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'm5hwgetpart_no' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){
+                              var elementsadded = document.querySelectorAll(".newelepart");
+                                  if(elementsadded.length>0){
+                                      var elementsaddedarr = Array.from(elementsadded);
+                                      elementsaddedarr.forEach((el)=> el.remove());
+                                      
+                                  var brarr,mystr,html;
+                                  brarr = response.map((el)=>el.part_no);
+                                  mystr = "";
+                                  brarr.forEach((el,index)=>{
+                                    html = `<option class="newelewpart">${brarr[index]}</option>`
+                                    mystr = html.concat(mystr);
+                                  });
+                                  html = "";
+                                  document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
+                                  mystr=""; 
+                            }
+                              })
+                    })
+
+
+</script>
+
+{% endblock content %}        
+
+
+        
+
+        
+
+

@@ -754,8 +754,6 @@ class ChartData(APIView):
 
 
 
-
-
 @login_required
 @role_required(urlpass='/m2view/')
 def m2view(request):
@@ -6209,22 +6207,6 @@ def m7view(request):
             leng2 = obj2.count()
             print(obj1,"obj1")
             print(obj2,"obj2")
-            # context = {
-            #     'obj1': obj1,
-            #     'obj2': obj2,
-            #     'ran':range(1,2),
-            #     'len': 31,
-            #     'len2': leng2,
-            #     'shop_sec': shop_sec,
-            #     'wo_no': wo_no,
-            #     'staff_no': staff_no,
-            #     'part_no': part_no, 
-            #     'mon': mon,
-            #     'sub':1,
-            #     'nav':nav,
-            #     'ip':get_client_ip(request),  
-            #     'subnav':subnav,     
-            # }
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -6308,7 +6290,7 @@ def m7view(request):
                 }
 
         if submitvalue =='Submit':
-                print("hi")
+                #print("hi")
                 leng=request.POST.get('len')
                 shop_sec= request.POST.get('shop_sec')
                 staff_no = request.POST.get('staff_no')
@@ -6342,8 +6324,7 @@ def m7view(request):
                         objjj.mon=mon
                         objjj.date=date
                         objjj.save()
-                    #print(in1)
-                    #print(date)
+                    #print(objjj)
 
                 for i in range(1, int(inoutnum)+1):
                     in1 = request.POST.get('in1add'+str(i))
@@ -8337,6 +8318,7 @@ def m23view(request):
     print("kj",usermaster)
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    
     menulist=set()
     for ob in nav:
         menulist.add(ob.navitem)
@@ -8352,7 +8334,7 @@ def m23view(request):
         context={
             'sub':0,
             'lenm' :2,
-
+            
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
@@ -8375,6 +8357,7 @@ def m23view(request):
             'nav':nav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
+            
             'roles' :rolelist
         }
     elif(len(rolelist)>1):
@@ -8385,7 +8368,169 @@ def m23view(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
+            'roles' :rolelist,
+            
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            from datetime import date
+            shop_sec = request.POST.get('shop_sec')
+            staff_no = request.POST.get('staff_no')
+            ddate = request.POST.get('ddate')
+            obj1 =  M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name').distinct()
+            # obj2=m23doc.objects.filter(emp_no=staff_no,shop_no=shop_sec).values('date','purpose','from_time','to_time')[0]
+            noprint=0
+            tod = date.today()
+            # current_date=date.today()
+            # print(current_date)
+            # if len(obj2) == 0:
+            #     obj2=range(1,2)
+            #     noprint=1
+           # obj2 = Shemp.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name','cat').distinct()
+            # leng = obj1.count()
+            # print(obj2)
+            #leng2 = obj2.count()
+           # print(obj1,"obj1")
+            #print(obj2,"obj2")
+            context = {
+                'obj1': obj1,
+                # 'obj2': obj2,
+                'ran':range(1,32),
+                'len': 31,
+                #'len2': leng2,
+                'shop_sec': shop_sec,
+                 'noprint':noprint,
+                #'wo_no': wo_no,
+                'staff_no': staff_no,
+                #'part_no': part_no, 
+                #'mon': mon,
+                'curdate':tod,
+                'sub':1,
+                'nav':nav,
+                'ddate': ddate,
+                'ip':get_client_ip(request),  
+                'subnav':subnav,     
+            }
+        if submitvalue =='Save':
+                    leng=request.POST.get('len')
+                    print("HH")
+                    
+                    from_time = request.POST.get('from_time')
+                    to_time = request.POST.get('to_time')
+                    purpose = request.POST.get('pur')
+                    shops=request.POST.get('shopsec')
+                    staffn=request.POST.get('staffno')
+                    date=request.POST.get('dddate')
+                    name=request.POST.get('employeename')
+                    print(date)
+                    now = time.localtime()
+                    current_time = time.strftime("%H:%M:%S",now)
+                    if to_time > from_time and from_time > current_time or from_time == current_time  :
+                        m23obj1 = m23doc.objects.filter(shop_no=shops,emp_no=staffn, date=date).values('to_time')
+                        if len(m23obj1)>0 :
+                            if (m23obj1[0]['to_time'] <= str(from_time) and str(from_time) <= str(to_time) ) :
+                                 m23doc.objects.create(shop_no=str(shops),emp_no=str(staffn),emp_name=str(name), from_time=str(from_time), to_time=str(to_time), purpose=str(purpose), date=str(date))
+                                 messages.success(request,'New gate pass created')
+                            else :
+                                 messages.success(request,'From-time and to-time of new gate pass should be greater than issued time of previous gate pass')
+                        else:
+                           m23doc.objects.create(shop_no=str(shops),emp_no=str(staffn),emp_name=str(name), from_time=str(from_time), to_time=str(to_time), purpose=str(purpose), date=str(date))
+                           messages.success(request,'First gate pass created')
+                    else :
+                        messages.success(request,'To_time should be greater than From_time  and from time should be greater than current time')
+                        
+        if submitvalue=='Generate report':
+            return m23report(request)
+    # else :
+    #     return m23report(request)
+    
+    return render(request,"m23view.html",context)
+                        
+
+def m23getempno(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        #wo_no = request.GET.get('wo_no')
+        staff_no=list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        return JsonResponse(staff_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def getm23date(request):
+    from .models import m23doc
+    if request.method == "GET" and request.is_ajax():
+        shopsec = request.GET.get('shpsec')
+        stfno=request.GET.get('stfno')
+        cdate=request.GET.get('insertdate')
+        print("in ajax")
+        #wo_no = request.GET.get('wo_no')
+        cddate=list(m23doc.objects.filter(shop_no=shopsec,emp_no=stfno).values('date').order_by('-id'))
+        print("list")
+        print(cddate)
+        return JsonResponse(cddate, safe = False)
+    return JsonResponse({"success":False}, status=400)
+  
+@login_required
+#@role_required(allowed_roles=["Superuser"])
+def m23report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    # print("kj",usermaster)
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+
+    # wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            w1 = M5SHEMP.objects.filter(shopsec=rolelist[i]).values('empno').distinct()
+            # req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            # wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            # 'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            
             'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            
         }
     if request.method == "POST":
         
@@ -8393,16 +8538,13 @@ def m23view(request):
         if submitvalue=='Proceed':
             shop_sec = request.POST.get('shop_sec')
             staff_no = request.POST.get('staff_no')
-            obj1 =  M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name').distinct()
-            obj2=m23doc.objects.filter(emp_no=staff_no,shop_no=shop_sec).values('date','purpose','from_time','to_time').distinct()
-            if len(obj2) == 0:
-                obj2=range(1,2)
-           # obj2 = Shemp.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name','cat').distinct()
+            ddate = request.POST.get('ddate')
+            print(shop_sec,staff_no,ddate)
+            # obj1 =  M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name').distinct()
+            obj1 = m23doc.objects.filter(shop_no=shop_sec,emp_no=staff_no,date=ddate).values('purpose','from_time','to_time').distinct()
+            obj2 = m23doc.objects.filter(shop_no=shop_sec,emp_no=staff_no,date=ddate).values('emp_name').distinct()
             leng = obj1.count()
-            print(obj2)
-            #leng2 = obj2.count()
-           # print(obj1,"obj1")
-            #print(obj2,"obj2")
+            print("obj1",obj1)
             context = {
                 'obj1': obj1,
                 'obj2': obj2,
@@ -8417,41 +8559,46 @@ def m23view(request):
                 'sub':1,
                 'nav':nav,
                 'ip':get_client_ip(request),  
-                'subnav':subnav,     
+                'subnav':subnav,  
+                'date': ddate,   
             }
-        if submitvalue =='Save':
-                    leng=request.POST.get('len')
-                    print("HH")
+        if submitvalue =='Submit':
+                leng=request.POST.get('len')
+                shop_sec= request.POST.get('s_spass')
+                staff_no = request.POST.get('s_fpass')
+            
+                m23obj = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).distinct()
+                print(m23obj)
+                if((m23obj)):
+                    m23obj.delete()
+                
+                # for i in range(1, int(leng)+1):
+                from_time = request.POST.get('from_time')
+                to_time = request.POST.get('to_time')
+                purpose = request.POST.get('pur')
+                shops=request.POST.get('shopsec')
+                staffn=request.POST.get('staffno')
+  
+                # reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
+                    #print(shopsec)
+                    # objjj=M7.objects.create(shop_sec=shop_sec,staff_no=staff_no,part_no=part_no,in1=in1,out=out,month=mon,date=date)
+                if from_time and to_time and purpose :
+                    print("jj")
+                    objjj=m23doc.objects.create()
+                    objjj.shop_no=shops
+                    objjj.emp_no=staffn
+                    objjj.emp_name=request.POST.get('employeename')
+                    objjj.from_time=from_time
+                    objjj.to_time=to_time
+                    objjj.purpose=purpose
+                    objjj.save()
+                    #print(in1)
+                    #print(date)
                     
-                    from_time = request.POST.get('from_time')
-                    to_time = request.POST.get('to_time')
-                    purpose = request.POST.get('pur')
-                    shops=request.POST.get('shopsec')
-                    staffn=request.POST.get('staffno')
-                    date=request.POST.get('date')
-                    name=request.POST.get('employeename')
-                    print(name)
-                    m23obj = m23doc.objects.filter(shop_no=shops,emp_no=staffn).distinct()
-                    if len(m23obj) == 0:
+                wo_nop=M5SHEMP.objects.all().values('staff_no').distinct()
+ 
 
-                        m23doc.objects.create(shop_no=str(shops),emp_no=str(staffn),emp_name=str(name), from_time=str(from_time), to_time=str(to_time), purpose=str(purpose),date=str(date))
-                        print("create")
-                     
-                    else:
-                        m23doc.objects.filter(shop_no=shops,emp_no=staffn).update(purpose=str(purpose),from_time=str(from_time),to_time=str(to_time),date=str(date))
-                    wo_nop=M5SHEMP.objects.all().values('staff_no').distinct()
-
-    return render(request,"m23view.html",context)
-                        
-
-def m23getempno(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        #wo_no = request.GET.get('wo_no')
-        staff_no=list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
-        return JsonResponse(staff_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
+    return render(request,"m23report.html",context)
 
 
 
@@ -11550,3 +11697,115 @@ def m9getwono(request):
         print(wo_no)
         return JsonResponse(wo_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+
+@login_required
+@role_required(urlpass='/m5hwview/')
+def m5hwview(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = user_master.objects.none()
+    if "Superuser" in rolelist:
+        tm=M5SHEMP.objects.all().values('shopsec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    return render(request,"m5hwview.html",context)
+
+
+def exam_detail(request):
+    context={
+            'totindb':0,
+        }
+    if request.method=="POST":
+        bval=request.POST.get('btn')
+        if bval=='View':
+            ecode=request.POST.get('ecode')
+            ex=exam_master.objects.all().order_by('id')
+            leng=len(ex)
+            context={
+                'sub':1,
+                'obj':ex,
+                'totindb':0,
+                'leng':leng,
+            }
+        if bval=='Save':
+            tot=request.POST.get('total')
+            if tot=='':
+                tot=0
+            else:
+                tot=int(tot)+1
+                for i in range(1,int(tot)):
+                    if (request.POST.get("ecode"+str(i))):
+                        ecode=request.POST.get("ecode"+str(i))
+                        etype=request.POST.get("etype"+str(i))
+                        prctd=request.POST.get("practical"+str(i))
+                        prcmarks=request.POST.get("pracmax"+str(i))
+                        orald=request.POST.get("oral"+str(i))
+                        oralmarks=request.POST.get("orlmax"+str(i))
+                        edate=request.POST.get("edate"+str(i))
+                        exam_master.objects.create(exam_code=ecode,exam_type=etype,exam_date=edate,prac_desc=prctd,prac_max=prcmarks,oral_desc=orald,oral_max=oralmarks)
+            ex1=request.POST.get('length')
+            print("exist",ex1)
+            for j in range(len(ex1)+1):
+                print(j)
+                if (request.POST.get("code"+str(j))):
+                    ecode=request.POST.get("code"+str(j))
+                    etype=request.POST.get("type"+str(j))
+                    prctd=request.POST.get("prc"+str(j))
+                    prcmrk=request.POST.get("pmax"+str(j))
+                    orald=request.POST.get("orl"+str(j))
+                    orlmrk=request.POST.get("omax"+str(j))
+                    edt=request.POST.get("date"+str(j))
+                    exam_master.objects.filter(exam_code=ecode).update(exam_type=etype,prac_desc=prctd,prac_max=prcmrk,oral_desc=orald,oral_max=orlmrk,exam_date=edt)
+            messages.success(request,'Successfully Saved!!')
+    return render(request,"examdetail.html",context)
+
+
+def m3a(request):
+    return render(request,"m3a.html")
+
+
+
+
+def performaA(request):
+
+    return render(request,"performaA.html")

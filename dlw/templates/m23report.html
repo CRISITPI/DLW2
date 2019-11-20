@@ -20,7 +20,7 @@
     }
     
     input[type=submit] {
-        width: 70%;
+        width: 20%;
         text-align: center;
         background-color: #4CAF50;
         color: white;
@@ -32,7 +32,6 @@
     }
     
     input[type=submit]:hover {
-        width: 70%;
         background-color: #45a049;
         text-align: center;
     }
@@ -53,9 +52,24 @@
         text-align: center;
     }
     
-   
+    /* input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    } */
 </style>
-
+<br>
 <br>
 <center>
         {% if messages %}
@@ -73,7 +87,7 @@
 
 <h2 align="center" >GATE PASS</h2>
 <br>
-<form action="{% url 'm23view' %}" method="POST"> {% csrf_token %}
+<form action="{% url 'm23report' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
                 <tr>
@@ -90,7 +104,7 @@
                         {% for role in roles %}
                         {{role}}
                             <option>{{role}}</option>
-                        {% endfor %}
+                        {% endfor %}    
                         {% endif %}
                             </select>
                         </td>
@@ -104,26 +118,29 @@
                         </td>
                         <td>
                             <label for="date"><b>DATE:</b></label>
-                            <input type="text"  class="form-control" id="ddate" name="ddate" value="{{curdate}}"/>
-                            <!-- "2019-11-07" -->
-                    
+                            <input type="text"  class="form-control" id="ddate" name="ddate" min="2019-11-07"/>
                             </td>
+                            <!-- <td>
+                                <label for="Gate Pass"><b>Gate Pass:  </b></label>
+                                    <select class="form-control" id="gate_pass" name="Gate pass" required >  
+                                    <option id="op_gate" selected disabled hidden>Select Gate Pass</option>
+                                    <option  value="gate1">Gate pass 1</option>
+                                    <option  value="gate2">Gate pass 2</option> 
+                                    </select> 
+                                    </td> -->
                 </tr>
                 
         </table>
-        <center>
- <input type="submit" value="Generate report" name="proceed" id="report">    
-        </center>
+        <!-- <center><input type="submit" value="Proceed" name="proceed" /></center> -->
         <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
 
 
     </div>
 
-    <input type="hidden" id="sub" name="sub" value={{sub}}>
-    
  {% if sub == 1 %}
 <input type="hidden" name="len" value="{{len}}">
 <div id="print1" >
+    <input type="hidden" id="sub" name="sub" value={{sub}}>
 <table align="center" border="2" width="50%">  
     <tr>
         <th>SHOP SECTION</th>
@@ -138,54 +155,54 @@
         <td>{{staff_no}}</td>
     </tr>
     <tr>
+        <th>DATE</th>
+        <input type="hidden" value="{{ddate}}" name="dddate" />
+        
+        <td>{{date}}</td>
+    </tr>
+    {% for i in obj2 %}
+    <tr>
         <th>EMPLOYEE NAME</th>
-        {% for i in obj1 %}
+        
         <td>
-                {{i.name}}
+                {{i.emp_name}}
         </td>
         <input type="hidden" value="{{i.name}}" name="employeename" />
-    </tr>
-    <tr>
-            <th>DATE</th>
-        
-        <input type="hidden" value="{{ddate}}" name="dddate" />
-        {% endfor %}
-        <td>{{ddate}}</td>
-        <!-- <th>GA PUNCHED AT</th> -->
-    </tr>
-</table>
-<br>
-<table align="center" border="2" width="60%">  
-    <tr>
-        <th>PURPOSE</th>
-        <th>FROM TIME</th>
-        <th>TO TIME</th>
-    </tr>
-    <tr>    
-     <div >  <td id="purposediv" style="display: none;">  {% for i in obj2 %} {{i.purpose}}<input type="hidden" value={{i.purpose}} name="purpose{{forloop.counter}}" id="purpose{{forloop.counter}}"  />{% endfor %}</td></div>
-             <div id="purdiv" ><td>          
-                        <select id="pur" name="pur" class="form-control" required>
-                                <option selected disabled value="">SELECT PURPOSE</option>
-                                <option  value="OFFICIAL">OFFICIAL</option>
-                                <option  value="PRIVATE">PRIVATE</option>
-                        </select>
-                       
-        </td>
-        </div>
-         
-        <td><input type="time" class="form-control" name="from_time" id="ftime" value="00:00:00" required></td>
-        
-        <td><input type="time" class="form-control" name="to_time" id="ttime" value="00:00:00" required></td>
-
-        </tr>
+    </tr>{% endfor %}
+   
     
-</table></div>
+{% for i in obj1 %}
+    <tr> 
+        <th>PURPOSE:</th> 
+     
+    <input type="text" value={{pur}} name="pur" id="pur" hidden /> 
+    <td>{{i.purpose}}</td>
+</tr>
+<tr> 
+    <th>FROM TIME:</th> 
+ 
+<input type="text" value={{from_time}} name="from_time" id="from_time" hidden /> 
+<td>{{i.from_time}}</td>
+</tr>
+<tr> 
+    <th>TO TIME:</th> 
 
+<input type="text" value={{to_time}} name="to_time" id="to_time" hidden /> 
+<td>{{i.to_time}}</td
+</tr>
+{% endfor %}
+
+
+
+</table>
+
+</div>
+</br>
 <center>  
     
-    <input type="submit" name="proceed" value="Save">
-    <!-- <input type="button" onclick="printDiv1()" value="print"> -->
-    
+   
+<input type="button" onclick="printDiv1()" value="Print" name="print1" id="print1"/> 
+                    
 
 </center> 
 {% endif %}
@@ -207,7 +224,6 @@ $(document).ready(function () {
 
                     
 });
-
 
 $(document).ready(function () {
    
@@ -258,11 +274,10 @@ $(document).ready(function(){
                               }
                                 })
                       })
-document.querySelector("#ddate").addEventListener('change',(e)=>{
-    console.log("in date changes");
+// document.querySelector("#ddate").addEventListener('change',(e)=>{
 
-document.querySelector("#myproceed").click();
-})
+// document.querySelector("#myproceed").click();
+// })
 document.addEventListener('keypress',(event)=>{
 if(event.keyCode===13){
     event.preventDefault();
@@ -270,6 +285,33 @@ if(event.keyCode===13){
 })
 
 
+
+function printDiv1() {
+     var printContents = document.getElementById("print1").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M23 Card (GATE PASS)</title>');
+        win.document.write('<h1>M23 Card (GATE PASS)</h1>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        
+
+
+
+}
 </script>    
 
     

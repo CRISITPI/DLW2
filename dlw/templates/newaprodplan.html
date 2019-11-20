@@ -622,11 +622,8 @@
 {
 var myVar = setInterval(submitdata, 10000);
 
-// $("#submitprod").submit(function(e) {
     function submitdata(){
 
-
-    // e.preventDefault(); // avoid to execute the actual submit of the form.
 
     var form = $("#submitprod");
     var serdata=form.serialize();
@@ -645,25 +642,10 @@ var myVar = setInterval(submitdata, 10000);
             var x = document.getElementById("snackbar");
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-            //    alert("Data saved successfully"); // show response from the php script.
-               // M.toast({html: 'Changes are saved!'});
            }
          });
-
-
-// });
 }
 }
-
-
-
-
-
-
-
-
-
-
      var typeval=document.getElementById('type').value;
         console.log("Type"+String(typeval));
   var lentype=typeval.length;
@@ -671,21 +653,10 @@ var myVar = setInterval(submitdata, 10000);
       {
 
         $('#type').val('ind-rail');
-        // $("#type").change();
 
         ajaxfortype();
     }
-
-
-
-
-
-
-
-
-
-
-        var ff=parseInt(document.getElementById('flag').value);
+    var ff=parseInt(document.getElementById('flag').value);
     if(ff==1)
     {
     // var num_loco=document.getElementById("num_of_loco").value;
@@ -727,37 +698,24 @@ else {
     $('#editloconame'+String(p)).append(newOption).trigger('change');
         
 
-} 
-
-    }
-
+}}
 }
-
 }
 
 $(document).on("click", ".delete", function(){
-
-// var user_choice = window.confirm('Are you sure you want to delete the Record??');
 $(this).parents("tr").remove();
     $(".add-new").removeAttr("disabled");
 
 var user_choice=false;
 if(user_choice==true) {
-// $(this).parents("tr").remove();
-//     $(".add-new").removeAttr("disabled");
-// window.location='your url';  // you can also use element.submit() if your input type='submit' 
 } else {
 return false;
 
 }   
     });
 
-
-
-
 function ajaxfortype()
             {
-            // var username = $(this).val();
             var username=document.getElementById('type').value;
             var v='type'
             var type=document.getElementById('lmtype').value;
@@ -787,14 +745,6 @@ function ajaxfortype()
             e.preventDefault();
             ajaxfortype();
         });
-
-        // $("#trysub").click(function(e) {
-        //     e.preventDefault();
-        //     console.log("i am here");
-        //     swal("Done!", "Data saved succesfully!", "success");
-        // });
-
-
         $("#add").click(function(e) {
             event.preventDefault()
             var name = "name";

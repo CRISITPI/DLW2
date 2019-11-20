@@ -4101,27 +4101,35 @@ class M11(models.Model):
 
 
 class MG33new(models.Model):
-
+    exam_code = models.CharField(max_length=10, blank=True, null= True)
+    # empno = models.CharField(max_length=10, blank=True, null= True)
     updt_date = models.CharField(max_length=50, blank=True, null= True)
     shop_sec = models.CharField(max_length=50, blank=True, null= True)
+    skill = models.CharField(max_length=50, blank=True, null= True)
     name = models.CharField(max_length=50, blank=True, null= True)
-    ticketno = models.CharField(max_length=10, blank = True, null= True)
-    acc_date = models.CharField(max_length=10,blank= True, null= True)
-    place = models.CharField(max_length=50, blank=True, null= True)
+    staff_no = models.CharField(max_length=10, blank = True, null= True)
+    exam_date = models.CharField(max_length=10,blank= True, null= True)
     place_of_exam = models.CharField(max_length=50, blank=True, null= True)
     sec_sup = models.CharField(max_length=50, blank=True, null= True)
-    prac_desc = models.CharField(max_length=200, blank=True, null= True)
-    oral_desc = models.CharField(max_length=200, blank=True, null= True)
     prac_score = models.CharField(max_length=10, blank=True, null= True)
     oral_score = models.CharField(max_length=10, blank=True, null= True)
     total_marks = models.CharField(max_length=50, blank=True, null= True)
     trade_test_officer = models.CharField(max_length=50, blank=True, null= True)
     foreman = models.CharField(max_length=50, blank=True, null= True)
     trade_test_admin = models.CharField(max_length=50, blank=True, null= True)
+    result = models.CharField(max_length=50, blank=True, null= True)
 
+class exam_master(models.Model):
+    exam_code=models.CharField(max_length=10, blank=True, null= True)
+    prac_desc = models.CharField(max_length=500, blank=True, null= True)
+    prac_max = models.CharField(max_length=5, blank=True, null= True)
+    oral_desc = models.CharField(max_length=500, blank=True, null= True)
+    oral_max = models.CharField(max_length=5, blank=True, null= True)
+    exam_type = models.CharField(max_length=500, blank=True, null= True)
+    exam_date = models.CharField(max_length=20, blank=True, null= True)
 
 class m9(models.Model):
-    
+
     shop_sec = models.CharField(max_length=4, blank=True, null=True)  # Field name made lowercase.
     date = models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
     wo_no = models.CharField( max_length=7, blank=True, null=True) 
