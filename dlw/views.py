@@ -6850,23 +6850,23 @@ def MG33view(request):
             #staffno=request.POST.get('staff_no')
             lvdate=request.POST.get('updt_date')
             examcode = []
-            ex = MG33examMaster.objects.all().values('exam_code')
+            ex = exam_master.objects.all().values('exam_code')
             for i in ex:
                 examcode.append(i['exam_code']) 
-            m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
-            # print(m2)
-            if m2 is not None and len(m2):
-                for mm in range(len(m2)):
-                    temper = {str(mm):{"name":m2[mm].name,
-                                               "ticketno":m2[mm].ticketno,
-                                               "date":m2[mm].alt_date,
-                                               }}
+            # m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
+            # # print(m2)
+            # if m2 is not None and len(m2):
+            #     for mm in range(len(m2)):
+            #         temper = {str(mm):{"name":m2[mm].name,
+            #                                    "ticketno":m2[mm].ticketno,
+            #                                    "date":m2[mm].alt_date,
+            #                                    }}
 
 
-                    totindb=totindb+1
+            #         totindb=totindb+1
 
-                    dictemper.update(copy.deepcopy(temper))
-                    print(dictemper)
+            #         dictemper.update(copy.deepcopy(temper))
+            #         print(dictemper)
 
             w1=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
             # print("w1",w1)
@@ -6909,8 +6909,9 @@ def MG33view(request):
                     'lvdate':lvdate,
                     'empname':names,
                     'names':wono,
-                    'dictemper':dictemper,
-                    'totindb':totindb,
+                    # 'dictemper':dictemper,
+                    # 'totindb':totindb,
+                     'totindb':0,
                     'alt_date':alt_date,
                     'examcode': examcode
                 }
@@ -7016,7 +7017,7 @@ def mg33getexam(request):
     if request.method == "GET" and request.is_ajax():  
         examcode= request.GET.get('two')
 
-        ex = MG33examMaster.objects.filter(exam_code= examcode).all()    
+        ex = exam_master.objects.filter(exam_code= examcode).all()    
      
         exam ={
 
@@ -11966,4 +11967,10 @@ def mg6view(request):
     return render(request,"mg6view.html")
 
 def performaA(request):
+<<<<<<< HEAD
     return render(request,"performaA.html")
+=======
+
+    return render(request,"performaA.html")
+
+>>>>>>> abhishek
