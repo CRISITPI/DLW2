@@ -12015,6 +12015,211 @@ def exam_detail(request):
     return render(request,"examdetail.html",context)
 
 
+def view_exam_data(request):
+    context={
+            'totindb':0,
+        }
+    if request.method=="POST":
+        bval=request.POST.get('btn')
+        if bval=='View Exam Detail':
+            ecode=request.POST.get('ecode')
+            ex=MG33new.objects.all().order_by('id')
+            leng=len(ex)
+            context={
+                'sub':1,
+                'obj':ex,
+                'totindb':0,
+                'leng':leng,
+            }
+        if bval=='Save':
+            tot=request.POST.get('total')
+            if tot=='':
+                tot=0
+            else:
+                tot=int(tot)+1
+                for i in range(1,int(tot)):
+                    if (request.POST.get("ecode"+str(i))):
+                        ecode=request.POST.get("ecode"+str(i))
+                        etype=request.POST.get("etype"+str(i))
+                        prctd=request.POST.get("practical"+str(i))
+                        prcmarks=request.POST.get("pracmax"+str(i))
+                        orald=request.POST.get("oral"+str(i))
+                        oralmarks=request.POST.get("orlmax"+str(i))
+                        edate=request.POST.get("edate"+str(i))
+                        exam_master.objects.create(exam_code=ecode,exam_type=etype,exam_date=edate,prac_desc=prctd,prac_max=prcmarks,oral_desc=orald,oral_max=oralmarks)
+            ex1=request.POST.get('length')
+            print("exist",ex1)
+            for j in range(1,len(ex1)+1):
+                print(j)
+                if (request.POST.get("code"+str(j))):
+                    ecode=request.POST.get("code"+str(j))
+                    etype=request.POST.get("type"+str(j))
+                    prctd=request.POST.get("prc"+str(j))
+                    prcmrk=request.POST.get("pmax"+str(j))
+                    orald=request.POST.get("orl"+str(j))
+                    orlmrk=request.POST.get("omax"+str(j))
+                    edt=request.POST.get("date"+str(j))
+                    exam_master.objects.filter(exam_code=ecode).update(exam_type=etype,prac_desc=prctd,prac_max=prcmrk,oral_desc=orald,oral_max=orlmrk,exam_date=edt)
+            messages.success(request,'Successfully Saved!!')
+    return render(request,"mg33viewdata.html",context)
+
+
+
+
+
+# @login_required
+# @role_required(urlpass='/mg33report/')
+def mg33report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    stfno=set()
+    ex=MG33new.objects.all().values('staff_no')
+    for i in ex:
+        if i['staff_no'] is not None:
+            stfno.add(i['staff_no'])
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'obj':stfno,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    if request.method=="POST":
+        bval=request.POST.get('proceed')
+        if bval=='Proceed':
+            stfno=set()
+            ex=MG33new.objects.all().values('staff_no')
+            for i in ex:
+                if i['staff_no'] is not None:
+                    stfno.add(i['staff_no'])
+            shpsec = request.POST.get('shop_sec')
+            staffno=request.POST.get('staff_no')
+            update=request.POST.get('updt_date')
+            ex = MG33new.objects.filter(shop_sec=shpsec,staff_no=staffno,updt_date=update).all()
+            pscore=ex[0].prac_score
+            oscore=ex[0].oral_score
+            result=ex[0].result
+            trdadmin=ex[0].trade_test_admin
+            worker=ex[0].name
+            secsup=ex[0].sec_sup
+            trdoff=ex[0].trade_test_officer
+            print(ex)
+            # dictemper={}
+            excode=set()
+            j=0
+            for i in range(len(ex)):
+                excode.add(ex[i].exam_code)
+            print(excode)
+            for a in excode:
+                obj1=exam_master.objects.filter(exam_code=a)
+                # temper = {str(j):{"examtype":obj1[0].exam_type,
+                #                     "pracd":obj1[0].prac_desc,"orald":obj1[0].oral_desc,}}
+                # dictemper.update(copy.deepcopy(temper))
+                # j=j+1
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shpsec,
+                    'obj':stfno,
+                    'obj2':ex,
+                    'obj1':obj1,
+                    'pscore':pscore,'oscore':oscore,'result':result,
+                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname').distinct
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shpsec,
+                    'obj':stfno,
+                    'obj2':ex,
+                    'obj1':obj1,
+                    'pscore':pscore,'oscore':oscore,'result':result,
+                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shpsec,
+                    'obj':stfno,
+                    'obj2':ex,
+                    'obj1':obj1,
+                    'pscore':pscore,'oscore':oscore,'result':result,
+                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                }
+    
+        
+    return render(request,"mg33report.html",context)
+
+
+
+
 def m3a(request):
     return render(request,"m3a.html")
 
@@ -12022,10 +12227,4 @@ def mg6view(request):
     return render(request,"mg6view.html")
 
 def performaA(request):
-<<<<<<< HEAD
     return render(request,"performaA.html")
-=======
-
-    return render(request,"performaA.html")
-
->>>>>>> abhishek

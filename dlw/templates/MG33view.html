@@ -11,14 +11,14 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
  
   <script>
-    $(document).ready(function () { $('#updt_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+    $(document).ready(function () { $('#updt_date').datepicker({dateFormat: 'dd-mm-yy'}); });
   </script>
    <script>
-      $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+      $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'dd-mm-yy'}); });
     </script>
 
     <script>
-        $(document).ready(function () { $('#exam_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+        $(document).ready(function () { $('#exam_date').datepicker({dateFormat: 'dd-mm-yy'}); });
       </script>
  
 
@@ -257,10 +257,16 @@ th, td {
 
 
           <td>
+              <a class="btn btn-primary" id="master" href="/view_exam_data">View Data</a>
+              
+
+          </td>
+          <td>
               <a class="btn btn-primary" id="master" href="/examdetail">Trade Test Master Screen</a>
               
 
           </td>
+
 
        
 
