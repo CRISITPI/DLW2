@@ -5219,12 +5219,33 @@ def m5getstaff_no(request):
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+@login_required
+@role_required(urlpass='/m12view/')
 def m12view(request):
-    
-    rolelist=[2301,2302,2303,304]
-    wo_no = user_master.objects.none()
-    if(len(rolelist)==1):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_no = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'len' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
@@ -5233,9 +5254,9 @@ def m12view(request):
             'sub':0,
             'len' :len(rolelist),
             'wo_no':wo_no,
-            #'nav':nav,
+            'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
-            #'usermaster':usermaster,
             'roles' :rolelist,
             'lent':0,
         }
@@ -5244,9 +5265,9 @@ def m12view(request):
         context = {
             'sub':0,
             'len' :len(rolelist),
-            #'nav':nav,
-            #'ip':get_client_ip(request),
-            #'usermaster':usermaster,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
             'roles' :rolelist,
             'lent':0,
         }
@@ -5281,7 +5302,6 @@ def m12view(request):
                 if t != 'None':
                     obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
                     obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
-                    print(obj2)
                    
            
                 for op in range(len(obj1)):
@@ -5299,59 +5319,90 @@ def m12view(request):
            
                     print("a",a)
                     print("b",b)
-            #obj2 = Shemp.objects.filter(shopsec=shop_sec).values('staff_no','name','cat').distinct()
-           # amt=0
-                print(obj1)
+                print("object1",obj1)
                 tmhr=rr
-                print("1",tmhr)
                 if len(obj2):    
                     avgrt=obj2[0]['avg_rate']
-                    print("2")
                     if tmhr == 'None': 
                         tmhr=0
                         avgrt=0
-                        print("3")
                     else:
                         tmhr1=tmhr.split(':')
                         tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
-                        print("4")
                                 
                         
                     amt=tmhr*avgrt
                 leng = obj1.count()
                 leng1 = obj2.count()
-                
-                
-
-            #amt=0    
-            #patotal=0
-            #attotal=0
-            #if len(obj2):
-            #for op in obj2:
-            #patotal=patotal+op['pa']
-            #attotal=attotal+op['at']
-            #print(obj2)
-            
-            #leng2 = obj3.count()
-           
-            #leng2 = obj2.count()
-
-            context = {
-                'obj1': obj1,
-                'obj2':obj2,
-                'obj3':obj3,
-                'lent': leng,
-                'lent2': leng1,
-                #'lent3':leng2,
-                'amt1': amt,
-                #'obj2': obj2,
-                'shop_sec': shop_sec,
-                'wo_no': wo_no,
-                'staff_no':staff_no, 
-                'r1':rr,
-                'month': month,
-                'sub':1,       
-            }
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'len' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+                    wo_no =wo_no | req
+                context = {
+                    'len' :len(rolelist),
+                    'wo_no':wo_no,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'len' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                }
 
         if submitvalue=='submit':
             leng=request.POST.get('len')
@@ -5360,10 +5411,6 @@ def m12view(request):
             month = request.POST.get('month')
             inoutnum=request.POST.get("inoutnum")
             amt = request.POST.get('amt')
-           
-
-            #name = request.Post.get('name')
-            
             for i in range(1, int(leng)+1):
                 in1 = request.POST.get('in1'+str(i))
                 out = request.POST.get('out'+str(i))
@@ -5376,31 +5423,17 @@ def m12view(request):
                 reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
                 M12DOC.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),time_hrs=str(time_hrs),amt=str(amt))
                
-                print(reasons_for_idle_time)
-                print(total_time)
-                #print(total_hrs)
 
             for i in range(1, int(inoutnum)+1):
                 in1 = request.POST.get('in1add'+str(i))
                 out = request.POST.get('outadd'+str(i))
                 month = request.POST.get('month_add'+str(i))
                 total_time = request.POST.get('total_time_add'+str(i))
-                #name = request.POST.get('name'+str(i))
                 date = request.POST.get('dateadd'+str(i))
                 cat = request.POST.get('catadd'+str(i))
                 time_hrs = request.POST.get('total_time_add'+str(i))
                 idle_time = request.POST.get('idle_time_add'+str(i))
-              # detail_no = request.POST.get('detail_noadd'+str(i))
                 reasons_for_idle_time = request.POST.get('reasons_for_idle_timeadd'+str(i))
-                #if len(cat)==1:
-                 #   cat="0"+cat
-                
-                print(in1)
-                print(cat)
-                print(out)
-                print(month)
-                print(reasons_for_idle_time)
-               # print(detail_no)
                
               
                 M12DOC.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),cat=str(cat),time_hrs=str(time_hrs))
@@ -11235,11 +11268,33 @@ def mg18view(request):
     return render(request, "mg18view.html", context)
 
 
-def m11views(request):
-    
-    rolelist=[2301,2302,2303,304]
-    wo_no = user_master.objects.none()
-    if(len(rolelist)==1):
+@login_required
+@role_required(urlpass='/m11view/')
+def m11view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
@@ -11248,9 +11303,9 @@ def m11views(request):
             'sub':0,
             'len' :len(rolelist),
             'wo_no':wo_no,
-            #'nav':nav,
+            'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
-            #'usermaster':usermaster,
             'roles' :rolelist,
             'lent':0,
         }
@@ -11259,9 +11314,9 @@ def m11views(request):
         context = {
             'sub':0,
             'len' :len(rolelist),
-            #'nav':nav,
-            #'ip':get_client_ip(request),
-            #'usermaster':usermaster,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
             'roles' :rolelist,
             'lent':0,
         }
