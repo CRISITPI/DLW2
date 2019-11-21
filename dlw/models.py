@@ -1181,7 +1181,7 @@ class M13(models.Model):
     m13_sn = models.CharField(db_column='M13_SN', max_length=7, blank=True, null=True)  # Field name made lowercase.
     m13_no = models.CharField(db_column='M13_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
     m13_date = models.DateField(db_column='M13_DATE', blank=True, null=True)  # Field name made lowercase.
-    wo = models.CharField(db_column='WO', max_length=7, blank=True, null=True)  # Field name made lowercase.
+    wo = models.CharField(db_column='WO', max_length=15, blank=True, null=True)  # Field name made lowercase.
     part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     qty_tot = models.DecimalField(db_column='QTY_TOT', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     qty_ins = models.DecimalField(db_column='QTY_INS', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
@@ -1219,7 +1219,6 @@ class M13(models.Model):
     epc_old = models.CharField(db_column='EPC_OLD', max_length=1, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'M13'
 
 
@@ -4169,3 +4168,116 @@ class MG36(models.Model):
     pay_salary = models.CharField( max_length=10, blank=True, null=True)
     ticket_no = models.CharField( max_length=10, blank=True, null=True)
     date_app = models.CharField( max_length=10, blank=True, null=True)
+
+
+
+class ms_tools_master(models.Model):
+    history_card_number = models.CharField(max_length=50, blank=True, null=False)
+    shop_code = models.CharField(max_length=50, blank=True, null=False)
+    maintenance_group = models.CharField(max_length=50, blank=True, null=False)
+    instrument_number = models.CharField(max_length=50, blank=True, null=True)
+    make = models.CharField(max_length=50, blank=True, null=True)
+    model = models.CharField(max_length=50, blank=True, null=True)
+    standard = models.CharField(max_length=50, blank=True, null=True)
+    tool_code = models.CharField(max_length=50, blank=True, null=True)
+    group_name = models.CharField(max_length=50, blank=True, null=True)
+    range = models.CharField(max_length=50, blank=True, null=True)
+    unit_of_measure = models.CharField(max_length=50, blank=True, null=True)
+    accuracy_criteria = models.CharField(max_length=50, blank=True, null=True)
+    calibration_frequency = models.CharField(max_length=50, blank=True, null=True)
+    calibration_link = models.CharField(max_length=50, blank=True, null=True)
+    process_tolerance = models.CharField(max_length=50, blank=True, null=True)
+    work_instruction_number = models.CharField(max_length=50, blank=True, null=True)
+    plus_error = models.FloatField(max_length=50, blank=True, null=True)
+    minus_error = models.FloatField(max_length=50, blank=True, null=True)
+    calibration_due_date = models.CharField(max_length=50, blank=True, null=True)
+    calibration_prodedure = models.CharField(max_length=1000, blank=True, null=True)
+    introduced_date = models.CharField(max_length=50, blank=True, null=True)
+    user_id = models.CharField(max_length=50, blank=True, null=True)
+    employee = models.CharField(max_length=50, blank=True, null=True)
+    remarks = models.CharField(max_length=50, blank=True, null=True)
+    last_iss_date = models.CharField(max_length=50, blank=True, null=True)
+    last_cal_date = models.CharField(max_length=50, blank=True, null=True)
+    last_rec_date = models.CharField(max_length=50, blank=True, null=True)
+
+class ms_tools_shops(models.Model):
+    shop_name = models.CharField(max_length=50, blank=True, null=False)
+    shop_code = models.CharField(max_length=10, blank=True, null=False)
+
+
+class ms_tools_shopchange(models.Model):
+    user_id = models.CharField(max_length=6, blank=True, null=True)
+    instrument_number = models.CharField(max_length=20, blank=True, null=True)
+    shop_code = models.CharField(max_length=2, blank=True, null=True)
+    surrendered_date = models.CharField(max_length=10, blank=True, null=True)
+    sl_no = models.CharField(max_length=10, blank=True, null=False)
+
+class ms_tools_calibration(models.Model):
+    calibration_code = models.CharField(max_length=10, blank=True, null=False)
+    maintenance_group = models.CharField(max_length=10, blank=True, null=False)
+    shop_code = models.CharField(max_length=10, blank=True, null=False)
+    instrument_number = models.CharField(max_length=20, blank=True, null=False)
+    calibration_date = models.CharField(max_length=10, blank=True, null=False)
+    accuracy_calibrated = models.CharField(max_length=50, blank=True, null=True)
+    calibrating_person = models.CharField(max_length=50, blank=True, null=True)
+    verified_by = models.CharField(max_length=50, blank=True, null=True)
+    remarks = models.CharField(max_length=200, blank=True, null=True)
+    ambient_temp = models.CharField(max_length=10, blank=True, null=True)
+    plus_error = models.FloatField(max_length=10, blank=True, null=True)
+    minus_error = models.FloatField(max_length=10, blank=True, null=True)
+    standrad_reading = models.CharField(max_length=50, blank=True, null=True)
+    receipt_code = models.FloatField(max_length=10, blank=True, null=True)
+
+class ms_tools_group(models.Model):
+    group_name = models.CharField(max_length=50, blank=True, null=False)
+    maintenance_group = models.CharField(max_length=20, blank=True, null=True)
+    range = models.CharField(max_length=50, blank=True, null=True)
+    unit_of_measure = models.CharField(max_length=50, blank=True, null=True)
+    accuracy_criteria = models.CharField(max_length=50, blank=True, null=True)
+    calibration_frequency = models.CharField(max_length=50, blank=True, null=True)
+    calibration_link = models.CharField(max_length=50, blank=True, null=True)
+    process_tolerance = models.CharField(max_length=50, blank=True, null=True)
+    work_instruction_number = models.CharField(max_length=50, blank=True, null=True)
+    plus_error = models.CharField(max_length=50, blank=True, null=True)
+    minus_error = models.CharField(max_length=50, blank=True, null=True)
+    calibration_prodedure = models.CharField(max_length=100, blank=True, null=True)
+    type_ins = models.CharField(max_length=50, blank=True, null=True)
+    change_date = models.CharField(max_length=50, blank=True, null=True)
+    user_id = models.CharField(max_length=50, blank=True, null=True)
+
+class ms_tools_Frequency(models.Model):
+    Frequency = models.CharField(max_length=50, blank=True, null=False)
+    FrequencyCode = models.CharField(max_length=10, blank=True, null=False)
+
+class ms_tools_issue(models.Model):
+    maintenance_group = models.CharField(max_length=20, blank=True, null=False)
+    instrument_number = models.CharField(max_length=50, blank=True, null=False)
+    shop_code = models.CharField(max_length=50, blank=True, null=False)
+    issued_date = models.CharField(max_length=50, blank=True, null=True)
+    issued_to = models.CharField(max_length=50, blank=True, null=True)
+    issued_by = models.CharField(max_length=50, blank=True, null=True)
+    receipt_code = models.CharField(max_length=50, blank=True, null=True)
+    issue_code = models.CharField(max_length=50, blank=True, null=False)
+    CalibrationDueDate = models.CharField(max_length=50, blank=True, null=True)
+    user_id = models.CharField(max_length=50, blank=True, null=True)
+    CalibrationFrequency = models.CharField(max_length=50, blank=True, null=True)
+
+class ms_tools_receipt(models.Model):
+    receipt_code =  models.CharField(max_length=50, blank=True, null=False)
+    instrument_number = models.CharField(max_length=50, blank=True, null=False)
+    status = models.CharField(max_length=50, blank=True, null=True)
+    maintenance_group =  models.CharField(max_length=20, blank=True, null=False)
+    shop_code =  models.CharField(max_length=50, blank=True, null=False)
+    receipt_date =  models.CharField(max_length=50, blank=True, null=True)
+    recived_by = models.CharField(max_length=50, blank=True, null=True)
+    plus_error = models.FloatField(max_length=10, blank=True, null=False)
+    minus_error = models.FloatField(max_length=10, blank=True, null=False)
+    accuracy_received = models.FloatField(max_length=10, blank=True, null=True)
+    accuracy_calibrated = models.FloatField(max_length=10, blank=True, null=True)
+    calibration_date =  models.CharField(max_length=50, blank=True, null=True)
+    remarks = models.CharField(max_length=50, blank=True, null=True)
+    discripency =  models.CharField(max_length=50, blank=True, null=True)
+    change_date =  models.CharField(max_length=50, blank=True, null=True)
+    user_id = models.CharField(max_length=50, blank=True, null=True)
+    supervisor = models.CharField(max_length=50, blank=True, null=True)
+    rec_chd_by = models.CharField(max_length=50, blank=True, null=True)

@@ -66,38 +66,48 @@ input[type=submit] {
   </center>
   <br>
   <br>
-<center><input type="submit" name="btn" value="View" class="form-control ll" required style="width:80px;" /></center>
+<center><input type="submit" name="btn" style="width: 200px;" value="View Exam Detail" class="form-control ll" required style="width:80px;" /></center>
 <br>
 {% if sub == 1 %}
 <table id="customers">
 <tr>
-<th>Exam Code</th><th>Exam Type</th><th>Exam Date</th>
-<th>Practical Exam Description</th><th>Practical Max. Marks</th>
-<th>Oral Exam Description</th><th>Oral Max. Marks</th>
+<th>Updated Date</th><th>Shop/ Section</th><th>Name</th><th>Staff No.</th><th>Skill</th>
+<th>Exam Code</th><th>Exam Date</th><th>Practical Exam Score</th><th>Oral Exam Score</th><th>Total Score</th><th>Result</th>
+<th>Place of Exam</th><th>Section Superi.</th><th>Trade Test Officer</th><th>Foreman</th><th>Trade Test Admin</th>
+
 </tr>
 {% for i in obj %}
 <tr>
-<td><input type="text" name="code{{forloop.counter}}" class="form-control ll" value="{{i.exam_code}}" readonly /></td>
-<td><input type="text" name="type{{forloop.counter}}" class="form-control ll" value="{{i.exam_type}}" required /></td>
-<td><input type="text" name="date{{forloop.counter}}" class="datepick" value="{{i.exam_date}}" readonly required /></td>
-<td><input type="text" name="prc{{forloop.counter}}" class="form-control ll" value="{{i.prac_desc}}" required /></td>
-<td><input type="text" name="pmax{{forloop.counter}}" class="form-control ll" value="{{i.prac_max}}" required /></td>
-<td><input type="text" name="orl{{forloop.counter}}" class="form-control ll" value="{{i.oral_desc}}" required /></td>
-<td><input type="text" name="omax{{forloop.counter}}" class="form-control ll" value="{{i.oral_max}}" required /></td>
+<td><input type="text" name="updt_date{{forloop.counter}}" class="form-control ll" value="{{i.updt_date}}" readonly /></td>
+<td><input type="text" name="shop_sec{{forloop.counter}}" class="form-control ll" value="{{i.shop_sec}}" required /></td>
+<td><input type="text" name="name{{forloop.counter}}" class="datepick" value="{{i.name}}" readonly required /></td>
+<td><input type="text" name="staff_no{{forloop.counter}}" class="form-control ll" value="{{i.staff_no}}" required /></td>
+<td><input type="text" name="skill{{forloop.counter}}" class="form-control ll" value="{{i.skill}}" required /></td>
+<td><input type="text" name="exam_code{{forloop.counter}}" class="form-control ll" value="{{i.exam_code}}" required /></td>
+<td><input type="text" name="exam_date{{forloop.counter}}" class="form-control ll" value="{{i.exam_date}}" required /></td>
+<td><input type="text" name="prac_score{{forloop.counter}}" class="form-control ll" value="{{i.prac_score}}" required /></td>
+<td><input type="text" name="oral_score{{forloop.counter}}" class="form-control ll" value="{{i.oral_score}}" required /></td>
+<td><input type="text" name="total_marks{{forloop.counter}}" class="form-control ll" value="{{i.total_marks}}" required /></td>
+<td><input type="text" name="result{{forloop.counter}}" class="form-control ll" value="{{i.result}}" required /></td>
+<td><input type="text" name="place_of_exam{{forloop.counter}}" class="form-control ll" value="{{i.place_of_exam}}" required /></td>
+<td><input type="text" name="sec_sup{{forloop.counter}}" class="form-control ll" value="{{i.sec_sup}}" required /></td>
+<td><input type="text" name="trade_test_officer{{forloop.counter}}" class="form-control ll" value="{{i.trade_test_officer}}" required /></td>
+<td><input type="text" name="foreman{{forloop.counter}}" class="form-control ll" value="{{i.foreman}}" required /></td>
+<td><input type="text" name="trade_test_admin{{forloop.counter}}" class="form-control ll" value="{{i.trade_test_admin}}" required /></td>
 <td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
 </tr>
 {% endfor %}
 {% endif %}
 </table>
 <br>
-<center><input type="button" name="btn" value="Add exam detail" id="add" class="form-control ll" style="width:150px;" required /></center>
+<!-- <center><input type="button" name="btn" value="Add exam detail" id="add" class="form-control ll" style="width:150px;" required /></center> -->
 <br>
 <input type="text" name="total" id="total" value="" hidden/>
 <input type="hidden" name="totindb" value={{totindb}} id="totindb">
 <input type="hidden" name="length" value={{leng}} id="length">
 <div id="items"></div>
 <br>
-<center><input type="submit" name="btn" value="Save" class="form-control ll" required style="width:80px;"/></center>
+<!-- <center><input type="submit" name="btn" value="Save" class="form-control ll" required style="width:80px;"/></center> -->
 </form>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script type="text/javascript">

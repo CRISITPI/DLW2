@@ -5219,12 +5219,33 @@ def m5getstaff_no(request):
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
+@login_required
+@role_required(urlpass='/m12view/')
 def m12view(request):
-    
-    rolelist=[2301,2302,2303,304]
-    wo_no = user_master.objects.none()
-    if(len(rolelist)==1):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_no = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'len' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
@@ -5233,9 +5254,9 @@ def m12view(request):
             'sub':0,
             'len' :len(rolelist),
             'wo_no':wo_no,
-            #'nav':nav,
+            'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
-            #'usermaster':usermaster,
             'roles' :rolelist,
             'lent':0,
         }
@@ -5244,9 +5265,9 @@ def m12view(request):
         context = {
             'sub':0,
             'len' :len(rolelist),
-            #'nav':nav,
-            #'ip':get_client_ip(request),
-            #'usermaster':usermaster,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
             'roles' :rolelist,
             'lent':0,
         }
@@ -5281,7 +5302,6 @@ def m12view(request):
                 if t != 'None':
                     obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
                     obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
-                    print(obj2)
                    
            
                 for op in range(len(obj1)):
@@ -5299,59 +5319,90 @@ def m12view(request):
            
                     print("a",a)
                     print("b",b)
-            #obj2 = Shemp.objects.filter(shopsec=shop_sec).values('staff_no','name','cat').distinct()
-           # amt=0
-                print(obj1)
+                print("object1",obj1)
                 tmhr=rr
-                print("1",tmhr)
                 if len(obj2):    
                     avgrt=obj2[0]['avg_rate']
-                    print("2")
                     if tmhr == 'None': 
                         tmhr=0
                         avgrt=0
-                        print("3")
                     else:
                         tmhr1=tmhr.split(':')
                         tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
-                        print("4")
                                 
                         
                     amt=tmhr*avgrt
                 leng = obj1.count()
                 leng1 = obj2.count()
-                
-                
-
-            #amt=0    
-            #patotal=0
-            #attotal=0
-            #if len(obj2):
-            #for op in obj2:
-            #patotal=patotal+op['pa']
-            #attotal=attotal+op['at']
-            #print(obj2)
-            
-            #leng2 = obj3.count()
-           
-            #leng2 = obj2.count()
-
-            context = {
-                'obj1': obj1,
-                'obj2':obj2,
-                'obj3':obj3,
-                'lent': leng,
-                'lent2': leng1,
-                #'lent3':leng2,
-                'amt1': amt,
-                #'obj2': obj2,
-                'shop_sec': shop_sec,
-                'wo_no': wo_no,
-                'staff_no':staff_no, 
-                'r1':rr,
-                'month': month,
-                'sub':1,       
-            }
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'len' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+                    wo_no =wo_no | req
+                context = {
+                    'len' :len(rolelist),
+                    'wo_no':wo_no,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'len' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                }
 
         if submitvalue=='submit':
             leng=request.POST.get('len')
@@ -5360,10 +5411,6 @@ def m12view(request):
             month = request.POST.get('month')
             inoutnum=request.POST.get("inoutnum")
             amt = request.POST.get('amt')
-           
-
-            #name = request.Post.get('name')
-            
             for i in range(1, int(leng)+1):
                 in1 = request.POST.get('in1'+str(i))
                 out = request.POST.get('out'+str(i))
@@ -5376,31 +5423,17 @@ def m12view(request):
                 reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
                 M12DOC.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),time_hrs=str(time_hrs),amt=str(amt))
                
-                print(reasons_for_idle_time)
-                print(total_time)
-                #print(total_hrs)
 
             for i in range(1, int(inoutnum)+1):
                 in1 = request.POST.get('in1add'+str(i))
                 out = request.POST.get('outadd'+str(i))
                 month = request.POST.get('month_add'+str(i))
                 total_time = request.POST.get('total_time_add'+str(i))
-                #name = request.POST.get('name'+str(i))
                 date = request.POST.get('dateadd'+str(i))
                 cat = request.POST.get('catadd'+str(i))
                 time_hrs = request.POST.get('total_time_add'+str(i))
                 idle_time = request.POST.get('idle_time_add'+str(i))
-              # detail_no = request.POST.get('detail_noadd'+str(i))
                 reasons_for_idle_time = request.POST.get('reasons_for_idle_timeadd'+str(i))
-                #if len(cat)==1:
-                 #   cat="0"+cat
-                
-                print(in1)
-                print(cat)
-                print(out)
-                print(month)
-                print(reasons_for_idle_time)
-               # print(detail_no)
                
               
                 M12DOC.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),cat=str(cat),time_hrs=str(time_hrs))
@@ -6853,20 +6886,20 @@ def MG33view(request):
             ex = exam_master.objects.all().values('exam_code')
             for i in ex:
                 examcode.append(i['exam_code']) 
-            m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
-            # print(m2)
-            if m2 is not None and len(m2):
-                for mm in range(len(m2)):
-                    temper = {str(mm):{"name":m2[mm].name,
-                                               "ticketno":m2[mm].ticketno,
-                                               "date":m2[mm].alt_date,
-                                               }}
+            # m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
+            # # print(m2)
+            # if m2 is not None and len(m2):
+            #     for mm in range(len(m2)):
+            #         temper = {str(mm):{"name":m2[mm].name,
+            #                                    "ticketno":m2[mm].ticketno,
+            #                                    "date":m2[mm].alt_date,
+            #                                    }}
 
 
-                    totindb=totindb+1
+            #         totindb=totindb+1
 
-                    dictemper.update(copy.deepcopy(temper))
-                    print(dictemper)
+            #         dictemper.update(copy.deepcopy(temper))
+            #         print(dictemper)
 
             w1=Shemp.objects.filter(shopsec=shop_sec).values('name').distinct()
             # print("w1",w1)
@@ -6909,8 +6942,9 @@ def MG33view(request):
                     'lvdate':lvdate,
                     'empname':names,
                     'names':wono,
-                    'dictemper':dictemper,
-                    'totindb':totindb,
+                    # 'dictemper':dictemper,
+                    # 'totindb':totindb,
+                     'totindb':0,
                     'alt_date':alt_date,
                     'examcode': examcode
                 }
@@ -9982,15 +10016,12 @@ def m13insert(request):
                 job_no = request.POST.get('job_no')
                 fault_cd = request.POST.get('fault_cd')
                 wo_rep = request.POST.get('wo_rep')
-                # print(wo_rep)
                 m13no = request.POST.get('m13no')
-                # print(m13no)
                 m15_no = request.POST.get('m15_no')
-                print(m15_no)
                 rej_cat = request.POST.get('rej_cat')
-                print(rej_cat)
                 reason = request.POST.get('reason')
-                print(reason)
+                print("in m13insert")
+                print(m13_no,slno,m13_sn,epc,ab,qty_tot,qty_ins,qty_pas,qty_rej,vendor_cd,opn,job_no,fault_cd,wo_rep,m13no,m15_no,rej_cat,reason)
                 if m13_sn and qty_tot and qty_ins and qty_pas and qty_rej and vendor_cd and opn and job_no and fault_cd and wo_rep and m15_no and rej_cat and reason and m13no and slno and epc:
                     print("in if cond")
                     m13obj=M13.objects.create()
@@ -11235,11 +11266,33 @@ def mg18view(request):
     return render(request, "mg18view.html", context)
 
 
-def m11views(request):
-    
-    rolelist=[2301,2302,2303,304]
-    wo_no = user_master.objects.none()
-    if(len(rolelist)==1):
+@login_required
+@role_required(urlpass='/m11view/')
+def m11view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
@@ -11248,9 +11301,9 @@ def m11views(request):
             'sub':0,
             'len' :len(rolelist),
             'wo_no':wo_no,
-            #'nav':nav,
+            'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
-            #'usermaster':usermaster,
             'roles' :rolelist,
             'lent':0,
         }
@@ -11259,9 +11312,9 @@ def m11views(request):
         context = {
             'sub':0,
             'len' :len(rolelist),
-            #'nav':nav,
-            #'ip':get_client_ip(request),
-            #'usermaster':usermaster,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
             'roles' :rolelist,
             'lent':0,
         }
@@ -11944,7 +11997,7 @@ def exam_detail(request):
                         exam_master.objects.create(exam_code=ecode,exam_type=etype,exam_date=edate,prac_desc=prctd,prac_max=prcmarks,oral_desc=orald,oral_max=oralmarks)
             ex1=request.POST.get('length')
             print("exist",ex1)
-            for j in range(len(ex1)+1):
+            for j in range(1,len(ex1)+1):
                 print(j)
                 if (request.POST.get("code"+str(j))):
                     ecode=request.POST.get("code"+str(j))
@@ -11959,12 +12012,216 @@ def exam_detail(request):
     return render(request,"examdetail.html",context)
 
 
+def view_exam_data(request):
+    context={
+            'totindb':0,
+        }
+    if request.method=="POST":
+        bval=request.POST.get('btn')
+        if bval=='View Exam Detail':
+            ecode=request.POST.get('ecode')
+            ex=MG33new.objects.all().order_by('id')
+            leng=len(ex)
+            context={
+                'sub':1,
+                'obj':ex,
+                'totindb':0,
+                'leng':leng,
+            }
+        if bval=='Save':
+            tot=request.POST.get('total')
+            if tot=='':
+                tot=0
+            else:
+                tot=int(tot)+1
+                for i in range(1,int(tot)):
+                    if (request.POST.get("ecode"+str(i))):
+                        ecode=request.POST.get("ecode"+str(i))
+                        etype=request.POST.get("etype"+str(i))
+                        prctd=request.POST.get("practical"+str(i))
+                        prcmarks=request.POST.get("pracmax"+str(i))
+                        orald=request.POST.get("oral"+str(i))
+                        oralmarks=request.POST.get("orlmax"+str(i))
+                        edate=request.POST.get("edate"+str(i))
+                        exam_master.objects.create(exam_code=ecode,exam_type=etype,exam_date=edate,prac_desc=prctd,prac_max=prcmarks,oral_desc=orald,oral_max=oralmarks)
+            ex1=request.POST.get('length')
+            print("exist",ex1)
+            for j in range(1,len(ex1)+1):
+                print(j)
+                if (request.POST.get("code"+str(j))):
+                    ecode=request.POST.get("code"+str(j))
+                    etype=request.POST.get("type"+str(j))
+                    prctd=request.POST.get("prc"+str(j))
+                    prcmrk=request.POST.get("pmax"+str(j))
+                    orald=request.POST.get("orl"+str(j))
+                    orlmrk=request.POST.get("omax"+str(j))
+                    edt=request.POST.get("date"+str(j))
+                    exam_master.objects.filter(exam_code=ecode).update(exam_type=etype,prac_desc=prctd,prac_max=prcmrk,oral_desc=orald,oral_max=orlmrk,exam_date=edt)
+            messages.success(request,'Successfully Saved!!')
+    return render(request,"mg33viewdata.html",context)
+
+
+
+
+
+# @login_required
+# @role_required(urlpass='/mg33report/')
+def mg33report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    stfno=set()
+    ex=MG33new.objects.all().values('staff_no')
+    for i in ex:
+        if i['staff_no'] is not None:
+            stfno.add(i['staff_no'])
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'obj':stfno,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = empmast.objects.filter(shop_sec=rolelist[i]).values('empno').distinct()
+            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'lvdate':"yyyy-mm-dd",
+        }
+    if request.method=="POST":
+        bval=request.POST.get('proceed')
+        if bval=='Proceed':
+            stfno=set()
+            ex=MG33new.objects.all().values('staff_no')
+            for i in ex:
+                if i['staff_no'] is not None:
+                    stfno.add(i['staff_no'])
+            shpsec = request.POST.get('shop_sec')
+            staffno=request.POST.get('staff_no')
+            update=request.POST.get('updt_date')
+            ex = MG33new.objects.filter(shop_sec=shpsec,staff_no=staffno,updt_date=update).all()
+            pscore=ex[0].prac_score
+            oscore=ex[0].oral_score
+            result=ex[0].result
+            trdadmin=ex[0].trade_test_admin
+            worker=ex[0].name
+            secsup=ex[0].sec_sup
+            trdoff=ex[0].trade_test_officer
+            print(ex)
+            # dictemper={}
+            excode=set()
+            j=0
+            for i in range(len(ex)):
+                excode.add(ex[i].exam_code)
+            print(excode)
+            for a in excode:
+                obj1=exam_master.objects.filter(exam_code=a)
+                # temper = {str(j):{"examtype":obj1[0].exam_type,
+                #                     "pracd":obj1[0].prac_desc,"orald":obj1[0].oral_desc,}}
+                # dictemper.update(copy.deepcopy(temper))
+                # j=j+1
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'shopsec':shpsec,
+                    'obj':stfno,
+                    'obj2':ex,
+                    'obj1':obj1,
+                    'pscore':pscore,'oscore':oscore,'result':result,
+                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname').distinct
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'wo_nop':wo_nop,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shpsec,
+                    'obj':stfno,
+                    'obj2':ex,
+                    'obj1':obj1,
+                    'pscore':pscore,'oscore':oscore,'result':result,
+                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'shopsec':shpsec,
+                    'obj':stfno,
+                    'obj2':ex,
+                    'obj1':obj1,
+                    'pscore':pscore,'oscore':oscore,'result':result,
+                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                }
+    
+        
+    return render(request,"mg33report.html",context)
+
+
+
+
 def m3a(request):
     return render(request,"m3a.html")
 
-
-
+def mg6view(request):
+    return render(request,"mg6view.html")
 
 def performaA(request):
-
     return render(request,"performaA.html")
