@@ -6850,7 +6850,7 @@ def MG33view(request):
             #staffno=request.POST.get('staff_no')
             lvdate=request.POST.get('updt_date')
             examcode = []
-            ex = MG33examMaster.objects.all().values('exam_code')
+            ex = exam_master.objects.all().values('exam_code')
             for i in ex:
                 examcode.append(i['exam_code']) 
             m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
@@ -7016,7 +7016,7 @@ def mg33getexam(request):
     if request.method == "GET" and request.is_ajax():  
         examcode= request.GET.get('two')
 
-        ex = MG33examMaster.objects.filter(exam_code= examcode).all()    
+        ex = exam_master.objects.filter(exam_code= examcode).all()    
      
         exam ={
 

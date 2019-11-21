@@ -82,9 +82,9 @@ WSGI_APPLICATION = 'dlw_integrate.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'localdb',
+        'NAME': 'production',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'PASSWORD': 'password@123',
         'HOST': 'localhost',
         'PORT': '5432',
     }
