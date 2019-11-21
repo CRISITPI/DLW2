@@ -1181,7 +1181,7 @@ class M13(models.Model):
     m13_sn = models.CharField(db_column='M13_SN', max_length=7, blank=True, null=True)  # Field name made lowercase.
     m13_no = models.CharField(db_column='M13_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
     m13_date = models.DateField(db_column='M13_DATE', blank=True, null=True)  # Field name made lowercase.
-    wo = models.CharField(db_column='WO', max_length=7, blank=True, null=True)  # Field name made lowercase.
+    wo = models.CharField(db_column='WO', max_length=15, blank=True, null=True)  # Field name made lowercase.
     part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     qty_tot = models.DecimalField(db_column='QTY_TOT', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     qty_ins = models.DecimalField(db_column='QTY_INS', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
@@ -1219,7 +1219,6 @@ class M13(models.Model):
     epc_old = models.CharField(db_column='EPC_OLD', max_length=1, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'M13'
 
 
