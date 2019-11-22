@@ -6323,14 +6323,14 @@ def m7view(request):
                 }
 
         if submitvalue =='Submit':
-                #print("hi")
                 leng=request.POST.get('len')
-                shop_sec= request.POST.get('shop_sec')
-                staff_no = request.POST.get('staff_no')
-                wo_no = request.POST.get('wo_no')
-                part_no = request.POST.get('part_no')
+                shop_sec= request.POST.get('shopsec')
+                staff_no = request.POST.get('staffno')
+                wo_no = request.POST.get('wono')
+                part_no = request.POST.get('partno')
                 inoutnum=request.POST.get("inoutnum")
-            
+                print(shop_sec,staff_no,wo_no,part_no)
+
                 m7obj = M7.objects.filter(shop_sec=shop_sec,staff_no=staff_no,part_no=part_no).distinct()
                 print(m7obj)
                 if((m7obj)):
@@ -6344,8 +6344,6 @@ def m7view(request):
                 
                     print(in1,out,date,mon)
                     
-                # reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
-                    #print(shopsec)
                     # objjj=M7.objects.create(shop_sec=shop_sec,staff_no=staff_no,part_no=part_no,in1=in1,out=out,month=mon,date=date)
                     if in1 and out and date and mon :
                         objjj=M7.objects.create()
@@ -10020,10 +10018,8 @@ def m13insert(request):
                 m15_no = request.POST.get('m15_no')
                 rej_cat = request.POST.get('rej_cat')
                 reason = request.POST.get('reason')
-                print("in m13insert")
-                print(m13_no,slno,m13_sn,epc,ab,qty_tot,qty_ins,qty_pas,qty_rej,vendor_cd,opn,job_no,fault_cd,wo_rep,m13no,m15_no,rej_cat,reason)
+
                 if m13_sn and qty_tot and qty_ins and qty_pas and qty_rej and vendor_cd and opn and job_no and fault_cd and wo_rep and m15_no and rej_cat and reason and m13no and slno and epc:
-                    print("in if cond")
                     m13obj=M13.objects.create()
                     m13obj.m13_sn=m13_sn
                     m13obj.qty_tot=qty_tot

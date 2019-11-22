@@ -93,7 +93,6 @@ urlpatterns = [
     path('ajax/axle_addbo',axle_addbo,name='axle_addbo'),
     path('ajax/axle_editsno',axle_editsno,name='axle_editsno'),
     path('m1genrept1/',m1genrept1,name='m1genrept1'),
-    path('axlewheelmachining_section/',axlewheelmachining_section,name='axlewheelmachining_section'),
     path('ajax/m3getbr/', m3getbr, name='m3getbr'),
     path('ajax/m3shopsec/', m3shopsec, name='m3shopsec'),
     path('ajax/m3getassly/', m3getassly, name='m3getassly'),
@@ -200,4 +199,6 @@ urlpatterns = [
     path('ajax/getm23date',getm23date,name='getm23date'),
     path('performaA/',performaA,name='performaA'),
     path('m3a/',m3a,name='m3a'),
+    # path('wheelmachining_section/',wheelmachining_section,name='wheelmachining_section'),
+    # path('axlemachining_section/',axlemachining_section,name='axlemachining_section'),
 ]
