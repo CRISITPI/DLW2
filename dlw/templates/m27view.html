@@ -142,14 +142,7 @@ th, td {
                     <input type="text" class="form-control" name="staffRate" id="staffRate">
                 </td>                       
             </tr>  
-            <tr>
-                <th>Select</th>
-                <th>Work Order No.</th>
-                <th>Work Order Date</th>
-                <th>Office Date</th>
-                <th>Total Hrs. Including Over-Time</th>
-                <th><button type="button" class="delete-row">-</button>  </th>
-            </tr>     
+               
     </table>    
     <br>   
    
@@ -177,14 +170,23 @@ th, td {
                 </th>
                 <th><input type="text" name="date3" id="date3" readonly class="form-control"  style="width:150px;" placeholder="Office Date"></th>
                 <th><input type="text" name="totalHr" id="totalHr"  class="form-control"  style="width:150px;" placeholder="Total Hrs. Including Over-Time"></th>
-                <th><input type="button" class="add-row" value="+"></th>
+                <th><input type="button" class="add-row" value="+" id="add"></th>
+                <input type="hidden" name="totindb" id="totindb" value="0">
             </tr>
         </thead>        
-    </table>   
-  </div>
-  <center><input type="submit" name="proceed" value="submit"  /></center>  
-</form>
+    </table>  
 
+    <div id="items"> </div>
+    
+        <center><input type="submit" name="proceed" value="submit"  /></center>  
+
+            <datalist id="batch_no">
+                {% for lc in batch_no %}
+                <option value="{{lc}}"></option>
+                {% endfor %}
+            </datalist>
+  </div> 
+</form>
 
 <script>
      $(document).ready(function () {
@@ -194,27 +196,49 @@ th, td {
     $(document).ready(function () {
         $('#date3').datepicker({ dateFormat: 'yy-mm-dd', }); 
    });
+    
+    $( document ).ready(function() {    
+    var totindb=document.getElementById('totindb').value; 
+    });
+
+  var j=0;
+ 
+  $("#add").click(function(e) {
+    event.preventDefault()
+        console.log("j"+String(j));
+        j++;           
+ 
+        var nameoname="wono"+String(j);
+        var date2="date2"+String(j);
+        var date3="date3"+String(j);
+        var totindb="totindb"+String(j);        
+        console.log(wono+" : "+date2+" : "+date3+" : "+totindb);
+
+        var totindb=document.getElementById('totindb').value;      
+        
+        var htAppend='<div><table id="customers"><tr>'+
+                          '<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" style="width: 220px;" required ><option  value="">name</option></select></td>'+          
+                          '<td><input type="text" id="'+date2+'"   name="'+date2+'" ></td>'+
+                          '<td><input type="date" id="'+date3+'"   name="'+date3+'" ></td>'+
+                          '<td><input type="text" id="'+totindb+'" name="'+totindb+'" ></td>';
+ 
+     htAppend=htAppend+'</tr></table>'+'</div>';
+     $('#items').append(htAppend);
+     document.getElementById("totmebs").value=j;  
+
+    
+     var x=document.getElementById("batch_no");
+     var pp=0;
+     for (pp = 0; pp < x.options.length; pp++) {
+      
+     $("#"+nameoname).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
+     }
+
+});
 </script>
 <script>
-    $(document).ready(function(){
-        $(".add-row").click(function(){
-            var wono = $("#wono").val();
-            var date2 = $("#date2").val();
-            var date3 = $("#date3").val();
-            var totalHr = $("#totalHr").val();
-            var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + wono + "</td><td>" + date2 + "</td><td>" + date3 + "</td><td>" + totalHr + "</td></tr>";
-            $("table tbody").append(markup);
-        });
-        
-        // Find and remove selected table rows
-        $(".delete-row").click(function(){
-            $("table tbody").find('input[name="record"]').each(function(){
-            	if($(this).is(":checked")){
-                    $(this).parents("tr").remove();
-                }
-            });
-        });
-    });    
+       
+
 </script>
 <script>
    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
@@ -324,7 +348,6 @@ th, td {
                     e.preventDefault();
                     var shop_sec = $("#shop_sec").val();
                     var data = {shop_sec};
-                    alert(shop_sec);
                       $.ajax({
                         type : 'GET',
                         url : "{% url 'm27getWorkOrder' %}",
@@ -356,7 +379,6 @@ th, td {
                     e.preventDefault();
                     var wono = $("#wono").val();
                     var data = {wono};
-                    alert(shop_sec);
                       $.ajax({
                         type : 'GET',
                         url : "{% url 'm27getWorkOrderDate' %}",

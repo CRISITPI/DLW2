@@ -7172,28 +7172,32 @@ def m27view(request):
         submitvalue = request.POST.get('proceed')
         if submitvalue=='submit':
             print("data saved test")    
-            # date1 shop_sec staffNo staffName staffDesg staffRate wono date2 date3 totalHr         
-            date1       = request.POST.get('date1')
-            print(date1)
-            shop_sec    = request.POST.get('shop_sec')
-            print(shop_sec)
-            staffNo     = request.POST.get('staffNo')
-            print(staffNo)
-            staffName   = request.POST.get('staffName')
-            print(staffName)
-            staffDesg   = request.POST.get('staffDesg')
-            print(staffDesg)
-            staffRate   = request.POST.get('staffRate')
-            print(staffRate)
-            wono        = request.POST.get('wono')
-            print(wono)
-            date2       = request.POST.get('date2')
-            print(date2)
-            date3       = request.POST.get('date3')
-            print(date3)
-            totalHr     = request.POST.get('totalHr')
-            print(totalHr)
-            
+            tot         = request.POST.get('totmebs')
+            tot=int(tot)+1
+            for i in range(1,int(tot)):    
+                
+                date1       = request.POST.get('date1')
+                print(date1)
+                shop_sec    = request.POST.get('shop_sec')
+                print(shop_sec)
+                staffNo     = request.POST.get('staffNo')
+                print(staffNo)
+                staffName   = request.POST.get('staffName')
+                print(staffName)
+                staffDesg   = request.POST.get('staffDesg')
+                print(staffDesg)
+                staffRate   = request.POST.get('staffRate')
+                print(staffRate)
+                wono        = request.POST.get(wono+str(i))
+                print(wono)
+                date2       = request.POST.get(date2+str(i))
+                print(date2)
+                date3       = request.POST.get(date3+str(i))
+                print(date3)
+                totalHr     = request.POST.get(totalHr+str(i))
+                print(totalHr)
+                
+
 
            # M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
    
@@ -11967,10 +11971,4 @@ def mg6view(request):
     return render(request,"mg6view.html")
 
 def performaA(request):
-<<<<<<< HEAD
     return render(request,"performaA.html")
-=======
-
-    return render(request,"performaA.html")
-
->>>>>>> abhishek
