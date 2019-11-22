@@ -1,0 +1,598 @@
+{% extends 'base.html' %}
+{% block content %}
+<html lang="en">
+<head>
+<script>
+    $(document).ready(function () {
+        $('#date').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+        $('#editdate').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#axled').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#dispatch_date').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#ustaxle_date').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+            </head>
+   
+    <style>
+        #customers {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        
+        #customers td,
+        #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+    </style>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    height:100%;
+    margin:0;
+}
+html{
+    height:100%;
+    margin:0;
+}
+.page-content{
+    min-height:100%;
+    margin-bottom:-40px;
+}
+.page-content::after{
+    content:"";
+    display:block;
+}
+footer, .page-content::after{
+    height:40px;
+}
+.content_section{
+    width:60%;
+}
+</style>
+      <form action="." id="myForm" method="POST" novalidate>{% csrf_token %}
+
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <ul class="navbar nav" style="width:60%">
+                <font size="4pt" color="#FFFFFF">AxleMachining</font>
+            </ul>
+    
+            <div class="collapse navbar-collapse" id="collapse_target">
+                <ul class="navbar nav" style="width:100%;">
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">Delete</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">Dispatch</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inspectmodal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">Inspect</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editmodal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">EditRecord</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">AddRecord</font>
+                         </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <table id="customers">
+            <tbody>
+                <tr>
+                        <center>
+                                {% if messages %}
+                                <ul class="messages">
+                                    {% for message in messages %}
+                                    <font size="3">
+                                        <li>
+                                           <h4>{{ message }}</h4>
+                                        </li>
+                                    </font>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </center>
+                </tr>
+                <tr>
+                <th>Serial No.</th>
+                <th>Batch Order No.</th>
+                <th>Part No. &nbsp;</th>
+                <th>Batch Qty &nbsp;</th>
+                <th>Batch Order Date &nbsp;</th>
+                <th>Loco Type </th>
+                <th>Date &nbsp;</th>
+                <th>Axle No. &nbsp; </th>
+                <th>Axle Part No.</th>
+                <th>Axle Make &nbsp; </th>
+                <th>Axle Heat Cast No. </th>
+                <th>Dispatch To</th>
+                <th>Dispatch Date &nbsp; </th>
+                </tr>
+                {% for objec in object %}
+                <tr>
+                <td>{{objec.sno}} <br><br></td>
+                <td>{{objec.bo_no}} <br><br></td>
+                <td>{{objec.pt_no}} <br><br></td>
+                <td>{{objec.bo_qty}} <br><br></td>
+                <td>{{objec.bo_date}} <br><br></td>
+                <td>{{objec.loco_type}} <br><br></td>
+                <td>{{objec.date}} <br><br></td>
+                <td>{{objec.axle_no}} <br><br></td>
+                <td>{{objec.axlep_no}} <br><br></td>
+                <td>{{objec.axle_make}} <br><br></td>
+                <td>{{objec.axle_heatcaseno}} <br><br></td>
+                <td>{{objec.dispatch_to}} <br><br></td>
+                <td>{{objec.dispatch_date}} <br><br></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        
+        <input type="hidden" name="once" id="once" value="0">
+
+<!--Add Axle-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">AxleMachining</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+      <div class="modal-body">       
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="">Batch Order No.</label>
+                                    <select name="bo_no" id="addbono" class="form-control ll" required>
+                                            <option value="" hidden selected>Select BO No.</option>  
+                                            {% for x in mybo %}
+                                            <option>{{x.bo_no}}</option>
+                                            {% endfor %}
+                                    </select> 
+                                        </div>
+                                        <div class="col-6">
+                                                <h6><label for="">Batch Order Date</label></h6>
+                                                <input type="text" class="form-control" name="bo_date" id="bo_date" required readonly>
+                                        </div>
+                                        </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label>Part No.</label>
+                                                <input type="text" class="form-control" name="pt_no" id="pt_no" required readonly>
+                                                </div>
+                                    <div class="col-6">
+                                        <label>Batch Qty</label>
+                                        <input type="text" class="form-control" name="bo_qty" id="bo_qty" required readonly>
+                                    </div>
+                                    </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <h6><label for="">Loco Type</label></h6>
+                                                <input type="text" class="form-control" name="loco_type" id="loco_type" required readonly>
+                                            </div>
+                                            <div class="col-6">
+                                                    <label for="">Date(Manually)</label>
+                                                    <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                            </div>
+                                   </div>
+                                   <div class="row">
+                                   <div class="col-6">
+                                    <label for="">Axle No.</label>
+                                    <input type="number" class="form-control" name="axle_no" id="axle_no" required>
+                                </div>   
+                                <div class="col-6">
+                                    <label for="">Axle Part No.</label>
+                                    <input type="number" class="form-control" name="axlep_no" id="axlep_no" required>
+                                </div>   
+                                </div>
+                                <div class="row">
+                                            <div class="col-6">
+                                                <label for="">Axle Make</label>
+                                                <input type="text" class="form-control" name="axle_make" id="axle_make" required>
+                                            </div> 
+                                            <div class="col-6">
+                                                    <label for="">Axle HeatCase No.</label>
+                                                    <input type="number" class="form-control" name="axle_heatcaseno" id="axle_heatcaseno" required>
+                                                </div> 
+                                </div>
+                            </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" />
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<!--EditRecord-->
+<div class="modal fade" id="editmodal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel1">AxleWheelMachining</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+         
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+            <div class="modal-body"> 
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="">Serial No.</label>
+                                        <label for="">S No.</label>
+                                        <select name="editsno" id="editsno" class="form-control ll" required>
+                                            <option value="" hidden selected>Select S No.</option>  
+                                            {% for y in mysno %}
+                                            <option>{{y.sno}}</option>
+                                            {% endfor %}
+                                    </select> 
+                                          </div> 
+                                                <div class="col-6">
+                                                        <h6><label for="">Batch Order No.</label></h6>
+                                                        <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
+                                              </div>
+                                          </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                        <h6><label for="">Batch Order Date</label></h6>
+                                                        <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
+                                           </div>
+                                           <div class="col-6">
+                                                <h6><label for="">Loco Type</label></h6>
+                                                <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
+                                            </div>  
+                                       </div>
+                                       <div class="row">
+                                            <div class="col-6">
+                                                <label>Part No.</label>
+                                                    <input type="text" class="form-control" name="editpt_no" id="editpt_no" required readonly>
+                                                    </div>
+                                        <div class="col-6">
+                                            <label>Batch Qty</label>
+                                            <input type="text" class="form-control" name="editbo_qty" id="editbo_qty" required readonly>
+                                        </div>
+                                        </div>
+                                        <div class="row">
+                                                <div class="col-6">
+                                                    <label for="">Date(Manually)</label>
+                                                    <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="">Axle Part No.</label>
+                                                    <input type="number" class="form-control" name="editaxlep_no" id="editaxlep_no" required>
+                                                </div> 
+                                    </div>
+                                    <div class="row">
+                                            <div class="col-6">
+                                                <label for="">Axle No.</label>
+                                                <input type="number" class="form-control" name="editaxle_no" id="editaxle_no" required>
+                                            </div> 
+                                            <div class="col-6">
+                                                <label for="">Axle Make</label>
+                                                <input type="text" class="form-control" name="editaxle_make" id="editaxle_make" required>
+                                            </div>
+                                    </div>
+                                                <div class="row">
+                                                <div class="col-6">
+                                                    <label for="">Axle HeatCase No.</label>
+                                                    <input type="number" class="form-control" name="editaxle_heatcaseno" id="editaxle_heatcaseno" required>
+                                                </div>
+                                            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="save" >
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    
+         <!--Dispatch-->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel2">AxleMachining</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form method="POST" class="needs-validation" > {% csrf_token %}
+             <div class="modal-body">       
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="">Serial No.</label>
+                                            <input type="number" class="form-control" id="dissno" name="dissno" required>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                                    <div class="col-6">
+                                                            <label for="">Dispatch Date(Manually)</label>
+                                                            <input type="text" name="dispatch_date" id="dispatch_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                      </div>
+                                    </div><br>
+                                    <div class="row">
+                                   <div class="col-6">
+                                    <div class="dropdown">
+                                      <select name="dislocos" type="form-control ll" required>
+                                        <option value="" hidden selected>Dispatch To</option>
+                                        <option value="Axle Wheel Pressing">Axle & Wheel Pressing Section</option>
+                                      </select>
+                                      </div>
+                                    </div>  
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                     </div>
+    <!--Delete-->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel3">AxleMachining</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+               <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                    <label for="">Serial No.</label>
+                                    <input type="number" class="form-control" id="delsno" name="delsno"  required>
+                            </div> 
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+    
+ <!--Inspect Axle-->
+               <!--Modal-->
+               <div class="modal fade bd-example-modal-lg" id="inspectmodal1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="inspectmodal">Axle Inspection</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    
+                        <form method="POST" class="needs-validation" > {% csrf_token %}
+        
+                          <div class="modal-body">
+                              <div class="row">
+                              <div class="col">
+                                    <label for="">Serial No.</label>
+                                    <select name="snoaxle" id="addsno" class="form-control ll" required>
+                                            <option value="" hidden selected>Select S.No.</option>  
+                                            {% for x in mysno %}
+                                            <option>{{x.sno}}</option>
+                                            {% endfor %}
+                                    </select> 
+                              </div>
+                              </div>
+                          <div class="row">
+                            <div class="col-4">
+                            <label for="Axle">UST</label>
+                                <select name="ustaxle" id="ustaxle" class="form-control ll" required >
+                                    <option>Ok</option>
+                                    <option>Not Ok</option>
+                                 </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="">UST Date</label>
+                                <input type="text" name="ustaxle_date" id="ustaxle_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                          </div>
+                          <div class="col-6">
+                           <label for="">Inspection Status</label>
+                                    <select name="ustaxle_status" id="ustaxle_status" class="form-control ll" required >
+                                        <option>Pass</option>
+                                        <option>Reject</option>
+                                     </select>
+                          </div>
+                            <div class="col-4">
+                            <label for="Axle">Axle Length</label>
+                            <input type="number" class="form-control" name="axlelength" id="axlelength" placeholder="" value="" required>
+                            </div>  
+                            <div class="col-4">
+                                <label for="Axle">Journal</label>
+                                <input type="number" class="form-control" name="journalaxle" id="journalaxle" placeholder="" value="" required>
+                                </div>  
+                                <div class="col-4">
+                                    <label for="Axle">Thrower</label>
+                                    <input type="number" class="form-control" name="throweraxle" id="throweraxle" placeholder="" value="" required>
+                                    </div>  
+                                    <div class="col-4">
+                                    <label for="Axle">Wheel Seat</label>
+                                    <input type="number" class="form-control" name="wheelseataxle" id="wheelseataxle" placeholder="" value="" required>
+                                    </div>  
+                                    <div class="col-4">
+                                <label for="Axle">Gear Seat</label>
+                                <input type="number" class="form-control" name="gearseataxle" id="gearseataxle" placeholder="" value="" required>
+                                </div> 
+                                <div class="col-4">
+                                    <label for="Axle">collar</label>
+                                    <input type="number" class="form-control" name="collaraxle" id="collaraxle" placeholder="" value="" required>
+                                </div> 
+
+                                        <div class="col-4">
+                                            <label for="Axle">Bearing</label>
+                                            <input type="number" class="form-control" name="bearingaxle" id="bearingaxle" placeholder="" value="" required>
+                                    </div>   
+                                    <div class="col-4">
+                                        <label for="Axle">Abutment</label>
+                                        <input type="number" class="form-control" name="abutmentaxle" id="abutmentaxle" placeholder="" value="" required>
+                                        </div> 
+                                        <div class="col-4">
+                                            <label for="Axle">Date(Manually)</label>
+                                            <input type="text" name="dateaxle" id="axled" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+
+                                            </div>   
+                                        <div class="col-4">
+                                            <label for="Axle">Inspector Name</label>
+                                            <input type="Text" class="form-control" name="inspector_nameaxle" id="inspector_nameaxle" placeholder="" value="" required>
+                                        </div>   
+                                                              
+                                              
+                    </div>  
+                    <strong class="mb-3" style="margin-top: 2%">Surface Finish GE</strong>
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="Axle">Journal</label>
+                            <input type="number" class="form-control" name="journal_surfacefinishGE" id="journal_surfacefinishGE" placeholder="" value="" required>
+                          </div> 
+                          <div class="col-4">
+                              <label for="Axle">Wheel Seat</label>
+                              <input type="number" class="form-control" name="wheelseat_surfacefinishGE" id="wheelseat_surfacefinishGE" placeholder="" value="" required>
+                            </div> 
+                            <div class="col-4">
+                                <label for="Axle">Gear Seat</label>
+                                <input type="number" class="form-control" name="gearseat_surfacefinishGE" id="gearseat_surfacefinishGE" placeholder="" value="" required>
+                              </div>  
+                              
+                        </div>
+                        <strong class="mb-3" style="margin-top:2%">Surface Finish FE</strong>
+    <div class="row">
+        <div class="col-4">
+            <label for="Axle">Journal</label>
+            <input type="number" class="form-control" name="journal_surfacefinishFE" id="journal_surfacefinishFE" placeholder="" value="" required>
+          </div> 
+          <div class="col-4">
+              <label for="Axle">Wheel Seat</label>
+              <input type="number" class="form-control" name="wheelseat_surfacefinishFE" id="wheelseat_surfacefinishFE" placeholder="" value="" required>
+            </div> 
+            <div class="col-4">
+                <label for="Axle">Gear Seat</label>
+                <input type="number" class="form-control" name="gearseat_surfacefinishFE" id="gearseat_surfacefinishFE" placeholder="" value="" required>
+              </div>   
+        </div>
+ </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="InspectAxle" />
+        </div>
+        </form>
+     </div>
+    </div>
+ </div>                                                      
+</form>
+
+<script>
+    $("#addbono").change(function(e){
+        e.preventDefault();
+        var selbo_no = $(this).val();
+        var data = {selbo_no};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'axle_addbo' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){            
+                $("#bo_date").val(`${response[0].rel_date}`);
+                $("#loco_type").val(`${response[0].ep_type}`);
+                $("#pt_no").val(`${response[0].part_no}`);
+                $("#bo_qty").val(`${response[0].batch_qty}`);
+            }
+        })
+    });
+
+    $("#editsno").change(function(e){
+        e.preventDefault();
+        var sels_no=$(this).val();
+        var data={sels_no};
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'axle_editsno' %}",
+                dataType: 'json',
+                data:data,
+                success:function(response){
+                    console.log(response);
+                    $("#editbo_no").val(`${response[0].bo_no}`);
+                    $("#editbo_date").val(`${response[0].bo_date}`);
+                    $("#editpt_no").val(`${response[0].pt_no}`);
+                    $("#editbo_qty").val(`${response[0].bo_qty}`);
+                    $("#editlocos").val(`${response[0].loco_type}`);
+                    $("#editdate").val(`${response[0].date}`);
+                    $("#editaxlep_no").val(`${response[0].axlep_no}`);
+                    $("#editaxle_no").val(`${response[0].axle_no}`);
+                    $("#editaxle_make").val(`${response[0].axle_make}`);
+                    $("#editaxle_heatcaseno").val(`${response[0].axle_heatcaseno}`);
+
+                }
+            })
+    }); 
+
+</script>
+
+</html>  
+{% endblock content %}
+
+
+
+
