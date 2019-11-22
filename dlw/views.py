@@ -7015,23 +7015,27 @@ def m27view(request):
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
         if submitvalue=='submit':
+            date1=request.POST.get('date1')
+            print(date1)
+            shop_sec=request.POST.get('shop_sec')
+            print(shop_sec)
+            staffNo=request.POST.get('staffNo')
+            print(staffNo)
+            staffName=request.POST.get('staffName')
+            print(staffName)
+            staffDesg =request.POST.get('staffDesg')
+            print(staffDesg)
+            staffRate=request.POST.get('staffRate')
+            print(staffRate)
+            wono="wono"
+            date2="date2"
+            date3="date3"
+            totalHr="totindb"
             print("data saved test")    
             tot = request.POST.get('totmebs')
+            print(tot)
             tot=int(tot)+1
             for i in range(1,int(tot)):    
-                
-                date1=request.POST.get('date1')
-                print(date1)
-                shop_sec=request.POST.get('shop_sec')
-                print(shop_sec)
-                staffNo=request.POST.get('staffNo')
-                print(staffNo)
-                staffName=request.POST.get('staffName')
-                print(staffName)
-                staffDesg =request.POST.get('staffDesg')
-                print(staffDesg)
-                staffRate=request.POST.get('staffRate')
-                print(staffRate)
                 wono = request.POST.get(wono+str(i))
                 print(wono)
                 date2 = request.POST.get(date2+str(i))
@@ -7040,11 +7044,8 @@ def m27view(request):
                 print(date3)
                 totalHr = request.POST.get(totalHr+str(i))
                 print(totalHr)
-                
-
-
-           # M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
-   
+                M27TimeSheet.objects.create(shop_sec=shop_sec, staff_no=staffNo, rate=staffRate, month=date1, tot_hrs=totalHr, ofc_date=date3, wo_date=date2, wo_no=wono, desg=staffDesg, name=staffName)
+                print("data saved ",i)
     return render(request,'m27view.html',context)    
 
 
@@ -7078,7 +7079,7 @@ def m27getDesignation(request):
 def m27getWorkOrder(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        print(shop_sec);
+        print(shop_sec)
         wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -7086,7 +7087,7 @@ def m27getWorkOrder(request):
 def m27getWorkOrderDate(request):
     if request.method == "GET" and request.is_ajax():
         wono = request.GET.get('wono')
-        print(wono);
+        print(wono)
         wono1 = list(M5DOCnew.objects.filter(batch_no = wono).values('date').exclude(batch_no__isnull=True).exclude(date__isnull=True).distinct())
         return JsonResponse(wono1, safe = False)
     return JsonResponse({"success":False}, status=400)

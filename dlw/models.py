@@ -4269,6 +4269,19 @@ class AxleMachining(models.Model):
     axlep_no=models.CharField(max_length=20,null=True)
 
 
+class M27TimeSheet(models.Model):
+    shop_sec=models.CharField(max_length=20,null=True)
+    staff_no=models.CharField(max_length=20,null=True)
+    desg=models.CharField(max_length=20,null=True)
+    name=models.CharField(max_length=20,null=True)
+    month=models.CharField(max_length=20,null=True)
+    rate=models.CharField(max_length=20,null=True)
+    wo_no=models.CharField(max_length=20,null=True)
+    ofc_date=models.CharField(max_length=20,null=True)
+    wo_date=models.CharField(max_length=20,null=True)
+    tot_hrs=models.CharField(max_length=20,null=True)
+
+
 class WheelMachining(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)
