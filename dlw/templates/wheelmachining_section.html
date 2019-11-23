@@ -1,0 +1,559 @@
+{% extends 'base.html' %}
+{% block content %}
+<html lang="en">
+<head>
+<script>
+    $(document).ready(function () {
+        $('#date').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+        $('#editdate').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#datewhl').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script> 
+        <script>
+            $(document).ready(function () {
+                $('#ustwhl_date').datepicker({
+                    dateFormat: 'dd-mm-yy'
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#dispatch_date').datepicker({
+                    dateFormat: 'dd-mm-yy'
+                });
+            });
+        </script>
+    
+            </head>
+   
+    <style>
+        #customers {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        
+        #customers td,
+        #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+    </style>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    height:100%;
+    margin:0;
+}
+html{
+    height:100%;
+    margin:0;
+}
+.page-content{
+    min-height:100%;
+    margin-bottom:-40px;
+}
+.page-content::after{
+    content:"";
+    display:block;
+}
+footer, .page-content::after{
+    height:40px;
+}
+.content_section{
+    width:60%;
+}
+</style>
+      <form action="." id="myForm" method="POST" novalidate>{% csrf_token %}
+
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <ul class="navbar nav" style="width:60%">
+                <font size="4pt" color="#FFFFFF">WheelMachining</font>
+            </ul>
+    
+            <div class="collapse navbar-collapse" id="collapse_target">
+                <ul class="navbar nav" style="width:100%;">
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">Delete</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">Dispatch</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inspectmodal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">Inspect</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">EditRecord</font>
+                         </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                                <font color="white">AddRecord</font>
+                         </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+
+<table id="customers">
+    <tbody>
+        <tr>
+                <center>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <font size="3">
+                                <li>
+                                   <h4>{{ message }}</h4>
+                                </li>
+                            </font>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </center>
+        </tr>
+        <tr>
+        <th>Serial No.</th>
+        <th>Batch Order No.</th>
+        <th>Part No. &nbsp;</th>
+        <th>Batch Qty &nbsp;</th>
+        <th>Batch Order Date &nbsp;</th>
+        <th>Loco Type </th>
+        <th>Date &nbsp;</th>
+        <th>Wheel No. </th>
+        <th>Wheel Part No. </th>
+        <th>Wheel Make &nbsp; </th>
+        <th>Wheel Heat Cast No.</th>
+        <th>Dispatch To</th>
+        <th>Dispatch Date &nbsp; </th>
+        </tr>
+        {% for objec in object %}
+        <tr>
+        <td>{{objec.sno}} <br><br></td>
+        <td>{{objec.bo_no}} <br><br></td>
+        <td>{{objec.pt_no}} <br><br></td>
+        <td>{{objec.bo_qty}} <br><br></td>
+        <td>{{objec.bo_date}} <br><br></td>
+        <td>{{objec.loco_type}} <br><br></td>
+        <td>{{objec.date}} <br><br></td>
+        <td>{{objec.wheel_no}} <br><br></td>
+        <td>{{objec.wheelp_no}} <br><br></td>
+        <td>{{objec.wheel_make}} <br><br></td>
+        <td>{{objec.wheel_heatcaseno}} <br><br></td>
+        <td>{{objec.dispatch_to}} <br><br></td>
+        <td>{{objec.dispatch_date}} <br><br></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<input type="hidden" name="once" id="once" value="0">
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Wheel Machining</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+      <div class="modal-body">       
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="">Batch Order No.</label>
+                                    <select name="bo_no" id="addbono" class="form-control ll" required>
+                                            <option value="" hidden selected>Select BO No.</option>  
+                                            {% for x in mybo %}
+                                            <option>{{x.bo_no}}</option>
+                                            {% endfor %}
+                                    </select> 
+                                        </div>
+                                        <div class="col-6">
+                                                <h6><label for="">Batch Order Date</label></h6>
+                                                <input type="text" class="form-control" name="bo_date" id="bo_date" required readonly>
+                                        </div>
+                                        </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label>Part No.</label>
+                                                <input type="text" class="form-control" name="pt_no" id="pt_no" required readonly>
+                                                </div>
+                                    <div class="col-6">
+                                        <label>Batch Qty</label>
+                                        <input type="text" class="form-control" name="bo_qty" id="bo_qty" required readonly>
+                                    </div>
+                                    </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <h6><label for="">Loco Type</label></h6>
+                                                <input type="text" class="form-control" name="loco_type" id="loco_type" required readonly>
+                                            </div>
+                                            <div class="col-6">
+                                                    <label for="">Date(Manually)</label>
+                                                    <input type="text" name="date" id="date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                            </div>
+                                   </div>
+                                    
+                                    <div class="row">   
+                                    <div class="col-6">
+                                            <label for="">Wheel No.</label>
+                                            <input type="number" class="form-control" name="wheel_no" id="wheel_no" required>
+                                        </div> 
+                                        <div class="col-6">
+                                            <label for="">Wheel Part No.</label>
+                                            <input type="number" class="form-control" name="wheelp_no" id="wheelp_no" required>
+                                        </div>   
+                                </div>
+
+                                <div class="row"> 
+                                    <div class="col-6">
+                                        <label for="">Wheel Make</label>
+                                        <input type="text" class="form-control" name="wheel_make" id="wheel_make" required>
+                                    </div>   
+                                <div class="col-6">
+                                    <label for="">wheel HeatCase No.</label>
+                                    <input type="number" class="form-control" name="wheel_heatcaseno" id="wheel_heatcaseno" required>
+                                </div>     
+                                </div>
+                            </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" />
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+<!--EditRecord-->
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">WheelMachining</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+     
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+        <div class="modal-body"> 
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="">Serial No.</label>
+                                    <label for="">S No.</label>
+                                    <select name="editsno" id="editsno" class="form-control ll" required>
+                                        <option value="" hidden selected>Select S No.</option>  
+                                        {% for y in mysno %}
+                                        <option>{{y.sno}}</option>
+                                        {% endfor %}
+                                </select> 
+                                      </div> 
+                                            <div class="col-6">
+                                                    <h6><label for="">Batch Order No.</label></h6>
+                                                    <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
+                                          </div>
+                                      </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                    <h6><label for="">Batch Order Date</label></h6>
+                                                    <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
+                                       </div>
+                                       <div class="col-6">
+                                            <h6><label for="">Loco Type</label></h6>
+                                            <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
+                                        </div>  
+                                   </div>
+                                   <div class="row">
+                                        <div class="col-6">
+                                            <label>Part No.</label>
+                                                <input type="text" class="form-control" name="editpt_no" id="editpt_no" required readonly>
+                                                </div>
+                                    <div class="col-6">
+                                        <label>Batch Qty</label>
+                                        <input type="text" class="form-control" name="editbo_qty" id="editbo_qty" required readonly>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                            <div class="col-6">
+                                                    <label for="">Date(Manually)</label>
+                                                    <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                              </div>
+                                    <div class="col-md-6 mb-3">
+                                            <label for="">Wheel No.</label>
+                                            <input type="number" class="form-control" name="editwheel_no" id="editwheel_no" required>
+                                        </div>    
+                                </div>
+    
+                                    <div class="row">
+                                     <div class="col-6">
+                                      <label for="">Wheel Make</label>
+                                      <input type="text" class="form-control" name="editwheel_make" id="editwheel_make" placeholder="" value="" required>
+                                    </div>
+                                     <div class="col-6">
+                                        <label for="">Wheel HeatCase No.</label>
+                                        <input type="number" class="form-control" name="editwheel_heatcaseno" id="editwheel_heatcaseno" required>
+                                    </div>   
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="">Wheel Part No.</label>
+                                        <input type="number" class="form-control" name="editwheelp_no" id="editwheelp_no" required>
+                                    </div>
+                                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="save" >
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<!--Dispatch-->
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">WheelMachining</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="POST" class="needs-validation" > {% csrf_token %}
+         <div class="modal-body">       
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="">Serial No.</label>
+                                        <input type="number" class="form-control" id="dissno" name="dissno" required>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                                <div class="col-6">
+                                                        <label for="">Dispatch Date(Manually)</label>
+                                                        <input type="text" name="dispatch_date" id="dispatch_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                  </div>
+                                </div><br>
+                                <div class="row">
+                               <div class="col-6">
+                                <div class="dropdown">
+                                  <select name="dislocos" type="form-control ll" required>
+                                    <option value="" hidden selected>Dispatch To</option>
+                                    <option value="Axle Wheel Pressing ">Axle & Wheel Pressing Section</option>
+                                  </select>
+                                  </div>
+                                </div>  
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                 </div>
+<!--Delete-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel3">AxleWheelMachining</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+    <form method="POST" class="needs-validation" > {% csrf_token %}
+           <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                                <label for="">Serial No.</label>
+                                <input type="number" class="form-control" id="delsno" name="delsno"  required>
+                        </div> 
+                    </div>
+            </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="submit" name="submit" class="btn btn-primary"  id="delsavebtn" value="Delete">
+        </div>
+        </form>
+    </div>
+</div>
+</div>   
+<!--Inspect Wheel-->
+<!--modal-->
+<div class="modal fade bd-example-modal-lg" id="inspectmodal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg" role="document">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Wheel Inspection</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                              </div>
+                          
+                              <form method="POST" class="needs-validation" > {% csrf_token %}
+              
+                              <div class="modal-body">
+                                    <div class="row">
+                                    <div class="col">
+                                            <label for="">Serial No.</label>
+                                            <select name="snowheel" id="addsno" class="form-control ll" required>
+                                                    <option value="" hidden selected>Select S.No.</option>  
+                                                    {% for x in mysno %}
+                                                    <option>{{x.sno}}</option>
+                                                    {% endfor %}
+                                            </select> 
+                                    </div>
+                                    </div>
+                                  <h4 class="mb-3">Wheel</h4>
+                                  <div class="row">
+                                          <div class="col-md-6 mb-3">
+                                                  <label>UST</label>
+                                                   <select name="ustwhl" id="ustwhl" class="form-control ll" required >
+                                                    <option>Ok</option>
+                                                    <option>Not Ok</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="">UST Date</label>
+                                                    <input type="text" name="ustwhl_date" id="ustwhl_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                              </div>
+                                              <div class="col-6">
+                                                <label for="">Inspection Status</label>
+                                                <select name="ustwhl_status" id="ustwhl_status" class="form-control ll" required >
+                                                    <option>Pass</option>
+                                                    <option>Reject</option>
+                                                    </select>
+                                              </div>  
+                                                <div class="col-md-6 mb-3">
+                                                      <label for="Axle">Hub Length</label>
+                                                      <input type="number" class="form-control" name="hub_lengthwhl" id="hub_lengthwhl" placeholder="" required>
+                                                    </div>  
+                                                    <div class="col-md-6 mb-3">
+                                                          <label for="Axle">Tread Dia</label>
+                                                          <input type="number" class="form-control" name="tread_diawhl" id="tread_diawhl" placeholder="" required>
+                                                        </div>  
+                                                        <div class="col-md-6 mb-3">
+                                                              <label for="Axle">Rim Thickness</label>
+                                                              <input type="number" class="form-control" name="rim_thicknesswhl" id="rim_thicknesswhl" placeholder="" required>
+                                                            </div>  
+                                                            <div class="col-md-6 mb-3">
+                                                                  <label for="Axle">Bore Dia</label>
+                                                                  <input type="number" class="form-control" name="bore_diawhl" id="bore_diawhl" placeholder="" required>
+                                                                </div> 
+                                                                <div class="col-md-6 mb-3">
+                                                                        <label for="Axle">Date(Manually)</label>
+                                                                        <input type="text" name="datewhl" id="datewhl" class="form-control" placeholder="dd-mm-yyyy" required readonly>
+                                                                      </div>  
+                                                                <div class="col-md-6 mb-3">
+                                                                      <label for="Axle">Inspector Name</label>
+                                                                      <input type="text" class="form-control" name="inspector_namewhl" id="inspector_namewhl" placeholder="" required>
+                                                                    </div>                                      
+                                                            
+                                  </div>
+                              </div>                        
+              
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                               <input type="submit" name="submit" class="btn btn-primary" id="savebtn" value="InspectWheel" />
+                                          </div>
+                                </form>
+                       </div>
+                   </div>
+               </div>                                                     
+</form>
+
+<script>
+        $("#addbono").change(function(e){
+            e.preventDefault();
+            var selbo_no = $(this).val();
+            var data = {selbo_no};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'whl_addbo' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){            
+                    $("#bo_date").val(`${response[0].rel_date}`);
+                    $("#loco_type").val(`${response[0].ep_type}`);
+                    $("#pt_no").val(`${response[0].part_no}`);
+                    $("#bo_qty").val(`${response[0].batch_qty}`);
+                }
+            })
+        });
+
+        $("#editsno").change(function(e){
+            e.preventDefault();
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'whl_editsno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        console.log(response);
+                        $("#editbo_no").val(`${response[0].bo_no}`);
+                        $("#editbo_date").val(`${response[0].bo_date}`);
+                        $("#editpt_no").val(`${response[0].pt_no}`);
+                        $("#editbo_qty").val(`${response[0].bo_qty}`);
+                        $("#editlocos").val(`${response[0].loco_type}`);
+                        $("#editdate").val(`${response[0].date}`);
+                        $("#editwheelp_no").val(`${response[0].wheelp_no}`);
+                        $("#editwheel_no").val(`${response[0].wheel_no}`);
+                        $("#editwheel_make").val(`${response[0].wheel_make}`);
+                        $("#editwheel_heatcaseno").val(`${response[0].wheel_heatcaseno}`);
+
+                    }
+                })
+        }); 
+
+    </script>
+
+    </html>  
+{% endblock content %}

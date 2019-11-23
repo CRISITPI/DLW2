@@ -848,7 +848,56 @@ footer, .page-content::after{
 
                     }
                 })
-        });   
+        }); 
+          
+
+        $("#wheelpress").change(function(e){
+            e.preventDefault();
+            var sels_no = $(this).val();
+            var data = {sels_no};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'wheelpress_inspectsno' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                    console.log(response);
+                    console.log(response[0].wheelno_de);
+                    console.log(response[0].wheelno_nde);
+                    console.log(response[0].bullgear_no);
+                    console.log(response[0].bullgear_make);
+                    console.log(response[0].axle_no);
+
+
+                    $("#inspectwheelno_de").val(`${response[0].wheelno_de}`);
+                    $("#inspectwheelno_nde").val(`${response[0].wheelno_nde}`);
+                    $("#inspectaxle_no").val(`${response[0].axle_no}`);
+                    $("#inspectbullgear_no").val(`${response[0].bullgear_no}`);
+                    $("#inspectbullgear_make").val(`${response[0].bullgear_make}`);
+                    
+                }
+            })
+        });
+
+        $("#wheelpresshhp").change(function(e){
+            e.preventDefault();
+            var sels_no = $(this).val();
+            var data = {sels_no};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'wheelpress_inspectsno' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                    $("#hhpwheelno_de").val(`${response[0].wheelno_de}`);
+                    $("#hhpwheelno_nde").val(`${response[0].wheelno_nde}`);
+                    $("#hhpaxle_no").val(`${response[0].axle_no}`);
+                    $("#hhpbullgear_no").val(`${response[0].bullgear_no}`);
+                    $("#hhpbullgear_make").val(`${response[0].bullgear_make}`);
+                    
+                }
+            })
+        });
 
         document.querySelector("#wheelno_de").addEventListener('change',(e)=>{
             e.preventDefault();
@@ -880,10 +929,7 @@ footer, .page-content::after{
                                 }
                                   })
                         });
-if(i>1)
-{
-    
-}
+
 document.querySelector("#editwheelno_de").addEventListener('change',(e)=>{
     e.preventDefault();
     var wheel_no = $("#editwheelno_de").val();

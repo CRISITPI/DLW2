@@ -172,6 +172,7 @@ th, td {
                 <th><input type="text" name="totalHr" id="totalHr"  class="form-control"  style="width:150px;" placeholder="Total Hrs. Including Over-Time"></th>
                 <th><input type="button" class="add-row" value="+" id="add"></th>
                 <input type="hidden" name="totindb" id="totindb" value="0">
+                <input type="hidden" name="totmebs" id="totmebs" value="0" hidden/>
             </tr>
         </thead>        
     </table>  
@@ -189,58 +190,6 @@ th, td {
 </form>
 
 <script>
-     $(document).ready(function () {
-        $('#date1').datepicker({ dateFormat: 'yy-mm', }); 
-   });
-    
-    $(document).ready(function () {
-        $('#date3').datepicker({ dateFormat: 'yy-mm-dd', }); 
-   });
-    
-    $( document ).ready(function() {    
-    var totindb=document.getElementById('totindb').value; 
-    });
-
-  var j=0;
- 
-  $("#add").click(function(e) {
-    event.preventDefault()
-        console.log("j"+String(j));
-        j++;           
- 
-        var nameoname="wono"+String(j);
-        var date2="date2"+String(j);
-        var date3="date3"+String(j);
-        var totindb="totindb"+String(j);        
-        console.log(wono+" : "+date2+" : "+date3+" : "+totindb);
-
-        var totindb=document.getElementById('totindb').value;      
-        
-        var htAppend='<div><table id="customers"><tr>'+
-                          '<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" style="width: 220px;" required ><option  value="">batch_no</option></select></td>'+          
-                          '<td><input type="text" id="'+date2+'"   name="'+date2+'" ></td>'+
-                          '<td><input type="date" id="'+date3+'"   name="'+date3+'" ></td>'+
-                          '<td><input type="text" id="'+totindb+'" name="'+totindb+'" ></td>';
- 
-     htAppend=htAppend+'</tr></table>'+'</div>';
-     $('#items').append(htAppend);
-     document.getElementById("totmebs").value=j;  
-
-    
-     var x=document.getElementById("batch_no");
-     var pp=0;
-     for (pp = 0; pp < x.options.length; pp++) {
-      
-     $("#"+nameoname).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
-     }
-
-});
-</script>
-<script>
-       
-
-</script>
-<script>
    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                     e.preventDefault();
                     var shop_sec = $("#shop_sec").val();
@@ -252,7 +201,7 @@ th, td {
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                          var elementsadded = document.querySelectorAll(".newelepart2");
+                          var elementsadded = document.querySelectorAll(".newelepart1");
                               if(elementsadded.length>0){
                                   var elementsaddedarr = Array.from(elementsadded);
                                   elementsaddedarr.forEach((el)=> el.remove());       
@@ -266,7 +215,7 @@ th, td {
                               brarr = response.map((el)=>el.staff_no); 
                               mystr = "";
                               brarr.forEach((el,index)=>{
-                                html = `<option class="newelepart2">${brarr[index]}</option>`
+                                html = `<option class="newelepart1">${brarr[index]}</option>`
                                 mystr = html.concat(mystr);
                               });
                               html = "";
@@ -288,7 +237,7 @@ th, td {
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                          var elementsadded = document.querySelectorAll(".newelepart1");
+                          var elementsadded = document.querySelectorAll(".newelepart2");
                               if(elementsadded.length>0){
                                   var elementsaddedarr = Array.from(elementsadded);
                                   elementsaddedarr.forEach((el)=> el.remove());       
@@ -301,7 +250,7 @@ th, td {
                               brarr = response.map((el)=>el.name);
                               mystr = "";
                               brarr.forEach((el,index)=>{
-                                html = `<option class="newelepart1">${brarr[index]}</option>`
+                                html = `<option class="newelepart2">${brarr[index]}</option>`
                                 mystr = html.concat(mystr);
                               });
                               html = "";
@@ -372,7 +321,7 @@ th, td {
                               document.querySelector("#wono").insertAdjacentHTML('beforeend',mystr);
                               mystr="";                              
                         }
-                   })
+                   });
                 })
 
                 document.querySelector("#wono").addEventListener('change',(e)=>{
@@ -405,6 +354,101 @@ th, td {
                    })
                 })
 
+</script>
+
+
+<script>
+     $(document).ready(function () {
+        $('#date1').datepicker({ dateFormat: 'yy-mm', }); 
+   });
+    
+    $(document).ready(function () {
+        $('#date3').datepicker({ dateFormat: 'yy-mm-dd', }); 
+   });
+    
+    $( document ).ready(function() {    
+    var totindb=document.getElementById('totindb').value; 
+    });
+
+  var j=0;
+ 
+  $("#add").click(function(e) {
+    event.preventDefault()
+        console.log("j"+String(j));
+        j++;           
+ 
+        var nameoname="wono"+String(j);
+        var date2="date2"+String(j);
+        var date3="date3"+String(j);
+        var totindb="totindb"+String(j);        
+        console.log(wono+" : "+date2+" : "+date3+" : "+totindb);
+
+        var totindb=document.getElementById('totindb').value; 
+        document.getElementById("totmebs").value=j;
+        
+        var htAppend='<div><table id="customers"><tr>'+
+                          '<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" style="width: 220px;" required ><option  value="" disabled hidden>Select WO Number</option></select></td>'+          
+                          '<td><input type="text" id="'+date2+'"   name="'+date2+'" readonly ></td>'+
+                          '<td><input type="date" id="'+date3+'"   name="'+date3+'" ></td>'+
+                          '<td><input type="text" id="'+totindb+'" name="'+totindb+'" ></td>';
+ 
+     htAppend=htAppend+'</tr></table>'+'</div>';
+     $('#items').append(htAppend);  
+     var shop_sec = $("#shop_sec").val();
+     var data = {shop_sec};
+      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm27getWorkOrder' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          console.log("in add ajax");
+                          console.log(response);
+                          var elementsadded = document.querySelectorAll(".newelepart6");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());         
+                                  document.querySelector("#op_wono").selected=true;
+                                  document.querySelector("#op_date2").selected=true;                                                                    
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.batch_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart6">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#"+nameoname).insertAdjacentHTML('beforeend',mystr);
+                              mystr="";                              
+                        }
+                   });
+
+    
+     var x=document.getElementById("batch_no");
+     var pp=0;
+     for (pp = 0; pp < x.options.length; pp++) {
+      
+     $("#"+nameoname).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
+     }
+document.querySelector("#"+nameoname).addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var wono = $("#"+nameoname).val();
+                    console.log("wo",wono);
+                    var data = {wono};
+                    console.log("in date ajax");
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm27getWorkOrderDate' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                         document.getElementById(date2).value=response[0].date;                              
+                        }
+                   })
+                })
+
+});
 </script>
 {% endblock content %}
 
