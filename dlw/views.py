@@ -567,14 +567,6 @@ def getEmpInfo(request):
 
 
 
-
-
-
-
-
-
-
-
 def getauthempInfo(request):
     if request.method == "GET" and request.is_ajax():
         emp_id=request.GET.get('username')
@@ -6973,6 +6965,10 @@ def m27view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    mon="dd-mm-yyyy"
+    stfrate="staff rate"
+    stfname="staff name"
+    stfdesg="staff designation"
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -6984,7 +6980,10 @@ def m27view(request):
             'nav':nav,
             'ip':get_client_ip(request),
             'roles':tmp,
-            'subnav':subnav
+            'subnav':subnav,
+            'stfname': stfname,
+            'stfdesg': stfdesg,
+            'stfrate': stfrate,
         }
     elif(len(rolelist)==1):
         # print("in else")
@@ -7010,43 +7009,98 @@ def m27view(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
         }
-
-
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
-        if submitvalue=='submit':
+        if submitvalue=='Proceed':
+            mon=request.POST.get('date1')
+            shop_sec = request.POST.get('shop_sec')
+            stfno = request.POST.get('staffNo')
+            stfname = request.POST.get('staffName')
+            stfdesg = request.POST.get('staffDesg')
+            stfrate = request.POST.get('staffRate')
+            wono=[]
+            ex=list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').exclude(batch_no__isnull=True).distinct())
+            for i in ex:
+                wono.append(i['batch_no'])
+            if "Superuser" in rolelist:
+                  tm=shop_section.objects.all()
+                  tmp=[]
+                  for on in tm:
+                      tmp.append(on.section_code)
+                  context = {
+                        'roles':tmp,
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'sub': 1,
+                        'mon':mon,
+                        'stfno':stfno,
+                        'shopsec': shop_sec,
+                        'stfname': stfname,
+                        'stfdesg': stfdesg,
+                        'stfrate': stfrate,
+                        'subnav':subnav,
+                        'totindb':0,
+                        'batch_no':wono,
+                  }
+            elif(len(rolelist)==1):
+                  for i in range(0,len(rolelist)):
+                        # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                        # wo_nop =wo_nop | req
+
+                        w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                        req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+                        wo_nop = wo_nop | req
+                  context = {
+                        'wo_nop':wo_nop,
+                        'roles' :rolelist,
+                        'usermaster':usermaster,
+                        'lenm' :len(rolelist),
+                        'nav': nav,
+                        'ip': get_client_ip(request),
+                        'sub': 1,
+                        'mon':mon,
+                        'stfno':stfno,
+                        'shopsec': shop_sec,
+                        'stfname': stfname,
+                        'stfdesg': stfdesg,
+                        'subnav':subnav,
+                  }
+            elif(len(rolelist)>1):
+                  context = {
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'usermaster':usermaster,
+                        'roles' :rolelist,
+                        'sub': 1,
+                        'mon':mon,
+                        'stfno':stfno,
+                        'shopsec': shop_sec,
+                        'stfname': stfname,
+                        'stfdesg': stfdesg,
+                        'subnav':subnav,
+                  }
+
+        if submitvalue=='Save':
             date1=request.POST.get('date1')
-            print(date1)
-            shop_sec=request.POST.get('shop_sec')
-            print(shop_sec)
-            staffNo=request.POST.get('staffNo')
-            print(staffNo)
-            staffName=request.POST.get('staffName')
-            print(staffName)
-            staffDesg =request.POST.get('staffDesg')
-            print(staffDesg)
+            shop_sec=request.POST.get('shopsec')
+            staffNo=request.POST.get('stfno')
+            staffName=request.POST.get('stfname')
+            staffDesg =request.POST.get('stfdesg')
             staffRate=request.POST.get('staffRate')
-            print(staffRate)
-            wono="wono"
-            date2="date2"
-            date3="date3"
-            totalHr="totindb"
-            print("data saved test")    
-            tot = request.POST.get('totmebs')
+            tot = request.POST.get('total')
             print(tot)
             tot=int(tot)+1
             for i in range(1,int(tot)):    
-                wono = request.POST.get(wono+str(i))
-                print(wono)
-                date2 = request.POST.get(date2+str(i))
-                print(date2)
-                date3 = request.POST.get(date3+str(i))
-                print(date3)
-                totalHr = request.POST.get(totalHr+str(i))
-                print(totalHr)
-                M27TimeSheet.objects.create(shop_sec=shop_sec, staff_no=staffNo, rate=staffRate, month=date1, tot_hrs=totalHr, ofc_date=date3, wo_date=date2, wo_no=wono, desg=staffDesg, name=staffName)
+                wono = request.POST.get("wono"+str(i))
+                wodate = request.POST.get("wodate"+str(i))
+                ofcdate = request.POST.get("ofcdate"+str(i))
+                tothrs = request.POST.get("tothrs"+str(i))
+                print(wono,wodate,ofcdate,tothrs)
+                M27TimeSheet.objects.create(shop_sec=shop_sec, staff_no=staffNo, rate=staffRate, month=date1, tot_hrs=tothrs, ofc_date=ofcdate, wo_date=wodate, wo_no=wono, desg=staffDesg, name=staffName)
                 print("data saved ",i)
-    return render(request,'m27view.html',context)    
+    return render(request,'m27view1.html',context)    
 
 
 
@@ -7055,7 +7109,6 @@ def m27getStaffNo(request):
         shop_sec = request.GET.get('shop_sec')
         date = request.GET.get('date')
         print(shop_sec)
-        print(date)
         staff_no = list(M5SHEMP.objects.filter(shopsec = shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -7086,9 +7139,10 @@ def m27getWorkOrder(request):
 
 def m27getWorkOrderDate(request):
     if request.method == "GET" and request.is_ajax():
-        wono = request.GET.get('wono')
+        wono = request.GET.get('wo')
         print(wono)
         wono1 = list(M5DOCnew.objects.filter(batch_no = wono).values('date').exclude(batch_no__isnull=True).exclude(date__isnull=True).distinct())
+        print(wono1)
         return JsonResponse(wono1, safe = False)
     return JsonResponse({"success":False}, status=400)
 

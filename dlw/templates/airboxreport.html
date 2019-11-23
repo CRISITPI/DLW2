@@ -1,0 +1,93 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<style>
+
+#customers {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    
+}
+
+#customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #808080;
+    color: white;
+}
+input[type=submit] {
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button] {
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+<form action="." method="POST">{%csrf_token%}
+<br>
+<center><h2>Machining of Air Box Report</h2></center>
+  <br>
+  <br>
+<center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:80px;" /></center>
+<br>
+{% if sub == 1 %}
+<table id="customers">
+<tr>
+<th>Exam Code</th><th>Exam Type</th><th>Exam Date</th>
+<th>Practical Exam Description</th><th>Practical Max. Marks</th>
+<th>Oral Exam Description</th><th>Oral Max. Marks</th>
+</tr>
+{% for i in obj %}
+<tr>
+<td><input type="text" name="code{{forloop.counter}}" class="form-control ll" value="{{i.exam_code}}" readonly /></td>
+<td><input type="text" name="type{{forloop.counter}}" class="form-control ll" value="{{i.exam_type}}" required /></td>
+<td><input type="text" name="date{{forloop.counter}}" class="datepick" value="{{i.exam_date}}" readonly required /></td>
+<td><input type="text" name="prc{{forloop.counter}}" class="form-control ll" value="{{i.prac_desc}}" required /></td>
+<td><input type="text" name="pmax{{forloop.counter}}" class="form-control ll" value="{{i.prac_max}}" required /></td>
+<td><input type="text" name="orl{{forloop.counter}}" class="form-control ll" value="{{i.oral_desc}}" required /></td>
+<td><input type="text" name="omax{{forloop.counter}}" class="form-control ll" value="{{i.oral_max}}" required /></td>
+<td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
+</tr>
+{% endfor %}
+{% endif %}
+</table>
+<br>
+<center><input type="button" name="btn" value="Add exam detail" id="add" class="form-control ll" style="width:150px;" required /></center>
+<br>
+<input type="text" name="total" id="total" value="" hidden/>
+<input type="hidden" name="totindb" value={{totindb}} id="totindb">
+<input type="hidden" name="length" value={{leng}} id="length">
+<div id="items"></div>
+<br>
+<center><input type="submit" name="btn" value="Save" class="form-control ll" required style="width:80px;"/></center>
+</form>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script type="text/javascript">
+</script>
+
+{% endblock content %}
