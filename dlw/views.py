@@ -7100,6 +7100,8 @@ def m27view(request):
                 print(wono,wodate,ofcdate,tothrs)
                 M27TimeSheet.objects.create(shop_sec=shop_sec, staff_no=staffNo, rate=staffRate, month=date1, tot_hrs=tothrs, ofc_date=ofcdate, wo_date=wodate, wo_no=wono, desg=staffDesg, name=staffName)
                 print("data saved ",i)
+
+                messages.success(request, 'Successfully Saved !') 
     return render(request,'m27view1.html',context)    
 
 

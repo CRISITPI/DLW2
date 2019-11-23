@@ -130,7 +130,7 @@ input[type=submit] {
                 </td>
                 <td>
                     <label for="br_no"><b>दर/Rate</b></label>
-                    <input type="text" class="form-control" name="staffRate" id="staffRate" value="{{stfrate}}" onblur="cproceed()">
+                    <input type="number" class="form-control" name="staffRate" id="staffRate" placeholder="Staff Rate" min="1"  onblur="cproceed()"> <!--value="{{stfrate}}"-->
                 </td>                       
             </tr>  
     </table>    
@@ -288,7 +288,7 @@ $("#add").click(function(e) {
 var htAppend='<div><table id="customers"><tr>'+'<td><select name="'+wono+'" id="'+wono+'" class="form-control ll" required style="width:250px"><option value="" selected disabled hidden>Select Work Order No.</option></select></td>'+
 '<td><input type="text" id='+wodate+' name='+wodate+' class="form-control ll" placeholder="WO Date" readonly required/></td>'+
 '<td><input type="text" id='+ofcdate+' name='+ofcdate+' class="odatec" placeholder="Office Date" required /></td>'+
-'<td><input type="text" id='+tothrs+' name='+tothrs+' class="form-control ll" required></td>';
+'<td><input type="number" id='+tothrs+' name='+tothrs+' class="form-control ll" required></td>';
 htAppend=htAppend+'</tr></table>'+'</div>';
      $('#items').append(htAppend);
 
