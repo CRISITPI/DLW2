@@ -4309,3 +4309,37 @@ class WheelMachining(models.Model):
     inspection_status=models.NullBooleanField()
     dispatch_date=models.CharField(max_length=20,null=True)
     wheelp_no=models.CharField(max_length=20,null=True)
+
+
+class MG6(models.Model):
+        tool_no = models.CharField(db_column='TOOL_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+        tool_des = models.CharField(db_column='TOOL_DES', max_length=50, blank=True, null=True)  # Field name made lowercase.
+        ticket_no = models.CharField(db_column='TICKET_NO',max_length=12, blank=True, null=True)
+        date_of_damage = models.CharField(db_column='DATE_OF_DAMAGE',max_length=20, blank=True, null=True)
+        machine_no = models.CharField(db_column='MACHINE_NO', max_length=4, blank=True, null=True)  # Field name made lowercase.
+        cd_no = models.CharField(db_column='CD_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+        cause_of_damage = models.CharField(db_column='CAUSE_OF_DAMAGE', max_length=70, blank=True, null=True)  # Field name made lowercase.
+        last_modified = models.CharField(db_column='LAST_MODIFIED',max_length=50, blank=True, null=True)
+        login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)  # Field name made lowercase.
+        shop_suprintendent = models.CharField(db_column='SHOP_SUPRINTENDENT', max_length=15, blank=True, null=True)  # Field name made lowercase.
+        sec_chargeman = models.CharField(db_column='SEC_CHARGEMAN', max_length=15, blank=True, null=True)  # Field name made lowercase.
+        remarks= models.CharField(db_column='REMARKS', max_length=60, blank=True, null=True)  # Field name made lowercase.
+
+        class Meta:
+                db_table = 'MG6'
+
+
+class M21(models.Model):
+    login_id = models.CharField(max_length=10, blank=True, null=True)
+    last_modified = models.DateTimeField(blank=True, null=True)
+    shop_sec = models.CharField(max_length=4, blank=True, null=True)
+    staff_no = models.CharField( max_length=50, blank=True, null=True)
+    name = models.CharField( max_length=40, blank=True, null=True)  
+    desgn = models.CharField( max_length=10, blank=True, null=True)  
+    cat = models.CharField( max_length=10, blank=True, null=True) 
+    in1 = models.CharField( max_length=10, blank=True, null=True)
+    out = models.CharField( max_length=10, blank=True, null=True)
+    in2 = models.CharField( max_length=10, blank=True, null=True)
+    out2 = models.CharField( max_length=10, blank=True, null=True)
+    total_time =models.CharField( max_length=10, blank=True, null=True)
+    date = models.CharField( max_length=10, blank=True, null=True)

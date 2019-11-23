@@ -1,0 +1,477 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<style>
+        input[type=text],
+        select {
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: block;
+                border: 1.5px solid rgb(14, 12, 12);
+                border-radius: 4px;
+                box-sizing: border-box;
+        }
+
+        input[type=submit] {
+                width: 20%;
+                text-align: center;
+                background-color: #4CAF50;
+                color: rgb(15, 12, 12);
+                padding: 14px 20px;
+                margin: 8px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+                background-color: #45a049;
+                text-align: center;
+        }
+
+        input[type=button] {
+                width: 10%;
+                text-align: center;
+                background-color: #4CAF50;
+                color: white;
+                padding: 6px 6px;
+                margin: 8px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+        }
+
+        input[type=button]:hover {
+                background-color: #45a049;
+                text-align: center;
+        }
+</style>
+
+<h4 style="float: left"><b>I.S.O -9002</b></h4>
+<h4 style="float: right"><b>MG-6</b></h4>
+<br>
+
+
+
+<h1 align="center">TOOL DAMAGE REPORT/औज़ार टूट- फुट रिपोर्ट</h1>
+<form action="{% url 'mg6views' %}" method="POST"> {% csrf_token %}
+        <div class="container text-center"  >
+            <table class="table">
+                <tr>
+                    <td>
+                        <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                        <select class="form-control" id="shop_sec" name="shop_sec" required>
+                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                {% if lenm == 1 %}
+                    <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                {% endif %}
+                {% if lenm > 1 %}
+                {% for role in roles %}
+                  <option>{{role}}</option>
+                {% endfor %}
+                {% endif %}
+            </select>
+                    </td>
+                    <td>
+                        <label for="mc_no"><b>Machine No/मशीन नं:</b></label>
+                        <select class="form-control" id="mcno" name="mcno" required>
+            <option id="op_mc" selected disabled hidden>Select Machine No</option>
+            {% if lenm == 1 %}
+            {% for i in wono %}
+              <option>{{i.lcno}}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+                    </td>
+               
+                
+                <td>
+                    <label for="cd_no"><b>C&D No/मूल्य व ब्यौरा नं :</b></label>
+                    <select class="form-control" id="cd_no" name="cd_no" required>
+            <option id="op_cd" selected disabled hidden>Select C&D NO</option>
+            {% if lenm == 1 %}
+            {% for i in cd_no %}
+              <option>{{i.part_no}}</option>
+            {% endfor %}
+            {% endif %}
+              </select>
+                </td>
+                <td>
+                                <label for="tool_no"><b>Tool No/औज़ार नं:</b></label>
+                                <select class="form-control" id="tool_no" name="tool_no" required>
+                        <option id="op_tool" selected disabled hidden>Select Tool NO</option>
+                        {% if lenm == 1 %}
+                        {% for i in tool_no %}
+                          <option>{{i.instrument_number}}</option>
+                        {% endfor %}
+                        {% endif %}
+                          </select>
+                            </td>
+
+             
+         
+           
+                    
+                 </tr>
+            </table>
+            <!-- <input type="hidden" name="inoutnum" id="inoutnum" value="0" /> -->
+            
+            <center><input type="submit" value="Proceed" id="myproceed" name="proceed" hidden/></center>
+        </div>
+        <input type="hidden" name="sub" id="sub" value={{sub}} >
+        <br><br> {% if sub == 1 %}
+        <div id="print" style="align:center" >
+        <input type="hidden" name="len" value="{{len}}">
+        <input type="hidden" name="len4" id="len4" value="{{len4}}">
+            
+
+<table>
+    <input type="hidden" name="shopsec" value="{{shop_sec}}">
+         
+    <h5><b>F.O./T.R./फोरमैन औज़ार कक्ष</b></h5>
+  <tr>
+
+                        <td colspan="8">
+                         <h5 style="float: left"><b>TOOL NO/औज़ार नं: </b> 
+                         
+                          {% if len %}
+                          {% for i in obj %}
+                          
+                          <input type="text" id="tool_no" name="tool_no" class="myinp" value="{{i.tool_no}}"  required/>{% endfor %}
+                          {% else %}
+                          <input  type="text" name="tool_no" value="{{tool_no}}" required/>
+                          {% endif %}
+                          <!-- <select class="form-control" id="tool_no" name="tool_no" required>
+                                <option id="op_tool" selected disabled hidden>Select Tool No</option>
+                                {% for i in prtlist %}
+                                <option value="{{i}}">{{i}}</option>
+                                {% endfor %}
+                        </select></h5>
+                        <center><input type="submit" value="Proceed" id="myproceed1" name="proceed" hidden
+                                onclick="check()"/>
+                       </center> --> 
+
+                       &nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <h5 style="float: right"><b>TOOL DESCRIPTION/औज़ार विवरण:</b>
+                          <!-- {% for i in obj %}
+                          {% if i.tool_des %}
+                         
+                          <input type="text" id="tool_des"  value="{{i.tool_des}}" name="tool_des"  >
+                          {% else %}
+                          <input  id="tool_des" type="text"  name="tool_des" >
+                          {% endif %}  
+                          {% endfor %}    -->
+                          {% if len %}
+                          {% for i in obj %}
+                          
+                          <input type="text" id="tool_des" name="tool_des" class="myinp" value="{{i.tool_des}}"  required/>{% endfor %}
+                          {% else %}
+                          <input type="text"  id="tool_des" name="tool_des" class="myinp" required>
+                          {% endif %}
+                               </h5>
+                            
+                        
+                                <!-- <input id="part_no" type="text" name="part_no" size="40" required/></td> -->
+                                <!-- <center><input type="submit" value="Proceed" id="myproceed" name="proceed" 
+                                         onclick="check()"/>
+                                </center> -->
+</td>
+                </tr>
+         
+
+                
+                        <!-- <h5><b>Drawn By </b></h5>
+                        <h5><b>TICKET NO</b><input id="ticket_no" type="text" name="ticket_no" size="40" /></h5>
+                        <h5><b>on</b></h5>
+                        <h5><b>DATE</b><input id="date_of_damage" type="text" name="date_of_damage" size="40" /></h5>
+                        <h5><b>has been condemned/scrapped/damaged on machine no </b></h5>
+                        <h5><b>MACHINE NO</b><input id="machine_no" type="text" name="machine_no" size="40" /></h5>
+                        <h5><b>on </b></h5>
+                        <h5><b>C&D NO</b><input id="cd_no" type="text" name="cd_no" size="40" /></h5>
+ -->
+<td colspan="8">
+ <h5 ><b>Drawn by T NO./टिकट नं:
+    {% if len %}
+    {% for i in obj %}
+    
+    <input type="text" id="ticket_no" name="ticket_no" class="myinp" value="{{i.ticket_no}}"  required/>{% endfor %}
+   
+</select> 
+    {% else %}
+   
+  
+         <select class="form-control" type=text id="ticket_no" name="ticket_no" required>
+                                <option id="op_ticket" selected disabled hidden>Select Ticket No</option>
+                                {% for i in prtticket %}
+                                <option value="{{i}}">{{i}}</option>
+                                {% endfor %}
+                        </select>  {% endif %}
+                      </h5>
+          
+        <h5><b> on date/दिनांक:</b>
+         {% if len %}
+         {% for i in obj %}
+        <input type="date" id="date_of_damage" name="date_of_damage" class="myinp" value="{{i.date_of_damage}}"  required/>{% endfor %}
+         {% else %}
+   
+         <input id="date_of_damage" type="date" name="date_of_damage" required >
+         {% endif %}
+        </h5>
+         <h5 ><b>Has beesn condemned  /Scrapped /Damaged on Machine no/मशीन नं: </b>
+          {% if len %}
+          {% for i in obj %}
+         <input type="text" id="mc_no" name="mc_no" class="myinp" value="{{i.machine_no}}"  required/>{% endfor %}
+          {% else %}
+            <input  type="text"  name="mc_no" value="{{mc_no}}" required/>
+          {% endif %}
+          </h5>
+           <!-- <input type="text" name="mc_no" value="{{mc_no}}"> -->
+          <h5><b> on C&D no/मूल्य व ब्यौरा नं:</b>
+            {% if len %}
+            {% for i in obj %}
+           <input type="text" id="cd_no" name="cd_no" class="myinp" value="{{i.cd_no}}"  required/>{% endfor %}
+            {% else %}
+            <input  type="text" name="cd_no" value="{{cd_no}}" required/>
+            {% endif %}
+          </h5>
+
+</td>
+</tr>
+<br><br>
+                
+
+                <tr>
+                        <td colspan="8">
+                        <h5><b>CAUSE OF DAMAGE/टूट-फुट- का कारण:</b>&nbsp; 
+                          {% if len %}
+                          {% for i in obj %}
+                         <input type="text" id="cause_of_damage" name="cause_of_damage" class="myinp" value="{{i.cause_of_damage}}"  required/>{% endfor %}
+                          {% else %}
+                          <input id="cause_of_damage" type="text" name="cause_of_damage" size="40" required/>
+                        {% endif %}
+                        </h5>
+                        </td>
+                       
+
+                </tr>
+                <tr aria-rowspan="3"></tr>
+                <tr></tr>
+                <tr>
+                        <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+                        <td colspan="8">
+
+                        <h5 style="float: left"><b>SHOP SUPRINTENDENT/शॉप अधीक्षक :</b>&nbsp; 
+                          {% if len %}
+                          {% for i in obj %}
+                         <input type="text" id="shop_sup" name="shop_sup" class="myinp" value="{{i.shop_suprintendent}}"  required/>{% endfor %}
+                          {% else %}
+                          <select class="form-control" type=text id="shop_sup" name="shop_sup" required>
+                              <option id="op_shop_sup" selected disabled hidden>Select Shop Suprintendent No</option>
+                              {% for i in prtemp %}
+                              <option value="{{i}}">{{i}}</option>
+                              {% endfor %}
+                      </select>
+                    {% endif %}
+                    </h5>
+                          <!-- <input id="shop_suprintendent" type="text" name="shop_suprintendent" size="40" /></h5> -->
+                       
+                        
+                        <h5 style="float: right"><b>SEC CHARGEMAN/अनुभाग चार्जमैन:</b>&nbsp; 
+                          {% if len %}
+                          {% for i in obj %}
+                          <input type="text" id="sec_chargeman" name="sec_chargeman" class="myinp" value="{{i.sec_chargeman}}"  required/>{% endfor %}
+                          {% else %}
+                          <select class="form-control" type=text id="sec_chargeman" name="sec_chargeman" required>
+                              <option id="op_sec_chargeman" selected disabled hidden>Select Shop Suprintendent No</option>
+                              {% for i in prtsec %}
+                              <option value="{{i}}">{{i}}</option>
+                              {% endfor %}
+                      </select>
+                    {% endif %}
+                    </h5>
+
+                          <!-- <input id="sec_chargeman" type="text" name="sec_chargeman" size="40" /></h5> -->
+                        </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5 style="float: left"><b>Remarks of FO/TR if any/फोरमैन/औज़ार कक्ष द्वारा कैफियत कोई हो तो:</b>
+                      {% if len %}
+                      {% for i in obj %}
+                      
+                      <input type="text" id="rem" name="rem" class="myinp" value="{{i.remarks}}"  />{% endfor %}
+                      {% else %}
+                      <input type="text"  id="rem" name="rem" class="myinp" >
+                      {% endif %}
+                           </h5>
+                        
+                    
+                  </td>
+                </tr>
+               </table>
+              </div>
+    
+             
+               <center>
+                    <input type="submit" name="proceed" value="submit">
+                    <input type="button" onclick="printDiv()" value="print">
+                   
+                  </center>
+               
+                {% endif %}
+               </form>
+               <script>
+               document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'mg6getmc' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelemcno");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_mcno").selected=true;
+                                   
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.lcno);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewmcno">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#mcno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+                
+                $("#mcno").change(function(e){
+      e.preventDefault();
+      var mcno = $(this).val();
+      var shop_sec = $("#shop_sec").val();
+      var data = {mcno,shop_sec};
+        $.ajax({
+          type : 'GET',
+          url : "{% url 'mg6getcd' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+                var elementsadded = document.querySelectorAll(".newelecdno");
+                if(elementsadded.length>0){
+                  var elementsaddedarr = Array.from(elementsadded);
+                elementsaddedarr.forEach((el)=> el.remove());
+                document.querySelector("#op_cd").selected = true;
+               
+                }
+                var brarr,mystr,html;
+                brarr = response.map((el)=>el.part_no);
+                mystr = "";
+                brarr.forEach((el,index)=>{
+                  html = `<option class="newelecdno">${brarr[index]}</option>`
+                  mystr = html.concat(mystr);
+                });
+                html = "";
+                document.querySelector("#cd_no").insertAdjacentHTML('beforeend',mystr);
+                mystr="";
+          }
+             })
+             }) 
+          
+  document.querySelector("#cd_no").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'mg6gettool' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".neweletool");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_tool").selected = true; 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.instrument_number);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="neweletool" value='${brarr[index]}'>${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#tool_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+
+
+             document.querySelector("#tool_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+ 
+
+document.querySelector("#tool_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed1").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M15 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+       
+
+
+        win.print();
+        win.close();
+
+}
+
+
+
+
+ 
+    
+               </script>
+            
+{% endblock content %}   
