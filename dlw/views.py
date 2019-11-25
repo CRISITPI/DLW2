@@ -12091,9 +12091,6 @@ def mg33report(request):
 def m3a(request):
     return render(request,"m3a.html")
 
-def mg6view(request):
-    return render(request,"mg6view.html")
-
 def performaA(request):
     return render(request,"performaA.html")
 
@@ -12389,7 +12386,8 @@ def whl_editsno(request):
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
 
-
+@login_required
+@role_required(urlpass='/mg6views/')
 def mg6views(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
