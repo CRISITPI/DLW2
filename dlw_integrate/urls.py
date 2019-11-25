@@ -171,7 +171,6 @@ urlpatterns = [
     # path('viewdata/', viewdata, name='viewdata'),
     path('m30view/', m30view, name='m30view'),
     path('mg33report/', mg33report, name='mg33report'),
-    # path('M13register/', M13register, name='M13register'),
     path('M13register2/', M13register2, name='M13register2'),
     path('view_exam_data/',view_exam_data, name='view_exam_data'),
     path('ajax/m30getpartno/', m30getpartno, name='m30getpartno'),
