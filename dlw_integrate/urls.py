@@ -218,4 +218,5 @@ urlpatterns = [
     path('miscreport/',miscreport,name='miscreport'),
     path('axlereport/',axlereport,name='axlereport'),
     path('wheelreport/',wheelreport,name='wheelreport'),
+    path('bogiereport/',wheelreport,name='bogiereport'),
 ]

@@ -13753,3 +13753,74 @@ def wheelreport(request):
             }
 
     return render(request,'wheelreport.html',context)
+
+
+
+
+@login_required
+@role_required(urlpass='/bogiereport/')
+def bogiereport(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    context={
+       'nav':nav,
+       'subnav':subnav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       }
+    if request.method=="POST":
+        bval=request.POST.get('btn')
+        if bval=='Date Wise Report':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':0,
+            }
+        if bval=='Date Range Report':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':2,
+            }
+        if bval=='Proceed1':
+            dt=request.POST.get('datew')
+            ob1=BogieAssembly.objects.filter(in_date=dt).values('sno','pt_no')
+            ob2=BogieAssembly.objects.filter(out_qty=dt).values('sno','pt_no')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':1,
+            'ob1':ob1,
+            'ob2':ob2,
+            'dt':dt,
+            }
+        if bval=='Proceed2':
+            dt1=request.POST.get('date1')
+            dt2=request.POST.get('date2')
+            ob1=BogieAssembly.objects.filter(in_date__range=(dt1,dt2)).values('sno','pt_no','in_date').order_by('in_date')
+            ob2=BogieAssembly.objects.filter(out_date__range=(dt1,dt2)).values('sno','pt_no','out_qty').order_by('out_qty')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':3,
+            'ob1':ob1,
+            'ob2':ob2,
+            'dt1':dt1,'dt2':dt2,
+            }
+
+    return render(request,'bogiereport.html',context)
