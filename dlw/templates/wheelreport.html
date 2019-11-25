@@ -1,0 +1,165 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<style>
+
+#customers {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    
+}
+
+#customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #808080;
+    color: white;
+}
+</style>
+<form action="." method="POST">{%csrf_token%}
+<br>
+
+<br>
+<br>
+<center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br>
+<br>
+{% if sub == 0 %}
+<center><input type="text" name="datew" id='datew' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed1" name="btn" id="myproceed" hidden/>
+{% endif %}
+<br>
+{% if sub == 2 %}
+<center><h3>From Date:</h3><input type="text" name="date1" id='date1' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<br>
+<center><h3>To Date:</h3><input type="text" name="date2" id='date2' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed2" name="btn" id="proceeddt" hidden/>
+{% endif %}
+<div id="print">
+{% if sub == 1 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Date : {{dt}}</h2>
+<h2 align="left">Shop Section : Wheel Machining</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+<table id="customers" align="right">
+<tr>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+</tr>
+{% for i in ob2 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 3 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Date : {{dt1}} to {{dt2}}</h2>
+<h2 align="left">Shop Section : Machining of Air box Assembly</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+<table id="customers" align="right">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+</tr>
+{% for i in ob2 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+</form>
+<script>
+$(document).ready(function () {
+    $('#datew').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#myproceed").click();
+    }
+});                   
+});
+$(document).ready(function () {
+    $('#date1').datepicker({
+        dateFormat: 'dd-mm-yy',
+});                   
+});
+$(document).ready(function () {
+    $('#date2').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#proceeddt").click();
+    }
+});                   
+});
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>AirBox Report</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+
+
+}
+</script>
+
+{% endblock content %}
