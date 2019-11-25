@@ -1,6 +1,7 @@
 {% extends 'base.html' %} {% block content %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+
 <style>
     input[type=text],
     select {
@@ -25,52 +26,6 @@
       th, td {
         padding: 15px;
       }
-    
-    input[type=submit] {
-        width: 20%;
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    input[type=submit]:hover {
-        background-color: #45a049;
-        text-align: center;
-    }
-    
-    input[type=button] {
-        width: 20%;
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    input[type=button]:hover {
-        background-color: #45a049;
-        text-align: center;
-    }
-
-    #print {
-        width: 10%;
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 6px 6px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
 
     #head{
 
@@ -103,14 +58,19 @@
     background-color: #808080;
     color: white;
 }
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
 </style>
-<script>
-    $(document).ready(function () {
-            $('#date1').datepicker({
-                dateFormat: 'dd-mm-yy'
-            });
-        });
-</script>
 <br>
 <br>
 <h3 align="center">M13 Monthly Position Register<br></h3>
@@ -141,80 +101,25 @@
             {% endif %}
         </select>
                 </td>
-        <td>
-              <label for="sno"><b>Date/ दिनांक </b></label>      
-              <input type="text" name="date1" id="date1" style="width: 150px;" id="date1" readonly class="form-control" value="{{lvdate}}" required>
-      </td>
+                <td>
+                  <label for="sno"><b>Month</b></label>            
+                  <input type="text" class="form-control ll" id="month" name="month" required readonly/>
+              </td>
     </tr>
-
+    
 </table>
+<div>
 
 <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
-
-
-
-
-
-        
- <table border="2" align="center">
-        <thead>
-            <th>S. No</th>
-            <th>M-13 No.</th>
-            <th>Date</th>
-            <th>SEG</th>
-            <th>Work Order</th>
-            <th>Job Sr No.</th>
-            <th>Part No.</th>
-            <th>Quantity</th>
-            <th>NCR</th>
-            <th>Faulty By</th>
-            <th>Staff No.</th>
-            <th>Chargeable Work Order</th>
-            <th>Operation No</th>
-            <th>Reason For Rejection</th>
-            
-        </thead>
-        <tbody>
-            {% for i in obj %}
-            <tr>
-                <td>{{i.slno}}</td>
-                <td>{{i.m13_no}}</td>
-                <td>{{i.m13_date}}</td>
-                <td>{{seg}}</td>
-                <td>{{i.wo}}</td>
-                <td>{{JBSR}}</td>
-                <td>{{i.part_no}}</td>
-                <td>{{i.qty_tot}}</td>
-                <td>{{ncr}}</td>
-                <td>{{i.fault_cd}}</td>
-                <td>{{i.staff_no}}</td>
-                <td>{{i.wo_rep}}</td>
-                <td>{{i.opn}}</td>
-                <td>{{i.reason}}</td>
-                <td>{{i.wo_rep}}</td>
-               
-            </tr>
-            {%endfor%}
-        </tbody>
-</table>
- <br><br>
+        {% if sub == 1 %}
  
-<!-- {% if sub == 1 %} -->
+ <br><br>
 <div id="print" style="align:center" >
-<!-- <input type="hidden" name="len" value="{{len}}"> -->
-
 <h5 style="float: left"><b>DLW</b><br><b>VARANASI</b></h5>
 
 <center><h4><u><B>M13 Monthly Position</B></u></h4></center>
 
-<!-- {% for i in obj %}
-
-<h5 style="float: right"><b>M-13 NO</b>{{i.m13_no}}<br><b>M13 DATE-</b></h5><input type="hidden" name="m13no" value="{{i.m13_no}}">
-<br>
-<br>
-{% endfor %} -->
-
-<table border="2" align="center">
+<table border="2" align="center" id="customers">
         <thead>
             <th>S. No</th>
             <th>M-13 No.</th>
@@ -245,7 +150,7 @@
                 <td>{{i.qty_tot}}</td>
                 <td>{{ncr}}</td>
                 <td>{{i.fault_cd}}</td>
-                <td>{{i.staff_no}}</td>
+                <td style="text-align:center"><b>-</b></td>
                 <td>{{i.wo_rep}}</td>
                 <td>{{i.opn}}</td>
                 <td>{{i.reason}}</td>
@@ -255,246 +160,25 @@
             {%endfor%}
         </tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <table border="2" align="center" width="100%">
-<tr>
-<th><h5><b>ORDER & BATCH NO: </b> </h5></th>
-<th><h5><b>C&D NO.:</b> </h5></th>
-<th><h5><b>DRAWING NO:</b></h5></th>
-<th  ><h5><b>NAME OF PARTS: </b></b></h5></th>
-<th  ><h5><b>SLno: </b></b></h5></th>
-<th  ><h5><b>M13 sn: </b></b></h5></th>
-<th  ><h5><b>EPC: </b></b></h5></th>
-</tr>
-
-
-<tr>
-<td>{{wo_no}}</td>
-<td>{{part_no}}</td>
-{% for i in obj1 %}
-<td>{{i.drgno}}</td>
-<td >{{i.des}}</td>
-{% endfor %}
-{% for i in obj %}
-<td ><input type="text" name ="slno" value="{{i.slno}}"</td>
-<input type="hidden" name="slno1" value="{{i.slno}}" >
-<td ><input type="text" name ="m13_sn" value="{{i.m13_sn}}"</td>
-<td ><input type="text" name ="epc" value="{{i.epc}}"</td>
-</tr>
-{% endfor %}
-
-
-
-
-
-<tr>
-<td><h5><b>QUANTITY TOTAL </b></h5></td>
-<td><h5><b>QUANTITY INSPECTED </b></h5></td>
-<td><h5><b>QUANTITY PASSED </b></h5></td>
-<td><h5><b>QUANTITY REJECTED </b></h5> </td>
-<td><h5><b>OPERATION OR STAGE NUMBER </b></h5></td>
-<td><h5><b>SOURCE OF SUPPLY </b></h5></td>
-<td><h5><b>JOB </b></h5></td>
-
-</tr>
-
-{% for i in obj %}
-<tr>
-<td><input type="text" name ="qty_tot" value="{{i.qty_tot}}"></td>
-<td><input type="text" name ="qty_ins" value="{{i.qty_ins}}"></td>
-<td><input type="text" name ="qty_pas" value="{{i.qty_pas}}"></td>
-<td><input type="text" name ="qty_rej" value="{{i.qty_rej}}"></td>
-<td><input type="text" name ="opn" value="{{i.opn}}"></td>
-<td><input type="text" name ="vendor_cd" value="{{i.vendor_cd}}"></td>
-<td><input type="text" name ="job_no" value="{{i.job_no}}"></td>
-
-
-</tr>
-{% endfor %}
-
-
-
-
-
-<tr>
-<td><h5><b>SCRAPPED IN SHOP </b></h5></td>
-<td><h5><b>FAULT MADE BY </b></h5></td>
-
-<td><h5><b>Chargeable work order </b></h5></td>
-<td><h5><b>M15 no </b></h5></td>
-
-<td><h5><b>rej_cat</b></h5></td>
-<td colspan="2"><h5><b>REASON FOR REJECTION</b></h5></td>
-
-</tr>
-
-{% for i in obj %}
-<tr>
-<td>{{shop_sec}}</td>
-<td><input type="text" name ="fault_cd" value="{{i.fault_cd}}"</td>
-
-<td><input type="text" name ="wo_rep" value="{{i.wo_rep}}"</td>
-<td><input type="text" name ="m15_no" value="{{i.m15_no}}"</td>
-<td><input type="text" name ="rej_cat" value="{{i.rej_cat}}"</td>
-<td colspan="2"><input type="text" name ="reason" value="{{i.reason}}"</td>
-
-
-</tr>
-{% endfor %}
-
-
-
-</table>
-
-<h6 style="float: left">MATERIAL RETURNED VALUE</b><br><br><br>signature of inspector & date</b></h6>
-
-<center><h6>REJECT AND REPLACE/ RECTIFY<br><br><br>date<br>signature of foreman & date</h6></center>
-<h6 style="float: right">WORKS MANAGER</b></h6> -->
-
-<center>
-  <input id="print" type="button" onclick="printDiv()" value="Print"> 
-</center> 
 </div>
+<center>
+  <input id="print" type="button" onclick="printDiv()" value="Print" class="button"/> 
+</center> 
 
-<!-- {% endif %} -->
+ {% endif %}
 
 </form>
 
 
-<script type="text/javaScript">
-document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-                  e.preventDefault();
-                  var shop_sec = $("#shop_sec").val()
-                  var data = {shop_sec};
-                    $.ajax({
-                      type : 'GET',
-                      url : "{% url 'm13getwono' %}",
-                      dataType : 'json',
-                      data : data,
-                      success : function(response){
-                        var elementsadded = document.querySelectorAll(".newelewono");
-                            if(elementsadded.length>0){
-                                var elementsaddedarr = Array.from(elementsadded);
-                                elementsaddedarr.forEach((el)=> el.remove());
-                                document.querySelector("#op_wo").selected=true;
-                                document.querySelector("#op_m13no").selected = true;
-                                document.querySelector("#op_part").selected = true;
-                                
-                                 
-                             }
-                            var brarr,mystr,html;
-                            brarr = response.map((el)=>el.wo);
-                            mystr = "";
-                            brarr.forEach((el,index)=>{
-                              html = `<option class="newelewono">${brarr[index]}</option>`
-                              mystr = html.concat(mystr);
-                            });
-                            html = "";
-                            document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
-                            mystr=""; 
-                      }
-                        })
-              })
-
-$("#wno").change(function(e){
-    e.preventDefault();
-    var wo_no = $(this).val();
-    var shop_sec = $("#shop_sec").val();
-    var data = {wo_no,shop_sec};
-      $.ajax({
-        type : 'GET',
-        url : "{% url 'm13getpano' %}",
-        dataType : 'json',
-        data : data,
-        success : function(response){
-              var elementsadded = document.querySelectorAll(".newelepart");
-              if(elementsadded.length>0){
-                var elementsaddedarr = Array.from(elementsadded);
-              elementsaddedarr.forEach((el)=> el.remove());
-              
-              document.querySelector("#op_m13no").selected = true;
-              document.querySelector("#op_part").selected = true;
-              
-              
-              }
-              var brarr,mystr,html;
-              brarr = response.map((el)=>el.part_no);
-              mystr = "";
-              brarr.forEach((el,index)=>{
-                html = `<option class="newelepart">${brarr[index]}</option>`
-                mystr = html.concat(mystr);
-              });
-              html = "";
-              document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
-              mystr="";
-        }
-           })
-           }) 
-
-
-
-
- $("#part_nop").change(function(e){
-    e.preventDefault();
-    var wo_no = $("#wno").val();
-    var shop_sec = $("#shop_sec").val();
-    var part_nop = $("#part_nop").val();
-    var data = {wo_no,shop_sec,part_nop};
-      $.ajax({
-        type : 'GET',
-        url : "{% url 'm13getno' %}",
-        dataType : 'json',
-        data : data,
-        success : function(response){
-              var elementsadded = document.querySelectorAll(".newelem13no");
-              if(elementsadded.length>0){
-                var elementsaddedarr = Array.from(elementsadded);
-              elementsaddedarr.forEach((el)=> el.remove());
-              
-              document.querySelector("#op_m13no").selected = true;
-              
-              
-              }
-              var brarr,mystr,html;
-              brarr = response.map((el)=>el.m13_no);
-              mystr = "";
-              brarr.forEach((el,index)=>{
-                html = `<option class="newelem13no">${brarr[index]}</option>`
-                mystr = html.concat(mystr);
-              });
-              html = "";
-              document.querySelector("#m13_no").insertAdjacentHTML('beforeend',mystr);
-              mystr="";
-        }
-           })
-           })  
-
-
-
-document.querySelector("#m13_no").addEventListener('change',(e)=>{
-
-document.querySelector("#myproceed").click();
-})
-document.addEventListener('keypress',(event)=>{
-if(event.keyCode===13){
-    event.preventDefault();
-}
-})
+<script type="text/javaScript"> 
+$(document).ready(function () {
+    $('#month').datepicker({
+        dateFormat: 'mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#myproceed").click();
+    }
+});                 
+});
 
 function printDiv() {
      var printContents = document.getElementById("print").innerHTML;
@@ -522,7 +206,6 @@ function printDiv() {
 </script>    
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 
 {% endblock content %}
