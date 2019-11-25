@@ -259,15 +259,6 @@ def dynamicnavbar(request,rolelist=[]):
         nav=navbar.objects.filter(role__in=rolelist).distinct('navmenu','navitem')
         return nav
 
-
-
-
-
-
-
-
-
-
 @login_required
 @role_required(urlpass='/createuser/')
 def create(request):
@@ -12833,8 +12824,8 @@ def m21getyymm(request):
 
 
 @login_required
-@role_required(urlpass='/M13register2/')
-def M13register2(request):
+@role_required(urlpass='/M13register/')
+def M13register(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -12888,17 +12879,19 @@ def M13register2(request):
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
            
-            shop_sec = request.POST.get('shop_sec')
-            wo_no = request.POST.get('wo_no')
-            part_no = request.POST.get('part_nop')
-            obj = M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no','qty_tot','qty_ins','qty_pas','qty_rej','opn','vendor_cd','fault_cd','reason','slno','m13_sn','wo_rep','m15_no','epc','rej_cat','job_no').distinct()
-            obj1 = Part.objects.filter(partno=part_no).values('des','drgno').distinct()
-            #obj2 = M2Doc.objects.filter(f_shopsec=shop_sec,part_no=part_no,batch_no=wo_no).values('m2sln').distinct()
+            shop = request.POST.get('shop_sec')
+            
+            month = request.POST.get('month')
+            print("MONTH is **************************",month)
+            
+            obj = M13.objects.filter(shop=shop,m13_date__contains=month).values('m13_no','wo','m13_date','part_no','qty_tot','opn','fault_cd','reason','wo_rep','job_no','shop').distinct()
+            
+            
+           
+            print("Test")
+            
             leng = obj.count()
-            leng1 = obj1.count()
-            #leng2 = obj2.count()
-            # print(obj)
-            # print(obj1)
+            
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -12912,14 +12905,11 @@ def M13register2(request):
                     'ip':get_client_ip(request),
                     'roles':tmp,
                     'obj': obj,
-                    'obj1': obj1,
-                    #'obj2': obj2,
+                    
                     'len': leng,
-                    'len1':leng1,
-                    #'len2':leng2,
-                    'shop_sec': shop_sec,
-                    'wo_no': wo_no,
-                    'part_no': part_no,
+                   
+                    'shop_sec': shop,
+                   
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
@@ -12935,14 +12925,11 @@ def M13register2(request):
                     'roles' :rolelist,
                     'subnav':subnav,
                     'obj': obj,
-                    'obj1': obj1,
-                    #'obj2': obj2,
+                  
                     'len': leng,
-                    'len1':leng1,
-                    #'len2':leng2,
-                    'shop_sec': shop_sec,
-                    'wo_no': wo_no,
-                    'part_no': part_no,
+                    
+                    'shop_sec': shop,
+                    
                 }
                
             elif(len(rolelist)>1):
@@ -12955,63 +12942,14 @@ def M13register2(request):
                     'roles' :rolelist,
                     'subnav':subnav,
                     'obj': obj,
-                    'obj1': obj1,
-                    #'obj2': obj2,
+                  
                     'len': leng,
                     'len1':leng1,
-                    #'len2':leng2,
-                    'shop_sec': shop_sec,
-                    'wo_no': wo_no,
-                    'part_no': part_no,
+                    
+                    'shop_sec': shop,
+                   
                 }
 
-        if submitvalue=='Save':
-                slno= request.POST.get('slno')
-                m13_sn = request.POST.get('m13_sn')
-                epc = request.POST.get('epc')
-                qty_tot = request.POST.get('qty_tot')
-                qty_ins = request.POST.get('qty_ins')
-                qty_pas = request.POST.get('qty_pas')
-                qty_rej = request.POST.get('qty_rej')
-                vendor_cd = request.POST.get('vendor_cd')
-                opn = request.POST.get('opn')
-                job_no = request.POST.get('job_no')
-                fault_cd = request.POST.get('fault_cd')
-                wo_rep = request.POST.get('wo_rep')
-                m13no = request.POST.get('m13no')
-                m15_no = request.POST.get('m15_no')
-                rej_cat = request.POST.get('rej_cat')
-                reason = request.POST.get('reason')
-                print(reason)
+        
+    return render(request,"M13register.html",context)
 
-                M13.objects.filter(m13_no=m13no).update(slno=slno,m13_sn=m13_sn,epc=epc,qty_tot=qty_tot,qty_ins=qty_ins,qty_pas=qty_pas,qty_rej=qty_rej,vendor_cd=vendor_cd,opn=opn,job_no=job_no,fault_cd=fault_cd,wo_rep=wo_rep,m13_no=m13no,m15_no=m15_no,rej_cat=rej_cat,reason=reason)
-
-    return render(request,"M13register2.html",context)
-
-def m13register2getwono(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        wo_no = list(M13.objects.filter(shop = shop_sec).values('wo').distinct())
-        return JsonResponse(wo_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-def m13register2getpano(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        wo_no = request.GET.get('wo_no')
-        part_no = list(M13.objects.filter(shop = shop_sec,wo=wo_no).values('part_no').distinct())
-        return JsonResponse(part_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-def m13register2getno(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        wo_no = request.GET.get('wo_no')
-        part_no = request.GET.get('part_nop')
-        # print(wo_no)
-        # print(shop_sec)
-        # print(part_no)
-        pp = list(M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no').distinct())
-        # print(pp)
-        return JsonResponse(pp, safe = False)
-    return JsonResponse({"success":False}, status=400)
