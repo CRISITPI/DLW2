@@ -1180,7 +1180,7 @@ class M13(models.Model):
     slno = models.CharField(db_column='SLNO', max_length=4, blank=True, null=True)  # Field name made lowercase.
     m13_sn = models.CharField(db_column='M13_SN', max_length=7, blank=True, null=True)  # Field name made lowercase.
     m13_no = models.CharField(db_column='M13_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    m13_date = models.DateField(db_column='M13_DATE', blank=True, null=True)  # Field name made lowercase.
+    m13_date = models.CharField(db_column='M13_DATE', max_length=15, blank=True, null=True)  # Field name made lowercase.
     wo = models.CharField(db_column='WO', max_length=15, blank=True, null=True)  # Field name made lowercase.
     part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     qty_tot = models.DecimalField(db_column='QTY_TOT', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
@@ -3359,8 +3359,8 @@ class MiscellSection(models.Model):
    pt_no=models.CharField(max_length=20,null=True)
    bo_qty=models.CharField(max_length=20,null=True)
    shaft_m=models.CharField(max_length=20,null=True) 
-   in_qty=models.IntegerField(null=True)
-   out_qty=models.IntegerField(null=True)
+   in_qty=models.CharField(max_length=20,null=True)
+   out_qty=models.CharField(max_length=20,null=True)
    date=models.CharField(max_length=20,null=True) 
    loco_type=models.CharField(max_length=20,null=True)
    dispatch_to=models.CharField(max_length=20,null=True)
@@ -3512,6 +3512,8 @@ class AxleWheelPressing(models.Model):
     bo_date=models.CharField(max_length=20,null=True)
     pt_no=models.CharField(max_length=20,null=True)
     bo_qty=models.CharField(max_length=20,null=True)
+    in_qty=models.CharField(max_length=20,null=True)
+    out_qty=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
     axle_no=models.CharField(max_length=20,null=True)
@@ -3630,6 +3632,8 @@ class BogieAssembly(models.Model):
     pt_no=models.CharField(max_length=20,null=True)
     bo_qty=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
+    in_qty=models.CharField(max_length=20,null=True)
+    out_qty=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
     in_date=models.CharField(max_length=20,null=True)
     frameserial_no=models.CharField(max_length=20,null=True)
@@ -4236,6 +4240,8 @@ class AxleMachining(models.Model):
     bo_date=models.CharField(max_length=20,null=True)
     pt_no=models.CharField(max_length=20,null=True)
     bo_qty=models.CharField(max_length=20,null=True)
+    in_qty=models.CharField(max_length=20,null=True)
+    out_qty=models.CharField(max_length=20,null=True)
     axle_no=models.CharField(max_length=20,null=True)
     axle_make=models.CharField(max_length=20,null=True)
     axle_heatcaseno=models.CharField(max_length=20,null=True)
@@ -4288,6 +4294,8 @@ class WheelMachining(models.Model):
     bo_date=models.CharField(max_length=20,null=True)
     pt_no=models.CharField(max_length=20,null=True)
     bo_qty=models.CharField(max_length=20,null=True)
+    in_qty=models.CharField(max_length=20,null=True)
+    out_qty=models.CharField(max_length=20,null=True)
     wheel_no=models.CharField(max_length=20,null=True)
     wheel_make=models.CharField(max_length=20,null=True)
     wheel_heatcaseno=models.CharField(max_length=20,null=True)
@@ -4343,3 +4351,24 @@ class M21(models.Model):
     out2 = models.CharField( max_length=10, blank=True, null=True)
     total_time =models.CharField( max_length=10, blank=True, null=True)
     date = models.CharField( max_length=10, blank=True, null=True)
+
+class MG9Initial(models.Model):
+        sec = models.CharField(db_column='SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+        mw_no = models.CharField(db_column='MW_NO', max_length=4, blank=True, null=True)  # Field name made lowercase.
+        staff_no = models.CharField(db_column='STAFF_NO', max_length=5, blank=True, null=True)  # Field name made lowercase.
+        complaint = models.CharField(db_column='COMPLAINT', max_length=70, blank=True, null=True)  # Field name made lowercase.
+        handed_date= models.CharField(db_column='HANDED_DATE',max_length=10, blank=True, null=True)
+        comp_date= models.CharField(db_column='COMP_DATE',max_length=10, blank=True, null=True)
+        handed_time= models.CharField(db_column='HANDED_TIME',max_length=10, blank=True, null=True)
+        comp_time= models.CharField(db_column='COMP_TIME',max_length=10, blank=True, null=True)
+        handed_cmsec= models.CharField(db_column='HANDED_CMSEC',max_length=20, blank=True, null=True)
+        comp_cmsec= models.CharField(db_column='COMP_CMSEC',max_length=20, blank=True, null=True)
+        handed_cmserv= models.CharField(db_column='HANDED_CMSERV',max_length=20, blank=True, null=True)
+        comp_cmserv= models.CharField(db_column='COMP_CMSERV',max_length=20, blank=True, null=True)
+        action = models.CharField(db_column='ACTION',max_length=20, blank=True, null=True)
+        sl_no = models.CharField(db_column='SL_NO',max_length=5,blank=True,null=True)
+        last_modified = models.CharField(db_column='LAST_MODIFIED',max_length=50, blank=True, null=True)
+        login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)  # Field name made lowercase.
+
+        class Meta:
+                db_table = 'MG9Initial'

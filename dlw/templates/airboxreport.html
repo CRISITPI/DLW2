@@ -4,8 +4,6 @@
 #customers {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
-    margin-left: auto;
-    margin-right: auto;
     width: 100%;
     
 }
@@ -26,68 +24,143 @@
     background-color: #808080;
     color: white;
 }
-input[type=submit] {
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    input[type=button] {
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 6px 6px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
 </style>
 <form action="." method="POST">{%csrf_token%}
 <br>
-<center><h2>Machining of Air Box Report</h2></center>
-  <br>
-  <br>
-<center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:80px;" /></center>
+
 <br>
+<br>
+<center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br>
+<br>
+{% if sub == 0 %}
+<center><input type="text" name="datew" id='datew' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed1" name="btn" id="myproceed" hidden/>
+{% endif %}
+<br>
+{% if sub == 2 %}
+<center><h3>From Date:</h3><input type="text" name="date1" id='date1' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<br>
+<center><h3>To Date:</h3><input type="text" name="date2" id='date2' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed2" name="btn" id="proceeddt" hidden/>
+{% endif %}
+<div id="print">
 {% if sub == 1 %}
-<table id="customers">
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Date : {{dt}}</h2>
+<h2 align="left">Shop Section : Machining of Air box Assembly</h2>
+<table id="customers" align="left">
 <tr>
-<th>Exam Code</th><th>Exam Type</th><th>Exam Date</th>
-<th>Practical Exam Description</th><th>Practical Max. Marks</th>
-<th>Oral Exam Description</th><th>Oral Max. Marks</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
 </tr>
-{% for i in obj %}
+{% for i in ob1 %}
 <tr>
-<td><input type="text" name="code{{forloop.counter}}" class="form-control ll" value="{{i.exam_code}}" readonly /></td>
-<td><input type="text" name="type{{forloop.counter}}" class="form-control ll" value="{{i.exam_type}}" required /></td>
-<td><input type="text" name="date{{forloop.counter}}" class="datepick" value="{{i.exam_date}}" readonly required /></td>
-<td><input type="text" name="prc{{forloop.counter}}" class="form-control ll" value="{{i.prac_desc}}" required /></td>
-<td><input type="text" name="pmax{{forloop.counter}}" class="form-control ll" value="{{i.prac_max}}" required /></td>
-<td><input type="text" name="orl{{forloop.counter}}" class="form-control ll" value="{{i.oral_desc}}" required /></td>
-<td><input type="text" name="omax{{forloop.counter}}" class="form-control ll" value="{{i.oral_max}}" required /></td>
-<td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
 </tr>
 {% endfor %}
-{% endif %}
 </table>
-<br>
-<center><input type="button" name="btn" value="Add exam detail" id="add" class="form-control ll" style="width:150px;" required /></center>
-<br>
-<input type="text" name="total" id="total" value="" hidden/>
-<input type="hidden" name="totindb" value={{totindb}} id="totindb">
-<input type="hidden" name="length" value={{leng}} id="length">
-<div id="items"></div>
-<br>
-<center><input type="submit" name="btn" value="Save" class="form-control ll" required style="width:80px;"/></center>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+</tr>
+{% for i in ob2 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 3 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Date : {{dt1}} to {{dt2}}</h2>
+<h2 align="left">Shop Section : Machining of Air box Assembly</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+</tr>
+{% for i in ob2 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
 </form>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<script type="text/javascript">
+<script>
+$(document).ready(function () {
+    $('#datew').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#myproceed").click();
+    }
+});                   
+});
+$(document).ready(function () {
+    $('#date1').datepicker({
+        dateFormat: 'dd-mm-yy',
+});                   
+});
+$(document).ready(function () {
+    $('#date2').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#proceeddt").click();
+    }
+});                   
+});
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>AirBox Report</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+
+
+}
 </script>
 
 {% endblock content %}

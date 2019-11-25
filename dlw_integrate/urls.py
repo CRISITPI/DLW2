@@ -140,6 +140,12 @@ urlpatterns = [
     path('ajax/m13getpano/',m13getpano,name='m13getpano'),
     path('ajax/m13getwono',m13getwono,name='m13getwono'),
     path('m13view/', m13view, name='m13view'),
+<<<<<<< HEAD
+=======
+    # path('m13registergetwono',m13registergetwono, name='m13registergetwono'),
+    #path('m13registergetpano',m13registergetpano, name='m13registergetpano'),
+    #path('m13registergetno',m13registergetno, name='m13registergetno'),
+>>>>>>> master
     path('ajax/m13getno',m13getno,name='m13getno'),
     path('ajax/m18getRef_no',m18getRef_no,name='m18getRef_no'),
     path('mg7view/', mg7view, name='mg7view'),
@@ -167,7 +173,12 @@ urlpatterns = [
     path('MG33view/', MG33view, name='MG33view'),
     path('m30view/', m30view, name='m30view'),
     path('mg33report/', mg33report, name='mg33report'),
+<<<<<<< HEAD
     path('M13register/', M13register, name='M13register'),
+=======
+    #path('M13register/', M13register, name='M13register'),
+    path('M13register2/', M13register2, name='M13register2'),
+>>>>>>> master
     path('view_exam_data/',view_exam_data, name='view_exam_data'),
     path('ajax/m30getpartno/', m30getpartno, name='m30getpartno'),
     path('ajax/mg33getexam/', mg33getexam, name='mg33getexam'),
@@ -210,4 +221,9 @@ urlpatterns = [
     path('ajax/mg6getmc/',mg6getmc,name='mg6getmc'),
     path('ajax/mg6getcd/',mg6getcd,name='mg6getcd'),
     path('ajax/mg6gettool/',mg6gettool,name='mg6gettool'),
+    path('airboxreport/',airboxreport,name='airboxreport'),
+    path('mg9initialreportviews/',mg9initialreportviews,name='mg9initialreportviews'),
+     path('mg9compreportviews/',mg9compreportviews,name='mg9compreportviews'),
+     path('ajax/mg9getmw/',mg9getmw,name='mg9getmw'),
+     path('ajax/mg9getstaff/',mg9getstaff,name='mg9getstaff'),
 ]
