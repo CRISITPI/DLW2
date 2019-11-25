@@ -12082,9 +12082,6 @@ def mg33report(request):
 def m3a(request):
     return render(request,"m3a.html")
 
-def mg6view(request):
-    return render(request,"mg6view.html")
-
 def performaA(request):
     return render(request,"performaA.html")
 
@@ -12380,7 +12377,8 @@ def whl_editsno(request):
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
 
-
+@login_required
+@role_required(urlpass='/mg6views/')
 def mg6views(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
@@ -12880,22 +12878,13 @@ def M13register(request):
        
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
-<<<<<<< HEAD
-           
             shop = request.POST.get('shop_sec')
-            
             month = request.POST.get('month')
             print("MONTH is **************************",month)
-            
+        
             obj = M13.objects.filter(shop=shop,m13_date__contains=month).values('m13_no','wo','m13_date','part_no','qty_tot','opn','fault_cd','reason','wo_rep','job_no','shop').distinct()
-            
-            
-           
             print("Test")
-            
             leng = obj.count()
-            
-=======
             shop_sec = request.POST.get('shop_sec')
             mon = request.POST.get('month')
             mon1=mon.split("-")
@@ -12904,7 +12893,6 @@ def M13register(request):
             obj = M13.objects.filter(shop=shop_sec,m13_date__contains=mon1).values('m13_no','qty_tot','qty_ins','qty_pas','qty_rej','opn','vendor_cd','fault_cd','reason','slno','m13_sn','wo_rep','m15_no','epc','rej_cat','job_no').distinct()
             leng = obj.count()
             print(leng)
->>>>>>> master
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -12918,16 +12906,11 @@ def M13register(request):
                     'ip':get_client_ip(request),
                     'roles':tmp,
                     'obj': obj,
-<<<<<<< HEAD
-                    
                     'len': leng,
                    
                     'shop_sec': shop,
-                   
-=======
                     'len': leng,
                     'shop_sec': shop_sec,
->>>>>>> master
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
@@ -12942,16 +12925,9 @@ def M13register(request):
                     'roles' :rolelist,
                     'subnav':subnav,
                     'obj': obj,
-<<<<<<< HEAD
-                  
                     'len': leng,
-                    
-                    'shop_sec': shop,
-                    
-=======
-                    'len': leng,
+                    'shop_sec': shop, 'len': leng,
                     'shop_sec': shop_sec,
->>>>>>> master
                 }
                
             elif(len(rolelist)>1):
@@ -12963,25 +12939,15 @@ def M13register(request):
                     'usermaster':usermaster,
                     'roles' :rolelist,
                     'subnav':subnav,
-                    'obj': obj,
-<<<<<<< HEAD
-                  
-                    'len': leng,
+                    'obj': obj,'len': leng,
                     'len1':leng1,
-                    
-                    'shop_sec': shop,
-                   
-=======
-                    'len': leng,
+                    'shop_sec': shop,'len': leng,
                     'shop_sec': shop_sec,
->>>>>>> master
                 }
 
         
     return render(request,"M13register.html",context)
 
-<<<<<<< HEAD
-=======
 def m13register2getno(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
@@ -13426,34 +13392,14 @@ def mg9compreportviews(request):
             mc_no = request.POST.get('mcno')
             cd_no = request.POST.get('cd_no')
             tool_no = request.POST.get('tool_no')
-
-           
-
-            
             print(tool_no)
             print(mc_no)
             obj  = MG6.objects.filter(tool_no=tool_no,machine_no=mc_no,cd_no=cd_no).values('tool_no','ticket_no','tool_des','date_of_damage','machine_no','cd_no','cause_of_damage','shop_suprintendent','sec_chargeman','remarks')
             obj1 = Lc1.objects.filter(lcno=mc_no)
             
             print(obj)
-        #     obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').distinct()
-        #     obj1 = M5DOCnew.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty').distinct()
-        #     obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
-        #     obj3 = Batch.objects.filter(bo_no=wo_no,part_no=part_no).values('batch_type','part_no').order_by('part_no').distinct()
-        #     obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
-        #     obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
-        #     print("obj1",obj1)
-        #     print("obj4",obj4)
-        #    # print("oj4 len",len(obj4))
-        #     ticket= randint(1111,9999)
             leng = obj.count()
             leng1 = obj1.count()
-            # leng1=obj1.count()
-            # leng2=obj2.count()
-            # leng3=obj3.count()
-            # leng4=obj4.count()
-            #print("lengg4",leng4)
-            
             
             if "Superuser" in rolelist:
                     tm=M5SHEMP.objects.all().values('shopsec').distinct()
@@ -13571,4 +13517,3 @@ def mg9compreportviews(request):
 
 
     return render(request,"mg9compreportviews.html",context)
->>>>>>> master
