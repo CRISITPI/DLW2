@@ -17,6 +17,34 @@
                          });
                 </script>
                 <script>
+                    $(document).ready(function () {
+                            $('#in_qty').datepicker({
+                                dateFormat: 'dd-mm-yy'
+                            });
+                        });
+                    </script> 
+                    <script>
+                    $(document).ready(function () {
+                            $('#out_qty').datepicker({
+                                dateFormat: 'dd-mm-yy'
+                            });
+                        });
+                    </script>
+                    <script>
+                            $(document).ready(function () {
+                                    $('#editin_qty').datepicker({
+                                        dateFormat: 'dd-mm-yy'
+                                    });
+                                });
+                            </script> 
+                            <script>
+                            $(document).ready(function () {
+                                    $('#editout_qty').datepicker({
+                                        dateFormat: 'dd-mm-yy'
+                                    });
+                                });
+                            </script>
+                <script>
                         $(document).ready(function () {
                              $('#inspectdate').datepicker({
                                  dateFormat: 'dd-mm-yy'
@@ -150,6 +178,8 @@ footer, .page-content::after{
         <th>Wheel No(NDE)</th>
         <th>Bull Gear No. &nbsp; </th>
         <th>Bull Gear Make &nbsp; </th>
+        <th>Machine In Date &nbsp; </th>
+        <th>Machine Out Date &nbsp; </th>
         <th>Dispatch To</th>
         <th>Dispatch Date &nbsp; </th>
         </tr>
@@ -167,6 +197,8 @@ footer, .page-content::after{
         <td>{{objec.wheelno_nde}} <br><br></td>
         <td>{{objec.bullgear_no}} <br><br></td>
         <td>{{objec.bullgear_make}} <br><br></td>
+        <td>{{objec.in_qty}} <br><br></td>
+        <td>{{objec.out_qty}} <br><br></td>
         <td>{{objec.dispatch_to}} <br><br></td>
         <td>{{objec.dispatch_date}} <br><br></td>
         </tr>
@@ -263,6 +295,16 @@ footer, .page-content::after{
                                         <input type="text" class="form-control" name="bullgear_no" id="bullgear_no" required>
                                 </div> 
                                 </div>
+                                <div class="row">
+                                        <div class="col-6">
+                                            <label for="">Machine In Date</label>
+                                            <input type="text" class="form-control" name="in_qty" id="in_qty" placeholder="dd-mm-yyyy" readonly>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="">Machine Out Date</label>
+                                            <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
+                                        </div>
+                                    </div>
                                 <div class="row">
                                         <div class="col-6">
                                                 <label for="">Bull Gear Make</label>
@@ -695,7 +737,15 @@ footer, .page-content::after{
                                   <div class="col-6">
                                           <label for="">Bull Gear Make</label>
                                           <input type="text" class="form-control" name="editbullgear_make" id="editbullgear_make" required>
-                                  </div>   
+                                  </div>  
+                                        <div class="col-6">
+                                            <label for="">Machine In Date</label>
+                                            <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="">Machine Out Date</label>
+                                            <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
+                                        </div>
                   </div>  
               </div>                      
       <div class="modal-footer">
@@ -785,26 +835,6 @@ footer, .page-content::after{
 </form>
 
 <script>
-    var i=0;
-        $(document).ready(function() {
-            $('#delform').bootstrapValidator({
-                feedbackIcons: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-                fields: {
-                    delsno: {
-                        validators: {
-                            notEmpty: {
-                                message: 'The username is required'
-                            }
-                        }
-                    }
-                }
-            });
-        });
-        
         $("#addbono").change(function(e){
             e.preventDefault();
             var selbo_no = $(this).val();
@@ -840,6 +870,8 @@ footer, .page-content::after{
                         $("#editbo_qty").val(`${response[0].bo_qty}`);
                         $("#editlocos").val(`${response[0].loco_type}`);
                         $("#editdate").val(`${response[0].date}`);
+                        $("#editin_qty").val(`${response[0].in_qty}`);
+                        $("#editout_qty").val(`${response[0].out_qty}`);
                         $("#editaxle_no").val(`${response[0].axle_no}`);
                         $("#editwheelno_de").val(`${response[0].wheelno_de}`);
                         $("#editwheelno_nde").val(`${response[0].wheelno_nde}`);

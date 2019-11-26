@@ -1,27 +1,55 @@
 {% extends 'base.html' %} {% block content %}
 <html>
         <head>
-                <script>
-                   $(document).ready(function () {
-                        $('#date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                </script>
-                <script>
-                    $(document).ready(function () {
-                        $('#editdate').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                </script>
-                <script>
-                        $(document).ready(function () {
-                             $('#dispatch_date').datepicker({
-                                 dateFormat: 'dd-mm-yy'
-                             });
-                         });
-                </script>
+<script>
+    $(document).ready(function () {
+        $('#date').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+            $('#in_qty').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+</script> 
+<script>
+    $(document).ready(function () {
+            $('#out_qty').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+</script>
+<script>
+    $(document).ready(function () {
+            $('#editin_qty').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+</script> 
+<script>
+    $(document).ready(function () {
+        $('#editout_qty').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#editdate').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
+<script>
+        $(document).ready(function () {
+                $('#dispatch_date').datepicker({
+                    dateFormat: 'dd-mm-yy'
+                });
+            });
+</script>
         </head> 
 <style>
         .default {
@@ -134,6 +162,8 @@
             <th>Out Quantity &nbsp;</th>
             <th>Shaft Machining &nbsp;</th>
             <th>Date &nbsp;</th>
+            <th>Machine In Date &nbsp; </th>
+            <th>Machine Out Date &nbsp; </th>
             <th>Dispatch To &nbsp;</th>
             </tr>
             {% for objec in object %}
@@ -148,6 +178,8 @@
             <td>{{objec.out_qty}} <br><br></td>
             <td>{{objec.shaft_m}} <br><br></td>
             <td>{{objec.date}} <br><br></td>
+            <td>{{objec.in_qty}} <br><br></td>
+            <td>{{objec.out_qty}} <br><br></td>
             <td>{{objec.dispatch_to}} <br><br></td>
             </tr>
             {% endfor %}
@@ -212,16 +244,16 @@
                                     </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <label for="">In Quantity</label>
-                                            <input type="number" class="form-control" name="in_qty" id="in_qty" required>
-                                     </div>
-                                        <div class="col-6">
-                                            <label for="">Out Quantity</label>
-                                            <input type="number" class="form-control" name="out_qty" id="out_qty" required>
-                                        </div>
-                                        </div>
+                                        <div class="row">
+                                                <div class="col-6">
+                                                    <label for="">Machine In Date</label>
+                                                    <input type="text" class="form-control" name="in_qty" id="in_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="">Machine Out Date</label>
+                                                    <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
+                                            </div>
 
                                         <div class="row">
                                                 <div class="col-6">
@@ -306,17 +338,16 @@
                                             </select>
                                         </div>
                                         </div>
-                                
                                         <div class="row">
-                                            <div class="col-6">
-                                                <label for="">In Quantity</label>
-                                                <input type="number" class="form-control" name="editin_qty" id="editin_qty" required>
+                                                <div class="col-6">
+                                                    <label for="">Machine In Date</label>
+                                                    <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="">Machine Out Date</label>
+                                                    <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
                                             </div>
-                                            <div class="col-6">
-                                                <label for="">Out Quantity</label>
-                                                <input type="number" class="form-control" name="editout_qty" id="editout_qty" required>
-                                            </div>
-                                        </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
