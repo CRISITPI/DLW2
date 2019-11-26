@@ -12880,7 +12880,6 @@ def M13register(request):
        
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
-<<<<<<< HEAD
            
             shop = request.POST.get('shop_sec')
             
@@ -12895,16 +12894,6 @@ def M13register(request):
             
             leng = obj.count()
             
-=======
-            shop_sec = request.POST.get('shop_sec')
-            mon = request.POST.get('month')
-            mon1=mon.split("-")
-            mon=str(mon1[1])+"-"+str(mon1[0])
-            print("new",mon)
-            obj = M13.objects.filter(shop=shop_sec,m13_date__contains=mon1).values('m13_no','qty_tot','qty_ins','qty_pas','qty_rej','opn','vendor_cd','fault_cd','reason','slno','m13_sn','wo_rep','m15_no','epc','rej_cat','job_no').distinct()
-            leng = obj.count()
-            print(leng)
->>>>>>> master
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -12918,16 +12907,11 @@ def M13register(request):
                     'ip':get_client_ip(request),
                     'roles':tmp,
                     'obj': obj,
-<<<<<<< HEAD
                     
                     'len': leng,
                    
                     'shop_sec': shop,
                    
-=======
-                    'len': leng,
-                    'shop_sec': shop_sec,
->>>>>>> master
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
@@ -12942,16 +12926,11 @@ def M13register(request):
                     'roles' :rolelist,
                     'subnav':subnav,
                     'obj': obj,
-<<<<<<< HEAD
                   
                     'len': leng,
                     
                     'shop_sec': shop,
                     
-=======
-                    'len': leng,
-                    'shop_sec': shop_sec,
->>>>>>> master
                 }
                
             elif(len(rolelist)>1):
@@ -12964,36 +12943,18 @@ def M13register(request):
                     'roles' :rolelist,
                     'subnav':subnav,
                     'obj': obj,
-<<<<<<< HEAD
                   
                     'len': leng,
                     'len1':leng1,
                     
                     'shop_sec': shop,
                    
-=======
-                    'len': leng,
-                    'shop_sec': shop_sec,
->>>>>>> master
                 }
 
         
     return render(request,"M13register.html",context)
 
-<<<<<<< HEAD
-=======
-def m13register2getno(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        wo_no = request.GET.get('wo_no')
-        part_no = request.GET.get('part_nop')
-        # print(wo_no)
-        # print(shop_sec)
-        # print(part_no)
-        pp = list(M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no').distinct())
-        # print(pp)
-        return JsonResponse(pp, safe = False)
-    return JsonResponse({"success":False}, status=400)
+
 
 
 @login_required
@@ -13571,4 +13532,3 @@ def mg9compreportviews(request):
 
 
     return render(request,"mg9compreportviews.html",context)
->>>>>>> master

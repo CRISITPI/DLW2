@@ -125,7 +125,7 @@
                 <td>
                     <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
-            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+            <option value="Select">Select</option>
             {% if lenm == 1 %}
             {% for role in roles %}
                 <option selected readonly>{{role}}</option>
@@ -140,7 +140,7 @@
                 </td>
                 <td>
                   <label for="sno"><b>Month</b></label>            
-                  <input type="text" class="form-control ll" id="month" name="month" onchange ="cproceed()" required readonly/>
+                  <input type="text" class="form-control ll" id="month" name="month" onchange ="cproceed()" required autocomplete="off"/>
               </td>
     </tr>
     <script>
@@ -152,17 +152,10 @@
 
 <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
 
-
-
-
-
  <br><br>
  
 
 <div id="print" style="width:60%;">
-
-
-
 
     <h3 align="center"> Monthly Position SHOP/ SECTION WISE<br></h3>
 
@@ -218,13 +211,7 @@
         </tbody>
 </table>
 
-
-
-
 </div>
-
-
-
 
 <center>
   <input id="print" type="button" onclick="printDiv()" value="Print"> 
@@ -239,10 +226,16 @@
 
   function cproceed()
   {
-      document.querySelector("#myproceed").click();
-  }
+  
+                      var shop_sec = $("#shop_sec").val()
 
- 
+                      if(shop_sec == "Select"){
+                        alert("select Shop Section First");
+                        return false;
+                      }else{
+                        document.querySelector("#myproceed").click();
+                      } 
+  }
 
 function printDiv() {
      var printContents = document.getElementById("printdata").innerHTML;
