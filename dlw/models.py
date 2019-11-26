@@ -3439,6 +3439,8 @@ class PinionPressing(models.Model):
     bo_date=models.CharField(max_length=20,null=True)
     pt_no=models.CharField(max_length=20,null=True)
     bo_qty=models.CharField(max_length=20,null=True)
+    in_qty=models.CharField(max_length=20,null=True)
+    out_qty=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
     tm_no=models.CharField(max_length=20,null=True)
     tm_make=models.CharField(max_length=20,null=True)
