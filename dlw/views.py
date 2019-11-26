@@ -12974,22 +12974,6 @@ def M13register(request):
         
     return render(request,"M13register.html",context)
 
-<<<<<<< HEAD
-
-=======
-def m13register2getno(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        wo_no = request.GET.get('wo_no')
-        part_no = request.GET.get('part_nop')
-        # print(wo_no)
-        # print(shop_sec)
-        # print(part_no)
-        pp = list(M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no').distinct())
-        # print(pp)
-        return JsonResponse(pp, safe = False)
-    return JsonResponse({"success":False}, status=400)
->>>>>>> master
 
 
 @login_required
@@ -13547,8 +13531,6 @@ def mg9compreportviews(request):
 
 
     return render(request,"mg9compreportviews.html",context)
-<<<<<<< HEAD
-=======
 
 
 @login_required
@@ -13830,4 +13812,3 @@ def bogiereport(request):
             }
 
     return render(request,'bogiereport.html',context)
->>>>>>> master
