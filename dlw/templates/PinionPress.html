@@ -23,6 +23,34 @@
                 });
             });
         </script>
+<script>
+    $(document).ready(function () {
+            $('#in_qty').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+</script> 
+<script>
+    $(document).ready(function () {
+            $('#out_qty').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+</script>
+<script>
+    $(document).ready(function () {
+            $('#editin_qty').datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+        });
+</script> 
+<script>
+    $(document).ready(function () {
+        $('#editout_qty').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+</script>
 
         </head>
    
@@ -132,6 +160,8 @@ footer, .page-content::after{
                 <th>Batch Order Date </th>
                 <th>Loco Type &nbsp;</th>
                 <th>Date &nbsp; </th>
+                <th>In Quantity &nbsp;</th>
+                <th>Out Quantity &nbsp;</th>
                 <th>Traction Motor No. </th>
                 <th>Traction Motor Make </th>
                 <th>Dispatch To</th>
@@ -146,6 +176,8 @@ footer, .page-content::after{
                 <td>{{objec.bo_date}} <br></td>
                 <td>{{objec.loco_type}} <br></td>
                 <td>{{objec.date}} <br></td>
+                <td>{{objec.in_qty}} <br><br></td>
+                <td>{{objec.out_qty}} <br><br></td>
                 <td>{{objec.tm_no}} <br></td>
                 <td>{{objec.tm_make}} <br></td>
                 <td>{{objec.dispatch_to}} <br><br></td>
@@ -193,6 +225,16 @@ footer, .page-content::after{
                                         <input type="text" class="form-control" name="bo_qty" id="bo_qty" required readonly>
                                     </div>
                                     </div>
+                                    <div class="row">
+                                                <div class="col-6">
+                                                    <label for="">Machine In Date</label>
+                                                    <input type="text" class="form-control" name="in_qty" id="in_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="">Machine Out Date</label>
+                                                    <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
+                                            </div>
 
                                         <div class="row">
                                             <div class="col-6">
@@ -267,7 +309,14 @@ footer, .page-content::after{
                                                     <h6><label>Batch Qty</label></h6>
                                                     <input type="text" class="form-control" name="editbo_qty" id="editbo_qty" required readonly>
                                             </div>
-                                        
+                                                <div class="col-6">
+                                                    <label for="">Machine In Date</label>
+                                                    <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="">Machine Out Date</label>
+                                                    <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
+                                                </div>
                                       
                                          <div class="col-6">
                                                 <h6><label for="">Loco Type</label></h6>
@@ -491,6 +540,8 @@ footer, .page-content::after{
                                 $("#editdate").val(`${response[0].date}`);
                                 $("#edittm_make").val(`${response[0].tm_make}`);
                                 $("#edittm_no").val(`${response[0].tm_no}`);
+                                $("#editin_qty").val(`${response[0].in_qty}`);
+                                $("#editout_qty").val(`${response[0].out_qty}`);
                                 
                                 
                             }
