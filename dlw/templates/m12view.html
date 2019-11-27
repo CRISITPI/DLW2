@@ -135,8 +135,12 @@
          </h5>
         
        <h5><b>MONTH: </b>
-       {{obj3.month}}
-       <input type="hidden" name="month" value="{{month}}" pattern="[A-Z]*{3}" title="Upper case alphabets only"/>
+       {% if obj3.month %}
+        {{obj3.month}}
+       {% else %}
+       {{month}} 
+       {% endif %}
+       <input type="hidden" name="month" value="{{month}}" pattern="[A-Z]*{3}" title="Upper case alphabets only" />
        </h5>
        
        <h5><b>WORK ORDER NUMBER: </b>{{wo_no}}</h5>
@@ -184,47 +188,47 @@
             <tr>
             <td>
               {% if i.date %}
-                <input type="date" id="date"  class="myinp2" value="{{i.date}}" name="date{{ forloop.counter }}"  >
+                <input type="date" id="date"  class="myinp2" value="{{i.date}}" name="date{{ forloop.counter }}"  readonly>
                 {% else %}
-                <input type="date" id="date"  class="myinp2" value="0" name="date{{ forloop.counter }}">
+                <input type="date" id="date"  class="myinp2" value="0" name="date{{ forloop.counter }}" readonly>
               {% endif %}  
             </td>
             <td>
 
               {% if i.month %}
-                <input type="text" id="month" value="{{i.month}}" name="month{{ forloop.counter }}"  pattern="[A-Z]*" title="Character Value" required>  
+                <input type="text" id="month" value="{{i.month}}" name="month{{ forloop.counter }}"  pattern="[A-Z]*" title="Character Value" required  readonly>  
                 {% else %}
-                <input type="text" id="month" value="{{month}}" name="month{{ forloop.counter }}"  pattern="[A-Z]*"  title="Character Value" required>
+                <input type="text" id="month" value="{{month}}" name="month{{ forloop.counter }}"  pattern="[A-Z]*"  title="Character Value" required placeholder="Enter month" readonly>
                 {% endif %}  
             </td>
             <td>
               {% if i.in1 %}
-                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}"  onchange="tottime('in1{{ forloop.counter }}');" >
+                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}"  onchange="tottime('in1{{ forloop.counter }}');"  readonly>
                 {% else %}
-                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="0" name="in1{{ forloop.counter }}"  onchange="tottime('in1{{ forloop.counter }}');"   >
+                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="0" name="in1{{ forloop.counter }}"  onchange="tottime('in1{{ forloop.counter }}');"  placeholder="Enter IN time" readonly>
                 
               {% endif %}  
               
               </td> 
               <td>
                {% if i.out %}
-                  <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}"   onchange="tottime('out{{ forloop.counter }}');"  >
+                  <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}"   onchange="tottime('out{{ forloop.counter }}');" readonly  >
                   {% else %}
                   
-                  <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="0" name="out{{ forloop.counter }}"   onchange="tottime('out{{ forloop.counter }}');"  >
+                  <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="0" name="out{{ forloop.counter }}"   onchange="tottime('out{{ forloop.counter }}');"  placeholder="Enter OUT time" readonly>
         
                 {% endif %}    
           
                </td> 
                <td>
                 
-                  <input type="text" id="cat{{ forloop.counter }}"   value="{{i.cat}}"  name="cat{{ forloop.counter }}"   >
+                  <input type="text" id="cat{{ forloop.counter }}"   value="{{i.cat}}"  name="cat{{ forloop.counter }}"  placeholder="Enter Category" readonly >
                   
                 </td>
                <td>
 
                 
-                      <select name="reasons_for_idle_time{{ forloop.counter }}" id="reasons_for_idle_time_noid{{forloop.counter}}">
+                      <select name="reasons_for_idle_time{{ forloop.counter }}" id="reasons_for_idle_time_noid{{forloop.counter}}" readonly>
                           <option value="select">SELECT REASON</option>
                           <option value="machine_repair">MACHINE REPAIR</option>
                           <option value="no_power">NO POWER</option>
@@ -241,7 +245,7 @@
                           <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
                           <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
                       </select>
-                      <input type="hidden" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}">
+                      <input type="hidden" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}" readonly>
                  
                 <!-- {% if i.reasons_for_idle_time %}
                 <input type="text" id="reasons_for_idle_time{{ forloop.counter }}"   value="{{i.reasons_for_idle_time}}"  name="reasons_for_idle_time{{ forloop.counter }}"   >
@@ -258,9 +262,9 @@
                 </td>
                 <td>
                     {% if i.idle_time %}
-                     <input type="text" id="idle_time"  value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}"  >
+                     <input type="text" id="idle_time"  value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}" readonly >
                       {% else %}
-                     <input type="text" id="idle_time"   value="0" name="idle_time{{ forloop.counter }}">
+                     <input type="time" id="idle_time"   value="0" name="idle_time{{ forloop.counter }}" placeholder="Enter Idle time" readonly>
                     {% endif %}  
                   </td>
                 
