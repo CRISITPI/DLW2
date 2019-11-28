@@ -47,6 +47,12 @@
         background-color: #45a049;
         text-align: center;
     }
+    #head{
+
+      background-color:slategrey;
+      width: 120%;
+      color: white;
+    }
 </style>
 <br>
 <br>
@@ -56,7 +62,7 @@
 <br>
 <form action="{% url 'm13view' %}" method="POST"> {% csrf_token %}
     <div class="container">
-        <table class="table">
+        <table id="head" class="table">
             <tr>
                 <td>
                     <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>
@@ -119,7 +125,7 @@
 <br>
 {% endfor %}
 
-<table border="2" align="center" width="100%">
+<table id="head" border="2" align="center" width="100%">
 <tr>
 <th><h5><b>ORDER & BATCH NO: </b> </h5></th>
 <th><h5><b>C&D NO.:</b> </h5></th>

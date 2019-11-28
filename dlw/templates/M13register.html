@@ -1,6 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
 
 
@@ -212,12 +213,18 @@
 </table>
 
 </div>
-
+</div>
+<br>
+<br>
 <center>
-  <input id="print" type="button" onclick="printDiv()" value="Print"> 
-</center> 
+  
+  <a style="color:white;" class="btn btn-success btn-lg" onclick="printDiv()" >
+        <span class="glyphicon glyphicon-print"></span> Print 
+      </a>
+  </center>  
 
-
+<br>
+<br>
 
 </form>
 
@@ -230,10 +237,11 @@
                       var shop_sec = $("#shop_sec").val()
 
                       if(shop_sec == "Select"){
-                        alert("select Shop Section First");
+                        alert("Select Shop Section First, then Select Month/ Year");
                         return false;
                       }else{
                         document.querySelector("#myproceed").click();
+                        
                       } 
   }
 

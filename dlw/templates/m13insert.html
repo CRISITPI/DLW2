@@ -47,6 +47,13 @@
         background-color: #45a049;
         text-align: center;
     }
+
+    #head{
+
+        background-color:slategrey;
+        width: 120%;
+        color: white;
+      }
 </style>
 <br>
 <br>
@@ -68,7 +75,7 @@
 <br>
 <form action="{% url 'm13insert' %}" method="POST"> {%csrf_token%}
     <div class="container">
-        <table class="table">
+        <table id="head" class="table">
             <tr>
                 <td>
                     <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>

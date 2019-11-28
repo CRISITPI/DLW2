@@ -524,15 +524,6 @@ def update_emp_shift_admin(request):
     }
     return render(request,'update_emp_shift_admin.html',context)
 
-
-
-
-
-
-
-
-
-
 def getEmpInfo(request):
     if request.method == "GET" and request.is_ajax():
         emp_id=request.GET.get('username')
@@ -555,8 +546,6 @@ def getEmpInfo(request):
         return JsonResponse({"emp_info":emp_info}, status=200)
 
     return JsonResponse({"success":False}, status=400)
-
-
 
 def getauthempInfo(request):
     if request.method == "GET" and request.is_ajax():
@@ -581,16 +570,6 @@ def getauthempInfo(request):
             return JsonResponse({"auth_info":auth_info}, status=200)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
-
-
-
-
-
 def getPermissionInfo(request):
     if request.method == "GET" and request.is_ajax():
         selectrole=request.GET.get('username')
@@ -602,15 +581,6 @@ def getPermissionInfo(request):
         return JsonResponse({"permission_info":permission_info}, status=200)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
-
-
-
-
 def getshopempinfo(request):
     if request.method == "GET" and request.is_ajax():
         shop=request.GET.get('username')
@@ -621,15 +591,6 @@ def getshopempinfo(request):
             }
         return JsonResponse({"shopemp_info":shopemp_info}, status=200)
     return JsonResponse({"success":False}, status=400)
-
-
-
-
-
-
-
-
-
 
 @login_required
 @role_required(urlpass='/delete_user/')
@@ -669,12 +630,6 @@ def delete_user(request):
     return render(request,'delete_user.html',context)
 
 
-
-
-
-
-
-
 @login_required
 @role_required(urlpass='/forget_password/')
 def forget_password(request):
@@ -708,12 +663,6 @@ def forget_password(request):
     }
     return render(request,'forget_password.html',context)
 
-
-
-
-
-
-
 def forget_path(request):
     if request.method == "POST":
         option=request.POST.get('forget')
@@ -732,9 +681,6 @@ class ChartData(APIView):
         obj= testc.objects.all()
         serializer=testSerializer(obj,many=True)
         return Response(serializer.data)
-
-
-
 
 
 @login_required
@@ -6378,11 +6324,6 @@ def wheelnde(request):
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
 @login_required
 @role_required(urlpass='/M20view/')
 def M20view(request):
@@ -6603,11 +6544,6 @@ def m20getstaffName(request):
         # print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
-
-
-
 
 
 @login_required
@@ -6858,55 +6794,6 @@ def mg33getexam(request):
 
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
 @login_required
 @role_required(urlpass='/m26view/')
 def m26view(request):
@@ -6934,13 +6821,6 @@ def m26view(request):
             'subnav':subnav,
         }
     return render(request,'m26view.html',context)
-
-
-
-
-
-
-
 
 
 @login_required
@@ -7138,8 +7018,6 @@ def m27getWorkOrderDate(request):
         print(wono1)
         return JsonResponse(wono1, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
 
 
 @login_required
@@ -11998,7 +11876,11 @@ def mg33report(request):
     if request.method=="POST":
         bval=request.POST.get('proceed')
         if bval=='Proceed':
+            
             stfno=set()
+            
+
+            
             ex=MG33new.objects.all().values('staff_no')
             for i in ex:
                 if i['staff_no'] is not None:
@@ -12007,26 +11889,31 @@ def mg33report(request):
             staffno=request.POST.get('staff_no')
             update=request.POST.get('updt_date')
             ex = MG33new.objects.filter(shop_sec=shpsec,staff_no=staffno,updt_date=update).all()
-            pscore=ex[0].prac_score
-            oscore=ex[0].oral_score
-            result=ex[0].result
-            trdadmin=ex[0].trade_test_admin
-            worker=ex[0].name
-            secsup=ex[0].sec_sup
-            trdoff=ex[0].trade_test_officer
-            print(ex)
-            # dictemper={}
-            excode=set()
-            j=0
-            for i in range(len(ex)):
-                excode.add(ex[i].exam_code)
-            print(excode)
-            for a in excode:
-                obj1=exam_master.objects.filter(exam_code=a)
+            if not ex:
+                msg = "data not found"
+            else:
+                
+                pscore=ex[0].prac_score
+                oscore=ex[0].oral_score
+                result=ex[0].result
+                trdadmin=ex[0].trade_test_admin
+                worker=ex[0].name
+                secsup=ex[0].sec_sup
+                trdoff=ex[0].trade_test_officer
+                print(ex)
+                # dictemper={}
+                excode=set()
+                j=0
+                for i in range(len(ex)):
+                    excode.add(ex[i].exam_code)
+                print(excode)
+                for a in excode:
+                    obj1=exam_master.objects.filter(exam_code=a)
                 # temper = {str(j):{"examtype":obj1[0].exam_type,
                 #                     "pracd":obj1[0].prac_desc,"orald":obj1[0].oral_desc,}}
                 # dictemper.update(copy.deepcopy(temper))
                 # j=j+1
+                
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -12974,22 +12861,6 @@ def M13register(request):
         
     return render(request,"M13register.html",context)
 
-<<<<<<< HEAD
-
-=======
-def m13register2getno(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        wo_no = request.GET.get('wo_no')
-        part_no = request.GET.get('part_nop')
-        # print(wo_no)
-        # print(shop_sec)
-        # print(part_no)
-        pp = list(M13.objects.filter(shop=shop_sec,part_no=part_no,wo=wo_no).values('m13_no').distinct())
-        # print(pp)
-        return JsonResponse(pp, safe = False)
-    return JsonResponse({"success":False}, status=400)
->>>>>>> master
 
 
 @login_required
@@ -13547,8 +13418,6 @@ def mg9compreportviews(request):
 
 
     return render(request,"mg9compreportviews.html",context)
-<<<<<<< HEAD
-=======
 
 
 @login_required
@@ -13830,4 +13699,3 @@ def bogiereport(request):
             }
 
     return render(request,'bogiereport.html',context)
->>>>>>> master

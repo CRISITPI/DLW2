@@ -82,7 +82,7 @@
                 <td>
                     <label for="staff_no"><b>Staff NO/प्रमुख कर्मचारी :</b></label>
                     <select class="form-control ll" id="staff_no" name="staff_no" required>
-                        <option id="op_staff" selected disabled hidden>Select Staff No</option>
+                        <option value="select" id="op_staff" selected disabled hidden>Select Staff No</option>
                         {% for i in obj %}
                         <option value="{{i}}">{{i}}</option>
                         {% endfor %}
@@ -147,7 +147,7 @@
                         <td>{{i.oral_desc}}</td>
                         <td>{{pscore}}</td>
                         <td>{{oscore}}</td>
-                        <td>{{result}}</td>
+                        <td>{{i.result}}</td>
                     </tr>
                     {%endfor%}
                 </tbody>
