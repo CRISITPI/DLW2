@@ -13714,10 +13714,6 @@ def mg9compreportviews(request):
         #                 print(comp)
 
     return render(request,"mg9compreportviews.html",context)
-<<<<<<< HEAD
-
-=======
->>>>>>> a13c3dff612f8acc2743edb1c424d23fe5484f31
 
 def mg9getmwno(request):
     if request.method == "GET" and request.is_ajax():
