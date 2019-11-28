@@ -3439,6 +3439,8 @@ class PinionPressing(models.Model):
     bo_date=models.CharField(max_length=20,null=True)
     pt_no=models.CharField(max_length=20,null=True)
     bo_qty=models.CharField(max_length=20,null=True)
+    in_qty=models.CharField(max_length=20,null=True)
+    out_qty=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
     tm_no=models.CharField(max_length=20,null=True)
     tm_make=models.CharField(max_length=20,null=True)
@@ -4371,3 +4373,95 @@ class MG9Initial(models.Model):
 
         class Meta:
                 db_table = 'MG9Initial'
+
+
+class Mgr(models.Model):
+    shop_sec = models.CharField(max_length=4, blank=True, null=True)
+    instrument_number = models.CharField(max_length=50, blank=True, null=True)
+    tool_des = models.CharField(max_length=50, blank=True, null=True)
+    type_mme = models.CharField(max_length=50, blank=True, null=True)
+    least_count = models.FloatField(max_length=50, blank=True, null=True)
+    calibration_frequency = models.CharField(max_length=50, blank=True, null=True) 
+    employee = models.CharField(max_length=50, blank=True, null=True) 
+    login_id = models.CharField(max_length=10, blank=True, null=True)
+    last_modified = models.DateTimeField(blank=True, null=True)
+
+class mgrreport(models.Model):
+    shop_sec = models.CharField(max_length=4, blank=True, null=True)
+    instrument_number = models.CharField(max_length=50, blank=True, null=True)
+    tool_des = models.CharField(max_length=50, blank=True, null=True)
+    range = models.CharField(max_length=50, blank=True, null=True) 
+    periodicity_check = models.CharField(max_length=50, blank=True, null=True)
+    date_calibration = models.CharField(max_length=50, blank=True, null=True)
+    calibration_status = models.CharField(max_length=50, blank=True, null=True)
+    calibration_due_date = models.CharField(max_length=50, blank=True, null=True)
+    login_id = models.CharField(max_length=10, blank=True, null=True)
+    last_modified = models.DateTimeField(blank=True, null=True)
+
+class m3a(models.Model):
+    login_id = models.CharField(max_length=10, blank=True, null=True)
+    last_modified = models.DateTimeField(blank=True, null=True)
+    shop_sec = models.CharField(max_length=4, blank=True, null=True)  # Field name made lowercase
+    item = models.CharField( max_length=35, blank=True, null=True)  # Field name made lowercase.
+    part_no = models.CharField(max_length=8, blank=True, null=True)
+    drgno = models.CharField( max_length=15, blank=True, null=True) 
+    C_Dno = models.CharField(max_length=8, blank=True, null=True)
+    wo_no = models.CharField( max_length=7, blank=True, null=True)  # Field name made lowercase.
+    qty_ordr = models.DecimalField( max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    qty_comp = models.DecimalField( max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    as_this_qty = models.CharField( max_length=15, blank=True, null=True)
+    sign=models.CharField( max_length=50, blank=True, null=True) #nameofthe
+    desgn = models.CharField(max_length=10, blank=True, null=True)  # Field name made lowercase.
+    comp_part_full = models.CharField( max_length=15, blank=True, null=True)
+    cost_book_yesno= models.CharField( max_length=15, blank=True, null=True)
+    dspc=models.CharField( max_length=100, blank=True, null=True) #dispatch particulars
+    m3a_date = models.CharField(max_length=20, blank=True, null=True) 
+    est_cost=models.CharField(max_length=20, blank=True, null=True)
+    deb_against=models.CharField(max_length=20, blank=True, null=True)
+    ep_code = models.CharField( max_length=2, blank=True, null=True)  # Field name made lowercase.
+    loco_fr = models.CharField( max_length=4, blank=True, null=True)  # Field name made lowercase.
+    loco_to = models.CharField(max_length=4, blank=True, null=True)  # Field name made lowercase.
+
+
+class MG21(models.Model):
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(db_column=' DATE', max_length=50)
+    name = models.CharField(db_column='NAME', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    to_the=models.CharField( db_column=' TO_THE', max_length=25)
+    rep_no= models.CharField(db_column='REP_NO', max_length=15)
+    acc_date= models.CharField(db_column='ACCCIDENT_DATE', max_length=10, blank=True, null=True, default='0')
+    super_in= models.CharField(db_column='SUPER_INTENDENT', max_length=35, blank=True)  # Field name made lowercase.
+    last_modified=models.CharField(db_column='LAST_MODIFIED', max_length=15)
+    login_id=models.CharField(db_column='LOGIN_ID', max_length=15)
+
+    class Meta:
+        db_table = 'MG21'
+
+
+class MG9Complete(models.Model):
+        sec = models.CharField(db_column='SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+        mw_no = models.CharField(db_column='MW_NO', max_length=4, blank=True, null=True)  # Field name made lowercase.
+        staff_no = models.CharField(db_column='STAFF_NO', max_length=5, blank=True, null=True)  # Field name made lowercase.
+        complaint = models.CharField(db_column='COMPLAINT', max_length=70, blank=True, null=True)  # Field name made lowercase.
+        handed_date= models.CharField(db_column='HANDED_DATE',max_length=10, blank=True, null=True)
+        comp_date= models.CharField(db_column='COMP_DATE',max_length=10, blank=True, null=True)
+        handed_time= models.CharField(db_column='HANDED_TIME',max_length=10, blank=True, null=True)
+        comp_time= models.CharField(db_column='COMP_TIME',max_length=10, blank=True, null=True)
+        handed_cmsec= models.CharField(db_column='HANDED_CMSEC',max_length=20, blank=True, null=True)
+        comp_cmsec= models.CharField(db_column='COMP_CMSEC',max_length=20, blank=True, null=True)
+        handed_cmserv= models.CharField(db_column='HANDED_CMSERV',max_length=20, blank=True, null=True)
+        comp_cmserv= models.CharField(db_column='COMP_CMSERV',max_length=20, blank=True, null=True)
+        action = models.CharField(db_column='ACTION',max_length=20, blank=True, null=True)
+        sl_no = models.CharField(db_column='SL_NO',max_length=5,blank=True,null=True)
+        last_modified = models.CharField(db_column='LAST_MODIFIED',max_length=50, blank=True, null=True)
+        login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)  # Field name made lowercase.
+        total_losthrs = models.CharField(db_column='TOTAL_LOSTHRS', max_length=15, blank=True, null=True) 
+        cause_hrs = models.CharField(db_column='CAUSE_HRS', max_length=15, blank=True, null=True)
+        mp_time = models.CharField(db_column='MP_TIME', max_length=15, blank=True, null=True)
+        inv_time = models.CharField(db_column='INV_TIME', max_length=15, blank=True, null=True)
+        mismp_time = models.CharField(db_column='MISMP_TIME', max_length=15, blank=True, null=True)
+
+        
+        class Meta:
+                db_table = 'MG9Complete'

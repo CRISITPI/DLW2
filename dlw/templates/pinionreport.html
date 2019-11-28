@@ -27,11 +27,10 @@
 </style>
 <form action="." method="POST">{%csrf_token%}
 <br>
-
-<br>
 <br>
 <center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br>
 <center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="Traction Motor Detail" class="form-control ll" required style="width:250px;" /></center><br>
 <center><input type="submit" name="btn" value="Month Wise Detail" class="form-control ll" required style="width:250px;" /></center><br>
 <br>
 {% if sub == 0 %}
@@ -45,6 +44,11 @@
 <center><h3>To Date:</h3><input type="text" name="date2" id='date2' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
 <input type="submit" value="Proceed2" name="btn" id="proceeddt" hidden/>
 {% endif %}
+{% if sub == 4 %}
+<center><h3>Traction Motor No.:</h3><input type="text" name="tmno" class="form-control ll" required style="width:250px;" placeholder="TM no." onblur="tm()" required/></center>
+<br>
+<input type="submit" value="Proceed3" name="btn" id="proceedtm" hidden/>
+{% endif %}
 {% if sub == 10 %}
 <center><h3>Month:</h3><input type="text" class="form-control ll" id="month" name="month" onchange ="monthc()" style="width:250px;" required autocomplete="off"/>
 <input type="submit" value="Proceed10" name="btn" id="monthdata" hidden/>
@@ -54,7 +58,7 @@
 <center><h2>DLW Varanasi</h2></center>
 <h2 align="right">Shop : TMS</h2>
 <h2 align="left">Date : {{dt}}</h2>
-<h2 align="left">Shop Section : Bogie Assembly</h2>
+<h2 align="left">Shop Section : Pinion Pressing Section</h2>
 <table id="customers" align="left">
 <tr>
     <th style="width:250px;text-align:center;">Part No.</th>
@@ -85,7 +89,7 @@
 <center><h2>DLW Varanasi</h2></center>
 <h2 align="right">Shop : TMS</h2>
 <h2 align="left">Date : {{dt1}} to {{dt2}}</h2>
-<h2 align="left">Shop Section : Bogie Assembly</h2>
+<h2 align="left">Shop Section : Pinion Pressing Section</h2>
 <table id="customers" align="left">
 <tr>
     <th style="width:250px;text-align:center;">Date</th>
@@ -94,7 +98,7 @@
 </tr>
 {% for i in ob1 %}
 <tr>
-    <td style="width:250px;text-align:center;">{{i.in_date}}</td>
+    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
     <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
     <td style="width:250px;text-align:center;">{{i.sno}}</td>
 </tr>
@@ -117,15 +121,43 @@
 </div>
 <br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
+{% if sub == 5 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Shop Section : Pinion Pressing Section</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Traction Motor No.</th>
+    <th style="width:250px;text-align:center;">Pinion No.</th>
+    <th style="width:250px;text-align:center;">Pinion Make</th>
+    <th style="width:250px;text-align:center;">Pinion Travel</th>
+    <th style="width:250px;text-align:center;">Pinion Pressure</th>
+    <th style="width:250px;text-align:center;">Blue Machining Status</th>
+    <th style="width:250px;text-align:center;">Loco Type</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{tmno}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_travel}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_pressure}}</td>
+    <td style="width:250px;text-align:center;">{{i.blue_match}}</td>
+    <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
+</tr>
+{% endfor %}
+</table>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
 {% if sub == 11 %}
 <center><h2>DLW Varanasi</h2></center>
 <h2 align="right">Shop : TMS</h2>
 <h2 align="left">Month : {{mon}}</h2>
-<h2 align="left">Shop Section : Bogie Assembly</h2>
+<h2 align="left">Shop Section : Pinion Pressing Section</h2>
 <table id="customers" align="left">
 <tr>
     <th style="width:250px;text-align:center;">Date</th>
-    <th style="width:250px;text-align:center;">Wheel No.</th>
+    <th style="width:250px;text-align:center;">Traction Motor No.</th>
     <th style="width:250px;text-align:center;">Part No.</th>
     <th style="width:250px;text-align:center;">Serial No.</th>
     <th style="width:250px;text-align:center;">In Date for Machining</th>
@@ -134,7 +166,7 @@
 {% for i in ob1 %}
 <tr>
     <td style="width:250px;text-align:center;">{{i.date}}</td>
-    <td style="width:250px;text-align:center;">{{i.wheel_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.tm_no}}</td>
     <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
     <td style="width:250px;text-align:center;">{{i.sno}}</td>
     <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
@@ -176,6 +208,10 @@ $(document).ready(function () {
     }
 });                   
 });
+function tm()
+{
+    document.getElementById('proceedtm').click();
+}
 function printDiv() {
      var printContents = document.getElementById("print").innerHTML;
 
@@ -188,7 +224,7 @@ function printDiv() {
 
         win.document.write('<html><head>');
 
-        win.document.write('<title>Bogie Assembly</title>');
+        win.document.write('<title>Pinion Press</title>');
         win.document.write(style);
         win.document.write('</head>');
         win.document.write('<body>');

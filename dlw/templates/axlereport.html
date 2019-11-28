@@ -32,10 +32,18 @@
 <br>
 <center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br>
 <center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="Axle Make Report(date range)" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="No. of Axle (date wise)" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="No. of Axle (date range)" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="Month Wise Detail" class="form-control ll" required style="width:250px;" /></center><br>
 <br>
 {% if sub == 0 %}
 <center><input type="text" name="datew" id='datew' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
 <input type="submit" value="Proceed1" name="btn" id="myproceed" hidden/>
+{% endif %}
+{% if sub == 6 %}
+<center><input type="text" name="datea" id='datea' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed6" name="btn" id="noaxledt" hidden/>
 {% endif %}
 <br>
 {% if sub == 2 %}
@@ -44,6 +52,22 @@
 <center><h3>To Date:</h3><input type="text" name="date2" id='date2' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
 <input type="submit" value="Proceed2" name="btn" id="proceeddt" hidden/>
 {% endif %}
+{% if sub == 5 %}
+<center><h3>From Date:</h3><input type="text" name="date3" id='date3' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<br>
+<center><h3>To Date:</h3><input type="text" name="date4" id='date4' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed3" name="btn" id="proceedaxle" hidden/>
+{% endif %}
+{% if sub == 7 %}
+<center><h3>From Date:</h3><input type="text" name="datea1" id='datea1' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<br>
+<center><h3>To Date:</h3><input type="text" name="datea2" id='datea2' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed7" name="btn" id="noaxledtr" hidden/>
+{% endif %}
+{% if sub == 10 %}
+<center><h3>Month:</h3><input type="text" class="form-control ll" id="month" name="month" onchange ="monthc()" style="width:250px;" required autocomplete="off"/>
+<input type="submit" value="Proceed10" name="btn" id="monthdata" hidden/>
+<br>{% endif %}
 <div id="print">
 {% if sub == 1 %}
 <center><h2>DLW Varanasi</h2></center>
@@ -109,6 +133,165 @@
 </tr>
 {% endfor %}
 </table>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 4 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Date : {{dt1}} to {{dt2}}</h2>
+<h2 align="left">Shop Section : Axle Machining</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">Inspection Status</th>
+    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.ustaxle_status}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+<table id="customers" align="right">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">Inspection Status</th>
+    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+</tr>
+{% for i in ob2 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.ustaxle_status}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 8 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Date : {{dt1}}</h2>
+<h2 align="left">Shop Section : Axle Machining</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Total</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+{% if forloop.counter == 1 %}
+    <td rowspan="{{l1}}" style="text-align: center;">{{l1}}</td>
+{% endif %}
+{% endfor %}
+</tr>
+</table>
+<table id="customers" align="right">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Total</th>
+</tr>
+{% for i in ob2 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+{% if forloop.counter == 1 %}
+    <td rowspan="{{l2}}" style="text-align: center;">{{l2}}</td>
+{% endif %}
+{% endfor %}
+</tr>
+</table>
+</div>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 9 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Date : {{dt1}} to {{dt2}}</h2>
+<h2 align="left">Shop Section : Axle Machining</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Total</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+{% if forloop.counter == 1 %}
+    <td rowspan="{{l1}}" style="text-align: center;">{{l1}}</td>
+{% endif %}
+{% endfor %}
+</tr>
+</table>
+<table id="customers" align="right">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Total</th>
+</tr>
+{% for i in ob2 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+{% if forloop.counter == 1 %}
+    <td rowspan="{{l2}}" style="text-align: center;">{{l2}}</td>
+{% endif %}
+{% endfor %}
+</tr>
+</table>
+</div>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 11 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="right">Shop : TMS</h2>
+<h2 align="left">Month : {{mon}}</h2>
+<h2 align="left">Shop Section : Axle Machining</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Date</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">Part No.</th>
+    <th style="width:250px;text-align:center;">Serial No.</th>
+    <th style="width:250px;text-align:center;">In Date for Machining</th>
+    <th style="width:250px;text-align:center;">Out Date for Machining</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.date}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
+{% endfor %}
+</tr>
+</table>
 </div>
 <br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
@@ -123,8 +306,24 @@ $(document).ready(function () {
 });                   
 });
 $(document).ready(function () {
-    $('#date1').datepicker({
+    $('#datea').datepicker({
         dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#noaxledt").click();
+    }
+});                   
+});
+$(document).ready(function () {
+    $('#datea1').datepicker({
+        dateFormat: 'dd-mm-yy',
+});                   
+});
+$(document).ready(function () {
+    $('#datea2').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#noaxledtr").click();
+    }
 });                   
 });
 $(document).ready(function () {
@@ -132,6 +331,32 @@ $(document).ready(function () {
         dateFormat: 'dd-mm-yy',
         onSelect: function(  ){
     document.querySelector("#proceeddt").click();
+    }
+});                   
+});
+$(document).ready(function () {
+    $('#date1').datepicker({
+        dateFormat: 'dd-mm-yy',
+});                   
+});
+$(document).ready(function () {
+    $('#date3').datepicker({
+        dateFormat: 'dd-mm-yy',
+});                   
+});
+$(document).ready(function () {
+    $('#date4').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#proceedaxle").click();
+    }
+});                   
+});
+$(document).ready(function () {
+    $('#month').datepicker({
+        dateFormat: 'mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#monthdata").click();
     }
 });                   
 });
