@@ -13535,10 +13535,6 @@ def mg9compreportviews(request):
 
 
     return render(request,"mg9compreportviews.html",context)
-<<<<<<< HEAD
-
-=======
->>>>>>> a13c3dff612f8acc2743edb1c424d23fe5484f31
 
 @login_required
 @role_required(urlpass='/miscreport/')
