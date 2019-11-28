@@ -6420,12 +6420,7 @@ def wheelnde(request):
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-<<<<<<< HEAD
-=======
 
-
-
->>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
 @login_required
 @role_required(urlpass='/M20view/')
 def M20view(request):
@@ -13609,15 +13604,6 @@ def mg9compreportviews(request):
         #                 print(comp)
 
     return render(request,"mg9compreportviews.html",context)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> a13c3dff612f8acc2743edb1c424d23fe5484f31
->>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
 
 def mg9getmwno(request):
     if request.method == "GET" and request.is_ajax():
@@ -14127,8 +14113,6 @@ def bogiereport(request):
             }
 
     return render(request,'bogiereport.html',context)
-<<<<<<< HEAD
-=======
 
 
 
@@ -15059,4 +15043,3 @@ def mg21report(request):
                     objjj.save()                    
                 
     return render(request,"mg21report.html",context)
->>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
