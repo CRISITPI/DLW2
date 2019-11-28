@@ -13623,8 +13623,6 @@ def mg9getstaffno(request):
         return JsonResponse(staff, safe = False)
     return JsonResponse({"success":False}, status=400)
 
->>>>>>> master
-
 @login_required
 @role_required(urlpass='/miscreport/')
 def miscreport(request):
