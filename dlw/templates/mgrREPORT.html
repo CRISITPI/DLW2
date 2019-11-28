@@ -1,0 +1,194 @@
+{% extends 'base.html' %} 
+{% block content %}
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+
+<!-- <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M1 - MASTER PROCESS SHEET</h1> -->
+<form action="{% url 'mgrreports' %}" method="POST"> {% csrf_token %}
+<div class="container" style="width: 100%" id="print">
+<br>
+
+<center><h4><u><B>DIESEL LOCOMOTIVE WORKS, VARANASI</B></u></h4></center>
+<center><h4><u><b>CALIBRATION STATUS RECORDS</b></u></h4></center>
+<br>
+<table  align="center" >
+
+<tr>
+<th hidden>Shop Section:</th>
+<td hidden>{{shop_sec}}</td>
+<input type="hidden" name="shop_sec" value="{{shop_sec}}">
+    <th>DESCRIPTION:</th>
+    <td>
+    {% if len1 %}
+    {% for i in obj1 %}
+    
+    <input type="text" id="tool_des" name="tool_des" class="myinp" value="{{i.tool_des}}"  required/>{% endfor %}
+    {% else %}
+    <input type="text"  id="tool_des" name="tool_des" class="myinp" required/>
+    {% endif %}
+    </td>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th>IDENTIFICATION NO:</th>
+    <td>
+    {% for i in obj %}
+    {{i.instrument_number}}
+    <input type="hidden" name="ins_no" value="{{i.instrument_number}}">
+    {% endfor %}
+    </td> 
+</tr>
+<tr>
+    <th>RANGE:</th>
+    <td>
+    {% if len1 %}
+    {% for i in obj1 %}
+    
+    <input type="number" id="range" name="range" class="myinp" value="{{i.range}}"  required/>{% endfor %}
+    {% else %}
+    <input type="number"  id="range" name="range" class="myinp" required/>
+    {% endif %}
+    </td>
+</tr>
+<tr>
+
+    <th>PERIODICITY OF CHECK:</th>
+    <td>
+    {% if len1 %}
+    {% for i in obj1 %}
+    
+    <input type="text" id="periodicity_check" name="periodicity_check" class="myinp" value="{{i.periodicity_check}}"  required/>{% endfor %}
+    {% else %}
+    <input type="text"  id="periodicity_check" name="periodicity_check" class="myinp" required/>
+    {% endif %}
+    </td>
+</tr>
+<tr>
+    
+</tr>
+    
+<table align="center" border="2">
+<tr>
+<th>DATE OF CALIBRATION</th>
+<th>CALIBRATION STATUS</th>
+<th>NEXT DUE DATE</th>
+</tr>
+<tr>
+<td>
+{% if len1 %}
+    {% for i in obj1 %}
+    
+    <input type="date" id="date_calibration" name="date_calibration" class="myinp" value="{{i.date_calibration}}"  required/>{% endfor %}
+    {% else %}
+    <input type="date"  id="date_calibration" name="date_calibration" class="myinp" required/>
+{% endif %}
+</td>
+<td>
+{% if len1 %}
+    {% for i in obj1 %}
+    
+    <input type="text" id="calibration_status" name="calibration_status" class="myinp" value="{{i.calibration_status}}"  required/>{% endfor %}
+    {% else %}
+    <input type="text"  id="calibration_status" name="calibration_status" class="myinp" required/>
+{% endif %}
+</td>
+<td>
+{% if len1 %}
+    {% for i in obj1 %}
+    
+    <input type="date" id="calibration_due_date" name="calibration_due_date" class="myinp" value="{{i.calibration_due_date}}"  required/>{% endfor %}
+    {% else %}
+    <input type="date"  id="calibration_due_date" name="calibration_due_date" class="myinp" required/>
+{% endif %}
+</td>
+</tr>
+</table>
+<center>
+    <input type="submit" name="proceed" value="Submit">
+    {% if noprint == 0 %}
+    <input type="button" onclick="printDiv()" value="Print">
+    {% endif %}
+
+    {% if noprint == 1 %}
+    <input type="button" disabled onclick="printDiv()" value="Print">
+{% endif %}
+</center>
+</div>
+</form>
+<script>
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>MGR REPORT</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+}
+</script>
+{% endblock content %}
