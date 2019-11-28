@@ -524,15 +524,6 @@ def update_emp_shift_admin(request):
     }
     return render(request,'update_emp_shift_admin.html',context)
 
-
-
-
-
-
-
-
-
-
 def getEmpInfo(request):
     if request.method == "GET" and request.is_ajax():
         emp_id=request.GET.get('username')
@@ -555,8 +546,6 @@ def getEmpInfo(request):
         return JsonResponse({"emp_info":emp_info}, status=200)
 
     return JsonResponse({"success":False}, status=400)
-
-
 
 def getauthempInfo(request):
     if request.method == "GET" and request.is_ajax():
@@ -581,16 +570,6 @@ def getauthempInfo(request):
             return JsonResponse({"auth_info":auth_info}, status=200)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
-
-
-
-
-
 def getPermissionInfo(request):
     if request.method == "GET" and request.is_ajax():
         selectrole=request.GET.get('username')
@@ -602,15 +581,6 @@ def getPermissionInfo(request):
         return JsonResponse({"permission_info":permission_info}, status=200)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
-
-
-
-
 def getshopempinfo(request):
     if request.method == "GET" and request.is_ajax():
         shop=request.GET.get('username')
@@ -621,15 +591,6 @@ def getshopempinfo(request):
             }
         return JsonResponse({"shopemp_info":shopemp_info}, status=200)
     return JsonResponse({"success":False}, status=400)
-
-
-
-
-
-
-
-
-
 
 @login_required
 @role_required(urlpass='/delete_user/')
@@ -669,12 +630,6 @@ def delete_user(request):
     return render(request,'delete_user.html',context)
 
 
-
-
-
-
-
-
 @login_required
 @role_required(urlpass='/forget_password/')
 def forget_password(request):
@@ -708,12 +663,6 @@ def forget_password(request):
     }
     return render(request,'forget_password.html',context)
 
-
-
-
-
-
-
 def forget_path(request):
     if request.method == "POST":
         option=request.POST.get('forget')
@@ -732,9 +681,6 @@ class ChartData(APIView):
         obj= testc.objects.all()
         serializer=testSerializer(obj,many=True)
         return Response(serializer.data)
-
-
-
 
 
 @login_required
@@ -4769,10 +4715,7 @@ def m1view(request):
                     'obj': obj,'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
                 }
         if submitvalue=='Generate Report':
-            shopsec= request.POST.get('shopsec')
-            partno= request.POST.get('partno')
-            print("this is part no:",partno)
-            return m1genrept1(request,partno,shopsec)
+            return m1genrept1(request)
     
 
     return render(request,"m1view.html",context)
@@ -4793,12 +4736,9 @@ def m1getpano(request):
 
 @login_required
 @role_required(urlpass='/m1view/')
-def m1genrept1(request,prtno,shopsec):
+def m1genrept1(request):
     from .models import Part,Partalt,Nstr
-    today = date.today()
-    # dd/mm/YY
-    d1 = today.strftime("%d/%m/%Y")
-    # print("d1 =", d1)
+    pa_no = empmast.objects.none()
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -4808,39 +4748,135 @@ def m1genrept1(request,prtno,shopsec):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    epcv=0
-    ptcv=0
-    rmpart=0
-    obj=Part.objects.filter(partno=prtno).values('des','drgno','drg_alt','size_m','spec','weight').distinct()
-    print(obj)
-    obj3=Nstr.objects.filter(pp_part=prtno).values('epc','ptc','cp_part').distinct()
-    print(obj3[0])
-    if len(obj3):
-        epcv=obj3[0]['epc']
-        ptcv=obj3[0]['ptc']
-        rmpart=obj3[0]['cp_part']
-    obj2 = Oprn.objects.filter(part_no=prtno).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('shop_sec','opn')
-    patotal=0
-    attotal=0
-    if len(obj2):
-        for op in obj2:
-            patotal=patotal+op['pa']
-            attotal=attotal+op['at']
-    context={
-        'obj1':obj,
-        'prtno':prtno,
-        'dtl':obj2,
-        'nav':nav,
-        'subnav':subnav,
-        'obj3':obj3,
-        'ip':get_client_ip(request),
-        'roles' :rolelist,
-        'pttl':patotal,
-        'attl':attotal,
-        'dt':d1,
-        'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
-    }
-    if request.method=='POST':
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav
+        }
+    elif(len(rolelist)==1):
+        # print("in else")
+        for i in range(0,len(rolelist)):
+            req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            pa_no =pa_no | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'pa_no':pa_no,
+            'roles' :rolelist,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        shop_sec = request.POST.get('shop_sec')
+        part_no = request.POST.get('part_nop')
+        if submitvalue=='Proceed':
+            print("in report proceed")
+            today = date.today()
+            d1 = today.strftime("%d/%m/%Y")
+            epcv=0
+            ptcv=0
+            rmpart=0
+            obj=Part.objects.filter(partno=part_no).values('des','drgno','drg_alt','size_m','spec','weight').distinct()
+            print(obj)
+            obj3=Nstr.objects.filter(pp_part=part_no).values('epc','ptc','cp_part').distinct()
+            print(obj3[0])
+            if len(obj3):
+                epcv=obj3[0]['epc']
+                ptcv=obj3[0]['ptc']
+                rmpart=obj3[0]['cp_part']
+            obj2 = Oprn.objects.filter(part_no=part_no).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('shop_sec','opn')
+            patotal=0
+            attotal=0
+            if len(obj2):
+                for op in obj2:
+                    patotal=patotal+op['pa']
+                    attotal=attotal+op['at']
+            print(obj)
+            print(d1)
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'subnav':subnav,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'obj1':obj,
+                    'dtl':obj2,
+                    'obj3':obj3,
+                    'pttl':patotal,
+                    'attl':attotal,
+                    'dt':d1,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                }
+            elif(len(rolelist)==1):
+                # print("in else")
+                for i in range(0,len(rolelist)):
+                    req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    pa_no =pa_no | req
+                context = {
+                    'lenm' :len(rolelist),
+                    'pa_no':pa_no,
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'obj1':obj,
+                    'dtl':obj2,
+                    'obj3':obj3,
+                    'pttl':patotal,
+                    'attl':attotal,
+                    'dt':d1,'sub': 1,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'sub': 1,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'obj1':obj,
+                    'dtl':obj2,
+                    'obj3':obj3,
+                    'pttl':patotal,
+                    'attl':attotal,
+                    'dt':d1,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                }
+
         bckbtn=request.POST.get('backbutton')
         if bckbtn=='Back':
             return render(request,"m1view.html",{})
@@ -6384,9 +6420,12 @@ def wheelnde(request):
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+<<<<<<< HEAD
+=======
 
 
 
+>>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
 @login_required
 @role_required(urlpass='/M20view/')
 def M20view(request):
@@ -6607,11 +6646,6 @@ def m20getstaffName(request):
         # print("ths is",shop_sec)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
-
-
-
 
 
 @login_required
@@ -6862,55 +6896,6 @@ def mg33getexam(request):
 
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
 @login_required
 @role_required(urlpass='/m26view/')
 def m26view(request):
@@ -6938,13 +6923,6 @@ def m26view(request):
             'subnav':subnav,
         }
     return render(request,'m26view.html',context)
-
-
-
-
-
-
-
 
 
 @login_required
@@ -7142,8 +7120,6 @@ def m27getWorkOrderDate(request):
         print(wono1)
         return JsonResponse(wono1, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
 
 
 @login_required
@@ -12002,7 +11978,11 @@ def mg33report(request):
     if request.method=="POST":
         bval=request.POST.get('proceed')
         if bval=='Proceed':
+            
             stfno=set()
+            
+
+            
             ex=MG33new.objects.all().values('staff_no')
             for i in ex:
                 if i['staff_no'] is not None:
@@ -12011,26 +11991,31 @@ def mg33report(request):
             staffno=request.POST.get('staff_no')
             update=request.POST.get('updt_date')
             ex = MG33new.objects.filter(shop_sec=shpsec,staff_no=staffno,updt_date=update).all()
-            pscore=ex[0].prac_score
-            oscore=ex[0].oral_score
-            result=ex[0].result
-            trdadmin=ex[0].trade_test_admin
-            worker=ex[0].name
-            secsup=ex[0].sec_sup
-            trdoff=ex[0].trade_test_officer
-            print(ex)
-            # dictemper={}
-            excode=set()
-            j=0
-            for i in range(len(ex)):
-                excode.add(ex[i].exam_code)
-            print(excode)
-            for a in excode:
-                obj1=exam_master.objects.filter(exam_code=a)
+            if not ex:
+                msg = "data not found"
+            else:
+                
+                pscore=ex[0].prac_score
+                oscore=ex[0].oral_score
+                result=ex[0].result
+                trdadmin=ex[0].trade_test_admin
+                worker=ex[0].name
+                secsup=ex[0].sec_sup
+                trdoff=ex[0].trade_test_officer
+                print(ex)
+                # dictemper={}
+                excode=set()
+                j=0
+                for i in range(len(ex)):
+                    excode.add(ex[i].exam_code)
+                print(excode)
+                for a in excode:
+                    obj1=exam_master.objects.filter(exam_code=a)
                 # temper = {str(j):{"examtype":obj1[0].exam_type,
                 #                     "pracd":obj1[0].prac_desc,"orald":obj1[0].oral_desc,}}
                 # dictemper.update(copy.deepcopy(temper))
                 # j=j+1
+                
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -13407,17 +13392,27 @@ def mg9compreportviews(request):
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
             shop_sec = request.POST.get('shop_sec')
-            mc_no = request.POST.get('mcno')
-            cd_no = request.POST.get('cd_no')
-            tool_no = request.POST.get('tool_no')
-            print(tool_no)
-            print(mc_no)
-            obj  = MG6.objects.filter(tool_no=tool_no,machine_no=mc_no,cd_no=cd_no).values('tool_no','ticket_no','tool_des','date_of_damage','machine_no','cd_no','cause_of_damage','shop_suprintendent','sec_chargeman','remarks')
-            obj1 = Lc1.objects.filter(lcno=mc_no)
-            
+            mw_no = request.POST.get('mwno')
+            staff_no = request.POST.get('staffno')
+        
+
+           
+
+            print(mw_no)
+            print(staff_no)
+            print(mw_no)
+            obj  = MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).values('sec','mw_no','sl_no','staff_no','handed_date','comp_date','handed_time','comp_time','handed_cmsec','comp_cmsec','handed_cmserv','comp_cmserv','complaint','action','total_losthrs','cause_hrs','mp_time','mismp_time','inv_time').distinct()
+            obj1  = MG9Complete.objects.values('id').count()
+            print("OBJ")
             print(obj)
+            print("count")
+            print(obj1)
             leng = obj.count()
-            leng1 = obj1.count()
+            slno=obj1
+            slno=slno+1
+            print(slno)
+            
+
             
             if "Superuser" in rolelist:
                     tm=M5SHEMP.objects.all().values('shopsec').distinct()
@@ -13430,14 +13425,15 @@ def mg9compreportviews(request):
                         'ip':get_client_ip(request),
                         'roles':tmp,
                         'len':leng,   
-                        'len1':leng1,  
+                        # 'len1':leng1,  
                         'obj':obj,
-                        'obj1':obj1,
+                        # 'obj1':obj1,
                         'sub': 1,
                         'shop_sec': shop_sec,
-                        'mc_no': mc_no,
-                        'cd_no': cd_no,
-                        'tool_no':tool_no,
+                        'mw_no': mw_no,
+                        'staff_no': staff_no,
+                        'slno':slno,
+                       
                         #'assm_no':assm_no,
                       
                         'subnav':subnav,
@@ -13459,15 +13455,14 @@ def mg9compreportviews(request):
                         'nav':nav,
                         'ip':get_client_ip(request),
                         'roles':tmp,
-                        'obj':obj,
-                        'obj1':obj1,    
                         'len':leng,
-                        'len1':leng1,
+                        'obj':obj,
+                        'slno':slno,
                         'sub': 1,
                         'shop_sec': shop_sec,
-                        'mc_no': mc_no,
-                        'cd_no': cd_no,
-                        'tool_no':tool_no,
+                        'mw_no': mw_no,
+                        'staff_no': staff_no,
+                     
                         #'assm_no':assm_no,
                       
                         'subnav':subnav,
@@ -13479,62 +13474,170 @@ def mg9compreportviews(request):
                         'subnav':subnav,
                         'ip':get_client_ip(request),
                         'roles' :rolelist,
-                        'obj':obj,
-                        'obj1':obj1,
                         'len':leng,
-                        'len1':leng1,
+                        'obj':obj,
+                        'slno':slno,
                         'shop_sec': shop_sec,
-                        'mc_no': mc_no,
-                        'cd_no': cd_no,
-                        'tool_no':tool_no,
+                        'mw_no': mw_no,
+                        'staff_no': staff_no,
+                  
                         #'assm_no':assm_no,
                         'subnav':subnav
                     }    
         if submitvalue=='submit':
                     leng=request.POST.get('len')
                     now = datetime.datetime.now()
-                    # shop_sec = request.POST.get('shop_sec')
-                    des=request.POST.get('tool_des')
-                    tool_no = request.POST.get('tool_no')
-                    ticket_no= request.POST.get('ticket_no')
-                    date=request.POST.get('date_of_damage')
-                    mc_no = request.POST.get('mc_no')
-                    cd_no=request.POST.get('cd_no')
-                    cause = request.POST.get('cause_of_damage')
-                    shop_sup = request.POST.get('shop_sup')
-                    sec = request.POST.get('sec_chargeman')
-                    rem = request.POST.get('rem')
+                    shop_sec=request.POST.get('shop_sec')
+                    mw_no = request.POST.get('mw_no')
+                    staff_no = request.POST.get('staff_no')
+                    comp= request.POST.get('complaint')
+                    date_handed=request.POST.get('date_handed')
+                    date_com=request.POST.get('date_com')
+                    time_handed=request.POST.get('time_handed')
+                    time_com=request.POST.get('time_com')
+                    sec_handed = request.POST.get('sec_handed')
+                    sec_com = request.POST.get('sec_com')
+                    serv_com = request.POST.get('serv_com')
+                    serv_handed = request.POST.get('serv_handed')
+                    action= request.POST.get('action')
+                    sl_no = request.POST.get('sl_no')
+                    lost_hrs = request.POST.get('lost_hrs')
+                    elec = request.POST.get('elec')
+                    mech = request.POST.get('mech')
+                    mech_ele = request.POST.get('mech_ele')
+                    mp = request.POST.get('mp')
+                    inv = request.POST.get('inv')
+                    mismp = request.POST.get('mismp')
+                    # time_hrs=request.POST.get('time_hrs')
+                    inv_time = request.POST.get('inv_time')
+                    mismp_time = request.POST.get('mismp_time')
+                    mp_time=request.POST.get('mp_time')
 
-                    mg6obj = MG6.objects.filter(tool_no=tool_no,machine_no=mc_no,cd_no=cd_no).distinct()
-                    if len(mg6obj) == 0:
 
-                        print(now)
-                        # print(shop_sec)
-                        print(tool_no)
-                        print(ticket_no)
-                        print(date)
-                        print(mc_no)
-                        print(cd_no)
-                        print(cause)
-                        print(shop_sup)
-                        print(sec)
 
-                        MG6.objects.create(tool_no=str(tool_no),tool_des=str(des),ticket_no=str(ticket_no),date_of_damage=str(date),machine_no=str(mc_no),cd_no=str(cd_no),cause_of_damage=str(cause),last_modified=str(now),login_id=request.user,shop_suprintendent=str(shop_sup),sec_chargeman=str(sec),remarks=str(rem))
+                   
 
+                    print(sl_no)
+                    print(shop_sec)
+                    print(mw_no)
+                    print(staff_no)
+                    print(date_handed)
+                    print(date_com)
+                    print(time_handed)
+                    print(time_com)
+                    print(sec_handed)
+                    print(sec_com)
+                    print(serv_handed)
+                    print(serv_com)
+                    print(action)
+                    print(comp)
+                    print(lost_hrs)
+                    print(elec)
+                    print(mech)
+                    print(mech_ele)
+                    print(mp)
+                    print(inv)
+                    print(mismp)
+                    print("mp_time",mp_time)
+                    print("mismp_time",mismp_time)
+                    print("inv_time",inv_time)
+                    tmp=""
+                    if(elec is not None):
+                        tmp=str(elec)+str("   ")
+                    if(mech is not None):
+                        tmp=tmp+str(mech)+str("   ")
+                    if(mech_ele is not None):
+                        tmp=tmp+str(mech_ele)+str("   ")
+                    if(mp is not None):
+                        tmp=tmp+str(mp)+str("   ")
+                    if(inv is not None):
+                        tmp=tmp+str(inv)+str("   ")
+                    print(tmp)
+                    if(mp_time is None):
+                        mp_time='00:00'
+                        print("mp_time",mp_time)
+                    if(inv_time is None):
+                        inv_time='00:00'
+                        print("inv_time",inv_time) 
+                    if(mismp_time is None):
+                        mismp_time='00:00'
+                        print("mismp_time",mismp_time)        
+                   
+
+                    mg9obj = MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).distinct()
+                    if len(mg9obj) == 0:
+
+        #                 print(now)
+        #                 print(sl_no)
+        #                 # print(shop_sec)
+        #                 print(shop_sec)
+        #                 print(mw_no)
+        #                 print(staff_no)
+        #                 print(date_handed)
+        #                 print(date_com)
+        #                 print(time_handed)
+        #                 print(time_com)
+        #                 print(sec_handed)
+        #                 print(sec_com)
+        #                 print(serv_handed)
+        #                 print(serv_com)
+        #                 print(action)
+        #                 print(comp)
+
+                    
+                        MG9Complete.objects.create(sec=str(shop_sec),mw_no=str(mw_no),sl_no=str(sl_no),staff_no=str(staff_no),complaint=str(comp),handed_date=str(date_handed),comp_date=str(date_com),handed_time=str(time_handed),comp_time=str(time_com),handed_cmsec=str(sec_handed),comp_cmsec=str(sec_com),handed_cmserv=str(serv_handed),comp_cmserv=str(serv_com),action=str(action),last_modified=str(now),login_id=request.user,total_losthrs=str(lost_hrs),cause_hrs=str(tmp),mp_time=str(mp_time),inv_time=str(inv_time),mismp_time=str(mismp_time))
                     else:
+                        cause=request.POST.get('cause_hrs')
 
-                        MG6.objects.filter(tool_no=tool_no,machine_no=mc_no,cd_no=cd_no).update(tool_no=str(tool_no),tool_des=str(des),ticket_no=str(ticket_no),date_of_damage=str(date),machine_no=str(mc_no),cd_no=str(cd_no),cause_of_damage=str(cause),shop_suprintendent=str(shop_sup),sec_chargeman=str(sec),last_modified=str(now),remarks=str(rem))
-                        print(tool_no)
-                        print(ticket_no)
-                        print(date)
-                        print(mc_no)
-                        print(cd_no)
-                        print(cause)
-                        print(shop_sup)
-                        print(sec)
-
+                        MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).update(complaint=str(comp),handed_date=str(date_handed),comp_date=str(date_com),handed_time=str(time_handed),comp_time=str(time_com),handed_cmsec=str(sec_handed),comp_cmsec=str(sec_com),handed_cmserv=str(serv_handed),comp_cmserv=str(serv_com),action=str(action),last_modified=str(now),login_id=str(request.user),total_losthrs=str(lost_hrs),cause_hrs=str(cause),mp_time=str(mp_time),inv_time=str(inv_time),mismp_time=str(mismp_time))
+                       
+        #                 print(now)
+        #                 print(sl_no)
+        #                 # print(shop_sec)
+        #                 print(shop_sec)
+        #                 print(mw_no)
+        #                 print(staff_no)
+        #                 print(date_handed)
+        #                 print(date_com)
+        #                 print(time_handed)
+        #                 print(time_com)
+        #                 print(sec_handed)
+        #                 print(sec_com)
+        #                 print(serv_handed)
+        #                 print(serv_com)
+        #                 print(action)
+        #                 print(comp)
 
     return render(request,"mg9compreportviews.html",context)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> a13c3dff612f8acc2743edb1c424d23fe5484f31
+>>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
+
+def mg9getmwno(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        # print(shop_sec)
+        wono = list(Lc1.objects.filter(shop_sec = shop_sec).values('lcno').distinct())
+        print("wono",wono)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg9getstaffno(request):
+    if request.method == "GET" and request.is_ajax():
+        # staff_no = request.GET.get('wo_no')
+        shop_sec = request.GET.get('shop_sec')
+        staff = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
+        print(staff)
+        return JsonResponse(staff, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+>>>>>>> master
 
 @login_required
 @role_required(urlpass='/miscreport/')
@@ -13666,6 +13769,14 @@ def axlereport(request):
             'ip':get_client_ip(request),
             'sub':7,
             }
+        if bval=='Month Wise Detail':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':10,
+            }
         if bval=='Proceed1':
             dt=request.POST.get('datew')
             ob1=AxleMachining.objects.filter(in_qty=dt).values('sno','pt_no')
@@ -13746,6 +13857,18 @@ def axlereport(request):
             'dt1':dt1,'dt2':dt2,
             'l1':l1,'l2':l2,
             }
+        if bval=='Proceed10':
+            mon=request.POST.get('month')
+            ob1=AxleMachining.objects.filter(date__contains=mon).values('sno','axle_no','in_qty','out_qty','pt_no','date').order_by('date')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':11,
+            'ob1':ob1,
+            'mon':mon,
+            }
 
     return render(request,'axlereport.html',context)
 
@@ -13811,6 +13934,14 @@ def wheelreport(request):
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':7,
+            }
+        if bval=='Month Wise Detail':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':10,
             }
         if bval=='Proceed1':
             dt=request.POST.get('datew')
@@ -13891,6 +14022,18 @@ def wheelreport(request):
             'dt1':dt1,'dt2':dt2,
             'l1':l1,'l2':l2,
             }
+        if bval=='Proceed10':
+            mon=request.POST.get('month')
+            ob1=WheelMachining.objects.filter(date__contains=mon).values('sno','wheel_no','in_qty','out_qty','pt_no','date').order_by('date')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':11,
+            'ob1':ob1,
+            'mon':mon,
+            }
 
     return render(request,'wheelreport.html',context)
 
@@ -13933,6 +14076,14 @@ def bogiereport(request):
             'ip':get_client_ip(request),
             'sub':2,
             }
+        if bval=='Month Wise Detail':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':10,
+            }
         if bval=='Proceed1':
             dt=request.POST.get('datew')
             ob1=BogieAssembly.objects.filter(in_date=dt).values('sno','pt_no')
@@ -13962,8 +14113,22 @@ def bogiereport(request):
             'ob2':ob2,
             'dt1':dt1,'dt2':dt2,
             }
+        if bval=='Proceed10':
+            mon=request.POST.get('month')
+            ob1=BogieAssembly.objects.filter(date__contains=mon).values('sno','axle_no','in_qty','out_qty','pt_no','date').order_by('date')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':11,
+            'ob1':ob1,
+            'mon':mon,
+            }
 
     return render(request,'bogiereport.html',context)
+<<<<<<< HEAD
+=======
 
 
 
@@ -14011,6 +14176,14 @@ def pinionreport(request):
             'ip':get_client_ip(request),
             'sub':4,
             }
+        if bval=='Month Wise Detail':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':10,
+            }
         if bval=='Proceed1':
             dt=request.POST.get('datew')
             ob1=PinionPressing.objects.filter(in_qty=dt).values('sno','pt_no')
@@ -14051,6 +14224,18 @@ def pinionreport(request):
             'sub':5,
             'ob1':ob1,
             'dt1':dt1,'tmno':dt1,
+            }
+        if bval=='Proceed10':
+            mon=request.POST.get('month')
+            ob1=PinionPressing.objects.filter(date__contains=mon).values('sno','tm_no','in_qty','out_qty','pt_no','date').order_by('date')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':11,
+            'ob1':ob1,
+            'mon':mon,
             }
 
     return render(request,'pinionreport.html',context)
@@ -14102,6 +14287,14 @@ def axlepressreport(request):
             'ip':get_client_ip(request),
             'sub':4,
             }
+        if bval=='Month Wise Detail':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':10,
+            }
         if bval=='Proceed1':
             dt=request.POST.get('datew')
             ob1=AxleWheelPressing.objects.filter(in_qty=dt).values('sno','pt_no')
@@ -14143,7 +14336,727 @@ def axlepressreport(request):
             'ob1':ob1,
             'dt1':dt1,'tmno':dt1,
             }
-
+        if bval=='Proceed10':
+            mon=request.POST.get('month')
+            ob1=AxleWheelPressing.objects.filter(date__contains=mon).values('sno','axle_no','wheel_no','in_qty','out_qty','pt_no','date').order_by('date')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':11,
+            'ob1':ob1,
+            'mon':mon,
+            }
 
  
     return render(request,'axlepress.html',context)
+
+
+
+@login_required
+@role_required(urlpass='/mgrview/')
+def mgrview(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = ms_tools_master.objects.all().filter(shop_code=rolelist[i]).values('instrument_number').distinct()
+            instrument_number = instrument_number | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'instrument_number':instrument_number,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            
+            shop_sec = request.POST.get('shop_sec')
+            instrument_number = request.POST.get('ins_no')
+            print(shop_sec,instrument_number)
+            obj = ms_tools_master.objects.filter(shop_code=shop_sec,instrument_number=instrument_number).values('calibration_frequency','employee','user_id').distinct()
+            obj1 = Mgr.objects.filter(instrument_number=instrument_number).values('tool_des','type_mme','least_count')
+            noprint=0
+            print(obj)
+            leng = obj.count()
+            leng1 = obj1.count()
+            if len(obj1) == 0:
+                noprint=1
+            
+            context = {
+                        'obj': obj,
+                        'obj1': obj1,
+                        'len': leng,
+                        'len1': leng1,
+                        'shop_sec': shop_sec,
+                        'instrument_number':instrument_number,
+                        'sub' : 1,
+                        #'noprint':noprint,
+                        'nav':nav,
+                        'ip':get_client_ip(request),  
+                        'subnav':subnav,
+            }
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1': leng1,
+                    'shop_sec': shop_sec,
+                    'instrument_number':instrument_number,
+                    'sub' : 1,
+                    #'noprint':noprint,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = ms_tools_master.objects.all().filter(shop_code=rolelist[i]).values('instrument_number').distinct()
+                    instrument_number = instrument_number | req
+                context = {
+                    
+                    'lenm' :len(rolelist),
+                    'instrument_number':instrument_number,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1': leng1,
+                    'shop_sec': shop_sec,
+                    'instrument_number':instrument_number,
+                    'sub' : 1,
+                    #'noprint':noprint,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+        
+            elif(len(rolelist)>1):
+                context = {
+                    
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1': leng1,
+                    'shop_sec': shop_sec,
+                    'instrument_number':instrument_number,
+                    'sub' : 1,
+                    #'noprint':noprint,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+        if submitvalue =='Submit':
+                
+                leng=request.POST.get('len')
+                now = datetime.datetime.now()
+                shop_sec = request.POST.get('shop_sec')
+                instrument_number = request.POST.get('ins_no')
+                tool_des = request.POST.get('tool_des')
+                type_mme = request.POST.get('type_mme')
+                least_count = request.POST.get('least_count')
+                calibration_frequency = request.POST.get('calibration_frequency')
+                employee = request.POST.get('employee')
+                #range = request.POST.get('range')
+                #periodicity_check = request.POST.get('periodicity_check')
+                #date_calibration = request.POST.get('date_calibration')
+                #calibration_status = request.POST.get('calibration_status')
+                #calibration_due_date = request.POST.get('calibration_due_date')
+
+                mgrobj = Mgr.objects.filter(shop_sec=shop_sec,instrument_number=instrument_number).distinct()
+                if len(mgrobj) == 0:
+                    
+                    Mgr.objects.create(login_id=request.user,shop_sec=str(shop_sec),instrument_number=str(instrument_number),tool_des=str(tool_des),type_mme=str(type_mme),
+                    least_count=str(least_count),calibration_frequency=str(calibration_frequency),employee=str(employee),last_modified=str(now))
+                
+                else:
+                    Mgr.objects.filter(shop_sec=shop_sec,instrument_number=instrument_number).update(tool_des=str(tool_des),type_mme=str(type_mme),
+                    least_count=str(least_count),calibration_frequency=str(calibration_frequency),employee=str(employee),last_modified=str(now))
+
+                instrument_number=Mgr.objects.all().values('instrument_number').distinct()
+
+        if submitvalue =='Proceed to Report':
+            return mgrreports(request)
+        
+
+    return render(request,"mgrview.html",context)
+
+def mgrgetinsno(request):
+    if request.method == "GET" and request.is_ajax():
+        
+        shop_sec = request.GET.get('shop_sec')
+        instrument_number=list(ms_tools_master.objects.filter(shop_code=shop_sec).values('instrument_number').distinct())
+        return JsonResponse(instrument_number, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(urlpass='/mgrview/')
+def mgrreports(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = ms_tools_master.objects.all().filter(shop_code=rolelist[i]).values('instrument_number').distinct()
+            instrument_number = instrument_number | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'instrument_number':instrument_number,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed to Report':
+            
+            shop_sec = request.POST.get('shop_sec')
+            instrument_number = request.POST.get('ins_no')
+            print(shop_sec,instrument_number)
+            obj = Mgr.objects.filter(shop_sec=shop_sec).values('instrument_number').distinct()
+            obj1 = mgrreport.objects.filter(shop_sec=shop_sec,instrument_number=instrument_number).values('tool_des','range','periodicity_check','date_calibration','calibration_status','calibration_due_date')
+            noprint=0
+            print(obj)
+            leng = obj.count()
+            leng1 = obj1.count()
+            if len(obj1) == 0:
+                noprint=1
+            
+            context = {
+                        'obj': obj,
+                        'obj1': obj1,
+                        'len': leng,
+                        'len1': leng1,
+                        'shop_sec': shop_sec,
+                        'instrument_number':instrument_number,
+                        'sub' : 1,
+                        'noprint':noprint,
+                        'nav':nav,
+                        'ip':get_client_ip(request),  
+                        'subnav':subnav,
+            }
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1': leng1,
+                    'shop_sec': shop_sec,
+                    'instrument_number':instrument_number,
+                    'sub' : 1,
+                    'noprint':noprint,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = ms_tools_master.objects.all().filter(shop_code=rolelist[i]).values('instrument_number').distinct()
+                    instrument_number = instrument_number | req
+                context = {
+                    
+                    'lenm' :len(rolelist),
+                    'instrument_number':instrument_number,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1': leng1,
+                    'shop_sec': shop_sec,
+                    'instrument_number':instrument_number,
+                    'sub' : 1,
+                    'noprint':noprint,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+        
+            elif(len(rolelist)>1):
+                context = {
+                    
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'len': leng,
+                    'len1': leng1,
+                    'shop_sec': shop_sec,
+                    'instrument_number':instrument_number,
+                    'sub' : 1,
+                    'noprint':noprint,
+                    'nav':nav,
+                    'ip':get_client_ip(request),  
+                    'subnav':subnav,
+                }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Submit':
+            now = datetime.datetime.now()
+            shop_sec = request.POST.get('shop_sec')
+            instrument_number = request.POST.get('ins_no')
+            tool_des = request.POST.get('tool_des')
+            range = request.POST.get('range')
+            periodicity_check = request.POST.get('periodicity_check')
+            date_calibration = request.POST.get('date_calibration')
+            calibration_status = request.POST.get('calibration_status')
+            calibration_due_date = request.POST.get('calibration_due_date')
+            
+
+            mgrobj1 = mgrreport.objects.filter(shop_sec=shop_sec,instrument_number=instrument_number).distinct()
+            if len(mgrobj1) == 0:
+                    
+                    mgrreport.objects.create(login_id=request.user,range=str(range),tool_des=str(tool_des),periodicity_check=str(periodicity_check),shop_sec=str(shop_sec),instrument_number=str(instrument_number),
+                    date_calibration=str(date_calibration),calibration_status=str(calibration_status),last_modified=str(now),calibration_due_date=str(calibration_due_date))
+
+            else:
+
+                    mgrreport.objects.filter(shop_sec=shop_sec,instrument_number=instrument_number).update(tool_des=str(tool_des),range=str(range),periodicity_check=str(periodicity_check),
+                    date_calibration=str(date_calibration),login_id=request.user,last_modified=str(now),calibration_status=str(calibration_status),calibration_due_date=str(calibration_due_date))
+
+            instrument_number=Mgr.objects.all().values('instrument_number').distinct()
+
+        
+
+    return render(request,"mgrREPORT.html",context)
+
+
+
+@login_required
+@role_required(urlpass='/mg21view/')
+def mg21view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0, len(rolelist)):
+            req = Shemp.objects.all().filter(shopsec=rolelist[i]).values('staff_no').exclude(staff_no__isnull=True).distinct()
+            wo_nop =wo_nop | req
+
+
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            staff_no = request.POST.get('staff_no')
+            print(shop_sec,staff_no)
+            from datetime import date
+            today = date.today()
+            obj = MG20.objects.filter(shop_sec=shop_sec, staff_no=staff_no).values('name','current_date','emp_type','id').distinct()
+            print(obj)
+            obj1 = MG21.objects.filter(shop_sec=shop_sec, staff_no=staff_no).values('to_the').distinct()
+            print(obj1)
+            if len(obj1)== 0:
+                obj1=range(0, 1)
+            if "Superuser" in rolelist:
+                  tm=shop_section.objects.all()
+                  tmp=[]
+                  for on in tm:
+                      tmp.append(on.section_code)
+                  context = {
+                        'roles':tmp,
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'sub': 1,
+                        'date':today,
+                        'staff_no': staff_no,
+                        'shop_sec': shop_sec,
+                        'subnav':subnav,
+                  }
+            elif(len(rolelist)==1):
+                  for i in range(0, len(rolelist)):
+                      req = Shemp.objects.all().filter(shopsec=rolelist[i]).values('staff_no').exclude(staff_no__isnull=True).distinct()
+                      wo_nop = wo_nop | req
+                  context = {
+                        'wo_nop':wo_nop,
+                        'roles' :rolelist,
+                        'usermaster':usermaster,
+                        'lenm' :len(rolelist),
+                        'nav': nav,
+                        'ip': get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'sub': 1,
+
+                        'staff_no': staff_no,
+                        'shop_sec': shop_sec,
+
+                        'subnav':subnav
+                  }
+            elif(len(rolelist)>1):
+                  context = {
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'usermaster':usermaster,
+                        'roles' :rolelist,
+                        'obj': obj,
+                        'obj1': obj1,
+                        'sub': 1,
+                        'staff_no': staff_no,
+                        'shop_sec': shop_sec,
+
+                        'subnav':subnav
+                  }
+
+        if submitvalue=='Save':
+                shop_sec= request.POST.get('shop_sec')
+                staff_no = request.POST.get('staff_no')
+                name= request.POST.get('name')
+                super_in = request.POST.get('emp_type')
+                acc_date=request.POST.get('acc_date')
+                rep_no=request.POST.get('rep_no')
+                to_the=request.POST.get('to_the')
+                date=request.POST.get('date')
+                from datetime import datetime
+                now = datetime.now()
+                dt_string = now.strftime("%H:%M:%S")
+                print("report",rep_no)
+                obj2 = MG21.objects.filter(shop_sec=shop_sec, staff_no=staff_no).distinct()
+                print(len(obj2))
+                if len(obj2) == 0:
+                    MG21.objects.create(rep_no=str(rep_no), to_the=str(to_the),acc_date=str(acc_date), shop_sec=str(shop_sec), staff_no=str(staff_no), name=str(name),  super_in=str(super_in), date=str(date),last_modified=str(dt_string))
+                else:
+                    MG21.objects.filter(shop_sec=shop_sec, staff_no=staff_no).update(to_the=str(to_the),last_modified=str(dt_string))
+
+                wo_no=MG21.objects.all().values('staff_no').distinct()
+                messages.success(request, 'Successfully Done!, Select new values to proceed')
+
+        if submitvalue=='Generate report':
+            return mg21report(request)
+            
+    return render(request, "mg21view.html", context)
+
+def mg21getstaff(request):
+    if request.method == "GET" and request.is_ajax():
+
+        shop_sec = request.GET.get('shop_sec')
+
+        staff = Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+        staff_no = list(staff)
+        return JsonResponse(staff_no, safe=False)
+    return JsonResponse({"success": False}, status=400)
+ 
+@login_required
+@role_required(urlpass='/mg21view/')
+def mg21report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    # print("kj",usermaster)
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+
+    # wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            w1 = M5SHEMP.objects.filter(shopsec=rolelist[i]).values('empno').distinct()
+            # req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            # wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            # 'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            shop_sec = request.POST.get('shop_sec')
+            staff_no = request.POST.get('staff_no')
+            obj1 = MG20.objects.filter(shop_sec=shop_sec,staff_no=staff_no).values('name','current_date','emp_type','id').distinct()
+            obj2 = MG21.objects.filter(shop_sec=shop_sec,staff_no=staff_no).values('to_the').distinct()
+            obj4=MG21.objects.filter( shop_sec=shop_sec, staff_no=staff_no).values('acc_date').distinct()
+            
+            from datetime import date
+            date = date.today()
+            leng = obj1.count()
+            print("obj1",obj1)
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj4': obj4,
+                    'ran':range(1,32),
+                    'len': 31,
+                    'shop_sec': shop_sec,
+                    'staff_no': staff_no,
+                    'date': date,  
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = M5SHEMP.objects.filter(shopsec=rolelist[i]).values('empno').distinct()
+
+                context = {
+                    'sub':1,
+                    'subnav':subnav,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj4': obj4,
+                    'ran':range(1,32),
+                    'len': 31,
+                    'shop_sec': shop_sec,
+                    'staff_no': staff_no,
+                    'date': date,  
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj4': obj4,
+                    'ran':range(1,32),
+                    'len': 31,
+                    'shop_sec': shop_sec,
+                    'staff_no': staff_no,
+                    'date': date,  
+                }
+        if submitvalue =='Submit':
+            
+                shop_sec= request.POST.get('shop_sec')
+                staff_no = request.POST.get('staff_no')
+                name= request.POST.get('name')
+                super_in = request.POST.get('super_in')
+                acc_date=request.POST.get('acc_date')
+                rep_no=request.POST.get('rep_no')
+                to_the=request.POST.get('to_the')
+                date=request.POST.get('date')
+                from datetime import datetime
+                now = datetime.now()
+                dt_string = now.strftime("%H:%M:%S")
+                if to_the  :
+                    print("jj")
+                    objjj=MG21.objects.create()
+                    objjj.shop_sec=shop_sec
+                    objjj.staff_no=staff_no
+                    objjj.name=name
+                    # objjj.name=request.POST.get('name')
+                    objjj.acc_date=acc_date
+                    objjj.date=date
+                    objjj.to_the=to_the
+                    objjj.rep_no=rep_no
+                    objjj.super_in=super_in
+                    objjj.save()                    
+                
+    return render(request,"mg21report.html",context)
+>>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
