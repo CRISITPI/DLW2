@@ -11810,10 +11810,23 @@ def m5hwview(request):
         }
     return render(request,"m5hwview.html",context)
 
-
+@login_required
+@role_required(urlpass='/MG33view/')
 def exam_detail(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     context={
             'totindb':0,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
         }
     if request.method=="POST":
         bval=request.POST.get('btn')
@@ -11826,6 +11839,9 @@ def exam_detail(request):
                 'obj':ex,
                 'totindb':0,
                 'leng':leng,
+                'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
             }
         if bval=='Save':
             tot=request.POST.get('total')
@@ -11860,9 +11876,23 @@ def exam_detail(request):
     return render(request,"examdetail.html",context)
 
 
+@login_required
+@role_required(urlpass='/MG33view/')
 def view_exam_data(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     context={
             'totindb':0,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
         }
     if request.method=="POST":
         bval=request.POST.get('btn')
@@ -11875,6 +11905,9 @@ def view_exam_data(request):
                 'obj':ex,
                 'totindb':0,
                 'leng':leng,
+                'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
             }
         if bval=='Save':
             tot=request.POST.get('total')
