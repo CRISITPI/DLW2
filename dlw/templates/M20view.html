@@ -120,12 +120,7 @@ input[type=text],
             </select>
           </td>   
 
-          <!-- <td>
-              <label for="sno"><b>Staff No/ स्टाफ न .:</b></label>
-              <select class="form-control ll" id="staff_no" name="staff_no" required style="width: 150px;">       
-                  <option id="staff_no" selected disabled hidden>Staff Number</option>    
-            </select>
-          </td>   -->
+         
           <td><input type="text" id="stffno" name="stffno" value="{{ticketno}}" style="display: none" /></td>     
           <td><input type="text" id="shpsec" value="{{shopsec}}" style="display: none" /></td>     
         </tr>
@@ -234,7 +229,7 @@ $( document ).ready(function() {
     var shop_sec=document.getElementById('shpsec').value;
     var sub=document.getElementById('sub').value;
     var tt=0;
-alert(shop_sec)
+
     
 
     if (sub == 1)
@@ -316,8 +311,16 @@ function find(th)
 }
 
                 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-                    
-                  document.querySelector("#proceed").click();
+
+                var shop_sec_temp = $("#shop_sec").val()
+                var lv_date_temp = $("#lv_date").val()
+
+                  if(lv_date_temp == "yyyy-mm-dd"){
+                  alert("Please First select Date then Shop Section.")
+                    return false;
+                  }
+
+               document.querySelector("#proceed").click();
               })
       
     function printDiv() {

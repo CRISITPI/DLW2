@@ -1,20 +1,13 @@
 {% extends 'base.html' %} {% block content %}
  
-<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" /> -->
- 
- 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-{% comment %} <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> {% endcomment %}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-{% comment %} <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> {% endcomment %}
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
- 
+
   <script>
     $(document).ready(function () { $('#updt_date').datepicker({dateFormat: 'yy-mm-dd'}); });
-  </script>
-   <script>
-      $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+    $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'yy-mm-dd'}); });
     </script>
  
 <style>
@@ -28,8 +21,7 @@ table {
 th, td {
   padding: 15px;
 }
-</style>
-<style>
+
     input[type=text],
     select {
         width: 100%;
@@ -91,7 +83,7 @@ th, td {
                 display: inline;
               }
 </style>
-<<form action="{% url 'MG22view' %}" method="POST"> {% csrf_token %}
+<form action="{% url 'MG22view' %}" method="POST"> {% csrf_token %}
     <div class="container">
 <table class="table">
   <tr>
@@ -110,13 +102,11 @@ th, td {
   </center>
   </tr>
     <tr>
-            <h4 align="center">HURT ON DUTY - MG22 </h4>
+    <h4 align="center">HURT ON DUTY - MG22 </h4>
     <h4 align="center">REPORT</h4>
- 
  
 <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
 <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम. जी. - 22/ M. G. - 22 </h6></div><br>
- 
  
         <td>
             <label for="sno"><b>Date/ दिनांक </b></label>            
@@ -140,13 +130,7 @@ th, td {
                 {% endif %}
             </select>
           </td>   
- 
-          <!-- <td>
-              <label for="sno"><b>Staff No/ ????? ? .:</b></label>
-              <select class="form-control ll" id="staff_no" name="staff_no" required style="width: 150px;">       
-                  <option id="staff_no" selected disabled hidden>Staff Number</option>    
-            </select>
-          </td>   -->
+
           <td><input type="text" id="stffno" name="stffno" value="{{ticketno}}" style="display: none" /></td>     
           <td><input type="text" id="shpsec" value="{{shopsec}}" style="display: none" /></td>     
         </tr>
@@ -168,73 +152,41 @@ th, td {
       <option value="{{lj}}"></option>
       {% endfor %}
   </datalist>
-    <input type="button" id="add" value="Add Accident Information Worker wise" />
     
     <input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" />
     <input type="hidden" name="totindb" value={{totindb}} id="totindb">
  
   <div id="printdata">
         <h3 align="center"></h3>
-    
-    
-   <div class="row">
-  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-    <!-- <table class="table">
-      <thead>
-          <input type="text" name="empname" value="{{empname}}" style="display: none" />
-        <tr>
-          <th>Name ???</th> 
-          
-          <th>Ticket No.  ???? ?.</th>       
-        </tr>
-        <tr>
-          <td>{{empname}}</td>
-          <td>{{ticketno}}</td> 
-        </tr>
-    
-      </thead>
-      <tbody id="projectData">
-          
-      </tbody> 
-    </table>
-  </div>
-  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date of leave to be given ???? ??? ?? ???? ???? ?????? ?? ????? </th>          
-        </tr>
-      </thead>  
-     
-      <tbody >  
-          <tr><td><input type="text" id="alt_date" style="width: 150px;" name="alt_date"  placeholder="yy-mm-dd" value="{{alt_date}}" readonly required /></td></tr>
-      </tbody> 
- 
-    </table> -->
-  </div> 
-</div>
 <input type="hidden" name="totmebs" id="totmebs" value="0">
-<!-- {% if totindb %}
-{% for key, values in dictemper.items %}
-<table>
-<tr><th>Name नाम</th><th>Ticket No.  टिकट नंबर </th><th>Date of Accident दुर्घटना की तिथि  </th></tr>
-<tr>
- <td>{{values.name}}</td>
-  <td>{{values.ticketno}}</td>
-  <td><input type="text" id="lv_date" style="width: 150px;" name="lv_date" value="{{values.acdate}}" placeholder="yyyy-mm-dd" readonly required/></td>
-</tr>
-</table>
- {% endfor %}     
-{% endif %} -->
+
+
+<table >
+  <tr>
+      <th>Name नाम</th>
+      <th>Ticket No.  टिकट नंबर </th>
+      <th>Date of Accident दुर्घटना की तिथि </th>
+  </tr>   
+  <tr>
+      <td>
+          <select class="form-control ll" id="name1" name="name1" style="width: 150px;" required onchange="find(this);">
+                <option value="Select">Select Name</option> 
+                  {% for lc in names %}
+                    <option value="{{lc}}">{{lc}}</option>
+                  {% endfor %}
+          </select>
+      </td>
+      <td><input type="text" name="ticket" id="ticket" class="form-control"></td>
+      <td><input type="date" name="datename" id="datename" class="form-control"></td>
+  </tr>
+  </table>
 
 <div id="items"> </div>
-
- 
 <div class="container" id="accident_info">
         
       
         <label for="cause">What was the the accident due to ?</label>
-        <input id="cause" type="text" name="cause" placeholder="Cause of the accident.." required value="{{values.cause}}"><br>
+        <input id="cause" type="text" name="cause" placeholder="Cause of the accident.."  value="{{values.cause}}"><br>
  
       
         <label for="reason">Is it due to negligence, if yes, state reasons ?</label>
@@ -264,7 +216,7 @@ th, td {
        
               <br>  <br>
         <label for="suggestion">Can you suggest any saftey devices to prevent similar accidents ? </label>
-        <input id="suggestion" type="text" id="cause" name="suggestion" placeholder="Suggest saftey devices" required><br>
+        <input id="suggestion" type="text" id="cause" name="suggestion" placeholder="Suggest saftey devices" ><br>
         
         <label for="bgc">Is it the first accident of its nature to this employee ? </label>
         
@@ -293,7 +245,7 @@ th, td {
              <td>
                 <label for="sno"><b>Section supervisor</b></label>
  
-              <select class="form-control ll" id="shop_sec" name="sec_sup" required style="width: 150px;" required>
+              <select class="form-control ll selectpicker" id="shop_sec" name="sec_sup" required style="width: 150px;" data-show-subtext="true" data-live-search="true">
               <option id="op_shop" name="sec_sup" value="{{lj}}" selected disabled hidden>Section Supervisor</option> 
               
                   {% for lj in empname %}
@@ -373,6 +325,7 @@ th, td {
 </form>
  
 <script type="text/javaScript">
+
 $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'yy-mm-dd'}); });
  
 $( function() {
@@ -394,59 +347,11 @@ $( document ).ready(function() {
  
       $("#shop_sec").val(shop_sec);
       console.log("shop_sec",shop_sec);
-      //if(totindb)
-      //{
-      //for(tt=1;tt<=totindb;tt++)
-      //{
-       // console.log(document.getElementById('datehid'+String(tt)).value);
-       // $('#datedb'+String(tt)).datepicker({dateFormat: 'yy-mm-dd'});
-       // $('#datedb'+String(tt)).datepicker('setDate', document.getElementById('datehid'+String(tt)).value);
-      
-        
-       
-     // }
-     // }
+     
     }
  
 });
   var j=0;
-  
- 
-  $("#add").click(function(e) {
-    event.preventDefault()
-        console.log("j"+String(j));
-        j++;
-        
-      
- 
-        var nameoname="name"+String(j);
-        var ticketfname="ticket"+String(j);
-        var datename="date"+String(j);
-       
-        var sno=j;
-        var totindb=document.getElementById('totindb').value;
-      
-        if(j==1 && totindb == 0)
-        {
-            var happ='<div><table id="customers">'+'<tr><th>Name नाम</th><th>Ticket No.  टिकट नंबर </th><th>Date of Accident दुर्घटना की तिथि  </th>';
- 
-    happ=happ+'</tr></table></div>';
-        $('#items').append(happ);
- 
-        }
-        var htAppend='<div><table id="customers"><tr>'+'<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" ></select></td>'+'<td><input type="text" id="'+ticketfname+'" name="'+ticketfname+'"  readonly></td>'+'<td><input type="date" id='+datename+' name='+datename+'></td>';
- 
-     htAppend=htAppend+'</tr></table>'+'</div>';
-     $('#items').append(htAppend);
-     document.getElementById("totmebs").value=j;
-     var x=document.getElementById("names");
-     var pp=0;
-     for (pp = 0; pp < x.options.length; pp++) {
-      
-     $("#"+nameoname).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
-     }
- 
-});
  
 function find(th)
 {
@@ -454,9 +359,7 @@ function find(th)
   var two=id.split("name");
   var ticket="ticket"+two[1];
   var name=document.getElementById(id).value;
-  var shop_sec=document.getElementById('shpsec').value;
- 
- 
+  var shop_sec=document.getElementById('shpsec').value; 
  
   var data = {shop_sec,name};
                       $.ajax({
@@ -465,19 +368,20 @@ function find(th)
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                            console.log(response);
-                         document.getElementById(ticket).value= response.cont.wono;
+                            console.log(response);                            
+                         document.getElementById("ticket").value= response.cont.wono;
                         }
                           })
- 
- 
 }
-  
- 
- 
- 
                 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
- 
+                  
+                var shop_sec_temp = $("#shop_sec").val()
+                var updt_date_temp = $("#updt_date").val()
+
+                if(updt_date_temp == "yyyy-mm-dd"){
+                  alert("Please First select Date then Shop Section.")
+                return false;
+                  }
                   document.querySelector("#proceed").click();
               })
       

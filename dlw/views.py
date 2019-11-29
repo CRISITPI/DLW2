@@ -6420,12 +6420,9 @@ def wheelnde(request):
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-<<<<<<< HEAD
-=======
 
 
 
->>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
 @login_required
 @role_required(urlpass='/M20view/')
 def M20view(request):
@@ -11991,10 +11988,8 @@ def mg33report(request):
             staffno=request.POST.get('staff_no')
             update=request.POST.get('updt_date')
             ex = MG33new.objects.filter(shop_sec=shpsec,staff_no=staffno,updt_date=update).all()
-            if not ex:
-                msg = "data not found"
-            else:
-                
+            if ex:
+                print("if") 
                 pscore=ex[0].prac_score
                 oscore=ex[0].oral_score
                 result=ex[0].result
@@ -12003,7 +11998,6 @@ def mg33report(request):
                 secsup=ex[0].sec_sup
                 trdoff=ex[0].trade_test_officer
                 print(ex)
-                # dictemper={}
                 excode=set()
                 j=0
                 for i in range(len(ex)):
@@ -12011,66 +12005,65 @@ def mg33report(request):
                 print(excode)
                 for a in excode:
                     obj1=exam_master.objects.filter(exam_code=a)
-                # temper = {str(j):{"examtype":obj1[0].exam_type,
-                #                     "pracd":obj1[0].prac_desc,"orald":obj1[0].oral_desc,}}
-                # dictemper.update(copy.deepcopy(temper))
-                # j=j+1
+            
                 
-            if "Superuser" in rolelist:
-                tm=shop_section.objects.all()
-                tmp=[]
-                for on in tm:
-                    tmp.append(on.section_code)
-                context={
-                    'sub':1,
-                    'lenm' :2,
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'roles':tmp,
-                    'shopsec':shpsec,
-                    'obj':stfno,
-                    'obj2':ex,
-                    'obj1':obj1,
-                    'pscore':pscore,'oscore':oscore,'result':result,
-                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
-                }
-            elif(len(rolelist)==1):
-                for i in range(0,len(rolelist)):
-                    w1 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname').distinct
-                context = {
-                    'sub':1,
-                    'subnav':subnav,
-                    'lenm' :len(rolelist),
-                    'wo_nop':wo_nop,
-                    'nav':nav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'shopsec':shpsec,
-                    'obj':stfno,
-                    'obj2':ex,
-                    'obj1':obj1,
-                    'pscore':pscore,'oscore':oscore,'result':result,
-                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
-                }
-            elif(len(rolelist)>1):
-                context = {
-                    'sub':1,
-                    'lenm' :len(rolelist),
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'shopsec':shpsec,
-                    'obj':stfno,
-                    'obj2':ex,
-                    'obj1':obj1,
-                    'pscore':pscore,'oscore':oscore,'result':result,
-                    'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
-                }
-    
+                if "Superuser" in rolelist:
+                    tm=shop_section.objects.all()
+                    tmp=[]
+                    for on in tm:
+                        tmp.append(on.section_code)
+                    context={
+                        'sub':1,
+                        'lenm' :2,
+                        'nav':nav,
+                        'subnav':subnav,
+                        'ip':get_client_ip(request),
+                        'roles':tmp,
+                        'shopsec':shpsec,
+                        'obj':stfno,
+                        'obj2':ex,
+                        'obj1':obj1,
+                        'pscore':pscore,'oscore':oscore,'result':result,
+                        'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                    }
+                elif(len(rolelist)==1):
+                    for i in range(0,len(rolelist)):
+                        w1 = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').values('empname').distinct
+                    context = {
+                        'sub':1,
+                        'subnav':subnav,
+                        'lenm' :len(rolelist),
+                        'wo_nop':wo_nop,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'usermaster':usermaster,
+                        'roles' :rolelist,
+                        'shopsec':shpsec,
+                        'obj':stfno,
+                        'obj2':ex,
+                        'obj1':obj1,
+                        'pscore':pscore,'oscore':oscore,'result':result,
+                        'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                    }
+                elif(len(rolelist)>1):
+                    context = {
+                        'sub':1,
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'subnav':subnav,
+                        'ip':get_client_ip(request),
+                        'usermaster':usermaster,
+                        'roles' :rolelist,
+                        'shopsec':shpsec,
+                        'obj':stfno,
+                        'obj2':ex,
+                        'obj1':obj1,
+                        'pscore':pscore,'oscore':oscore,'result':result,
+                        'trdadmin':trdadmin,'worker':worker,'trdoff':trdoff,'secsup':secsup,
+                    }
+            else:
+                print("else") 
+                messages.error(request,"Data Not found!")         
         
     return render(request,"mg33report.html",context)
 
@@ -13609,15 +13602,7 @@ def mg9compreportviews(request):
         #                 print(comp)
 
     return render(request,"mg9compreportviews.html",context)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 
-=======
->>>>>>> a13c3dff612f8acc2743edb1c424d23fe5484f31
->>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7
 
 def mg9getmwno(request):
     if request.method == "GET" and request.is_ajax():
@@ -13637,7 +13622,7 @@ def mg9getstaffno(request):
         return JsonResponse(staff, safe = False)
     return JsonResponse({"success":False}, status=400)
 
->>>>>>> master
+
 
 @login_required
 @role_required(urlpass='/miscreport/')
@@ -14127,8 +14112,6 @@ def bogiereport(request):
             }
 
     return render(request,'bogiereport.html',context)
-<<<<<<< HEAD
-=======
 
 
 
@@ -15059,4 +15042,3 @@ def mg21report(request):
                     objjj.save()                    
                 
     return render(request,"mg21report.html",context)
->>>>>>> 5f63d09604b38c0e9a0e7b12df59c3fdace7edd7

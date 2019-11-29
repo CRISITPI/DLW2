@@ -66,7 +66,7 @@
                 <td>
                         <label for="sno"><b>Shop Section NO/ शॉप अधी..:</b></label>
                         <select class="form-control ll" id="shop_sec" name="shop_sec"  required>   
-                        <option id="op_shop" selected disabled hidden>Shop Section</option>  
+                        <option value="Select">Shop Section</option>  
                         {% if lenm == 1 %}
                           {% for role in roles %}
                             <option selected readonly>{{role}}</option>
@@ -97,7 +97,21 @@
     </table>
     <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
 
-  
+  <table class="table">
+  <tr>
+      <center>
+          {% if messages %}
+          <ul class="messages">
+              {% for message in messages %}
+              <font style="color :red; font-size:32px; font-weight:bold;">
+                      {{ message }}               
+              </font>
+              {% endfor %}
+          </ul>
+          {% endif %}
+  </center>
+  </tr>
+  </table>
 
 <br><br> 
 {% if sub == 1 %}
@@ -113,9 +127,11 @@
                 <th>Worker Name</th>
                 
             </tr>
+
+            
             {% for i in obj2 %}
             <tr>
-                <td>{{i.shop_sec}}</td>
+                <td>{{i.shop_sec[0]}}</td>
                 <td>{{i.staff_no}}</td>
                 <td>{{i.name}}</td>
             </tr>
@@ -197,12 +213,23 @@
             $('#updt_date').datepicker({
                 dateFormat: 'dd-mm-yy',
                 onSelect: function(  ){
+
+                var updt_date_temp = $("#updt_date").val()
+                var staff_no_temp = $("#staff_no").val()
+                var shop_sec_temp = $("#shop_sec").val()
+                
+                  if(shop_sec_temp == "Select"){
+                  alert("Please First select Shop Section Staff No.")
+                    return false;
+                  }else if(staff_no_temp == "null"){
+                      alert("Please First select Shop Section Staff No.")
+                      return false;
+                  }
+        
             document.querySelector("#myproceed").click();
             }
-        });
-
-        
-});
+        });      
+    });
                         function printDiv() {
                             var printContents = document.getElementById("print").innerHTML;
                        
