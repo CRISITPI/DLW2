@@ -9208,8 +9208,8 @@ def MG22view(request):
             shop_sec = request.POST.get('shop_sec')
             name=request.POST.get('name1')
             staff_no = request.POST.get('staff_no')
-            ticketno = request.POST.get('ticket1')
-            acc_Date = request.POST.get('date1')
+            ticketno = request.POST.get('ticket')
+            acc_Date = request.POST.get('datename')
             cause = request.POST.get('cause')
             reason_neg = request.POST.get('reason_neg')
             reason_y_neg = request.POST.get('reason_y_neg')
@@ -11810,10 +11810,23 @@ def m5hwview(request):
         }
     return render(request,"m5hwview.html",context)
 
-
+@login_required
+@role_required(urlpass='/MG33view/')
 def exam_detail(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     context={
             'totindb':0,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
         }
     if request.method=="POST":
         bval=request.POST.get('btn')
@@ -11826,6 +11839,9 @@ def exam_detail(request):
                 'obj':ex,
                 'totindb':0,
                 'leng':leng,
+                'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
             }
         if bval=='Save':
             tot=request.POST.get('total')
@@ -11860,9 +11876,23 @@ def exam_detail(request):
     return render(request,"examdetail.html",context)
 
 
+@login_required
+@role_required(urlpass='/MG33view/')
 def view_exam_data(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     context={
             'totindb':0,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
         }
     if request.method=="POST":
         bval=request.POST.get('btn')
@@ -11875,6 +11905,9 @@ def view_exam_data(request):
                 'obj':ex,
                 'totindb':0,
                 'leng':leng,
+                'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
             }
         if bval=='Save':
             tot=request.POST.get('total')
