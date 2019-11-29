@@ -11810,7 +11810,8 @@ def m5hwview(request):
         }
     return render(request,"m5hwview.html",context)
 
-
+@login_required
+@role_required(urlpass='/m5hwview/')
 def exam_detail(request):
     context={
             'totindb':0,
