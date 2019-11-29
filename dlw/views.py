@@ -6421,8 +6421,11 @@ def wheelnde(request):
     return JsonResponse({"success":False}, status=400)
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
 @login_required
 @role_required(urlpass='/M20view/')
 def M20view(request):
@@ -13602,7 +13605,10 @@ def mg9compreportviews(request):
         #                 print(comp)
 
     return render(request,"mg9compreportviews.html",context)
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 
 def mg9getmwno(request):
     if request.method == "GET" and request.is_ajax():
@@ -13622,8 +13628,11 @@ def mg9getstaffno(request):
         return JsonResponse(staff, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
 @login_required
 @role_required(urlpass='/miscreport/')
 def miscreport(request):
