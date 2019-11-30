@@ -11155,7 +11155,6 @@ def m11view(request):
             'roles' :rolelist,
             'lent':0,
         }
-        #return render(request,"m11views.html",context)              #ye comment tha!!!!!!!!!!!!!!!!!!!!!!1
     elif(len(rolelist)>1):
         context = {
             'sub':0,
@@ -11171,7 +11170,6 @@ def m11view(request):
         submitvalue = request.POST.get('proceed')
         print(submitvalue)
         if submitvalue=='Proceed':
-            #print("hi")
             from decimal import Decimal
             month = request.POST.get('monthdrop')
             shop_sec = request.POST.get('shop_sec')
@@ -11181,13 +11179,6 @@ def m11view(request):
             
             obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('cat','name','in1','out','date','total_time','detail_no','idle_time').distinct()
             print(obj1)
-            # print(obj1[0]['total_time'])
-            #t = obj1[0]['cat']
-            #obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
-            #obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')
-            #print(obj3)
-            #obj2 = Shemp.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('name','cat').distinct()
-            #print(obj2)
             obj2='None'
             obj3='None'
             leng=0
@@ -11200,10 +11191,8 @@ def m11view(request):
             if len(obj1):
                 print(obj1)
                 t=obj1[0]['cat']
-                # print(t)
-                # print(obj1[0]['total_time'])
                 if t != 'None':
-                    obj2 = Rates_dlw.objects.filter(cat=t).values('avg_rate').distinct()
+                    obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
                     obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat')[0]
                     print(obj2)
 
@@ -11247,24 +11236,6 @@ def m11view(request):
                 leng = obj1.count()
                 leng1 = obj2.count()
             print(obj2)
-            #leng = obj1.count()
-           # print(staff_no)
-
-
-           # context = {
-            #    'obj1': obj1,
-             #   'obj2': obj2,
-                #'ran': range(1,32),
-                # 'len': leng,
-              #  'leng': leng,
-               # 'leng2': leng2,
-                #'shop_sec': shop_sec,
-                #'wo_no': wo_no,
-                #'staff_no': staff_no,
-                #'part_no': part_no, 
-                #'month': month,
-                #'sub':1,       
-           # }
             leng=obj1.count()
             print("amt1",amt)
             context = {
@@ -11286,40 +11257,16 @@ def m11view(request):
                 'sub':1,       
             }
 
-   
-    
-# elif(len(rolelist)>1):
-#             context = {
-#                 'lenm' :len(rolelist),
-#                 'obj1': obj1,
-#                 'obj2': obj2,
-#                 'len': leng,
-#                 'len2': leng2,
-#                 'shop_sec': shop_sec,
-#                 'wo_no': wo_no,
-#                 'staff_no': staff_no,
-#                 'part_no': part_no, 
-#                 'mon': mon,
-#                 'sub':1,       
-#             }
-
-    # return render(request,"m11views.html",context)              #ye comment tha
-
 
         if submitvalue=='Submit':
             # print("in submit")                               #!!!!!!!1!!!!!!!!!!!!capital S
             leng=request.POST.get('len')
             print("leng=",leng)
-            #shop_sec= request.POST.get('shop_sec')
-            #staff_no = request.POST.get('staff_no')
-            #name = request.Post.get('name')
             shopsec= request.POST.get('shopsec')
             staff_no = request.POST.get('staff_no')
             inoutnum = request.POST.get("inoutnum")
-            idletime=request.POST.get('idle_time')
-            amt = request.POST.get('amt')
+            print("dadd",inoutnum)
             
-                
             for i in range(1, int(leng)+1):
                 date = request.POST.get('date'+str(i))
                 month = request.POST.get('month')
@@ -11339,37 +11286,19 @@ def m11view(request):
                                     
                 M11.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date), in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
                 print("data saved")
-                #print(in1)
-                #print(date)
-            for i in range(int(leng)+1, int(inoutnum)+1):
+            for i in range(1,int(inoutnum)+1):
                 date = request.POST.get('dateadd'+str(i))
                 month = request.POST.get('month_add'+str(i))
                 in1 = request.POST.get('in1add'+str(i))
                 out = request.POST.get('outadd'+str(i))
                 total_time = request.POST.get('total_time_add'+str(i))
-            #   name = request.POST.get('name'+str(i))
                 idle_time = request.POST.get('idle_time_add'+str(i))
-                detail_no = request.POST.get('detail_no_add'+str(i))     
-                print(date)
-                print(month)
-                print(in1)
-                print(out)
-                print(total_time)          #!!!!detail_no_add
-                
-                #if submitvalue=='Submit':
-                 #   print("data saved")
-                  #  shop_sec= request.POST.get('shop_sec')
-                 #   staff_no=request.POST.get('stffno')
-                   # date= request.POST.get('date')
-                    #month=request.POST.get('month')
-                    #in1 = request.POST.get('in1')
-                    #out = request.POST.get('out')
-                    #total_time = request.POST.get('total_time')
-                    #idle_time = request.POST.get('idle_time')
-                    #detail_no = request.POST.get('it_reasons')
-                M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),detail_no=str(detail_no))
-                    #messages.success(request, 'Successfully Saved !!!, Select new values to update')
-                    
+                detail_no = request.POST.get('detail_noadd'+str(i))    
+                if date and month and in1 and out and idle_time and detail_no:
+                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),detail_no=str(detail_no))
+                    messages.success(request, 'Data Saved Successfully!!')
+                else:
+                    messages.success(request, 'Please enter all values!!')
                 wo_no=Batch.objects.all().values('bo_no').distinct()
 
     return render(request,"m11views.html",context)                        
@@ -11389,9 +11318,8 @@ def m11getwono(request):
 def m11getstaff_no(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        #wo_no = request.GET.get('wo_no')
-        staff_no = list(M11.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
-        #staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        # staff_no = list(M11.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
