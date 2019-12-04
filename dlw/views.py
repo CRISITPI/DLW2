@@ -15267,3 +15267,343 @@ def mg9getstaff(request):
         print(staff)
         return JsonResponse(staff, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+
+@login_required
+@role_required(urlpass='/mg9compreportviews/')
+def mg9compreportviews(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = user_master.objects.none()
+    tool_no = Tools.objects.values('tool_code').exclude(tool_code__isnull=True).distinct()
+    prtlist=[]
+    for i in tool_no:
+        prtlist.append(i['tool_code'])
+    # print(prtlist) 
+    ticket_no = empmast.objects.values('ticket_no').exclude(ticket_no__isnull=True).distinct()
+    prtticket=[]
+    for i in ticket_no:
+        prtticket.append(i['ticket_no'])
+    #print(prtticket)   
+    empno = empmast.objects.filter(payrate__gt=4200).values('empno').exclude(empno__isnull=True).distinct()
+    prtemp=[]
+    for i in empno:
+        prtemp.append(i['empno'])
+    # print(prtemp)
+    empno = empmast.objects.filter(scalecode__gt=4200).values('empno').exclude(empno__isnull=True).distinct()
+    prtsec=[]
+    for i in empno:
+        prtsec.append(i['empno'])
+    #print(prtsec)  
+    if "Superuser" in rolelist:
+        tm=M5SHEMP.objects.all().values('shopsec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+           
+            'roles':tmp,
+            'subnav':subnav,
+            'prtlist':prtlist,
+            'prtticket':prtticket,
+            'prtemp':prtemp,
+            'prtsec':prtsec,
+
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'prtlist':prtlist,
+            'prtticket':prtticket,
+            'prtemp':prtemp,
+            'prtsec':prtsec,
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'prtlist':prtlist,
+            'prtticket':prtticket,    
+            'prtemp':prtemp,
+            'prtsec':prtsec,
+                }
+
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            shop_sec = request.POST.get('shop_sec')
+            mw_no = request.POST.get('mwno')
+            staff_no = request.POST.get('staffno')
+            
+            current_yr=int(datetime.datetime.now().year)
+
+
+            print("Current year",current_yr)
+        
+
+           
+
+            print(mw_no)
+            print(staff_no)
+            print(mw_no)
+            obj  = MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).values('sec','mw_no','sl_no','staff_no','handed_date','comp_date','handed_time','comp_time','handed_cmsec','comp_cmsec','handed_cmserv','comp_cmserv','complaint','action','total_losthrs','cause_hrs','mp_time','mismp_time','inv_time').distinct()
+            obj1  = MG9Complete.objects.values('id').count()
+            print("OBJ")
+            print(obj)
+            print("count")
+            print(obj1)
+            leng = obj.count()
+            slno=obj1
+            slno=slno+1
+            print(slno)
+            
+
+            
+            if "Superuser" in rolelist:
+                    tm=M5SHEMP.objects.all().values('shopsec').distinct()
+                    tmp=[]
+                    for on in tm:
+                        tmp.append(on['shopsec'])
+                    context={
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'roles':tmp,
+                        'len':leng,   
+                        # 'len1':leng1,  
+                        'obj':obj,
+                        # 'obj1':obj1,
+                        'sub': 1,
+                        'shop_sec': shop_sec,
+                        'mw_no': mw_no,
+                        'staff_no': staff_no,
+                        'slno':slno,
+                        'cyear':current_yr,
+                       
+                        #'assm_no':assm_no,
+                      
+                        'subnav':subnav,
+                        'prtlist':prtlist,
+                        'prtticket':prtticket,
+                        'prtemp':prtemp,
+                        'prtsec':prtsec,
+
+
+
+                    }
+            elif(len(rolelist)==1):
+                    # print("in m5 else")
+                    for i in range(0,len(rolelist)):
+                        req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+                        wo_nop =wo_nop | req
+                    context = {
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'roles':tmp,
+                        'len':leng,
+                        'obj':obj,
+                        'slno':slno,
+                        'sub': 1,
+                        'shop_sec': shop_sec,
+                        'mw_no': mw_no,
+                        'staff_no': staff_no,
+                        'cyear':current_yr,
+                     
+                        #'assm_no':assm_no,
+                      
+                        'subnav':subnav,
+                    }
+            elif(len(rolelist)>1):
+                    context = {
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'subnav':subnav,
+                        'ip':get_client_ip(request),
+                        'roles' :rolelist,
+                        'len':leng,
+                        'obj':obj,
+                        'slno':slno,
+                        'shop_sec': shop_sec,
+                        'mw_no': mw_no,
+                        'staff_no': staff_no,
+                        'cyear':current_yr,
+                  
+                        #'assm_no':assm_no,
+                        'subnav':subnav
+                    }    
+        if submitvalue=='submit':
+                    leng=request.POST.get('len')
+                    now = datetime.datetime.now()
+                    shop_sec=request.POST.get('shop_sec')
+                    mw_no = request.POST.get('mw_no')
+                    staff_no = request.POST.get('staff_no')
+                    comp= request.POST.get('complaint')
+                    date_handed=request.POST.get('date_handed')
+                    date_com=request.POST.get('date_com')
+                    time_handed=request.POST.get('time_handed')
+                    time_com=request.POST.get('time_com')
+                    sec_handed = request.POST.get('sec_handed')
+                    sec_com = request.POST.get('sec_com')
+                    serv_com = request.POST.get('serv_com')
+                    serv_handed = request.POST.get('serv_handed')
+                    action= request.POST.get('action')
+                    sl_no = request.POST.get('sl_no')
+                    lost_hrs = request.POST.get('lost_hrs')
+                    elec = request.POST.get('elec')
+                    mech = request.POST.get('mech')
+                    mech_ele = request.POST.get('mech_ele')
+                    mp = request.POST.get('mp')
+                    inv = request.POST.get('inv')
+                    mismp = request.POST.get('mismp')
+                    # time_hrs=request.POST.get('time_hrs')
+                    inv_time = request.POST.get('inv_time')
+                    mismp_time = request.POST.get('mismp_time')
+                    mp_time=request.POST.get('mp_time')
+
+
+
+                   
+
+                    print(sl_no)
+                    print(shop_sec)
+                    print(mw_no)
+                    print(staff_no)
+                    print(date_handed)
+                    print(date_com)
+                    print(time_handed)
+                    print(time_com)
+                    print(sec_handed)
+                    print(sec_com)
+                    print(serv_handed)
+                    print(serv_com)
+                    print(action)
+                    print(comp)
+                    print(lost_hrs)
+                    print(elec)
+                    print(mech)
+                    print(mech_ele)
+                    print(mp)
+                    print(inv)
+                    print(mismp)
+                    print("mp_time",mp_time)
+                    print("mismp_time",mismp_time)
+                    print("inv_time",inv_time)
+                    tmp=""
+                    if(elec is not None):
+                        tmp=str(elec)+str("   ")
+                    if(mech is not None):
+                        tmp=tmp+str(mech)+str("   ")
+                    if(mech_ele is not None):
+                        tmp=tmp+str(mech_ele)+str("   ")
+                    if(mp is not None):
+                        tmp=tmp+str(mp)+str("   ")
+                    if(inv is not None):
+                        tmp=tmp+str(inv)+str("   ")
+                    print(tmp)
+                    if(mp_time is None):
+                        mp_time='00:00'
+                        print("mp_time",mp_time)
+                    if(inv_time is None):
+                        inv_time='00:00'
+                        print("inv_time",inv_time) 
+                    if(mismp_time is None):
+                        mismp_time='00:00'
+                        print("mismp_time",mismp_time)        
+                   
+
+                    mg9obj = MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).distinct()
+                    if len(mg9obj) == 0:
+
+        #                 print(now)
+        #                 print(sl_no)
+        #                 # print(shop_sec)
+        #                 print(shop_sec)
+        #                 print(mw_no)
+        #                 print(staff_no)
+        #                 print(date_handed)
+        #                 print(date_com)
+        #                 print(time_handed)
+        #                 print(time_com)
+        #                 print(sec_handed)
+        #                 print(sec_com)
+        #                 print(serv_handed)
+        #                 print(serv_com)
+        #                 print(action)
+        #                 print(comp)
+
+                    
+                        MG9Complete.objects.create(sec=str(shop_sec),mw_no=str(mw_no),sl_no=str(sl_no),staff_no=str(staff_no),complaint=str(comp),handed_date=str(date_handed),comp_date=str(date_com),handed_time=str(time_handed),comp_time=str(time_com),handed_cmsec=str(sec_handed),comp_cmsec=str(sec_com),handed_cmserv=str(serv_handed),comp_cmserv=str(serv_com),action=str(action),last_modified=str(now),login_id=request.user,total_losthrs=str(lost_hrs),cause_hrs=str(tmp),mp_time=str(mp_time),inv_time=str(inv_time),mismp_time=str(mismp_time))
+                    else:
+                        cause=request.POST.get('cause_hrs')
+
+                        MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).update(complaint=str(comp),handed_date=str(date_handed),comp_date=str(date_com),handed_time=str(time_handed),comp_time=str(time_com),handed_cmsec=str(sec_handed),comp_cmsec=str(sec_com),handed_cmserv=str(serv_handed),comp_cmserv=str(serv_com),action=str(action),last_modified=str(now),login_id=str(request.user),total_losthrs=str(lost_hrs),cause_hrs=str(cause),mp_time=str(mp_time),inv_time=str(inv_time),mismp_time=str(mismp_time))
+                       
+        #                 print(now)
+        #                 print(sl_no)
+        #                 # print(shop_sec)
+        #                 print(shop_sec)
+        #                 print(mw_no)
+        #                 print(staff_no)
+        #                 print(date_handed)
+        #                 print(date_com)
+        #                 print(time_handed)
+        #                 print(time_com)
+        #                 print(sec_handed)
+        #                 print(sec_com)
+        #                 print(serv_handed)
+        #                 print(serv_com)
+        #                 print(action)
+        #                 print(comp)
+                 
+
+        
+    
+
+
+    return render(request,"mg9compreportviews.html",context)
+
+def mg9getmwno(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        # print(shop_sec)
+        wono = list(Mnp.objects.filter(shopsec = shop_sec).values('mwno').distinct())
+        print("wono",wono)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def mg9getstaffno(request):
+    if request.method == "GET" and request.is_ajax():
+        # staff_no = request.GET.get('wo_no')
+        shop_sec = request.GET.get('shop_sec')
+        staff = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
+        print(staff)
+        return JsonResponse(staff, safe = False)
+    return JsonResponse({"success":False}, status=400)
