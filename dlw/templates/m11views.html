@@ -162,6 +162,7 @@
     </div>
 <br><br> 
 {% if sub == 1 %}
+<div id="print" style="align:center" >
 <table align="center">  
     <tr>
         <th>SHOP SECTION/शाप विभाग:</th> 
@@ -182,17 +183,14 @@
         <th>STAFF NO/क्रम सं.:</th> 
         <td><u>{{staff_no}}</u></td>
         <input type="hidden" name="staff_no" value="{{staff_no}}">
+        <th>Employee Name</th> 
+        <td>{{empname}}</td>
+        <input type="hidden" name="empname" value="{{empname}}">
 
     </tr>
     <tr>
         <th>CAT/कोटि सं:</th>
-        {% for i in obj1 %}
-        {% if forloop.counter == 1 %}
-        <td>
-            <u>{{i.cat}}</u>
-        </td>
-        {% endif %}
-        {% endfor %}
+        <td>{{tcat}}</td>
     </tr>
 
     <tr>
@@ -206,7 +204,7 @@
         <input type="hidden" name="amt" value="{{amt1}}">
     </tr>  
        
-    
+    </div>
 </table> 
 <br>
 
@@ -312,6 +310,7 @@
 
 <center>
     <input type="submit" name="proceed" value="Submit">
+    <input type="button" onclick="printDiv()" value="Print">
 </center>
 {% endif %} 
 <div id="items">
@@ -601,7 +600,32 @@ document.addEventListener('keypress',(event)=>{
 if(event.keyCode===13){
     event.preventDefault();
 }
-})
+});
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M14 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+
+
+}
  
 </script>    
 {% endblock content %}        
