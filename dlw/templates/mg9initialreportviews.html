@@ -101,7 +101,7 @@
                 <option id="op_mw" selected disabled hidden>Select MW No</option>
                 {% if lenm == 1 %}
                 {% for i in wono %}
-                  <option>{{i.mwno}}</option>
+                  <option>{{i.lcno}}</option>
                 {% endfor %}
                 {% endif %}
             </select>
@@ -237,9 +237,11 @@
                         {% if len %}
                         {% for i in obj %}
                         
-                        <input type="date" id="datePickerId" name="date_handed" class="myinp" value="{{i.handed_date}}" required />{% endfor %}
+                        <input type="text" id="datePickerId" name="date_handed" class="myinp" value="{{i.handed_date}}" required />{% endfor %}
                         {% else %}
-                        <input  type="date" name="date_handed" id="datePickerId" required/>
+                        <input  type="text" name="date_handed" id="datePickerId" required/>
+                        <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden>
+
                         {% endif %}
 
                 </td>
@@ -248,9 +250,11 @@
                         {% if len %}
                         {% for i in obj %}
                         
-                        <input type="date" id="datePickerId1" name="date_com" class="myinp" value="{{i.comp_date}}" required />{% endfor %}
+                        <input type="text" id="datePickerId1" name="date_com" class="myinp" value="{{i.comp_date}}"  />{% endfor %}
                         {% else %}
-                        <input  type="date" name="date_com" id="datePickerId1" required/>
+                        <input  type="text" name="date_com" id="datePickerId1"/>
+                        <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden>
+
                         {% endif %}
 
                 </td>
@@ -279,9 +283,9 @@
                             {% if len %}
                             {% for i in obj %}
                             
-                            <input type="time" id="time_com" name="time_com" class="myinp" value="{{i.comp_time}}" required/>{% endfor %}
+                            <input type="time" id="time_com" name="time_com" class="myinp" value="{{i.comp_time}}" />{% endfor %}
                             {% else %}
-                            <input  type="time" name="time_com" id="time_com" required/>
+                            <input  type="time" name="time_com" id="time_com"/>
                             {% endif %}
     
                     </td>
@@ -310,9 +314,9 @@
                                 {% if len %}
                                 {% for i in obj %}
                                 
-                                <input type="text" id="sec_com" name="sec_com" class="myinp" value="{{i.comp_cmsec}}" required/>{% endfor %}
+                                <input type="text" id="sec_com" name="sec_com" class="myinp" value="{{i.comp_cmsec}}" />{% endfor %}
                                 {% else %}
-                                <input  type="text" name="sec_com" id="sec_com" required/>
+                                <input  type="text" name="sec_com" id="sec_com" />
                                 {% endif %}
         
                                 
@@ -324,10 +328,11 @@
                                 {% if len %}
                                 {% for i in obj %}
                                 
-                                <input type="text" id="action" name="action" class="myinp" value="{{i.action}}" required/>{% endfor %}
+                                <input type="text" id="action" name="action" class="myinp" value="{{i.action}}" />{% endfor %}
                                
                                 {% else %}
-                                <select class="form-control" type=text name="action" id="action" required>
+                                <select class="form-control" type=text name="action" id="action" >
+                                        <option id="op_action" selected disabled hidden>Select Action</option>
                                         <option value="PMS">PMS</option>
                                         <option value="EMS">EMS</option>
                                         <option value="EMS">TR</option>
@@ -361,9 +366,9 @@
                                     {% if len %}
                                     {% for i in obj %}
                                     
-                                    <input type="text" id="serv_com" name="serv_com" class="myinp" value="{{i.comp_cmserv}}" required/>{% endfor %}
+                                    <input type="text" id="serv_com" name="serv_com" class="myinp" value="{{i.comp_cmserv}}" />{% endfor %}
                                     {% else %}
-                                    <input  type="text" name="serv_com" id="serv_com" required/>
+                                    <input  type="text" name="serv_com" id="serv_com" />
                                     {% endif %}
             
                             </td>
@@ -424,7 +429,7 @@
                                     
                                 }
                                var brarr,mystr,html;
-                               brarr = response.map((el)=>el.mwno);
+                               brarr = response.map((el)=>el.lcno);
                                mystr = "";
                                brarr.forEach((el,index)=>{
                                  html = `<option class="newelemwno">${brarr[index]}</option>`
@@ -509,13 +514,24 @@ function printDiv() {
 } 
 
 
-datePickerId1.max = new Date().toISOString().split("T")[0];
-console.log("aaaa",datePickerId1.max)
+var a=document.getElementById('cyear');
+        var b=a-b;  
+        $(function() {
+        $( "#datePickerId1" ).datepicker({  maxDate: new Date(),
+        changeYear: true,
+        yearRange: (a)+':'+(b),
+        });
+        });
+
+        $(function() {
+        $( "#datePickerId" ).datepicker({  maxDate: new Date(),
+        changeYear: true,
+        yearRange: (a)+':'+(b),
+        });
+        });
 
 
-datePickerId.max = new Date().toISOString().split("T")[0];
-console.log("aaaa",datePickerId.max)
-                </script> 
+     </script>
                
 
 {% endblock %}            

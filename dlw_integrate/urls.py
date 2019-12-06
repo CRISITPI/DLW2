@@ -90,6 +90,7 @@ urlpatterns = [
     path('ajax/m5getpart_no/',m5getpart_no,name='m5getpart_no'),
     path('ajax/m5getdoc_no/',m5getdoc_no,name='m5getdoc_no'),
     path('ajax/m5getwono',m5getwono,name='m5getwono'),
+    path('ajax/m5getempname/',m5getempname,name='m5getempname'),
     path('ajax/m12getwono',m12getwono,name='m12getwono'),
     path('ajax/airbox_addbo',airbox_addbo,name='airbox_addbo'),
     path('ajax/miscell_addbo',miscell_addbo,name='miscell_addbo'),
