@@ -4901,12 +4901,15 @@ def m5view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+
     wo_nop = user_master.objects.none()
+  
     if "Superuser" in rolelist:
-        tm=M5SHEMP.objects.all().values('shopsec').distinct()
+        tm=shop_section.objects.all()
         tmp=[]
+        
         for on in tm:
-            tmp.append(on['shopsec'])
+            tmp.append(on.section_code)
         context={
             'sub':0,
             'lenm' :2,
@@ -4934,6 +4937,7 @@ def m5view(request):
             'lenm' :len(rolelist),
             'nav':nav,
             'subnav':subnav,
+            
             'ip':get_client_ip(request),
             'roles' :rolelist
         }
@@ -4951,24 +4955,87 @@ def m5view(request):
             ticket_no = request.POST.get('ticket_no')
             name = request.POST.get('name')
             doc_no =request.POST.get('doc_no')
+            current_yr=int(datetime.datetime.now().year)
 
-           # print(doc_no)
+
+            print("Current year",current_yr)
+            print("shop_sec",shop_sec)
+       
+
             
-            obj  = Oprn.objects.filter(shop_sec=shop_sec, part_no=part_no).values('qtr_accep','mat_rej','lc_no','pa','at','des').distinct()
-            obj1 = M5DOCnew.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty').distinct()
+           # print(doc_no)
+            res = [int(x) for x in str(wo_no)] 
+            print("WORK",str(res))
+            # workorder=np.trim_zeros(res)
+
+            s = [str(i) for i in res] 
+            workorder = int("".join(s)) 
+            print("wo_no",workorder)
+            obj1 = M5DOCnew.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('opn','n_shopsec','rm_partno','cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty','lc_no','pa','at','opn_desc').distinct()
             obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
-            obj3 = Batch.objects.filter(bo_no=wo_no,part_no=part_no).values('batch_type','part_no').order_by('part_no').distinct()
-            obj4 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken').distinct()
-            obj5 = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('shopsec','staff_no','name','ticket_no','flag')[0]
-            print("obj1",obj1)
-            print("obj4",obj4)
-           # print("oj4 len",len(obj4))
+            obj3 = Batch.objects.filter(bo_no=workorder,brn_no=brn_no,b_close_dt__isnull=True).values('batch_type','part_no','loco_fr','loco_to').distinct()
+            obj4 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('shopsec','staff_no','in_date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken','out_date','in_date','shift_typename').distinct()
+            obj5 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('shopsec','staff_no','name','ticket_no','flag').distinct()
+            obj6  = Oprn.objects.filter(shop_sec=shop_sec,part_no=part_no).values('qtr_accep','mat_rej').exclude(qtr_accep=None,mat_rej=None).distinct()
+            print(obj3)
+            leng=0
+            leng5=0
+            leng9=0
+            if len(obj1):
+                raw_mat= obj1[0]['rm_partno']
+                opn= obj1[0]['opn']
+                obj7 = Part.objects.filter(partno=raw_mat).values('des').distinct()
+                obj  = Oprn.objects.filter(part_no=part_no,opn=opn).values('ncp_jbs').distinct()
+                leng = obj.count()
+                print(raw_mat,opn)
+                print(obj)
+                print(obj7)
+                leng5=obj7.count()
+            if len(obj3):
+                end_part=obj3[0]['part_no']
+                obj9 = Part.objects.filter(partno=end_part).values('des').distinct()
+                leng9=obj9.count()
+
+
+
+            
+            
+           
+
+        
+           
+            obj8 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('flag').distinct()
+            print(obj8)
+            # obj9 = empmast.objects.filter()
+            staff=5548
+
+           
+            # # print("OBJ!0",obj10)
+            # print("obj7",obj7)
+            # print("ibj",obj6)
+            # print("OBJ5",obj5)
+            # print("OBJ!",obj8)
+
+            staff=M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+           
+            prtstaff=[]
+            for i in staff:
+              prtstaff.append(i['staff_no'])
+            # print(prtstaff)  
+    #    .    print(prtlist) 
+            # print("obj4",obj4)
+            # print("oj4 len",len(obj4))
             ticket= randint(1111,9999)
-            leng = obj.count()
+           
             leng1=obj1.count()
             leng2=obj2.count()
             leng3=obj3.count()
             leng4=obj4.count()
+           
+            leng7=obj5.count()
+            leng6=obj6.count()
+           
+            leng8=obj8.count()
             #print("lengg4",leng4)
             
             
@@ -4988,8 +5055,13 @@ def m5view(request):
                         'obj2':obj2,
                         'obj3':obj3,
                         'obj4':obj4,
-            
+                        'obj7':obj7,
                         'obj5':obj5,
+                        'obj6' :obj6,
+                        'obj8':obj8,
+                        'obj9':obj9,
+                        'len9':leng9,
+                        'len8':leng8,
                         'ticket1':ticket,
                         'sub': 1,
                         'len': leng,
@@ -4997,12 +5069,17 @@ def m5view(request):
                         'len2':leng2,
                         'len3':leng3,
                         'len4':leng4,
+                        'len5':leng5,
+                        'len6':leng6,
+                        'len7':leng7,
                         'shop_sec': shop_sec,
                         'part_no': part_no,
                         'wo_no': wo_no,
+                        'cyear':current_yr,
                         #'assm_no':assm_no,
                         'brn_no': brn_no,
                         'doc_no': doc_no,
+                        'prtstaff':prtstaff,
                         'staff_no':staff_no,
                         'subnav':subnav,
                     }
@@ -5024,18 +5101,29 @@ def m5view(request):
                         'obj3':obj3,
                         'obj4':obj4,
                         'obj5':obj5,
+                        'obj6':obj6,
+                        'obj7':obj7,
+                        'obj8':obj8,
+                        'obj9':obj9,
+                        'len9':leng9,
+                        'len8':leng8,
                         'sub': 1,
                         'len': leng,
                         'len1':leng1,
                         'len2':leng2,
                         'len3':leng3,
                         'len4':leng4,
+                        'len5':leng5,
+                        'len6':leng6,
+                        'len7':leng7,
                         'shop_sec': shop_sec,
                         'part_no': part_no,
                         'wo_no': wo_no,
+                        'cyear':current_yr,
                         #'assm_no':assm_no,
                         'brn_no': brn_no,
                         'doc_no': doc_no,
+                        'prtstaff':prtstaff,
                         'staff_no':staff_no,
                         'subnav':subnav
                     }
@@ -5052,148 +5140,195 @@ def m5view(request):
                         'obj3':obj3,
                         'obj4':obj4,
                         'obj5':obj5,
+                        'obj6':obj6,
+                        'obj7':obj7,
+                        'obj8':obj8,
+                        'obj9':obj9,
+                        'len9':leng9,
+                        'len8':leng8,
                         'sub': 1,
                         'len': leng,
                         'len1':leng1,
                         'len2':leng2,
                         'len3':leng3,
                         'len4':leng4,
+                        'len5':leng5,
+                        'len6':leng6,
+                        'len7':leng7,
+                        'cyear':current_yr,
                         'shop_sec': shop_sec,
                         'part_no': part_no,
                         'wo_no': wo_no,
                         #'assm_no':assm_no,
                         'brn_no': brn_no,
                         'doc_no': doc_no,
+                        'prtstaff':prtstaff,
                         'staff_no':staff_no,
                         'subnav':subnav
                     }    
         if submitvalue=='submit':
+            print("M%n")
             leng=request.POST.get('len')
-            shopsec= request.POST.get('shopsec')
+            shopsec= request.POST.get('shop_sec')
             partno= request.POST.get('partno')
             brn_no = request.POST.get('brn_no')
             inoutnum=request.POST.get("inoutnum")
+            #name = request.Post.get('name')
+
             len4=request.POST.get('len4')
+
             qty_insp = request.POST.get('qty_insp')
             inspector = request.POST.get('inspector')
             date = request.POST.get('date')
             remarks = request.POST.get('remarks')
-            worker = request.POST.get('worker')
-            
-            in1 = request.POST.get('in1')
-            out = request.POST.get('out')
-            cat = request.POST.get('cat')
-            staff_no = request.POST.get('staff_no')
-            ticket_no = request.POST.get('ticket_no')
-            month_hrs = request.POST.get('month_hrs')
-            total_time_taken = request.POST.get('total_time_taken')
-            date =  request.POST.get('date1')
-            rm_ut =  request.POST.get('rm_ut')
             rev_qty=request.POST.get('rev_qty')
             rej_qty=request.POST.get('rej_qty')
-            print("revqty",rev_qty)
-            print("rejqty",rej_qty)
+            worker=request.POST.get('worker')
+            #worker = request.POST.get('worker')
+            
+            # in1 = request.POST.get('in1')
+            # out = request.POST.get('out')
+            # #lc_no = request.POST.get('lc_no'+str(i))
+            # # brn_no = request.POST.get('brn_no'+str(i))
+            # cat = request.POST.get('cat')
+            # staff_no = request.POST.get('staff_no')
+            # ticket_no = request.POST.get('ticket_no')
+            # month_hrs = request.POST.get('month_hrs')
+            # total_time_taken = request.POST.get('total_time_taken')
+            # in_date =  request.POST.get('in_date')
+            # out_date= request.POST.get('out_date')
+            # rm_ut =  request.POST.get('rm_ut')
 
 
            # print(remarks)
            # print(qty_insp)
+
+
+
            # print(inspector)
            # print(worker)
             print(date)
 
             print("@")
+            print(shopsec)
+            print(partno)
+            print(brn_no)
+            print(inspector)
+            print(worker)
+            print(date)
+            print(remarks)
+            print(qty_insp)
+            print(rev_qty)
+            print(rej_qty)
             #print(in1)
             #print(out)
            # print(date)
 
-            M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=int(qty_insp),inspector=int(inspector),date=str(date),remarks=str(remarks),rev_qty=int(rev_qty),rej_qty=int(rej_qty),worker=str(worker))             
-            staff_no = request.POST.get('staff_nohid')
-            name = request.POST.get('namehid')
-            ticket_no = request.POST.get('ticket_nohid')
-            cat = request.POST.get('cat1')
-            m5upd=M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat)
-            print("m5upd",m5upd)
+            M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=str(qty_insp),inspector=str(inspector),date=str(date),remarks=str(remarks),rev_qty=str(rev_qty),rej_qty=str(rej_qty),worker=str(worker))             
             
-            for i in range(1, int(len4)+1):
+            # staff_no = request.POST.get('staff_nohid')
+            # name = request.POST.get('namehid')
+            # ticket_no = request.POST.get('ticket_nohid')
+            # cat = request.POST.get('cat1')
+            # m5upd=M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat)
+            # print("m5upd",m5upd)
+            
+        #     for i in range(1, int(len4)+1):
 
-                print("i",i)
-                in1 = request.POST.get('in1'+str(i))
+        #         print("i",i)
+        #         in1 = request.POST.get('in1'+str(i))
 
                 
 
-                out = request.POST.get('out'+str(i))
-                lc_no = request.POST.get('lc_no'+str(i))
-               # brn_no = request.POST.get('brn_no'+str(i))
-                cat = request.POST.get('cat'+str(i))
-                # staff_no = request.POST.get('staff_no'+str(i))
-                # ticket_no = request.POST.get('ticket_no'+str(i))
-                month_hrs = request.POST.get('month_hrs'+str(i))
-                total_time_taken = request.POST.get('total_time_taken'+str(i))
-                # name = request.POST.get('name'+str(i))
-                date = request.POST.get('date'+str(i))
+        #         out = request.POST.get('out'+str(i))
+        #         lc_no = request.POST.get('lc_no'+str(i))
+        #        # brn_no = request.POST.get('brn_no'+str(i))
+        #         cat = request.POST.get('cat'+str(i))
+        #         # staff_no = request.POST.get('staff_no'+str(i))
+        #         # ticket_no = request.POST.get('ticket_no'+str(i))
+        #         month_hrs = request.POST.get('month_hrs'+str(i))
+        #         total_time_taken = request.POST.get('total_time_taken'+str(i))
+        #         # name = request.POST.get('name'+str(i))
+        #         in_date = request.POST.get('in_date'+str(i))
+        #         out_date = request.POST.get('out_date'+str(i))
 
-                # M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat).update(in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),date=str(date),ticket_no=int(ticket_no))
 
-           # print(worker)
+        #         # M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat).update(in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),date=str(date),ticket_no=int(ticket_no))
+
+        #    # print(worker)
            # print(date)
             print("leng",leng)
+            len4=request.POST.get('len4')
             
             for i in range(1, int(leng)+1):
-                qtyac = request.POST.get('qtyac'+str(i))
-                matrej = request.POST.get('matrej'+str(i))
-                lc_no = request.POST.get('lc_no'+str(i))
-                pa = request.POST.get('pa'+str(i))
-                at = request.POST.get('at'+str(i))
+                qtyac = request.POST.get('qtyac')
+                matrej = request.POST.get('mat_rej')
+                lc_no = request.POST.get('lc_no')
+                pa = request.POST.get('pa')
+                at = request.POST.get('at')
+                shopsec = request.POST.get('shop_sec')
+                # partno = request.POST.get('part_no')
                 
                
-                print("staff No",staff_no)
+                print("staff No")
+                print(shopsec)
+                print(partno)
                 print(lc_no)
                 print(qtyac)
                 print(matrej)
                 print(at)
                 print(pa)
-                Oprn.objects.filter(shop_sec=shopsec, part_no=partno,lc_no=lc_no,pa=pa,at=at).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
-                
+                Oprn.objects.filter(shop_sec=shopsec).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
                
                  
 
-            print("len4",len4,"inoutnum",inoutnum)
-            
+                print("len4",len4,"inoutnum",inoutnum)
+                len4=request.POST.get('len4')
             for i in range(int(len4)+1, int(inoutnum)+1):
                 in1 = request.POST.get('in1add'+str(i))
                 out = request.POST.get('outadd'+str(i))
                 lc_no = request.POST.get('lc_no'+str(i))
-               # brn_no = request.POST.get('brn_no'+str(i))
+                # brn_no = request.POST.get('brn_no'+str(i))
                 cat = request.POST.get('catadd'+str(i))
-                # staff_no = request.POST.get('staff_no'+str(i))
-                # ticket_no = request.POST.get('ticket_noadd'+str(i))
+                staff_no = request.POST.get('staff_noadd'+str(i))
+                staff_name = request.POST.get('staff_nameadd'+str(i))
+                ticket_no = request.POST.get('ticket_noadd'+str(i))
                 month_hrs = request.POST.get('month_hrsadd'+str(i))
                 total_time_taken = request.POST.get('total_time_takenadd'+str(i))
                 # name = request.POST.get('name'+str(i))
-                date = request.POST.get('dateadd'+str(i))
+                in_date = request.POST.get('in_dateadd'+str(i))
+                out_date = request.POST.get('out_dateadd'+str(i))
+                shift = request.POST.get('shiftadd'+str(i))
+                
                 print("j",i)
-               
+                print("shift",shift)
+                
                 if len(cat)==1:
                     cat="0"+cat
-                print(name)
-                print(in1)
-                print(out) 
-                print(month_hrs)   
-                print(cat,staff_no,ticket_no,total_time_taken)
+                print("stf no",staff_no) 
+
+                print("name",staff_name)
+                print("in_time",in1)
+                print("in_date",in_date)
+                print("out",out)
+                print("Out_date",out_date) 
+                print("month_hrs",month_hrs)   
+                print("cat",cat)
+                print("ticket_no",ticket_no)
+                print("total time",total_time_taken)
                 print("Create new row")
-                M5SHEMP.objects.create(shopsec=shopsec,staff_no=staff_no,name=name,in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),cat=int(cat),date=str(date),ticket_no=int(ticket_no))
-               
+                M5SHEMP1.objects.create(shopsec=shopsec,staff_no=str(staff_no),name=str(staff_name),in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),cat=str(cat),in_date=str(in_date),out_date=str(out_date),ticket_no=int(ticket_no),shift_typename=str(shift))
                 
-                wo_no=M5DOCnew.objects.all().values('batch_no').distinct()
+                
+            wo_no=M5DOCnew.objects.all().values('batch_no').distinct()
 
     return render(request,"m5view.html",context)
-
 
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         # print(shop_sec)
-        wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').distinct())
+        wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').exclude(batch_no__isnull=True).distinct())
         # print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -5225,7 +5360,8 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').exclude(m2slno__isnull=True).distinct())
+        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').distinct())
+        print(doc_no)
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5237,6 +5373,38 @@ def m5getstaff_no(request):
         br_no = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+def m5getempname(request):
+   if request.method == "GET" and request.is_ajax():  
+        examcode= request.GET.get('two')
+        x =512000
+        y=15719
+        a = math.floor(math.log10(y))
+        hello= int(x*10**(1+a)+y)
+        print(hello)
+        ex = M5SHEMP.objects.filter(staff_no= examcode).all()  
+        # print(ex[0].get("name"))
+        obj10= empmast.objects.filter(empno__contains=examcode).all()
+        # print("ONKJJ",obj10[0]['ticket_no'])
+        # print(obj10[0].get("ticket_no"))
+        ticket=0
+        if len(obj10):
+            ticket=obj10[0].ticket_no
+            print("ticket",ticket)
+        
+        # print(obj10)
+        exam ={
+            "exam_type":ex[0].name,
+            "ticket":ticket,
+             
+           
+           
+        }
+    
+        
+
+        return JsonResponse({"exam":exam}, safe = False)
+        return JsonResponse({"success":False}, status=400)
 
 @login_required
 @role_required(urlpass='/m12view/')
@@ -13137,6 +13305,12 @@ def mg9initialreportviews(request):
             shop_sec = request.POST.get('shop_sec')
             mw_no = request.POST.get('mwno')
             staff_no = request.POST.get('staffno')
+            
+            current_yr=int(datetime.datetime.now().year)
+
+
+            print("Current year",current_yr)
+        
         
 
            
@@ -13175,6 +13349,7 @@ def mg9initialreportviews(request):
                         'mw_no': mw_no,
                         'staff_no': staff_no,
                         'slno':slno,
+
                        
                         #'assm_no':assm_no,
                       
@@ -13252,6 +13427,7 @@ def mg9initialreportviews(request):
 
                         print(now)
                         print(sl_no)
+                        print("action",action)
                         # print(shop_sec)
                         print(shop_sec)
                         print(mw_no)
@@ -13286,7 +13462,7 @@ def mg9initialreportviews(request):
                         print(sec_com)
                         print(serv_handed)
                         print(serv_com)
-                        print(action)
+                        
                         print(comp)
                  
 
@@ -13313,9 +13489,6 @@ def mg9getstaff(request):
         print(staff)
         return JsonResponse(staff, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
-
 
 
 
@@ -13409,6 +13582,11 @@ def mg9compreportviews(request):
             shop_sec = request.POST.get('shop_sec')
             mw_no = request.POST.get('mwno')
             staff_no = request.POST.get('staffno')
+            
+            current_yr=int(datetime.datetime.now().year)
+
+
+            print("Current year",current_yr)
         
 
            
@@ -13416,16 +13594,16 @@ def mg9compreportviews(request):
             print(mw_no)
             print(staff_no)
             print(mw_no)
-            obj  = MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).values('sec','mw_no','sl_no','staff_no','handed_date','comp_date','handed_time','comp_time','handed_cmsec','comp_cmsec','handed_cmserv','comp_cmserv','complaint','action','total_losthrs','cause_hrs','mp_time','mismp_time','inv_time').distinct()
-            obj1  = MG9Complete.objects.values('id').count()
-            print("OBJ")
-            print(obj)
-            print("count")
-            print(obj1)
+            obj2 = MG9Initial.objects.filter(sec=shop_sec,mw_no=mw_no).values('sl_no','handed_date','handed_time','handed_cmserv','handed_cmsec','complaint').distinct()
+            obj  = MG9Complete.objects.filter(sec=shop_sec,mw_no=mw_no,staff_no=staff_no).values('sec','mw_no','staff_no','comp_date','comp_time','comp_cmsec','comp_cmserv','action','total_losthrs','cause_hrs','mp_time','mismp_time','inv_time').distinct()
+            # obj1  = MG9Complete.objects.values('id').count()
+            print("OBJ2")
+            print(obj2)
             leng = obj.count()
-            slno=obj1
-            slno=slno+1
-            print(slno)
+            leng2 = obj2.count()
+            # slno=obj1
+            # slno=slno+1
+            # print(slno)
             
 
             
@@ -13442,12 +13620,15 @@ def mg9compreportviews(request):
                         'len':leng,   
                         # 'len1':leng1,  
                         'obj':obj,
+                        'obj2':obj2,
+                        'len2':leng2,
                         # 'obj1':obj1,
                         'sub': 1,
                         'shop_sec': shop_sec,
                         'mw_no': mw_no,
                         'staff_no': staff_no,
-                        'slno':slno,
+                        # 'slno':slno,
+                        'cyear':current_yr,
                        
                         #'assm_no':assm_no,
                       
@@ -13472,11 +13653,14 @@ def mg9compreportviews(request):
                         'roles':tmp,
                         'len':leng,
                         'obj':obj,
-                        'slno':slno,
+                        'obj2':obj2,
+                        'len2':leng2,
+                        # 'slno':slno,
                         'sub': 1,
                         'shop_sec': shop_sec,
                         'mw_no': mw_no,
                         'staff_no': staff_no,
+                        'cyear':current_yr,
                      
                         #'assm_no':assm_no,
                       
@@ -13491,10 +13675,13 @@ def mg9compreportviews(request):
                         'roles' :rolelist,
                         'len':leng,
                         'obj':obj,
-                        'slno':slno,
+                        'obj2':obj2,
+                        'len2':leng2,
+                        # 'slno':slno,
                         'shop_sec': shop_sec,
                         'mw_no': mw_no,
                         'staff_no': staff_no,
+                        'cyear':current_yr,
                   
                         #'assm_no':assm_no,
                         'subnav':subnav
@@ -13622,6 +13809,11 @@ def mg9compreportviews(request):
         #                 print(serv_com)
         #                 print(action)
         #                 print(comp)
+                 
+
+        
+    
+
 
     return render(request,"mg9compreportviews.html",context)
 
@@ -13633,6 +13825,7 @@ def mg9getmwno(request):
         print("wono",wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 
 def mg9getstaffno(request):
     if request.method == "GET" and request.is_ajax():
