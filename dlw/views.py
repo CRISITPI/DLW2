@@ -7706,7 +7706,7 @@ def m15view(request):
 
                 else:
                     M15.objects.filter(shop=shop_sec,wo=wo_no,part_no=str(part_no)).update(unit=str(unit),allocation=str(allocation),rate=str(rate),rupees=str(rupees),paise=str(paise),mat_ret_date=str(mat_ret_date),
-                    mat_rec_date=str(mat_rec_date),last_modified=str(now),login_id=request.user,posted_date=str(posted_date),metric_ton_returned=str(metric_ton_returned),metric_ton_received=str(metric_ton_received),m13_no=str(m13_no),des=str(des),doc_no=str(doc_no),c_d_no=str(c_d_no),qty_ret=str(qty_ret),qty_rec_inward=str(qty_rec_inward))
+                    mat_rec_date=str(mat_rec_date),last_modified=str(now),login_id=request.user.username,posted_date=str(posted_date),metric_ton_returned=str(metric_ton_returned),metric_ton_received=str(metric_ton_received),m13_no=str(m13_no),des=str(des),doc_no=str(doc_no),c_d_no=str(c_d_no),qty_ret=str(qty_ret),qty_rec_inward=str(qty_rec_inward))
             
                 wo_nop=M13.objects.all().values('wo').distinct()
 
@@ -7729,6 +7729,7 @@ def m15getpart_no(request):
         part_no = list(M13.objects.filter(shop = shop_sec,wo=wo_no).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 
 def m18getwono(request):
     if request.method == "GET" and request.is_ajax():

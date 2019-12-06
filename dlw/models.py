@@ -3971,7 +3971,7 @@ class Rates(models.Model):
     cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    #staff_no = models.CharField(db_column='STAFF_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         db_table = 'RATES'  
@@ -4481,3 +4481,12 @@ class staff_auth(models.Model):
     login_id=models.CharField(max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     last_modified=models.CharField(max_length=60, blank=True, null=True,default=0)  # Field name made lowercase.
     psnt_date=models.CharField(max_length=60, blank=True, null=True,default=0)  # Field name made lowercase.
+
+
+class logbook_record(models.Model):
+    m_w_no = models.CharField(max_length=10, blank=True, null=True)
+    job_booked = models.CharField(max_length=10, blank=True, null=True)
+    staff_no = models.CharField(max_length=10, blank=True, null=True)
+    attandance = models.CharField(max_length=10, blank=True, null=True)
+    out_turn = models.CharField(max_length=10, blank=True, null=True)
+    remarks = models.CharField(max_length=10, blank=True, null=True)
