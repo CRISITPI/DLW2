@@ -11334,7 +11334,8 @@ def m11view(request):
             staff_no = request.POST.get('staff_no')
             inoutnum = request.POST.get("inoutnum")
             ename= request.POST.get('empname')
-            cat=request.POST.get('tcat')
+            scat=request.POST.get('tcat')
+            print(scat)
             print("dadd",inoutnum)
             
             for i in range(1, int(leng)+1):
@@ -11346,7 +11347,7 @@ def m11view(request):
                 idle_time = request.POST.get('idle_time'+str(i))
                 detail_no = request.POST.get('detail_no'+str(i))
                 amt = request.POST.get('amt1'+str(i))
-                M11.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),name=str(ename),cat=cat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
+                M11.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
                 print("data saved")
             for i in range(1,int(inoutnum)+1):
                 date = request.POST.get('dateadd'+str(i))
@@ -11357,7 +11358,7 @@ def m11view(request):
                 idle_time = request.POST.get('idle_time_add'+str(i))
                 detail_no = request.POST.get('detail_noadd'+str(i))    
                 if date and month and in1 and out and idle_time and detail_no and total_time:
-                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=cat,month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),detail_no=str(detail_no))
+                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),detail_no=str(detail_no))
                     messages.success(request, 'Data Saved Successfully!!')
                 else:
                     messages.success(request, 'Please enter all values!!')
@@ -11394,6 +11395,258 @@ def m11getpart_no(request):
         part_no = list(Batch.objects.filter(bo_no=wo_no).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(urlpass='/m11report/')
+def m11report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+            wo_no =wo_no | req
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'wo_no':wo_no,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'lent':0,
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'lent':0,
+        }
+    if request.method == "POST":
+        
+        submitvalue = request.POST.get('proceed')
+        print(submitvalue)
+        if submitvalue=='Proceed':
+            from decimal import Decimal
+            month = request.POST.get('monthdrop')
+            shop_sec = request.POST.get('shop_sec')
+            wo_no = request.POST.get('wo_no')
+            staff_no = request.POST.get('staff_no')
+            part_no = request.POST.get('part_no')
+            tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
+            empname=tempcat[0]['name']
+            tcat=tempcat[0]['cat']
+            obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('month','cat','in1','out','date','total_time','detail_no','idle_time').distinct()
+            print(obj1)
+            obj2='None'
+            obj3='None'
+            leng=0
+            leng1=0
+            rr='None'
+            amt=0
+            patotal=0
+            a=0 
+            b=0
+            t=0
+            if len(obj1):
+                print(obj1)
+                if obj1[0]['cat'] is not None:
+                    print("in if cat none")
+                    t=obj1[0]['cat']
+                else:
+                    print("in else cat")
+                    t=tempcat[0]['cat']
+            else:
+                t=tempcat[0]['cat']
+            print("t",t)
+            if t != 'None':
+                obj2 = Rates.objects.filter(staff_no=staff_no).values('avg_rate').distinct()
+                obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat')[0]
+                print(obj2)
+
+
+            for op in range(len(obj1)):
+                patotal=obj1[op]['total_time']
+                print("patotal",patotal)
+                if patotal is not None and len(str(patotal)):
+                    p=patotal.split(':')
+                    a=a+Decimal(p[0])
+                    b=b+Decimal(p[1])
+                    if (b>=60):
+                        a=a+1
+                        b=b%60
+
+                rr=str(a)+':'+str(b)    
+                print(rr)
+            
+        
+                print("a",a)
+                print("b",b)
+
+            #if len(obj1):
+            print(obj1)
+            tmhr=rr
+            print("1",tmhr)
+            if len(obj2):    
+                avgrt=obj2[0]['avg_rate']
+                print("2")
+                if tmhr == 'None': 
+                    tmhr=0
+                    avgrt=0
+                    print("3")
+                else:
+                    tmhr1=tmhr.split(':')
+                    tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                    print("4")
+                    
+            
+                amt=tmhr*avgrt
+            leng = obj1.count()
+            leng1 = obj2.count()
+            leng=obj1.count()
+            amt=round(amt,2)
+            print("amt1",amt)
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'leng':leng,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,'tcat':tcat,'empname':empname,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+                    wo_no =wo_no | req
+                context = {
+                    'sub':1,
+                    'len' :len(rolelist),
+                    'wo_no':wo_no,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'lent':0,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'leng':leng,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,'tcat':tcat,'empname':empname,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'len' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'lent':0,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'leng':leng,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,'tcat':tcat,'empname':empname,
+                }
+
+
+        if submitvalue=='Submit':
+            # print("in submit")                               #!!!!!!!1!!!!!!!!!!!!capital S
+            leng=request.POST.get('len')
+            print("leng=",leng)
+            shopsec= request.POST.get('shopsec')
+            staff_no = request.POST.get('staff_no')
+            inoutnum = request.POST.get("inoutnum")
+            ename= request.POST.get('empname')
+            scat=request.POST.get('tcat')
+            print(scat)
+            print("dadd",inoutnum)
+            
+            for i in range(1, int(leng)+1):
+                date = request.POST.get('date'+str(i))
+                month = request.POST.get('month')
+                in1 = request.POST.get('in1'+str(i))
+                out = request.POST.get('out'+str(i))
+                total_time = request.POST.get('total_time'+str(i))
+                idle_time = request.POST.get('idle_time'+str(i))
+                detail_no = request.POST.get('detail_no'+str(i))
+                amt = request.POST.get('amt1'+str(i))
+                M11.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
+                print("data saved")
+            for i in range(1,int(inoutnum)+1):
+                date = request.POST.get('dateadd'+str(i))
+                month = request.POST.get('month_add'+str(i))
+                in1 = request.POST.get('in1add'+str(i))
+                out = request.POST.get('outadd'+str(i))
+                total_time = request.POST.get('total_time_add'+str(i))
+                idle_time = request.POST.get('idle_time_add'+str(i))
+                detail_no = request.POST.get('detail_noadd'+str(i))    
+                if date and month and in1 and out and idle_time and detail_no and total_time:
+                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),detail_no=str(detail_no))
+                    messages.success(request, 'Data Saved Successfully!!')
+                else:
+                    messages.success(request, 'Please enter all values!!')
+                wo_no=Batch.objects.all().values('bo_no').distinct()
+
+    return render(request,"m11report.html",context)  
 
 @login_required
 @role_required(urlpass='/mg36view/')
