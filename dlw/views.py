@@ -4973,16 +4973,17 @@ def m5view(request):
             print("wo_no",workorder)
             obj1 = M5DOCnew.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('opn','n_shopsec','rm_partno','cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty','lc_no','pa','at','opn_desc').distinct()
             obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
-            obj3 = Batch.objects.filter(bo_no=workorder,brn_no=brn_no,b_close_dt__isnull=True).values('batch_type','part_no','loco_fr','loco_to').distinct()
+            obj3 = Batch.objects.filter(bo_no=workorder,brn_no=brn_no,b_close_dt__isnull=True).values('part_no').distinct()
             obj4 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('shopsec','staff_no','in_date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken','out_date','in_date','shift_typename').distinct()
             obj5 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('shopsec','staff_no','name','ticket_no','flag').distinct()
             obj6  = Oprn.objects.filter(shop_sec=shop_sec,part_no=part_no).values('qtr_accep','mat_rej').exclude(qtr_accep=None,mat_rej=None).distinct()
+            obj10= Batch.objects.filter(bo_no=workorder).values('batch_type','loco_fr','loco_to')[0]
             print(obj3)
             leng=0
             leng5=0
             leng9=0
-            obj7=0
             obj=0
+            obj7=0
             obj9=0
             if len(obj1):
                 raw_mat= obj1[0]['rm_partno']
@@ -4999,7 +5000,16 @@ def m5view(request):
                 obj9 = Part.objects.filter(partno=end_part).values('des').distinct()
                 leng9=obj9.count()
 
-
+            print("OBJ",obj)
+            print("OBJ1",obj1)
+            print("OBJ2",obj2)
+            print("OBJ3",obj3)
+            print("OBJ4",obj4)
+            print("OBJ5",obj5)
+            print("OBJ6",obj6)
+            print("OBJ7",obj7)
+            # print("OBJ8",obj8)
+            print("OBJ9",obj9)
 
             
             
@@ -5008,9 +5018,10 @@ def m5view(request):
         
            
             obj8 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('flag').distinct()
-            print(obj8)
+            print("OBJ8",obj8)
             # obj9 = empmast.objects.filter()
             staff=5548
+            rr=0
 
            
             # # print("OBJ!0",obj10)
@@ -5063,9 +5074,11 @@ def m5view(request):
                         'obj6' :obj6,
                         'obj8':obj8,
                         'obj9':obj9,
+                        'obj10':obj10,
                         'len9':leng9,
                         'len8':leng8,
                         'ticket1':ticket,
+                        'rr':rr,
                         'sub': 1,
                         'len': leng,
                         'len1':leng1,
@@ -5108,6 +5121,8 @@ def m5view(request):
                         'obj7':obj7,
                         'obj8':obj8,
                         'obj9':obj9,
+                        'obj10':obj10,
+                        'rr':rr,
                         'len9':leng9,
                         'len8':leng8,
                         'sub': 1,
@@ -5147,6 +5162,8 @@ def m5view(request):
                         'obj7':obj7,
                         'obj8':obj8,
                         'obj9':obj9,
+                        'obj10':obj10,
+                        'rr':rr,
                         'len9':leng9,
                         'len8':leng8,
                         'sub': 1,
@@ -16333,4 +16350,48 @@ def staff_auth_report_view(request):
             }
                         
             
-    return render(request,"staff_auth_report_view.html",context)    
+    return render(request,"staff_auth_report_view.html",context) 
+
+
+def logbook_record(request):
+    from .models import logbook_record
+
+
+    if request.method=="POST":
+        #m_w_no=request.POST.get(m_w_no)
+        #obj=logbook_record.objects.filter(m_w_no=m_w_no)
+        obj=logbook_record.objects.create()
+        obj.m_w_no=request.POST.get('m_w_no')
+        obj.job_booked=request.POST.get('job_booked')
+        obj.staff_no=request.POST.get('staff_no')
+        obj.attandance=request.POST.get('attandance')
+        obj.out_turn=request.POST.get('out_turn')
+        obj.remarks=request.POST.get('remarks')
+        obj.save()
+    return render(request,"logbook_record.html",{})
+
+
+def logbook_delete(request):
+    from .models import logbook_record
+
+    if request.method=="POST":
+        var=request.POST.get('del1')
+        obj=logbook_record.objects.filter(m_w_no=var)
+        obj.delete()
+    return render(request,"logbook_delete.html",{}) 
+
+def logbook_update(request):
+
+    if request.method=="POST":
+        
+        obj=logbook_record.objects.create()
+        obj.m_w_no=request.POST.get('m_w_no')
+        obj.job_booked=request.POST.get('job_booked')
+        obj.staff_no=request.POST.get('staff_no')
+        obj.attandance=request.POST.get('attandance')
+        obj.out_turn=request.POST.get('out_turn')
+        obj.remarks=request.POST.get('remarks')
+        obj.save()
+        logbook_record.objects.filter(m_w_no=obj.m_w_no).update(job_booked=obj.job_booked,staff_no=obj.staff_no,attandance=obj.attandance,out_turn=obj.out_turn,remarks=obj.remarks)
+        
+    return render(request,"logbook_update.html",{})

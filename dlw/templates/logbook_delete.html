@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<br><br><br>
+<p align="center"><a href="http://127.0.0.1:8000/logbook_record/"><u>Back </u></a>
+<h4 align="center">DELETE LOG BOOK RECORD</h4>
+<form action="{% url 'logbook_delete' %}" method="POST">  {%csrf_token%}
+<br><br>
+<center>
+    M.W.No : <input type='text' name='del1' placeholder="give_id"/>
+    <input type='submit' value='delete'/>
+</center>
+    
+    
+</form>
+{% endblock content %}

@@ -127,6 +127,8 @@
     <input type="hidden" name="len4" id="len4" value="{{len4}}">
     <input type="hidden" name="len6" id="len6" value="{{len6}}">
     <input type="hidden" name="len1" id="len1" value="{{len1}}">
+    <input type="hidden" name="len3" id="len3" value="{{len3}}">
+    
  
     <table border="2" align="center">
         <tr >
@@ -143,28 +145,59 @@
 
       </tr>
       <tr>
+          
           {% for i in date %}
           <td height="50">{{i.m2prtdt}}</td>{% endfor %}
           <td height="50">{{wo_no}}</td>
-          {% for i in obj3 %}
-          <td height="50" >
-          {{i.batch_type}} </td> {% endfor %} 
-   
+          
+          <td height="50" >  
+          {% if obj10 %}    
+          {{obj10.batch_type}} 
+          {% else %}
+          {{rr}}
+          {% endif %} </td>  
           <td height="50" colspan="2">{{brn_no}}</td>
           <input type="hidden"  name="brn_no" value="{{brn_no}}">
           <input type="hidden"  name="shop_sec" value="{{shop_sec}}">
-          {% for i in obj3 %}
-          <td height="50"> {{i.loco_fr}}</td>{% endfor %}
-          {% for i in obj3 %}
-          <td height="50"> {{i.loco_to}}</td>{% endfor %}
-          {% for i in obj1 %}
-          <td height="50">{{i.m2slno}}</td>{% endfor %}
-          {% for i in obj3 %}
-          <td height="50">{{i.part_no}} </td> {% endfor %}
-          <td height="50">{{doc_no}}</td>
-          <input type="hidden" name="doc_no" value="{{doc_no}}">
-          {% for i in obj1 %}
-          <td height="50">{{i.m5prtdt}}</td>{% endfor %} 
+          <td height="50">
+          {% if obj10 %}    
+         {{obj10.loco_fr}} 
+          {% else %}
+          {{rr}}
+          {% endif %} </td>
+          <td height="50">
+              {% if obj10 %}                
+              {{obj10.loco_to}} 
+              {% else %}
+              {{rr}}
+              {% endif %} </td>   
+              <td height="50">
+                  {% if len1 %}    
+                  {% for i in obj1 %}       
+                  {{i.m2slno}} 
+                  {% endfor %}
+                  {% else %}
+                  {{rr}}
+                  {% endif %} </td> 
+                  <td height="50">
+                      {% if len3 %}    
+                      {% for i in obj3 %}       
+                      {{obj3.part_no}} 
+                      {% endfor %}
+                      {% else %}
+                      {{rr}}
+                      {% endif %} </td>               
+          <td height="50">{{doc_no}}
+          <input type="hidden" name="doc_no" value="{{doc_no}}"></td>
+          <td height="50">
+                  {% if len1 %}    
+                  {% for i in obj1 %}       
+                  {{i.m5prtdt}} 
+                  {% endfor %}
+                  {% else %}
+                  {{rr}}
+                  {% endif %} </td> 
+         
            
           
          
@@ -350,9 +383,9 @@
                 </td>
                
                 <td height="50" colspan="5" >
-                 {% for ii in obj9 %}
-                 {{ii.des}}
-                 {% endfor %}
+                
+                 {{obj9.des}}
+                
                  </td> 
                  
               </tr>           
