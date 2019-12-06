@@ -11248,6 +11248,7 @@ def m11view(request):
             leng = obj1.count()
             leng1 = obj2.count()
             leng=obj1.count()
+            amt=round(amt,2)
             print("amt1",amt)
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
