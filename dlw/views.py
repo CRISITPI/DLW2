@@ -11607,45 +11607,6 @@ def m11report(request):
                     'month': month,'tcat':tcat,'empname':empname,
                 }
 
-
-        if submitvalue=='Submit':
-            # print("in submit")                               #!!!!!!!1!!!!!!!!!!!!capital S
-            leng=request.POST.get('len')
-            print("leng=",leng)
-            shopsec= request.POST.get('shopsec')
-            staff_no = request.POST.get('staff_no')
-            inoutnum = request.POST.get("inoutnum")
-            ename= request.POST.get('empname')
-            scat=request.POST.get('tcat')
-            print(scat)
-            print("dadd",inoutnum)
-            
-            for i in range(1, int(leng)+1):
-                date = request.POST.get('date'+str(i))
-                month = request.POST.get('month')
-                in1 = request.POST.get('in1'+str(i))
-                out = request.POST.get('out'+str(i))
-                total_time = request.POST.get('total_time'+str(i))
-                idle_time = request.POST.get('idle_time'+str(i))
-                detail_no = request.POST.get('detail_no'+str(i))
-                amt = request.POST.get('amt1'+str(i))
-                M11.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
-                print("data saved")
-            for i in range(1,int(inoutnum)+1):
-                date = request.POST.get('dateadd'+str(i))
-                month = request.POST.get('month_add'+str(i))
-                in1 = request.POST.get('in1add'+str(i))
-                out = request.POST.get('outadd'+str(i))
-                total_time = request.POST.get('total_time_add'+str(i))
-                idle_time = request.POST.get('idle_time_add'+str(i))
-                detail_no = request.POST.get('detail_noadd'+str(i))    
-                if date and month and in1 and out and idle_time and detail_no and total_time:
-                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),detail_no=str(detail_no))
-                    messages.success(request, 'Data Saved Successfully!!')
-                else:
-                    messages.success(request, 'Please enter all values!!')
-                wo_no=Batch.objects.all().values('bo_no').distinct()
-
     return render(request,"m11report.html",context)  
 
 @login_required
