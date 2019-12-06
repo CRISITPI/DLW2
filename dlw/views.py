@@ -4981,6 +4981,9 @@ def m5view(request):
             leng=0
             leng5=0
             leng9=0
+            obj7=0
+            obj=0
+            obj9=0
             if len(obj1):
                 raw_mat= obj1[0]['rm_partno']
                 opn= obj1[0]['opn']
