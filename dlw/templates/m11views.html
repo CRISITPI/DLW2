@@ -183,8 +183,10 @@
         <th>STAFF NO/क्रम सं.:</th> 
         <td><u>{{staff_no}}</u></td>
         <input type="hidden" name="staff_no" value="{{staff_no}}">
-        <th>Employee Name</th> 
-        <td>{{empname}}</td>
+    </tr>
+    <tr>
+        <th>Employee Name/कर्मचारी नाम</th> 
+        <td><u>{{empname}}</u></td>
         <input type="hidden" name="empname" value="{{empname}}">
 
     </tr>
@@ -205,12 +207,9 @@
     </tr>  
        
     </div>
-</table> 
-<br>
-
+</table>
 <br><br>
-
-<div class="container" style="width: 100%">                  
+<div class="container" align="center">          
 <table border="4" align="center" id="customers">
     <tr>
         
@@ -300,13 +299,13 @@
             {% endfor %}
           
         
-</table>
+</table></div> 
+</div>
 <center>
 <input  type="button" id="add" value="Add Operations" style="width: 150px;"/>
 <input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
 </center>
 <div id="inouttab"></div>
-</div>
 
 <center>
     <input type="submit" name="proceed" value="Submit">

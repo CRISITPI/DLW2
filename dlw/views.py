@@ -11190,13 +11190,20 @@ def m11view(request):
             patotal=0
             a=0 
             b=0
+            t=0
             if len(obj1):
                 print(obj1)
-                t=obj1[0]['cat']
+                if obj1[0]['cat'] is not None:
+                    print("in if cat none")
+                    t=obj1[0]['cat']
+                else:
+                    print("in else cat")
+                    t=tempcat[0]['cat']
             else:
                 t=tempcat[0]['cat']
+            print("t",t)
             if t != 'None':
-                obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
+                obj2 = Rates.objects.filter(staff_no=staff_no).values('avg_rate').distinct()
                 obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat')[0]
                 print(obj2)
 
