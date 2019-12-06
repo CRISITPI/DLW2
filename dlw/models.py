@@ -4465,3 +4465,19 @@ class MG9Complete(models.Model):
         
         class Meta:
                 db_table = 'MG9Complete'
+
+class staff_auth(models.Model):
+    form_id=models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
+    srno=models.CharField( max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    shopsec=models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
+    staff_no=models.CharField( max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    staff_name=models.CharField( max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    auth=models.CharField(max_length=50, blank=True, null=True)  # Field name made lowercase.
+    mwno=models.CharField(max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    empno_shop_mang=models.CharField(max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    date_shop_mang=models.CharField(max_length=60, blank=True, null=True,default=0)  # Field name made lowercase.
+    empno_sse=models.CharField(max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    date_sse=models.CharField(max_length=60, blank=True, null=True,default=0)  # Field name made lowercase.
+    login_id=models.CharField(max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    last_modified=models.CharField(max_length=60, blank=True, null=True,default=0)  # Field name made lowercase.
+    psnt_date=models.CharField(max_length=60, blank=True, null=True,default=0)  # Field name made lowercase.

@@ -1,0 +1,100 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+
+<style>
+        input[type=text],
+        select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: block;
+            border: 0.5px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        input[type=submit] {
+            width: 20%;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+            background-color: #45a049;
+            text-align: center;
+        }
+        
+        input[type=button] {
+            width: 10%;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 6px 6px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        input[type=button]:hover {
+            background-color: #45a049;
+            text-align: center;
+        }
+    </style>
+
+
+
+<form action="{% url 'partallotement' %}" method="POST"> {% csrf_token %}
+        <table class="table">
+                <tr>
+                    <center>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <font size="3">
+                                <li>
+                                    {{ message }}
+                                </li>
+                            </font>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                </center>
+                </tr>
+                <h3 align="center">Diesel Locomotive Works </h3>
+                <h4 align="center">Design office - Part Alot </h4>
+                <tr>
+                <td>
+                        <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
+                        <select class="form-control" style="width: 150px;" id="part" name="part" required>
+                <option id="op_part" selected disabled hidden>Select Part No</option>
+            </select>
+                    </td>                         
+                
+                     <td>
+                        <label for="br_no"><b>GM-PART NO</b></label>                   
+                        <select class="form-control" style="width: 150px;" id="gmpart" name="gmpart" required>
+                                  <option id="op_staffName" selected disabled hidden>SELECT GM PART NO</option>
+                                  {% if lenm == 1 %}
+                                  {% for i in wo_nop %}
+                                    <option>{{i.name}}</option>
+                                  {% endfor %}
+                                  {% endif %}
+                         </select>
+                    </td>
+                </tr>
+                    
+                </table>
+</form>
+
+
+
+
+{% endblock content %}       
