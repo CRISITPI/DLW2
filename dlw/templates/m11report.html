@@ -77,7 +77,7 @@
 <h1 align="center" >कर्मचारी निष्कर्य समय कार्ड</h1>
 <h1 align="center" >MAN IDLE TIME CARD</h1>
 <br><br>
-<form action="{% url 'm11view' %}" method="POST"> {% csrf_token %}
+<form action="{% url 'm11report' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
 <tr>
@@ -151,14 +151,8 @@
                         </td>
                 </tr>
         </table>
-        <!-- <center><input type="submit" value="Proceed" name="proceed" /></center> -->
-        <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
 
         <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
-
-<input type="hidden" name="len" id="len" value="{{leng}}">
-<input type="hidden" name="subb" id="subb" value="{{sub}}">
-
     </div>
 <br><br> 
 {% if sub == 1 %}
@@ -222,94 +216,56 @@
         <th>DETAIL NO.</th>
         <th>IDLE TIME</th>
     </tr>
-
-        
             {% for i in obj1 %}
             <tr>
             <td>
                 {% if i.date %}
                 <input type="text" id="date"  class="myinp2" value="{{i.date}}" name="date{{ forloop.counter }}" readonly/>         <!-- value="date" name="date"  -->
-                {% else %}
-                <input type="text" id="date"  class="myinp2" value="0" name="date{{ forloop.counter }}" readonly/>
                 {% endif %}
-            <script>
-    $(document).ready(function () { $('#date').datepicker({dateFormat: 'yy-mm-dd'}); });
-  </script>
             </td>
 
              <td>
                 {% if i.month %}
-                <input type="text" value="{{i.month}}" name="month{{ forloop.counter }}" title="Character Value">
-                {% else %}
-                <input type="text" value="{{month}}" name="month{{ forloop.counter }}" title="Character Value">
+                <input type="text" value="{{i.month}}" name="month{{ forloop.counter }}"/>
                 {% endif %}  
             </td>
             
             <td>
                 {% if i.in1 %}
-                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}" onchange=tottime('in1{{ forloop.counter }}')  >
-                {% else %}
-                <input type="time" id="in1{{ forloop.counter }}"  class="myinps1"  name="in1{{ forloop.counter }}" onchange=tottime('in1{{ forloop.counter }}')>
+                <input type="text" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}"/>
                 {% endif %}  
              </td>
              
             <td>
                 {% if i.out %}
-                <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}" onchange=tottime('out{{ forloop.counter }}') >
-                {% else %}
-                <input type="time" id="out{{ forloop.counter }}"  class="myinps1"  name="out{{ forloop.counter }}"    onchange=tottime('out{{ forloop.counter }}')>
-                {% endif %}
+                <input type="text" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}" onchange=tottime('out{{ forloop.counter }}') >
+               {% endif %}
             </td>
 
             <td>
                 {% if i.total_time %}
                 <input type="text" id="total_time{{ forloop.counter }}"   value="{{i.total_time}}" name="total_time{{ forloop.counter }}"  >
-                {% else %}
-                <input type="text" id="total_time{{ forloop.counter }}"   value="0" name="total_time{{ forloop.counter }}">
                 {% endif %}  
             </td> 
 
             <td>
-            
-                <select name="detail_no{{ forloop.counter }}" id="detail_noid{{forloop.counter}}">
-                    <option value="select">SELECT REASON</option>
-                    <option value="machine_repair">MACHINE REPAIR</option>
-                    <option value="no_power">NO POWER</option>
-                    <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>
-                    <option value="lack_of_tools">LACK OF TOOLS</option>
-                    <option value="waiting_for_work">WAITING FOR WORK</option>
-                    <option value="failure_of_crane">FAILURE OF CRANE</option>
-                    <option value="waiting_for_crane">WAITING FOR CRANE</option>
-                    <option value="operator_absent">OPERATOR ABSENT</option>
-                    <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>
-                    <option value="lack_of_gas">LACK OF GAS OXY</option>
-                    <option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>
-                    <option value="lack_of_electrodes">LACK OF ELECTRODES</option>
-                    <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
-                    <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
-                </select>
-                <input type="hidden" id="detail_no{{forloop.counter}}" value="{{i.detail_no}}">
+            {% if i.detail_no %}
+            <textarea class="form-control" rows="1" wrap="soft" style="overflow:hidden; resize:none;width:200px;">{{i.detail_no}}</textarea>
+                
+            {% endif %}
             </td>
 
             <td>
                 {% if i.idle_time %}
-                    <input type="time" value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}">
-                    {% else %}
-                    <input type="time"  name="idle_time{{ forloop.counter }}">
+                <input type="text" class="myinps1" value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}" style="width:100px;"/>
                 {% endif %}  
             {% endfor %}
           
         
 </table></div> 
 </div>
-<center>
-<input  type="button" id="add" value="Add Operations" style="width: 150px;"/>
-<input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
-</center>
-<div id="inouttab"></div>
 
 <center>
-    <input type="submit" name="proceed" value="Submit">
     <input type="button" onclick="printDiv()" value="Print">
 </center>
 {% endif %} 
@@ -319,17 +275,6 @@
 </form>
 
 <script type="text/javaScript">
-  
-var j=0;
-var date="dateadd";
-var month="month_add";
-var in1="in1add";
-var out="outadd";
-var outid="'"+out+"'";
-var in1id="'"+out+"'";
-var total_time="total_time_add";
-var idle_time="idle_time_add";
-var detail_no = "detail_noadd";
 
 $(document).ready(function(){
     var sub =document.getElementById('subb').value;
@@ -576,7 +521,7 @@ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                               if(elementsadded.length>0){
                                   var elementsaddedarr = Array.from(elementsadded);
                                   elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#op_emp").selected = true;                //ye comment tha  
+                                  document.querySelector("#op_emp").selected = true; 
                               }
                               var brarr,mystr,html;
                               brarr = response.map((el)=>el.staff_no);
@@ -633,6 +578,4 @@ function printDiv() {
 }
  
 </script>    
-{% endblock content %}        
- 
-                                  
+{% endblock content %} 

@@ -106,12 +106,12 @@
             <option id="op_doc" selected disabled hidden>Select Document No</option>
         </select>
                 </td>
-                <td>
+                <!-- <td>
                   <label for="staff_no"><b>Staff NO/प्रमुख कर्मचारी :</b></label>
                   <select class="form-control" id="staff_no" name="staff_no" required>
           <option id="op_doc" selected disabled hidden>Select Staff No</option>
       </select>
-              </td>
+              </td> -->
             </tr>
 
 
@@ -125,34 +125,83 @@
     <div id="print" style="align:center" >
     <input type="hidden" name="len" value="{{len}}">
     <input type="hidden" name="len4" id="len4" value="{{len4}}">
-        
+    <input type="hidden" name="len6" id="len6" value="{{len6}}">
+    <input type="hidden" name="len1" id="len1" value="{{len1}}">
+    <input type="hidden" name="len3" id="len3" value="{{len3}}">
+    
+ 
     <table border="2" align="center">
         <tr >
           <th height="30">WORK ORDER NUMBER</th>
+          <th height="30">ORDER TYPE</th>
+
+          <th height="30" colspan="2">BRN NUMBER</th>
+          <th height="30">LOCO FROM</th>
+          <th height="30">LOCO TO</th>
+          <th height="30">ROUTE CARD NO</th>
+          <th height="30">END PRODUCT PART NO</th>
+          <th height="30">DOCUMENT NUMBER</th>
           <th height="30">W.O. DATE</th>
 
-          <th height="30">BRN NUMBER</th>
-          <th height="30">SHOP SECTION</th>
-          <th height="30" colspan="2">Part NO</th>
-          <!--<th>Part Description</th>-->
-          <th>DOCUMENT NUMBER</th>
       </tr>
       <tr>
+          
           {% for i in date %}
           <td height="50">{{i.m2prtdt}}</td>{% endfor %}
           <td height="50">{{wo_no}}</td>
-          {% for i in obj1 %}
-          <td height="50">{{i.m5prtdt}}</td>{% endfor %}
-          <td height="50">{{brn_no}}</td>
+          
+          <td height="50" >  
+          {% if obj10 %}    
+          {{obj10.batch_type}} 
+          {% else %}
+          {{rr}}
+          {% endif %} </td>  
+          <td height="50" colspan="2">{{brn_no}}</td>
           <input type="hidden"  name="brn_no" value="{{brn_no}}">
-          <td height="50">{{shop_sec}}</td>
-          <input type="hidden" name="shopsec" value="{{shop_sec}}">
-          <td height="50" colspan="2">{{part_no}}</td>
-          <input type="hidden" name="partno" value="{{part_no}}">
-          <!--<td>{{obj1}}</td>-->
-          <td height="50">{{doc_no}}</td>
-          <input type="hidden" name="doc_no" value="{{doc_no}}">
-
+          <input type="hidden"  name="shop_sec" value="{{shop_sec}}">
+          <td height="50">
+          {% if obj10 %}    
+         {{obj10.loco_fr}} 
+          {% else %}
+          {{rr}}
+          {% endif %} </td>
+          <td height="50">
+              {% if obj10 %}                
+              {{obj10.loco_to}} 
+              {% else %}
+              {{rr}}
+              {% endif %} </td>   
+              <td height="50">
+                  {% if len1 %}    
+                  {% for i in obj1 %}       
+                  {{i.m2slno}} 
+                  {% endfor %}
+                  {% else %}
+                  {{rr}}
+                  {% endif %} </td> 
+                  <td height="50">
+                      {% if len3 %}    
+                      {% for i in obj3 %}       
+                      {{obj3.part_no}} 
+                      {% endfor %}
+                      {% else %}
+                      {{rr}}
+                      {% endif %} </td>               
+          <td height="50">{{doc_no}}
+          <input type="hidden" name="doc_no" value="{{doc_no}}"></td>
+          <td height="50">
+                  {% if len1 %}    
+                  {% for i in obj1 %}       
+                  {{i.m5prtdt}} 
+                  {% endfor %}
+                  {% else %}
+                  {{rr}}
+                  {% endif %} </td> 
+         
+           
+          
+         
+         
       </tr>
   
 
@@ -161,28 +210,32 @@
     <!--<form action="." method = "POST">  {% csrf_token %}-->
   
             <tr >
-               <th height="30">QUANTITIY ACCEPTED:</th>
-               <th height="30">LOAD CENTRE</th>
-               <th height="30">P.A.</th>
-               <th height="30">A.T.</th>
-               <th height="30" colspan="2">OPERATION DESCRIPTION</th>
-               <th height="30">MATERIAL REJECTED</th>
+               <th height="30">PART NO:</th>
+               <th height="30" colspan="4">PART DESCRIPTION</th>
+               <th height="30" colspan="4">DRAWING NO</th>
+               <th height="30">ORDERED QUANTITY</th>
+               
              
            </tr>
-            {% for i in obj %}
+           
             <tr>
-              <td height="50">
-                <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
+              <td height="50">{{part_no}}</td>                
+                <input type="hidden" name="partno" value="{{part_no}}">
               </td> 
-              <td height="50">
-                  {{i.lc_no}}
-                  <input type="hidden" id="lc_no" name="lc_no{{ forloop.counter }}" value="{{i.lc_no}}">
-                </td> 
-                <td height="50">
-                    {{i.pa}}
-                    <input type="hidden" id="pa" name="pa{{ forloop.counter }}" value="{{i.pa}}">
+              {% for i in obj2 %}
+              <td height="50" colspan="4" >{{i.des}}</td>{% endfor %}
+             
+              {% for i in obj2 %}
+              <td height="50" colspan="4">{{i.drgno}} </td>{% endfor %}
+              {% for i in obj1 %}
+              <td height="50"> {{i.qty_ord}} </td>{% endfor %}
+               
+             
+     
 
-    
+
+ 
+<!--     
                   </td> 
                   <td height="50">
                       {{i.at}}
@@ -196,204 +249,263 @@
                 </td>
                 <td height="50">
                   <input type="text" id="matrej" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value">
-              </td>     
+              </td>      -->
                   
            
            </tr>
+           <tr >
+            <th height="30" >RAW MATERIAL PART NO:</th>
+            <th height="30" colspan="3">RAW MATERIAL DESCRIPTION</th>
+            <th height="30" colspan="3">LENGTH/WT/PIECE.</th>
+            <th height="30">UNIT</th>
+            <th height="30" colspan="2">TOTAL LENGTH/WT</th>
+            
+          
+        </tr>
+        
+         <tr>
+            <!-- {% for i in obj7 %}
+            <td height="50" colspan="2" >hello</td>   {% endfor %}    -->
+            <td>
+               {% for i in obj1 %}
+               {{i.rm_partno}}
+               {% endfor %}
+            </td>
+            
+          <td height="50" colspan="3">
+            {% for i in obj7 %}
+            {{i.des}}
             {% endfor %}
+          </td>
+          {% for i in obj1 %}
+          <td height="50" colspan="3" >{{i.rm_qty}} </td> {% endfor %}
+          {% for i in obj1 %}
+          <td height="50" > {{i.rm_ut}} </td> {% endfor %}
+          {% for i in obj1 %}
+          <td height="50" colspan="2" >{{i.tot_rm_qty}}</td>{% endfor %}
+        
+          </tr>    
+  
+          <tr>
+            <th height="30" >PREVIOUS SHOP</th>
+            <th height="30" >PRESENT SHOP</th>
+            <th height="30" >LOAD CENTER</th>
+            <th height="30" >OPERATION NO.</th>
+
+            <th height="30" >P.A.</th>
+            <th height="30" >A.T.</th>
+            <th height="30">PER PIECE</th>
+            <th height="30">RECEIVER</th>
+            
+            <th height="30" >NEXT Shop</th>
+            <th height="30" >CUT-SHEAR</th>
+           
+          
+          
+          </tr>
+         
+          <tr>
+             
+              <td height="50">
+                  {% for i in obj1 %}
+                {{i.pr_shopsec}}
+                {% endfor %}
+              </td>
+              <td height="50" >
+                  {{shop_sec}}
+                 <!-- <input type="hidden" id="lc_no" name="lc_no{{ forloop.counter }}" value="{{i.lc_no}}"> -->
+                 </td>
+
+             <td height="50" >
+              {% for i in obj1 %} 
+              {{i.lc_no}} 
+              {% endfor %}
+              <input type="hidden" id="lc_no" name="lc_no" value="{{i.lc_no}}">
+            </td>
+            <td height="50" >
+                {% for i in obj1 %} 
+                {{i.opn}} 
+                {% endfor %}
+                
+              </td>
+            <td height="50 " >
+                {% for i in obj1 %}
+               {{i.pa}}
+               {% endfor %}
+                <input type="hidden" id="pa" name="pa" value="{{i.pa}}"></td>
+               
+                <td height="50" >
+                {% for i in obj1 %}
+                {{i.at}}
+                {% endfor %}
+                <input type="hidden" id="at" name="at" value="{{i.at}}">
+              </td>
+              <td height="50" >
+                  {% for i in obj %}
+                  {{i.ncp_jbs}}
+                  {% endfor %}
+              </td>
+              <td height="50" >
+                 <h5>CUSTODY</h5>
+              </td>
+               
+                  <td height="50">
+                      {% for i in obj1 %}
+                    {{i.n_shopsec}}
+                    {% endfor %}
+                  </td>
+               
+           
+               
+             
+             <td height="50" >
+              {% for i in obj1 %}
+             {{i.cut_shear}}
+             {% endfor %}   
+            </td> 
+               
+           </tr>
+         
+          
+        
+         
+              <th height="30" colspan="5" >OPERATION DESCRIPTION</th>
+              <th height ="30" colspan="5">END PRODUCT PART DESCRIPTION</th>
+           </tr>
+          
+           <tr>
+             
+              
+              <td height="50"  colspan="5">
+                  {% for i in obj1 %}
+                  {{i.opn_desc}}  
+                  {% endfor %}  
+                </td>
+               
+                <td height="50" colspan="5" >
+                
+                 {{obj9.des}}
+                
+                 </td> 
+                 
+              </tr>           
+         
+           
+
+               
+       </table>    
+       
+          
+
+        <br><br><br>  
       
 
-  <tr>
-     <th height="30" colspan="2">CUT SHEAR:</th>
-     <th height="30" >PREVIOUS SHOP</th>
-     <th height="30">NEXT SHOP</th>
-     <th height="30">LOCO TO</th>
-     <th height="30">LOCO FROM</th>
-     <th height="30">ORDERED QUANTITY</th>
-
-     
-   
- </tr>
-  {% for i in obj1 %}
-  <tr>
-    <td height="50" colspan="2"
-      {{i.cut_shear}}
-
-    </td> 
-    <td height="50" >
-        {{i.pr_shopsec}}
-
-      </td> 
-      <td height="50">
-          {{i.n_shopsec}}
-
-        </td> 
-        {{i.l_to}}
-        
-
-          </td>
-          <td height="50">
-            {{i.l_fr}}
-          </td>
-          <td height="50">
-            {{i.qty_ord}}
-          </td>
-
-         
-         
-         
- </tr>
- {% endfor %}
-
- <tr>
-  <th height="30" colspan="3">PART DESCRIPTION:</th>
-  <th height="30" colspan="3" >DRAWING NUMBER</th>
-  <th height="30" >ROUTE CARD NO.</th>
-  
-
-  
-  
-
- 
-
-</tr>
-
-<tr>
-    {% for i in obj2 %}
- <td height="50" colspan="3" >
-   {{i.des}}
-
- </td> 
- {% endfor %}
- {% for i in obj2 %}
- <td height="50" colspan="3">
-     {{i.drgno}}
-
-
-   </td> 
-{% endfor %}
-{% for i in obj1 %}
-<td height="50">
-    {{i.m2slno}}
-
-
-  </td> 
-{% endfor %}
-
-
-</tr>
-<tr>
-    <th height="30" colspan="7">Order Type:</th>
-</tr>
-<tr>
-    {% for i in obj3 %}
-    <td height="50" colspan="7">
-        {{i.batch_type}}
-    
-    
-      </td> 
-    {% endfor %}
-    
-</tr>
-
-
-
- <tr>
-  <th height="30">END PRODUCT PART NO.</th>
-  <th height="30" >END PRODUCT DESCRIPTION</th>
-  <th height="30">LENGTH/WT.</th>
-  <th height="30">UNIT</th>
-  <th height="30" colspan="3">TOTAL LENGTH/WT</th>
- 
-
-
-</tr>
-<tr>
-    {% for i in obj3 %}
-    <td height="50">
-     {{i.part_no}}
-      </td> 
-    {% endfor %}
-    {% for ii in obj2 %}
-    <td height="50" >
-        {{ii.partno}}
-    </td> 
-    {% endfor %}
-    {% for i in obj1 %}
-    <td height="50" >
-     {{i.rm_qty}}
-         </td> 
-    {% endfor %}
-    {% for i in obj1 %}
-    <td height="50" >
-    {{i.rm_ut}}
-      </td> 
-    {% endfor %}
-    {% for i in obj1 %}
-    <td height="50" colspan="3" >
-   {{i.tot_rm_qty}}
-      </td> 
-    {% endfor %}
-
-
-  
-</tr>
-
-
-</table>
-<br><br>
-
-<table border="2" align="center">
+  <tr><table border="2" align="center">
     <tr>
+     
   <th height="30">QUANTITY INSPECTED</th>
+  <th height="30">QUANTITIY ACCEPTED:</th>
+  <th height="30">WORKER</th>
+  <th height="30">REJECTED MATERIAL</th>
+
+  <th height="30">REVISED QUANTITY</th>
+  <th height="30">REJECTED QUANTITY</th>
   <th height="30">INSPECTOR</th>
   <th height="30">DATE</th>
   <th height="30">REMARKS</th>
-  <th height="30">WORKER</th>
-  <th height="30">REVISED QUANTITY</th>
-  <th height="30">REJECTED QUANTITY</th>
+  
+  
 
 
 </tr>
-{% for i in obj1 %}
+
 <tr>
+   
   <td height="50">
+      {% for i in obj1 %}
+      {% if i.qty_insp %}
     <input type="text" id="qty_insp" value="{{i.qty_insp}}" name="qty_insp" pattern="[0-9]+" title="Numeric Value">
+    {% else %}
+    <input type="text" id="qty_insp"   value="0" name="qty_insp"  required>
+  {% endif %} 
+  {% endfor %}
   </td >
-  <td height="50">
-      <input type="text" id="inspector" value="{{i.inspector}}" name="inspector" pattern="[0-9]+" title="Numeric Value">
-   </td>
-  <td height="50">
-    {% if i.date %}
-      <input type="date" id="date"  class="myinp" value="{{i.date}}" name="date"  >
+
+ 
+     <td height="50">
+        {% if len6 %}
+        {% for i in obj6 %}
+      <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac" pattern="[0-9]*" title="Numeric Value" required>{% endfor %}
       {% else %}
-      <input type="date" id="date"  class="myinp" value="0" name="date">
-    {% endif %}  
-  </td>
-  <td height="50">
-      <input type="text" id="remarks" value="{{i.remarks}}" name="remarks" pattern="[a-zA-Z]*" title="Character Value">
+       <input type="text" id="qtyac"  value="0" name="qtyac" required >
+    {% endif %}
+    
+    </td>
+    {% for i in obj1 %}
+    <td height="50">
+        <input type="text" id="worker" value="{{i.worker}}" name="worker"  placeholder="Worker Name" required>
+  
+    </td>{% endfor %}
+  
+    <td height="50">
+        {% if len6 %}
+        {% for i in obj6 %}
+        <input type="text" id="mat_rej" value="{{i.mat_rej}}" name="mat_rej" pattern="[0-9]+" title="Character Value" required> {% endfor %}
+        {% else %}
+        <input type="text" id="mat_rej"   value="0" name="mat_rej" required>
+      {% endif %}
+     
+    </td>
 
-  </td>
-  <td height="50">
-      <input type="text" id="worker" value="{{i.worker}}" name="worker" pattern="[a-zA-Z]*" title="Character Value">
-
-  </td>
-
+     {% for i in obj1 %}
   <td height="50">
       {% if i.rev_qty %}
-      <input type="text" id="rev_qty"   value="{{i.rev_qty}}" name="rev_qty" pattern="[0-9]+" title="Numeric Value" >
+      <input type="text" id="rev_qty"   value="{{i.rev_qty}}" name="rev_qty" pattern="[0-9]+" title="Numeric Value" required>
       {% else %}
-      <input type="text" id="rev_qty"   value="0" name="rev_qty" >
+      <input type="text" id="rev_qty"   value="0" name="rev_qty" required >
     {% endif %}  
     <!-- <input type="text" id="i.rev_qty"   value="{{i.rev_qty}}" name="i.rev_qty{{ forloop.counter }}" > -->
-  </td>
+  </td>{% endfor %}
+  {% for i in obj1 %}
   <td height="50">
       {% if i.rej_qty %}
-      <input type="text" id="rej_qty"   value="{{i.rej_qty}}" name="rej_qty" pattern="[0-9]+" title="Numeric Value" >
+      <input type="text" id="rej_qty"   value="{{i.rej_qty}}" name="rej_qty" pattern="[0-9]+" title="Numeric Value" required>
       {% else %}
-      <input type="text" id="rej_qty"   value="0" name="rej_qty" >
+      <input type="text" id="rej_qty"   value="0" name="rej_qty" required>
+    {% endif %}  
+  </td>{% endfor %}
+
+   
+  <td height="50">
+      {% if len1 %}
+      {% for i in obj1 %}
+      <input type="text" id="inspector" value="{{i.inspector}}" name="inspector" pattern="[0-9]+" title="Numeric Value" required>{% endfor %}
+      {% else %}
+      <input type="text" id="inspector"  name="inspector" pattern="[0-9]+" title="Numeric Value" required>
+       {% endif %}
+   </td>
+  
+  <td height="50">
+      {% if len1 %}
+      {% for i in obj1 %}
+      <input type="date"   class="myinp" value="{{i.date}}" name="date" id="datePickerId" required>{% endfor %}
+      {% else %}
+      <input type="date"  class="myinp" value="0" name="date" id="datePickerId" required>
+      <!-- <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden> -->
+
     {% endif %}  
   </td>
+ 
+  <td height="50">
+    {% if len1 %}
+      {% for i in obj1 %}
+      <input type="text" id="remarks" value="{{i.remarks}}" name="remarks" pattern="[a-zA-Z]*" title="Character Value" required>{% endfor %}
+       {% else %}
+       <input type="text" id="remarks" name="remarks" pattern="[a-zA-Z]*" title="Character Value" required>
+       {% endif %}
+  </td>
+ 
+ 
   
       <!-- {% if i.rev_qty %}
       <input type="text" id="i.rev_qty"   value="{{i.rev_qty}}" name="i.rev_qty{{ forloop.counter }}" pattern="[0-9]+" title="Numeric Value" >
@@ -407,7 +519,7 @@
   
  
 </tr>
-{% endfor %}
+
 
 </table>
 <br><br>
@@ -416,41 +528,57 @@
   
  
  &nbsp;&nbsp;&nbsp;&nbsp;
-<h5><b>SERIAL No: </b> {{obj5.shopsec}}</h5>
+ {% if len4 %}
+<h5><b>SERIAL No: </b> {{shop_sec}}</h5>
 
-<h5><b>STAFF NO:</b> {{obj5.staff_no}}
-  
+<h5><b>STAFF NO:</b> 
+  {% for i in obj5 %}
+  {{i.staff_no}}
+{% endfor %}  
   <input type="hidden" id="staff_no{{ forloop.counter }}" name="staff_nohid{{ forloop.counter }}" value="{{obj5.staff_no}}">
    </h5>
 
-
+ 
 <h5><b>TICKET NO: </b>
-  
-      {{obj5.ticket_no}}
-      
+  {% for i in obj5 %}
+      {{i.ticket_no}}
+      {% endfor %}   
       <input type="hidden" id="ticket_nohid{{ forloop.counter }}" name="ticket_nohid{{ forloop.counter }}" value="{{obj5.ticket_no}}">
      
       </b></h5>
 
-
-<h5><b>NAME: </b>{{obj5.name}}
-  
+<h5><b>NAME: </b>
+  {% for i in obj5 %}
+  {{i.name}}
+  {% endfor %} 
   <input type="hidden" id="name" name="namehid{{ forloop.counter }}" value="{{obj5.name}}">
   
 </h5>
 
-<h5><b>STATUS: </b>{{obj5.flag}}
+<h5><b>STATUS: </b>
+  
+  {% for i in obj8 %}
+  {{i.flag}}
+  {% endfor %} 
+  <!-- {{obj4.flag}} -->
  
 </h5>
+
 
 </div>
 
 
 <table border="2" align="center" >
+ 
     <tr>
-      <th height="30">Date</th>
-      <th height="30">IN</th>
-       <th  height="30">OUT</th>
+      <th height="30">STAFF NO</th>
+      <th height="30">STAFF NAME</th>
+      <th height="30">SHIFT TYPE</th>
+      <th height="30">IN Date</th>
+      <th height="30">IN Time</th>
+       <th  height="30">OUT Date</th>
+       <th height="30">OUT Time</th>
+       
        <th height="30">TICKET NO</th>
        <th height="30">CATEGORY:</th>
        <th height="30">MONTH HRS</th>
@@ -465,54 +593,98 @@
     {% for i in obj4 %}
     <tr>
         <td height="50">
-            {% if i.date %}
-              <input type="date" id="date1"  class="myinp" value="{{i.date}}" name="date{{ forloop.counter }}"  >
-              {% else %}
-              <input type="date" id="date1"  class="myinp" value="0" name="date{{ forloop.counter }}">
-
-            {% endif %}  
-          </td>
-        <td  height="50">
-          {% if i.in1 %}
-            <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="{{i.in1}}" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');"  >
-            {% else %}
-            <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="0" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');">
-          {% endif %}  
           
-          </td> 
+            <input type="text" id="staff_no"  class="myinp" value="{{i.staff_no}}" name="staff_no{{ forloop.counter }}" readonly  required>
+            <!-- <input type="text" id="staff_name"  class="myinp" value="{{i.name}}" name="staff_name{{ forloop.counter }}"  > -->
+
+      
+
+          </td>
+        
+            <td height="50">
+               
+                <input type="text" id="staff_name"  class="myinp" value="{{i.name}}" name="staff_name{{ forloop.counter }}" readonly required>
+             
+         </td> 
+         <td>
+          <!-- <label for="shift_type_name"><b>Month/माह :</b></label> -->
+          <!-- <select class="form-control" id="shift_noid{{forloop.counter}}" name="shift{{forloop.counter}}">
+                  <option value="select">SELECT SHIFT TYPE</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="GD">GD</option>
+                  <option value="GN">GN</option>
+          </select> -->
+          <input type="text" id="shift{{forloop.counter}}" value="{{i.shift_typename}}" readonly>         </td>
+       
+          <td height="50">
+            {% if i.in_date %}
+              <input type="text" id="in_date"  class="myinp" value="{{i.in_date}}" name="in_date{{ forloop.counter }}" readonly >
+              {% else %}
+              <input type="text" id="in_date"  class="myinp" value="0" name="in_date{{ forloop.counter }}" readonly>
+       
+            {% endif %}  
+            <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden>
+
+          </td>
+          <td  height="50">
+            {% if i.in1 %}
+              <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="{{i.in1}}" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');" readonly >
+              {% else %}
+              <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="0" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');" readonly>
+            {% endif %}  
+            
+            </td> 
+            <td height="50">
+              {% if i.out_date %}
+                <input type="text" id="out_date"  class="myinp" value="{{i.out_date}}" name="out_date{{ forloop.counter }}" readonly >
+                {% else %}
+                <input type="text" id="out_date"  class="myinp" value="0" name="out_date{{ forloop.counter }}" readonly>
+  
+              {% endif %}  
+              <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden>
+
+          </td>
           <td  height="50">
            {% if i.out %}
-              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="{{i.out}}" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');" >
+              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="{{i.out}}" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');" readonly>
               {% else %}
-              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="0" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');">
+              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="0" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');" readonly>
             {% endif %}    
       
            </td> 
-           <td>
-           
-              {% if i.ticket_no %}
-              <input type="text" id="ticket_no{{ forloop.counter }}"  value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}"  >
-              {% else %}
-              <input type="text" id="ticket_no{{ forloop.counter }}"  value="0" name="ticket_no{{ forloop.counter }}" >
-            {% endif %}           
+      
+       
+          <td>
+       
+          {% if i.ticket_no %}
+          <input type="text" id="ticket_no{{ forloop.counter }}"  value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}" readonly >
+          {% else %}
+          <input type="text" id="ticket_no{{ forloop.counter }}"  value="0" name="ticket_no{{ forloop.counter }}" readonly>
+        {% endif %}           
+    
+    
+        </td> 
+       
         
-        
-            </td> 
+          
+               
             <td>
                 
-                <input type="text" id="cat"  value="{{i.cat}}" name="cat{{ forloop.counter }}" title="Character Value" >
+                <input type="text" id="cat"  value="{{i.cat}}" name="cat{{ forloop.counter }}" title="Character Value" readonly>
 
         
               </td> 
              
               <td>
                  
-                  <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}"   pattern=[0-9]*  title="Numeric Value" >
+                  <input type="text" id="month_hrs"  value="{{i.month_hrs}}" name="month_hrs{{ forloop.counter }}"   pattern=[0-9]*  title="Numeric Value" readonly>
           
                 </td> 
                 <td>
                     
-                    <input type="text" id="total_time_taken{{ forloop.counter }}"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" readonly> 
+                    <input type="text" id="total_time_taken{{ forloop.counter }}"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" readonly>  
             
                   </td> 
                
@@ -521,6 +693,7 @@
            
    </tr>
     {% endfor %}
+    {% endif %}
 
 
   </table>
@@ -531,12 +704,13 @@
 <br><br>
 
 
+<center>
+    <input type="submit" name="proceed" value="submit" style="height:50px; width:100px">
+    <input type="button" onclick="printDiv()" value="print" style="height:50px; width:100px">
+    <input  type="button" id="add" value="Add Operations" style="height:50px; width:100px"/>
 
-    <center>
-      <input type="submit" name="proceed" value="submit">
-      <input type="button" onclick="printDiv()" value="print">
-     
-    </center>
+   
+</center>
     <br><br> 
 
 
@@ -547,8 +721,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-<input  type="button" id="add" value="Add Operations" style="width: 150px;"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;
 <input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
 <div id="items">
 
@@ -560,10 +734,10 @@
 
 <br>
 
-
-
 </div>
+
 {% endif %}
+
 </form>
 
 
@@ -582,8 +756,22 @@ $(document).ready(function(){
      j=vall;
 
 
-  }
-
+  
+  $(document).ready(function(){
+    var sub =document.getElementById('sub').value;
+    if(sub==1)
+    {
+        var leng=document.getElementById('len4').value;
+        console.log(leng,"leng");
+        for (i=1;i<=leng;i++)
+        {
+        var detail_no=document.getElementById('shift'+String(i)).value;
+        console.log("detai_no",detail_no);
+        $("#shift_noid"+String(i)).val(detail_no);
+        }
+        
+    }
+  
     $("#add").click(function(e){
         event.preventDefault()
 
@@ -592,10 +780,13 @@ $(document).ready(function(){
         j++;
         console.log(j);
         assign();
- 
-       var date="dateadd"+String(j)
+       var staff_no2="staff_noadd"+String(j);
+       var exam_type="staff_nameadd"+String(j);
+       var in_date="in_dateadd"+String(j)
        var in1="in1add"+String(j);
        var out="outadd"+String(j);
+       var out_date="out_dateadd"+String(j);
+       var shift="shiftadd"+String(j);
        var outid="'"+out+"'";
        var in1id="'"+out+"'";
        var cat="catadd"+String(j);
@@ -609,18 +800,19 @@ $(document).ready(function(){
         {
 
 
-            var happ='<div class="table-responsive"><table id="customers" border="2" align="center">'+'<tr ><th  style="width:12%">In</th>'+
-'<th style="width:12%">OUT</th>'+'<th  style="width:12%">Categoy</th>'+'<th  style="width:12%">Ticket No.</th>'+'<th  style="width:12%">Month Hours</th>'+'<th  style="width:12%">Total Time Taken</th></tr>';
+            var happ='<div class="table-responsive"><table id="customers" border="2" align="center">'+'<tr ><th style="width:11%" >STAFF NO</th>'+
+'<th style="width:6%" >STAFF NAME</th>'+'<th style="width:6%" >IN DATE</th>'+'<th style="width:6%" >IN TIME</th>'+'<th  style="width:12%">OUT DATE</th>'+'<th style="width:12%">OUT TIME</th>'+'<th  style="width:12%">SHIFT TYPE</th>'+'<th  style="width:12%">TICKET No</th>'+'<th  style="width:12%">Ticket No.</th>'+'<th  style="width:12%">Month Hours</th>'+'<th  style="width:12%">Total Time Taken</th></tr>';
 
      happ=happ+'</tr></table></div>';
-        // $('#items').append(happ);
+         $('#inouttab').append(happ);
 
         }
-var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><input type="date" id='+date+' name='+date+'  /></td >'+'<td ><input type="time" id='+in1+' name='+in1+' onchange="tottime('+in1id+')" /></td >'+'<td  height="50"><input type="time" id='+out+' name='+out+'  onchange="tottime('+outid+')" /></td>'+' <td  height="50"><input type="text" id="ticket_no" name='+ticket_no+'></td>'+'<td  height="50"><input type="text" id="cat" name='+cat+'></td>'+'<td  height="50"><input type="text" id="month_hrs" name='+month_hrs+'></td>'+'<td  height="50"><input type="text" id='+total_time_taken+' name='+total_time_taken+' readonly></td>';
+var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td style="width:11%" ><select class="form-control" type=text id='+staff_no2+' name='+staff_no2+' required  onchange="find2(this)" ><option id="op_forman" selected disabled hidden>Select Staff_no</option>{% for i in prtstaff %}<option value="{{i}}">{{i}}</option>{% endfor %} </select></td >'+'<td><input type="text" id="'+exam_type+'" name="'+exam_type+'" value="{{exam_type}}" readonly placeholder="Staff Name"></td>'+'<td style="width:8%" height="50"> <select class="form-control" id='+shift+' name='+shift+' onchange="myFunction(this)" required><option value="select">SELECT SHIFT TYPE</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="GD">GD</option><option value="GN">GN</option></td>'+'<td style="width:3%" ><input type="date" id='+in_date+' name='+in_date+'  required  /> <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden></td >'+'<td style="width:8%"  ><input type="time" id='+in1+' name='+in1+'  min="06:27" max="06:45" onchange="tottime('+in1id+')"  required></td >'+'<td ><input type="date" id='+out_date+' name='+out_date+' required /></td >'+'<td style="width:8%" height="50"><input type="time" id='+out+' name='+out+'   min="14:30" max="14:45"  onchange="tottime('+outid+')"  required/></td>'+'<td  height="50"><input type="text" id='+ticket_no+' name='+ticket_no+' value="{{ticket}}" placeholder="Ticket No" required ></td>'+'<td  height="50"><input type="text" id="cat" name='+cat+' placeholder="Category" pattern="[1-9]+" title="Numeric Value[1-9]"  required></td>'+'<td  height="50"><input type="text" id="month_hrs" name='+month_hrs+' placeholder="Month Hrs" pattern="[0-9]+" title="Numeric Value"  required></td>'+'<td  height="50"><input type="text" id='+total_time_taken+' name='+total_time_taken+' placeholder="Total Time Taken" readonly></td>';
 
         htAppend=htAppend+'</tr></table></div>';
 
-
+        // document.getElementById('in_date').max = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
+        // console.log("Aa",document.getElementById('in_date') )
 
      $('#inouttab').append(htAppend);
      document.getElementById("inoutnum").value=j;
@@ -630,6 +822,8 @@ var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><
         $(this).parent('div').remove();
     });
 
+});
+}
 });
 function assign(){
         function operation()
@@ -879,39 +1073,39 @@ $( document ).ready(function() {
 
 
 <script type="text/javaScript">
-  document.querySelector("#doc_no").addEventListener('change',(e)=>{
-    //console.log("hi");
-                    e.preventDefault();
-                    var shop_sec = $("#shop_sec").val()
-                    var data = {shop_sec};
-                      $.ajax({
-                        type : 'GET',
-                        url : "{% url 'm5getstaff_no' %}",
-                        dataType : 'json',
-                        data : data,
-                        success : function(response){
-                          var elementsadded = document.querySelectorAll(".newelestaff");
-                              if(elementsadded.length>0){
-                                  var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#op_staff").selected = true; 
-                              }
-                              var brarr,mystr,html;
-                              brarr = response.map((el)=>el.staff_no);
-                              mystr = "";
-                              brarr.forEach((el,index)=>{
-                                html = `<option class="newelestaff" value='${brarr[index]}'>${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                              });
-                              html = "";
-                              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
-                              mystr=""; 
-                        }
-                          })
-                })  
+  // document.querySelector("#doc_no").addEventListener('change',(e)=>{
+  //   //console.log("hi");
+  //                   e.preventDefault();
+  //                   var shop_sec = $("#shop_sec").val()
+  //                   var data = {shop_sec};
+  //                     $.ajax({
+  //                       type : 'GET',
+  //                       url : "{% url 'm5getstaff_no' %}",
+  //                       dataType : 'json',
+  //                       data : data,
+  //                       success : function(response){
+  //                         var elementsadded = document.querySelectorAll(".newelestaff");
+  //                             if(elementsadded.length>0){
+  //                                 var elementsaddedarr = Array.from(elementsadded);
+  //                                 elementsaddedarr.forEach((el)=> el.remove());
+  //                                 document.querySelector("#op_staff").selected = true; 
+  //                             }
+  //                             var brarr,mystr,html;
+  //                             brarr = response.map((el)=>el.staff_no);
+  //                             mystr = "";
+  //                             brarr.forEach((el,index)=>{
+  //                               html = `<option class="newelestaff" value='${brarr[index]}'>${brarr[index]}</option>`
+  //                               mystr = html.concat(mystr);
+  //                             });
+  //                             html = "";
+  //                             document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+  //                             mystr=""; 
+  //                       }
+  //                         })
+  //               })  
 
 
-                document.querySelector("#staff_no").addEventListener('change',(e)=>{
+                document.querySelector("#doc_no").addEventListener('change',(e)=>{
 
 document.querySelector("#myproceed").click();
 })
@@ -933,7 +1127,8 @@ function printDiv() {
         
         win.document.write('<html><head>');
 
-        win.document.write('<title>M15 Card</title>');
+        win.document.write('<title>M5 Card</title>');
+        win.document.write('<title>M5 Card</title>');
         win.document.write(style);
         win.document.write('</head>');
         win.document.write('<body>');
@@ -945,23 +1140,170 @@ function printDiv() {
         win.print();
         win.close();
 
+
+}
+// var a=document.getElementById('cyear');
+//         var b=a-b;  
+//         $(function() {
+//           // no=id.split("staff_noadd")
+
+//         $( "#in_dateadd" ).datepicker({  maxDate: new Date(),
+//         changeYear: true,
+//         yearRange: (a)+':'+(b),
+//         });
+//         });
+
+
+function find2(th){
+
+
+var id = th.id;
+no=id.split("staff_noadd")
+// no1=id.split("ticket_noadd")
+
+var exam_type="staff_nameadd"+no[1];
+// var ticket_no="staff_nameadd"+no1[1];
+var two=document.getElementById(id).value;
+console.log(id+" "+two+" "+exam_type);
+
+var data = {two};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm5getempname' %}",
+                    
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                          console.log(response);
+                          // var w=document.getElementById('exam_type')
+                          // console.log("w",w)
+                       document.getElementById(exam_type).value= response.exam.exam_type;
+                       console.log(document.getElementById(exam_type).value)
+
+                       document.getElementById("ticket_noadd"+no[1]).value= response.exam.ticket;
+                       console.log(document.getElementById("ticket_noadd"+no[1]).value)
+
+                       
+                       console.log(response.exam.ticket)
+                       
+                      }
+                        })
+                        
+
+
+}
+
+
+// var a=document.getElementById('cyear');
+// console.log(a)
+// var b=a-b;
+// console.log(b)
+// $(document).ready(function() {
+//     $( "#datepicker" ).datepicker({  maxDate: new Date()
+//       // changeYear: true,
+//       // yearRange: (a)+':'+(b),
+//   });
+//   });
+  
+datePickerId.max = new Date().toISOString().split("T")[0];
+console.log("aaaa",datePickerId.max)
+
+
+// var a=document.getElementById('cyear');
+//         var b=a-b;  
+//         $(function() {
+//         var id = id.split("staff_noadd");
+//         console.log("TT",id[1])
+           
+//         $( "#in_dateadd"+id[1] ).datepicker({  maxDate: new Date(),
+//         changeYear: true,
+//         yearRange: (a)+':'+(b),
+//         });
+//         });
+
+
+function myFunction(th) {
+  var id = th.id;
+  var x = document.getElementById(id).value;
+  // alert("x : "+x)
+  console.log("x",id);
+  k=id.split("shiftadd");
+  console.log("kkk",k)
+  if ( document.getElementById(id).value=="A") {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("in1add"+k[1]).value = "07:27";
+       document.getElementById("in1add"+k[1]).min = "06:27";
+       document.getElementById("in1add"+k[1]).max = "06:45";
+
+
+       document.getElementById("outadd"+k[1]).min = "14:30";
+       document.getElementById("outadd"+k[1]).max = "14:45";
+
+
+    }
+    if(document.getElementById(id).value=="B")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "14:27";
+       document.getElementById("in1add"+k[1]).max = "14:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "22:30";
+       document.getElementById("outadd"+k[1]).max = "22:45";
+
+
+    }
+    if(document.getElementById(id).value=="C")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "22:27";
+       document.getElementById("in1add"+k[1]).max = "22:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "06:30";
+       document.getElementById("outadd"+k[1]).max = "06:45";
+
+
+    }
+    if(document.getElementById(id).value=="GD")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "06:27";
+       document.getElementById("in1add"+k[1]).max = "06:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "16:00";
+       document.getElementById("outadd"+k[1]).max = "16:30";
+
+
+    }
+    if(document.getElementById(id).value=="GN")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "15:57";
+       document.getElementById("in1add"+k[1]).max = "16:15";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "01:30";
+       document.getElementById("outadd"+k[1]).max = "01:45";
+
+
+    }
 }
 
 
 
 
 </script> 
-
-
-
-
-
-
-
-
-
-
-
 
 
 
