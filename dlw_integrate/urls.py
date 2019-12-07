@@ -120,6 +120,7 @@ urlpatterns = [
     path('ajax/m27getDesignation/', m27getDesignation, name='m27getDesignation'),
     path('ajax/m27getWorkOrder/', m27getWorkOrder, name='m27getWorkOrder'),
     path('ajax/m27getWorkOrderDate/', m27getWorkOrderDate, name='m27getWorkOrderDate'),
+    path('ajax/m27getBatchNo/', m27getBatchNo, name='m27getBatchNo'),
     path('m18view/',m18view,name='m18view'),
     path('ajax/m26getwono/', m26getwono, name='m26getwono'),
     path('ajax/m26getStaffCatWorkHrs/', m26getStaffCatWorkHrs, name='m26getStaffCatWorkHrs'),

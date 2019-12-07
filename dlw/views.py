@@ -6421,11 +6421,6 @@ def wheelnde(request):
     return JsonResponse({"success":False}, status=400)
 
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> master
 @login_required
 @role_required(urlpass='/M20view/')
 def M20view(request):
@@ -7979,7 +7974,7 @@ def ShowLeaf(request,part,res,code):
         for i in range(len(final)):
             if final[i]['cp_part'] not in res:
                 res.append(final[i]['cp_part'])
-                print(len(res))
+                print("showLeaf  :  ",len(res))
                 ShowLeaf(request,final[i]['cp_part'],res,code)
     return res
     
@@ -8000,7 +7995,8 @@ def CardGeneration(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    assmno = EpcCode.objects.all().values('num_1').distinct()
+    #assmno = EpcCode.objects.all().values('num_1').distinct()
+    assmno = Batch.objects.all().values('part_no').exclude(part_no__isnull=True).distinct()
     context = {
         'ip':get_client_ip(request),
         'nav':nav,
@@ -8015,17 +8011,26 @@ def CardGeneration(request):
         if batch and bval and asmno and card:
             if bval=="Generate Cards" and card=="M2":
                 res = []
-                obj1 = ShowLeaf(request,asmno,res,'M')
-                print("len = ",obj1)
-                for i in range(len(obj1)):
+                #obj1 = ShowLeaf(request,asmno,res,'M')
+                #print("obj1 :  = ",len(obj1))
+                getShopSecDetails = list(Oprn.objects.filter(part_no=asmno).values('shop_sec').distinct())
+                print("getShopSecDetails : ",len(getShopSecDetails))
+                getNstrDetails = list(Nstr.objects.filter(pp_part=asmno,ptc='M',l_to='9999').values('cp_part','ptc','qty','epc','del_fl','epc_old').exclude(pp_part__isnull=True).distinct())
+                print("getNstrDetails : ",len(getNstrDetails))
+                getBatchDetails = list(Batch.objects.filter(part_no=asmno,loco_to='9999').values('mark','status','brn_no'))
+                print("getBatchDetails : ",len(getBatchDetails))
+
+               # for i in range(len(obj1)):
+                    
                     # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
                     # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
                     # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
-                    # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
-                    # if len(obj2):
-                    #     print(obj2[0])
-                    print(i)
-                    M2Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
+                    #  obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                    #  if len(obj2):
+                     #   print("len1----",len(obj2))  
+                        #print("tset ----------",len(obj2))
+                   # print(i)
+                   # M2Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
 
                 # try:
                 #     for j in range(len(obj1)):
@@ -8095,7 +8100,13 @@ def CardGeneration(request):
     return render(request,'CardGeneration.html',context)
 
 
-
+def m27getBatchNo(request):
+    if request.method == "GET" and request.is_ajax():
+        mAsslyno = request.GET.get('mAsslyno')
+        bo_no=Batch.objects.filter(part_no=mAsslyno).values('bo_no').distinct()
+        bo_no_temp = list(bo_no)
+        return JsonResponse(bo_no_temp, safe = False)
+    return JsonResponse({"success": False}, status=400)
 
 
 
@@ -13605,10 +13616,6 @@ def mg9compreportviews(request):
         #                 print(comp)
 
     return render(request,"mg9compreportviews.html",context)
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 
 def mg9getmwno(request):
     if request.method == "GET" and request.is_ajax():
@@ -13628,11 +13635,6 @@ def mg9getstaffno(request):
         return JsonResponse(staff, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> master
 @login_required
 @role_required(urlpass='/miscreport/')
 def miscreport(request):
