@@ -16353,6 +16353,8 @@ def staff_auth_report_view(request):
     return render(request,"staff_auth_report_view.html",context) 
 
 
+@login_required
+@role_required(urlpass='/logbook_record/')
 def logbook_record(request):
     from .models import logbook_record
 
@@ -16370,7 +16372,8 @@ def logbook_record(request):
         obj.save()
     return render(request,"logbook_record.html",{})
 
-
+@login_required
+@role_required(urlpass='/logbook_delete/')
 def logbook_delete(request):
     from .models import logbook_record
 
@@ -16380,6 +16383,8 @@ def logbook_delete(request):
         obj.delete()
     return render(request,"logbook_delete.html",{}) 
 
+@login_required
+@role_required(urlpass='/logbook_update/')
 def logbook_update(request):
 
     if request.method=="POST":
