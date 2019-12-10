@@ -14065,10 +14065,6 @@ def mg9compreportviews(request):
         
     
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
     return render(request,"mg9compreportviews.html",context)
 
 def mg9getmwno(request):
