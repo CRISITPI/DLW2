@@ -1,6 +1,6 @@
 {% extends 'base.html' %} 
 {% block content %}
-
+{% load static %}
 
 <style>
         input[type=text],
@@ -9,9 +9,10 @@
             padding: 12px 20px;
             margin: 8px 0;
             display: block;
-            border: 0.5px solid #ccc;
+            border: 0.5px solid 2px;
             border-radius: 4px;
             box-sizing: border-box;
+            box-shadow: 2px 2px;
         }
         
         input[type=submit] {
@@ -25,6 +26,31 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        input[type=reset] {
+            width: 20%;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #print {
+            width: 20%;
+            text-align: center;
+            background-color:cornflowerblue;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        
         
         input[type=submit]:hover {
             background-color: #45a049;
@@ -47,54 +73,347 @@
             background-color: #45a049;
             text-align: center;
         }
+
+        .container input:checked ~ .checkmark:after {
+            display: inline;
+          }
+
+        #remarks{
+
+            background-color: lightblue;
+            color: black;
+            font-weight: bold;
+            width: 600px;
+
+        }
+        .table tr td {
+            font-weight: bold;
+        }
+          
     </style>
 
 
 
 <form action="{% url 'partallotement' %}" method="POST"> {% csrf_token %}
-        <table class="table">
-                <tr>
-                    <center>
-                        {% if messages %}
-                        <ul class="messages">
-                            {% for message in messages %}
-                            <font size="3">
-                                <li>
-                                    {{ message }}
-                                </li>
-                            </font>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                </center>
+        <div id="printdata" class="container">
+                <table class="table">
+                  <tr>
+                      <center>
+                          {% if messages %}
+                          <ul class="messages">
+                              {% for message in messages %}
+                              <font size="3">
+                                  <li>
+                                      {{ message }}
+                                  </li>
+                              </font>
+                              {% endfor %}
+                          </ul>
+                          {% endif %}
+                  </center>
                 </tr>
                 <h3 align="center">Diesel Locomotive Works </h3>
                 <h4 align="center">Design office - Part Alot </h4>
                 <tr>
                 <td>
                         <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
-                        <select class="form-control" style="width: 150px;" id="part" name="part" required>
-                <option id="op_part" selected disabled hidden>Select Part No</option>
-            </select>
-                    </td>                         
+                        <select class="form-control" style="width: 170px;" id="partno" name="partno" required>
+                            <option id="op_part" selected disabled hidden>Select Part No</option>
+               
+                                  {% for i in partnew %}
+                                    <option>{{i.part_no}}</option>
+                                  {% endfor %}
+                                  
+                        </select>
+                </td>                         
                 
                      <td>
-                        <label for="br_no"><b>GM-PART NO</b></label>                   
-                        <select class="form-control" style="width: 150px;" id="gmpart" name="gmpart" required>
-                                  <option id="op_staffName" selected disabled hidden>SELECT GM PART NO</option>
-                                  {% if lenm == 1 %}
-                                  {% for i in wo_nop %}
-                                    <option>{{i.name}}</option>
-                                  {% endfor %}
-                                  {% endif %}
-                         </select>
+                        <label for="br_no"><b>GM-PART NO</b></label>
+                        <input type="text" style="width: 180px;" id="gmpart" name="gmpart" required>            
+                        <!-- <select class="form-control" style="width: 180px;" id="gmpart" name="gmpart" required>   -->
+                                  <!-- <option id="op_staffName" selected disabled hidden>SELECT GM PART NO</option> -->
+                                  
+
+                       </select>
+                         <label style="color:red; font-style: italic;">* Enter For New Drawing of DLW (Press 'Enter' Key)</label> 
                     </td>
                 </tr>
-                    
-                </table>
-</form>
+                
+
+                <tr>
+                    <td>
+                        <label for="drg_rev">DRG-REV</label>
+                        <input style="width: 150px;" type="text" name="drg_rev" id="drg_rev">
+                    </td>
+                    <td>
+                        <label for="DESC">DESC</label>
+                        <input style="width: 200px;" type="text" name="DESC" id="DESC">
+                    </td>
+                    <td>
+                            <label for="drg_rev">MB</label>
+                            <input  style="width: 150px;"  type="text" name="MB" id="MB">
+                    </td>
+                   
+
+                    <td>
+                                <label for="IND_BUY">IND-BUY</label>
+                                <input style="width: 150px;" type="text" name="ind_buy" id="ind_buy">
+                    </td>
+                    <td>
+                                <label for="it_cat">IT-CAT</label>
+                                <input style="width: 150px;" type="text" name="it_Cat" id="it_cat">
+                    </td>
+                </tr>
+
+                 <tr>
+                        <td>
+                            <label for="drg_rev">WEIGHT</label>
+                            <input style="width: 150px;" type="text" name="WEIGHT" id="WEIGHT">
+                        </td>
+                        <td>
+                            <label for="DESC">UNIT</label>
+                            <input style="width: 150px;" type="text" name="UNIT" id="UNIT">
+                        </td>
+
+                        <td>
+                                <label for="drg_rev">SIZE</label>
+                                <input style="width: 150px;" type="text" name="SIZE" id="SIZE">
+                            </td>
+                            <td>
+                                <label for="DESC">MAT-SPEC</label>
+                                <input style="width: 150px;" type="text" name="MAT-SPEC" id="MAT-SPEC">
+                            </td>
+                </tr>
+                <tr>
+                    <td>
+                            <label for="remarks">REMARKS</label>
+                            <textarea id="remarks" name="remarks"> </textarea>
+                    </td>   
+                </tr>
+                
+
+                    </table>
+                    <div id="grp"></div>
+            <table class="table">
+                
+                        <tr>
+                                <td>
+                                <label for="partno"><b>MAJ-GROUP</b></label>
+                        <select class="form-control" style="width: 170px;" id="maj_grp" name="maj_grp" required>
+                            <option id="maj_grp" selected disabled hidden>Select Major Group</option>
+               
+                                  {% for i in partgrp %}
+                                    <option>{{i.maj_grp}}</option> 
+                                  {% endfor %}
+                                  
+                        </select>
+                            </td>
+                            <td>
+                                    <label for="subgrp"><b>SUB-GROUP</b></label>
+                            <select class="form-control" style="width: 170px;" id="subgrp" name="subgrp" required>
+                                <option id="subgrp" selected disabled hidden>Select Sub Group</option>
+                   
+                                      
+                                      
+                            </select>
+                                </td>
+
+                                <td>
+                                        <label for="drg_rev">SUB-GROUP2</label>
+                                        <input  style="width: 150px;" type="text" name="SUB-GROUP2" id="SUB-GROUP2">
+                                    </td>
+                                    <td>
+                                        <label for="DESC">SL NO</label>
+                                        <input  style="width: 150px;" type="text" name="SL_NO" id="SL_NO">
+                                    </td>
+
+                                    <td>
+                                            <label for="GROUP-DES">GROUP-DES</label>
+                                            <textarea id="grp_des" name="grp_des">
+                                                </textarea>
+        
+        
+                                    </td>
+                        </tr>
 
 
+            </table>
+
+            <table class="table">
+                <div class="container">
+
+                                    <tr>
+                                            <td>
+                                                    <center>
+                                                            <input  style="width: 150px;"  id="submit" type="submit" name="proceed" value="Save/ Update"> 
+                                                            
+                                                            <input  style="width: 150px;"  id="print" type="button" onclick="printDiv()" value="Print"> 
+                                                    </center>
+                
+                                            </td>
+                                                <tr>
+                                                    <td>
+                                                        <label for="checkYN">chkYN</label>
+                                                        <input  type="checkbox" id="checkbox" name="checkbox">
+                                                    </td>
+                                                </tr>
+                                            <tr>
+                                                <td>
+                                                        <center>
+                                                                <input  style="width: 150px;"  type="submit" name="save" value="Save" id="submitted"> 
+                                                                <input  style="width: 150px;"  type="submit" name="ref" value="RefDoc"> 
+                                                                <input  style="width: 150px;"  type="reset" value="Clear"> 
+                                                        </center>
+                
+                                                </td>
+                                            </tr>
+                                        </tr>
+                                    </div>
+                                       
+                        
+
+
+                        
+            </table>
+           
+        
+        </div>
+               
+            </div>
+            </form>
+    <script>
+
+
+            document.querySelector('#partno').addEventListener('change',(e)=>{
+                e.preventDefault();
+                var partno_temp = $('#partno').val();               
+                var data = {partno_temp};                
+                  $.ajax({
+                    type : 'GET',
+                    url : "{% url 'getpartnewdetails' %}",
+                    dataType : 'json',
+                    data : data,
+                    success : function(response){                       
+                     document.getElementById('gmpart').value=response[0].gm_ptno;
+                     document.getElementById('drg_rev').value=response[0].rev;
+                     document.getElementById('DESC').value=response[0].des;
+                     document.getElementById('MB').value=response[0].mb;
+                     document.getElementById('UNIT').value=response[0].unit;
+                     document.getElementById('WEIGHT').value=response[0].unit_wt;
+                     document.getElementById('SIZE').value=response[0].size_pc;
+                     document.getElementById('MAT-SPEC').value=response[0].mat_specn;
+                     document.getElementById('ind_buy').value=response[0].ind_buy;
+                     document.getElementById('it_cat').value=response[0].it_cat;
+                     
+
+                     
+                                                    
+                    }
+               })
+            });
+
+
+           
+
+            document.querySelector("#maj_grp").addEventListener('change',(e)=>{
+                e.preventDefault();
+                var maj_grp_temp = $('#maj_grp').val();               
+                var data = {maj_grp_temp};                
+                  $.ajax({
+                    type : 'GET',
+                    url : "{% url 'getpartnewdetails123' %}",
+                    dataType : 'json',
+                    data : data,
+                    success : function(response){
+                            
+                         var elementsadded = document.querySelectorAll(".neweleassm");
+                          if(elementsadded.length>0){
+                              var elementsaddedarr = Array.from(elementsadded);
+                              elementsaddedarr.forEach((el)=> el.remove());
+                              document.getElementById('subgrp').value=response[0].sub_grp;
+                            document.getElementById('slno').value=response[0].slno;
+                            document.getElementById('maj_descr').value=response[0].maj_descr;
+                            document.getElementById('sub_descr').value=response[0].sub_descr;
+                            document.getElementById('missing1').value=response[0].missing1;
+                           }
+
+                          var brarr,mystr,html;
+                          brarr = response.map((el)=>el.sub_grp);
+                          mystr = "";
+                          brarr.forEach((el,index)=>{
+                            html = `<option class="neweleassm">${brarr[index]}</option>`
+                            mystr = html.concat(mystr);
+                          });
+                          html = "";
+                          document.querySelector("#subgrp").insertAdjacentHTML('beforeend',mystr);
+                          mystr="";
+                    }
+                      })
+                      })
+
+                      document.querySelector("#subgrp").addEventListener('change',(e)=>{
+                        e.preventDefault();
+                        var subgrp_temp = $('#subgrp').val();               
+                        var data = {subgrp_temp};                
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'getpartdecription' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){
+
+                               
+
+                                document.getElementById('grp_des').value=response[0].sub_descr;
+                            }
+                              })
+                              })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            function printDiv() {
+                var printContents = document.getElementById("print").innerHTML;
+           
+                  var style = "<style>";
+                   style = style + "table {width: 100%;font: 17px Calibri;}";
+                   style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+                   style = style + "padding: 2px 3px;text-align: left;}";
+                   style = style + "</style>";
+                 var win = window.open('', '', 'height=500,width=500');
+           
+                   win.document.write('<html><head>');
+           
+                   win.document.write('<title>Design Office - Part Alot</title>');
+                   win.document.write(style);
+                   win.document.write('</head>');
+                   win.document.write('<body>');
+                   win.document.write(printContents);
+                   win.document.write('</body></html>');
+           
+                   win.print();
+                   win.close();
+           
+           
+           }
+          
+          </script>   
 
 
 {% endblock content %}       

@@ -4726,7 +4726,7 @@ def m1getpano(request):
         shop_sec = request.GET.get('shop_sec')
         print(shop_sec)
         pano = list(Oprn.objects.filter(shop_sec = shop_sec).values('part_no').distinct())
-        print(pano)
+        # print(pano)
         return JsonResponse(pano, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -4748,6 +4748,7 @@ def m1genrept1(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    newob=list(Part.objects.all().values('partno').exclude(partno__isnull=True).distinct())
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -4759,7 +4760,8 @@ def m1genrept1(request):
             'nav':nav,
             'ip':get_client_ip(request),
             'roles':tmp,
-            'subnav':subnav
+            'subnav':subnav,
+            'newob':newob,
         }
     elif(len(rolelist)==1):
         # print("in else")
@@ -4774,6 +4776,7 @@ def m1genrept1(request):
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
+            'newob':newob,
         }
     elif(len(rolelist)>1):
         context = {
@@ -4784,11 +4787,12 @@ def m1genrept1(request):
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
+            'newob':newob,
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
-        shop_sec = request.POST.get('shop_sec')
         part_no = request.POST.get('part_nop')
+        print("prtno",part_no)
         if submitvalue=='Proceed':
             print("in report proceed")
             today = date.today()
@@ -4799,7 +4803,7 @@ def m1genrept1(request):
             obj=Part.objects.filter(partno=part_no).values('des','drgno','drg_alt','size_m','spec','weight').distinct()
             print(obj)
             obj3=Nstr.objects.filter(pp_part=part_no).values('epc','ptc','cp_part').distinct()
-            print(obj3[0])
+            # print(obj3[0])
             if len(obj3):
                 epcv=obj3[0]['epc']
                 ptcv=obj3[0]['ptc']
@@ -4825,7 +4829,6 @@ def m1genrept1(request):
                     'ip':get_client_ip(request),
                     'roles':tmp,
                     'subnav':subnav,
-                    'shop_sec': shop_sec,
                     'part_no': part_no,
                     'obj1':obj,
                     'dtl':obj2,
@@ -4847,7 +4850,6 @@ def m1genrept1(request):
                     'nav':nav,
                     'subnav':subnav,
                     'ip':get_client_ip(request),
-                    'shop_sec': shop_sec,
                     'part_no': part_no,
                     'obj1':obj,
                     'dtl':obj2,
@@ -4866,7 +4868,6 @@ def m1genrept1(request):
                     'subnav':subnav,
                     'ip':get_client_ip(request),
                     'sub': 1,
-                    'shop_sec': shop_sec,
                     'part_no': part_no,
                     'obj1':obj,
                     'dtl':obj2,
@@ -11409,8 +11410,10 @@ def m11view(request):
             print("t",t)
             if t != 'None':
                 obj2 = Rates.objects.filter(staff_no=staff_no).values('avg_rate').distinct()
-                obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat')[0]
-                print(obj2)
+                obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat').distinct()
+                if len(obj3):
+                    obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat')[0]
+                # print(obj2)
 
 
             for op in range(len(obj1)):
@@ -11432,7 +11435,7 @@ def m11view(request):
                 print("b",b)
 
             #if len(obj1):
-            print(obj1)
+            # print(obj1)
             tmhr=rr
             print("1",tmhr)
             if len(obj2):    
@@ -16105,8 +16108,59 @@ def mg9getstaffno(request):
 @login_required
 @role_required(urlpass='/partallotement/')
 def partallotement(request):
-    
-    return render(request, 'partallotement.html')
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist) 
+    partnew = list(Partnew.objects.all().values('part_no').distinct())
+    partgrp = list(Partgrp.objects.all().values('maj_grp').distinct())
+
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'partnew' : partnew,
+            'partgrp' : partgrp,        
+        }
+    return render(request, 'partallotement.html',context)
+
+
+def getpartnewdetails(request):
+    if request.method == "GET" and request.is_ajax():        
+        partno_temp = request.GET.get("partno_temp")
+        
+        partnew = list(Partnew.objects.filter(part_no=partno_temp).values('gm_ptno','rev','des','mb','unit','size_pc','mat_specn','ind_buy','it_cat','unit_wt').distinct())
+
+        print('partnew : ----',partnew)
+        return JsonResponse(partnew, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def getpartnewdetails123(request):
+    if request.method == "GET" and request.is_ajax():        
+        partgrp_temp = request.GET.get("maj_grp_temp")        
+        partgrp = list(Partgrp.objects.filter(maj_grp = partgrp_temp).values('sub_grp'))
+        return JsonResponse(partgrp, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def getpartdecription(request):
+    if request.method == "GET" and request.is_ajax():        
+        subgrp_temp_temp = request.GET.get("subgrp_temp")        
+        partgrp = list(Partgrp.objects.filter(sub_grp = subgrp_temp_temp).values('sub_descr'))
+        return JsonResponse(partgrp, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 
 
