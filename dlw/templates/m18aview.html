@@ -1,0 +1,954 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+  input[type=text],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 20%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 10%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 6px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+</style>
+<br>
+<br>
+<h1 align="center"><u><b>JOB CARD FOR SQUAD WORK</b></u></h1>
+<br><br>
+<form action="{% url 'm18aview' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td>
+                    <label for="month"><b>Month/माह :</b></label>
+                    <select class="form-control" id="month" name="month">
+                            <option value="select">SELECT MONTH</option>
+                            <option value="JAN">JAN</option>
+                            <option value="FEB">FEB</option>
+                            <option value="MAR">MAR</option>
+                            <option value="APR">APR</option>
+                            <option value="MAY">MAY</option>
+                            <option value="JUN">JUNE</option>
+                            <option value="JULY">JULY</option>
+                            <option value="AUG">AUG</option>
+                            <option value="SEPT">SEPT</option>
+                            <option value="OCT">OCT</option>
+                            <option value="NOV">NOV</option>
+                            <option value="DEC">DEC</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+            {% if lenm == 1 %}
+                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+            {% endif %}
+            {% if lenm > 1 %}
+            {% for role in roles %}
+              <option>{{role}}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+                </td>
+                <td>
+                    <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
+                    <select class="form-control" id="wno" name="wo_no" required>
+        <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+        {% if lenm == 1 %}
+        {% for i in wo_nop %}
+          <option>{{i.batch_no}}</option>
+        {% endfor %}
+        {% endif %}
+    </select>
+                </td>
+                          
+            </tr>
+            <tr>
+                <td>
+                    <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
+                    <select class="form-control" id="part_nop" name="part_nop" required>
+            <option id="op_part" selected disabled hidden>Select Part No</option>
+        </select>
+                </td>
+                <td>
+                  <label for="oprn_no"><b>OPERATION NO:</b></label>
+                  <select class="form-control" id="oprn_no" name="oprn_no" required>
+          <option id="op_oprn" selected disabled hidden>Select Oprn No</option>
+      </select>
+              </td>
+                
+                
+                <td>
+                  <label for="sse"><b>SSE :</b></label>
+                  <select class="form-control" id="sse" name="sse" required>
+          <option id="op_sse" selected disabled hidden>Select Staff No</option>
+      </select>
+              </td>
+              <td>
+                <label for="ticket_no"><b>TICKET NO: :</b></label>
+                <select class="form-control" id="ticket_no" name="ticket_no" required>
+        <option id="op_ticket" selected disabled hidden>Select TICKET No</option>
+    </select>
+            </td>
+            </tr>
+
+
+        </table>
+        <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
+        
+        <center><input type="submit" value="Proceed" id="myproceed" name="proceed" hidden  /></center>
+    </div>
+    <input type="hidden" name="sub" id="sub" value={{sub}} >
+    <br><br> {% if sub == 1 %}
+    <div id="print" style="align:center" >
+    <input type="hidden" name="len" value="{{len}}">
+    <input type="hidden" name="len4" id="len4" value="{{len4}}">
+    <!-- <input type="hidden" name="len6" id="len6" value="{{len6}}"> -->
+    <input type="hidden" name="len1" id="len1" value="{{len1}}">
+    <input type="hidden" name="len2" id="len2" value="{{len2}}">
+    
+    <table align="center"  >
+      <tr align="center">
+       <td>
+      <h5 align="left" style="margin-right: 180px"><u><b>SHOP SECTION: </b> </u>{{shop_sec}} 
+      </h5> <input type="hidden" name="shopsec" id="shopsec" value="{{shop_sec}}">
+    </td>
+    <!-- <input type="hidden" name="shopsec" value="{{shop_sec}}"> -->
+      <td colspan="2"></td>
+      <td>
+      <h5 align="right"><u><b>TICKET No.: </b></u>{{ticket_no}} 
+       
+       
+      
+     </h5></td>
+    </tr>
+   <tr align="center">
+           <td>
+          <h5 align="left" ><u><b>MONTH: </b> </u>{{month}}</h5><input type="hidden" name="month" value="{{month}}" pattern="[A-Z]*{3}" title="Upper case alphabets only" />
+         </td>
+         <!-- <input type="hidden" name="month"  value="{{month}}"> -->
+          <td colspan="2"></td>
+          <td>
+          <h5 align="right"><u><b>CATEGORY: </b> </u>{{staff.cat}}</h5></td>
+         </tr>
+       <tr align="center">
+               <td>
+            <h5 align="left"><u><b>WORK ORDER: </b> </u> {{wo_no}}</h5></td>
+            <td colspan="2"></td>
+               <td colspan="3">
+              <h5 align="right" ><u><b>REQ No: </b> </u> {% if obj3 %} 
+                {{obj3.req_no}}
+                {% else %}
+              </h5>
+             </td>
+            <td>
+                   
+              <input type="text" name="req_no" id="req_no" />
+              {% endif %}
+         </td>
+       </tr>
+           <tr align="center">
+                   <td>
+                  <h5 align="left"><u><b>P.L. No. : </b> </u>{{part_no}}</h5></td>
+                  <td colspan="2"></td>
+                  <td>
+                  <h5 align="right"><u><b>OPERATION: </b> </u>
+                 {{oprn_no}}
+                  </h5></td>
+                  </tr>
+   
+   </table>
+<br><br>
+   
+
+<table border="2" align="center" style="width: 105%;" >
+ 
+    <tr>
+      <th height="30" width="200">STAFF NO</th>
+      <th height="30">STAFF NAME</th>
+      <th height="30">SHIFT TYPE</th>
+      <th height="30" width="200">IN Date</th>
+      <th height="30">IN Time</th>
+       <th  height="30" width="200">OUT Date</th>
+       <th height="30" width="150">OUT Time</th>
+       
+       <th height="30">TICKET NO</th>
+       <th height="30">CATEGORY:</th>
+       <th height="30">TOTAL TIME TAKEN</th>
+      
+       
+       
+      
+     
+   </tr>
+   
+    {% for i in obj1 %}
+    <tr>
+        <td height="50">
+          
+            <input type="text" id="staff_no"  class="myinp" value="{{i.staff_no}}" name="staff_no{{ forloop.counter }}" readonly  required>
+            <!-- <input type="text" id="staff_name"  class="myinp" value="{{i.name}}" name="staff_name{{ forloop.counter }}"  > -->
+
+      
+
+          </td>
+        
+            <td height="50">
+               
+                <input type="text" id="staff_name"  class="myinp" value="{{i.name}}" name="staff_name{{ forloop.counter }}" readonly required>
+             
+         </td> 
+         <td>
+          <!-- <label for="shift_type_name"><b>Month/माह :</b></label> -->
+          <!-- <select class="form-control" id="shift_noid{{forloop.counter}}" name="shift{{forloop.counter}}">
+                  <option value="select">SELECT SHIFT TYPE</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="GD">GD</option>
+                  <option value="GN">GN</option>
+          </select> -->
+          <input type="text" id="shift{{forloop.counter}}" value="{{i.shift_typename}}" readonly>         </td>
+       
+          <td height="50">
+            {% if i.in_date %}
+              <input type="text" id="in_date"  class="myinp" value="{{i.in_date}}" name="in_date{{ forloop.counter }}" readonly >
+              {% else %}
+              <input type="text" id="in_date"  class="myinp" value="0" name="in_date{{ forloop.counter }}" readonly>
+       
+            {% endif %}  
+            <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden>
+
+          </td>
+          <td  height="50">
+            {% if i.in1 %}
+              <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="{{i.in1}}" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');" readonly >
+              {% else %}
+              <input type="time" id="in1{{ forloop.counter }}"  class="myinps" value="0" name="in1{{ forloop.counter }}" onchange="tottime('in1{{ forloop.counter }}');" readonly>
+            {% endif %}  
+            
+            </td> 
+            <td height="50">
+              {% if i.out_date %}
+                <input type="text" id="out_date"  class="myinp" value="{{i.out_date}}" name="out_date{{ forloop.counter }}" readonly >
+                {% else %}
+                <input type="text" id="out_date"  class="myinp" value="0" name="out_date{{ forloop.counter }}" readonly>
+  
+              {% endif %}  
+              <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden>
+
+          </td>
+          <td  height="50">
+           {% if i.out %}
+              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="{{i.out}}" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');" readonly>
+              {% else %}
+              <input type="time" id="out{{ forloop.counter }}"  class="myinps" value="0" name="out{{ forloop.counter }}" onchange="tottime('out{{ forloop.counter }}');" readonly>
+            {% endif %}    
+      
+           </td> 
+      
+       
+          <td>
+       
+          {% if i.ticket_no %}
+          <input type="text" id="ticket_no{{ forloop.counter }}"  value="{{i.ticket_no}}" name="ticket_no{{ forloop.counter }}" readonly >
+          {% else %}
+          <input type="text" id="ticket_no{{ forloop.counter }}"  value="0" name="ticket_no{{ forloop.counter }}" readonly>
+        {% endif %}           
+    
+    
+        </td> 
+       
+        
+          
+               
+            <td>
+                
+                <input type="text" id="cat"  value="{{i.cat}}" name="cat{{ forloop.counter }}" title="Character Value" readonly>
+
+        
+              </td> 
+             
+               <td>
+                    
+                    <input type="text" id="total_time_taken{{ forloop.counter }}"  value="{{i.total_time_taken}}" name="total_time_taken{{ forloop.counter }}" title="Character Value" readonly>  
+            
+                  </td> 
+               
+              
+   
+           
+   </tr>
+    {% endfor %}
+    
+
+
+  </table>
+  <div id="inouttab">
+
+  </div>
+  
+<br><br>
+
+
+<center>
+    <input type="submit" name="proceed" value="submit" style="height:50px; width:100px">
+    <input type="button" onclick="printDiv()" value="print" style="height:50px; width:100px">
+    <input  type="button" id="add" value="Add Operations" style="height:50px; width:100px"/>
+
+   
+</center>
+    <br><br> 
+
+
+</form>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;
+<input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
+<div id="items">
+
+
+    </div>
+
+<br>
+    <br><br><br>
+
+<br>
+
+</div>
+
+{% endif %}
+
+</form>
+
+
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script language="javascript">
+var j=0;
+$(document).ready(function(){
+  var sub=document.getElementById('sub').value;
+  if (sub == 1)
+  {
+    var vall=document.getElementById('len4').value;
+     j=vall;
+
+
+  
+  $(document).ready(function(){
+    var sub =document.getElementById('sub').value;
+    if(sub==1)
+    {
+        var leng=document.getElementById('len4').value;
+        console.log(leng,"leng");
+        for (i=1;i<=leng;i++)
+        {
+        var detail_no=document.getElementById('shift'+String(i)).value;
+        console.log("detai_no",detail_no);
+        $("#shift_noid"+String(i)).val(detail_no);
+        }
+        
+    }
+  
+    $("#add").click(function(e){
+        event.preventDefault()
+
+
+
+        j++;
+        console.log(j);
+        assign();
+       var staff_no2="staff_noadd"+String(j);
+       var exam_type="staff_nameadd"+String(j);
+       var in_date="in_dateadd"+String(j)
+       var in1="in1add"+String(j);
+       var out="outadd"+String(j);
+       var out_date="out_dateadd"+String(j);
+       var shift="shiftadd"+String(j);
+       var outid="'"+out+"'";
+       var in1id="'"+out+"'";
+       var cat="catadd"+String(j);
+       var ticket_no="ticket_noadd"+String(j);
+      //  var month_hrs="month_hrsadd"+String(j)
+       var total_time_taken="total_time_takenadd"+String(j);
+       
+      
+       var sno=j;
+        if(j==1)
+        {
+
+
+            var happ='<div class="table-responsive"><table id="customers" border="2" align="center">'+'<tr ><th style="width:11%" >STAFF NO</th>'+
+'<th style="width:6%" >STAFF NAME</th>'+'<th style="width:6%" >IN DATE</th>'+'<th style="width:6%" >IN TIME</th>'+'<th  style="width:12%">OUT DATE</th>'+'<th style="width:12%">OUT TIME</th>'+'<th  style="width:12%">SHIFT TYPE</th>'+'<th  style="width:12%">TICKET No</th>'+'<th  style="width:12%">Ticket No.</th>'+'<th  style="width:12%">Month Hours</th>'+'<th  style="width:12%">Total Time Taken</th></tr>';
+
+     happ=happ+'</tr></table></div>';
+        //  $('#inouttab').append(happ);
+
+        }
+var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td style="width:11%" ><select class="form-control" type=text id='+staff_no2+' name='+staff_no2+' required  onchange="find2(this)" ><option id="op_forman" selected disabled hidden>Select Staff_no</option>{% for i in empno %}<option value="{{i}}">{{i}}</option>{% endfor %} </select></td >'+'<td><input type="text" id="'+exam_type+'" name="'+exam_type+'" value="{{exam_type}}" readonly placeholder="Staff Name"></td>'+'<td style="width:8%" height="50"> <select class="form-control" id='+shift+' name='+shift+' onchange="myFunction(this)" required><option value="select">SELECT SHIFT TYPE</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="GD">GD</option><option value="GN">GN</option></td>'+'<td style="width:3%" ><input type="date" id='+in_date+' name='+in_date+'  required  /> <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden></td >'+'<td style="width:8%"  ><input type="time" id='+in1+' name='+in1+'  min="06:27" max="06:45" onchange="tottime('+in1id+')"  required></td >'+'<td ><input type="date" id='+out_date+' name='+out_date+' required /></td >'+'<td style="width:8%" height="50"><input type="time" id='+out+' name='+out+'   min="14:30" max="14:45"  onchange="tottime('+outid+')"  required/></td>'+'<td  height="50"><input type="text" id='+ticket_no+' name='+ticket_no+'  value="{{ticket_no}}" placeholder="Ticket No" required ></td>'+'<td  height="50"><input type="text" id="cat" name='+cat+' value="{{staff.cat}}" placeholder="Category"  required></td>'+'<td  height="50"><input type="text" id='+total_time_taken+' name='+total_time_taken+' placeholder="Total Time Taken" readonly></td>';
+
+        htAppend=htAppend+'</tr></table></div>';
+
+        // document.getElementById('in_date').max = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
+        // console.log("Aa",document.getElementById('in_date') )
+
+     $('#inouttab').append(htAppend);
+     document.getElementById("inoutnum").value=j;
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+});
+}
+});
+function assign(){
+        function operation()
+        {
+        console.log(j);
+        return j;
+        }
+       document.getElementById('myvalue').value =operation();
+    }
+  </script>
+
+
+
+ 
+    
+<script type="text/javaScript">
+$( document ).ready(function() {
+    // console.log( "ready!" );
+    tottime('in11');
+});
+    // console.log( "ready!" );
+    function tottime(id) {
+      console.log("id=");
+      console.log(id);
+      var ad=id.includes("add");
+      
+      if(ad==false)
+      {
+      var inn=id.includes("in");
+      console.log(inn);
+      if(inn)
+      {
+        var res = id.split("in1");
+        console.log(res[1]);
+        var outid="#out"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_taken'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("out");
+        console.log(res[1]);
+        var inid="#in1"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_taken'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+      else{
+      var inn=id.includes("in");
+
+        if(inn)
+      {
+        var res = id.split("in1add");
+        console.log(res[1]);
+        var outid="#outadd"+res[1];
+    var timeOfCall = $('#'+id).val(),
+        timeOfResponse = $(outid).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_takenadd'+String(res[1])).val(hours + ':' + minutes);
+      }
+      else
+      {
+      var res = id.split("outadd");
+        console.log(res[1]);
+        var inid="#in1add"+res[1];
+    var timeOfCall = $(inid).val(),
+        timeOfResponse = $('#'+id).val(),
+        hours = timeOfResponse.split(':')[0] - timeOfCall.split(':')[0],
+        minutes = timeOfResponse.split(':')[1] - timeOfCall.split(':')[1];
+
+    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+    if(minutes<0){ 
+        hours--;
+        minutes = 60 + minutes;
+    }
+    hours = hours.toString().length<2?'0'+hours:hours;
+    $('#total_time_takenadd'+String(res[1])).val(hours + ':' + minutes);
+      }
+      }
+    
+  }
+
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm18getwono' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_wo").selected=true;
+                                  
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.batch_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+      //           $("#wno").change(function(e){
+      // e.preventDefault();
+      // var wo_no = $(this).val();
+      // var shop_sec = $("#shop_sec").val();
+      // var data = {wo_no,shop_sec};
+      //   $.ajax({
+      //     type : 'GET',
+      //     url : "{% url 'm5getbr' %}",
+      //     dataType : 'json',
+      //     data : data,
+      //     success : function(response){
+      //           var elementsadded = document.querySelectorAll(".newelebr");
+      //           if(elementsadded.length>0){
+      //             var elementsaddedarr = Array.from(elementsadded);
+      //           elementsaddedarr.forEach((el)=> el.remove());
+      //           document.querySelector("#op_br").selected = true;
+      //         //  document.querySelector("#op_assm").selected = true;
+      //           document.querySelector("#op_part").selected = true;
+      //           document.querySelector("#op_doc").selected = true; 
+      //           }
+      //           var brarr,mystr,html;
+      //           brarr = response.map((el)=>el.brn_no);
+      //           mystr = "";
+      //           brarr.forEach((el,index)=>{
+      //             html = `<option class="newelebr">${brarr[index]}</option>`
+      //             mystr = html.concat(mystr);
+      //           });
+      //           html = "";
+      //           document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr);
+      //           mystr="";
+      //     }
+      //        })
+      //        }) 
+ 
+    
+  document.querySelector("#wno").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var wo_no = $("#wno").val();
+                    var shop_sec = $("#shop_sec").val()
+                   // var assm_no = $('#assm_no').val()
+                    var data = {wo_no,shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm18getpart_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_part").selected = true;
+                                  
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.part_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+                document.querySelector("#part_nop").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var part_nop = $("#part_nop").val()
+                    var data = {part_nop};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm18getoprn_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          console.log(response)
+                          var elementsadded = document.querySelectorAll(".neweleoprn");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  // print("k",elementsaddedarr)
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_oprn").selected = true; 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.opn);;                           
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="neweleoprn">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              
+                              html = "";
+                              document.querySelector("#oprn_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+                document.querySelector("#oprn_no").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm18getsse' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          console.log(response)
+                          var elementsadded = document.querySelectorAll(".newelesse");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  // print("k",elementsaddedarr)
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_sse").selected = true; 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.context.prt;
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelesse">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              
+                              html = "";
+                              document.querySelector("#sse").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+                document.querySelector("#sse").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var sse = $("#sse").val();
+                    var shop_sec = $("#shop_sec").val()
+                   // var assm_no = $('#assm_no').val()
+                    var data = {sse,shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm18getticket_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          console.log(response)
+                          var elementsadded = document.querySelectorAll(".neweleticket");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  // print("k",elementsaddedarr)
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_sse").selected = true; 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.ticket_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="neweleticket">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              
+                              html = "";
+                              document.querySelector("#ticket_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+
+
+                document.querySelector("#ticket_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M5 Card</title>');
+        win.document.write('<title>M5 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+       
+
+
+        win.print();
+        win.close();
+
+
+}
+// var a=document.getElementById('cyear');
+//         var b=a-b;  
+//         $(function() {
+//           // no=id.split("staff_noadd")
+
+//         $( "#in_dateadd" ).datepicker({  maxDate: new Date(),
+//         changeYear: true,
+//         yearRange: (a)+':'+(b),
+//         });
+//         });
+
+
+function find2(th){
+var id = th.id;
+no=id.split("staff_noadd")
+// no1=id.split("ticket_noadd")
+
+var exam_type="staff_nameadd"+no[1];
+// var ticket_no="staff_nameadd"+no1[1];
+var two=document.getElementById(id).value;
+console.log(id+" "+two+" "+exam_type);
+
+var data = {two};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm18getempname' %}",
+                    
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                          console.log(response);
+                          // var w=document.getElementById('exam_type')
+                          // console.log("w",w)
+                       document.getElementById(exam_type).value= response.exam.exam_type;
+                       console.log(document.getElementById(exam_type).value)
+                                           }
+                        })                  
+
+
+}
+
+
+// var a=document.getElementById('cyear');
+// console.log(a)
+// var b=a-b;
+// console.log(b)
+// $(document).ready(function() {
+//     $( "#datepicker" ).datepicker({  maxDate: new Date()
+//       // changeYear: true,
+//       // yearRange: (a)+':'+(b),
+//   });
+//   });
+ 
+
+// var a=document.getElementById('cyear');
+//         var b=a-b;  
+//         $(function() {
+//         var id = id.split("staff_noadd");
+//         console.log("TT",id[1])
+           
+//         $( "#in_dateadd"+id[1] ).datepicker({  maxDate: new Date(),
+//         changeYear: true,
+//         yearRange: (a)+':'+(b),
+//         });
+//         });
+
+
+function myFunction(th) {
+  var id = th.id;
+  var x = document.getElementById(id).value;
+  // alert("x : "+x)
+  console.log("x",id);
+  k=id.split("shiftadd");
+  console.log("kkk",k)
+  if ( document.getElementById(id).value=="A") {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("in1add"+k[1]).value = "07:27";
+       document.getElementById("in1add"+k[1]).min = "06:27";
+       document.getElementById("in1add"+k[1]).max = "06:45";
+
+
+       document.getElementById("outadd"+k[1]).min = "14:30";
+       document.getElementById("outadd"+k[1]).max = "14:45";
+
+
+    }
+    if(document.getElementById(id).value=="B")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "14:27";
+       document.getElementById("in1add"+k[1]).max = "14:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "22:30";
+       document.getElementById("outadd"+k[1]).max = "22:45";
+
+
+    }
+    if(document.getElementById(id).value=="C")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "22:27";
+       document.getElementById("in1add"+k[1]).max = "22:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "06:30";
+       document.getElementById("outadd"+k[1]).max = "06:45";
+
+
+    }
+    if(document.getElementById(id).value=="GD")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "06:27";
+       document.getElementById("in1add"+k[1]).max = "06:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "16:00";
+       document.getElementById("outadd"+k[1]).max = "16:30";
+
+
+    }
+    if(document.getElementById(id).value=="GN")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "15:57";
+       document.getElementById("in1add"+k[1]).max = "16:15";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "01:30";
+       document.getElementById("outadd"+k[1]).max = "01:45";
+
+
+    }
+}
+
+
+
+
+</script> 
+
+
+
+
+{% endblock content %}
