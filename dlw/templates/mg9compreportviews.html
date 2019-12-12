@@ -505,7 +505,8 @@
                                  dataType : 'json',
                                  data : data,
                                  success : function(response){
-                                   var elementsadded = document.querySelectorAll(".newelemwno");
+                                   
+                                   var elementsadded = document.querySelectorAll(".newelemwno1");
                                        if(elementsadded.length>0){
                                            var elementsaddedarr = Array.from(elementsadded);
                                            elementsaddedarr.forEach((el)=> el.remove());
@@ -516,7 +517,7 @@
                                        brarr = response.map((el)=>el.lcno);
                                        mystr = "";
                                        brarr.forEach((el,index)=>{
-                                         html = `<option class="newelemwno">${brarr[index]}</option>`
+                                         html = `<option class="newelemwno1">${brarr[index]}</option>`
                                          mystr = html.concat(mystr);
                                        });
                                        html = "";

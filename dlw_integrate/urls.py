@@ -247,4 +247,10 @@ urlpatterns = [
     path('ajax/mg9getstaff/',mg9getstaff,name='mg9getstaff'),
     path('ajax/mg9getmwno/',mg9getmwno,name='mg9getmwno'),
     path('ajax/mg9getstaffno/',mg9getstaffno,name='mg9getstaffno'),
+    path('m2hwview/', m2hwview, name='m2hwview'),
+    path('ajax/m2getwonohw',m2getwonohw,name='m2getwonohw'),
+    path('ajax/m2getbrhw/',m2getbrhw,name='m2getbrhw'),
+    path('ajax/m2getasslyhw/',m2getasslyhw,name='m2getasslyhw'),
+    path('ajax/m2getpart_nohw/',m2getpart_nohw,name='m2getpart_nohw'),
+    path('ajax/m2getdoc_nohw/',m2getdoc_nohw,name='m2getdoc_nohw'),
 ]

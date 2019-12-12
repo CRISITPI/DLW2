@@ -78,12 +78,12 @@ input[type=submit] {
             <tr>
                  <td>
                     <label for="br_no"><b>महीनो के लिय/For The Month Of</b></label>
-                    <input type="text" name="date1" id="date1" readonly class="form-control" value="{{mon}}" required>
+                    <input type="text" name="date1" id="date1" readonly class="form-control" value="{{mon}}" required placeholder="dd-mm-yyyy">
                 </td>
                 <td>
                     <label for="sno"><b>Shop Section NO/शॉप न०</b></label>
-                    <select class="form-control" id="shop_sec" name="shop_sec" required>
-                                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                    <select class="form-control" id="shop_sec" name="shop_sec" >
+                                <option value="select"  >Select Shop Section</option>
                             {% if lenm == 1 %}
                                 <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
                             {% endif %}
@@ -96,8 +96,8 @@ input[type=submit] {
                 </td>
                 <td>
                     <label for="wk_ord_no"><b>Staff NO:/क्रम सं०</b></label>
-                    <select class="form-control" id="staffNo" name="staffNo" required>
-                              <option id="op_staffNo" selected disabled hidden>Select Staff NO</option>
+                    <select class="form-control" id="staffNo" name="staffNo" >
+                              <option value="select">Select Staff NO</option>
                               {% if lenm == 1 %}
                               {% for i in wo_nop %}
                                 <option>{{i.staff_no}}</option>
@@ -108,8 +108,8 @@ input[type=submit] {
             
                  <td>
                     <label for="br_no"><b>नाम/Name</b></label>                   
-                    <select class="form-control" id="staffName" name="staffName" value="{{stfname}}" required>
-                              <option id="op_staffName" selected disabled hidden>Select Staff Name</option>
+                    <select class="form-control" id="staffName" name="staffName" value="{{stfname}}" >
+                              <option value="select">Select Staff Name</option>
                               {% if lenm == 1 %}
                               {% for i in wo_nop %}
                                 <option>{{i.name}}</option>
@@ -119,8 +119,8 @@ input[type=submit] {
                 </td>
                 <td>
                     <label for="br_no"><b>पदनाम/Designation</b></label>
-                    <select class="form-control" id="staffDesg" name="staffDesg" value="{{stfdesg}}" required>
-                              <option id="op_staffDesg" selected disabled hidden>Select Designation</option>
+                    <select class="form-control" id="staffDesg" name="staffDesg" value="{{stfdesg}}" >
+                              <option value="select" >Select Designation</option>
                               {% if lenm == 1 %}
                               {% for i in wo_nop %}
                                 <option>{{i.desgn}}</option>
@@ -130,7 +130,7 @@ input[type=submit] {
                 </td>
                 <td>
                     <label for="br_no"><b>दर/Rate</b></label>
-                    <input type="number" class="form-control" name="staffRate" id="staffRate" placeholder="Staff Rate" min="1"  onblur="cproceed()"> <!--value="{{stfrate}}"-->
+                    <input type="number" class="form-control" name="staffRate" id="staffRate" placeholder="Staff Rate" min="1"  onblur="cproceed()"  value="0"> <!--value="{{stfrate}}"-->
                 </td>                       
             </tr>  
     </table>    
@@ -155,9 +155,43 @@ input[type=submit] {
 {% endif %}
 </form>
 <script type="text/javascript">
-function cproceed()
-{
+function cproceed()     
+{         
+                var date1_temp      = $("#date1").val()                              
+                var shop_sec_temp   = $("#shop_sec").val()                      
+                var staffNo_temp    = $("#staffNo").val()                      
+                var staffName_temp  = $("#staffName").val()                            
+                var staffDesg_temp  = $("#staffDesg").val()                           
+                var staffRate_temp  = $("#staffRate").val()                         
+               
+                if(date1_temp == ""){
+                    alert("Select Date");
+                    return false;
+                }
+                if(shop_sec_temp == "select"){
+                    alert("Select shop section");
+                    return false;
+                }
+                if(staffNo_temp=="select"){
+                    alert("Select Staff no.");
+                    return false;
+                }
+                if(staffName_temp=="select"){
+                    alert("Select staff name");
+                    return false;
+                }
+                if(staffDesg_temp=="select"){
+                    alert("Select staff designation");
+                    return false;
+                }
+                if(staffRate_temp=="select"){
+                    alert("Select staff rate");
+                    return false;
+                }
+
+                    
     document.querySelector("#myproceed").click();
+
 }
 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                     e.preventDefault();
@@ -315,7 +349,7 @@ document.querySelector("#"+wono).addEventListener('change',(e)=>{
                         data : data,
                         success : function(response){
                             console.log(response);
-                         document.getElementById(wodate).value=response[0].date;                              
+                         document.getElementById(wodate).value=response[0].b_expl_dt;                              
                         }
                    })
                 });
