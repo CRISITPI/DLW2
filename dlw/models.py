@@ -4122,6 +4122,28 @@ class MG36(models.Model):
     date_app = models.CharField( max_length=10, blank=True, null=True)
 
 
+class MG5(models.Model):
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=8, blank=True, null=True)  
+    name = models.CharField(db_column='EMPLOYEE_NAME', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(db_column=' DATE', max_length=50)
+    super_in = models.CharField(db_column='SHOP_SUPERINTENDENT', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    optr=models.CharField( db_column='OPERATOR', max_length=25)
+    chkr= models.CharField(db_column='TOOL_CHECKER', max_length=15)
+    id_no= models.CharField(db_column='IDENTITY CARD NO', max_length=10)
+    t_no= models.CharField(db_column='TICKET_NO', max_length=35, blank=True)  
+    t_id= models.CharField(db_column='TOOL_ID', max_length=35, blank=True)
+    # t_desc=models.CharField(db_column='TOOL_DESCRIPTION', max_length=35, null=True,blank=True)
+    last_modified=models.CharField(db_column='LAST_MODIFIED', max_length=15)
+    to_no=models.AutoField(db_column='TOOL_ORDER_NO',primary_key=True, max_length=5, blank=True)
+    # login_id=models.CharField(db_column='LOGIN_ID', max_length=15)
+    t_desc = models.CharField(db_column='TOOL_DESCRIPTION',max_length=50, blank=True, null=True)
+   
+
+    class Meta:
+        db_table = 'MG5'
+
+
 
 class ms_tools_master(models.Model):
     history_card_number = models.CharField(max_length=50, blank=True, null=False)
