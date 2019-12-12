@@ -7,10 +7,19 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
   <script>
-    $(document).ready(function () { $('#lv_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+    $(document).ready(function () { $('#lv_date').datepicker({dateFormat: 'yy-mm-dd', minDate: 0,
+  
+                  beforeShowDay: function(date)
+                  {
+                    var day = date.getDay();
+                    return [day == 0, ''];
+                  }
+  }); });
+
+
   </script>
   <script>
-    $(document).ready(function () { $('#alt_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+    $(document).ready(function () { $('#alt_date').datepicker({dateFormat: 'yy-mm-dd', minDate: 0}); });
   </script>
 
 <style>
@@ -221,7 +230,14 @@ $( function() {
                 dateFormat:'yy-mm-dd',
                 changeMonth:true,
                 changeYear:true,
-                yearRange:"2009:2099"
+                yearRange:"2009:2099",
+                beforeShowDay: function(date)
+      
+                    {
+                      var day = date.getDay();
+                      return [day != 0, ''];
+                    }
+
               }).val;
             } );
 

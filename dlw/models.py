@@ -4518,3 +4518,38 @@ class M5SHEMP1(models.Model):
     flag = models.CharField(db_column='FLAG', max_length=1, blank=True,null=True, default='A') # Field name made lowercase.
     class Meta:
         db_table = 'M5SHEMP1'
+
+class M18DOC(models.Model):
+    shopsec = models.CharField(db_column='SHOPSEC', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=12, blank=True, null=True)  # Field name made lowercase.
+    name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    ticket_no = models.CharField(db_column='TICKET_NO',max_length=20,  blank=True, null=True, default=0)  # Field name made lowercase.
+    month = models.CharField(db_column='MONTH', max_length=10, blank=True,null=True,default=0) # Field name made lowercase0.
+    in1 = models.CharField(db_column='IN1', max_length=10, blank=True,null=True) # Field name made lowercase.
+    out = models.CharField(db_column='OUT', max_length=10, blank=True,null=True) # Field name made lowercase.
+    total_time_taken = models.CharField(db_column='TOTAL_TIME_TAKEN',max_length=20, blank=True,null=True, default=0)
+    in_date = models.CharField(db_column='IN_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+    out_date = models.CharField(db_column='OUT_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+    shift_typename= models.CharField(db_column='SHIFT_TYPENAME',max_length=20, blank=True, null=True)
+    req_no = models.CharField(db_column='REQ_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'M18DOC'  
+
+class M24(models.Model):
+    sno=models.AutoField(db_column='SL.No',primary_key=True)
+    fr_date=models.CharField(db_column='FR_DATE',max_length=20,null=True)
+    to_date=models.CharField(db_column='TO_DATE',max_length=20,null=True)
+    shop_sec=models.CharField(db_column='SHOPSEC',max_length=20,null=True)
+    ssfo=models.CharField(db_column='SSFO',max_length=20,null=True)
+    timekeep=models.CharField(db_column='TIMEKEEPER',max_length=30,null=True)
+    workshop=models.CharField(db_column='WORKSHOPS',max_length=30,null=True)
+    staff_no=models.CharField(db_column='STAFF_NO',max_length=20,null=True)
+    desgn=models.CharField(db_column='DESIGNATION',max_length=20,null=True)
+    payrate=models.CharField(db_column='RATE_PAY',max_length=20,null=True)   
+    hrs_wrked=models.CharField(db_column='HOURS_WRKD',max_length=20,null=True)
+    rsn_ovrtym=models.CharField(db_column='OVERTIME_REASON',max_length=20,null=True)
+    supervise_chrgmn=models.CharField(db_column='SUPERVISOR',max_length=50,null=True)
+    last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
+    login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
