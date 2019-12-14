@@ -130,10 +130,15 @@
             <td>{{i.empname}}</td>
         </tr>
         <tr> 
+            <th>SHOP SUPERINTENDENT</th> 
+            <input type="text" value={{i.emptype}} name="emptype" id="emptype" hidden /> 
+        <td>{{i.emptype}}</td>
+    </tr>
+        <!-- <tr> 
                 <th>SHOP SUPERINTENDENT</th> 
                 <td><input type="text" name="emp_type" id="emp_type" /> </td>
             <!-- <td>{{i.emptype}}</td> -->
-        </tr>
+        </tr> -->
         {% endfor %}
 
             <tr>
@@ -149,10 +154,13 @@
  
             {% for i in obj1 %} 
         <tr> 
+                <input type="text" value="{{i.t_no}}" name="t_no" hidden />
                 <th>DLW TOOL ORDER NO</th> 
             <td>{{i.t_no}}</td>
         </tr>
         {% endfor %}
+
+
 
             <tr> 
                 <th><b> PLEASE ISSUE ON LOAN THE FOLLOWING:</b></th> 

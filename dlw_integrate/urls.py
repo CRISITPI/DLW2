@@ -273,4 +273,11 @@ urlpatterns = [
     path('ajax/m18getempname/',m18getempname,name='m18getempname'),
     path('ajax/m18getoprn_no/',m18getoprn_no,name='m18getoprn_no'),
     path('ajax/m18getwono/',m18getwono,name='m18getwono'),
+    path('machineviews/',machineviews,name='machineviews'),
+    path('ajax/machinegetcause/',machinegetcause,name='machinegetcause'),
+    path('m12view/',m12view,name='m12view'),
+    path('ajax/m12getwono',m12getwono,name='m12getwono'),
+    path('ajax/m12getstaff_no/',m12getstaff_no,name='m12getstaff_no'),
+    path('ajax/m12getempname/',m12getempname,name='m12getempname'),
+
 ]

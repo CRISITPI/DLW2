@@ -107,7 +107,7 @@ input[type=text],
         <h3 align="center">कर्मशाला कर्मचारियों की रविवार की बुकिंग </h3>
         <h4 align="center">SUNDAY BOOKING OF WORKSHOP STAFF</h4>
         <td>
-            <label for="sno"><b>Date/ दिनांक.:</b></label>            
+            <label for="sno"><b>Sunday Working Date/ दिनांक.:</b></label>            
           <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="yyyy-mm-dd" required/>
         </td> 
 
@@ -181,7 +181,7 @@ input[type=text],
  <td>{{values.name}}</td>
   <td>{{values.ticketno}}</td>
   <input type="hidden" name="datehid{{forloop.counter}}" id="datehid{{forloop.counter}}" value='{{values.date}}'>
-   <td><input type="text" id="datedb{{forloop.counter}}" class="datepicker2" style="width: 150px;"  name="datedb{{forloop.counter}}" placeholder="yy-mm-dd" value="{{values.date}}" readonly/></td>
+   <td><input type="text" id="datedb{{forloop.counter}}" class="datepicker2" style="width: 150px;"  name="datedb{{forloop.counter}}" placeholder="date" value="{{values.date}}" readonly/></td>
 </tr>
  
 {% endfor %}
