@@ -16508,7 +16508,11 @@ def m2hwview(request):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
+<<<<<<< HEAD
                 
+=======
+
+>>>>>>> cb3805c25733ab99c0d5249df184359e3fc96279
             context = {
                 'sub':0,
                 'subnav':subnav,
@@ -17481,6 +17485,7 @@ def m24report(request):
                       
             }
     return render(request,"m24report.html",context)
+<<<<<<< HEAD
     
 
 @login_required
@@ -17714,3 +17719,6 @@ def m4getdoc_nohw(request):
         doc_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+=======
+    
+>>>>>>> cb3805c25733ab99c0d5249df184359e3fc96279
