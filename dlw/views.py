@@ -33,6 +33,7 @@ from django.db.models import Max
 from django.http import HttpResponseRedirect
 import math,random
 from random import randint
+import datetime
 # Create your views here.
 #
 #
@@ -16472,20 +16473,14 @@ def logbook_update(request):
         
     return render(request,"logbook_update.html",{})
 
-<<<<<<< HEAD
+
+
+
 @login_required
 @role_required(urlpass='/m2hwview/')
 def m2hwview(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
-=======
-
-@login_required
-@role_required(urlpass='/m18aview/')
-def m18aview(request):
-    cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
->>>>>>> 8e9be2081ceea86fc0e8ce0fe26d72e841063453
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
@@ -16493,27 +16488,16 @@ def m18aview(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-<<<<<<< HEAD
-    wo_nop = empmast.objects.none()
+    wo_nop = user_master.objects.none()  
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
-        tmp=[]
-=======
-
-    wo_nop = user_master.objects.none()
-  
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        
->>>>>>> 8e9be2081ceea86fc0e8ce0fe26d72e841063453
+        tmp=[]        
         for on in tm:
             tmp.append(on.section_code)
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
-<<<<<<< HEAD
             'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp
@@ -16524,40 +16508,18 @@ def m18aview(request):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
-
-=======
-            'ip':get_client_ip(request),
-            'roles':tmp,
-            'subnav':subnav,
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
-            wo_nop =wo_nop | req
->>>>>>> 8e9be2081ceea86fc0e8ce0fe26d72e841063453
-        context = {
-            'sub':0,
-            'subnav':subnav,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-<<<<<<< HEAD
-            'usermaster':usermaster,
-=======
->>>>>>> 8e9be2081ceea86fc0e8ce0fe26d72e841063453
-            'roles' :rolelist
-        }
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'subnav':subnav,
-<<<<<<< HEAD
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist
+                
+            context = {
+                'sub':0,
+                'subnav':subnav,
+                'lenm' :len(rolelist),
+                'wo_nop':wo_nop,
+                'nav':nav,
+                'ip':get_client_ip(request),
+                'usermaster':usermaster,
+                'ip':get_client_ip(request),
+                'usermaster':usermaster,
+                'roles' :rolelist
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
@@ -16659,21 +16621,62 @@ def m18aview(request):
                         'doc_no': doc_no,
                         'subnav':subnav
                   }
-            
+        
+        rand = random.choice('0123456789') 
+        rand1 = random.choice('0123456789')
+        rand2 = random.choice('0123456789')
+        rand3 = random.choice('0123456789')
+        rand4 = random.choice('0123456789')
+        rand5 = random.choice('0123456789')
+        num = rand + rand1 + rand2 + rand3 + rand4 + rand5    
+        print(rand + rand1 + rand2 + rand3 + rand4 + rand5)
+
         if submitvalue=='Save':
             leng=request.POST.get('len')
-            shopsec= request.POST.get('shopsec')
-            partno= request.POST.get('partno')
-            for i in range(1, int(leng)+1):
+              
+            for i in range(1, int(leng)+1):               
+                
+                print("leng : ",leng)    
+                print(i)
+                shopsec= request.POST.get('shopsec')
+                partno= request.POST.get('partno')
+                prtDate     = request.POST.get('prtDate')
+                # print("prtDate 123 : ",prtDate)    
+                # print(" month : ",prtDate.split(' ')[0])
+                # print(" date : ",prtDate.split(' ')[1])
+                # dateTemp = prtDate.split(' ')[1]
+                # print("dateTemp : ",dateTemp.split(',')[0])
+                # print(" 3 : ",prtDate.split(' ')[2])               
+                # print(prtDate.split(' ')[2]+'-'+prtDate.split(' ')[0]+'-'+dateTemp.split(',')[0])
+                # convertedDate = prtDate.split(' ')[2]+'-'+prtDate.split(' ')[0]+'-'+dateTemp.split(',')[0]
+                workOrdNo   = request.POST.get('workOrdNo')
+                brnNo       = request.POST.get('brnNo')
+                orderQuantity= request.POST.get('orderQuantity')
+                asmlyPartNo = request.POST.get('asmlyPartNo')
+                asmlyDesc   = request.POST.get('asmlyDesc')
+                shopSection = request.POST.get('shopSection')
+                partNum     = request.POST.get('partNum')
+                partDescription= request.POST.get('partDescription')
+                drawingNum  = request.POST.get('drawingNum')
+                documentNum = request.POST.get('documentNum')
+                orderType   = request.POST.get('orderType')          
+                number   = num      
+
+                operationNum=request.POST.get('operationNum'+str(i)) 
+                shopSecTemp=request.POST.get('shopSecTemp'+str(i)) 
+                loadCenter=request.POST.get('loadCenter'+str(i)) 
+                operationDescription=request.POST.get('operationDescription'+str(i)) 
+                paTemp=request.POST.get('paTemp'+str(i)) 
+                taTemp=request.POST.get('taTemp'+str(i))
+                noTemp=request.POST.get('noTemp'+str(i))    
                 qtypr=request.POST.get('qtypr'+str(i))
                 qtyac = request.POST.get('qtyac'+str(i))
                 wrrej = request.POST.get('wrrej'+str(i))
-                matrej = request.POST.get('matrej'+str(i))
-                opn=request.POST.get('opn'+str(i))              
+                matrej = request.POST.get('matrej'+str(i))               
 
-                Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=qtypr, qtr_accep=qtyac, work_rej=wrrej, mat_rej=matrej)
-                wo_no=M2Doc.objects.all().values('batch_no').distinct()
-            messages.success(request, 'Successfully Updated!, Select new values to update')
+                M2HW.objects.create(workOrdNo=str(workOrdNo),brnNo=str(brnNo),orderQuantity=str(orderQuantity),asmlyPartNo=str(asmlyPartNo),asmlyDesc=str(asmlyDesc),shopSection=str(shopSection),partNum=str(partNum),partDescription=str(partDescription),drawingNum=str(drawingNum),documentNum=str(documentNum),orderType=str(orderType),operationNum=str(operationNum),shopSecTemp=str(shopSecTemp),loadCenter=str(loadCenter),operationDescription=str(operationDescription),paTemp=str(paTemp),taTemp=str(taTemp),noTemp=str(noTemp),qtypr=str(qtypr),qtyac=str(qtyac),wrrej=str(wrrej),matrej=str(matrej),number=str(number))
+
+            messages.success(request, 'M2 Card Hand Written generated Successfully, Your Reference number is : '+number)
     return render(request, "m2hwview.html", context)
 
 
@@ -16739,11 +16742,67 @@ def m2getdoc_nohw(request):
         doc_no = list(M2Doc.objects.filter(batch_no=wo_no,part_no=part_no).values('m2sln').distinct())
 
         return JsonResponse(doc_no, safe=False)
-    return JsonResponse({"success": False}, status=400)    
+    return JsonResponse({"success": False}, status=400) 
 
 
-=======
-            
+
+
+
+
+
+
+@login_required
+@role_required(urlpass='/m18aview/')
+def m18aview(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+
+    wo_nop = user_master.objects.none()
+  
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+            wo_nop =wo_nop | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+
             'ip':get_client_ip(request),
             'roles' :rolelist
         }
@@ -16761,8 +16820,6 @@ def m2getdoc_nohw(request):
             staff_no = request.POST.get('sse')
             ticket_no = request.POST.get('ticket_no')
             oprn_no = request.POST.get('oprn_no')
-
-
 
             ty=str(staff_no)
             staff=ty[6:11]
@@ -16951,13 +17008,7 @@ def m2getdoc_nohw(request):
                 print(shopsec)
                 print(req_no)
 
-                
-               
-              
                 M18DOC.objects.create(shift_typename=str(shift),shopsec=str(shopsec),name=str(staff_name),staff_no=str(staff_no),in1=str(in1),out=str(out),month=str(month1),in_date=str(in_date),cat=str(cat),total_time_taken=str(total_time),out_date=str(out_date),ticket_no=str(ticket_no),req_no=str(req_no))
-               
-                
-                
 
     #             wo_no=Batch.objects.all().values('bo_no').distinct()
     return render(request,"m18aview.html",context)
@@ -17429,7 +17480,237 @@ def m24report(request):
                 'sub': 1, 
                       
             }
-    
     return render(request,"m24report.html",context)
     
->>>>>>> 8e9be2081ceea86fc0e8ce0fe26d72e841063453
+
+@login_required
+@role_required(urlpass='/m4hwview/')
+def m4hwview(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+            wo_nop = wo_nop | req
+
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            shop_sec = request.POST.get('shop_sec')
+            part_no = request.POST.get('part_nop')
+            wo_no = request.POST.get('wo_no')
+            brn_no = request.POST.get('br_no')
+            assembly_no = request.POST.get('assm_no')
+            doc_no = request.POST.get('doc_no')
+            kkk=Oprn.objects.all()
+            obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
+            obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
+            obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
+            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
+            obj = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
+            
+            if len(obj) == 0:
+                obj = range(0,1)
+            date = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('prtdt','qty').distinct()
+            leng = obj.count()
+            datel = date.count()
+                       
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context = {
+                    'roles':tmp,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'datel': datel,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):                    
+
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'wo_nop':wo_nop,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'usermaster':usermaster,
+                    'lenm' :len(rolelist),
+                    'nav': nav,
+                    'ip': get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'datel': datel,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'datel': datel,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+
+     
+        if submitvalue=='Save':
+            doc_no= request.POST.get('doc_no1')
+            part_no= request.POST.get('part_no1')
+            wo_no=request.POST.get('wo_no1')
+            brn_no=request.POST.get('brn_no1')           
+            received_mat = request.POST.get('received_mat')
+            issued_qty = request.POST.get('issued_qty')
+            received_qty = request.POST.get('received_qty')
+            laser_pst = request.POST.get('laser_pst')
+            line= request.POST.get('line')
+            closing_bal = request.POST.get('closing_bal')
+            remarks = request.POST.get('remarks')
+            posted_date = request.POST.get('posted_date')
+            wardkp_date = request.POST.get('wardkp_date')
+            shopsup_date = request.POST.get('shopsup_date')
+            posted1_date = request.POST.get('posted1_date')
+
+            M14M4.objects.filter(part_no=part_no,doc_no=doc_no,brn_no=brn_no,bo_no=wo_no).update(received_mat=str(received_mat), issued_qty=int(issued_qty), received_qty=int(received_qty), laser_pst=str(laser_pst), line=str(line), closing_bal=int(closing_bal), remarks=str(remarks), posted_date=str(posted_date), wardkp_date=str(wardkp_date), shopsup_date=str(shopsup_date), posted1_date=str(posted1_date))
+            wo_no=M14M4.objects.all().values('bo_no').distinct()
+            messages.success(request, 'Successfully Updated!, Select new values to update')
+    return render(request,"m4hwview.html",context)    
+
+
+
+def m4getwonohw(request):
+    if request.method == "GET" and request.is_ajax():
+        from.models import Batch
+        shop_sec = request.GET.get('shop_sec')
+        w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
+        w2 = M14M4.objects.filter(assly_no__in=w1).values('bo_no').exclude(bo_no__isnull=True).distinct()
+        # print(w2)
+        wono = list(w2)
+        return JsonResponse(wono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m4getbrhw(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = list(M14M4.objects.filter(bo_no =wo_no).values('brn_no').exclude(brn_no__isnull=True).distinct())
+        return JsonResponse(br_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m4getasslyhw(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        assm_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no).values('assly_no').exclude(assly_no__isnull=True).distinct())
+        return JsonResponse(assm_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+def m4getpart_nohw(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        assembly_no = request.GET.get('assm_no')
+        part_no = list(M14M4.objects.filter(brn_no=br_no,assly_no=assembly_no,bo_no=wo_no).values('part_no').exclude(part_no__isnull=True).distinct())
+        return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+def m4getdoc_nohw(request):
+    if request.method == "GET" and request.is_ajax():
+        wo_no = request.GET.get('wo_no')
+        br_no = request.GET.get('brn_no')
+        shop_sec = request.GET.get('shop_sec')
+        assembly_no = request.GET.get('assm_no')
+        part_no = request.GET.get('part_no')
+        doc_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
+        return JsonResponse(doc_no, safe = False)
+    return JsonResponse({"success":False}, status=400)

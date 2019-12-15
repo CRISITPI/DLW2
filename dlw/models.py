@@ -4553,3 +4553,32 @@ class M24(models.Model):
     supervise_chrgmn=models.CharField(db_column='SUPERVISOR',max_length=50,null=True)
     last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
+
+
+
+class M2HW(models.Model):
+    #prtDate=models.DateField(db_column='PRINTDATE',max_length=20)
+    workOrdNo=models.CharField(db_column='WONO',max_length=50,null=True)
+    brnNo=models.CharField(db_column='BRNNO',max_length=50,null=True)
+    orderQuantity=models.CharField(db_column='ORDERQUANTITY',max_length=50,null=True)
+    asmlyPartNo=models.CharField(db_column='ASMLYPARTNO',max_length=50,null=True)
+    asmlyDesc=models.CharField(db_column='ASMLYDESC',max_length=100,null=True)
+    shopSection=models.CharField(db_column='SHOPSECTION',max_length=50,null=True)
+    partNum=models.CharField(db_column='PARTNUM',max_length=50,null=True)
+    partDescription=models.CharField(db_column='PARTDESCRIPTION',max_length=100,null=True)
+    drawingNum=models.CharField(db_column='DRAWINGNUMBER',max_length=50,null=True) 
+    documentNum=models.CharField(db_column='DOCUMENTNUMBER',max_length=50,null=True)
+    orderType=models.CharField(db_column='ORDERTYPE',max_length=50,null=True)
+    operationNum=models.CharField(db_column='OPERATIONNUM',max_length=50,null=True)
+    shopSecTemp = models.CharField(db_column='SHOPSECTEMP', max_length=50, blank=True, null=True)  
+    loadCenter = models.CharField(db_column='LOADCENTER', max_length=50, blank=True, null=True)
+    operationDescription=models.CharField(db_column='OPERATIONDESCRIPTION',max_length=100,null=True)
+    paTemp=models.CharField(db_column='PATEMP',max_length=50,null=True)
+    taTemp=models.CharField(db_column='TATEMP',max_length=50,null=True)
+    noTemp=models.CharField(db_column='NOTEMP',max_length=50,null=True)
+    qtypr=models.CharField(db_column='QTYPR',max_length=50,null=True) 
+    qtyac=models.CharField(db_column='QTYAC',max_length=50,null=True)
+    wrrej=models.CharField(db_column='WRREJ',max_length=50,null=True)
+    matrej=models.CharField(db_column='MATREJ',max_length=50,null=True)
+    number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
+    

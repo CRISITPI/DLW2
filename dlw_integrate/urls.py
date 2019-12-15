@@ -269,4 +269,10 @@ urlpatterns = [
     path('ajax/m18getempname/',m18getempname,name='m18getempname'),
     path('ajax/m18getoprn_no/',m18getoprn_no,name='m18getoprn_no'),
     path('ajax/m18getwono/',m18getwono,name='m18getwono'),
+    path('m4hwview/', m4hwview, name='m4hwview'),
+    path('ajax/m4getbrhw/',m4getbrhw,name='m4getbrhw'),
+    path('ajax/m4getasslyhw/',m4getasslyhw,name='m4getasslyhw'),
+    path('ajax/m4getpart_nohw/',m4getpart_nohw,name='m4getpart_nohw'),
+    path('ajax/m4getdoc_nohw/',m4getdoc_nohw,name='m4getdoc_nohw'),
+    path('ajax/m4getwonohw',m4getwonohw,name='m4getwonohw'),
 ]
