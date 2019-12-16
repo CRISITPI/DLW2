@@ -146,30 +146,27 @@
                        None
                 {% else %}
                    {% for i in date %}
-
-                      {{i.prtdt}}
-
+                      <input type="text" id="prtdt"  value="{{i.prtdt}}" name="prtdt" >
                    {% endfor %}
                 {% endif %}
             </td>
-            <td>{{wo_no}}</td>
-            <input type="hidden" name="wo_no1" value="{{wo_no}}">
-            <td>{{brn_no}}</td>
-            <input type="hidden" name="brn_no1" value="{{brn_no}}">
+            <td><input type="text" id="wo_no"  value="{{wo_no}}" name="wo_no" ></td>
+                <input type="hidden" name="wo_no1" value="{{wo_no}}">
+            <td><input type="text" id="brn_no"  value="{{brn_no}}" name="brn_no" ></td>
+                <input type="hidden" name="brn_no1" value="{{brn_no}}">
              <td>
                 {% if datel == 0   %}
                        None
                 {% else %}
                    {% for i in date %}
-
-                      {{i.qty}}
-
+                      <input type="text" id="qty"  value="{{i.qty}}" name="qty" >
                    {% endfor %}
                 {% endif %}
             </td>
-            <td>{{assembly_no}}</td>
-            {% for g in obj2 %}
-            <td>{{g.des}}</td>{% endfor %}
+            <td><input type="text" id="assembly_no"  value="{{assembly_no}}" name="assembly_no" ></td>
+                {% for g in obj2 %}
+            <td><input type="text" id="epdes"  value="{{g.des}}" name="epdes" ></td>
+                {% endfor %}
         </tr>
          <tr>
             <th>Shop Section</th>
@@ -180,17 +177,18 @@
             <th>Order Type</th>
         </tr>
         <tr>
-             <td>{{shop_sec}}</td>
-            <td>{{part_no}}</td>
-            <input type="hidden" name="part_no1" value="{{part_no}}">
-            {% for ii in obj1 %}
-            <td>{{ii.des}}</td>
-            <td>{{ii.drgno}}</td>
-            {% endfor %}
-            <td>{{doc_no}}</td>
-            <input type="hidden" name="doc_no1" value="{{doc_no}}">
-            {% for k in obj3 %}
-            <td>{{k.batch_type}}</td>{% endfor %}
+            <td><input type="text" id="shop_section_temp"  value="{{shop_sec}}" name="shop_section_temp" ></td>
+            <td><input type="text" id="part_no"  value="{{part_no}}" name="part_no" ></td>
+                <input type="hidden" name="part_no1" value="{{part_no}}">
+                {% for ii in obj1 %}
+            <td><input type="text" id="partdes"  value="{{ii.des}}" name="partdes" ></td>
+            <td><input type="text" id="drgno"  value="{{ii.drgno}}" name="drgno" ></td>
+                {% endfor %}
+            <td><input type="text" id="doc_no"  value="{{doc_no}}" name="doc_no" ></td>
+                <input type="hidden" name="doc_no1" value="{{doc_no}}">
+                {% for k in obj3 %}
+            <td><input type="text" id="batch_type"  value="{{k.batch_type}}" name="batch_type" ></td>
+                {% endfor %}
         </tr>
     </table>
     </br></br></br>
@@ -203,61 +201,58 @@
             <th>LINE/लाइन:</th>
             <th>CLOSING BALANCE:</th>
             <th>REMARKS:</th>
-
         </tr>
-        <tr>
+        <tr> 
          {% for obj in obj %}
              <td>
             {% if obj.received_mat %}
                 <input type="text" id="received_mat" class="myinp" value="{{obj.received_mat}}" name="received_mat" >
-                {% else %}
+            {% else %}
                 <input type="text" id="received_mat" class="myinp" value="0" name="received_mat" >
-                {% endif %}
+            {% endif %}
         </td>
         <td>
             {% if obj.issued_qty %}
               <input type="text" id="issued_qty" class="myinp" value="{{obj.issued_qty}}" name="issued_qty" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
+            {% else %}
               <input type="text" id="issued_qty" class="myinp" value="0" name="issued_qty" pattern="[0-9]*" title="Numeric Value" required>
-                {% endif %}
+            {% endif %}
         </td>
         <td>
             {% if obj.received_qty %}
               <input type="text" id="received_qty" class="myinp" value="{{obj.received_qty}}" name="received_qty" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
+            {% else %}
               <input type="text" id="received_qty" class="myinp" value="0" name="received_qty" pattern="[0-9]*" title="Numeric Value" required>
-                {% endif %}
+            {% endif %}
         </td>
         <td>
             {% if obj.laser_pst %}
-
                 <input type="date" id="laser_pst" class="myinp" value="{{obj.laser_pst}}" name="laser_pst" min="2015-01-01" max="2020-12-31" >
-                {% else %}
-
+            {% else %}
                 <input type="date" id="laser_pst" class="myinp" value="0" name="laser_pst" min="2015-01-01" max="2020-12-31" >
             {% endif %}
         </td>
         <td>
             {% if obj.line %}
               <input type="text" id="line" class="myinp" value="{{obj.line}}" name="line" >
-                {% else %}
+            {% else %}
               <input type="text" id="line" class="myinp" value="" name="line" >
-                {% endif %}
+            {% endif %}
         </td>
         <td>
             {% if obj.closing_bal %}
               <input type="text" id="closing_bal" class="myinp" value="{{obj.closing_bal}}" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
+            {% else %}
               <input type="text" id="closing_bal" class="myinp" value="0" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
-                {% endif %}
+            {% endif %}
         </td>
 
         <td>
             {% if obj.remarks %}
               <input type="text" id="remarks" class="myinp" value="{{obj.remarks}}" name="remarks" >
-                {% else %}
+            {% else %}
               <input type="text" id="remarks" class="myinp" value="" name="remarks" >
-                {% endif %}
+            {% endif %}
         </td>
     </tr>
         <tr>
@@ -271,15 +266,15 @@
             <td>
             {% if obj.posted_date %}
                 <input type="date" id="posted_date" class="myinp" value="{{obj.posted_date}}" name="posted_date" min="2015-01-01" max="2020-12-31" required>
-                {% else %}
+            {% else %}
                 <input type="date" id="posted_date" class="myinp" value="0" name="posted_date" min="2015-01-01" max="2020-12-31"  required>
-                {% endif %}
+            {% endif %}
 
             </td>
             <td>
             {% if obj.wardkp_date %}
                 <input type="date" id="wardkp_date" class="myinp" value="{{obj.wardkp_date}}" name="wardkp_date"  min="2015-01-01" max="2020-12-31">
-                {% else %}
+            {% else %}
                 <input type="date" id="wardkp_date" class="myinp" value="0" name="wardkp_date" min="2015-01-01" max="2020-12-31">
             {% endif %}
             </td>
@@ -294,11 +289,11 @@
             <td>
             {% if obj.posted1_date %}
                 <input type="date" id="posted1_date" class="myinp" value="{{obj.posted1_date}}" name="posted1_date" min="2015-01-01" max="2020-12-31" required>
-                {% else %}
+            {% else %}
                  <input type="date" id="posted1_date" class="myinp" value="0" name="posted1_date" min="2015-01-01" max="2020-12-31" required>
             {% endif %}
             </td>
-                {% endfor %}
+        {% endfor %}
         </tr>
     </table>
          </div>

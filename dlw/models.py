@@ -4604,3 +4604,28 @@ class M2HW(models.Model):
     matrej=models.CharField(db_column='MATREJ',max_length=50,null=True)
     number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
     
+
+
+class M4HW(models.Model):
+    prtdt=models.DateField(db_column='PRINTDATE',max_length=20)
+    wo_no=models.CharField(db_column='WONO',max_length=50,null=True)
+    brn_no=models.CharField(db_column='BRNNO',max_length=50,null=True)
+    qty=models.CharField(db_column='ORDERQUANTITY',max_length=50,null=True)
+    assembly_no=models.CharField(db_column='ASMLYNO',max_length=50,null=True)
+    epdes=models.CharField(db_column='EPDESC',max_length=100,null=True)
+    shop_section_temp=models.CharField(db_column='SHOPSECTION',max_length=50,null=True)
+    partdes=models.CharField(db_column='PARTDES',max_length=50,null=True)
+    drgnodoc_no=models.CharField(db_column='DRAWINGNO',max_length=100,null=True)
+    drawingNum=models.CharField(db_column='DRAWINGNUMBER',max_length=50,null=True) 
+    batch_type=models.CharField(db_column='BATCHTYPE',max_length=50,null=True)
+    received_mat=models.CharField(db_column='RECEVMAT',max_length=50,null=True)
+    issued_qty=models.CharField(db_column='ISSUEDQTY',max_length=50,null=True)
+    received_qty = models.CharField(db_column='RECEIVEQTY', max_length=50, blank=True, null=True)  
+    laser_pst = models.CharField(db_column='LASERPST', max_length=50, blank=True, null=True)
+    line=models.CharField(db_column='LINE',max_length=100,null=True)
+    closing_bal=models.CharField(db_column='CLOSINGBAL',max_length=50,null=True)
+    remarks=models.CharField(db_column='REMARKS',max_length=50,null=True)
+    posted_date=models.CharField(db_column='POSTEDDATE',max_length=50,null=True)
+    wardkp_date=models.CharField(db_column='HARDKEEPARDATE',max_length=50,null=True) 
+    shopsup_date=models.CharField(db_column='SHOPSUPDATE',max_length=50,null=True)
+    posted1_date=models.CharField(db_column='SUPPOSTEDDATE',max_length=50,null=True)

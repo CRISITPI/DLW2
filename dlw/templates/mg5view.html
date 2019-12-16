@@ -116,24 +116,29 @@
         {% for i in obj %} 
         <tr>
             <th>SHOP NO.</th>
-            <input type="text" value={{shop_no}} name="shop_no" id="shop_no" hidden /> 
+            <input type="text" value={{i.shopno}} name="shop_no" id="shop_no" hidden /> 
             <td>{{i.shopno}}</td>
         </tr>
         <tr>
                 <th>STAFF N0.</th>
-                <input type="text" value={{staff_no}} name="staff_no" id="staff_no" hidden /> 
+                <input type="text" value={{i.empno}} name="staff_no" id="staff_no" hidden /> 
                 <td>{{i.empno}}</td>
             </tr>
         <tr> 
                 <th>EMPLOYEE NAME</th>
-                <input type="text" value={{name}} name="name" id="name" hidden /> 
+                <input type="text" value={{i.empname}} name="name" id="name" hidden /> 
             <td>{{i.empname}}</td>
         </tr>
         <tr> 
+            <th>SHOP SUPERINTENDENT</th> 
+            <input type="text" value={{i.emptype}} name="emptype" id="emptype" hidden /> 
+        <td>{{i.emptype}}</td>
+    </tr>
+        <!-- <tr> 
                 <th>SHOP SUPERINTENDENT</th> 
-                <input type="text" value={{emp_type}} name="emp_type" id="emp_type" hidden /> 
-            <td>{{i.emptype}}</td>
-        </tr>
+                <td><input type="text" name="emp_type" id="emp_type" /> </td>
+            <!-- <td>{{i.emptype}}</td> -->
+        </tr> -->
         {% endfor %}
 
             <tr>
@@ -143,16 +148,19 @@
             </tr>
             <tr>
                 <th>TICKET NO</th>
-                <input type="text" value={{ticket_no}} name="t_no" id="t_no" hidden /> 
-                <td>{{ticket_no}}</td>
+                
+                <td><input type="text" value={{ticket_no}} name="t_no" id="t_no" readonly/> </td>
             </tr>
  
             {% for i in obj1 %} 
         <tr> 
+                <input type="text" value="{{i.t_no}}" name="t_no" hidden />
                 <th>DLW TOOL ORDER NO</th> 
             <td>{{i.t_no}}</td>
         </tr>
         {% endfor %}
+
+
 
             <tr> 
                 <th><b> PLEASE ISSUE ON LOAN THE FOLLOWING:</b></th> 
@@ -166,10 +174,10 @@
                     </select>
                    
                     <label for="desc_no"><b>Tool Description:</b></label>
-                    <input type="text" name="make1" id="make1" value=[{make}] hidden>
-                    {% for i in obj2 %}
+                    <input type="text" name="make1" id="make1" readonly>
+                    <!-- {% for i in obj2 %}
                     {{i.t_desc}}
-                    {% endfor %}
+                    {% endfor %} -->
 
                     <input type="submit" id="add1" name="add1" value="add">
 
@@ -270,7 +278,26 @@ var htAppend='<div> <table id="customers" border="2" align="center"><tr> '+' <td
         $(this).parent('div').remove();
     });
 
+
+
+    document.querySelector('#t_id').addEventListener('change',(e)=>{
+        e.preventDefault();
+        var make = $('#t_id').val();               
+        var data = {make};                
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'mg5gettooldesc' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){                       
+             document.getElementById('make1').value=response[0].make;
+                                    
+            }
+       })
+    });
+
 </script>
 
 <input type="hidden" name="totaltools" id="totaltools" /> 
+
   {% endblock content %}
