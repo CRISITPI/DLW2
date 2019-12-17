@@ -273,3 +273,6 @@ urlpatterns = [
     path('ajax/m18getoprn_no/',m18getoprn_no,name='m18getoprn_no'),
     path('ajax/m18getwono/',m18getwono,name='m18getwono'),
 ]
+
+
+

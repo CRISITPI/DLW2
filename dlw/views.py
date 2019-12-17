@@ -17287,8 +17287,20 @@ def m24getsuprvsr(request):
     return JsonResponse({"success":False}, status=400)
 
 
+# def m24getpayrate(request):
+#     if request.method == "GET" and request.is_ajax():
+#         shop_sec = request.GET.get('shop_sec')
+
+#         #wo_no = request.GET.get('wo_no')
+#         py_rt = list(dlw_empmast.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+#         #staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+#         return JsonResponse(staff_no, safe = False)
+#     return JsonResponse({"success":False}, status=400)
+
+
+
 @login_required
-@role_required(urlpass='/m24view/')
+@role_required(urlpass='/m24report/')
 def m24report(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -17440,4 +17452,3 @@ def m24report(request):
             }
     
     return render(request,"m24report.html",context)
-    
