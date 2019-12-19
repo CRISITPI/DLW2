@@ -117,7 +117,21 @@
 <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
 <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम-20/M.-20 </h6></div><br>
 <br>
-
+<br>
+<center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{message}}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </center>
+<br>
 <br>
 <form action="{% url 'M13register' %}" method="POST"> {% csrf_token %}
 <div class="container">

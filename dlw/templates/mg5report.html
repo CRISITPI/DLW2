@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -20,7 +19,7 @@
     }
     
     input[type=submit] {
-        width: 30%;
+        width: 50%;
         text-align: center;
         background-color: #4CAF50;
         color: white;
@@ -32,7 +31,7 @@
     }
     
     input[type=submit]:hover {
-        width: 30%;
+        width: 50%;
         background-color: #45a049;
         text-align: center;
     }
@@ -52,6 +51,13 @@
         background-color: #45a049;
         text-align: center;
     }
+
+    #print
+        input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+
+    }
     
    
 </style>
@@ -69,123 +75,138 @@
             {% endfor %}
         </ul>
         {% endif %}
-    </center>
+</center>
 
-<h2 align="center" >M.G.-5 Card (TOOLS ISSUE SLIP)</h2>
+<h2 align="center" >M.G.-5 Report</h2>
 <br>
 <form action="{% url 'mg5report' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
-                <tr>
-                        <td>
-                             <label for="i_no"><b>Identity card no.:</b></label>
-                            <select class="form-control" id="id_no" name="id_no" required>
-                            <option id="op_id" selected disabled hidden>Select Identity card no.</option>
-                            {% for i in obj %}
-                            <option value="{{i.idcard_no}}">{{i.idcard_no}}</option>
-                            {% endfor %}
-                         </select>
-                        </td>
-                        <td>
-                                <label  for="ti_no"><b>Ticket No.</b></label>
-                                <select  class="form-control" id="t_no" name="t_no" required>
-                                <option id="op_ticket" selected disabled hidden>Select Ticket no.</option>
-                                {% for i in objj %}
-                                <option value="{{i.ticket_no}}">{{i.ticket_no}}</option>
-                                {% endfor %}
-                                </select>
-                            </td>
-                        
-                </tr>
-                         
+            <tr>
+                <td>
+                     <label for="i_no"><b>Identity card no.:</b></label>
+                    <select class="form-control" id="id_no" name="id_no" required>
+                    <option id="op_id" selected disabled hidden>Select Identity card no.</option>
+                    {% for i in obj %}
+                    <option value="{{i.idcard_no}}">{{i.idcard_no}}</option>
+                    {% endfor %}
+                 </select>
+                </td>
+                <td>
+                        <label  for="ti_no"><b>Ticket No.</b></label>
+                        <select  class="form-control" id="t_no" name="t_no" required>
+                        <option id="op_ticket" selected disabled hidden>Select Ticket no.</option>
+                        {% for i in objj %}
+                        <option value="{{i.ticket_no}}">{{i.ticket_no}}</option>
+                        {% endfor %}
+                        </select>
+                    </td>
+                
+        </tr>
+                  
         </table>
+        
+        <center>
+ <!-- <input type="submit" value="Generate report" name="proceed" id="report">     -->
+        </center>
         <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
-
+  
     </div>
 
- <input type="hidden" id="sub" name="sub" value={{sub}}>
+    <input type="hidden" id="sub" name="sub" value={{sub}}>
+    
  {% if sub == 1 %}
+ <div id="print" style="align:center" >
 <input type="hidden" name="len" value="{{len}}">
 <div id="print1" >
-<table align="center" border="2" width="50%"> 
+<table  id= "customers" align="center" border="2" width="50%">  
         
         {% for i in obj %} 
         <tr>
             <th>SHOP NO.</th>
-            <input type="text" value={{shop_no}} name="shop_no" id="shop_no" hidden /> 
-            <td>{{i.shopno}}</td>
+            <input type="text" value={{i.shop_sec}} name="shop_no" id="shop_no" hidden /> 
+            <td>{{i.shop_sec}}</td>
         </tr>
         <tr>
                 <th>STAFF N0.</th>
-                <input type="text" value={{staff_no}} name="staff_no" id="staff_no" hidden /> 
-                <td>{{i.empno}}</td>
+                <input type="text" value={{i.staff_no}} name="staff_no" id="staff_no" hidden /> 
+                <td>{{i.staff_no}}</td>
             </tr>
         <tr> 
                 <th>EMPLOYEE NAME</th>
-                <input type="text" value={{name}} name="name" id="name" hidden /> 
-            <td>{{i.empname}}</td>
+                <input type="text" value={{i.name}} name="name" id="name" hidden /> 
+            <td>{{i.name}}</td>
         </tr>
         <tr> 
+            <th>SHOP SUPERINTENDENT</th> 
+            <input type="text" value={{i.super_in}} name="emptype" id="emptype" hidden /> 
+        <td>{{i.super_in}}</td>
+    </tr>
+        <!-- <tr> 
                 <th>SHOP SUPERINTENDENT</th> 
-                <input type="text" value={{emp_type}} name="emp_type" id="emp_type" hidden /> 
-            <td>{{i.emptype}}</td>
+                <td><input type="text" name="emp_type" id="emp_type" /> </td>
+            <!-- <td>{{i.emptype}}</td> -->
         </tr>
-        {% endfor %}
+    
 
             <tr>
                 <th>IDENTITY CARD NO</th>
                 <input type="text" value={{id_no}} name="id_no" id="id_no" hidden /> 
-                <td>{{id_no}}</td>
+                <td>{{i.id_no}}</td>
             </tr>
             <tr>
                 <th>TICKET NO</th>
-                <input type="text" value={{ticket_no}} name="t_no" id="t_no" hidden /> 
-                <td>{{ticket_no}}</td>
+                <input type="text" value={{t_no}} name="t_no" id="t_no" hidden /> 
+                <td>{{i.t_no}}</td>
             </tr>
-            <tr> 
-                    <th><b> DATE:</b></th> 
-                    <input type="text" name="date" id="date" hidden/>
-                <td>{{date}} </td
-                </tr>
-
-                {% for i in obj1 %}   
-                <tr> 
-                        <th>OPERATOR</th> 
-                        <input type="text" name="optr" id="optr" hidden  />
-                   <td> {{optr}}</td> 
-                </tr>
-                <tr> 
-                        <th>TOOL CHECKER</th> 
-                                <input type="text" name="chkr" id="chkr" hidden/>
-                                <td> {{chkr}}</td> 
-                </tr>
-                {% endfor %}
-                {% for i in obj1 %} 
+ 
+        
         <tr> 
+                <input type="text" value="{{i.to_no}}" name="t_no" hidden />
                 <th>DLW TOOL ORDER NO</th> 
-                <input type="text" name="id" id="id" hidden/>
-            <td>{{i.id}}</td>
+            <td>{{i.to_no}}</td>
+        </tr>
+  
+
+            <tr> 
+                <th><b> Tool Id</b></th> 
+                <td>{{i.t_id}}</td>
+                        
+            </tr> 
+            
+            <tr>
+                <th><b>Tool Description:</b></th> 
+                <td>{{i.t_desc}}</td>
+            </tr>
+                   
+                  
+        
+    <tr> 
+            <th><b> DATE:</b></th> 
+            <input type="text" id="date" name="date" value="{{i.date}}" hidden/>
+        <td>{{i.date}} </td>
+        </tr>
+
+        <tr> 
+                <th>OPERATOR</th> 
+                <td> {{i.optr}}    </td>
         </tr>
         <tr> 
-                <th><b> Tools issued are:</b></th> 
-                <td>
-                    {{i.t_id}} 
-                   </td>
-                   <!-- <td>
-                        {{desc}} 
-                       </td> -->
-            </tr> 
-            {% endfor %}
+                <th>TOOL CHECKER</th> 
+                <td>{{i.chkr}} </td>
+        </tr>
+          
+        {% endfor %}
 </table>
+</div>
+
 <br>
 </div>
 
-<center>  
-        <input type="button" onclick="printDiv1()" value="Print" name="print1" id="print1"/> 
-</center> 
+<center><input style="width: 150px;" type="button" onclick="printDiv()" value="Print Report"></center>
 {% endif %}
 </form> 
-
+<script> function myFunction(){ window.print(); }</script>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 <script type="text/javaScript">
@@ -233,8 +254,43 @@ document.addEventListener('keypress',(event)=>{
 })
 
 
-function printDiv1() {
-     var printContents = document.getElementById("print1").innerHTML;
+var j=0;
+$("#add1").click(function(e){
+        event.preventDefault()
+        j++;
+        // console.log(j);
+        // assign();
+       var t_id="t_id"+String(j);
+      
+var htAppend='<div> <table id="customers" border="2" align="center"><tr> '+' <td style="width:11%" > <select class="form-control" type=text id='+t_id+' name='+t_id+' required > <option id="t_emp" selected disabled hidden> Select tool id </option> {% for i in obj2 %} <option value="{{i.instrument_number}}">{{i.instrument_number}} </option> {% endfor %} </select> </td>';
+     htAppend=htAppend+'</tr></table></div>';
+     $('#print1').append(htAppend); // id of div tag
+     document.getElementById("totaltools").value=j;  //hidden input field
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+
+
+    document.querySelector('#t_id').addEventListener('change',(e)=>{
+        e.preventDefault();
+        var make = $('#t_id').val();               
+        var data = {make};                
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'mg5gettooldesc' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){                       
+             document.getElementById('make1').value=response[0].make;
+                                    
+            }
+       })
+    });
+    function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
 
        var style = "<style>";
         style = style + "table {width: 100%;font: 17px Calibri;}";
@@ -245,8 +301,7 @@ function printDiv1() {
 
         win.document.write('<html><head>');
 
-        win.document.write('<title>MG5 Card (TOOLS ISSUE SLIP)</title>');
-        win.document.write('<h1>MG5 Card (TOOLS ISSUE SLIP) </h1>');
+        win.document.write('<title>MG5 Report</title>');
         win.document.write(style);
         win.document.write('</head>');
         win.document.write('<body>');
@@ -254,7 +309,11 @@ function printDiv1() {
         win.document.write('</body></html>');
 
         win.print();
+        win.close();
 }
-  </script>
+
+</script>
+
+<input type="hidden" name="totaltools" id="totaltools" /> 
 
   {% endblock content %}
