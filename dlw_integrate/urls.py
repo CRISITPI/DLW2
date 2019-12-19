@@ -225,10 +225,10 @@ urlpatterns = [
     path('m21view/', m21view, name='m21view'),
     path('ajax/m21getempno/', m21getempno, name='m21getempno'),
     path('ajax/m21getyymm/', m21getyymm, name='m21getyymm'),
-    path('mg5view/', mg5view, name='mg5view'),
-    path('mg5report/',mg5report,name='mg5report'),
-    path('mg5getticket/',mg5getticket,name='mg5getticket'),
-    path('ajax/mg5gettooldesc/',mg5gettooldesc,name='mg5gettooldesc'),
+    # path('mg5view/', mg5view, name='mg5view'),
+    # path('mg5report/',mg5report,name='mg5report'),
+    # path('mg5getticket/',mg5getticket,name='mg5getticket'),
+    # path('ajax/mg5gettooldesc/',mg5gettooldesc,name='mg5gettooldesc'),
     path('mg6views/',mg6views,name='mg6views'),
     path('ajax/mg6getmc/',mg6getmc,name='mg6getmc'),
     path('ajax/mg6getcd/',mg6getcd,name='mg6getcd'),
@@ -273,7 +273,6 @@ urlpatterns = [
     path('ajax/m18getempname/',m18getempname,name='m18getempname'),
     path('ajax/m18getoprn_no/',m18getoprn_no,name='m18getoprn_no'),
     path('ajax/m18getwono/',m18getwono,name='m18getwono'),
-<<<<<<< HEAD
     path('machineviews/',machineviews,name='machineviews'),
     path('ajax/machinegetcause/',machinegetcause,name='machinegetcause'),
     path('m12view/',m12view,name='m12view'),
@@ -281,12 +280,10 @@ urlpatterns = [
     path('ajax/m12getstaff_no/',m12getstaff_no,name='m12getstaff_no'),
     path('ajax/m12getempname/',m12getempname,name='m12getempname'),
 
-=======
-    path('m4hwview/', m4hwview, name='m4hwview'),
-    path('ajax/m4getbrhw/',m4getbrhw,name='m4getbrhw'),
-    path('ajax/m4getasslyhw/',m4getasslyhw,name='m4getasslyhw'),
-    path('ajax/m4getpart_nohw/',m4getpart_nohw,name='m4getpart_nohw'),
-    path('ajax/m4getdoc_nohw/',m4getdoc_nohw,name='m4getdoc_nohw'),
-    path('ajax/m4getwonohw',m4getwonohw,name='m4getwonohw'),
->>>>>>> master
+    # path('m4hwview/', m4hwview, name='m4hwview'),
+    # path('ajax/m4getbrhw/',m4getbrhw,name='m4getbrhw'),
+    # path('ajax/m4getasslyhw/',m4getasslyhw,name='m4getasslyhw'),
+    # path('ajax/m4getpart_nohw/',m4getpart_nohw,name='m4getpart_nohw'),
+    # path('ajax/m4getdoc_nohw/',m4getdoc_nohw,name='m4getdoc_nohw'),
+    # path('ajax/m4getwonohw',m4getwonohw,name='m4getwonohw'),
 ]

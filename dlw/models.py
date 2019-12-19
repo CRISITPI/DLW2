@@ -4598,20 +4598,13 @@ class M12DOC1(models.Model):
     in_date = models.CharField(db_column='IN_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
     out_date = models.CharField(db_column='OUT_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
     shift_typename= models.CharField(db_column='SHIFT_TYPENAME',max_length=20, blank=True, null=True)
-<<<<<<< HEAD
     reasons_for_idle_time= models.CharField(db_column='REASONS_FOR_IDLE_TIME',max_length=70, blank=True, null=True)
     time_hrs= models.CharField(db_column='TIME_HRS',max_length=10, blank=True, null=True)
     
 
-    flag = models.CharField(db_column='FLAG', max_length=1, blank=True,null=True, default='A') # Field name made lowercase.
-    class Meta:
-        db_table = 'M12DOC1'
-=======
-    req_no = models.CharField(db_column='REQ_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    
 
-    class Meta:
-        db_table = 'M18DOC'  
-
+    
 class M24(models.Model):
     sno=models.AutoField(db_column='SL.No',primary_key=True)
     fr_date=models.CharField(db_column='FR_DATE',max_length=20,null=True)
@@ -4656,5 +4649,4 @@ class M2HW(models.Model):
     wrrej=models.CharField(db_column='WRREJ',max_length=50,null=True)
     matrej=models.CharField(db_column='MATREJ',max_length=50,null=True)
     number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
-    
->>>>>>> master
+
