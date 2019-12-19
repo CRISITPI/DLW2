@@ -83,7 +83,7 @@
             background-color: lightblue;
             color: black;
             font-weight: bold;
-            width: 600px;
+           
 
         }
         .table tr td {
@@ -214,7 +214,7 @@
                 <tr>
                     <td>
                             <label for="remarks">REMARKS</label>
-                            <textarea id="remarks" name="remarks"> </textarea>
+                            <textarea style="width: 200px;" id="remarks" name="remarks"> </textarea>
                     </td>   
                 </tr>
                 
@@ -226,28 +226,30 @@
                         <tr>
                                 <td>
                                 <label for="partno"><b>MAJ-GROUP</b></label>
-                        <select class="form-control" style="width: 170px;" id="maj_grp" name="maj_grp" required>
+                        <select class="form-control" style="width: 180px;" id="maj_grp" name="maj_grp" required>
                             <option id="maj_grp" selected disabled hidden>Select Major Group</option>
                
                                   {% for i in partgrp %}
-                                    <option>{{i.maj_grp}}</option> 
+                                    <option>{{i.mgr}}</option> 
                                   {% endfor %}
                                   
                         </select>
                             </td>
                             <td>
                                     <label for="subgrp"><b>SUB-GROUP</b></label>
-                            <select class="form-control" style="width: 170px;" id="subgrp" name="subgrp" required>
+                            <select class="form-control" style="width: 180px;" id="subgrp" name="subgrp" required>
                                 <option id="subgrp" selected disabled hidden>Select Sub Group</option>
                    
                                       
                                       
                             </select>
                                 </td>
-
-                                <td>
-                                        <label for="drg_rev">SUB-GROUP2</label>
-                                        <input  style="width: 150px;" type="text" name="SUB-GROUP2" id="SUB-GROUP2">
+                                    <td>
+                                        <label for="subgrp2"><b>SUB-GROUP2</b></label>
+                                <select class="form-control" style="width: 180px;" id="SUB-GROUP2" name="SUB-GROUP2" required>
+                                    <option id="subgrp2" selected disabled hidden>Select Sub Group2</option>
+                 
+                                </select>
                                     </td>
                                     <td>
                                         <label for="DESC">SL NO</label>
@@ -261,7 +263,7 @@
                                     </td>
                         </tr>
 
-                        <tr>
+                        <!-- <tr>
                
                             <td>
                                REF-IND <input style="width:150px; background-color: lightblue; color: black; font-weight: bold;" type="text" name="ref_id" id="ref_id"/>
@@ -276,7 +278,7 @@
                                 LOC <input style="width:150px;background-color: lightblue; color: black; font-weight: bold;" type="text" name="loc" id="loc"/>
                             </td>
                                    
-                        </tr>
+                        </tr> -->
 
 
             </table>
@@ -293,7 +295,8 @@
                                                     </center>
                 
                                             </td>
-                                                <tr>
+                                    </tr>
+                                                <!-- <tr>
                                                    
                                                     <td>
                                                     <center>
@@ -301,8 +304,8 @@
                                                         <input  type="checkbox" id="checkbox" name="checkbox">
                                                     </center>
                                                     </td>
-                                                </tr>
-                                            <tr>
+                                                </tr> -->
+                                            <!-- <tr>
                                                 <td>
                                                         <center>
                                                                 <input  style="width: 150px;"  type="submit" name="save" value="Save" id="submitted"> 
@@ -311,14 +314,10 @@
                                                         </center>
                 
                                                 </td>
-                                            </tr>
-                                        </tr>
+                                            </tr> -->
+                                      
                                     </div>
-                                       
-                        
-
-
-                        
+               
             </table>
            
         
@@ -370,15 +369,12 @@
                           if(elementsadded.length>0){
                               var elementsaddedarr = Array.from(elementsadded);
                               elementsaddedarr.forEach((el)=> el.remove());
-                              document.getElementById('subgrp').value=response[0].sub_grp;
-                            document.getElementById('slno').value=response[0].slno;
-                            document.getElementById('maj_descr').value=response[0].maj_descr;
-                            document.getElementById('sub_descr').value=response[0].sub_descr;
-                            document.getElementById('missing1').value=response[0].missing1;
+                              
+                         
                            }
 
                           var brarr,mystr,html;
-                          brarr = response.map((el)=>el.sub_grp);
+                          brarr = response.map((el)=>el.sgr1);
                           mystr = "";
                           brarr.forEach((el,index)=>{
                             html = `<option class="neweleassm">${brarr[index]}</option>`
@@ -393,39 +389,56 @@
 
                       document.querySelector("#subgrp").addEventListener('change',(e)=>{
                         e.preventDefault();
-                        var subgrp_temp = $('#subgrp').val();               
-                        var data = {subgrp_temp};                
+                        var subgrp_temp_temp = $('#subgrp').val();               
+                        var data = {subgrp_temp_temp};                
                           $.ajax({
                             type : 'GET',
-                            url : "{% url 'getpartdecription' %}",
+                            url : "{% url 'getsubgrp2' %}",
                             dataType : 'json',
                             data : data,
                             success : function(response){
-
-                               
-
-                                document.getElementById('grp_des').value=response[0].sub_descr;
+                                   
+                                 var elementsadded = document.querySelectorAll(".neweleassm1");
+                                  if(elementsadded.length>0){
+                                      var elementsaddedarr = Array.from(elementsadded);
+                                      elementsaddedarr.forEach((el)=> el.remove());
+                                      
+                                 
+                                   }
+        
+                                  var brarr,mystr,html;
+                                  brarr = response.map((el)=>el.sgr2);
+                                  mystr = "";
+                                  brarr.forEach((el,index)=>{
+                                    html = `<option class="neweleassm1">${brarr[index]}</option>`
+                                    mystr = html.concat(mystr);
+                                  });
+                                  html = "";
+                                  document.querySelector("#SUB-GROUP2").insertAdjacentHTML('beforeend',mystr);
+                                  mystr="";
                             }
                               })
                               })
+                             
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                              document.querySelector("#SUB-GROUP2").addEventListener('change',(e)=>{
+                                e.preventDefault();
+                                var SUB_GROUP2_temp = $('#SUB-GROUP2').val();               
+                                var data = {SUB_GROUP2_temp};                
+                                  $.ajax({
+                                    type : 'GET',
+                                    url : "{% url 'getDiscription' %}",
+                                    dataType : 'json',
+                                    data : data,
+                                    success : function(response){
+                                    
+                                        document.getElementById('SL_NO').value=response[0].sln;
+                                        document.getElementById('grp_des').value=response[0].gdes;
+                                        
+                                        
+                                        }
+                                      })
+                                      })
 
 
             function printDiv() {

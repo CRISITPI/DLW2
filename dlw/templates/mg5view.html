@@ -98,10 +98,7 @@
         </tr>
                   
         </table>
-        
-        <center>
- <input type="submit" value="Generate report" name="proceed" id="report">    
-        </center>
+      
         <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
   
     </div>
@@ -138,7 +135,7 @@
                 <th>SHOP SUPERINTENDENT</th> 
                 <td><input type="text" name="emp_type" id="emp_type" /> </td>
             <!-- <td>{{i.emptype}}</td> -->
-        </tr> -->
+        </tr> 
         {% endfor %}
 
             <tr>
@@ -148,8 +145,8 @@
             </tr>
             <tr>
                 <th>TICKET NO</th>
-                <input type="text" value={{ticket_no}} name="t_no" id="t_no" hidden /> 
-                <td>{{ticket_no}}</td>
+                
+                <td><input type="text" value={{ticket_no}} name="t_no" id="t_no" readonly/> </td>
             </tr>
  
             {% for i in obj1 %} 

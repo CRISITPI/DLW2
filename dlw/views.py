@@ -16132,7 +16132,8 @@ def partallotement(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist) 
     partnew = list(Partnew.objects.all().values('part_no').distinct())
-    partgrp = list(Partgrp.objects.all().values('maj_grp').distinct())
+    partgrp = list(Ngr.objects.all().values('mgr').distinct())
+    subgrp2 = list(Ngr.objects.all().values('sgr2','sln'))
     it_cat = list(GmCode.objects.filter(cd_type='IT').values('alpha_1').distinct())
     unit = list(GmCode.objects.filter(cd_type='UT').values('alpha_1').distinct())
     MB = list(GmCode.objects.filter(cd_type='MB').values('alpha_1').distinct())
@@ -16153,11 +16154,11 @@ def partallotement(request):
             'partgrp' : partgrp,
             'it_cat' : it_cat,
             'unit' : unit,
-            'mb' : MB,   
+            'mb' : MB,
+            'subgrp2': subgrp2, 
         }
     
-
-    return render(request, 'partallotement.html',context)
+    return render(request,"partallotement.html",context)
 
 
 def getpartnewdetails(request):
@@ -16173,14 +16174,31 @@ def getpartnewdetails(request):
 def getpartnewdetails123(request):
     if request.method == "GET" and request.is_ajax():        
         partgrp_temp = request.GET.get("maj_grp_temp")        
-        partgrp = list(Partgrp.objects.filter(maj_grp = partgrp_temp).values('sub_grp'))
+        partgrp = list(Ngr.objects.filter(mgr = partgrp_temp).values('sgr1').distinct())
         return JsonResponse(partgrp, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def getsubgrp2(request):
+    if request.method == "GET" and request.is_ajax():
+        subgrp_temp_temp = request.GET.get("subgrp_temp_temp")  
+        subgrp2 = list(Ngr.objects.filter(sgr1 = subgrp_temp_temp).values('sgr2').exclude(sgr2__isnull=True))
+        print("subgrp2 : ", subgrp2)
+        return JsonResponse(subgrp2, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def getDiscription(request):
+    if request.method == "GET" and request.is_ajax():
+        SUB_GROUP2_temp = request.GET.get("SUB_GROUP2_temp")  
+        subgrpDesc = list(Ngr.objects.filter(sgr2 = SUB_GROUP2_temp).values('sln','gdes').exclude(sgr2__isnull=True))
+        print("subgrpDesc : ", subgrpDesc)
+        return JsonResponse(subgrpDesc, safe = False)
     return JsonResponse({"success":False}, status=400)
 
 def getpartdecription(request):
     if request.method == "GET" and request.is_ajax():        
         subgrp_temp_temp = request.GET.get("subgrp_temp")        
-        partgrp = list(Partgrp.objects.filter(sub_grp = subgrp_temp_temp).values('sub_descr'))
+        partgrp = list(Ngr.objects.filter(gdes = subgrp_temp_temp).values('gdes'))
+        print("partgrp : ", partgrp)
         return JsonResponse(partgrp, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -16525,11 +16543,6 @@ def m2hwview(request):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
-<<<<<<< HEAD
-                
-=======
-
->>>>>>> cb3805c25733ab99c0d5249df184359e3fc96279
             context = {
                 'sub':0,
                 'subnav':subnav,
@@ -17502,20 +17515,11 @@ def m24report(request):
                       
             }
     return render(request,"m24report.html",context)
-<<<<<<< HEAD
-    
+
     
 @login_required
 @role_required(urlpass='/mg5view/')
 def mg5view(request):
-=======
-<<<<<<< HEAD
-    
-
-@login_required
-@role_required(urlpass='/m4hwview/')
-def m4hwview(request):
->>>>>>> master
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -17525,7 +17529,6 @@ def m4hwview(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-<<<<<<< HEAD
     idcard_no = empmast.objects.none()
     obj=empmast.objects.all().values('idcard_no').distinct()
     objj=empmast.objects.filter(idcard_no=idcard_no).values('ticket_no').distinct()
@@ -17534,21 +17537,12 @@ def m4hwview(request):
         # tmp=[]
         # for on in tm:
         #     tmp.append(on.section_code)
-=======
-    wo_nop = empmast.objects.none()
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
->>>>>>> master
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
-<<<<<<< HEAD
             # 'roles':tmp,
             'obj':obj,
             # 'objj':objj
@@ -17564,23 +17558,6 @@ def m4hwview(request):
             'lenm' :len(rolelist),
             'idcard_no':idcard_no,
             'nav':nav,
-=======
-            'roles':tmp
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-
-            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-            req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
-            wo_nop = wo_nop | req
-
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'subnav':subnav,
->>>>>>> master
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist
@@ -17600,8 +17577,8 @@ def m4hwview(request):
         if submitvalue=='Proceed':
             rolelist=usermaster.role.split(", ")
             wo_nop = empmast.objects.none()
-<<<<<<< HEAD
             ti_no = request.POST.get('t_no')
+            print("ti_no : ",ti_no)
             id_no = request.POST.get('id_no')
             instrument_number= request.POST.get('t_id')
             print(id_no)
@@ -17610,7 +17587,7 @@ def m4hwview(request):
             obj = empmast.objects.filter( idcard_no=id_no,ticket_no=ti_no).values('empname','emptype','shopno','empno').distinct()
             obj1 = MG5.objects.filter(id_no=id_no,t_no=ti_no).values('optr','chkr').distinct()
             obj2 = ms_tools_master.objects.values('instrument_number','make').distinct()
-            obj3=  ms_tools_master.objects.filter(instrument_number=instrument_number).values('make').distinct()
+            obj3=ms_tools_master.objects.filter(instrument_number=instrument_number).values('make').distinct()
         
             print(obj1)
             if len(obj1)== 0:
@@ -17680,38 +17657,25 @@ def m4hwview(request):
                 empno = request.POST.get('staff_no')
                 emp_name= request.POST.get('name')
                 super_in = request.POST.get('emptype')
+                print("super_in 123 : ",super_in)
                 id_no=request.POST.get('id_no')
                 ticket_no=request.POST.get('t_no')
+                print("ticket_no 123 : ",ticket_no)
                 t_id=request.POST.get('t_id')
-                
                 date=request.POST.get('date')
                 t_desc=request.POST.get('make1')
                 optr=request.POST.get('optr')
                 chkr=request.POST.get('chkr')
                 # to_no=request.POST.get('to_no')
 
-                print('tool id---->',t_id)
-                print('empno---->',empno)
-                print('emp_name---->',emp_name)
-                print('super_in--->',super_in)
-                print('id_no---->',id_no)
-                print('ticket_no---->',ticket_no)
-                print('date---->',date)
-                print('t_desc---->',t_desc)
-                print('optr---->',optr)
-               
-
-
-
                 from datetime import datetime
                 now = datetime.now()
                 dt_string = now.strftime("%H:%M:%S")
-                tot = request.POST.get('totaltools')
-                
-                  
+                # print(to_no)
+                # obj3 = MG5.objects.filter( id_no=id_no).distinct()
+                # print(len(obj2))
+                # if len(obj3) == 0:
                 MG5.objects.create(id_no=str(id_no),t_id=str(t_id),t_desc=str(t_desc), t_no=str(ticket_no), shop_sec=str(shopno), staff_no=str(empno), name=str(emp_name), super_in=str(super_in), date=str(date), optr=str(optr), chkr=str(chkr), last_modified=str(dt_string) )
-                
-                print(id_no,t_id,t_desc,ticket_no,shopno,empno,emp_name,super_in,date,optr,chkr,dt_string)
                 # else:
                 #     MG21.objects.filter(shop_sec=shop_sec, staff_no=staff_no).update(to_the=str(to_the),last_modified=str(dt_string))
                 # wo_no=empmast.objects.all().values('idcard_no').distinct()
@@ -18314,181 +18278,4 @@ def mg5report(request):
             return mg5report(request)
             
     return render(request, "mg5report.html", context)
-=======
-            shop_sec = request.POST.get('shop_sec')
-            part_no = request.POST.get('part_nop')
-            wo_no = request.POST.get('wo_no')
-            brn_no = request.POST.get('br_no')
-            assembly_no = request.POST.get('assm_no')
-            doc_no = request.POST.get('doc_no')
-            kkk=Oprn.objects.all()
-            obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
-            obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
-            obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
-            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-            obj = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
-            
-            if len(obj) == 0:
-                obj = range(0,1)
-            date = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('prtdt','qty').distinct()
-            leng = obj.count()
-            datel = date.count()
-                       
-            if "Superuser" in rolelist:
-                tm=shop_section.objects.all()
-                tmp=[]
-                for on in tm:
-                    tmp.append(on.section_code)
-                context = {
-                    'roles':tmp,
-                    'lenm' :2,
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'obj': obj,
-                    'obj1': obj1,
-                    'obj2': obj2,
-                    'obj3': obj3,
-                    'sub': 1,
-                    'len': leng,
-                    'date': date,
-                    'datel': datel,
-                    'shop_sec': shop_sec,
-                    'part_no': part_no,
-                    'wo_no': wo_no,
-                    'brn_no': brn_no,
-                    'assembly_no': assembly_no,
-                    'doc_no': doc_no,
-                }
-            elif(len(rolelist)==1):
-                for i in range(0,len(rolelist)):                    
 
-                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-                    req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
-                    wo_nop = wo_nop | req
-
-                context = {
-                    'wo_nop':wo_nop,
-                    'roles' :rolelist,
-                    'subnav':subnav,
-                    'usermaster':usermaster,
-                    'lenm' :len(rolelist),
-                    'nav': nav,
-                    'ip': get_client_ip(request),
-                    'obj': obj,
-                    'obj1': obj1,
-                    'obj2': obj2,
-                    'obj3': obj3,
-                    'sub': 1,
-                    'len': leng,
-                    'date': date,
-                    'datel': datel,
-                    'shop_sec': shop_sec,
-                    'part_no': part_no,
-                    'wo_no': wo_no,
-                    'brn_no': brn_no,
-                    'assembly_no': assembly_no,
-                    'doc_no': doc_no,
-                }
-            elif(len(rolelist)>1):
-                context = {
-                    'lenm' :len(rolelist),
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'obj': obj,
-                    'obj1': obj1,
-                    'obj2': obj2,
-                    'obj3': obj3,
-                    'sub': 1,
-                    'len': leng,
-                    'date': date,
-                    'datel': datel,
-                    'shop_sec': shop_sec,
-                    'part_no': part_no,
-                    'wo_no': wo_no,
-                    'brn_no': brn_no,
-                    'assembly_no': assembly_no,
-                    'doc_no': doc_no,
-                }
-
-     
-        if submitvalue=='Save':
-            doc_no= request.POST.get('doc_no1')
-            part_no= request.POST.get('part_no1')
-            wo_no=request.POST.get('wo_no1')
-            brn_no=request.POST.get('brn_no1')           
-            received_mat = request.POST.get('received_mat')
-            issued_qty = request.POST.get('issued_qty')
-            received_qty = request.POST.get('received_qty')
-            laser_pst = request.POST.get('laser_pst')
-            line= request.POST.get('line')
-            closing_bal = request.POST.get('closing_bal')
-            remarks = request.POST.get('remarks')
-            posted_date = request.POST.get('posted_date')
-            wardkp_date = request.POST.get('wardkp_date')
-            shopsup_date = request.POST.get('shopsup_date')
-            posted1_date = request.POST.get('posted1_date')
-
-            M14M4.objects.filter(part_no=part_no,doc_no=doc_no,brn_no=brn_no,bo_no=wo_no).update(received_mat=str(received_mat), issued_qty=int(issued_qty), received_qty=int(received_qty), laser_pst=str(laser_pst), line=str(line), closing_bal=int(closing_bal), remarks=str(remarks), posted_date=str(posted_date), wardkp_date=str(wardkp_date), shopsup_date=str(shopsup_date), posted1_date=str(posted1_date))
-            wo_no=M14M4.objects.all().values('bo_no').distinct()
-            messages.success(request, 'Successfully Updated!, Select new values to update')
-    return render(request,"m4hwview.html",context)    
-
-
-
-def m4getwonohw(request):
-    if request.method == "GET" and request.is_ajax():
-        from.models import Batch
-        shop_sec = request.GET.get('shop_sec')
-        w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2 = M14M4.objects.filter(assly_no__in=w1).values('bo_no').exclude(bo_no__isnull=True).distinct()
-        # print(w2)
-        wono = list(w2)
-        return JsonResponse(wono, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-def m4getbrhw(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        br_no = list(M14M4.objects.filter(bo_no =wo_no).values('brn_no').exclude(brn_no__isnull=True).distinct())
-        return JsonResponse(br_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-def m4getasslyhw(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        br_no = request.GET.get('brn_no')
-        assm_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no).values('assly_no').exclude(assly_no__isnull=True).distinct())
-        return JsonResponse(assm_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-
-
-def m4getpart_nohw(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        br_no = request.GET.get('brn_no')
-        assembly_no = request.GET.get('assm_no')
-        part_no = list(M14M4.objects.filter(brn_no=br_no,assly_no=assembly_no,bo_no=wo_no).values('part_no').exclude(part_no__isnull=True).distinct())
-        return JsonResponse(part_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-
-
-def m4getdoc_nohw(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        br_no = request.GET.get('brn_no')
-        shop_sec = request.GET.get('shop_sec')
-        assembly_no = request.GET.get('assm_no')
-        part_no = request.GET.get('part_no')
-        doc_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
-        return JsonResponse(doc_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-=======
-    
->>>>>>> cb3805c25733ab99c0d5249df184359e3fc96279
->>>>>>> master
