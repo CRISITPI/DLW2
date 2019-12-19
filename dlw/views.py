@@ -16202,7 +16202,7 @@ def getpartdecription(request):
         return JsonResponse(partgrp, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-    
+
 @login_required
 @role_required(urlpass='/staff_auth_view/')
 def staff_auth_view(request):
@@ -16544,7 +16544,10 @@ def m2hwview(request):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
+<<<<<<< HEAD
 
+=======
+>>>>>>> cfba9c638d6bdfd481f5a1efd2e42340c063228d
             context = {
                 'sub':0,
                 'subnav':subnav,
@@ -18126,24 +18129,6 @@ def m4hwview(request):
 
 
 
-def m4getwonohw(request):
-    if request.method == "GET" and request.is_ajax():
-        from.models import Batch
-        shop_sec = request.GET.get('shop_sec')
-        w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2 = M14M4.objects.filter(assly_no__in=w1).values('bo_no').exclude(bo_no__isnull=True).distinct()
-        # print(w2)
-        wono = list(w2)
-        return JsonResponse(wono, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-def m4getbrhw(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        br_no = list(M14M4.objects.filter(bo_no =wo_no).values('brn_no').exclude(brn_no__isnull=True).distinct())
-        return JsonResponse(br_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
 def m4getasslyhw(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
@@ -18547,5 +18532,15 @@ def mg5report(request):
         
             
     return render(request, "mg5report.html", context)
+
+
+
+
+
+
+
+
+
+
 
 
