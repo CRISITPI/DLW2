@@ -16544,10 +16544,6 @@ def m2hwview(request):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
             wo_nop = wo_nop | req
-<<<<<<< HEAD
-
-=======
->>>>>>> cfba9c638d6bdfd481f5a1efd2e42340c063228d
             context = {
                 'sub':0,
                 'subnav':subnav,
