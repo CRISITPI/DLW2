@@ -4606,6 +4606,7 @@ class M12DOC1(models.Model):
 
     
 
+    
 class M24(models.Model):
     sno=models.AutoField(db_column='SL.No',primary_key=True)
     fr_date=models.CharField(db_column='FR_DATE',max_length=20,null=True)
@@ -4622,6 +4623,9 @@ class M24(models.Model):
     supervise_chrgmn=models.CharField(db_column='SUPERVISOR',max_length=50,null=True)
     last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
+    
+class Meta:
+    db_table="M24"
 
 
 

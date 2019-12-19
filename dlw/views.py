@@ -16202,6 +16202,7 @@ def getpartdecription(request):
         return JsonResponse(partgrp, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
 @login_required
 @role_required(urlpass='/staff_auth_view/')
 def staff_auth_view(request):
@@ -17363,8 +17364,20 @@ def m24getsuprvsr(request):
     return JsonResponse({"success":False}, status=400)
 
 
+# def m24getpayrate(request):
+#     if request.method == "GET" and request.is_ajax():
+#         shop_sec = request.GET.get('shop_sec')
+
+#         #wo_no = request.GET.get('wo_no')
+#         py_rt = list(dlw_empmast.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+#         #staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+#         return JsonResponse(staff_no, safe = False)
+#     return JsonResponse({"success":False}, status=400)
+
+
+
 @login_required
-@role_required(urlpass='/m24view/')
+@role_required(urlpass='/m24report/')
 def m24report(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -17709,7 +17722,10 @@ def mg5gettooldesc(request):
 
 
 
+    
+    return render(request,"m24report.html",context)
 
+ 
 @login_required
 @role_required(urlpass='/machineviews/')
 def machineviews(request):
@@ -18098,8 +18114,8 @@ def machinegetcause(request):
     return JsonResponse({"success":False}, status=400)  
 
 @login_required
-@role_required(urlpass='/mg5report/')
-def mg5report(request):
+@role_required(urlpass='/m4hwview/')
+def m4hwview(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -18109,35 +18125,33 @@ def mg5report(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    idcard_no = empmast.objects.none()
-    obj=empmast.objects.all().values('idcard_no').distinct()
-    objj=empmast.objects.filter(idcard_no=idcard_no).values('ticket_no').distinct()
+    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
-        # tm=shop_section.objects.all()
-        # tmp=[]
-        # for on in tm:
-        #     tmp.append(on.section_code)
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
-            # 'roles':tmp,
-            'obj':obj,
-            # 'objj':objj
+            'roles':tmp
         }
     elif(len(rolelist)==1):
-        for i in range(0, len(rolelist)):
-            req = empmast.objects.all().filter(idcard_no=rolelist[i]).distinct()
-            idcard_no =idcard_no | req
+        for i in range(0,len(rolelist)):
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+            wo_nop = wo_nop | req
 
         context = {
             'sub':0,
-            'subnav':subnav,
             'lenm' :len(rolelist),
-            'idcard_no':idcard_no,
+            'wo_nop':wo_nop,
             'nav':nav,
+            'subnav':subnav,
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist

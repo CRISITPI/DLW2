@@ -11,6 +11,9 @@
     </script>
  
 <style>
+  body{
+    font-size:larger;
+  }
 table, td, th {  
   text-align: left;
 }
@@ -110,7 +113,7 @@ th, td {
  
         <td>
             <label for="sno"><b>Date/ दिनांक </b></label>            
-          <input type="text" id="updt_date" style="width: 150px;" name="updt_date" value="{{lvdate}}" placeholder="yyyy-mm-dd" readonly required/>
+          <input type="text" id="updt_date" style="width: 170px;" name="updt_date" value="{{lvdate}}" placeholder="yyyy-mm-dd" readonly required/>
         </td> 
  
         <td>
@@ -191,7 +194,7 @@ th, td {
       
         <label for="reason">Is it due to negligence, if yes, state reasons ?</label>
         <label class="container">Yes
-                <input id="reason_y" type="radio"  name="reason_neg" value="yes" required>
+                <input id="reason_y" type="radio"  name="reason_neg" value="yes" checked required>
                 <span class="checkmark"></span>
               </label>
  
@@ -205,7 +208,7 @@ th, td {
  
         <label for="equip_check">Was the employee wearing the protective equipment he was entitled to ?</label>
         <label class="container">Yes
-                <input type="radio" name="equip_check" value="yes" required>
+                <input type="radio" name="equip_check" value="yes" checked required>
                 <span class="checkmark"></span>
               </label>
  
@@ -222,7 +225,7 @@ th, td {
         
         
         <label class="container">Yes
-          <input type="radio" name="bgc" value="yes" required>
+          <input type="radio" name="bgc" value="yes" checked required>
           <span class="checkmark"></span>
         </label>
  
@@ -290,10 +293,10 @@ th, td {
             <label for="Certification">Certified that :- </label><br>
  
           <ol> 
-            <li><input type="checkbox" name="c1" value="The accident arose out of and in the course of his employement" required>  The accident arose out of and in the course of his employement</li>
-            <li><input type="checkbox" name="c2" value="The work man was not under the influence of drink or drugs at the time time if accident" required>   The work man was not under the influence of drink or drugs at the time time if accident</li>
-            <li><input type="checkbox" name="c3" value="The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman" required>   The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman</li>
-            <li><input type="checkbox" name="c4" value="The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman" required>  The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman</li>       
+            <li><input type="checkbox" name="c1" value="The accident arose out of and in the course of his employement">  The accident arose out of and in the course of his employement</li>
+            <li><input type="checkbox" name="c2" value="The work man was not under the influence of drink or drugs at the time time if accident">   The work man was not under the influence of drink or drugs at the time time if accident</li>
+            <li><input type="checkbox" name="c3" value="The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman">   The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman</li>
+            <li><input type="checkbox" name="c4" value="The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman" >  The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman</li>       
           </ol>
             <br>
  
@@ -301,8 +304,8 @@ th, td {
             <label for="Certification">ANNEXURE </label><b>
           <ol> 
               <li><input type="checkbox" name="a1" value="This is an eye injury" required>  This is an eye injury</li>
-              <li> The employee was <input type="radio" name="a2" value="yes" required> was not <input type="radio" name="a2" value="no" required>  provided with goggles </li>
-            <li> He was <input type="radio" name="a3" value="yes" required> was not <input type="radio" name="a3" value="no" required>  wearing them at the time of accident</li>
+              <li> The employee was <input type="radio" name="a2" value="yes" checked required> was not <input type="radio" name="a2" value="no" required>  provided with goggles </li>
+            <li> He was <input type="radio" name="a3" value="yes" checked required> was not <input type="radio" name="a3" value="no" required>  wearing them at the time of accident</li>
           </ol>
          
           
@@ -314,6 +317,7 @@ th, td {
                   </select><br>
          
       </div> 
+    </body>
 
 <center>
   <input id="submit" type="submit" name="proceed" value="Save" id="submitted"> 
