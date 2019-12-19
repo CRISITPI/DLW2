@@ -17918,7 +17918,6 @@ def machinegetcause(request):
         print("wono",wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)  
-
 @login_required
 @role_required(urlpass='/m4hwview/')
 def m4hwview(request):
@@ -18121,7 +18120,7 @@ def m4hwview(request):
             M4HW.objects.create(prtdt=str(date_time_obj.date()),doc_no=str(doc_no),part_no=str(part_no),wo_no=str(wo_no),brn_no=str(brn_no),qty=str(qty),end_prod=str(end_prod),epdes=str(epdes),shop_section_temp=str(shop_section_temp),partdes=str(partdes),drgno=str(drgno),batch_type=str(batch_type),received_mat=str(received_mat),issued_qty=str(issued_qty),received_qty=str(received_qty),laser_pst=str(laser_pst),line=str(line),closing_bal=str(closing_bal),remarks=str(remarks),posted_date=str(posted_date),wardkp_date=str(wardkp_date),shopsup_date=str(shopsup_date),posted1_date=str(posted1_date),number=str(number))         
             messages.success(request, 'M4 Card Hand Written generated Successfully, Your Reference number is : '+number)
            
-    return render(request,"m4hwview.html",context)    
+    return render(request,"m4hwview.html",context)      
 
 
 def m4getbrhw(request):
