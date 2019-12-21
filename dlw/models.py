@@ -4603,8 +4603,14 @@ class M12DOC1(models.Model):
     flag = models.CharField(db_column='FLAG', max_length=1, blank=True,null=True, default='A') # Field name made lowercase.
     class Meta:
         db_table = 'M12DOC1'
+    # req_no = models.CharField(db_column='REQ_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
 
+<<<<<<< HEAD
     
+=======
+    # class Meta:
+    #     db_table = 'M18DOC'  
+>>>>>>> 2ecb5d2bd6eaf9786e546c2b859faa0e90e18f84
 
     
 class M24(models.Model):
@@ -4628,24 +4634,23 @@ class Meta:
     db_table="M24"
 
 
-
 class M2HW(models.Model):
-    #prtDate=models.DateField(db_column='PRINTDATE',max_length=20)
+    prtDate=models.DateField(db_column='PRINTDATE',max_length=20)
     workOrdNo=models.CharField(db_column='WONO',max_length=50,null=True)
     brnNo=models.CharField(db_column='BRNNO',max_length=50,null=True)
     orderQuantity=models.CharField(db_column='ORDERQUANTITY',max_length=50,null=True)
     asmlyPartNo=models.CharField(db_column='ASMLYPARTNO',max_length=50,null=True)
-    asmlyDesc=models.CharField(db_column='ASMLYDESC',max_length=100,null=True)
+    asmlyDesc=models.CharField(db_column='ASMLYDESC',max_length=200,null=True)
     shopSection=models.CharField(db_column='SHOPSECTION',max_length=50,null=True)
     partNum=models.CharField(db_column='PARTNUM',max_length=50,null=True)
-    partDescription=models.CharField(db_column='PARTDESCRIPTION',max_length=100,null=True)
+    partDescription=models.CharField(db_column='PARTDESCRIPTION',max_length=200,null=True)
     drawingNum=models.CharField(db_column='DRAWINGNUMBER',max_length=50,null=True) 
     documentNum=models.CharField(db_column='DOCUMENTNUMBER',max_length=50,null=True)
     orderType=models.CharField(db_column='ORDERTYPE',max_length=50,null=True)
     operationNum=models.CharField(db_column='OPERATIONNUM',max_length=50,null=True)
     shopSecTemp = models.CharField(db_column='SHOPSECTEMP', max_length=50, blank=True, null=True)  
     loadCenter = models.CharField(db_column='LOADCENTER', max_length=50, blank=True, null=True)
-    operationDescription=models.CharField(db_column='OPERATIONDESCRIPTION',max_length=100,null=True)
+    operationDescription=models.CharField(db_column='OPERATIONDESCRIPTION',max_length=200,null=True)
     paTemp=models.CharField(db_column='PATEMP',max_length=50,null=True)
     taTemp=models.CharField(db_column='TATEMP',max_length=50,null=True)
     noTemp=models.CharField(db_column='NOTEMP',max_length=50,null=True)
@@ -4654,3 +4659,37 @@ class M2HW(models.Model):
     wrrej=models.CharField(db_column='WRREJ',max_length=50,null=True)
     matrej=models.CharField(db_column='MATREJ',max_length=50,null=True)
     number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
+<<<<<<< HEAD
+=======
+    causesofHW=models.CharField(db_column='CAUSESOFHW',max_length=50,null=True)
+    
+
+class M4HW(models.Model):
+    prtdt=models.DateField(db_column='PRINTDATE',max_length=20)
+    doc_no=models.CharField(db_column='DOCNO',max_length=100,null=True)
+    part_no=models.CharField(db_column='PARTNO',max_length=50,null=True)
+    wo_no=models.CharField(db_column='WONO',max_length=50,null=True)
+    brn_no=models.CharField(db_column='BRNNO',max_length=50,null=True)
+    qty=models.CharField(db_column='ORDERQUANTITY',max_length=50,null=True)
+    end_prod=models.CharField(db_column='ENDPRODUCT',max_length=50,null=True)
+    epdes=models.CharField(db_column='EPDESC',max_length=100,null=True)
+    shop_section_temp=models.CharField(db_column='SHOPSECTION',max_length=50,null=True)		
+    partdes=models.CharField(db_column='PARTDES',max_length=50,null=True)	
+    drgno=models.CharField(db_column='DRAWINGNO',max_length=100,null=True)
+    batch_type=models.CharField(db_column='BATCHTYPE',max_length=50,null=True)
+    received_mat=models.CharField(db_column='RECEVMAT',max_length=50,null=True)
+    issued_qty=models.CharField(db_column='ISSUEDQTY',max_length=50,null=True)
+    received_qty = models.CharField(db_column='RECEIVEQTY', max_length=50, blank=True, null=True)  
+    laser_pst = models.CharField(db_column='LASERPST', max_length=50, blank=True, null=True)
+    line=models.CharField(db_column='LINE',max_length=100,null=True)
+    closing_bal=models.CharField(db_column='CLOSINGBAL',max_length=50,null=True)
+    remarks=models.CharField(db_column='REMARKS',max_length=50,null=True)
+    posted_date=models.CharField(db_column='POSTEDDATE',max_length=50,null=True)
+    wardkp_date=models.CharField(db_column='HARDKEEPARDATE',max_length=50,null=True) 
+    shopsup_date=models.CharField(db_column='SHOPSUPDATE',max_length=50,null=True)
+    posted1_date=models.CharField(db_column='SUPPOSTEDDATE',max_length=50,null=True)
+    number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
+    causesofHW=models.CharField(db_column='CAUSESOFHW',max_length=50,null=True)
+
+
+>>>>>>> 2ecb5d2bd6eaf9786e546c2b859faa0e90e18f84
