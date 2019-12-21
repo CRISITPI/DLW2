@@ -318,19 +318,30 @@
         </tr>
         {% endfor %}
     </table>
-   
     </div>
-    <br><br>
+    <br>
+    <table style="margin-left:100px;">
+        <tr>
+            <td>Causes of Hand Written: </td><td><select class="form-control" required name="causesofHW" id="causesofHW"><option value="select">--Select--</option><option value="m2 missing">M2 Card</option><option value="m4 missing">M4 Card</option><option value="m14 missing">M14 Card</option></select></td>
+        </tr>
+    </table>
     <center>
-        <input type="submit" name="proceed" value="Save" id="submitted" > 
+        <input type="submit" name="proceed" value="Save" id="submitted"  onclick="return validateActivity()"> 
         <input type="button" onclick="printDiv()" value="Print">
     </center>
     <br><br> {% endif %}
 
 </form>
-
-
 <script type="text/javaScript">
+function validateActivity()
+{
+    var causesofHW=$("#causesofHW").val();        
+    if(causesofHW=="select"){
+        alert("Please Select Causes of Hand Written.");
+        return false;
+    }                
+}    
+
 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                   e.preventDefault();
                   var shop_sec = $("#shop_sec").val()

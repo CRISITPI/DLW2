@@ -4123,9 +4123,9 @@ class MG36(models.Model):
 
 
 class MG5(models.Model):
-    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    staff_no = models.CharField(db_column='STAFF_NO', max_length=8, blank=True, null=True)  
-    name = models.CharField(db_column='EMPLOYEE_NAME', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=12, blank=True, null=True)  
+    name = models.CharField(db_column='EMPLOYEE_NAME', max_length=30, blank=True, null=True)  # Field name made lowercase.
     date = models.CharField(db_column=' DATE', max_length=50)
     super_in = models.CharField(db_column='SHOP_SUPERINTENDENT', max_length=25, blank=True, null=True)  # Field name made lowercase.
     optr=models.CharField( db_column='OPERATOR', max_length=25)
@@ -4541,24 +4541,70 @@ class M5SHEMP1(models.Model):
     class Meta:
         db_table = 'M5SHEMP1'
 
-class M18DOC(models.Model):
+# class M18DOC(models.Model):
+#     shopsec = models.CharField(db_column='SHOPSEC', max_length=10, blank=True, null=True)  # Field name made lowercase.
+#     staff_no = models.CharField(db_column='STAFF_NO', max_length=12, blank=True, null=True)  # Field name made lowercase.
+#     name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
+#     cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+#     ticket_no = models.CharField(db_column='TICKET_NO',max_length=20,  blank=True, null=True, default=0)  # Field name made lowercase.
+#     month = models.CharField(db_column='MONTH', max_length=10, blank=True,null=True,default=0) # Field name made lowercase0.
+#     in1 = models.CharField(db_column='IN1', max_length=10, blank=True,null=True) # Field name made lowercase.
+#     out = models.CharField(db_column='OUT', max_length=10, blank=True,null=True) # Field name made lowercase.
+#     total_time_taken = models.CharField(db_column='TOTAL_TIME_TAKEN',max_length=20, blank=True,null=True, default=0)
+#     in_date = models.CharField(db_column='IN_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+#     out_date = models.CharField(db_column='OUT_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+#     shift_typename= models.CharField(db_column='SHIFT_TYPENAME',max_length=20, blank=True, null=True)
+#     req_no = models.CharField(db_column='REQ_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+
+#     class Meta:
+#         db_table = 'M18DOC'  
+
+# class M24(models.Model):
+#     sno=models.AutoField(db_column='SL.No',primary_key=True)
+#     fr_date=models.CharField(db_column='FR_DATE',max_length=20,null=True)
+#     to_date=models.CharField(db_column='TO_DATE',max_length=20,null=True)
+#     shop_sec=models.CharField(db_column='SHOPSEC',max_length=20,null=True)
+#     ssfo=models.CharField(db_column='SSFO',max_length=20,null=True)
+#     timekeep=models.CharField(db_column='TIMEKEEPER',max_length=30,null=True)
+#     workshop=models.CharField(db_column='WORKSHOPS',max_length=30,null=True)
+#     staff_no=models.CharField(db_column='STAFF_NO',max_length=20,null=True)
+#     desgn=models.CharField(db_column='DESIGNATION',max_length=20,null=True)
+#     payrate=models.CharField(db_column='RATE_PAY',max_length=20,null=True)   
+#     hrs_wrked=models.CharField(db_column='HOURS_WRKD',max_length=20,null=True)
+#     rsn_ovrtym=models.CharField(db_column='OVERTIME_REASON',max_length=20,null=True)
+#     supervise_chrgmn=models.CharField(db_column='SUPERVISOR',max_length=50,null=True)
+#     last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
+#     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
+
+class M12DOC1(models.Model):
+    # yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
     shopsec = models.CharField(db_column='SHOPSEC', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    staff_no = models.CharField(db_column='STAFF_NO', max_length=12, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=50, blank=True, null=True)  # Field name made lowercase.
     name = models.CharField(db_column='NAME', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    # desgn = models.CharField(db_column='DESGN', max_length=10, blank=True, null=True)  # Field name made lowercase.
     cat = models.CharField(db_column='CAT', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    ticket_no = models.CharField(db_column='TICKET_NO',max_length=20,  blank=True, null=True, default=0)  # Field name made lowercase.
-    month = models.CharField(db_column='MONTH', max_length=10, blank=True,null=True,default=0) # Field name made lowercase0.
+    # emp_type = models.CharField(db_column='EMP_TYPE', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    # status = models.CharField(db_column='STATUS', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    # remark = models.CharField(db_column='REMARK', max_len1000, blank=True, null=True)  # Field name made lowercase.
+    # updt_by = models.CharField(db_column='UPDT_BY', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    # updt_date = models.CharField(db_column='UPDT_DATE',max_length=20, blank=True, null=True)  # Field name made lowercase.
+    # rec_ind = models.CharField(db_column='REC_IND', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    # ticket_no = models.CharField(db_column='TICKET_NO',max_length=20,  blank=True, null=True, default=0)  # Field name made lowercase.
+    month = models.CharField(db_column='MONTH', max_length=15, blank=True,null=True,default=0) # Field name made lowercase0.
     in1 = models.CharField(db_column='IN1', max_length=10, blank=True,null=True) # Field name made lowercase.
     out = models.CharField(db_column='OUT', max_length=10, blank=True,null=True) # Field name made lowercase.
-    total_time_taken = models.CharField(db_column='TOTAL_TIME_TAKEN',max_length=20, blank=True,null=True, default=0)
+    total_time = models.CharField(db_column='TOTAL_TIME',max_length=20, blank=True,null=True, default=0)
+    idle_time = models.CharField(db_column='IDLE_TIME',max_length=20, blank=True,null=True, default=0)
     in_date = models.CharField(db_column='IN_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
     out_date = models.CharField(db_column='OUT_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
     shift_typename= models.CharField(db_column='SHIFT_TYPENAME',max_length=20, blank=True, null=True)
-    req_no = models.CharField(db_column='REQ_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
-
+    reasons_for_idle_time= models.CharField(db_column='REASONS_FOR_IDLE_TIME',max_length=70, blank=True, null=True)
+    time_hrs= models.CharField(db_column='TIME_HRS',max_length=10, blank=True, null=True)  
+    flag = models.CharField(db_column='FLAG', max_length=1, blank=True,null=True, default='A') # Field name made lowercase.
     class Meta:
-        db_table = 'M18DOC'  
+        db_table = 'M12DOC1'
 
+    
 class M24(models.Model):
     sno=models.AutoField(db_column='SL.No',primary_key=True)
     fr_date=models.CharField(db_column='FR_DATE',max_length=20,null=True)
@@ -4577,24 +4623,23 @@ class M24(models.Model):
     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
 
 
-
 class M2HW(models.Model):
-    #prtDate=models.DateField(db_column='PRINTDATE',max_length=20)
+    prtDate=models.DateField(db_column='PRINTDATE',max_length=20)
     workOrdNo=models.CharField(db_column='WONO',max_length=50,null=True)
     brnNo=models.CharField(db_column='BRNNO',max_length=50,null=True)
     orderQuantity=models.CharField(db_column='ORDERQUANTITY',max_length=50,null=True)
     asmlyPartNo=models.CharField(db_column='ASMLYPARTNO',max_length=50,null=True)
-    asmlyDesc=models.CharField(db_column='ASMLYDESC',max_length=100,null=True)
+    asmlyDesc=models.CharField(db_column='ASMLYDESC',max_length=200,null=True)
     shopSection=models.CharField(db_column='SHOPSECTION',max_length=50,null=True)
     partNum=models.CharField(db_column='PARTNUM',max_length=50,null=True)
-    partDescription=models.CharField(db_column='PARTDESCRIPTION',max_length=100,null=True)
+    partDescription=models.CharField(db_column='PARTDESCRIPTION',max_length=200,null=True)
     drawingNum=models.CharField(db_column='DRAWINGNUMBER',max_length=50,null=True) 
     documentNum=models.CharField(db_column='DOCUMENTNUMBER',max_length=50,null=True)
     orderType=models.CharField(db_column='ORDERTYPE',max_length=50,null=True)
     operationNum=models.CharField(db_column='OPERATIONNUM',max_length=50,null=True)
     shopSecTemp = models.CharField(db_column='SHOPSECTEMP', max_length=50, blank=True, null=True)  
     loadCenter = models.CharField(db_column='LOADCENTER', max_length=50, blank=True, null=True)
-    operationDescription=models.CharField(db_column='OPERATIONDESCRIPTION',max_length=100,null=True)
+    operationDescription=models.CharField(db_column='OPERATIONDESCRIPTION',max_length=200,null=True)
     paTemp=models.CharField(db_column='PATEMP',max_length=50,null=True)
     taTemp=models.CharField(db_column='TATEMP',max_length=50,null=True)
     noTemp=models.CharField(db_column='NOTEMP',max_length=50,null=True)
@@ -4603,20 +4648,21 @@ class M2HW(models.Model):
     wrrej=models.CharField(db_column='WRREJ',max_length=50,null=True)
     matrej=models.CharField(db_column='MATREJ',max_length=50,null=True)
     number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
+    causesofHW=models.CharField(db_column='CAUSESOFHW',max_length=50,null=True)
     
-
 
 class M4HW(models.Model):
     prtdt=models.DateField(db_column='PRINTDATE',max_length=20)
+    doc_no=models.CharField(db_column='DOCNO',max_length=100,null=True)
+    part_no=models.CharField(db_column='PARTNO',max_length=50,null=True)
     wo_no=models.CharField(db_column='WONO',max_length=50,null=True)
     brn_no=models.CharField(db_column='BRNNO',max_length=50,null=True)
     qty=models.CharField(db_column='ORDERQUANTITY',max_length=50,null=True)
-    assembly_no=models.CharField(db_column='ASMLYNO',max_length=50,null=True)
+    end_prod=models.CharField(db_column='ENDPRODUCT',max_length=50,null=True)
     epdes=models.CharField(db_column='EPDESC',max_length=100,null=True)
-    shop_section_temp=models.CharField(db_column='SHOPSECTION',max_length=50,null=True)
-    partdes=models.CharField(db_column='PARTDES',max_length=50,null=True)
-    drgnodoc_no=models.CharField(db_column='DRAWINGNO',max_length=100,null=True)
-    drawingNum=models.CharField(db_column='DRAWINGNUMBER',max_length=50,null=True) 
+    shop_section_temp=models.CharField(db_column='SHOPSECTION',max_length=50,null=True)		
+    partdes=models.CharField(db_column='PARTDES',max_length=50,null=True)	
+    drgno=models.CharField(db_column='DRAWINGNO',max_length=100,null=True)
     batch_type=models.CharField(db_column='BATCHTYPE',max_length=50,null=True)
     received_mat=models.CharField(db_column='RECEVMAT',max_length=50,null=True)
     issued_qty=models.CharField(db_column='ISSUEDQTY',max_length=50,null=True)
@@ -4629,3 +4675,7 @@ class M4HW(models.Model):
     wardkp_date=models.CharField(db_column='HARDKEEPARDATE',max_length=50,null=True) 
     shopsup_date=models.CharField(db_column='SHOPSUPDATE',max_length=50,null=True)
     posted1_date=models.CharField(db_column='SUPPOSTEDDATE',max_length=50,null=True)
+    number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
+    causesofHW=models.CharField(db_column='CAUSESOFHW',max_length=50,null=True)
+
+

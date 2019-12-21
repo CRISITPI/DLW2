@@ -154,7 +154,7 @@
               </h5>
 
        <h5><b>AMOUNT: </b>
-         {{amt1}}  
+         {{amt1|floatformat:2}}  
          <input type="hidden" name="amt" value="{{amt1}}">
   
       </h5>
@@ -170,29 +170,40 @@
  
 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
-        <div class="container" style="width: 100%">
-        <table border="4" align="centre">
+        <!-- <div class="container" style="width: 140%"> -->
+        <table border="4"  style="width:100%">
             <tr >
-               <th>Date:</th>
-               <th>Month</th>
-               <th>In</th>
-               <th>Out</th>
-               <th>Category</th>
-               <th>Reasons for idle time</th>
-               <th>Total Time</th>
-               <th>Idle Time</th>
+               <th>STAFF NO:</th>
+               <th width="200">STAFF NAME</th> 
+               <th>MONTH</th>
+               <th width="200">SHIFT TYPE</th>             
+               <th width="175">IN DATE</th>
+               <th width="90">IN TIME</th>
+               <th width="175">OUT DATE</th>
+               <th >OUT TIME</th>
+               <th>CATEGORY</th>
+               <th >REASONS FOR IDLE TIME</th>
+               <th>TOTAL TIME</th>
+               <th>IDLE TIME</th>
                             
              <input type="hidden" id="cmonth" value="{{month}}"/>
            </tr>
             {% for i in obj1 %}
             <tr>
             <td>
-              {% if i.date %}
-                <input type="date" id="date"  class="myinp2" value="{{i.date}}" name="date{{ forloop.counter }}"  readonly>
+              {% if i.staff_no %}
+                <input type="text" id="staff_no"  class="myinp2" value="{{i.staff_no}}" name="staff_no{{ forloop.counter }}"  readonly>
                 {% else %}
-                <input type="date" id="date"  class="myinp2" value="0" name="date{{ forloop.counter }}" readonly>
+                <input type="TEXT" id="staff_no"  class="myinp2" value="0" name="staff_no{{ forloop.counter }}" readonly>
               {% endif %}  
             </td>
+            <td>
+                {% if i.name %}
+                  <input type="text" id="name"  class="myinp2" value="{{i.name}}" name="name{{ forloop.counter }}"  readonly>
+                  {% else %}
+                  <input type="text" id="name"  class="myinp2"  name="name{{ forloop.counter }}" readonly>
+                {% endif %}  
+              </td>
             <td>
 
               {% if i.month %}
@@ -200,6 +211,22 @@
                 {% else %}
                 <input type="text" id="month" value="{{month}}" name="month{{ forloop.counter }}"  pattern="[A-Z]*"  title="Character Value" required placeholder="Enter month" readonly>
                 {% endif %}  
+            </td>
+            <td>
+                {% if i.shift_typename %}
+                <input type="text" id="shift_typename{{ forloop.counter }}"  class="myinps1" value="{{i.shift_typename}}" name="in_date{{ forloop.counter }}"    readonly>
+                {% else %}
+                <input type="text" id="shift_typename{{ forloop.counter }}"  class="myinps1" value="0" name="shift_typename{ forloop.counter }}"   readonly>
+                
+              {% endif %}
+            </td>
+            <td>
+                {% if i.in_date %}
+                  <input type="date" id="in_date{{ forloop.counter }}"  class="myinps1" value="{{i.in_date}}" name="in_date{{ forloop.counter }}"    readonly>
+                  {% else %}
+                  <input type="date" id="in_date{{ forloop.counter }}"  class="myinps1" value="0" name="in_date{{ forloop.counter }}"  onchange="tottime('in1{{ forloop.counter }}');"  placeholder="Enter IN time" readonly>
+                  
+                {% endif %}
             </td>
             <td>
               {% if i.in1 %}
@@ -210,6 +237,16 @@
               {% endif %}  
               
               </td> 
+              <td>
+                  {% if i.out_date %}
+                     <input type="date" id="out_date{{ forloop.counter }}"  class="myinps1" value="{{i.out_date}}" name="out{{ forloop.counter }}"    readonly  >
+                     {% else %}
+                     
+                     <input type="date" id="out_date{{ forloop.counter }}"  class="myinps1" name="out_date{{ forloop.counter }}"     placeholder="Enter OUT time" readonly>
+           
+                   {% endif %}    
+             
+                  </td> 
               <td>
                {% if i.out %}
                   <input type="time" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}"   onchange="tottime('out{{ forloop.counter }}');" readonly  >
@@ -226,26 +263,12 @@
                   
                 </td>
                <td>
-
+                  {% if i.reasons_for_idle_time %}
+                  <input type="text" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}" readonly>
+                  {% else %}
+                  <input type="text" id="reasons_for_idle_time{{forloop.counter}}" value="0" readonly>
+                  {% endif %}  
                 
-                      <select name="reasons_for_idle_time{{ forloop.counter }}" id="reasons_for_idle_time_noid{{forloop.counter}}" readonly>
-                          <option value="select">SELECT REASON</option>
-                          <option value="machine_repair">MACHINE REPAIR</option>
-                          <option value="no_power">NO POWER</option>
-                          <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>
-                          <option value="lack_of_tools">LACK OF TOOLS</option>
-                          <option value="waiting_for_work">WAITING FOR WORK</option>
-                          <option value="failure_of_crane">FAILURE OF CRANE</option>
-                          <option value="waiting_for_crane">WAITING FOR CRANE</option>
-                          <option value="operator_absent">OPERATOR ABSENT</option>
-                          <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>
-                          <option value="lack_of_gas">LACK OF GAS OXY</option>
-                          <option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>
-                          <option value="lack_of_electrodes">LACK OF ELECTRODES</option>
-                          <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
-                          <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
-                      </select>
-                      <input type="hidden" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}" readonly>
                  
                 <!-- {% if i.reasons_for_idle_time %}
                 <input type="text" id="reasons_for_idle_time{{ forloop.counter }}"   value="{{i.reasons_for_idle_time}}"  name="reasons_for_idle_time{{ forloop.counter }}"   >
@@ -272,6 +295,7 @@
 </tr>
             {% endfor %}
         </table>
+       
         <div id="inouttab">
 
        </div>
@@ -281,8 +305,11 @@
 </div>
 </div>
 <center>
-    <input type="submit" name="proceed" value="submit">
-    <input type="button" onclick="printDiv()" value="print">
+    <input type="submit" name="proceed" value="submit" style="height:50px; width:100px">
+    <input type="button" onclick="printDiv()" value="print" style="height:50px; width:100px">
+   
+    <input  type="button" id="add" value="Add Operations" style="height:50px; width:100px"/>
+
 </center>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -294,7 +321,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<input  type="button" id="add" value="Add Operations" style="width: 150px;"/>
 
 <input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
        
@@ -370,12 +396,25 @@ $(document).ready(function(){
         j++;
         console.log(j);
         assign();
+       var staff_no2="staff_noadd"+String(j);
+       var exam_type="staff_nameadd"+String(j);
+       var out_date="out_dateadd"+String(j);
+       var in_date="in_dateadd"+String(j);
+
+       var shift="shiftadd"+String(j);
+      //  var outid="'"+out+"'";
+      //  var in1id="'"+out+"'";
+       var cat="catadd"+String(j);
+      //  var ticket_no="ticket_noadd"+String(j);
+      //  var month_hrs="month_hrsadd"+String(j)
+      //  var total_time_taken="total_time_takenadd"+String(j);
+       
  
-       var date="dateadd"+String(j)
+      //  var date="dateadd"+String(j)
        var month="month_add"+String(j)
        var in1="in1add"+String(j);
        var out="outadd"+String(j);
-       var cat="catadd"+String(j);
+      //  var cat="catadd"+String(j);
        var outid="'"+out+"'";
        var in1id="'"+out+"'";
      
@@ -389,20 +428,19 @@ $(document).ready(function(){
        
       
        var sno=j;
-        if(j==1)
-        {
+       
 
 
-            var happ='<div class="table-responsive"><table id="customers" border="2" align="center">'+'<tr ><th  style="width:12%">Date</th>'+'<tr ><th  style="width:12%">Month</th>'+'<tr ><th  style="width:12%">In</th>'+
+            var happ='<div class="table-responsive"><table id="customers" border="2" >'+'<tr ><th  style="width:12%">Date</th>'+'<tr ><th  style="width:12%">Month</th>'+'<tr ><th  style="width:12%">In</th>'+
 '<th style="width:12%">OUT</th>'+'<th  style="width:12%">Category</th>'+'<th  style="width:12%">Reasons</th>'+'<th  style="width:12%">Total Time.</th>'+'<th  style="width:12%">Idle Time</th></tr>';
 
      happ=happ+'</tr></table></div>';
         // $('#items').append(happ);
+        // $('#inouttab').append(happ);
 
-        }
-var htAppend='<div><table id="customers" border="2" align="center"><tr>'+'<td ><input type="date" id='+date+' name='+date+'  required/></td >'+'<td ><input type="text" id='+month+' name='+month+' pattern="[A-Z]*" title="Upper case alphabets only" required onblur="check(this)"/></td >'+'<td ><input type="time" id='+in1+' name='+in1+' onchange="tottime('+in1id+')" required /></td >'+'<td  height="50"><input type="time" id='+out+' name='+out+'  onchange="tottime('+outid+')" /></td>'+
-'<td  height="50"><input type="text" id='+cat+' name='+cat+'  required/></td>'+' <td  height="50"><select name='+reasons_for_idle_time+' id='+reasons_for_idle_time+' required> <option value="select">SELECT REASON</option><option value="machine_repair">MACHINE REPAIR</option> <option value="no_power">NO POWER</option> <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option><option value="lack_of_tools">LACK OF TOOLS</option><option value="waiting_for_work">WAITING FOR WORK</option> <option value="failure_of_crane">FAILURE OF CRANE</option> <option value="waiting_for_crane">WAITING FOR CRANE</option><option value="operator_absent">OPERATOR ABSENT</option> <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option> <option value="lack_of_gas">LACK OF GAS OXY</option><option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option><option value="lack_of_electrodes">LACK OF ELECTRODES</option><option value="waiting_for_lifter">WAITING FOR F./LIFTER</option><option value="drop_in_pressure">DROP IN Pn. PRESSURE</option></select><input type="hidden" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}"></td>'+
-'<td  height="50"><input type="text" id='+total_time+' name='+total_time+' required readonly></td>'+'<td  height="50"><input type="text" id='+idle_time+' name='+idle_time+' required></td>';
+        
+var htAppend='<div><table id="customers" border="4" style="width:100%"><tr>'+'<td  ><select class="form-control" type=text id='+staff_no2+' name='+staff_no2+' required  onchange="find2(this)" ><option id="op_forman" selected disabled hidden>Select Staff_no</option>{% for i in prtstaff %}<option value="{{i}}">{{i}}</option>{% endfor %} </select></td >'+'<td ><input type="text" id="'+exam_type+'" name="'+exam_type+'" value="{{exam_type}}" readonly placeholder="Staff Name"></td>'+'<td width="115" ><input type="text" id='+month+' name='+month+'  value="{{month}}" pattern="[A-Z]*" title="Upper case alphabets only" placeholder="MONTH" required onblur="check(this)" readonly/></td >'+'<td> <select class="form-control" id='+shift+' name='+shift+' onchange="myFunction(this)" required><option value="select">SELECT SHIFT TYPE</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="GD">GD</option><option value="GN">GN</option></td>'+'<td width="5" ><input type="date" id='+in_date+' name='+in_date+'  required  /> <input type="text" name="cyear"  id="cyear" value="{{cyear}}" hidden></td >'+'<td   ><input type="time" id='+in1+' name='+in1+'  min="06:27" max="06:45" onchange="tottime('+in1id+')"  required></td >'+'<td ><input type="date" id='+out_date+' name='+out_date+' required /></td >'+'<td ><input type="time" id='+out+' name='+out+'   min="14:30" max="14:45"  onchange="tottime('+outid+')"  required/></td>'+'<td ><input type="text" id='+cat+' name='+cat+' placeholder="Category" required/></td>'+' <td  ><select name='+reasons_for_idle_time+' id='+reasons_for_idle_time+' required> <option value="select">SELECT REASON</option><option value="machine_repair">MACHINE REPAIR</option> <option value="no_power">NO POWER</option> <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option><option value="lack_of_tools">LACK OF TOOLS</option><option value="waiting_for_work">WAITING FOR WORK</option> <option value="failure_of_crane">FAILURE OF CRANE</option> <option value="waiting_for_crane">WAITING FOR CRANE</option><option value="operator_absent">OPERATOR ABSENT</option> <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option> <option value="lack_of_gas">LACK OF GAS OXY</option><option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option><option value="lack_of_electrodes">LACK OF ELECTRODES</option><option value="waiting_for_lifter">WAITING FOR F./LIFTER</option><option value="drop_in_pressure">DROP IN Pn. PRESSURE</option></select><input type="hidden" id="reasons_for_idle_time{{forloop.counter}}" value="{{i.reasons_for_idle_time}}"></td>'+
+'<td  ><input type="text" id='+total_time+' name='+total_time+' placeholder="Total Time" required readonly></td>'+'<td  ><input type="text" id='+idle_time+' name='+idle_time+' placeholder="Idle Time" required></td>';
 
         htAppend=htAppend+'</tr></table></div>';
 
@@ -552,6 +590,7 @@ $( document ).ready(function() {
 
 
 
+  
   document.querySelector("#shop_sec").addEventListener('change',(e)=>{
     //console.log("hi");
                     e.preventDefault();
@@ -567,14 +606,13 @@ $( document ).ready(function() {
                               if(elementsadded.length>0){
                                   var elementsaddedarr = Array.from(elementsadded);
                                   elementsaddedarr.forEach((el)=> el.remove());
-                                  document.querySelector("#op_wo").selected=true;
-                                  document.querySelector("#op_staff").selected = true; 
-                               }
+ 
+                              }
                               var brarr,mystr,html;
-                              brarr = response.map((el)=>el.bo_no);
+                              brarr = response.map((el)=>el.batch_no);
                               mystr = "";
                               brarr.forEach((el,index)=>{
-                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                html = `<option class="newelestaff">${brarr[index]}</option>`
                                 mystr = html.concat(mystr);
                               });
                               html = "";
@@ -582,9 +620,8 @@ $( document ).ready(function() {
                               mystr=""; 
                         }
                           })
-                })
-
-  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                })  
+                document.querySelector("#shop_sec").addEventListener('change',(e)=>{
     //console.log("hi");
                     e.preventDefault();
                     var shop_sec = $("#shop_sec").val()
@@ -649,6 +686,117 @@ function printDiv() {
         win.close();
 
 }
+function find2(th){
+
+
+var id = th.id;
+no=id.split("staff_noadd")
+// no1=id.split("ticket_noadd")
+
+var exam_type="staff_nameadd"+no[1];
+// var ticket_no="staff_nameadd"+no1[1];
+var two=document.getElementById(id).value;
+console.log(id+" "+two+" "+exam_type);
+
+var data = {two};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm12getempname' %}",
+                    
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                          console.log(response);
+                          // var w=document.getElementById('exam_type')
+                          // console.log("w",w)
+                       document.getElementById(exam_type).value= response.exam.exam_type;
+                       console.log(document.getElementById(exam_type).value)
+
+                     
+                       
+                      }
+                        })
+}
+
+function myFunction(th) {
+  var id = th.id;
+  var x = document.getElementById(id).value;
+  // alert("x : "+x)
+  console.log("x",id);
+  k=id.split("shiftadd");
+  console.log("kkk",k)
+  if ( document.getElementById(id).value=="A") {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("in1add"+k[1]).value = "07:27";
+       document.getElementById("in1add"+k[1]).min = "06:27";
+       document.getElementById("in1add"+k[1]).max = "06:45";
+
+
+       document.getElementById("outadd"+k[1]).min = "14:30";
+       document.getElementById("outadd"+k[1]).max = "14:45";
+
+
+    }
+    if(document.getElementById(id).value=="B")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "14:27";
+       document.getElementById("in1add"+k[1]).max = "14:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "22:30";
+       document.getElementById("outadd"+k[1]).max = "22:45";
+
+
+    }
+    if(document.getElementById(id).value=="C")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "22:27";
+       document.getElementById("in1add"+k[1]).max = "22:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "06:30";
+       document.getElementById("outadd"+k[1]).max = "06:45";
+
+
+    }
+    if(document.getElementById(id).value=="GD")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "06:27";
+       document.getElementById("in1add"+k[1]).max = "06:45";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "16:00";
+       document.getElementById("outadd"+k[1]).max = "16:30";
+
+
+    }
+    if(document.getElementById(id).value=="GN")  {
+       console.log(document.getElementById(id).value) ;
+      //  alert("x1 : "+document.getElementById(id).value)
+      //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+       document.getElementById("in1add"+k[1]).min = "15:57";
+       document.getElementById("in1add"+k[1]).max = "16:15";
+      //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+       document.getElementById("outadd"+k[1]).min = "01:30";
+       document.getElementById("outadd"+k[1]).max = "01:45";
+
+
+    }
+}
+
+                        
 
     
  

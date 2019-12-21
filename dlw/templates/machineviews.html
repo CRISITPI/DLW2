@@ -1,0 +1,357 @@
+{% extends 'base.html' %} 
+{% block content %}
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+        input[type=text],
+        select {
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: block;
+                border: 1.5px solid rgb(14, 12, 12);
+                border-radius: 4px;
+                box-sizing: border-box;
+        }
+
+        input[type=submit] {
+                width: 20%;
+                text-align: center;
+                background-color: #4CAF50;
+                color: rgb(15, 12, 12);
+                padding: 14px 20px;
+                margin: 8px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+                background-color: #45a049;
+                text-align: center;
+        }
+
+        input[type=button] {
+                width: 10%;
+                text-align: center;
+                background-color: #4CAF50;
+                color: white;
+                padding: 6px 6px;
+                margin: 8px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+        }
+
+        input[type=button]:hover {
+                background-color: #45a049;
+                text-align: center;
+        }
+</style>
+<!-- <h4 style="float: left"><b>D.L.W./VARANASI</b></h4> -->
+<h4 align="left"><b>D.L.W./VARANASI</b></h4>
+<!-- <h4 style="float: right"><b>MG-9</b></h4> -->
+<h4 style="float: left"><b>ISO-9002</b></h4>
+
+<!-- <h4 style="float: right"><b>MG-9</b></h4> -->
+
+
+<!-- <h3 align="center" style="margin-right: 120px"><u><b>COMPLETION </b></u></h3> -->
+<!-- <h3 align="center" style="margin-right: 30px" ><u><b>REPORT</b></u></h3> -->
+
+<h3 align="center" style="margin-right: 100px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u><b>MACHINE BREAKDOWN REPORT</b></u></h3>
+
+<br><br>
+<form action="{% url 'machineviews' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+                        <table align="left" class="table" style="width: 120%;">
+                                        <tr>
+                                         <td>
+                                             <label for="sno"><b>Shop Section NO:</b></label>
+                                             <select class="form-control" id="shop_sec" name="shop_sec" required>
+                                     <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                                     {% if lenm == 1 %}
+                                         <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                                     {% endif %}
+                                     {% if lenm > 1 %}
+                                     {% for role in roles %}
+                                       <option>{{role}}</option>
+                                     {% endfor %}
+                                     {% endif %}
+                                 </select>
+                                         </td>
+                                         <td>
+                                             <label for="mw_no"><b>MW No:</b></label>
+                                             <select class="form-control" id="mwno" name="mwno" required>
+                                 <option id="op_mw" selected disabled hidden>Select MW No</option>
+                                 {% if lenm == 1 %}
+                                 {% for i in wono %}
+                                   <option>{{i.lcno}}</option>
+                                 {% endfor %}
+                                 {% endif %}
+                             </select>
+                                         </td>
+                                         <td>
+                                    <label for="cause"><b>CAUSE:</b></label>
+                                    <select class="form-control" id="cause" name="cause" required>
+                                                    <option value="select">SELECT CAUSE</option>
+                                                    <option value="ELEC">ELEC</option>
+                                                    <option value="MECH">MECH</option>
+                                                    <option value="MECH&ELE">MECH&ELE</option>
+                                                    <option value="MP">MP</option>
+                                                    <option value="MISMP">MISMP</option>
+                                                    <option value="INV">INV</option>
+                                                    <option value="ELEC&MP">ELEC & MP</option>
+                                                    <option value="MECH&INV">MECH & INV</option>
+                                                    <option value="EL&ME">ELEC & MECH & MISMP</option>
+                                                   
+                                                </select>
+                                            </td>
+                                            <!-- <td style="width: 270px;">
+                                                        <label for="fr_date" ><b>FROM DATE</b></label>
+    
+                                                        <input  class="form-control" type ="date" id="datePickerId" name="date_fr" required>
+                                                </td> 
+                                                <td style="width: 270px;">
+                                                                <label for="fr_date" ><b>TO DATE</b></label>
+            
+                                                                <input  class="form-control" type ="date" id="date_to" name="date_to" required>
+                                                        </td>                        -->
+                                                              
+                                            
+                                            <td style="width: 270px;">
+                                                    <label for="lost_hrs" ><b>LOST HOURS</b></label>
+
+                                                    <input  class="form-control" type ="number" id="lost_hrs" name="losthrs" required>
+                                            </td>                       
+                                                          
+                                        
+                                            
+                                         </tr>
+                                    
+                             </table>
+                               
+                             <center><input type="submit" value="Proceed" id="myproceed" name="proceed"  hidden/></center>
+                         </div>
+                         <input type="hidden" name="sub" id="sub" value={{sub}} >
+                         <br><br> {% if sub == 1 %}
+                         <div id="print" style="align:center" >
+                         <input type="hidden" name="len1" value="{{len1}}">
+                         <!-- <input type="hidden" name="len2" id="len2" value="{{len2}}"> -->
+                             
+                             
+
+                        
+    <table border="4" style="width: 100%;">
+            
+                    <tr height="50" >
+                     <th>SHOP SECTION</th>
+                     <th>SHOP DES</th>
+                     <th>MW NUMBER</th>
+                     <th>MW NUMBER DES</th>
+                     <th>COMPLAIN Sr No</th>
+                     <th>COMPLAINT</th>
+                     <th>CAUSE</th>
+                     <th>REGISTRATION DATE</th>
+                     <th>REGISTRATION TIME</th>
+                     <th>COMPLETED DATE</th>
+                     <th>COMPLETED TIME</th>
+                     <th>ACTION BY</th>
+                     <th>LOST HOURS</th>
+                    </tr>
+                    {% for i in obj1 %}
+                   
+                   
+                    
+                    <tr>
+                            <td>
+                                  {{shop_sec}}  
+                            </td>
+
+                            <td>
+                                  {{obj.sh_desc}} 
+                            </td>
+                            <td>
+                                    {{mw_no}}
+                            </td>
+                            <td>
+                                    {{obj2.des}}
+                            </td>
+                            <td>
+                                    {{i.sl_no}}
+                            </td>
+                            <td>
+                                    {{i.complaint}}
+                            </td>
+                            <td>
+                                    {{cause}}
+                            </td>
+                            <td>
+                                    {{i.handed_date}}
+                            </td>
+                            <td>
+                                    {{i.handed_time}}
+                            </td>
+                            <td>
+                                   {{i.comp_date}}
+                                  
+                            </td>
+                            <td>
+                                   
+                                    {{i.comp_time}}
+                                   
+                            </td>
+                            <td>
+                                    {{i.action}}
+
+                            </td>
+                            <td>
+                                    {{i.total_losthrs}}
+                            </td>
+                    </tr>
+                        {% endfor %}
+                       
+
+             
+                           
+   
+    
+    </table>  <br><br>
+        {% endif %}     
+        </div>
+    
+        <br><br>
+  
+
+       
+           
+ <script>
+                        document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+             //console.log("hi");
+                             e.preventDefault();
+                             var shop_sec = $("#shop_sec").val()
+                             var data = {shop_sec};
+                               $.ajax({
+                                 type : 'GET',
+                                 url : "{% url 'mg9getmwno' %}",
+                                 dataType : 'json',
+                                 data : data,
+                                 success : function(response){
+                                   var elementsadded = document.querySelectorAll(".newelemwno");
+                                       if(elementsadded.length>0){
+                                           var elementsaddedarr = Array.from(elementsadded);
+                                           elementsaddedarr.forEach((el)=> el.remove());
+                                           document.querySelector("#op_mwno").selected=true;
+                                            
+                                        }
+                                       var brarr,mystr,html;
+                                       brarr = response.map((el)=>el.lcno);
+                                       mystr = "";
+                                       brarr.forEach((el,index)=>{
+                                         html = `<option class="newelemwno">${brarr[index]}</option>`
+                                         mystr = html.concat(mystr);
+                                       });
+                                       html = "";
+                                       document.querySelector("#mwno").insertAdjacentHTML('beforeend',mystr);
+                                       mystr=""; 
+                                 }
+                                   })
+                         })
+            //              $("#mwno").change(function(e){
+            //   e.preventDefault();
+            //   var mwno = $(this).val();
+            // //   var shop_sec = $("#shop_sec").val();
+            //   var data = {mwno};
+            //     $.ajax({
+            //       type : 'GET',
+            //       url : "{% url 'machinegetcause' %}",
+            //       dataType : 'json',
+            //       data : data,
+            //       success : function(response){
+            //             var elementsadded = document.querySelectorAll(".newelecause");
+            //             if(elementsadded.length>0){
+            //               var elementsaddedarr = Array.from(elementsadded);
+            //             elementsaddedarr.forEach((el)=> el.remove());
+            //             document.querySelector("#op_staff").selected = true;
+                       
+            //             }
+            //             var brarr,mystr,html;
+            //             brarr = response.map((el)=>el.cause_hrs);
+            //             mystr = "";
+            //             brarr.forEach((el,index)=>{
+            //               html = `<option class="newelecdno">${brarr[index]}</option>`
+            //               mystr = html.concat(mystr);
+            //             });
+            //             html = "";
+            //             document.querySelector("#cause").insertAdjacentHTML('beforeend',mystr);
+            //             mystr="";
+            //       }
+            //          })
+            //          }) 
+                
+             
+// datePickerId.max = new Date().toISOString().split("T")[0];
+// console.log("aaaa",datePickerId.max)          
+
+ 
+              
+        
+        
+                         document.querySelector("#lost_hrs").addEventListener('change',(e)=>{
+
+                        
+                          
+        document.querySelector("#myproceed").click();
+     
+
+
+        })
+        document.addEventListener('keypress',(event)=>{
+        if(event.keyCode===13){
+            event.preventDefault();
+        }
+        })
+
+
+     
+                        </script> 
+          
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           
+               
+
+{% endblock %}            
+           
