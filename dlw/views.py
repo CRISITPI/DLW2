@@ -17531,6 +17531,204 @@ def m24report(request):
                 'sub': 1, 
                       
             }
+<<<<<<< HEAD
+    return render(request,"m24report.html",context)
+
+    
+@login_required
+@role_required(urlpass='/mg5view/')
+def mg5view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    idcard_no = empmast.objects.none()
+    obj=empmast.objects.all().values('idcard_no').distinct()
+    objj=empmast.objects.filter(idcard_no=idcard_no).values('ticket_no').distinct()
+    if "Superuser" in rolelist:
+        # tm=shop_section.objects.all()
+        # tmp=[]
+        # for on in tm:
+        #     tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            # 'roles':tmp,
+            'obj':obj,
+            # 'objj':objj
+        }
+    elif(len(rolelist)==1):
+        for i in range(0, len(rolelist)):
+            req = empmast.objects.all().filter(idcard_no=rolelist[i]).distinct()
+            idcard_no =idcard_no | req
+
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'idcard_no':idcard_no,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            rolelist=usermaster.role.split(", ")
+            wo_nop = empmast.objects.none()
+            ti_no = request.POST.get('t_no')
+            print("ti_no : ",ti_no)
+            id_no = request.POST.get('id_no')
+            instrument_number= request.POST.get('t_id')
+            print(id_no)
+            from datetime import date
+            today = date.today()
+            obj = empmast.objects.filter( idcard_no=id_no,ticket_no=ti_no).values('empname','emptype','shopno','empno').distinct()
+            obj1 = MG5.objects.filter(id_no=id_no,t_no=ti_no).values('optr','chkr').distinct()
+            obj2 = ms_tools_master.objects.values('instrument_number','make').distinct()
+            obj3=ms_tools_master.objects.filter(instrument_number=instrument_number).values('make').distinct()
+        
+            print(obj1)
+            if len(obj1)== 0:
+                obj1=range(0, 1)
+            if "Superuser" in rolelist:
+                  tm=shop_section.objects.all()
+                  tmp=[]
+                  for on in tm:
+                      tmp.append(on.section_code)
+                  context = {
+                        'roles':tmp,
+                        'lenm' :2,
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'obj2': obj2,
+                        'obj3': obj3,
+                        'sub': 1,
+                        'date':today,
+                        'ticket_no': ti_no,
+                        'id_no': id_no,
+                        'subnav':subnav,
+                  }
+            elif(len(rolelist)==1):
+                  for i in range(0, len(rolelist)):
+                      req = empmast.objects.all().filter(idcard_no=rolelist[i]).distinct()
+                      idcard_no =idcard_no | req
+                      
+                  context = {
+                        'roles' :rolelist,
+                        'usermaster':usermaster,
+                        'lenm' :len(rolelist),
+                        'nav': nav,
+                        'ip': get_client_ip(request),
+                        'obj': obj,
+                        'obj1': obj1,
+                        'obj3': obj3,
+                        'sub': 1,
+                        'idcard_no': idcard_no,
+                        'subnav':subnav,
+                        'date':today, 
+                        'ticket_no': ti_no,
+                        'obj2': obj2,
+                  }
+            elif(len(rolelist)>1):
+                  context = {
+                        'lenm' :len(rolelist),
+                        'nav':nav,
+                        'ip':get_client_ip(request),
+                        'usermaster':usermaster,
+                        'roles' :rolelist,
+                        'obj': obj,
+                        'obj1': obj1,
+                        'obj2': obj2,
+                        'obj3': obj3,
+                        'sub': 1,
+                        'ticket_no': ti_no,
+                        'id_no': id_no,
+                        'subnav':subnav,
+                        'date':today, 
+
+                  }
+        # print(obj3)
+        if submitvalue=='Save':
+                shopno= request.POST.get('shop_no')
+                empno = request.POST.get('staff_no')
+                emp_name= request.POST.get('name')
+                super_in = request.POST.get('emptype')
+                print("super_in 123 : ",super_in)
+                id_no=request.POST.get('id_no')
+                ticket_no=request.POST.get('t_no')
+                print("ticket_no 123 : ",ticket_no)
+                t_id=request.POST.get('t_id')
+                date=request.POST.get('date')
+                t_desc=request.POST.get('make1')
+                optr=request.POST.get('optr')
+                chkr=request.POST.get('chkr')
+                # to_no=request.POST.get('to_no')
+
+                from datetime import datetime
+                now = datetime.now()
+                dt_string = now.strftime("%H:%M:%S")
+                # print(to_no)
+                # obj3 = MG5.objects.filter( id_no=id_no).distinct()
+                # print(len(obj2))
+                # if len(obj3) == 0:
+                MG5.objects.create(id_no=str(id_no),t_id=str(t_id),t_desc=str(t_desc), t_no=str(ticket_no), shop_sec=str(shopno), staff_no=str(empno), name=str(emp_name), super_in=str(super_in), date=str(date), optr=str(optr), chkr=str(chkr), last_modified=str(dt_string) )
+                # else:
+                #     MG21.objects.filter(shop_sec=shop_sec, staff_no=staff_no).update(to_the=str(to_the),last_modified=str(dt_string))
+                # wo_no=empmast.objects.all().values('idcard_no').distinct()
+                messages.success(request, 'Successfully Done!, Select new values to proceed')
+
+        if submitvalue=='Generate report':
+            return mg5report(request)
+            
+    return render(request, "mg5view.html", context)
+
+
+def mg5getticket(request):
+    if request.method == "GET" and request.is_ajax():
+
+        idcard_no = request.GET.get('id_no')
+
+        ticket = empmast.objects.filter(idcard_no=idcard_no).values('ticket_no').exclude(ticket_no__isnull=True).distinct()
+        ticket_no = list(ticket)
+        return JsonResponse(ticket_no, safe=False)
+    return JsonResponse({"success": False}, status=400)
+
+def mg5gettooldesc(request):
+    if request.method == "GET" and request.is_ajax():
+
+        make = request.GET.get('make')
+
+        tool_desc = list(ms_tools_master.objects.filter(instrument_number=make).values('make'))
+        print('TOOL MAKe ---->',tool_desc)
+        return JsonResponse(tool_desc, safe=False)
+    return JsonResponse({"success": False}, status=400)
+
+
+
+=======
+>>>>>>> 2ecb5d2bd6eaf9786e546c2b859faa0e90e18f84
     
     return render(request,"m24report.html",context)
 
@@ -17921,6 +18119,7 @@ def machinegetcause(request):
         print("wono",wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)  
+
 @login_required
 @role_required(urlpass='/m4hwview/')
 def m4hwview(request):
@@ -18400,7 +18599,10 @@ def mg5report(request):
                 print('date---->',date)
                 print('t_desc---->',t_desc)
                 print('optr---->',optr)
-    
+               
+
+
+
                 from datetime import datetime
                 now = datetime.now()
                 dt_string = now.strftime("%H:%M:%S")
@@ -18415,18 +18617,8 @@ def mg5report(request):
                 # wo_no=empmast.objects.all().values('idcard_no').distinct()
                 messages.success(request, 'Successfully Done!, Select new values to proceed')
 
-        
+        if submitvalue=='Generate report':
+            return mg5report(request)
             
     return render(request, "mg5report.html", context)
-
-
-
-
-
-
-
-
-
-
-
 

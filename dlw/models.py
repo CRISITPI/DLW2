@@ -4605,8 +4605,12 @@ class M12DOC1(models.Model):
         db_table = 'M12DOC1'
     # req_no = models.CharField(db_column='REQ_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
 
+<<<<<<< HEAD
+    
+=======
     # class Meta:
     #     db_table = 'M18DOC'  
+>>>>>>> 2ecb5d2bd6eaf9786e546c2b859faa0e90e18f84
 
     
 class M24(models.Model):
@@ -4655,6 +4659,8 @@ class M2HW(models.Model):
     wrrej=models.CharField(db_column='WRREJ',max_length=50,null=True)
     matrej=models.CharField(db_column='MATREJ',max_length=50,null=True)
     number=models.CharField(db_column='UNIQUENUM',max_length=50,null=True)
+<<<<<<< HEAD
+=======
     causesofHW=models.CharField(db_column='CAUSESOFHW',max_length=50,null=True)
     
 
@@ -4686,3 +4692,4 @@ class M4HW(models.Model):
     causesofHW=models.CharField(db_column='CAUSESOFHW',max_length=50,null=True)
 
 
+>>>>>>> 2ecb5d2bd6eaf9786e546c2b859faa0e90e18f84
