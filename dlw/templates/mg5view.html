@@ -183,10 +183,10 @@
     
          <tr> 
             <th><b> DATE:</b></th> 
-            <td><input type="text" id="date" style="width: 150px;" name="date" value="Select Date" placeholder="yyyy-mm-dd" required/></td>
+            <td><input type="text" id="date" style="width: 150px;" name="date" value="Select Date" placeholder="dd-mm-yy" required/></td>
             </tr>
             <script>
-                $(document).ready(function () { $('#date').datepicker({dateFormat: 'yy-mm-dd', minDate: 0}); });
+                $(document).ready(function () { $('#date').datepicker({dateFormat: 'dd-mm-yy', minDate: 0}); });
               </script>
 
         <tr> 

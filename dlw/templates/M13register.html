@@ -122,7 +122,7 @@
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
-            <font size="3">
+            <font style="font-size: large; color: red; font-weight:bold">
                 <li>
                     {{message}}
                 </li>
@@ -159,7 +159,7 @@
               </td>
     </tr>
     <script>
-      $(document).ready(function () { $('#month').datepicker({dateFormat: 'yy-mm'}); });
+      $(document).ready(function () { $('#month').datepicker({dateFormat: 'mm-yy'}); });
     </script>
 
     
