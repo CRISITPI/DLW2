@@ -6652,7 +6652,7 @@ def M20view(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"mm-dd-yy",
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -6669,7 +6669,7 @@ def M20view(request):
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"mm-dd-yy",
         }
     elif(len(rolelist)>1):
         context = {
@@ -6680,17 +6680,39 @@ def M20view(request):
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"mm-dd-yy",
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Add':
             rolelist=usermaster.role.split(", ")
+
             wo_nop = empmast.objects.none()
+
             shop_sec = request.POST.get('shop_sec')
             #staffno=request.POST.get('staff_no')
+
             lvdate=request.POST.get('lv_date')
+            print("lvdate",lvdate)
             
+
+            lv_date_temp1 = lv_date.split("-")[0]
+            print("month---->",month_temp1)
+
+            lv_date_temp2 = lv_date.split("-")[1]
+            print("days---->",month_temp2)
+
+            lv_date_temp3 = lv_date.split("-")[2]
+            print("year---->",month_temp3)
+
+            lvdate = month_temp1+"-"+month_temp_2+"-"+month_temp3
+
+            print("final date after formating",lvdate)
+            # name=request.P
+
+
+
+
             m2=M20new.objects.filter(shop_sec=shop_sec,lv_date=lvdate)
             # print(m2)
             if m2 is not None and len(m2):
@@ -6719,7 +6741,7 @@ def M20view(request):
             # obj1=M20new.objects.filter(shop_sec=shop_sec,staff_no=staffno).first()
             # print(obj1)
             
-            alt_date="yyyy-mm-dd"
+            alt_date="mm-dd-yy"
             # if obj1 is not None:
             #     ename=obj1[0].name
             #     alt_date=obj1[0].alt_date
@@ -6785,6 +6807,19 @@ def M20view(request):
             shop_sec= request.POST.get('shop_sec')
             # staff_no=request.POST.get('stffno')
             lv_date= request.POST.get('lv_date')
+
+            lv_date_temp1 = lv_date.split("-")[0]
+            print("month---->",month_temp1)
+
+            lv_date_temp2 = lv_date.split("-")[1]
+            print("days---->",month_temp2)
+
+            lv_date_temp3 = lv_date.split("-")[2]
+            print("year---->",month_temp3)
+
+            lv_date = month_temp1+"-"+month_temp_2+"-"+month_temp3
+
+            print(lv_date)
             # name=request.POST.get('empname')
             # ticketno = request.POST.get('stffno')
             # alt_date = request.POST.get('alt_date')
@@ -6874,7 +6909,7 @@ def MG33view(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"dd-mm-yy",
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -6891,7 +6926,7 @@ def MG33view(request):
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"dd-mm-yy",
         }
     elif(len(rolelist)>1):
         context = {
@@ -6902,7 +6937,7 @@ def MG33view(request):
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"dd-mm-yy",
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
@@ -9251,7 +9286,7 @@ def MG22view(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"dd-mm-yy",
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -9268,7 +9303,7 @@ def MG22view(request):
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"dd-mm-yy",
         }
     elif(len(rolelist)>1):
         context = {
@@ -9279,7 +9314,7 @@ def MG22view(request):
             'ip':get_client_ip(request),
             'usermaster':usermaster,
             'roles' :rolelist,
-            'lvdate':"yyyy-mm-dd",
+            'lvdate':"dd-mm-yy",
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
@@ -13346,24 +13381,30 @@ def M13register(request):
         if submitvalue=='Proceed':
            
             shop = request.POST.get('shop_sec')
+            print('SHOP is ------>',shop)
             
-            month = request.POST.get('month')
+            month = request.POST.get('month')            
             print("MONTH is **************************",month)
+            month_temp1 = month.split("-")[0]
+            print("month and year---->",month_temp1)
+
+            month_temp2 = month.split("-")[1]
+            print("month and year---->",month_temp2)
+
+            month_final = month_temp2+'-'+month_temp1
+            print(month_final)
+            obj = M13.objects.filter(shop=shop,m13_date__contains=month_final).values('m13_no','wo','m13_date','part_no','qty_tot','opn','fault_cd','reason','wo_rep','job_no','shop').distinct()
             
-            obj = M13.objects.filter(shop=shop,m13_date__contains=month).values('m13_no','wo','m13_date','part_no','qty_tot','opn','fault_cd','reason','wo_rep','job_no','shop').distinct()
-            
-            
+        if obj:
+                  
+            leng = obj.count()
+
+            print(obj)
            
             print("Test")
-            
-            leng = obj.count()
-            
-            if "Superuser" in rolelist:
-                tm=shop_section.objects.all()
-                tmp=[]
-                for on in tm:
-                    tmp.append(on.section_code)
-                context={
+
+            context = {
+
                     'sub':1,
                     'lenm' :2,
                     'nav':nav,
@@ -13371,52 +13412,17 @@ def M13register(request):
                     'ip':get_client_ip(request),
                     'roles':tmp,
                     'obj': obj,
-                    
                     'len': leng,
-                   
                     'shop_sec': shop,
-                   
-                }
-            elif(len(rolelist)==1):
-                for i in range(0,len(rolelist)):
-                    req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
-                    wo_nop =wo_nop | req
-                context = {
-                    'sub':1,
-                    'lenm' :len(rolelist),
-                    'wo_nop':wo_nop,
-                    'nav':nav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'subnav':subnav,
-                    'obj': obj,
-                  
-                    'len': leng,
+                    'month': month_final,
                     
-                    'shop_sec': shop,
-                    
-                }
-               
-            elif(len(rolelist)>1):
-                context = {
-                    'sub': 1,
-                    'lenm' :len(rolelist),
-                    'nav':nav,
-                    'ip':get_client_ip(request),
-                    'usermaster':usermaster,
-                    'roles' :rolelist,
-                    'subnav':subnav,
-                    'obj': obj,
-                  
-                    'len': leng,
-                    'len1':leng1,
-                    
-                    'shop_sec': shop,
-                   
-                }
 
-        
+            }
+            
+
+        else:
+                print("Data Not Found") 
+                messages.error(request,"Data Not Found ! - Please select correct Shop and Month data to display data ")  
     return render(request,"M13register.html",context)
 
 

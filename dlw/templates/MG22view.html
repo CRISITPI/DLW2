@@ -6,8 +6,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
   <script>
-    $(document).ready(function () { $('#updt_date').datepicker({dateFormat: 'yy-mm-dd'}); });
-    $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'yy-mm-dd'}); });
+    $(document).ready(function () { $('#updt_date').datepicker({dateFormat: 'dd-mm-yy'}); });
+    $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'dd-mm-yy'}); });
     </script>
  
 <style>
@@ -113,7 +113,7 @@ th, td {
  <body>
         <td>
             <label for="sno"><b>Date/ दिनांक </b></label>            
-          <input type="text" id="updt_date" style="width: 170px;" name="updt_date" value="{{lvdate}}" placeholder="yyyy-mm-dd" readonly required/>
+          <input type="text" id="updt_date" style="width: 170px;" name="updt_date" value="{{lvdate}}" placeholder="mm-dd-yy" readonly required/>
         </td> 
  
         <td>
@@ -382,7 +382,7 @@ function find(th)
                 var shop_sec_temp = $("#shop_sec").val()
                 var updt_date_temp = $("#updt_date").val()
 
-                if(updt_date_temp == "yyyy-mm-dd"){
+                if(updt_date_temp == "dd-mm-yy"){
                   alert("Please First select Date then Shop Section.")
                 return false;
                   }
