@@ -99,9 +99,7 @@
                   
         </table>
         
-        <center>
- <input type="submit" value="Generate report" name="proceed" id="report">    
-        </center>
+        
         <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
   
     </div>
@@ -110,7 +108,7 @@
     
  {% if sub == 1 %}
 <input type="hidden" name="len" value="{{len}}">
-<div id="print1" >
+
 <table  id= "customers" align="center" border="2" width="50%">  
         
         {% for i in obj %} 
@@ -138,8 +136,9 @@
                 <th>SHOP SUPERINTENDENT</th> 
                 <td><input type="text" name="emp_type" id="emp_type" /> </td>
             <!-- <td>{{i.emptype}}</td> -->
-        </tr> -->
-        {% endfor %}
+        </tr>
+      
+      
 
             <tr>
                 <th>IDENTITY CARD NO</th>
@@ -152,11 +151,11 @@
                 <td>{{ticket_no}}</td>
             </tr>
  
-            {% for i in obj1 %} 
+          
         <tr> 
-                <input type="text" value="{{i.t_no}}" name="t_no" hidden />
+                <input type="text" value="{{i.to_no}}" name="to_no" hidden />
                 <th>DLW TOOL ORDER NO</th> 
-            <td>{{i.t_no}}</td>
+            <td>{{i.to_no}}</td>
         </tr>
         {% endfor %}
 
@@ -184,11 +183,13 @@
                    </td>
             </tr> 
     
-    <tr> 
+         <tr> 
             <th><b> DATE:</b></th> 
-            <input type="text" name="date" id="date" hidden/>
-        <td>{{date}} </td
-        </tr>
+            <td><input type="text" id="date" style="width: 150px;" name="date" value="Select Date" placeholder="dd-mm-yy" required/></td>
+            </tr>
+            <script>
+                $(document).ready(function () { $('#date').datepicker({dateFormat: 'dd-mm-yy', minDate: 0}); });
+              </script>
 
         <tr> 
                 <th>OPERATOR</th> 
