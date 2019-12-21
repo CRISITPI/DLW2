@@ -18118,12 +18118,7 @@ def machinegetcause(request):
         print("wono",wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)  
-<<<<<<< HEAD
 
-
-    
-=======
->>>>>>> master
 @login_required
 @role_required(urlpass='/m4hwview/')
 def m4hwview(request):
