@@ -727,6 +727,14 @@ function find(th)
  
 }
                 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+
+                  var shop_sec_temp = $("#shop_sec").val()
+                var updt_date_temp = $("#updt_date").val()
+
+                if(updt_date_temp == "dd-mm-yy"){
+                  alert("Please First select Date then Shop Section.")
+                return false;
+                  }
  
                   document.querySelector("#proceed").click();
               })

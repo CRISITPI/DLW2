@@ -208,7 +208,9 @@ urlpatterns = [
     path('partallotement/', partallotement, name='partallotement'),
     path('ajax/getpartnewdetails',getpartnewdetails,name='getpartnewdetails'),
     path('ajax/getpartnewdetails123',getpartnewdetails123,name='getpartnewdetails123'),
-    path('ajax/getpartdecription',getpartdecription,name='getpartdecription'),    
+    path('ajax/getpartdecription',getpartdecription,name='getpartdecription'),
+    path('ajax/getsubgrp2',getsubgrp2,name='getsubgrp2'),
+    path('ajax/getDiscription',getDiscription,name='getDiscription'),
     path('examdetail/',exam_detail,name='examdetail'),
     path('m23view/',m23view,name='m23view'),
     path('m23report/',m23report,name='m23report'),
@@ -286,3 +288,6 @@ urlpatterns = [
     path('ajax/m4getdoc_nohw/',m4getdoc_nohw,name='m4getdoc_nohw'),
     path('ajax/m4getwonohw',m4getwonohw,name='m4getwonohw'),
 ]
+
+
+

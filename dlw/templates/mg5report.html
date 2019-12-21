@@ -51,6 +51,13 @@
         background-color: #45a049;
         text-align: center;
     }
+
+    #print
+        input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+
+    }
     
    
 </style>
@@ -70,9 +77,9 @@
         {% endif %}
 </center>
 
-<h2 align="center" >M.G.-5 Card</h2>
+<h2 align="center" >M.G.-5 Report</h2>
 <br>
-<form action="{% url 'mg5view' %}" method="POST"> {% csrf_token %}
+<form action="{% url 'mg5report' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
             <tr>
@@ -99,7 +106,9 @@
                   
         </table>
         
-        
+        <center>
+ <!-- <input type="submit" value="Generate report" name="proceed" id="report">     -->
+        </center>
         <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
   
     </div>
@@ -107,113 +116,97 @@
     <input type="hidden" id="sub" name="sub" value={{sub}}>
     
  {% if sub == 1 %}
+ <div id="print" style="align:center" >
 <input type="hidden" name="len" value="{{len}}">
-
+<div id="print1" >
 <table  id= "customers" align="center" border="2" width="50%">  
         
         {% for i in obj %} 
         <tr>
             <th>SHOP NO.</th>
-            <input type="text" value={{i.shopno}} name="shop_no" id="shop_no" hidden /> 
-            <td>{{i.shopno}}</td>
+            <input type="text" value={{i.shop_sec}} name="shop_no" id="shop_no" hidden /> 
+            <td>{{i.shop_sec}}</td>
         </tr>
         <tr>
                 <th>STAFF N0.</th>
-                <input type="text" value={{i.empno}} name="staff_no" id="staff_no" hidden /> 
-                <td>{{i.empno}}</td>
+                <input type="text" value={{i.staff_no}} name="staff_no" id="staff_no" hidden /> 
+                <td>{{i.staff_no}}</td>
             </tr>
         <tr> 
                 <th>EMPLOYEE NAME</th>
-                <input type="text" value={{i.empname}} name="name" id="name" hidden /> 
-            <td>{{i.empname}}</td>
+                <input type="text" value={{i.name}} name="name" id="name" hidden /> 
+            <td>{{i.name}}</td>
         </tr>
         <tr> 
             <th>SHOP SUPERINTENDENT</th> 
-            <input type="text" value={{i.emptype}} name="emptype" id="emptype" hidden /> 
-        <td>{{i.emptype}}</td>
+            <input type="text" value={{i.super_in}} name="emptype" id="emptype" hidden /> 
+        <td>{{i.super_in}}</td>
     </tr>
         <!-- <tr> 
                 <th>SHOP SUPERINTENDENT</th> 
                 <td><input type="text" name="emp_type" id="emp_type" /> </td>
             <!-- <td>{{i.emptype}}</td> -->
         </tr>
-      
-      
+    
 
             <tr>
                 <th>IDENTITY CARD NO</th>
                 <input type="text" value={{id_no}} name="id_no" id="id_no" hidden /> 
-                <td>{{id_no}}</td>
+                <td>{{i.id_no}}</td>
             </tr>
             <tr>
                 <th>TICKET NO</th>
-                
-                <td><input type="text" value={{ticket_no}} name="t_no" id="t_no" readonly/> </td>
+                <input type="text" value={{t_no}} name="t_no" id="t_no" hidden /> 
+                <td>{{i.t_no}}</td>
             </tr>
  
-          
+        
         <tr> 
-                <input type="text" value="{{i.to_no}}" name="to_no" hidden />
+                <input type="text" value="{{i.to_no}}" name="t_no" hidden />
                 <th>DLW TOOL ORDER NO</th> 
             <td>{{i.to_no}}</td>
         </tr>
-        {% endfor %}
-
-
+  
 
             <tr> 
-                <th><b> PLEASE ISSUE ON LOAN THE FOLLOWING:</b></th> 
-                <td>
-                        <label for="tid_no"><b>Tool id:</b></label>
-                           <select class="form-control" id="t_id" name="t_id" required>
-                   <option id="t_emp" selected disabled hidden>Select tool id</option>
-                   {% for i in obj2 %}
-                    <option value="{{i.instrument_number}}">{{i.instrument_number}}</option>
-                    {% endfor %}
-                    </select>
-                   
-                    <label for="desc_no"><b>Tool Description:</b></label>
-                    <input type="text" name="make1" id="make1" readonly>
-                    <!-- {% for i in obj2 %}
-                    {{i.t_desc}}
-                    {% endfor %} -->
-
-                    <input type="submit" id="add1" name="add1" value="add">
-
-                   </td>
+                <th><b> Tool Id</b></th> 
+                <td>{{i.t_id}}</td>
+                        
             </tr> 
-    
-         <tr> 
-            <th><b> DATE:</b></th> 
-            <td><input type="text" id="date" style="width: 150px;" name="date" value="Select Date" placeholder="dd-mm-yy" required/></td>
+            
+            <tr>
+                <th><b>Tool Description:</b></th> 
+                <td>{{i.t_desc}}</td>
             </tr>
-            <script>
-                $(document).ready(function () { $('#date').datepicker({dateFormat: 'dd-mm-yy', minDate: 0}); });
-              </script>
+                   
+                  
+        
+    <tr> 
+            <th><b> DATE:</b></th> 
+            <input type="text" id="date" name="date" value="{{i.date}}" hidden/>
+        <td>{{i.date}} </td>
+        </tr>
 
         <tr> 
                 <th>OPERATOR</th> 
-                <td>
-                <input type="text" name="optr" id="optr" />
-            </td>
+                <td> {{i.optr}}    </td>
         </tr>
         <tr> 
                 <th>TOOL CHECKER</th> 
-                <td>
-                        <input type="text" name="chkr" id="chkr" />
-                    </td>
+                <td>{{i.chkr}} </td>
         </tr>
+          
+        {% endfor %}
 </table>
+</div>
 
 <br>
 </div>
 
-<center>  
-    <input type="submit" name="proceed" value="Save">
-</center> 
+<center><input style="width: 150px;" type="button" onclick="printDiv()" value="Print Report"></center>
 {% endif %}
 </form> 
-
+<script> function myFunction(){ window.print(); }</script>
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 <script type="text/javaScript">
@@ -296,6 +289,28 @@ var htAppend='<div> <table id="customers" border="2" align="center"><tr> '+' <td
             }
        })
     });
+    function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>MG5 Report</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+}
 
 </script>
 
