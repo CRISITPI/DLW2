@@ -16163,7 +16163,24 @@ def partallotement(request):
             'mb' : MB,
             'subgrp2': subgrp2, 
         }
-    
+    if request.method == "POST":
+
+        if submitvalue == 'proceed':
+            maj_grp = request.POST.get('maj_grp')
+            sub_grp1 = request.POST.get('subgrp')
+            sub_grp2 = request.POST.get('SUB-GROUP2')
+            slno = request.GET.POST('SL_NO')
+
+            print("Major Group",maj_grp)
+
+            print("Major Group",sub_grp1)
+
+            print("Major Group",sub_grp2)
+
+            print("Major Group",slno)
+
+        
+      
     return render(request,"partallotement.html",context)
 
 
