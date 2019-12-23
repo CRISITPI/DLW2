@@ -113,11 +113,11 @@
                   </center>
                 </tr>
                 <h3 align="center">Diesel Locomotive Works </h3>
-                <h4 align="center">Design office - Part Alot </h4>
+                <h4 align="center">Design office -- Part Alot </h4>
                 <tr>
                 <td>
                         <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
-                        <select class="form-control" style="width: 170px;" id="partno" name="partno" required>
+                        <select class="form-control" style="width: 170px;" id="partno" name="partno">
                             <option id="op_part" selected disabled hidden>Select Part No</option>
                
                                   {% for i in partnew %}
@@ -129,7 +129,7 @@
                 
                      <td>
                         <label for="br_no"><b>GM-PART NO</b></label>
-                        <input type="text" style="width: 180px;" id="gmpart" name="gmpart" required>            
+                        <input type="text" style="width: 180px;" id="gmpart" name="gmpart">            
                         <!-- <select class="form-control" style="width: 180px;" id="gmpart" name="gmpart" required>   -->
                                   <!-- <option id="op_staffName" selected disabled hidden>SELECT GM PART NO</option> -->
                                   
@@ -143,11 +143,11 @@
                 <tr>
                     <td>
                         <label for="drg_rev">DRG-REV </label>
-                        <input style="width: 150px;" type="text" name="drg_rev" id="drg_rev" required>
+                        <input style="width: 150px;" type="text" name="drg_rev" id="drg_rev">
                     </td>
                     <td>
                         <label for="DESC">DESC</label>
-                        <input style="width: 200px;" type="text" name="DESC" id="DESC" required>
+                        <input style="width: 200px;" type="text" name="DESC" id="DESC">
                     </td>
                     <td>
                         <label for="drg_rev">MB</label>
@@ -166,11 +166,11 @@
 
                     <td>
                             <label for="IND_BUY">IND-BUY</label>
-                            <input style="width: 150px;" type="text" name="ind_buy" id="ind_buy" required>
+                            <input style="width: 150px;" type="text" name="ind_buy" id="ind_buy">
                     </td>
                     <td>
                             <label for="it_cat">IT-CAT</label>
-                            <select class="form-control" style="width: 170px;" id="it_cat" name="it_cat" value="{{i.alpha_1}}" required>
+                            <select class="form-control" style="width: 170px;" id="it_cat" name="it_cat" value="{{i.alpha_1}}" >
                                     <option id="it_cat" selected disabled hidden>Select Item Category</option>
                         
                                             {% for i in it_cat %}
@@ -190,7 +190,7 @@
                         <td>
                             <label for="DESC">UNIT</label>
                             <!-- <input style="width: 150px;" type="text" name="UNIT" id="UNIT"> -->
-                            <select class="form-control" style="width: 170px;" id="unit" name="unit" value="{{i.alpha_1}}" required>
+                            <select class="form-control" style="width: 170px;" id="unit" name="unit" value="{{i.alpha_1}}">
                                 <option id="unit" selected disabled hidden>Select UNIT</option>
                         
                                             {% for i in unit %}
@@ -320,6 +320,7 @@
                
             </table>
            
+            <input id="submit" type="submit" name="proceed" value="proceed" id="submitted"> 
         
         </div>
                
@@ -439,6 +440,7 @@
                                         }
                                       })
                                       })
+                                    
 
 
             function printDiv() {
