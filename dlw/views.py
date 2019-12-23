@@ -6807,19 +6807,19 @@ def M20view(request):
             shop_sec= request.POST.get('shop_sec')
             # staff_no=request.POST.get('stffno')
             lv_date= request.POST.get('lv_date')
+            # print("test : --------------",lv_date)
+            # lv_date_temp1 = lv_date.split("-")[0]
+            # print("month---->",month_temp1)
 
-            lv_date_temp1 = lv_date.split("-")[0]
-            print("month---->",month_temp1)
+            # lv_date_temp2 = lv_date.split("-")[1]
+            # print("days---->",month_temp2)
 
-            lv_date_temp2 = lv_date.split("-")[1]
-            print("days---->",month_temp2)
+            # lv_date_temp3 = lv_date.split("-")[2]
+            # print("year---->",month_temp3)
 
-            lv_date_temp3 = lv_date.split("-")[2]
-            print("year---->",month_temp3)
+            # lv_date = month_temp1+"-"+month_temp_2+"-"+month_temp3
 
-            lv_date = month_temp1+"-"+month_temp_2+"-"+month_temp3
-
-            print(lv_date)
+           
             # name=request.POST.get('empname')
             # ticketno = request.POST.get('stffno')
             # alt_date = request.POST.get('alt_date')
@@ -6836,9 +6836,6 @@ def M20view(request):
                 datedb=request.POST.get('datedb'+str(tb))
                 print("Dateindb"+str(tb),datedb)
                 M20new.objects.filter(shop_sec=str(shop_sec),staff_no=str(ticketnodb), lv_date=str(lv_date) ).update(alt_date=str(datedb))
-
-
-
 
             for t in range(1,int(tot)+1):
                 name=request.POST.get('name'+str(t))
@@ -17921,6 +17918,8 @@ def machinegetcause(request):
         print("wono",wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)  
+
+
 @login_required
 @role_required(urlpass='/m4hwview/')
 def m4hwview(request):
@@ -17979,13 +17978,153 @@ def m4hwview(request):
         if submitvalue=='Proceed':
             rolelist=usermaster.role.split(", ")
             wo_nop = empmast.objects.none()
-                 
-            posted1_date = request.POST.get('posted1_date')        
+            shop_sec = request.POST.get('shop_sec')
+            part_no = request.POST.get('part_nop')
+            wo_no = request.POST.get('wo_no')
+            brn_no = request.POST.get('br_no')
+            assembly_no = request.POST.get('assm_no')
+            doc_no = request.POST.get('doc_no')
+            kkk=Oprn.objects.all()
+            obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
+            obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
+            obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
+            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
+            obj = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
+            print("hh")
+            print(obj)
+            if len(obj) == 0:
+                obj = range(0,1)
+            date = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('prtdt','qty').distinct()
+            leng = obj.count()
+            datel = date.count()           
+           
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context = {
+                    'roles':tmp,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'datel': datel,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):                    
+
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+                    wo_nop = wo_nop | req
+
+                context = {
+                    'wo_nop':wo_nop,
+                    'roles' :rolelist,
+                    'subnav':subnav,
+                    'usermaster':usermaster,
+                    'lenm' :len(rolelist),
+                    'nav': nav,
+                    'ip': get_client_ip(request),
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'datel': datel,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'usermaster':usermaster,
+                    'roles' :rolelist,
+                    'obj': obj,
+                    'obj1': obj1,
+                    'obj2': obj2,
+                    'obj3': obj3,
+                    'sub': 1,
+                    'len': leng,
+                    'date': date,
+                    'datel': datel,
+                    'shop_sec': shop_sec,
+                    'part_no': part_no,
+                    'wo_no': wo_no,
+                    'brn_no': brn_no,
+                    'assembly_no': assembly_no,
+                    'doc_no': doc_no,
+                }
+        if submitvalue=='Save':
+            rand  = random.choice('0123456789')           
+            rand1 = random.choice('0123456789')        
+            rand2 = random.choice('0123456789')           
+            rand3 = random.choice('0123456789')         
+            rand4 = random.choice('0123456789')          
+            rand5 = random.choice('0123456789')           
+            num = rand + rand1 + rand2 + rand3 + rand4 + rand5           
+            number = num
+
+            prtDate= request.POST.get('prtdt')              
+            monthTemp = prtDate.split(' ')[0]            
+            dateTemp = prtDate.split(' ')[1]                    
+            final1 = monthTemp[0:3]+' '+dateTemp.split(',')[0]+' '+prtDate.split(' ')[2]
+            print("final1 : ",final1)                
+            date_time_str = final1
+            date_time_obj = datetime.datetime.strptime(date_time_str, '%b %d %Y')
+            print('Date:', date_time_obj.date())
             
-            M4HW.objects.create(prtdt=str(date_time_obj.date()),doc_no=str(doc_no),part_no=str(part_no),wo_no=str(wo_no),brn_no=str(brn_no),qty=str(qty),end_prod=str(end_prod),epdes=str(epdes),shop_section_temp=str(shop_section_temp),partdes=str(partdes),drgno=str(drgno),batch_type=str(batch_type),received_mat=str(received_mat),issued_qty=str(issued_qty),received_qty=str(received_qty),laser_pst=str(laser_pst),line=str(line),closing_bal=str(closing_bal),remarks=str(remarks),posted_date=str(posted_date),wardkp_date=str(wardkp_date),shopsup_date=str(shopsup_date),posted1_date=str(posted1_date),number=str(number))         
+            wo_no= request.POST.get('wo_no')          
+            brn_no=request.POST.get('brn_no')         
+            qty=request.POST.get('qty')  
+            end_prod = request.POST.get('end_prod')         
+            epdes = request.POST.get('epdes')        
+            shop_section_temp = request.POST.get('shop_section_temp')        
+            part_no = request.POST.get('part_no')        
+            partdes= request.POST.get('partdes')        
+            drgno = request.POST.get('drgno')           
+            doc_no = request.POST.get('doc_no')         
+            batch_type = request.POST.get('batch_type')          
+            received_mat = request.POST.get('received_mat')        
+            issued_qty = request.POST.get('issued_qty')        
+            received_qty = request.POST.get('received_qty')      
+            laser_pst = request.POST.get('laser_pst')        
+            line = request.POST.get('line')                  
+            closing_bal = request.POST.get('closing_bal')          
+            remarks = request.POST.get('remarks')       
+            posted_date = request.POST.get('posted_date')        
+            wardkp_date = request.POST.get('wardkp_date')            
+            shopsup_date = request.POST.get('shopsup_date')        
+            posted1_date = request.POST.get('posted1_date')
+            causesofHW = request.POST.get('causesofHW')        
+            
+            M4HW.objects.create(prtdt=str(date_time_obj.date()),doc_no=str(doc_no),part_no=str(part_no),wo_no=str(wo_no),brn_no=str(brn_no),qty=str(qty),end_prod=str(end_prod),epdes=str(epdes),shop_section_temp=str(shop_section_temp),partdes=str(partdes),drgno=str(drgno),batch_type=str(batch_type),received_mat=str(received_mat),issued_qty=str(issued_qty),received_qty=str(received_qty),laser_pst=str(laser_pst),line=str(line),closing_bal=str(closing_bal),remarks=str(remarks),posted_date=str(posted_date),wardkp_date=str(wardkp_date),shopsup_date=str(shopsup_date),posted1_date=str(posted1_date),number=str(number),causesofHW=str(causesofHW))         
             messages.success(request, 'M4 Card Hand Written generated Successfully, Your Reference number is : '+number)
            
-    return render(request,"m4hwview.html",context)      
+    return render(request,"m4hwview.html",context)    
+
 
 
 def m4getbrhw(request):
