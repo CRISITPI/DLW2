@@ -4729,3 +4729,14 @@ class mg11(models.Model):
     last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
 
+
+
+class emp_details(models.Model):
+    empno=models.DecimalField(max_digits=18, decimal_places=0, blank=False, null=False)  # Field name made lowercase.
+    empname=models.CharField(max_length=100, blank=True, null=True)  # Field name made lowercase.
+    shopsec=models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
+    desgn=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
+    grp=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
+    mobileno=models.DecimalField( max_digits=20, decimal_places=0, blank=True, null=True,default=0)  # Field name made lowercase.
+    email_id=models.CharField( max_length=100, blank=True, null=True)  # Field name made lowercase.
+    shop_code=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.

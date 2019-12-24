@@ -34,6 +34,7 @@ from django.http import HttpResponseRedirect
 import math,random
 from random import randint
 import datetime
+import smtplib 
 # Create your views here.
 #
 #
@@ -6807,6 +6808,8 @@ def M20view(request):
             shop_sec= request.POST.get('shop_sec')
             # staff_no=request.POST.get('stffno')
             lv_date= request.POST.get('lv_date')
+
+
             # print("test : --------------",lv_date)
             # lv_date_temp1 = lv_date.split("-")[0]
             # print("month---->",month_temp1)
@@ -6842,10 +6845,22 @@ def M20view(request):
                 ticketno=request.POST.get('ticket'+str(t))
                 date=request.POST.get('date'+str(t))
                 print(name,ticketno,date)
+
                 M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
+                emp_detail= emp_details.objects.filter(shopsec=shop_sec, empno=ticketno).values('email_id','mobileno')
+                email("erpdlw@gmail.com", "erpdlw@123", emp_detail[0]['email_id']," M20 Card Saved")
                 print(shop_sec,lv_date,name,ticketno,date)
             messages.success(request, 'Successfully Saved !!!, Select new values to update')
     return render(request, "M20view.html", context)
+
+
+
+def email(sender_email_id,sender_email_id_password,receiver_email_id,message):
+        s = smtplib.SMTP('smtp.gmail.com', 587) 
+        s.starttls()
+        s.login(sender_email_id,sender_email_id_password)  
+        s.sendmail(sender_email_id,receiver_email_id, message) 
+        s.quit()
 
 
 
