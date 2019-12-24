@@ -10920,7 +10920,7 @@ def mg49view(request):
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
-            tm1=Part.objects.all().values('partno').distinct()
+            tm1=Part.objects.all().values('des').distinct()
             
             temp=Part.objects.all().values('shop_ut').distinct()
             tm2=Code.objects.filter(code__in=temp,cd_type='51').values('alpha_1').distinct()
@@ -10983,22 +10983,7 @@ def mg49view(request):
                     'ip':get_client_ip(request),  
                     'subnav':subnav,
                 }
-            
-
-
-            # context = {
-            #             'tm1':tm1,
-            #             'tm2':tm2,
-            #             'obj': obj,
-            #             'len': leng,
-            #             'updt_date':updt_date,
-            #             'shop_sec': shop_sec,
-            #             'staff_no':staff_no,
-            #             'sub' : 1,
-            #             'nav':nav,
-            #             'ip':get_client_ip(request),  
-            #             'subnav':subnav,
-            # }
+        
         if submitvalue=='submit':
             updt_date = request.POST.get('update')
             shop_sec= request.POST.get('shopsec')
@@ -11010,11 +10995,11 @@ def mg49view(request):
             unit = request.POST.get('unit')
             now = datetime.datetime.now()
             user=request.user
-            if(part_no==None or matdes==None or quantity==None or weight==None or unit==None):
-                pass;
-            else:
-                # print(updt_date,shop_sec,staff_no,part_no,quantity,weight,unit,now,user)
-                MG49.objects.create(shopsec=str(shop_sec), staff_no=str(staff_no), date=str(updt_date), part_no=str(part_no), desc=str(matdes), quan=str(quantity), weight=str(weight),login_id=str(user), last_modified=str(now), unit=str(unit))
+            # if(part_no==None or matdes==None or quantity==None or weight==None or unit==None):
+            #     pass;
+            # else:
+            print(updt_date,shop_sec,staff_no,part_no,quantity,weight,unit,now,user)
+            MG49.objects.create(shopsec=str(shop_sec), staff_no=str(staff_no), date=str(updt_date), part_no=str(part_no), desc=str(matdes), quan=str(quantity), weight=str(weight),login_id=str(user), last_modified=str(now), unit=str(unit))
 
             totindb=request.POST.get('totmebs')
             
@@ -11029,11 +11014,11 @@ def mg49view(request):
                 now = datetime.datetime.now()
                 user=request.user
                 updt_date = request.POST.get('update')
-                if(part_no==None or matdes==None or quantity==None or weight==None or unit==None):
-                    pass;
-                else:
-                    # print(updt_date,shop_sec,staff_no,part_no,quantity,weight,unit,now,user)
-                    MG49.objects.create(shopsec=str(shop_sec), staff_no=str(staff_no), date=str(updt_date), part_no=str(part_no),desc=str(matdes), quan=str(quantity), weight=str(weight),login_id=str(user), last_modified=str(now), unit=str(unit))
+                # if(part_no==None or matdes==None or quantity==None or weight==None or unit==None):
+                #     pass;
+                # else:
+                print(updt_date,shop_sec,staff_no,part_no,quantity,weight,unit,now,user)
+                MG49.objects.create(shopsec=str(shop_sec), staff_no=str(staff_no), date=str(updt_date), part_no=str(part_no),desc=str(matdes), quan=str(quantity), weight=str(weight),login_id=str(user), last_modified=str(now), unit=str(unit))
 
         
         ###################################
@@ -11047,17 +11032,32 @@ def mg49getstaff_no(request):
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-def mg49getmat_des(request):
+def mg49getpart_no(request):
     
     if request.method == "GET" and request.is_ajax():
-        part_no = request.GET.get('part_no')
-        print(part_no,"part_no")
-        w1 = list(Part.objects.filter(partno=part_no).values('des').distinct())
-        wono = w1[0]['des']
+        matdes = request.GET.get('matdes')
+        # print(matdes,"matdes")
+        w1 = list(Part.objects.filter(des=matdes).values('partno').distinct())
+        w2 = list(Part.objects.filter(des=matdes).values('shop_ut').distinct())
+        ut=w2[0]['shop_ut']
+
+        tm2=Code.objects.filter(code=ut,cd_type='51').values('alpha_1').distinct()
+        # unit=tm2[0]['alpha_1']   
+
+        print(w1,"mat des",ut,tm2)
+        print("mat des",tm2[0]['alpha_1'])
+        wono = w1[0]['partno']
+        if(tm2.count()==0):
+            k='NULL'
+        else:
+            k=tm2[0]['alpha_1']
+
+
         cont ={
             "wono":wono,
+            "ut":k,
         }
-
+        
         return JsonResponse({"cont":cont}, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -16160,28 +16160,7 @@ def partallotement(request):
             'mb' : MB,
             'subgrp2': subgrp2, 
         }
-<<<<<<< HEAD
-   
-=======
-    if request.method == "POST":
-    
-        if submitvalue == 'proceed':
-            maj_grp = request.POST.get('maj_grp')
-            sub_grp1 = request.POST.get('subgrp')
-            sub_grp2 = request.POST.get('SUB-GROUP2')
-            slno = request.GET.POST('SL_NO')
 
-            print("Major Group",maj_grp)
-
-            print("Major Group",sub_grp1)
-
-            print("Major Group",sub_grp2)
-
-            print("Major Group",slno)
-
-        
-      
->>>>>>> master
     return render(request,"partallotement.html",context)
 
 

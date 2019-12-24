@@ -2,6 +2,8 @@
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
 
 
 <style>
@@ -15,7 +17,7 @@
       border-radius: 4px;
       box-sizing: border-box;
   }
-  
+
   input[type=submit] {
       width: 20%;
       text-align: center;
@@ -66,7 +68,7 @@
                 
                     
                 <td>
-                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label><br>
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
                         <option id="op_shop" selected disabled hidden>Select Shop Section</option>
                         {% if lenm == 1 %}
@@ -111,56 +113,76 @@
                 <td>{{staff_no}}</td>
                 
                 
-                        <td>{{obj.name}}</td>
-                        
-                        <td>{{obj.desgn}}</td>
+                <td>{{obj.name}}</td>
+                
+                <td>{{obj.desgn}}</td>
             
             </tr>
         </table>
     <br>
     <br>
     <br>
-    <table align="center" border="1" id="tableID">
+    <table align="center" border="1" id="tableID" class="table-striped">
+
+        <thead class="thead-dark">
+            <th>Material Description</th>
+            <th>Part No</th>
+            <th>Quantity</th>
+            <th>Weight</th>
+            <th>UNIT</th>
+        </thead>
+        <tbody id="items">
+
+        
         <tr>
-            <td>`
-                <label for="part_no"><b>Part No:</b></label>
-                <select class="form-control" id="part_no1" name="part_no" onchange="find(this)" required>
+            
+            <td>
+                <select class="form-control" id="matdes" class="mat" name="matdes" onchange="find(this)" required>
+                    <option id="op_unit" selected disabled hidden>Select material des</option>
+                    {% for i in tm1 %}
+                    <option>{{i.des}}</option>
+                    {%endfor%}
+                </select> 
+                <br>
+                
+                
+            </td>
+            <td>
+                
+                <input type="number" name="part_no" id="part_no" placeholder="Part No"  readonly>
+                <!-- <select class="form-control" id="part_no1" name="part_no" onchange="find(this)" required>
                     <option id="op_unit" selected disabled hidden>Select Part No</option>
                     {% for i in tm1 %}
                     <option>{{i.partno}}</option>
                     {%endfor%}
-                </select>
+                </select> -->
             </td>
             <td>
-                <label for="matdes1"><b>Material Description:</b></label>
-                <br>
-                
-                <input type="text" name="matdes" id="matdes1" readonly>
-            </td>
-            <td>
-                <label for="quan" ><b>Quantity:</b></label>
-                <br>
+
                 <input type="number" id="quan" placeholder="Quantity" name="quantity"  min="0" max="100000000">
             </td>
             <td>
-                <label for="weight" ><b>Weight:</b></label>
-                <br>
                 <input type="number" id="weight" placeholder="Weight" name="weight"  min="0" max="100000000" >
             </td>
             <td>
-                <label for="unit" ><b>UNIT:</b></label>
-                <select class="form-control" id="unit" name="unit" required >
+                <input type="text" id="unit" placeholder="unit" name="unit" readonly>
+                           
+                <!-- <select class="form-control" id="unit" name="unit" required >
                         <option id="op_unit" selected disabled hidden>Select Unit</option>
                         {% for i in tm2 %}
                         <option>{{i.alpha_1}}</option>
                         {%endfor%}
-                </select>
+                </select> -->
             </td>
         </tr>
+    </tbody>
+    <tfoot>
+        
+    </tfoot>
     </table>
-    <div id="items">
-        <!--  -->
-    </div>
+    <!-- <div id="items">
+       
+    </div> -->
     
 </div>
     <center><input type="button" id="add" name="add" value="add more items" ></center>
@@ -184,9 +206,11 @@
 <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet"/> -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script  type="text/javaScript"> 
-    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    
+    $("#shop_sec").chosen().change(function(){
+        
         //console.log("hi");
-                        e.preventDefault();
+                        //e.preventDefault();
                         var shop_sec = $("#shop_sec").val()
                         document.getElementById("updt_date").disabled=true;
                         console.log("in ajax shopsec");
@@ -207,7 +231,7 @@
                                     brarr = response.map((el)=>el.staff_no);
                                     mystr = "";
                                     brarr.forEach((el,index)=>{
-                                    html = `<option class="newelestaff">${brarr[index]}</option>`
+                                    html = `<option class="newelestaff choice">${brarr[index]}</option>`
                                     mystr = html.concat(mystr);
                                     });
                                     html = "";
@@ -216,17 +240,13 @@
                             }
                                 })
                     })  
-    
+                    
+                    $("#matdes").chosen();
                     document.querySelector("#updt_date").addEventListener('change',(e)=>{
                         document.querySelector("#myproceed").click();
                         console.log("inside proceed json");
                         })
 
-                    /*document.addEventListener('keypress',(event)=>{
-                        if(event.keyCode===13){
-                            event.preventDefault();
-                        }
-                        }) */
                     document.querySelector("#staff_no").addEventListener('change',(e)=>{
                         document.getElementById("updt_date").disabled=false
                         console.log("json");
@@ -256,30 +276,26 @@
                         
                         } 
 
-
-            
-                       
-                       
-
-         //////////////to show material description
 function find(th)
 {
   var id = th.id;
-  var two=id.split("part_no");
-  var matdes="matdes"+two[1];
-  var part_no=document.getElementById(id).value;
+  //console.log(id.value)
+  var two=id.split("matdes");
+  var matdes=document.getElementById(id).value;
+    //console.log(matdes)
 
 
-
-  var data = {part_no};
+  var data = {matdes};
                       $.ajax({
                         type : 'GET',
-                        url : "{% url 'mg49getmat_des' %}",
+                        url : "{% url 'mg49getpart_no' %}",
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                         document.getElementById(matdes).value= response.cont.wono;
-                         console.log(document.getElementById(matdes).value);
+                         document.getElementById("part_no"+two[1]).value= response.cont.wono;
+                         document.getElementById("unit"+two[1]).value= response.cont.ut;
+                         //console.log(response.cont.ut)
+                         //console.log(document.getElementById(matdes).value);
                         }
                           })
  
@@ -288,8 +304,6 @@ function find(th)
     
                            
 </script>
-
-
 <script language="javascript">
 
 var j=1;
@@ -303,26 +317,28 @@ $("#add").click(function(e) {
         var quanj="quan"+String(j);
         var weightj="weight"+String(j);
         var unitj="unit"+String(j);
-        var htAppend='<div><table class="emp" id='+id+'  align="center" border="1"><tr>'+'<td><select name='+partnoj+' id='+partnoj+' onchange="find(this);" class="form-control ll" required></select></td>'+'<td><input type="text" id="'+matdesj+'" name="'+matdesj+'"  readonly></td>'+'<td><input type="number" id='+quanj+' name='+quanj+' min="0" max="100000000" placeholder="Quantity" required></td>'+'<td><input type="number" id='+weightj+' name='+weightj+' min="0" max="100000000" placeholder="Weight" required></td>'+'<td><select name='+unitj+' id='+unitj+' " class="form-control ll" required></select></td>';
-        htAppend=htAppend+'<td><a class="delete" title="Delete">Delete row</a></td>'+'</tr></table>'+'</div>';
+        var htAppend='<tr>'+'<td><select name='+matdesj+' id='+matdesj+' onchange="find(this);" class="form-control ll" required></select></td>'+'<td><input type="text" id="'+partnoj+'" name="'+partnoj+'"  readonly class="form-control ll" required></td>'+'<td><input type="number" id='+quanj+' name='+quanj+' min="0" max="100000000" placeholder="Quantity"></td>'+'<td><input type="number" id='+weightj+' name='+weightj+' min="0" max="100000000" placeholder="Weight" ></td>'+'<td><input type="text" id='+unitj+' name='+unitj+' placeholder="unit" ></td>';
+        htAppend=htAppend+'<td><a class="delete" Deletedata-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>'+'</tr>';
         $('#items').append(htAppend);                                                  
-
+        
         /////////
         document.getElementById("totmebs").value=j;
         ////////////////////
-        var x=document.getElementById("part_no1");
+        var x=document.getElementById("matdes");
         var pp=0;
         for (pp = 0; pp < x.options.length; pp++) {
         
-            $("#"+partnoj).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
-        }
-
+            $("#"+matdesj).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
+        } 
+        $("#"+matdesj).chosen();
+        /*
         var x=document.getElementById("unit");
         var pp=0;
+        console.log("x.options  " +x.options)
         for (pp = 0; pp < x.options.length; pp++) {
             //console.log("jg");
             $("#"+unitj).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
-        }
+        }*/
 
 });
 
@@ -332,6 +348,9 @@ $(document).on("click", ".delete", function(){
     $(this).parents("tr").remove();
        
         });
+
+
+
+
 </script> 
 {% endblock content %}
-<!-- javascript written inside script tag -->
