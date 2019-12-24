@@ -16160,24 +16160,7 @@ def partallotement(request):
             'mb' : MB,
             'subgrp2': subgrp2, 
         }
-    if request.method == "POST":
-    
-        if submitvalue == 'proceed':
-            maj_grp = request.POST.get('maj_grp')
-            sub_grp1 = request.POST.get('subgrp')
-            sub_grp2 = request.POST.get('SUB-GROUP2')
-            slno = request.GET.POST('SL_NO')
-
-            print("Major Group",maj_grp)
-
-            print("Major Group",sub_grp1)
-
-            print("Major Group",sub_grp2)
-
-            print("Major Group",slno)
-
-        
-      
+   
     return render(request,"partallotement.html",context)
 
 
@@ -17936,6 +17919,17 @@ def machinegetcause(request):
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)  
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> 53b65289f7706710390816e11ca07ed86924cabd
 @login_required
 @role_required(urlpass='/m4hwview/')
 def m4hwview(request):
@@ -18111,6 +18105,37 @@ def m4hwview(request):
             date_time_str = final1
             date_time_obj = datetime.datetime.strptime(date_time_str, '%b %d %Y')
             print('Date:', date_time_obj.date())
+<<<<<<< HEAD
+            
+            wo_no= request.POST.get('wo_no')          
+            brn_no=request.POST.get('brn_no')         
+            qty=request.POST.get('qty')  
+            end_prod = request.POST.get('end_prod')         
+            epdes = request.POST.get('epdes')        
+            shop_section_temp = request.POST.get('shop_section_temp')        
+            part_no = request.POST.get('part_no')        
+            partdes= request.POST.get('partdes')        
+            drgno = request.POST.get('drgno')           
+            doc_no = request.POST.get('doc_no')         
+            batch_type = request.POST.get('batch_type')          
+            received_mat = request.POST.get('received_mat')        
+            issued_qty = request.POST.get('issued_qty')        
+            received_qty = request.POST.get('received_qty')      
+            laser_pst = request.POST.get('laser_pst')        
+            line = request.POST.get('line')                  
+            closing_bal = request.POST.get('closing_bal')          
+            remarks = request.POST.get('remarks')       
+            posted_date = request.POST.get('posted_date')        
+            wardkp_date = request.POST.get('wardkp_date')            
+            shopsup_date = request.POST.get('shopsup_date')        
+            posted1_date = request.POST.get('posted1_date')
+            causesofHW = request.POST.get('causesofHW')        
+            
+            M4HW.objects.create(prtdt=str(date_time_obj.date()),doc_no=str(doc_no),part_no=str(part_no),wo_no=str(wo_no),brn_no=str(brn_no),qty=str(qty),end_prod=str(end_prod),epdes=str(epdes),shop_section_temp=str(shop_section_temp),partdes=str(partdes),drgno=str(drgno),batch_type=str(batch_type),received_mat=str(received_mat),issued_qty=str(issued_qty),received_qty=str(received_qty),laser_pst=str(laser_pst),line=str(line),closing_bal=str(closing_bal),remarks=str(remarks),posted_date=str(posted_date),wardkp_date=str(wardkp_date),shopsup_date=str(shopsup_date),posted1_date=str(posted1_date),number=str(number),causesofHW=str(causesofHW))         
+            messages.success(request, 'M4 Card Hand Written generated Successfully, Your Reference number is : '+number)
+           
+    return render(request,"m4hwview.html",context)         
+=======
             
             wo_no= request.POST.get('wo_no')          
             brn_no=request.POST.get('brn_no')         
@@ -18141,6 +18166,7 @@ def m4hwview(request):
            
     return render(request,"m4hwview.html",context)    
 
+>>>>>>> master
 
 
 def m4getbrhw(request):
@@ -18578,3 +18604,854 @@ def mg5report(request):
             
     return render(request, "mg5report.html", context)
 
+
+
+@login_required
+@role_required(urlpass='/mg10views/')
+def mg10views(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    #----for name 
+    name = empmast.objects.values('empname').exclude(empname__isnull=True).distinct()
+    prtname=[]
+    for i in name:
+        prtname.append(i['empname'])
+        
+    # print(prtlist)
+    #------end name  
+    shop_sec = request.GET.get('shop_sec')
+    w1 = Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+    prtticket=[] 
+    for i in w1:
+        ty=i['staff_no']
+        pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+        prtticket.append(pop)
+
+    # print(prtticket)
+    
+
+    # cat = empmast.objects.values('desgn').exclude(desgn__isnull=True).distinct()
+    # prtdesgn=[]
+    # for i in desgn:
+    #     prtdesgn.append(i['desgn'])
+
+    payrate = empmast.objects.values('payrate').exclude(payrate__isnull=True).distinct()
+    prtpay=[]
+    for i in payrate:
+        prtpay.append(i['payrate'])
+
+    # superv = empmast.objects.values('empno').exclude(scalecode__isnull=True).distinct()
+    # prtemp=[]
+    # for i in superv:
+    #     prtemp.append(i['empno'])
+    # # print(prtemp)
+
+    
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        # print(tm)
+        tmp=[]
+        
+        for on in tm:
+            tmp.append(on.section_code)
+            #print(tmp)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = mg10.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+            print("role===========1 ",rolelist)
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)>1):
+        print("role >>>>>>>>>>>>>>>>> 1 ",rolelist)
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+        
+    if request.method == "POST":
+
+        submitvalue = request.POST.get('proceed')
+
+        if submitvalue=='Proceed':
+            date = request.POST.get('date')
+            #to_date = request.POST.get('to_date')
+            shop_sec = request.POST.get('shop_sec')
+            month = request.POST.get('month')
+            ticket = request.POST.get('ticket')
+
+            obj1 = mg10.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','payrate','cat','remarks').distinct()
+            print(date)
+            print(shop_sec)
+            print(month)
+            print("fgghuhjeeiueehjeduedeh")
+            obj3=mg10.objects.all().count()
+            print(obj3)
+            wer=obj3+1
+            print("wer------>",wer)
+            # #m21 se date validation--------------------------------------*******
+            # d1 = M21.objects.filter(shop_sec=shop_sec).values('date').distinct()
+            # print("d1 date m21",d1)
+            # #mydate = d1[0]['date']
+            # dtdate = mg10.objects.filter(eiwdate__contains=d1).values('ticket_no')
+
+
+            w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
+            print("w1",w1)
+            print("jgjuj")
+            prtticket=[]
+            for i in w1:
+                ty=i['staff_no']
+                pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+                for i in pop:
+                    prtticket.append(i['ticket_no'])
+
+            #leng=obj1.count()
+            ticket = request.POST.get('ticket')
+            print(ticket)
+
+            context = {
+            #'obj1': obj1,
+            'mytry':"rimjhim",
+            #'lent': leng,
+            # 'lent2': leng1,
+            #'leng':leng,
+            'shop_sec': shop_sec,
+            'month':month,
+            'date':date,
+            'wer':wer,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            'prt':prtticket,
+            'prtticket':prtticket,
+            'ticket':ticket,
+            # 'prtemp':prtemp,
+            # 'timekeep':timekeep,
+            # 'workshop':workshop,
+            # 'fr_date':fr_date,
+            'sub': 1, 
+                    
+        }
+
+        print("ghjkl;'",submitvalue)
+        if submitvalue=='submit':
+            # print("in submit")                               
+            leng=request.POST.get('len')
+            print("leng=",leng)
+            #shop_sec= request.POST.get('shop_sec')
+            #staff_no = request.POST.get('staff_no')
+            #name = request.Post.get('name')
+            tot= request.POST.get('total')
+            tot = int(tot)+1
+
+            for i in range(1,int(tot)):
+                print("aaya1")
+                date = request.POST.get('date')
+                shop_sec = request.POST.get('shop_sec')
+                month = request.POST.get('month')
+                sno = request.POST.get('sno'+str(i))
+                ticket = request.POST.get('ticket'+str(i))
+                name = request.POST.get('name'+str(i))
+                payrate = request.POST.get('payrate')
+                category = request.POST.get('category'+str(i)) 
+                eiwdate = request.POST.get('eiwdate'+str(i))
+                remark = request.POST.get('remark'+str(i))
+
+                
+                print("print here")
+                print(date)
+                print(month)
+                print(shop_sec)
+                print(ticket)
+                print(name)
+                print(payrate)
+                print(category)
+                print(eiwdate)
+                print(remark)
+                print("over n out !!!!!")
+                mg10.objects.create(shop_sec=str(shop_sec),month=str(month),date=str(date),sno=str(sno),ticket_no=str(ticket),name=str(name),payrate=str(payrate),cat=str(category),eiwdate=str(eiwdate),remarks=str(remark))
+
+
+    return render(request,"mg10views.html",context)
+
+# def mg10checkdate(request):
+#    if request.method == "GET" and request.is_ajax():
+#        shop_sec = request.GET.get('shop_sec')
+#        ticket = request.GET.get('ticket')
+#        d1 = M21.objects.filter(shop_sec=shop_sec).values('date').distinct()
+#        print("d1 date m21",d1)
+#        # #mydate = d1[0]['date']
+#        dtdate = mg10.objects.filter(eiwdate__contains=d1).values('ticket_no')
+
+
+def mg10checkdate(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        ticket = request.GET.get('ticket')
+        d1 = M21.objects.filter(shop_sec=shop_sec).values('date').distinct()
+        date_values = []
+        print("d1 date m21",d1)
+        for i in d1:
+            if not mg10.objects.get(eiwdate__contains=d1).exists():
+                print("Select a valid date")
+            else:
+                print("good")
+        return JsonResponse(d1, safe = False)
+    return JsonResponse({"success":False}, status=400)
+    
+        
+
+
+
+
+    
+
+
+#def mg10getticketno(request):
+#     if request.method == "GET" and request.is_ajax():
+#         shop_sec = request.GET.get('shop_sec')
+#         # w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
+#         # print("w1",w1)
+#         # print("jgjuj")
+#         # prtticket=[]
+#         # for i in w1:
+#         #     ty=i['staff_no']
+#         #     pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+#         #     for i in pop:
+#         #         prtticket.append(i['ticket_no'])
+#         context={
+#             'prt':prtticket,
+#         }
+#         print("prtticket----------",context)                     
+#         return JsonResponse({'cont':context}, safe = False)
+#     return JsonResponse({"success":False}, status=400)
+
+
+# def mg10getname(request):
+#     if request.method == "GET" and request.is_ajax():
+#         shop_sec = request.GET.get('shop_sec')
+#         ticket = request.GET.get('ticket')
+#         w2 = empmast.objects.filter(ticket_no=ticket).values('empname').distinct()
+#         print("w2--",w2)
+#         return JsonResponse(w2, safe = False)
+#     return JsonResponse({"success":False}, status=400)
+
+
+def mg10getname(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        #ticket = request.GET.get('ticket')
+        ticket = request.GET.get('two')
+        wname = empmast.objects.filter(ticket_no=ticket).values('empname').distinct()
+        myname = wname[0]['empname']
+        #print("wname--",wname)
+        context={
+            'prt':myname,
+        }
+        print("prtname******--",myname)
+        return JsonResponse({'cont':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def mg10getpayrate(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        ticket = request.GET.get('ticket')
+        ticket = list(empmast.objects.filter(ticket_no=ticket).values('payrate').distinct())
+        #staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        return JsonResponse(ticket, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def mg10getcat(request):
+    if request.method == "GET" and request.is_ajax():
+        # shop_sec = request.GET.get('shop_sec')
+        ticket = request.GET.get('two')
+        print(ticket)
+        w1 = list(empmast.objects.filter(ticket_no=ticket).values('empno').exclude(empno__isnull=True).distinct())
+        print("w1***********",w1)
+        t=w1[0]['empno']
+        print("t",t)
+        w2=str(t)
+        print("w2---",w2)
+        w4=w2[6:11]
+        print("w4---",w4)
+        w3= list(Shemp.objects.filter(staff_no=w4).values('cat').exclude(cat__isnull=True).distinct())[0]
+        print("w3",w3)
+        context={
+            'prt':w3['cat'],
+        }
+        print("prtcat----------------------",context)
+        return JsonResponse({'cont':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(urlpass='/mg10report/')
+def mg10report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    #----for name 
+    name = empmast.objects.values('empname').exclude(empname__isnull=True).distinct()
+    prtname=[]
+    for i in name:
+        prtname.append(i['empname'])
+        
+    # print(prtlist)
+    #------end name  
+    shop_sec = request.GET.get('shop_sec')
+    w1 = Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+    prtticket=[] 
+    for i in w1:
+        ty=i['staff_no']
+        pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+        prtticket.append(pop)
+
+    # print(prtticket)
+    
+
+    # cat = empmast.objects.values('desgn').exclude(desgn__isnull=True).distinct()
+    # prtdesgn=[]
+    # for i in desgn:
+    #     prtdesgn.append(i['desgn'])
+
+    payrate = empmast.objects.values('payrate').exclude(payrate__isnull=True).distinct()
+    prtpay=[]
+    for i in payrate:
+        prtpay.append(i['payrate'])
+
+    # superv = empmast.objects.values('empno').exclude(scalecode__isnull=True).distinct()
+    # prtemp=[]
+    # for i in superv:
+    #     prtemp.append(i['empno'])
+    # # print(prtemp)
+
+    
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        # print(tm)
+        tmp=[]
+        
+        for on in tm:
+            tmp.append(on.section_code)
+            #print(tmp)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = mg10.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+            print("role===========1 ",rolelist)
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)>1):
+        print("role >>>>>>>>>>>>>>>>> 1 ",rolelist)
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+        
+    if request.method == "POST":
+
+        submitvalue = request.POST.get('proceed')
+
+        if submitvalue=='Proceed':
+            date = request.POST.get('date')
+            #to_date = request.POST.get('to_date')
+            shop_sec = request.POST.get('shop_sec')
+            month = request.POST.get('month')
+            ticket = request.POST.get('ticket')
+
+            obj1 = mg10.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','payrate','cat','eiwdate','remarks').distinct()
+            print("obj 1 ---",obj1)
+            print(date)
+            print(shop_sec)
+            print(month)
+            
+
+
+            w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
+            print("w1",w1)
+            print("jgjuj")
+            prtticket=[]
+            for i in w1:
+                ty=i['staff_no']
+                pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+                for i in pop:
+                    prtticket.append(i['ticket_no'])
+
+            leng=obj1.count()
+            ticket = request.POST.get('ticket')
+            print(ticket)
+
+            context = {
+            'obj1': obj1,
+            'mytry':"rimjhim",
+            #'lent': leng,
+            # 'lent2': leng1,
+            'leng':leng,
+            'shop_sec': shop_sec,
+            'month':month,
+            'date':date,
+            'prtname':prtname,
+            'prtpay':prtpay,
+            'prt':prtticket,
+            'prtticket':prtticket,
+            'ticket':ticket,
+            # 'prtemp':prtemp,
+            # 'timekeep':timekeep,
+            # 'workshop':workshop,
+            # 'fr_date':fr_date,
+            'sub': 1, 
+                    
+        }
+
+    return render(request,"mg10report.html",context)
+
+
+@login_required
+@role_required(urlpass='/mg11views/')
+def mg11views(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    #----for name 
+    name = empmast.objects.values('empname').exclude(empname__isnull=True).distinct()
+    prtname=[]
+    for i in name:
+        prtname.append(i['empname'])
+        
+    # print(prtlist)
+    #------end name  
+    shop_sec = request.GET.get('shop_sec')
+    w1 = Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+    prtticket=[] 
+    for i in w1:
+        ty=i['staff_no']
+        pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+        prtticket.append(pop)
+    
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        # print(tm)
+        tmp=[]
+        
+        for on in tm:
+            tmp.append(on.section_code)
+            #print(tmp)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'prtname':prtname,
+            #'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = mg11.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+            print("role===========1 ",rolelist)
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            #'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)>1):
+        print("role >>>>>>>>>>>>>>>>> 1 ",rolelist)
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            #'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+        
+    if request.method == "POST":
+
+        submitvalue = request.POST.get('proceed')
+
+        if submitvalue=='Proceed':
+            date = request.POST.get('date')
+            #to_date = request.POST.get('to_date')
+            shop_sec = request.POST.get('shop_sec')
+            month = request.POST.get('month')
+            #ticket = request.POST.get('ticket')
+
+            obj1 = mg11.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','remarks').distinct()
+            print(date)
+            print(shop_sec)
+            print(month)
+            print("fgghuhjeeiueehjeduedeh")
+            obj3=mg11.objects.all().count()
+            print(obj3)
+            wer=obj3+1
+            print("wer------>",wer)
+
+
+            w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
+            print("w1",w1)
+            print("jgjuj")
+            prtticket=[]
+            for i in w1:
+                ty=i['staff_no']
+                pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+                for i in pop:
+                    prtticket.append(i['ticket_no'])
+
+            # #leng=obj1.count()   comment
+            ticket = request.POST.get('ticket')
+            print(ticket)
+
+            context = {
+            #'obj1': obj1,
+            'mytry':"rimjhim",
+            #'lent': leng,
+            # 'lent2': leng1,
+            #'leng':leng,
+            'shop_sec': shop_sec,
+            'month':month,
+            'date':date,
+            'wer':wer,
+            'prtname':prtname,
+            #'prtpay':prtpay,
+            'prt':prtticket,
+            'prtticket':prtticket,
+            'ticket':ticket,
+            # 'prtemp':prtemp,
+            # 'timekeep':timekeep,
+            # 'workshop':workshop,
+            # 'fr_date':fr_date,
+            'sub': 1, 
+                    
+        }
+
+        print("ghjkl;'",submitvalue)
+        if submitvalue=='submit':
+            # print("in submit")                               
+            leng=request.POST.get('len')
+            print("leng=",leng)
+            shop_sec= request.POST.get('shop_sec')
+            staff_no = request.POST.get('staff_no')
+            name = request.POST.get('name')
+            tot= request.POST.get('total')
+            tot = int(tot)+1
+
+            for i in range(1,int(tot)):
+                print("aaya1")
+                date = request.POST.get('date')
+                shop_sec = request.POST.get('shop_sec')
+                month = request.POST.get('month')
+                sno = request.POST.get('sno'+str(i))
+                ticket = request.POST.get('ticket'+str(i))
+                name = request.POST.get('name'+str(i))
+                remark = request.POST.get('remark'+str(i))
+
+
+                print("print here")
+                print(date)
+                print(month)
+                print(shop_sec)
+                print(ticket)
+                print(name)
+                print(remark)
+                print("over n out !!!!!")
+                mg11.objects.create(shop_sec=str(shop_sec),month=str(month),date=str(date),sno=str(sno),ticket_no=str(ticket),name=str(name),remarks=str(remark))
+
+
+    return render(request,"mg11views.html",context)
+
+def mg11getname(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        #ticket = request.GET.get('ticket')
+        ticket = request.GET.get('two')
+        wname = empmast.objects.filter(ticket_no=ticket).values('empname').distinct()
+        myname = wname[0]['empname']
+        #print("wname--",wname)
+        context={
+            'prt':myname,
+        }
+        print("prtname******--",myname)
+        return JsonResponse({'cont':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+@login_required
+@role_required(urlpass='/mg11report/')
+def mg11report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    #----for name 
+    name = empmast.objects.values('empname').exclude(empname__isnull=True).distinct()
+    prtname=[]
+    for i in name:
+        prtname.append(i['empname'])
+        
+    # print(prtlist)
+    #------end name  
+    shop_sec = request.GET.get('shop_sec')
+    w1 = Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
+    prtticket=[] 
+    for i in w1:
+        ty=i['staff_no']
+        pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+        prtticket.append(pop)
+
+    # print(prtticket)
+    
+
+    
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        # print(tm)
+        tmp=[]
+        
+        for on in tm:
+            tmp.append(on.section_code)
+            #print(tmp)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'prtname':prtname,
+            #'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            # wo_nop =wo_nop | req
+
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = mg11.objects.filter(part_no__in=w1).values('batch_no').distinct()
+            wo_nop = wo_nop | req
+            print("role===========1 ",rolelist)
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            #'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+    elif(len(rolelist)>1):
+        print("role >>>>>>>>>>>>>>>>> 1 ",rolelist)
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'prtname':prtname,
+            #'prtpay':prtpay,
+            #'ticket':ticket,
+            'prtticket':prtticket,
+            # 'prtemp':prtemp,
+        }
+        
+    if request.method == "POST":
+
+        submitvalue = request.POST.get('proceed')
+
+        if submitvalue=='Proceed':
+            date = request.POST.get('date')
+            #to_date = request.POST.get('to_date')
+            shop_sec = request.POST.get('shop_sec')
+            month = request.POST.get('month')
+            ticket = request.POST.get('ticket')
+
+            obj1 = mg11.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','remarks').distinct()
+            # print(date)
+            # print(shop_sec)
+            # print(month)
+            print("obj1+++++++",obj1)
+            obj3=mg11.objects.all().count()
+            print("obj3-------",obj3)
+            wer=obj3+1
+            print("wer------>",wer)
+
+
+            w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
+            print("w1++++",w1)
+            #print("jgjuj")
+            prtticket=[]
+            for i in w1:
+                ty=i['staff_no']
+                pop=empmast.objects.filter(empno__contains=ty).values('ticket_no')
+                for i in pop:
+                    prtticket.append(i['ticket_no'])
+
+            leng=obj1.count()   
+            #ticket = request.POST.get('ticket')
+            #print(ticket)
+
+            context = {
+            'obj1': obj1,
+            'mytry':"rimjhim",
+            #'lent': leng,
+            # 'lent2': leng1,
+            'leng':leng,
+            'shop_sec': shop_sec,
+            'month':month,
+            'date':date,
+            'wer':wer,
+            'prtname':prtname,
+            'prt':prtticket,
+            'prtticket':prtticket,
+            #'ticket':ticket,
+            'sub': 1, 
+                    
+        }
+
+    return render(request,"mg11report.html",context)

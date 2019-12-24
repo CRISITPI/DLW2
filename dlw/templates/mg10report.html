@@ -1,0 +1,207 @@
+{% block content %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 2.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+
+    td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+<br>
+<br>
+<h1 align="center" >प्रोत्साहन बोनस विवरण-1</h1>
+<h1 align="center" >INCENTIVE BONUS STATEMENT-1</h1>
+<br><br>
+<form action="{% url 'mg10report' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table" align="center">
+            <tr>
+                
+                <td>
+                    <label for="date"><b>Date</b></label>
+                    <input id="date" type="date" name="date" maxlength="20" value={{date}}>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+            
+                <td>
+                    <label for="sno"><b>Shop Section/शॉप अनुभाग :</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+                    <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                    {% if lenm == 1 %}
+                        <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                        {{role}}
+                    {% endif %}
+                    {% if lenm > 1 %}
+                    {% for role in roles %}
+                        {{role}}
+                        <option>{{role}}</option>
+                    {% endfor %}
+                    {% endif %}
+                    </select>
+
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                    <label for="month"><b>Month/माह :</b></label>
+                    <select id="month" name="month">
+                        <option value="select">SELECT MONTH</option>
+                        <option value="JAN">JAN</option>
+                        <option value="FEB">FEB</option>
+                        <option value="MAR">MAR</option>
+                        <option value="APR">APR</option>
+                        <option value="MAY">MAY</option>
+                        <option value="JUN">JUN</option>
+                        <option value="JUL">JUL</option>
+                        <option value="AUG">AUG</option>
+                        <option value="SEPT">SEPT</option>
+                        <option value="OCT">OCT</option>
+                        <option value="NOV">NOV</option>
+                        <option value="DEC">DEC</option>
+                    </select>
+                </td>
+            </tr>
+        
+        </table>
+        <center>
+            <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+        </center>
+</div>
+<br>
+<br><br> 
+{% if sub == 1 %}
+<div id="print" style="align:center" class="table">
+    <center><b><h4>डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h4></b></center>
+    <input type="hidden" name="len" value="{{len}}">
+    <input type="hidden" name="len2" value="{{len2}}">
+        <table align="center" border="1">
+            <tr>
+                <th> DATE </th>
+                <th>SHOP SECTION/शाप विभाग </th>
+                <th>MONTH/माह</th>
+            </tr>
+            <tr>
+                <td>{{date}}</td>
+                <td>{{shop_sec}}</td>
+                <td>{{month}}</td>
+            </tr>
+        </table>
+        <br>
+        <br><br>
+    <div>
+        <table border="1" align="center">
+            <thead>
+                <th>SL. NO.</th>
+                <th>TICKET NO.</th>
+                <th>NAME</th>
+                <th>CATEGORY</th>
+                <th>RATE OF PAY</th>
+                <th>DATE WORKED AS E.I.W</th>
+                <th>REMARKS</th>
+            </thead>
+            <tbody>
+            
+                {% for i in obj1 %}
+                    <tr>
+                        <td>{{i.sno}}</td>
+                        <td>{{i.ticket_no}}</td>
+                        <td>{{i.name}}</td>
+                        <td>{{i.cat}}</td>
+                        <td>{{i.payrate}}</td>
+                        <td>{{i.eiwdate}}</td>
+                        <td>{{i.remarks}}</td>
+                    </tr>
+                {% endfor %}
+            
+
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+<br>
+<center><input type="button"  value="print" onclick="printDiv()"></center>
+</form>
+<script>
+document.querySelector("#month").addEventListener('change',(e)=>{
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})     
+
+    function printDiv() {
+        var printContents = document.getElementById("print").innerHTML;
+                       
+        var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        //style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: center;}";
+        style = style + "</style>";
+        var win = window.open('', '', 'height=500,width=500');
+                       
+        win.document.write('<html><head>');
+                       
+        win.document.write('<title>MG10 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+    }
+</script>
+{% endblock content %}
