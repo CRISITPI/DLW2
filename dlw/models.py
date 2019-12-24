@@ -4686,3 +4686,46 @@ class M4HW(models.Model):
     causesofHW=models.CharField(db_column='CAUSESOFHW',max_length=50,null=True)
 
 
+
+
+class mg10(models.Model):
+    sno=models.AutoField(db_column='SL.No',primary_key=True)
+    formid=models.CharField(db_column='FORM_ID',max_length=30,null=True)
+    date=models.CharField(db_column='DATE',max_length=30,null=True)
+    month=models.CharField(db_column='MONTH',max_length=30,null=True)
+    shop_sec=models.CharField(db_column='SHOPSEC',max_length=20,null=True)
+    ticket_no=models.CharField(db_column='TICKET_NO',max_length=20,null=True)
+    name=models.CharField(db_column='name',max_length=30,null=True)
+    payrate=models.CharField(db_column='RATE_PAY',max_length=20,null=True)   
+    cat=models.CharField(db_column='CATEGORY',max_length=30,null=True)
+    remarks=models.CharField(db_column='REMARKS',max_length=40,null=True)
+    eiwdate=models.CharField(db_column='EIW_DATE',max_length=50,null=True)
+    last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
+    login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
+
+
+class mg11doc(models.Model):
+    sno=models.AutoField(db_column='SL.No',primary_key=True)
+    formid=models.CharField(db_column='FORM_ID',max_length=30,null=True)
+    date=models.CharField(db_column='DATE',max_length=30,null=True)
+    month=models.CharField(db_column='MONTH',max_length=30,null=True)
+    shop_sec=models.CharField(db_column='SHOPSEC',max_length=20,null=True)
+    ticket_no=models.CharField(db_column='TICKET_NO',max_length=20,null=True)
+    name=models.CharField(db_column='name',max_length=30,null=True)
+    remarks=models.CharField(db_column='REMARKS',max_length=40,null=True)
+    last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
+    login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
+
+
+class mg11(models.Model):
+    sno=models.AutoField(db_column='SL.No',primary_key=True)
+    formid=models.CharField(db_column='FORM_ID',max_length=30,null=True)
+    date=models.CharField(db_column='DATE',max_length=30,null=True)
+    month=models.CharField(db_column='MONTH',max_length=30,null=True)
+    shop_sec=models.CharField(db_column='SHOPSEC',max_length=20,null=True)
+    ticket_no=models.CharField(db_column='TICKET_NO',max_length=20,null=True)
+    name=models.CharField(db_column='name',max_length=30,null=True)
+    remarks=models.CharField(db_column='REMARKS',max_length=40,null=True)
+    last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
+    login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
+

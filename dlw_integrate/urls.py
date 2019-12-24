@@ -287,6 +287,15 @@ urlpatterns = [
     path('ajax/m4getpart_nohw/',m4getpart_nohw,name='m4getpart_nohw'),
     path('ajax/m4getdoc_nohw/',m4getdoc_nohw,name='m4getdoc_nohw'),
     path('ajax/m4getwonohw',m4getwonohw,name='m4getwonohw'),
+    path('mg11views/',mg11views, name='mg11views'),
+    path('ajax/mg11getname/',mg11getname,name='mg11getname'),
+    path('mg11report/',mg11report, name='mg11report'),
+    path('mg10views/',mg10views, name='mg10views'),
+    path('mg10report/',mg10report, name='mg10report'),
+    path('ajax/mg10getcat/',mg10getcat,name='mg10getcat'),
+    path('ajax/mg10getname/',mg10getname,name='mg10getname'),
+    path('ajax/mg10checkdate/',mg10checkdate,name='mg10checkdate'),
+    path('ajax/mg10getpayrate/',mg10getpayrate,name='mg10getpayrate'),
 ]
 
 
