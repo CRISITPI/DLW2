@@ -35,6 +35,7 @@ import math,random
 from random import randint
 import datetime
 import smtplib 
+import requests
 # Create your views here.
 #
 #
@@ -6848,21 +6849,29 @@ def M20view(request):
 
                 M20new.objects.create(shop_sec=str(shop_sec),staff_no=str(ticketno), lv_date=str(lv_date), name=str(name), ticketno=str(ticketno), alt_date=str(date))
                 emp_detail= emp_details.objects.filter(shopsec=shop_sec, empno=ticketno).values('email_id','mobileno')
-                email("erpdlw@gmail.com", "erpdlw@123", emp_detail[0]['email_id']," M20 Card Saved")
+                # email("erpdlw@gmail.com", "erpdlw@123", emp_detail[0]['email_id']," M20 Card Saved")
+                sms(emp_detail[0]['mobileno'],"Leave alloted on"+date+" for sunday booking, m20 card saved ")
                 print(shop_sec,lv_date,name,ticketno,date)
+                print("check----->>",emp_detail[0]['email_id'])
             messages.success(request, 'Successfully Saved !!!, Select new values to update')
     return render(request, "M20view.html", context)
 
 
 
 def email(sender_email_id,sender_email_id_password,receiver_email_id,message):
-        s = smtplib.SMTP('smtp.gmail.com', 587) 
-        s.starttls()
-        s.login(sender_email_id,sender_email_id_password)  
-        s.sendmail(sender_email_id,receiver_email_id, message) 
-        s.quit()
+    print(sender_email_id)
+    s = smtplib.SMTP('smtp.gmail.com', 587) 
+    s.starttls()
+    s.login(sender_email_id,sender_email_id_password)  
+    s.sendmail(sender_email_id,receiver_email_id, message) 
+    s.quit()
 
-
+def sms(phoneno,message):
+    url = "http://enterprise.smsgupshup.com/GatewayAPI/rest?method=SendMessage&send_to=91"+str(phoneno)+"&msg="+message+" &msg_type=TEXT&userid=2000184632&auth_scheme=plain&password=pWK3H5&v=1.1&format=text"
+    
+    print("Message ---->>",message)
+    response = requests.request("POST", url)
+    print(response.text)
 
 def m20getstaffno(request):
     if request.method == "GET" and request.is_ajax():  
