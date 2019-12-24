@@ -9348,7 +9348,7 @@ def MG22view(request):
             wono=[]
             for w in range(len(w1)):
                 wono.append(w1[w]['name'])
-            alt_date="yyyy-mm-dd"
+            alt_date="mm-dd-yy"
             # if obj1 is not None:
             #     ename=obj1[0].name
             #     alt_date=obj1[0].alt_date
