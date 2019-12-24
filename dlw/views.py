@@ -17919,17 +17919,7 @@ def machinegetcause(request):
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)  
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> master
->>>>>>> master
->>>>>>> 53b65289f7706710390816e11ca07ed86924cabd
 @login_required
 @role_required(urlpass='/m4hwview/')
 def m4hwview(request):
@@ -18105,7 +18095,6 @@ def m4hwview(request):
             date_time_str = final1
             date_time_obj = datetime.datetime.strptime(date_time_str, '%b %d %Y')
             print('Date:', date_time_obj.date())
-<<<<<<< HEAD
             
             wo_no= request.POST.get('wo_no')          
             brn_no=request.POST.get('brn_no')         
@@ -18135,38 +18124,6 @@ def m4hwview(request):
             messages.success(request, 'M4 Card Hand Written generated Successfully, Your Reference number is : '+number)
            
     return render(request,"m4hwview.html",context)         
-=======
-            
-            wo_no= request.POST.get('wo_no')          
-            brn_no=request.POST.get('brn_no')         
-            qty=request.POST.get('qty')  
-            end_prod = request.POST.get('end_prod')         
-            epdes = request.POST.get('epdes')        
-            shop_section_temp = request.POST.get('shop_section_temp')        
-            part_no = request.POST.get('part_no')        
-            partdes= request.POST.get('partdes')        
-            drgno = request.POST.get('drgno')           
-            doc_no = request.POST.get('doc_no')         
-            batch_type = request.POST.get('batch_type')          
-            received_mat = request.POST.get('received_mat')        
-            issued_qty = request.POST.get('issued_qty')        
-            received_qty = request.POST.get('received_qty')      
-            laser_pst = request.POST.get('laser_pst')        
-            line = request.POST.get('line')                  
-            closing_bal = request.POST.get('closing_bal')          
-            remarks = request.POST.get('remarks')       
-            posted_date = request.POST.get('posted_date')        
-            wardkp_date = request.POST.get('wardkp_date')            
-            shopsup_date = request.POST.get('shopsup_date')        
-            posted1_date = request.POST.get('posted1_date')
-            causesofHW = request.POST.get('causesofHW')        
-            
-            M4HW.objects.create(prtdt=str(date_time_obj.date()),doc_no=str(doc_no),part_no=str(part_no),wo_no=str(wo_no),brn_no=str(brn_no),qty=str(qty),end_prod=str(end_prod),epdes=str(epdes),shop_section_temp=str(shop_section_temp),partdes=str(partdes),drgno=str(drgno),batch_type=str(batch_type),received_mat=str(received_mat),issued_qty=str(issued_qty),received_qty=str(received_qty),laser_pst=str(laser_pst),line=str(line),closing_bal=str(closing_bal),remarks=str(remarks),posted_date=str(posted_date),wardkp_date=str(wardkp_date),shopsup_date=str(shopsup_date),posted1_date=str(posted1_date),number=str(number),causesofHW=str(causesofHW))         
-            messages.success(request, 'M4 Card Hand Written generated Successfully, Your Reference number is : '+number)
-           
-    return render(request,"m4hwview.html",context)    
-
->>>>>>> master
 
 
 def m4getbrhw(request):
