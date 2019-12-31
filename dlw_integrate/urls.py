@@ -211,6 +211,7 @@ urlpatterns = [
     path('ajax/getpartdecription',getpartdecription,name='getpartdecription'),
     path('ajax/getsubgrp2',getsubgrp2,name='getsubgrp2'),
     path('ajax/getDiscription',getDiscription,name='getDiscription'),
+    
     path('ajax/GenerateNewPartNo',GenerateNewPartNo,name='GenerateNewPartNo'),
     path('examdetail/',exam_detail,name='examdetail'),
     path('m23view/',m23view,name='m23view'),
