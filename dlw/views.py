@@ -16229,6 +16229,31 @@ def getpartdecription(request):
         return JsonResponse(partgrp, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+def GenerateNewPartNo(request):
+    if request.method == "GET" and request.is_ajax():        
+        majg = request.GET.get("majg")  
+        subg1= request.GET.get("subg1")
+        subg2= request.GET.get("subg2")
+        sl_no= request.GET.get("sl_no")
+        lst=[majg,subg1,subg2,sl_no]
+        part=''.join(map(str,lst))
+        lst=[]
+        for i in range(0,len(part)):
+            lst.insert(i,int(part[i]))
+        sum=0 
+        cal=8
+        for i in range(0,7):
+            sum=sum + (lst[i] * cal)
+            cal= cal - 1
+        mod = sum % 11
+        lst.insert(len(lst),mod) 
+        part=''.join(map(str,lst)) 
+        print(part)   
+        print("new part no generated: ")
+        return JsonResponse(part, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
 
 @login_required
 @role_required(urlpass='/staff_auth_view/')

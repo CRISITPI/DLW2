@@ -125,6 +125,7 @@
                                   {% endfor %}
                                   
                         </select>
+                        <input type="text" style="width: 180px; display:none;" id="partno1" name="partno1" readonly>
                 </td>                         
                 
                      <td>
@@ -435,7 +436,7 @@
                                     
                                         document.getElementById('SL_NO').value=response[0].sln;
                                         document.getElementById('grp_des').value=response[0].gdes;
-                                        
+                                        genpartno();
                                         
                                         }
                                       })
@@ -467,6 +468,35 @@
            
            
            }
+
+    //   changed
+
+                            function genpartno()
+                            {
+                                var gmpart = $('#gmpart').val();
+                                if(gmpart=="NEW" || gmpart=="new")
+                                {  
+                                var SUB_GROUP2_temp = $('#SUB-GROUP2').val();               
+                                var temp = {majg :$('#maj_grp').val() , subg1 :$('#subgrp').val(), subg2 :$('#SUB-GROUP2').val() , sl_no :$('#SL_NO').val() }; 
+                                var data = temp;               
+                                  $.ajax({
+                                    type : 'GET',
+                                    url : "{% url 'GenerateNewPartNo' %}",
+                                    dataType : 'json',
+                                    data : data,
+                                    success : function(response){
+
+                                        $('#partno').hide();
+                                        $('#partno1').show();
+                                        window.alert("NEW PART NO. IS GENERATED :-   " + response)
+                                        document.getElementById("partno1").value=response;
+                                        
+                                        } 
+                                       
+                                      }) 
+                                      }
+                                    }
+                                     
           
           </script>   
 
