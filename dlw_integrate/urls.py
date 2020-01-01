@@ -298,6 +298,15 @@ urlpatterns = [
     path('ajax/mg10getname/',mg10getname,name='mg10getname'),
     path('ajax/mg10checkdate/',mg10checkdate,name='mg10checkdate'),
     path('ajax/mg10getpayrate/',mg10getpayrate,name='mg10getpayrate'),
+    path('m14hwview/',m14hwview,name='m14hwview'),
+    path('ajax/m14getdate/',m14getdate,name='m14getdate'),
+    path('ajax/m14hwpart/',m14hwpart,name='m14hwpart'),
+    path('ajax/m14hwbatch_no/',m14hwbatch_no,name='m14hwbatch_no'),
+    path('ajax/m14hwassly/',m14hwassly,name='m14hwassly'),
+    path('ajax/m14hwsave/',m14hwsave,name='m14hwsave'),
+    path('ajax/m14getdoc_no/',m14getdoc_no,name='m14getdoc_no'),
+    path('ajax/m14hwpm/',m14hwpm,name='m14hwpm'),
+    path('ajax/m14hwasslyno/',m14hwasslyno,name='m14hwasslyno'),
 ]
 
 
