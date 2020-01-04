@@ -307,10 +307,11 @@ urlpatterns = [
     path('ajax/m14getdoc_no/',m14getdoc_no,name='m14getdoc_no'),
     path('ajax/m14hwpm/',m14hwpm,name='m14hwpm'),
     path('ajax/m14hwasslyno/',m14hwasslyno,name='m14hwasslyno'),
-    path('GeneratePdf/',GeneratePdf, name='GeneratePdf'),
+    
     path('m338view/',m338view,name='m338view'),
     path('ajax/m338authority/',m338authority,name='m338authority'),
     path('ajax/edit_status/',edit_status,name='edit_status'),
+    path('GeneratePdf/',GeneratePdf, name='GeneratePdf'),
 ]
 
 
