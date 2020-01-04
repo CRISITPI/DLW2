@@ -46,6 +46,57 @@ import requests
 #
 
 
+from .utils import render_to_pdf 
+
+def GeneratePdf(request, *args, **kwargs):
+    m13_no = request.GET.get('m13_no')
+    m13_date = request.GET.get('m13_date')
+    char_wo = request.GET.get('char_wo')
+    sl_no = request.GET.get('sl_no')
+    batch_no = request.GET.get('batch_no')
+    epc = request.GET.get('epc')
+    brn_no = request.GET.get('brn_no')
+    loco_from = request.GET.get('loco_from')
+    loco_to = request.GET.get('loco_to')
+    assly_no = request.GET.get('assly_no')
+    assly_desc = request.GET.get('assly_desc')
+    part_no = request.GET.get('part_no')
+    part_desc = request.GET.get('part_desc')
+    quantity = request.GET.get('quantity')
+    unit = request.GET.get('unit')
+    pm_no = request.GET.get('pm_no')
+    m14_no = request.GET.get('m14_no')
+    rforhw = request.GET.get('rforhw')
+    m14_date=datetime.datetime.now().strftime ("%d-%m-%Y")
+    data = {
+        'm14_date':m14_date,
+        'rforhw':rforhw,
+        'm14_no':m14_no,
+        'pm_no':pm_no,
+        'unit':unit,
+        'quantity':quantity,
+        'part_desc':part_desc,
+        'part_no':part_no,
+        'assly_desc':assly_desc,
+        'assly_no':assly_no,
+        'loco_to':loco_to,
+        'loco_from':loco_from,
+        'brn_no':brn_no,
+        'epc':epc,
+        'batch_no':batch_no,
+        'sl_no':sl_no,
+        'char_wo':char_wo,
+        'm13_date':m13_date,
+        'm13_no':m13_no,    
+        }
+    if str(m13_no)==str(0):
+        pdf = render_to_pdf('m14genpdf2.html', data)
+    else:
+        pdf = render_to_pdf('m14genpdf1.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
+# END PRINT
+
+
 def viewsPermission(request):
     rolelist = roles.objects.all().values('role').order_by('role').distinct('role')
     urlfirst = navbar.objects.all().values('link').distinct('link')
@@ -340,7 +391,7 @@ def update_permission(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     users=User.objects.all()
-    availableroles=roles.objects.all().values('parent').distinct()
+    availableroles=roles.objects.all().values('parent').distinct() 
     if request.method == "POST":
         updateuser=request.POST.get('emp_id')
         sublevelrole=request.POST.getlist('sublevel')
@@ -19476,7 +19527,7 @@ def m14hwview(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist) 
     batch1 = list(Batch.objects.filter(status = 'R' , rel_date__isnull=False).values('bo_no').distinct())
-    m13ref = list(M13.objects.all().values('m13_no').distinct())
+    m13ref = list(M13.objects.filter(rej_cat='M14').values('m13_no').distinct())
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -19499,7 +19550,7 @@ def m14hwview(request):
 def m14getdate(request):
     if request.method == 'GET' and request.is_ajax():  
         partno_temp = request.GET.get('partno_temp')
-        partnew = list(M13.objects.filter(m13_no = partno_temp ).values('epc','m13_date','slno','wo','wo_rep','reason','part_no').distinct())
+        partnew = list(M13.objects.filter(m13_no = partno_temp ).values('epc','m13_date','slno','wo','wo_rep','reason','part_no','qty_rej').distinct())
         s = list(partnew[0]['m13_date'])
         date='' . join(map(str,s))
         date = date[8:10] + "-" + date[5:7] + "-" + date[0:4]
@@ -19526,7 +19577,8 @@ def m14hwpart(request):
 def m14hwbatch_no(request):
     if request.method == 'GET' and request.is_ajax():  
         batch_temp = request.GET.get('batch')
-        batchnew=list(Batch.objects.filter(bo_no = batch_temp, status = 'R' , rel_date__isnull=False).values('part_no','ep_type','brn_no','loco_to','loco_fr','rel_date','status').distinct())
+        print(batch_temp)
+        batchnew=list(Batch.objects.filter(bo_no = batch_temp, status = 'R' , rel_date__isnull=False).values('part_no','ep_type','brn_no','loco_to','loco_fr','rel_date','status','batch_qty').distinct())
         if len(batchnew)<=0:
                 batchnew.insert(0,'Z')
         elif len(batchnew)>0:
@@ -19537,8 +19589,10 @@ def m14hwbatch_no(request):
 def m14hwpm(request):
     if request.method == 'GET' and request.is_ajax():  
         batch_temp = request.GET.get('batch')
-        print(batch_temp)
-        batchnew=list(M14M4.objects.filter(part_no = batch_temp).values('unit','pm_no','qty').distinct())
+        qty=request.GET.get('qty')
+        
+        batchnew=list(M14M4.objects.filter(part_no = batch_temp,qty=qty).values('unit','pm_no').distinct())
+        print(batchnew)
         return JsonResponse(batchnew, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -19577,11 +19631,12 @@ def m14hwsave(request):
         pm_no = request.GET.get('pm_no')
         m14_no = request.GET.get('m14_no')
         rforhw = request.GET.get('rforhw')
+        loco_no = request.GET.get('loco_no')
         m14_date=datetime.datetime.now().strftime ("%d-%m-%Y")
         
         response_data=m14_no
         print(response_data)
-        M14HW11.objects.create(doc_code='89',m14_no=str(m14_no),m14_date=str(m14_date),m13_no=str(m13_no),m13_date=str(m13_date),char_wo=str(char_wo),sl_no=str(sl_no),batch_no=str(batch_no),brn_no=brn_no,epc=str(epc),l_fr=str(loco_from),l_to=str(loco_to),pm_no=str(pm_no),part_no=str(part_no),part_desc=str(part_desc),qty=quantity,reason=str(rforhw),assly_no=str(assly_no),assly_desc=str(assly_desc),unit=unit,epc_old=str(''))
+        M14HW11.objects.create(doc_code='89',m14_no=str(m14_no),m14_date=str(m14_date),m13_no=str(m13_no),m13_date=str(m13_date),char_wo=str(char_wo),sl_no=str(sl_no),batch_no=str(batch_no),brn_no=brn_no,epc=str(epc),l_fr=str(loco_from),l_to=str(loco_to),pm_no=str(pm_no),part_no=str(part_no),part_desc=str(part_desc),qty=quantity,reason=str(rforhw),assly_no=str(assly_no),assly_desc=str(assly_desc),unit=unit,epc_old=str(''),loco_no=str(loco_no))
         Code.objects.filter(cd_type='21',code = 'M14' ).update(num_1=int(m14_no))
         return JsonResponse(response_data, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -19594,3 +19649,162 @@ def m14getdoc_no(request):
         docno.insert(1,c_date)
         return JsonResponse(docno, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+
+@login_required
+@role_required(urlpass='/m338view/')
+def m338view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=M5SHEMP.objects.all().values('shopsec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('final')
+        if submitvalue=='final':
+             
+            obj = Intershop()
+    
+            obj.shop_sec        = request.POST.get('shop_sec')
+            obj.staffNo          = request.POST.get('staffNo')
+            obj.staffName        = request.POST.get('staffName')
+            obj.staffDesg      = request.POST.get('staffDesg')
+            obj.reference_authority = request.POST.get('reference_authority')
+            obj.staffRate = request.POST.get('staffRate')
+            obj.toshop_sec    = request.POST.get('toshop_sec')
+            obj.date1        = request.POST.get('date1')
+            obj.login_id            = str(request.user)
+            obj.status          = 'f'
+            obj.current_date     = datetime.datetime.now() 
+            print(obj.reference_authority)
+             
+            obj.save()
+            
+
+
+        submitvalue = request.POST.get('draft')
+        if submitvalue=='draft': 
+            obj = Intershop()          
+            obj.shop_sec        = request.POST.get('shop_sec')
+            obj.staffNo          = request.POST.get('staffNo')
+            obj.staffName        = request.POST.get('staffName')
+            obj.staffDesg      = request.POST.get('staffDesg')
+            obj.reference_authority = request.POST.get('reference_authority')
+            obj.staffRate = request.POST.get('staffRate')
+            obj.toshop_sec    = request.POST.get('toshop_sec')
+            obj.date1        = request.POST.get('date1')
+            obj.login_id            = str(request.user)
+            obj.status          = 'd'
+            obj.current_date     = datetime.date.today()
+            #quantity        = request.POST.get('quantity')
+            #setExtraTime    = request.POST.get('setExtraTime')    
+            #setno           = request.POST.get('setno')  
+            obj.save()
+    
+
+        submitvalue = request.POST.get('viewdraft')
+       
+        if submitvalue =='viewdraft':      
+            
+            shop_sec        = request.POST.get('shop_sec')
+            staffNo          = request.POST.get('staffNo')
+            staffName        = request.POST.get('staffName')
+            staffDesg      = request.POST.get('staffDesg')
+            reference_authority = request.POST.get('reference_authority')
+            staffRate = request.POST.get('staffRate')
+            toshop_sec    = request.POST.get('toshop_sec')
+            date1        = request.POST.get('date1')
+           
+            submitvalue = request.POST.get('i.staffNo')
+            obj = list(Intershop.objects.filter(status = 'd').values('shop_sec', 'staffNo','staffName', 'staffDesg', 'reference_authority','staffRate', 'toshop_sec','date1').distinct())
+           
+            context = {
+                        
+                        
+                        'obj': obj,
+                        'shop_sec': shop_sec,
+                        'staffNo' :staffNo,
+                        'staffName' : staffName,
+                        'staffDesg':staffDesg,
+                        'reference_authority':reference_authority,
+                        'staffRate':staffRate,
+                        'toshop_sec':toshop_sec,
+                        'date1':date1,
+                        
+                        'subnav':subnav,
+            }
+            
+        # submitvalue = request.POST.get('status_final')
+        # if submitvalue =='status_final': 
+        #     print("hello") 
+        #     id = request.GET.get('staffNo')
+        #     print("hi")
+        #     Intershop.objects.filter(id = staffNo).update(status = 'f')
+
+    return render(request,"m338view.html",context)
+    
+def m338authority(request):
+    if request.method == "GET" and request.is_ajax():
+        reference_authority = request.GET.get('reference_authority')        
+        return JsonResponse(reference_authority, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def edit_status(request):
+  
+    if request.method == "GET" and request.is_ajax():
+        print("hh")
+        id = request.GET.get('id1')
+        print(id)
+        Intershop.objects.filter(staffNo = id).update(status = 'f')
+        return JsonResponse(id, safe = False)
+    return JsonResponse({"success":False}, status = 400)
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>M14HW</title>
+        <style type="text/css">
+          
+            .title {
+                font-size: 22px;
+                font-weight: 100;
+                color: #007cae;
+               /* text-align: right;*/
+               padding: 10px 20px 0px 20px;  
+            }
+            table.b {
+                empty-cells: hide;
+              }
+              
+            td.b { 
+                height: 50px;
+                text-align:center;
+                vertical-align: bottom;
+            } 
+            table.b {
+                width:  100%;
+                border-collapse: collapse;
+            }
+           
+        </style>
+    </head>
+    <body> 
+        <div>   
+        <p class='title' align="center">RECORD FOR HAND WRITTEN M14</p>
+        <table class="a">
+            <tr>
+                <td><p style="font-size: 15px;">M-14 NO. :    {{m14_no}}</p></td>
+            </tr>
+            <tr>
+                <td><p style="font-size: 15px">M-14 DATE. :  {{m14_date}}</p></td>
+            </tr>
+
+        </table>
+        <hr>
+        
+
+        <table class='b' border="1" align="center">
+            <tr class="css_color">
+                <td class='b' bgcolor="lightblue"><p style="font-size: 15px;" >BATCH NO. </p></td >
+                <td class='b'><p style="font-size: 15px;">EPC </p></td>
+                <td class='b'><p style="font-size: 15px;" >BRN NO. </p></td>
+                <td class='b'><p style="font-size: 15px;">QUANTITY</p></td>
+            </tr>
+            <tr>
+                <td class='b'><p style="font-size: 15px;">{{batch_no}}</p></td>
+                <td class='b'><p style="font-size: 15px;">{{epc}}</p></td>
+                <td class='b'><p style="font-size: 15px;"> {{brn_no}}  </p></td>
+                <td class='b'><p style="font-size: 15px;">{{quantity}} </p></td>
+            </tr>
+            <tr class="css_color">
+                <td class='b' bgcolor="lightblue"><p style="font-size: 15px;" >LOCO FROM </p></td >
+                <td class='b'><p style="font-size: 15px;">LOCO TO</p></td>
+                <td class='b'><p style="font-size: 15px;" >UNIT </p></td>
+                <td class='b'><p style="font-size: 15px;">PM NO.</p></td>
+            </tr>
+            <tr>
+                <td class='b' ><p style="font-size: 15px;">{{loco_from}}</p></td>
+                <td class='b'><p style="font-size: 15px;">{{loco_to}}</p></td>
+                <td class='b'><p style="font-size: 15px;"> {{unit}}  </p></td>
+                <td class='b'><p style="font-size: 15px;">{{pm_no}} </p></td>
+            </tr>
+            <tr class="css_color">
+                <td class='b' bgcolor="lightblue"><p style="font-size: 15px;" >ASSLY NO. </p></td >
+                <td class='b' colspan="3"><p style="font-size: 15px;">ASSLY DESCRIPTION</p></td>
+
+            </tr>
+            <tr>
+                <td class='b'><p style="font-size: 15px;">{{assly_no}}</p></td>
+                <td class='b' colspan="3"><p style="font-size: 15px;">{{assly_desc}}</p></td>
+                
+            </tr>
+            <tr class="css_color">
+                <td class='b' bgcolor="lightblue"><p style="font-size: 15px;" >PART NO. </p></td >
+                <td class='b' colspan="3"><p style="font-size: 15px;">  PART DESCRIPTION</p></td>
+
+            </tr>
+            <tr>
+                <td class='b'><p style="font-size: 15px;">{{part_no}}</p></td>
+                <td class='b' colspan="3"><p style="font-size: 15px;">{{part_desc}}</p></td>
+                
+            </tr>
+            <tr class="css_color">
+                <td class='b' colspan="4" bgcolor="lightblue"><p style="font-size: 15px;">  REASON FOR HAND WRITTEN</p></td>
+
+            </tr>
+            <tr>
+                <td class='b' colspan="4"><p style="font-size: 15px;">{{rforhw}}</p></td>
+                
+            </tr>
+        </table>
+    </body>
+</html>

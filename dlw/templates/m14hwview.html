@@ -207,32 +207,38 @@
                 </div>
             </div>
             <div class="form-group row"> 
+                <label for="loco_no" class="col-sm-1 col-form-label">Loco No</label>
+                <div class="col-sm-2">
+                    <input class="form-control" type="text" id="loco_no" name="loco_no" required>
+                </div>
                 <label for="rforhw" class="col-sm-2 col-form-label">Reasons For Hw</label>
                 <div class="col-sm-4">
                     <textarea rows="2"  cols= "50" id="rforhw"></textarea>
                 </div>
             </div>
-        <div class="form-group row" >
-                
-                <label for="rforhw" class="col-sm-3 col-form-label"></label>
-            <div class="col-sm-1">
-                <input  class="css-center" type="button" value="SAVE" id="save">
-            </div>
-            <label class="sr-only">Cancel</label>
-            <div class="col-sm-1">
-                <input  class="css-center" type="button" value="CANCEL" id="cancel">
-            </div>
-        </div>
+            <div class="form-group row" >    
+                <label for="save1" class="col-sm-3 col-form-label"></label>
+                 <div class="col-sm-1">
+                     <input  type="button" class="btn btn-primary" value = "  SAVE  " id="save" />
+                 </div>
+                 <label class="sr-only">Cancel</label>
+                 <div class="col-sm-1">
+                     <input  type="button" class="btn btn-primary" value = "CANCEL" id="cancel" />
+                 </div>
+                 <label class="sr-only">PRINT</label>
+                 <div class="col-sm-1">
+                     <input onclick="setGetParameter1()" type="button" class="btn btn-primary" value = "PRINT"/>
+                 </div>
+             </div>
             <h2 for="table" align="center" class="css-color1 hidden" id="lblhd" ></h2>
             <div>
                 <table align="center" class="table-striped hidden " id="table" name="table" required>
                         <thead class="thead-dark" >
                             <tr>
                                 <th>  ASSLY NO  </th>
-                                <th>  EPC      </th>
                                 <th>  BRN NO </th>
-                                <th>  LOCO FROM</th>
                                 <th>  LOCO TO</th>
+                                <th>  LOCO FROM</th>
                                 <th>  REL_DATE </th>
                                 <th>  STATUS </th>
                             </tr>
@@ -241,21 +247,8 @@
                          </tbody>
                 </table>  
             </div>   
-            <h2 for="table1" align="center" class="css-color1 hidden" id="lblhd1" ></h2>
-            <div>
-                <table align="center" class="table-striped hidden" id="table1" name="table1" required>
-                        <thead class="thead-dark" >
-                            <tr>
-                                <th>  QUANTITY  </th>
-                                <th>  UNIT   </th>
-                                <th>  PM_NO </th>
-                                
-                            </tr>
-                        </thead>
-                         <tbody>
-                         </tbody>
-                </table>  
-            </div>    
+           
+            
     </form>
     
 
@@ -282,11 +275,11 @@
             </select></div>
         <label for="epc1" class="col-sm-1 col-form-label" >EPC</label>
         <div class="col-sm-2">
-            <input class="form-control" type="text" id="epc1">
+            <input class="form-control" type="text" id="epc1" required>
         </div>
         <label for="brn_no1" class="col-sm-1 col-form-label" >BRN No</label>
         <div class="col-sm-2">
-            <input class="form-control" type="text" id="brn_no1">
+            <input class="form-control" type="text" id="brn_no1" required>
         </div>
         <label for="quantity1" class="col-sm-1 col-form-label">Quantity</label>
         <div class="col-sm-2">
@@ -296,19 +289,19 @@
     <div class="form-group row">     
             <label for="loco_from1" class="col-sm-1 col-form-label">Loco From</label>
             <div class="col-sm-2 pull-left">
-                <input class="form-control" type="text" id="loco_from1">
+                <input class="form-control" type="text" id="loco_from1" required>
             </div>
             <label for="loco_to1" class="col-sm-1 col-form-label" >Loco To</label>
             <div class="col-sm-2">
-                <input class="form-control" type="text" id="loco_to1">
+                <input class="form-control" type="text" id="loco_to1" required>
             </div>
             <label for="unit1" class="col-sm-1 col-form-label" >Unit</label>
         <div class="col-sm-2">
-            <input class="form-control" type="text" id="unit1">
+            <input class="form-control" type="text" id="unit1" required>
         </div>
         <label for="pm_no1" class="col-sm-1 col-form-label" >Pm-No</label>
         <div class="col-sm-2">
-            <input oninput="this.value = this.value.toUpperCase()" class="form-control" type="text" id="pm_no1">
+            <input oninput="this.value = this.value.toUpperCase()" class="form-control" type="text" id="pm_no1" required>
         </div>
             
     </div>
@@ -337,23 +330,29 @@
         </div>
     </div>
     <div class="form-group row">
+        <label for="loco_no1" class="col-sm-1 col-form-label">Loco No</label>
+                <div class="col-sm-2">
+                    <input class="form-control" type="text" id="loco_no1" name="loco_no1" required>
+                </div>
         <label for="rforhw1" class="col-sm-2 col-form-label">Reasons For Hw</label>
         <div class="col-sm-4">
             <textarea rows="2"  cols= "50" id="rforhw1"></textarea>
         </div>
     </div>
-<div class="form-group row" >
-        
-        <label for="save1" class="col-sm-3 col-form-label"></label>
+<div class="form-group row" >    
+   <label for="save1" class="col-sm-3 col-form-label"></label>
     <div class="col-sm-1">
-        <input  class="css-center" type="button" value="SAVE" id="save1">
+        <input  type="button" class="btn btn-primary" value = "  SAVE  " id="save1" />
     </div>
     <label class="sr-only">Cancel</label>
     <div class="col-sm-1">
-        <input  class="css-center" type="button" value="CANCEL" id="cancel1">
+        <input  type="button" class="btn btn-primary" value = "CANCEL" id="cancel1" />
+    </div>
+    <label class="sr-only">PRINT</label>
+    <div class="col-sm-1">
+        <input onclick="setGetParameter()" type="button" class="btn btn-primary" value = "PRINT"/>
     </div>
 </div>
-
 <h2 for="table2" align="center" class="css-color1 hidden" id="lblhd2" ></h2>
             <div>
                 <table align="center" class="table-striped hidden " id="table2" name="table2" required>
@@ -362,31 +361,20 @@
                                 <th>  ASSLY NO  </th>
                                 <th>  EPC      </th>
                                 <th>  BRN NO </th>
-                                <th>  LOCO FROM</th>
                                 <th>  LOCO TO</th>
+                                <th>  LOCO FROM</th>
                                 <th>  REL_DATE </th>
                                 <th>  STATUS </th>
+
+                                <th>  QUANTITY </th>
+                                
+
                             </tr>
                         </thead>
                          <tbody>
                          </tbody>
                 </table>  
             </div>   
-            <h2 for="table3" align="center" class="css-color1 hidden" id="lblhd3" ></h2>
-            <div>
-                <table align="center" class="table-striped hidden" id="table3" name="table3" required>
-                        <thead class="thead-dark" >
-                            <tr>
-                                <th>  QUANTITY  </th>
-                                <th>  UNIT   </th>
-                                <th>  PM_NO </th>
-                                
-                            </tr>
-                        </thead>
-                         <tbody>
-                         </tbody>
-                </table>  
-            </div>
     </form>
 </div>
 
@@ -443,12 +431,11 @@
  
                    for(var i=1;i<response.length;i++)
                     {   
-                        $('#table2 > tbody:last').append("<tr><td id="+i+">"+response[i].part_no+"</td><td id="+i+">"+response[i].ep_type+"</td><td id="+i+">"+response[i].brn_no+"</td><td id="+i+">"+response[i].loco_to+"</td><td id="+i+">"+response[i].loco_fr+"</td><td id="+i+">"+response[i].rel_date+"</td><td id="+i+">"+response[i].status+"</td></tr>"); 
+                        $('#table2 > tbody:last').append("<tr><td id="+i+">"+response[i].part_no+"</td><td id="+i+">"+response[i].ep_type+"</td><td id="+i+">"+response[i].brn_no+"</td><td id="+i+">"+response[i].loco_to+"</td><td id="+i+">"+response[i].loco_fr+"</td><td id="+i+">"+response[i].rel_date+"</td><td id="+i+">"+response[i].status+"</td><td id="+i+">"+response[i].batch_qty+"</td></tr>"); 
                     }
                     window.scrollTo(0,500)
                     $("#table3 > tbody").html(""); 
-                    document.getElementById("table3").className = 'hidden';
-                    document.getElementById("lblhd3").className = 'hidden';
+                   
                     
                }                                   
              }
@@ -471,10 +458,13 @@
              {      
                 document.getElementById('m13_date').value=response[0].m13_date;
                 document.getElementById('sl_no').value=response[0].slno;
-                document.getElementById('char_wo').value=response[0].wo; 
-                document.getElementById("batch_no").value=response[0].wo_rep; 
+                document.getElementById('char_wo').value=response[0].wo_rep; 
+                document.getElementById("batch_no").value=response[0].wo; 
                 document.getElementById('rforhw').value=response[0].reason;
                 document.getElementById('part_no').value=response[0].part_no;
+                document.getElementById('epc').value=response[0].epc;
+                document.getElementById('quantity').value=response[0].qty_rej;
+                
                 
                 myFunction(); 
                 myfunction_part(); 
@@ -488,7 +478,8 @@
     function myfunction_pmno()
     {
         var batch = $('#part_no').val();
-        var data={batch};
+        var qty = $('#quantity').val();
+        var data={batch,qty};
         var part;                
           $.ajax({
             type : 'GET',
@@ -498,24 +489,25 @@
             
             success : function(response)
             {   
-                for(var i=1;i<response.length;i++)
-                {   
-                    $('#table1 > tbody:last').append("<tr><td id="+i+">"+response[i].qty+"</td><td id="+i+">"+response[i].unit+"</td><td id="+i+">"+response[i].pm_no+"</td></tr>"); 
+                if(response.length<=0){
+                    window.alert(" UNIT AND PM_NO NOT EXIST FOR THIS PART AND QUANTITY");
+                    document.getElementById("unit").focus();
                 }
-                window.scrollTo(0,500)
-                document.getElementById("table1").className = 'table table-striped scrolldown';
-                document.getElementById("lblhd1").className = 'css-color1';
-                document.getElementById("lblhd1").innerHTML='SELECT QUANTITY , PM_NO FOR PART NO :- '.concat(batch);
-         
-            }     
+            
+                else{
+                    document.getElementById('unit').value=response[0].unit;
+                document.getElementById('pm_no').value=response[0].pm_no;
+
+                document.getElementById("loco_no").focus();
+               
+            }   }  
        })
     }
 
     function myFunction(){
         
         var batch = $('#batch_no').val();
-        var epc = $('#epc').val();
-        var data={batch,epc};
+        var data={batch};
 
         var part;                
           $.ajax({
@@ -532,7 +524,7 @@
                    document.getElementById("lblhd").className = 'hidden';
                    window.alert("BATCH NO MUST BE ENTERED")
                    document.getElementById('assly_no').value="";
-                   document.getElementById('epc').value="";
+                   
                    document.getElementById('brn_no').value="";
                    document.getElementById('loco_from').value="";
                    document.getElementById('loco_to').value="";
@@ -545,7 +537,7 @@
                     document.getElementById("lblhd").className = 'hidden';
                     window.alert(" BATCH DOES NOT EXIST IN MASTER.");
                     document.getElementById('assly_no').value="";
-                    document.getElementById('epc').value="";
+                    
                     document.getElementById('brn_no').value="";
                     document.getElementById('loco_from').value="";
                     document.getElementById('loco_to').value="";
@@ -563,7 +555,7 @@
  
                    for(var i=1;i<response.length;i++)
                     {   
-                        $('#table > tbody:last').append("<tr><td id="+i+">"+response[i].part_no+"</td><td id="+i+">"+response[i].ep_type+"</td><td id="+i+">"+response[i].brn_no+"</td><td id="+i+">"+response[i].loco_to+"</td><td id="+i+">"+response[i].loco_fr+"</td><td id="+i+">"+response[i].rel_date+"</td><td id="+i+">"+response[i].status+"</td></tr>"); 
+                        $('#table > tbody:last').append("<tr><td id="+i+">"+response[i].part_no+"</td><td id="+i+">"+response[i].brn_no+"</td><td id="+i+">"+response[i].loco_to+"</td><td id="+i+">"+response[i].loco_fr+"</td><td id="+i+">"+response[i].rel_date+"</td><td id="+i+">"+response[i].status+"</td></tr>"); 
                     }
                     window.scrollTo(0,500)
                }    
@@ -609,13 +601,13 @@
         var serviceID = ev.target.id;
 
         document.getElementById('assly_no').value=document.getElementById("table").rows[serviceID].cells[0].innerHTML;
-        document.getElementById('epc').value=document.getElementById("table").rows[serviceID].cells[1].innerHTML;
-        document.getElementById('brn_no').value=document.getElementById("table").rows[serviceID].cells[2].innerHTML;
+        document.getElementById('brn_no').value=document.getElementById("table").rows[serviceID].cells[1].innerHTML;
+        document.getElementById('loco_to').value=document.getElementById("table").rows[serviceID].cells[2].innerHTML;
         document.getElementById('loco_from').value=document.getElementById("table").rows[serviceID].cells[3].innerHTML;
-        document.getElementById('loco_to').value=document.getElementById("table").rows[serviceID].cells[4].innerHTML;
         var temp = $('#assly_no').val();
         var data = {temp}; 
         var part;                
+
           $.ajax({
             type : 'GET',
             url : "{% url 'm14hwassly' %}",
@@ -634,23 +626,6 @@
         myfunction_pmno();
         
     });
-
-
-    var table = document.querySelector('table1');
-    // get the id of selected rows
-    table1.addEventListener('click', function(ev){
-        var serviceID = ev.target.id;
-        document.getElementById('quantity').value=document.getElementById("table1").rows[serviceID].cells[0].innerHTML;
-        document.getElementById('unit').value=document.getElementById("table1").rows[serviceID].cells[1].innerHTML;
-        document.getElementById('pm_no').value=document.getElementById("table1").rows[serviceID].cells[2].innerHTML;
-        window.scrollTo(0,0); 
-        $("#table1 > tbody").html(""); 
-        document.getElementById("table1").className = 'hidden';
-        document.getElementById("lblhd1").className = 'hidden';
-       
-    });
-
-
 
     window.onload = function() {
         document.getElementById("select_form").focus();
@@ -706,38 +681,63 @@
         if(batch_no.value=="")
         {
             window.alert("BATCH NO MUST BE ENTERED.");
+            document.getElementById("batch_no").focus();
+
         }
         else
         {
             if(assly_no.value=="")
             {
                 window.alert("ASSLY NO MUST BE ENTERED.");
+                document.getElementById("assly_no").focus();
+
             }
             else
                 if(part_no.value=="")
                 {
                     window.alert("PART NO MUST BE ENTERED.");
+                    document.getElementById("part_no").focus();
+
                 }
                 else
                     if(pm_no.value=="")
                         {
                             window.alert("PM NO MUST BE ENTERED.");
+                            document.getElementById("pm_no").focus();
+
                         }
                         else
                             if(quantity.value=="")
                             {
                                 window.alert("QUANTITY MUST BE ENTERED.");
+                                document.getElementById("quantity").focus();
+
                             }
                             else
                                 if(parseFloat(quantity.value)<0)
                                 {
                                     window.alert("QUANTITY CANNOT BE ZERO or LESS");
+                                    document.getElementById("quantity").focus();
 
-                                }
+
+                                }else
+                    if(unit.value=="")
+                        {
+                            window.alert("UNIT MUST BE ENTERED.");
+                            document.getElementById("unit").focus();
+
+                        }
+                        else
+                    if(loco_no.value=="")
+                        {
+                            window.alert("LOCO NO MUST BE ENTERED.");
+                            document.getElementById("loco_no").focus();
+
+                        }
                                 
-                                else
+                        else
                                 {   
-                                    var temp = {m13_no:$('#m13_no').val(),m13_date:$('#m13_date').val(),char_wo:$('#char_wo').val(),sl_no:$('#sl_no').val(),batch_no:$('#batch_no').val(),epc:$('#epc').val(),brn_no:$('#brn_no').val(),loco_from:$('#loco_from').val(),loco_to:$('#loco_to').val(),assly_no:$('#assly_no').val(),assly_desc:$('#assly_desc').val(),part_no:$('#part_no').val(),part_desc:$('#part_desc').val(),quantity:$('#quantity').val(),unit:$('#unit').val(),pm_no:$('#pm_no').val(),m14_no:$('#m14_no').val(),rforhw:$('#rforhw').val(),csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()};
+                                    var temp = {m13_no:$('#m13_no').val(),m13_date:$('#m13_date').val(),char_wo:$('#char_wo').val(),sl_no:$('#sl_no').val(),batch_no:$('#batch_no').val(),epc:$('#epc').val(),brn_no:$('#brn_no').val(),loco_from:$('#loco_from').val(),loco_to:$('#loco_to').val(),assly_no:$('#assly_no').val(),assly_desc:$('#assly_desc').val(),part_no:$('#part_no').val(),part_desc:$('#part_desc').val(),quantity:$('#quantity').val(),unit:$('#unit').val(),pm_no:$('#pm_no').val(),m14_no:$('#m14_no').val(),rforhw:$('#rforhw').val(),loco_no:$('#loco_no').val(),csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()};
                                     var data = temp; 
                                     var part;
                                      
@@ -750,7 +750,10 @@
                                         {    
                                           
                                             window.alert("Data saved successfully with doc no.:-" + response); 
-                                            window.location.reload();
+                                            $('#save').hide();
+                                            $('#select_form').hide();
+                                            document.getElementById("cancel").value="Refresh";
+                                           
                                                                                                  
                                         }
                                     })
@@ -767,39 +770,64 @@
         if(batch_no1.value=="")
         {
             window.alert("BATCH NO MUST BE ENTERED.");
+            document.getElementById("batch_no1").focus();
+
         }
         else
         {
             if(assly_no1.value=="")
             {
                 window.alert("ASSLY NO MUST BE ENTERED.");
+                document.getElementById("assly_no1").focus();
+
             }
             else
                 if(part_no1.value=="")
                 {
                     window.alert("PART NO MUST BE ENTERED.");
+                    document.getElementById("part_no1").focus();
+
                 }
                 else
                     if(pm_no1.value=="")
                         {
                             window.alert("PM NO MUST BE ENTERED.");
+                            document.getElementById("pm_no1").focus();
+
                         }
                         else
                             if(quantity1.value=="")
                             {
                                 window.alert("QUANTITY MUST BE ENTERED.");
+                                document.getElementById("quantity1").focus();
+
                             }
                             else
                                 if(parseFloat(quantity1.value)<0)
                                 {
                                     window.alert("QUANTITY CANNOT BE ZERO or LESS");
+                                    document.getElementById("quantity1").focus();
 
-                                }
+
+                                }else
+                    if(unit1.value=="")
+                        {
+                            window.alert("UNIT MUST BE ENTERED.");
+                            document.getElementById("unit1").focus();
+
+                        }
+                        else
+                    if(loco_no1.value=="")
+                        {
+                            window.alert("LOCO NO MUST BE ENTERED.");
+                            document.getElementById("loco_no1").focus();
+
+                        }
                                 
                                 else
                                 {   
                                     document.getElementById('sl_no').value=0;
-                                    var temp = {m13_no:$('#m13_no').val(),m13_date:$('#m13_date').val(),char_wo:$('#char_wo').val(),sl_no:$('#sl_no').val(),batch_no:$('#batch_no1').val(),epc:$('#epc1').val(),brn_no:$('#brn_no1').val(),loco_from:$('#loco_from1').val(),loco_to:$('#loco_to1').val(),assly_no:$('#assly_no1').val(),assly_desc:$('#assly_desc1').val(),part_no:$('#part_no1').val(),part_desc:$('#part_desc1').val(),quantity:$('#quantity1').val(),unit:$('#unit1').val(),pm_no:$('#pm_no1').val(),m14_no:$('#m14_no').val(),rforhw:$('#rforhw1').val(),csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()};
+                                    var temp = {m13_no:$('#m13_no').val(),m13_date:$('#m13_date').val(),char_wo:$('#char_wo').val(),sl_no:$('#sl_no').val(),batch_no:$('#batch_no1').val(),epc:$('#epc1').val(),brn_no:$('#brn_no1').val(),loco_from:$('#loco_from1').val(),loco_to:$('#loco_to1').val(),assly_no:$('#assly_no1').val(),assly_desc:$('#assly_desc1').val(),part_no:$('#part_no1').val(),part_desc:$('#part_desc1').val(),quantity:$('#quantity1').val(),unit:$('#unit1').val(),pm_no:$('#pm_no1').val(),m14_no:$('#m14_no').val(),rforhw:$('#rforhw1').val(),loco_no:$('#loco_no1').val(),csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()};
                                     var data = temp; 
                                     var part;
                                      
@@ -811,7 +839,9 @@
                                         success : function(response)
                                         {    
                                             window.alert("Data saved successfully with doc no.:-" + response); 
-                                            window.location.reload();
+                                            $('#save1').hide();
+                                            $('#select_form').hide();
+                                            document.getElementById("cancel1").value="Refresh";
                                                                                                  
                                         }
                                     })
@@ -834,8 +864,10 @@
         document.getElementById('assly_no1').value=document.getElementById("table2").rows[serviceID].cells[0].innerHTML;
         document.getElementById('epc1').value=document.getElementById("table2").rows[serviceID].cells[1].innerHTML;
         document.getElementById('brn_no1').value=document.getElementById("table2").rows[serviceID].cells[2].innerHTML;
-        document.getElementById('loco_from1').value=document.getElementById("table2").rows[serviceID].cells[3].innerHTML;
-        document.getElementById('loco_to1').value=document.getElementById("table2").rows[serviceID].cells[4].innerHTML;
+        document.getElementById('loco_to1').value=document.getElementById("table2").rows[serviceID].cells[3].innerHTML;
+        document.getElementById('loco_from1').value=document.getElementById("table2").rows[serviceID].cells[4].innerHTML;
+        document.getElementById('quantity1').value=document.getElementById("table2").rows[serviceID].cells[7].innerHTML;
+        
         var temp = $('#assly_no1').val();
         var data = {temp}; 
         var part;                
@@ -932,26 +964,11 @@ function getpartdesc()
    myfunction_pmno1();
 }
 
-
-    var table = document.querySelector('table3');
-    // get the id of selected rows
-    table3.addEventListener('click', function(ev){
-        var serviceID = ev.target.id;
-        document.getElementById('quantity1').value=document.getElementById("table3").rows[serviceID].cells[0].innerHTML;
-        document.getElementById('unit1').value=document.getElementById("table3").rows[serviceID].cells[1].innerHTML;
-        document.getElementById('pm_no1').value=document.getElementById("table3").rows[serviceID].cells[2].innerHTML;
-        window.scrollTo(0,0); 
-        $("#table3 > tbody").html(""); 
-        document.getElementById("table3").className = 'hidden';
-        document.getElementById("lblhd3").className = 'hidden';
-    });
-
-
     function myfunction_pmno1()
     {
         var batch = $('#part_no1').val();
-        var data={batch};
-        var part;                
+        var qty = $('#quantity1').val();
+        var data={batch,qty};            
           $.ajax({
             type : 'GET',
             url : "{% url 'm14hwpm' %}",
@@ -960,22 +977,16 @@ function getpartdesc()
             
             success : function(response)
 
-            {   if(response.length==0)
-                {
-                    document.getElementById("lblhd3").innerHTML=' PM_NO & QUANTITY DOESNOT EXIST FOR SELECTED PART NO';
-          
+            {   if(response.length<=0){
+                    window.alert(" UNIT AND PM_NO NOT EXIST FOR THIS PART AND QUANTITY");
+                    document.getElementById("unit1").focus();
                 }
-                else
-                {
-                for(var i=1;i<response.length;i++)
-                {   
-                    $('#table3 > tbody:last').append("<tr><td id="+i+">"+response[i].qty+"</td><td id="+i+">"+response[i].unit+"</td><td id="+i+">"+response[i].pm_no+"</td></tr>"); 
-                }
-                window.scrollTo(0,500)
-                document.getElementById("table3").className = 'table table-striped scrolldown';
-                document.getElementById("lblhd3").className = 'css-color1';
-                document.getElementById("lblhd3").innerHTML='SELECT QUANTITY , PM_NO FOR PART NO :- '.concat(batch);
-            }
+                else{
+                document.getElementById('unit1').value=response[0].unit;
+                document.getElementById('pm_no1').value=response[0].pm_no;
+                document.getElementById("loco_no1").focus();
+               
+            } 
             }     
        })
     }
@@ -984,7 +995,17 @@ function getpartdesc()
         e.preventDefault();
         getpartdesc();});
 
-    
+        function setGetParameter(){
+            window.location.href = "{% url 'GeneratePdf' %}"+"?m13_no="+"0"+"&m13_date="+$('#m13_date').val()+"&char_wo="+$('#char_wo').val()+"&sl_no="+$('#sl_no').val()+"&batch_no="+$('#batch_no1').val()+"&epc="+$('#epc1').val()+"&brn_no="+$('#brn_no1').val()+"&loco_from="+$('#loco_from1').val()+"&loco_to="+$('#loco_to1').val()+"&assly_no="+$('#assly_no1').val()+"&assly_desc="+$('#assly_desc1').val()+"&part_no="+$('#part_no1').val()+"&part_desc="+$('#part_desc1').val()+"&quantity="+$('#quantity1').val()+"&unit="+$('#unit1').val()+"&pm_no="+$('#pm_no1').val()+"&m14_no="+$('#m14_no').val()+"&rforhw="+$('#rforhw1').val();
+            
+        } 
+
+        function setGetParameter1(){
+            
+            
+            window.location.href = "{% url 'GeneratePdf' %}"+"?m13_no="+$('#m13_no').val()+"&m13_date="+$('#m13_date').val()+"&char_wo="+$('#char_wo').val()+"&sl_no="+$('#sl_no').val()+"&batch_no="+$('#batch_no').val()+"&epc="+$('#epc').val()+"&brn_no="+$('#brn_no').val()+"&loco_from="+$('#loco_from').val()+"&loco_to="+$('#loco_to').val()+"&assly_no="+$('#assly_no').val()+"&assly_desc="+$('#assly_desc').val()+"&part_no="+$('#part_no').val()+"&part_desc="+$('#part_desc').val()+"&quantity="+$('#quantity').val()+"&unit="+$('#unit').val()+"&pm_no="+$('#pm_no').val()+"&m14_no="+$('#m14_no').val()+"&rforhw="+$('#rforhw').val();
+            
+        } 
 
 </script>
 {% endblock content %}

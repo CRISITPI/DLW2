@@ -4764,3 +4764,21 @@ class M14HW11(models.Model):
     assly_no = models.CharField(db_column='ASSLY_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     assly_desc = models.CharField(db_column='ASSLY_DESC', max_length=30, blank=True, null=True)  # Field name made lowercase.
     unit = models.DecimalField(db_column='UNIT', max_digits=5, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    loco_no = models.CharField(db_column='LOCO_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
+
+class Intershop(models.Model):
+    #shopIncharge   = models.CharField(db_column='SHOPINCHARGE', max_length=100, blank=True, null=True,default=0)  # Field name made lowercase.
+    shop_sec=models.CharField(db_column='SHOPSEC', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    staffNo=models.CharField(db_column='staffNo',max_length=20,primary_key=True)
+    staffName=models.CharField(db_column='staffNAME',max_length=50,null=True)
+    staffDesg=models.CharField(db_column='staffDesg',max_length=50,null=True)
+    reference_authority=models.CharField(db_column='REFERENCEAUTHORITY',max_length=100,null=True)
+    staffRate=models.CharField(db_column='staffRate',max_length=50,blank=True,null=True)
+    toshop_sec=models.CharField(db_column='TOSHOPSEC', max_length=50, blank=True, null=True,default=0) 
+    date1=models.CharField(db_column='date1',max_length=20,null=True)
+    login_id = models.CharField(db_column='LOGINID',max_length=10, blank=True, null=True)
+    status = models.CharField(db_column='STATUS',max_length=5, blank=True, null=True)
+    current_date= models.DateTimeField(db_column='CURRENTDATE', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'Intershop'
