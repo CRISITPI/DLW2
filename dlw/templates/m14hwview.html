@@ -41,7 +41,7 @@
     } 
       
     tbody td, thead th { 
-        width : 200px; 
+        width : 400px; 
         border-right: 2px solid black; 
     } 
     th{
@@ -116,18 +116,18 @@
 <div class="container" >
     <form action="{% url 'm14hwview' %}" method="POST" id="form_1" style="display: none;"> {% csrf_token %}
         <div class="form-group row">
-            <label for="m13_no" class="col-sm-1 col-form-label">M-13 Ref No</label>
+            <label for="m13_no" class="col-sm-1 col-form-label">M-13 SL no.</label>
             <div class="col-sm-2">
                 <select class="form-control" id="m13_no" name="m13_no"  value ="m13_no" required>
-                    <option id="m13_no" selected disabled hidden>Select Ref No</option>
+                    <option id="m13_no" selected disabled hidden>Select SL No</option>
                     {% if lenm == 1 %}
                         {% for role in m13ref %}
-                            <option selected readonly>{{role.m13_no}}</option>
+                            <option selected readonly>{{role.slno}}</option>
                             {% endfor %}
                         {% endif %}
                         {% if lenm > 1 %}
                         {% for role in m13ref %}
-                          <option>{{role.m13_no}}</option>
+                          <option>{{role.slno}}</option>
                         {% endfor %}
                         {% endif %}
                     
@@ -141,7 +141,7 @@
              <div class="col-sm-2">
                 <input class="form-control" type="text" id="char_wo" readonly required>
             </div>
-            <label for="sl_no" class="col-sm-1 col-form-label" >Sl. No</label>
+            <label for="sl_no" class="col-sm-1 col-form-label" >M13 REF No</label>
             <div class="col-sm-2">
                 <input class="form-control" type="text" id="sl_no" readonly required>
             </div>
@@ -236,11 +236,10 @@
                         <thead class="thead-dark" >
                             <tr>
                                 <th>  ASSLY NO  </th>
-                                <th>  BRN NO </th>
+                                
                                 <th>  LOCO TO</th>
                                 <th>  LOCO FROM</th>
-                                <th>  REL_DATE </th>
-                                <th>  STATUS </th>
+                                
                             </tr>
                         </thead>
                          <tbody>
@@ -359,15 +358,8 @@
                         <thead class="thead-dark" >
                             <tr>
                                 <th>  ASSLY NO  </th>
-                                <th>  EPC      </th>
-                                <th>  BRN NO </th>
                                 <th>  LOCO TO</th>
                                 <th>  LOCO FROM</th>
-                                <th>  REL_DATE </th>
-                                <th>  STATUS </th>
-
-                                <th>  QUANTITY </th>
-                                
 
                             </tr>
                         </thead>
@@ -380,253 +372,6 @@
 
 
 <script>
-
-
-    $('#select_form').change(function(){
-        if($(this).val() == "form_1") {
-            $('#form_2').hide();
-            $('#form_1').show();
-            document.getElementById("m13_no").focus();
-        } else {
-            $('#form_2').show();
-            $('#form_1').hide();
-            document.getElementById("batch_no1").focus();
-        }
-    });
-
-    document.querySelector('#batch_no1').addEventListener('change',(e)=>{
-        e.preventDefault();
-        var batch = $('#batch_no1').val();                 
-        var data = {batch};                
-          $.ajax
-          ({
-            type : 'GET',
-            url : "{% url 'm14hwbatch_no' %}",
-            dataType : 'json',
-            data : data,
-             success : function(response)
-             {      
-               
-               if(response[0]=='Z')
-               {
-                    document.getElementById("table2").className = 'hidden';
-                    document.getElementById("lblhd2").className = 'hidden';
-                    window.alert(" BATCH DOES NOT EXIST IN MASTER.");
-                    document.getElementById('assly_no1').value="";
-                    document.getElementById('epc1').value="";
-                    document.getElementById('brn_no1').value="";
-                    document.getElementById('loco_from1').value="";
-                    document.getElementById('loco_to1').value="";
-                    document.getElementById('assly_desc1').value="";
-                    
-               }  
-               else
-               if(response[0]=='ZR')
-               {
-                   
-                   window.alert("SELECT ASSEMBLY NO. FROM THE BELOW TAABLE");
-                   document.getElementById("table2").className = 'table table-striped scrolldown';
-                   document.getElementById("lblhd2").className = 'css-color1';
-                   document.getElementById("lblhd2").innerHTML='SELECT ASSEMBLY FOR BATCH NO :- '.concat(batch);
- 
-                   for(var i=1;i<response.length;i++)
-                    {   
-                        $('#table2 > tbody:last').append("<tr><td id="+i+">"+response[i].part_no+"</td><td id="+i+">"+response[i].ep_type+"</td><td id="+i+">"+response[i].brn_no+"</td><td id="+i+">"+response[i].loco_to+"</td><td id="+i+">"+response[i].loco_fr+"</td><td id="+i+">"+response[i].rel_date+"</td><td id="+i+">"+response[i].status+"</td><td id="+i+">"+response[i].batch_qty+"</td></tr>"); 
-                    }
-                    window.scrollTo(0,500)
-                    $("#table3 > tbody").html(""); 
-                   
-                    
-               }                                   
-             }
-              
-          })
-          
-    });
-    
-    document.querySelector('#m13_no').addEventListener('change',(e)=>{
-        e.preventDefault();
-        var partno_temp = $('#m13_no').val();                  
-        var data = {partno_temp};                
-          $.ajax
-          ({
-            type : 'GET',
-            url : "{% url 'm14getdate' %}",
-            dataType : 'json',
-            data : data,
-             success : function(response)
-             {      
-                document.getElementById('m13_date').value=response[0].m13_date;
-                document.getElementById('sl_no').value=response[0].slno;
-                document.getElementById('char_wo').value=response[0].wo_rep; 
-                document.getElementById("batch_no").value=response[0].wo; 
-                document.getElementById('rforhw').value=response[0].reason;
-                document.getElementById('part_no').value=response[0].part_no;
-                document.getElementById('epc').value=response[0].epc;
-                document.getElementById('quantity').value=response[0].qty_rej;
-                
-                
-                myFunction(); 
-                myfunction_part(); 
-                                                             
-              }
-              
-          })
-          
-    });
-    
-    function myfunction_pmno()
-    {
-        var batch = $('#part_no').val();
-        var qty = $('#quantity').val();
-        var data={batch,qty};
-        var part;                
-          $.ajax({
-            type : 'GET',
-            url : "{% url 'm14hwpm' %}",
-            dataType : 'json',
-            data : data,
-            
-            success : function(response)
-            {   
-                if(response.length<=0){
-                    window.alert(" UNIT AND PM_NO NOT EXIST FOR THIS PART AND QUANTITY");
-                    document.getElementById("unit").focus();
-                }
-            
-                else{
-                    document.getElementById('unit').value=response[0].unit;
-                document.getElementById('pm_no').value=response[0].pm_no;
-
-                document.getElementById("loco_no").focus();
-               
-            }   }  
-       })
-    }
-
-    function myFunction(){
-        
-        var batch = $('#batch_no').val();
-        var data={batch};
-
-        var part;                
-          $.ajax({
-            type : 'GET',
-            url : "{% url 'm14hwbatch_no' %}",
-            dataType : 'json',
-            data : data,
-            
-            success : function(response)
-            {   
-                if(response[0]=='A')
-               {
-                   document.getElementById("table").className = 'hidden';
-                   document.getElementById("lblhd").className = 'hidden';
-                   window.alert("BATCH NO MUST BE ENTERED")
-                   document.getElementById('assly_no').value="";
-                   
-                   document.getElementById('brn_no').value="";
-                   document.getElementById('loco_from').value="";
-                   document.getElementById('loco_to').value="";
-                   document.getElementById('assly_desc').value="";
-               }  
-               else 
-               if(response[0]=='Z')
-               {
-                    document.getElementById("table").className = 'hidden';
-                    document.getElementById("lblhd").className = 'hidden';
-                    window.alert(" BATCH DOES NOT EXIST IN MASTER.");
-                    document.getElementById('assly_no').value="";
-                    
-                    document.getElementById('brn_no').value="";
-                    document.getElementById('loco_from').value="";
-                    document.getElementById('loco_to').value="";
-                    document.getElementById('assly_desc').value="";
-                    
-               }  
-               else
-               if(response[0]=='ZR')
-               {
-                   
-                   window.alert("SELECT ASSEMBLY NO. FROM THE BELOW TAABLE");
-                   document.getElementById("table").className = 'table table-striped scrolldown';
-                   document.getElementById("lblhd").className = 'css-color1';
-                   document.getElementById("lblhd").innerHTML='SELECT ASSEMBLY FOR BATCH NO :- '.concat(batch);
- 
-                   for(var i=1;i<response.length;i++)
-                    {   
-                        $('#table > tbody:last').append("<tr><td id="+i+">"+response[i].part_no+"</td><td id="+i+">"+response[i].brn_no+"</td><td id="+i+">"+response[i].loco_to+"</td><td id="+i+">"+response[i].loco_fr+"</td><td id="+i+">"+response[i].rel_date+"</td><td id="+i+">"+response[i].status+"</td></tr>"); 
-                    }
-                    window.scrollTo(0,500)
-               }    
-                                                                        
-            }
-            
-       })
-    }
-    function myfunction_part(){
-        var partno_temp = $('#part_no').val();
-        var data = {partno_temp}; 
-        var part;                
-          $.ajax({
-            type : 'GET',
-            url : "{% url 'm14hwpart' %}",
-            dataType : 'json',
-            data : data,
-            success : function(response)
-            {   
-                if(response[0]=='A')
-               {
-                   window.alert("part no must be entered")
-               }  
-               else 
-               if(response[0]=='Z')
-               {
-                   window.alert("part not in production")
-               }  
-               else
-               if(response[0]=='ZR')
-               {
-                document.getElementById('part_desc').value=response[1].des;
-               }              
-                
-                                                                         
-            }
-       })
-    
-    }
-    var table = document.querySelector('table');
-    // get the id of selected rows
-    table.addEventListener('click', function(ev){
-        var serviceID = ev.target.id;
-
-        document.getElementById('assly_no').value=document.getElementById("table").rows[serviceID].cells[0].innerHTML;
-        document.getElementById('brn_no').value=document.getElementById("table").rows[serviceID].cells[1].innerHTML;
-        document.getElementById('loco_to').value=document.getElementById("table").rows[serviceID].cells[2].innerHTML;
-        document.getElementById('loco_from').value=document.getElementById("table").rows[serviceID].cells[3].innerHTML;
-        var temp = $('#assly_no').val();
-        var data = {temp}; 
-        var part;                
-
-          $.ajax({
-            type : 'GET',
-            url : "{% url 'm14hwassly' %}",
-            dataType : 'json',
-            data : data,
-            success : function(response)
-            {                
-                document.getElementById('assly_desc').value=response[0].des;
-                                                                        
-            }
-       })
-        window.scrollTo(0,0); 
-        $("#table > tbody").html(""); 
-        document.getElementById("table").className = 'hidden';
-        document.getElementById("lblhd").className = 'hidden';
-        myfunction_pmno();
-        
-    });
-
     window.onload = function() {
         document.getElementById("select_form").focus();
         var temp = $('#m14_no').val();
@@ -664,7 +409,206 @@
             }
        })
     }
+
+    $('#select_form').change(function(){
+        if($(this).val() == "form_1") {
+            $('#form_2').hide();
+            $('#form_1').show();
+            document.getElementById("m13_no").focus();
+        } else {
+            $('#form_2').show();
+            $('#form_1').hide();
+            document.getElementById("batch_no1").focus();
+        }
+    });
+
+
     
+    document.querySelector('#m13_no').addEventListener('change',(e)=>{
+        e.preventDefault();
+        var partno_temp = $('#m13_no').val();                  
+        var data = {partno_temp};                
+          $.ajax
+          ({
+            type : 'GET',
+            url : "{% url 'm14getdate' %}",
+            dataType : 'json',
+            data : data,
+             success : function(response)
+             {      
+                document.getElementById('m13_date').value=response[0].m13_date;
+                document.getElementById('sl_no').value=response[0].m13_no;
+                document.getElementById('char_wo').value=response[0].wo_rep; 
+                document.getElementById("batch_no").value=response[0].wo; 
+                document.getElementById('rforhw').value=response[0].reason;
+                document.getElementById('part_no').value=response[0].part_no;
+                document.getElementById('epc').value=response[0].epc;
+                document.getElementById('quantity').value=response[0].qty_rej;
+                
+                
+                
+                myFunction(); 
+                myfunction_part(); 
+                                                             
+              }
+              
+          })
+          
+    });
+    
+    
+    function myFunction(){
+        
+        var batch = $('#batch_no').val();
+        var part = $('#part_no').val();
+        var data={batch,part};
+
+        var part;                
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm14hwbatch_no1' %}",
+            dataType : 'json',
+            data : data,
+            
+            success : function(response)
+            {   
+                if(response[0]=='A')
+               {
+                   document.getElementById("table").className = 'hidden';
+                   document.getElementById("lblhd").className = 'hidden';
+                   window.alert("BATCH NO MUST BE ENTERED")
+                   document.getElementById('assly_no').value="";
+                   document.getElementById('loco_from').value="";
+                   document.getElementById('loco_to').value="";
+                   document.getElementById('assly_desc').value="";
+               }  
+               else 
+               if(response[0]=='Z')
+               {
+                    document.getElementById("table").className = 'hidden';
+                    document.getElementById("lblhd").className = 'hidden';
+                    window.alert(" BATCH DOES NOT EXIST IN MASTER.");
+                    document.getElementById('assly_no').value="";
+                    
+                    
+                    document.getElementById('loco_from').value="";
+                    document.getElementById('loco_to').value="";
+                    document.getElementById('assly_desc').value="";
+                    
+               }  
+               else
+               if(response[0]=='ZR')
+               {
+                   
+                   window.alert("SELECT ASSEMBLY NO. FROM THE BELOW TAABLE");
+                   document.getElementById("table").className = 'table table-striped scrolldown';
+                   document.getElementById("lblhd").className = 'css-color1';
+                   document.getElementById("lblhd").innerHTML='SELECT ASSEMBLY FOR BATCH NO :- '.concat(batch);
+                   for(var i=1;i<response.length;i++)
+                    {   
+                        $('#table > tbody:last').append("<tr><td id="+i+">"+response[i].assly_no+"</td><td id="+i+">"+response[i].l_to+"</td><td id="+i+">"+response[i].l_fr+"</td></tr>"); 
+                    }
+                    window.scrollTo(0,500)
+               }    
+                                                                        
+            }
+            
+       })
+    }
+
+
+    function myfunction_part(){
+        var partno_temp = $('#part_no').val();
+        var data = {partno_temp}; 
+        var part;                
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm14hwpart' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response)
+            {   
+                if(response[0]=='A')
+               {
+                   window.alert("part no must be entered")
+               }  
+               else 
+               if(response[0]=='Z')
+               {
+                   window.alert("part not in production")
+               }  
+               else
+               if(response[0]=='ZR')
+               {
+                document.getElementById('part_desc').value=response[1].des;
+               }              
+                
+                                                                         
+            }
+       })
+    
+    }
+    var table = document.querySelector('table');
+    // get the id of selected rows
+    table.addEventListener('click', function(ev){
+        var serviceID = ev.target.id;
+
+        document.getElementById('assly_no').value=document.getElementById("table").rows[serviceID].cells[0].innerHTML;
+        document.getElementById('loco_to').value=document.getElementById("table").rows[serviceID].cells[1].innerHTML;
+        document.getElementById('loco_from').value=document.getElementById("table").rows[serviceID].cells[2].innerHTML;
+        var temp = $('#assly_no').val();
+        var data = {temp}; 
+        var part;                
+
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm14hwassly' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response)
+            {                
+                document.getElementById('assly_desc').value=response[0].des;
+                                                                        
+            }
+       })
+        window.scrollTo(0,0); 
+        $("#table > tbody").html(""); 
+        document.getElementById("table").className = 'hidden';
+        document.getElementById("lblhd").className = 'hidden';
+        myfunction_pmno();
+        
+    });
+
+    function myfunction_pmno()
+    {
+        var batch = $('#batch_no').val();
+        var qty = $('#assly_no').val();
+        var lt= $('#loco_to').val();
+        var lf = $('#loco_from').val();
+        var data={batch,qty,lt,lf};
+        var part;                
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm14hwpm1' %}",
+            dataType : 'json',
+            data : data,
+            
+            success : function(response)
+            {   
+               
+                document.getElementById('unit').value=response[0].unit;
+                document.getElementById('pm_no').value=response[0].pm_no;
+                document.getElementById('brn_no').value=response[0].brn_no;
+
+                document.getElementById("loco_no").focus();
+               
+            }    
+       })
+    }
+
+
+
+
 
     $(document).on('click', '#cancel', function(){
         window.location.reload();
@@ -852,7 +796,55 @@
         
     });
 
-
+    document.querySelector('#batch_no1').addEventListener('change',(e)=>{
+        e.preventDefault();
+        var batch = $('#batch_no1').val();                 
+        var data = {batch};                
+          $.ajax
+          ({
+            type : 'GET',
+            url : "{% url 'm14hwbatch_no' %}",
+            dataType : 'json',
+            data : data,
+             success : function(response)
+             {      
+               
+               if(response[0]=='Z')
+               {
+                    document.getElementById("table2").className = 'hidden';
+                    document.getElementById("lblhd2").className = 'hidden';
+                    window.alert(" BATCH DOES NOT EXIST IN MASTER.");
+                    document.getElementById('assly_no1').value="";
+                    document.getElementById('epc1').value="";
+                    document.getElementById('brn_no1').value="";
+                    document.getElementById('loco_from1').value="";
+                    document.getElementById('loco_to1').value="";
+                    document.getElementById('assly_desc1').value="";
+                    
+               }  
+               else
+               if(response[0]=='ZR')
+               {
+                   
+                   window.alert("SELECT ASSEMBLY NO. FROM THE BELOW TAABLE");
+                   document.getElementById("table2").className = 'table table-striped scrolldown';
+                   document.getElementById("lblhd2").className = 'css-color1';
+                   document.getElementById("lblhd2").innerHTML='SELECT ASSEMBLY FOR BATCH NO :- '.concat(batch);
+ 
+                   for(var i=1;i<response.length;i++)
+                    {   
+                        $('#table2 > tbody:last').append("<tr><td id="+i+">"+response[i].part_no+"</td><td id="+i+">"+response[i].loco_to+"</td><td id="+i+">"+response[i].loco_fr+"</td></tr>"); 
+                    }
+                    window.scrollTo(0,500)
+                    $("#table3 > tbody").html(""); 
+                   
+                    
+               }                                   
+             }
+              
+          })
+          
+    });
 
 
     var table = document.querySelector('table2');
@@ -862,11 +854,9 @@
         document.getElementById('rforhw1').value='Part No. not in Structure';
 
         document.getElementById('assly_no1').value=document.getElementById("table2").rows[serviceID].cells[0].innerHTML;
-        document.getElementById('epc1').value=document.getElementById("table2").rows[serviceID].cells[1].innerHTML;
-        document.getElementById('brn_no1').value=document.getElementById("table2").rows[serviceID].cells[2].innerHTML;
-        document.getElementById('loco_to1').value=document.getElementById("table2").rows[serviceID].cells[3].innerHTML;
-        document.getElementById('loco_from1').value=document.getElementById("table2").rows[serviceID].cells[4].innerHTML;
-        document.getElementById('quantity1').value=document.getElementById("table2").rows[serviceID].cells[7].innerHTML;
+        document.getElementById('loco_to1').value=document.getElementById("table2").rows[serviceID].cells[1].innerHTML;
+        document.getElementById('loco_from1').value=document.getElementById("table2").rows[serviceID].cells[2].innerHTML;
+        
         
         var temp = $('#assly_no1').val();
         var data = {temp}; 
@@ -887,6 +877,7 @@
         document.getElementById("table2").className = 'hidden';
         document.getElementById("lblhd2").className = 'hidden';
         myfunction_asslyno();
+        myfunction_pmno1();
         
        
         
@@ -956,41 +947,46 @@ function getpartdesc()
            if(response[0]=='ZR')
            {
             document.getElementById('part_desc1').value=response[1].des;
+            document.getElementById("loco_no1").focus();
            }              
             
                                                                      
         }
    })
-   myfunction_pmno1();
+ 
+  
 }
 
     function myfunction_pmno1()
     {
-        var batch = $('#part_no1').val();
-        var qty = $('#quantity1').val();
-        var data={batch,qty};            
+        var batch = $('#batch_no1').val();
+        var qty = $('#assly_no1').val();
+        var lt= $('#loco_to1').val();
+        var lf = $('#loco_from1').val();
+        var data={batch,qty,lt,lf};
+        var part;                
           $.ajax({
             type : 'GET',
-            url : "{% url 'm14hwpm' %}",
+            url : "{% url 'm14hwpm1' %}",
             dataType : 'json',
             data : data,
             
             success : function(response)
-
-            {   if(response.length<=0){
-                    window.alert(" UNIT AND PM_NO NOT EXIST FOR THIS PART AND QUANTITY");
-                    document.getElementById("unit1").focus();
-                }
-                else{
+            {   
+               
                 document.getElementById('unit1').value=response[0].unit;
                 document.getElementById('pm_no1').value=response[0].pm_no;
-                document.getElementById("loco_no1").focus();
+                document.getElementById('brn_no1').value=response[0].brn_no;
+                document.getElementById('quantity1').value=response[0].qty;
+                document.getElementById('epc1').value=response[0].epc;
+
                
-            } 
-            }     
+               
+            }    
        })
     }
 
+     
     document.querySelector('#part_no1').addEventListener('change',(e)=>{
         e.preventDefault();
         getpartdesc();});

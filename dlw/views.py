@@ -19527,7 +19527,7 @@ def m14hwview(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist) 
     batch1 = list(Batch.objects.filter(status = 'R' , rel_date__isnull=False).values('bo_no').distinct())
-    m13ref = list(M13.objects.filter(rej_cat='M14').values('m13_no').distinct())
+    m13ref = list(M13.objects.filter(rej_cat='M14').values('slno').order_by('slno').distinct())
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -19550,7 +19550,7 @@ def m14hwview(request):
 def m14getdate(request):
     if request.method == 'GET' and request.is_ajax():  
         partno_temp = request.GET.get('partno_temp')
-        partnew = list(M13.objects.filter(m13_no = partno_temp ).values('epc','m13_date','slno','wo','wo_rep','reason','part_no','qty_rej').distinct())
+        partnew = list(M13.objects.filter(slno = partno_temp ).values('epc','m13_date','m13_no','wo','wo_rep','reason','part_no','qty_rej','brn_no').distinct())
         s = list(partnew[0]['m13_date'])
         date='' . join(map(str,s))
         date = date[8:10] + "-" + date[5:7] + "-" + date[0:4]
@@ -19577,7 +19577,6 @@ def m14hwpart(request):
 def m14hwbatch_no(request):
     if request.method == 'GET' and request.is_ajax():  
         batch_temp = request.GET.get('batch')
-        print(batch_temp)
         batchnew=list(Batch.objects.filter(bo_no = batch_temp, status = 'R' , rel_date__isnull=False).values('part_no','ep_type','brn_no','loco_to','loco_fr','rel_date','status','batch_qty').distinct())
         if len(batchnew)<=0:
                 batchnew.insert(0,'Z')
@@ -19586,13 +19585,25 @@ def m14hwbatch_no(request):
         return JsonResponse(batchnew, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-def m14hwpm(request):
+def m14hwbatch_no1(request):
+    if request.method == 'GET' and request.is_ajax():  
+        batch_temp = request.GET.get('batch')
+        part_temp = request.GET.get('part')
+        batchnew=list(M14M4.objects.filter(bo_no = batch_temp,part_no=part_temp).values('assly_no','l_to','l_fr').distinct())
+        if len(batchnew)<=0:
+                batchnew.insert(0,'Z')
+        elif len(batchnew)>0:
+                batchnew.insert(0,'ZR')
+        return JsonResponse(batchnew, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m14hwpm1(request):
     if request.method == 'GET' and request.is_ajax():  
         batch_temp = request.GET.get('batch')
         qty=request.GET.get('qty')
-        
-        batchnew=list(M14M4.objects.filter(part_no = batch_temp,qty=qty).values('unit','pm_no').distinct())
-        print(batchnew)
+        lt=request.GET.get('lt')
+        lf=request.GET.get('lf')
+        batchnew=list(M14M4.objects.filter(bo_no = batch_temp,assly_no=qty,l_to=lt,l_fr=lf).values('unit','pm_no','brn_no','qty','epc').distinct())
         return JsonResponse(batchnew, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -19635,7 +19646,6 @@ def m14hwsave(request):
         m14_date=datetime.datetime.now().strftime ("%d-%m-%Y")
         
         response_data=m14_no
-        print(response_data)
         M14HW11.objects.create(doc_code='89',m14_no=str(m14_no),m14_date=str(m14_date),m13_no=str(m13_no),m13_date=str(m13_date),char_wo=str(char_wo),sl_no=str(sl_no),batch_no=str(batch_no),brn_no=brn_no,epc=str(epc),l_fr=str(loco_from),l_to=str(loco_to),pm_no=str(pm_no),part_no=str(part_no),part_desc=str(part_desc),qty=quantity,reason=str(rforhw),assly_no=str(assly_no),assly_desc=str(assly_desc),unit=unit,epc_old=str(''),loco_no=str(loco_no))
         Code.objects.filter(cd_type='21',code = 'M14' ).update(num_1=int(m14_no))
         return JsonResponse(response_data, safe = False)
@@ -19791,7 +19801,6 @@ def m338authority(request):
     return JsonResponse({"success":False}, status=400)
 
 def edit_status(request):
-  
     if request.method == "GET" and request.is_ajax():
         print("hh")
         id = request.GET.get('id1')
@@ -19799,8 +19808,6 @@ def edit_status(request):
         Intershop.objects.filter(staffNo = id).update(status = 'f')
         return JsonResponse(id, safe = False)
     return JsonResponse({"success":False}, status = 400)
-
-
 
 
 
