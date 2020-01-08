@@ -4782,3 +4782,10 @@ class Intershop(models.Model):
 
     class Meta:
         db_table = 'Intershop'
+
+class sanctionSSE(models.Model):
+    shopsec=models.CharField(max_length=4, blank=True, null=True)  # Field name made lowercase.
+    desig=models.CharField(max_length=50, blank=True, null=True)  # Field name made lowercase.
+    sanc=models.CharField(max_length=5, blank=True, null=True)  # Field name made lowercase.
+    login_id=models.CharField( max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    last_modified=models.CharField(max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
