@@ -19624,10 +19624,10 @@ def m14hwasslyno(request):
 def m14hwsave(request):
     response_data = {}
     if request.method == 'GET' and request.is_ajax():
-        m13_no = request.GET.get('m13_no')
+        m13_no = request.GET.get('sl_no')
         m13_date = request.GET.get('m13_date')
         char_wo = request.GET.get('char_wo')
-        sl_no = request.GET.get('sl_no')
+        sl_no = request.GET.get('m13_no')
         batch_no = request.GET.get('batch_no')
         epc = request.GET.get('epc')
         brn_no = request.GET.get('brn_no')
