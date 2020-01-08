@@ -303,17 +303,15 @@ urlpatterns = [
     path('ajax/m14hwpart/',m14hwpart,name='m14hwpart'),
     path('ajax/m14hwbatch_no/',m14hwbatch_no,name='m14hwbatch_no'),
     path('ajax/m14hwassly/',m14hwassly,name='m14hwassly'),
+    path('ajax/m14hwbatch_no1/',m14hwbatch_no1,name='m14hwbatch_no1'),
+    path('ajax/m14hwpm1/',m14hwpm1,name='m14hwpm1'),
     path('ajax/m14hwsave/',m14hwsave,name='m14hwsave'),
     path('ajax/m14getdoc_no/',m14getdoc_no,name='m14getdoc_no'),
     path('ajax/m14hwasslyno/',m14hwasslyno,name='m14hwasslyno'),
-    path('ajax/m14hwbatch_no1/',m14hwbatch_no1,name='m14hwbatch_no1'),
-    path('ajax/m14hwpm1/',m14hwpm1,name='m14hwpm1'),
-    path('GeneratePdf/',GeneratePdf, name='GeneratePdf'),
     path('m338view/',m338view,name='m338view'),
     path('ajax/m338authority/',m338authority,name='m338authority'),
     path('ajax/edit_status/',edit_status,name='edit_status'),
-
-
+    path('GeneratePdf/',GeneratePdf, name='GeneratePdf'),
 ]
 
 
