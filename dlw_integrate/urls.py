@@ -312,6 +312,15 @@ urlpatterns = [
     path('m338view/',m338view,name='m338view'),
     path('ajax/m338authority/',m338authority,name='m338authority'),
     path('ajax/edit_status/',edit_status,name='edit_status'),
+    path('sanction_formview/',sanction_formview,name='sanction_formview'),
+    path('sanction_rollview/',sanction_rollview,name='sanction_rollview'),
+
+    path('IDcertificate/',IDcertificate,name='IDcertificate'),
+    path('ajax/certificate/',certificate,name='certificate'),
+    path('ajax/certificate1/',certificate1,name='certificate1'),
+    path('ajax/certificate2/',certificate2,name='certificate2'),
+    path('ajax/save_s/',save_s,name='save_s'),
+    path('GenPdf/',GenPdf,name='GenPdf'),
 
 ]
 

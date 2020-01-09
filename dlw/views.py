@@ -45,7 +45,7 @@ import requests
 #
 #
 
-
+from django.db.models import Q
 from .utils import render_to_pdf 
 
 def GeneratePdf(request, *args, **kwargs):
@@ -15443,7 +15443,7 @@ def mg21getstaff(request):
     return JsonResponse({"success": False}, status=400)
  
 @login_required
-@role_required(urlpass='/mg21view/')
+@role_required(urlpass='/mg21report/')
 def mg21report(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -19662,6 +19662,7 @@ def m14getdoc_no(request):
 
 
 
+
 @login_required
 @role_required(urlpass='/m338view/')
 def m338view(request):
@@ -19815,3 +19816,371 @@ def edit_status(request):
 
 
 
+@login_required
+@role_required(urlpass='/sanction_rollview/')
+
+def sanction_rollview(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    if "Superuser" in rolelist:
+        tm=Shemp.objects.all().values('shopsec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    elif(len(rolelist)==1):
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        print(submitvalue)
+        if submitvalue=='Proceed':
+            shop_sec= request.POST.get('shop_sec')
+            print(shop_sec)
+            reqf=sanctionSSE.objects.filter(shopsec=shop_sec).values('shopsec','desig','sanc')
+            print(reqf)
+            ###########################Group by####################
+            # a=sanctionSSE.objects.values('shopsec').annotate(Count('shopsec'))
+            # print(a[0].get('shopsec'))
+            #################################################
+            if "Superuser" in rolelist:
+                tm=Shemp.objects.all().values('shopsec').distinct()
+                
+                tmp=[]
+                for on in tm:
+                    tmp.append(on['shopsec'])
+                context={
+                    'sub':1,
+                    'reqf':reqf,
+                    'nav':nav,
+                    'shop_sec':shop_sec,
+                    'lenm' :2,
+                    'roles':tmp,
+                    'ip':get_client_ip(request),
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)==1):
+                context = {
+                    'sub':1,
+                    'reqf':reqf,
+                    'nav':nav,
+                    'shop_sec':shop_sec,
+                    'lenm' :2,
+                    'roles':tmp,
+                    'ip':get_client_ip(request),
+                    'subnav':subnav,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'sub':1,
+                    'reqf':reqf,
+                    'nav':nav,
+                    'shop_sec':shop_sec,
+                    'lenm' :2,
+                    'roles':tmp,
+                    'ip':get_client_ip(request),
+                    'subnav':subnav,
+                }
+            
+            
+        if submitvalue=='Proceed2':
+            val2 = request.POST.get('updt_date')
+            print(val2)
+            p=val2.split('-')
+            year1=int(p[0])-60
+            year=str(year1)
+            year=year[2:]
+            month=p[1]
+            day=p[2]
+            dat=day+"-"+month+"-"+year
+            
+            print(dat)
+
+            pre_date_time=str(datetime.datetime.now())
+            pre_date_time1=pre_date_time.split(' ')
+            pre_date=pre_date_time1[0]
+            print("date pre"+pre_date)
+            pre=pre_date.split('-')
+            pre_day=pre[2]
+            pre_mon=pre[1]
+            pre_year1=int(pre[0])-60
+            pre_year=str(pre_year1)
+            pre_year=pre_year[2:]
+            pre_date_be_60=pre_day+"-"+pre_mon+"-"+pre_year
+            # pre_date_be_60=pre_year+"-"+pre_mon+"-"+pre_day
+            print("fe ",pre_date_be_60,dat)
+            
+            # k=empmast.objects.filter(birthdate__range=(pre_date_be_60,dat)).annotate(mon=ExtractMonth(datetime.datetime.date('birthdatedate::DATE'))).values('empno','empname','birthdate','desig_longdesc')
+            # t=empmast.objects.filter(empno=k).values('empname')
+            k=empmast.objects.filter(birthdate__contains="-"+month+"-").filter(birthdate__contains="-"+year).values('empno','empname','birthdate','desig_longdesc')
+            # co=k.count()
+            # print([key['empno'] for key in k])
+            print(k) 
+            # print(t)
+            context = {
+                    'sub':1,
+                    'k':k,
+                    
+                    'nav':nav,
+                    
+                    'lenm' :2,
+                    'roles':tmp,
+                    'ip':get_client_ip(request),
+                    'subnav':subnav,
+                }
+    return render(request,"sanction_rollview.html",context)  
+
+
+@login_required
+@role_required(urlpass='/sanction_formview/')
+
+def sanction_formview(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    if "Superuser" in rolelist:
+        tm=Shemp.objects.all().values('shopsec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shopsec'])
+           
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+        }
+    elif(len(rolelist)==1):
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    if request.method == "POST":
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='submit':
+            shop_sec= request.POST.get('shop_sec')
+            print(shop_sec)
+            totindb=request.POST.get('totmebs')
+            now = datetime.datetime.now()
+            user=request.user
+            # print(totindb)
+            for tb in range(1,int(totindb)+1):
+                desig=request.POST.get('desig1'+str(tb))
+                san_no=request.POST.get('san_no'+str(tb))
+                print(desig,san_no)
+                if(shop_sec==None or desig==None or san_no==None or now==None or user==None):
+                    pass
+                else:
+               
+                    sanctionSSE.objects.create(shopsec=str(shop_sec), desig=str(desig), sanc=str(san_no),login_id=str(user), last_modified=str(now))         
+    return render(request,"sanction_formview.html",context) 
+
+
+@login_required
+@role_required(urlpass='/IDcertificate/')
+def IDcertificate(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        
+        # print(tm)
+        d_id=list(empmast.objects.filter(~Q(desig_longdesc__startswith='CONTRACT'),dept_desc="MEDICAL",decode_paycategory='GAZ').values('empno').distinct())
+        print(d_id)
+        tmp=[]
+        for on in d_id:
+            tmp.append(on['empno'])
+        #print(tmp)
+        context = {
+            'sub':0,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'doctors':tmp
+        }
+    #if request.method =="POST":
+
+        #submitvalue = request.POST.get('submit')
+     
+
+        #if submitvalue =='submit':
+            #form_no=request.POST.get('icerti')
+            #eno=request.POST.get('emp_no')
+            #eno=request.GET["emp_no"]
+            #print("eno:=",eno)
+            #dno=request.POST.get('demp_no')
+            #print("dno:=",dno)
+            #bno=request.POST.get('book_no')
+            #mcno=request.POST.get('mc_no')
+            #pb=request.POST.get('inj_part')
+            #n=request.POST.get('nature')
+            #dc=request.POST.get('contd')
+            #ad=request.POST.get('acc_date')
+            #table1_id.objects.raw('')
+            #a=table1_id.objects.create(bookno=bno,medical=mcno,empno=eno,demp_no=dno)
+            #table2_id.objects.create(accdient=ad,part=pb,nature=n,disability=dc,medicalcno=a)
+    
+    return render(request,"IDcertificate.html",context)        
+
+    
+
+
+
+
+def certificate(request):
+    if request.method == "GET" and request.is_ajax():
+        emp= request.GET.get('emp_no')
+        #print("emp:  ",emp)
+        obj=list(empmast.objects.filter(empno=emp).values('empname','desig_longdesc','ticket_no').distinct())
+        #print("obj----",obj)
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success":False}, status=400)       
+
+def certificate1(request):
+    if request.method == "GET" and request.is_ajax():
+        demp= request.GET.get('emp_no')
+        #print("doctor empNo:  ",demp)
+        obj=list(empmast.objects.filter(empno=demp).values('empname','desig_longdesc').distinct())
+        return JsonResponse(obj,safe=False)
+    
+    return JsonResponse({"success":False}, status=400)
+
+def certificate2(request):
+    #d={}
+    l=[]
+    if request.method == "GET" and request.is_ajax():
+        no= request.GET.get('mc_no')
+        print("medical no:  ",no)
+        obj=list(table1_id.objects.filter(medical=no).values('empno','demp_no','bookno').distinct())
+        obj1=list(table2_id.objects.filter(medicalcno=no).values('accdient','part','nature','disability').distinct())
+        #d={'table1':obj,'table2':obj1}
+        #obj=table2_id.objects.select_related().filter(medical=no)
+        #obj=table2_id.objects.all().values('empno','demp_no','bookno','accdient','part','nature','disability')
+        l.append(obj)
+        l.append(obj1)
+        print(l)
+        print(len(l))
+        return JsonResponse(l,safe=False)
+    
+    return JsonResponse({"success":False}, status=400)
+
+def save_s(request):
+    context={}
+    if request.method == "GET" and request.is_ajax():
+            eno=request.GET.get('emp_no')
+
+            #eno=request.GET["emp_no"]
+            print("eno:=",eno)
+            dno=request.GET.get('demp_no')
+            print("dno:=",dno)
+            bno=request.GET.get('book_no')
+            print("bno:=",bno)
+            mcno=request.GET.get('mc_no')
+            print("mc_no:=",mcno)
+            pb=request.GET.get('inj_part')
+            print("inj_part:=",pb)
+            n=request.GET.get('nature')
+            print("nature:=",n)
+            dc=request.GET.get('contd')
+            print("contd:=",dc)
+            ad=request.GET.get('acc_date')
+            print("acc_date:=",ad)
+            a=table1_id.objects.create(bookno=str(bno),medical=str(mcno),empno=str(eno),demp_no=str(dno))
+            table2_id.objects.create(accdient=str(ad),part=str(pb),nature=str(n),disability=dc,medicalcno=a)
+            return JsonResponse(context,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+def GenPdf(request, *args, **kwargs):
+    date1 = request.GET.get('date1')
+    book_no = request.GET.get('book_no')
+    mc_no = request.GET.get('mc_no')
+    acc_date = request.GET.get('acc_date')
+    t_no=request.GET.get('t_no')
+    emp_no = request.GET.get('emp_no')
+    emp_name = request.GET.get('emp_name')
+    emp_des = request.GET.get('emp_des')
+    demp_no = request.GET.get('demp_no')
+    dname = request.GET.get('dname')
+    d_des = request.GET.get('d_des')
+    inj_part = request.GET.get('inj_part')
+    nature = request.GET.get('nature')
+    contd = request.GET.get('contd')
+   
+   # m14_date=datetime.datetime.now().strftime ("%d-%m-%Y")
+    data = {
+        'date1':date1,
+        'book_no':book_no,
+        'mc_no':mc_no,
+        'acc_date':acc_date,
+        'emp_no':emp_no,
+        't_no':t_no,
+        'emp_name':emp_name,
+        'emp_des':emp_des,
+        'demp_no':demp_no,
+        'dname':dname,
+        'd_des':d_des,
+        'inj_part':inj_part,
+        'nature':nature,
+        'contd':contd,
+           
+        }
+    pdf = render_to_pdf('certi.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
+    
