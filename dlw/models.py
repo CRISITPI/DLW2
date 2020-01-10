@@ -4791,14 +4791,14 @@ class sanctionSSE(models.Model):
     last_modified=models.CharField(max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
 
 class table1_id(models.Model):
-    bookno=models.CharField(db_column='BOOK_NO',max_length=10)
+    bookno=models.CharField(db_column='BOOK_NO',max_length=20)
     medical=models.CharField(db_column='MEDICAL_CNO',max_length=20,primary_key=True)
     empno=models.CharField(db_column='EMP_NO',max_length=12)
     demp_no=models.CharField(db_column='DEMP_NO',max_length=12)
 
 
 class table2_id(models.Model):
-    accdient=models.DateField(db_column='ACC_DATE')
+    accdient=models.CharField(db_column='ACC_DATE',max_length=12)
     part=models.CharField(db_column='PART_INJURED',max_length=100)
     nature=models.CharField(db_column='NATURE_INJURY',max_length=200)
     disability=models.IntegerField(db_column='DISABILITY_DAYS')

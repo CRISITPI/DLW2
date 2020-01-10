@@ -1,0 +1,94 @@
+{% extends 'base.html' %} 
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Partqry</title>
+    
+     <style>
+        body{
+            background-color: white;
+    
+        }
+            button{
+                transform: translate(+280%,-50%);
+            }
+            
+        table.center{
+        margin-left:15% ;
+        margin-right:auto ;
+        text-align: right;
+        position: relative;
+        width:60%;
+           
+       }
+       textarea[name= "Txtdes"]{
+        height:30px;
+        width:188px; 
+        resize:none;
+    }
+    p{
+        text-align:center;
+        font-size:50px;
+    }
+        
+    </style>
+   
+</head>
+<body>  
+   
+    <p style="font-size:3vw;">FIND GMPART/DLW PART DETAILS</p>
+
+    <form action="{% url 'partqry' %}" method="POST">
+    <table class="center">
+        {% csrf_token %}
+        <tr><td style="font-size:1vw;">ENTER GMPART NO **OR** DLWPART NO:</td><td><input type="text" id="Txtpartno" name="Txtpartno" autofocus  ></td></tr><br><br><br>
+        <tr><td style="font-size:1vw;">GMPART NO:</td><td><input type="text" id="txtgm_ptno" name="txtgm_ptno"  readonly ></td><td style ="font-size:1vw;"> DESCRIPTION:</td><td><textarea id="Txtdes" name="Txtdes" readonly> </textarea></td></tr>   
+        <tr><td style="font-size:1vw;">DLWPART NO:</td><td><input type="text" id="Txtpart_no"  readonly ></td><td style="font-size:1vw;">MAKE/BUY:</td><td><input type="text" id="Txtmb"  readonly></td></tr>
+        <tr><td style="font-size:1vw;">CATEGORY:</td><td><input type="text" id="txtit_ct"  readonly></td><td style="font-size:1vw;">UNIT:</td><td><input  type="text" id="Txtum"  readonly></td></tr>
+        <tr><td><br><br><br></td></tr>
+
+        <tr><td><button onclick=redirect() type="submit" class="btn btn-success" name="Btnclr"><i class="fas fa-database"> </i>
+            Clear </button></td></tr>
+
+    </table>
+    </form>
+
+</body>
+</html>
+<script>
+    
+    document.querySelector("#Txtpartno").addEventListener('change',(e)=>{                
+        e.preventDefault();                  
+        var Txtpart_no = $("#Txtpartno").val();
+        var data = {Txtpart_no};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'partqry1' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){                               
+               // for(i=0;i<response.length;i++){
+            // alert(response[0].name);
+            //alert(response[0].desgn);
+            //console.log(response); 
+            document.getElementById('txtgm_ptno').value=response[0].gm_ptno; 
+            document.getElementById('Txtdes').value=response[0].des; 
+            document.getElementById('Txtpart_no').value=response[0].part_no; 
+            document.getElementById('Txtmb').value=response[0].mb; 
+            document.getElementById('txtit_ct').value=response[0].it_cat; 
+            document.getElementById('Txtum').value=response[0].um; 
+               // }  
+
+            },
+            error: function() {
+                alert("NO SUCH PART");
+            },
+            
+            })
+    });
+</script>
+{% endblock content %}

@@ -321,6 +321,8 @@ urlpatterns = [
     path('ajax/certificate2/',certificate2,name='certificate2'),
     path('ajax/save_s/',save_s,name='save_s'),
     path('GenPdf/',GenPdf,name='GenPdf'),
+    path('partqry/',partqry,name='partqry'),
+    path('ajax/partqry1/',partqry1,name='partqry1'),
 
 ]
 

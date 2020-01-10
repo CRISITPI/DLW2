@@ -22,10 +22,10 @@
             <table>
                 <tr>
                     <td>
-                        <label><b>BOOK NO. / पुस्तक संख्या</b></label><br><input type="text" name="book_no" id="book_no" class="form-control" style="width: 300px;">
+                        <label><b>BOOK NO. / पुस्तक संख्या</b></label><br><input type="text" name="book_no" id="book_no" class="form-control" style="width: 300px;" value="" onkeyup="AdjustKeyPress(this.value);">
                     </td>
                     <td style="text-align: right;">
-                        <label for="date"><b>DATE:</b></label><input type="date" id="date1" name="date1" style="width: 200px;">
+                        <label style="margin-right: 150px;"><b>DATE:</b></label><br><input type="" id="date1" name="date1" style="width: 200px;margin-left: 500px;" placeholder="dd-mm-yyyy" readonly class="form-control">
                     </td>
                 </tr>
             </table>
@@ -41,7 +41,7 @@
                 <label><b>MEDICAL CERTIFICATE NO./ मेडिकल प्रमाणपत्र संख्या</b></label><br><input type="text" size=20 name="mc_no" id="mc_no" class="form-control">
             </td>
             <td width=33%>
-                <label><b>ACCIDENT DATE / दुर्घटना की तारीख</b></label><br><input type="date" id="acc_date" name="acc_date" class="form-control" style="width: 300px;" >
+                <label><b>ACCIDENT DATE / दुर्घटना की तारीख</b></label><br><input type="" id="acc_date" name="acc_date" class="form-control" style="width: 300px;" placeholder="dd-mm-yyyy" readonly>
             </td>
         </tr>
         <tr>
@@ -93,14 +93,21 @@
    <input type="button" id="submit1"name="submit1" class="btn btn-primary" value="Report" onclick="validate()">  
 </form>
 <script>
- //  $(document).ready(function()
-   //{
-     //  $('#date1').datepicker({ dateFormat: 'dd-mm-yy', });
-   //});
-  // $(document).ready(function()
- //  {
-      // $('#acc_date').datepicker({ dateFormat: 'dd-mm-yy', });
-  // });
+    function AdjustKeyPress(value){
+        var max_value=20;
+        if(value.length>max_value)
+        {
+            alert("Maximum Allowed Length is 10")
+        }
+    }
+   $(document).ready(function()
+   {
+       $('#date1').datepicker({ dateFormat: 'dd-mm-yy', });
+   });
+   $(document).ready(function()
+   {
+       $('#acc_date').datepicker({ dateFormat: 'dd-mm-yy', });
+   });
 
     document.querySelector("#emp_no").addEventListener('blur',(e)=>{
                         

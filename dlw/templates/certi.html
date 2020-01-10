@@ -38,26 +38,40 @@
     </table>
 
 </form>
-<p> <font style="font-size: 15px; line-height: 15pt;">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp I have examined <b>{{emp_name}}</b> ID <b>{{emp_no}}</b>, Designation <b>{{emp_des}}</b>
-     Ticket no <b>{{t_no}}</b> who met with an accident on <b>{{acc_date}}</b>, ticket number<b>{{t_no}}</b>
-     Part of body injured <b>{{inj_part}}</b> Nature of injury <b>{{nature}}</b><br>
-     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp His disablement is likely to continue for <b>{{contd}} </b>days</font>
+<p> <font style="font-size: 15px; line-height: 15pt;">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp I have examined <b>{{emp_name}}</b>, employee number:- <b>{{emp_no}}</b>, Designation:- <b>{{emp_des}}</b>,
+     Ticket no <b>{{t_no}}</b> who met with an accident on <b>{{acc_date}}</b>.
+     The Part of body injured is <b>{{inj_part}}</b> and the nature of injury is <b>{{nature}}</b>.<br>
+     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp His disablement is likely to continue for <b>{{contd}} </b>days.</font>
 </p>
 <table style="margin-top: 50px;">
     <tr>
-        <td style="text-align: left;">
+        <td style="text-align: left;" width=60%>
            <label style="font-size: 15px;">Dated <b>{{date1}}</b></label> 
         </td>
-        <td  style="text-align: right;">
-            <label style="font-size: 15px;"> Signature_______________</label>
-        </td>
-    </tr>
-    <tr>
-        <td colspan=2 style="text-align: right;">
-            <label style="font-size: 15px;">Designation <b>{{d_des}}</b></label>
+        <td width=40%>
+            <label style="font-size: 15px;">Signature <b>_______________</b></label>
+            
         </td>
     </tr>
 </table>
+<table style="margin-top: 10px;">
+    <tr style="border-spacing:50px;">
+        <td width=60%></td>
+        <td width=40% >
+            <label style="font-size: 15px;"> Name: <b>{{dname}}</b></label>
+            
+        </td>
+    </tr>
+</table>
+<table style="margin-top: 10px;">
+    <tr>
+        <td width=60%></td>
+        <td width=40% >
+            <label style="font-size: 15px;">Designation <b>{{d_des}}</b></label>
+        </td>
+    </tr>
+</table>    
+
                     
      
 
