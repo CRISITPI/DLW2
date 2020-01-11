@@ -19949,9 +19949,7 @@ def sanction_rollview(request):
             context = {
                     'sub':1,
                     'k':k,
-                    
                     'nav':nav,
-                    
                     'lenm' :2,
                     'roles':tmp,
                     'ip':get_client_ip(request),
