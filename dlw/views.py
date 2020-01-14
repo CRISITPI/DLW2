@@ -36,6 +36,7 @@ from random import randint
 import datetime
 import smtplib 
 import requests
+
 # Create your views here.
 #
 #
@@ -47,6 +48,8 @@ import requests
 
 from django.db.models import Q
 from .utils import render_to_pdf 
+from django.db.models.functions import Substr
+from django.db.models import Subquery
 
 def GeneratePdf(request, *args, **kwargs):
     m13_no = request.GET.get('m13_no')
@@ -19865,9 +19868,14 @@ def sanction_rollview(request):
         print(submitvalue)
         if submitvalue=='Proceed':
             shop_sec= request.POST.get('shop_sec')
-            print(shop_sec)
-            reqf=sanctionSSE.objects.filter(shopsec=shop_sec).values('shopsec','desig','sanc')
-            print(reqf)
+            reqf=list(sanctionSSE.objects.filter(shopsec=shop_sec).values('shopsec','desig','sanc'))
+            sub=empmast.objects.annotate(emp=Substr("empno",7,5)).distinct() 
+            for i in range(0,len(reqf)):
+                c=0
+                for j in Shemp.objects.filter(staff_no__in=Subquery(sub.values('emp')),shopsec='2303',desgn__startswith=reqf[i]['desig']).values('name','staff_no').distinct():
+                    c=c+1
+                print(c)
+                reqf[i].update({'roll':c})
             ###########################Group by####################
             # a=sanctionSSE.objects.values('shopsec').annotate(Count('shopsec'))
             # print(a[0].get('shopsec'))
@@ -19958,6 +19966,8 @@ def sanction_rollview(request):
     return render(request,"sanction_rollview.html",context)  
 
 
+
+
 @login_required
 @role_required(urlpass='/sanction_formview/')
 
@@ -19976,7 +19986,14 @@ def sanction_formview(request):
         tmp=[]
         for on in tm:
             tmp.append(on['shopsec'])
-           
+            # first_person = Person.objects.raw('SELECT * FROM myapp_person')[0]
+
+        # for p in empmast.objects.raw('SELECT * FROM public."dlw_empmast" '):
+        #     print(p)
+
+        # for p in Shemp.objects.raw("SELECT 1 as id ,"
+        #     " (SELECT * FROM public.""SHEMP"" "  ):
+        #     print(p)
         context={
             'sub':0,
             'lenm' :2,
@@ -20015,12 +20032,15 @@ def sanction_formview(request):
             for tb in range(1,int(totindb)+1):
                 desig=request.POST.get('desig1'+str(tb))
                 san_no=request.POST.get('san_no'+str(tb))
-                print(desig,san_no)
+                pre=list(sanctionSSE.objects.filter(shopsec=shop_sec,desig=desig).values('id'))
+                print(pre)
                 if(shop_sec==None or desig==None or san_no==None or now==None or user==None):
                     pass
                 else:
-               
-                    sanctionSSE.objects.create(shopsec=str(shop_sec), desig=str(desig), sanc=str(san_no),login_id=str(user), last_modified=str(now))         
+                    if len(pre)>0:
+                        sanctionSSE.objects.filter(shopsec=shop_sec,desig=desig).update(sanc=str(san_no),login_id=str(user), last_modified=str(now))
+                    else:
+                        sanctionSSE.objects.create(shopsec=str(shop_sec), desig=str(desig), sanc=str(san_no),login_id=str(user), last_modified=str(now))          
     return render(request,"sanction_formview.html",context) 
 
 
@@ -20224,3 +20244,17 @@ def partqry1(request):
             if(len(data_list)>0):
                 return JsonResponse(data_list,safe = False)                          
     return JsonResponse({"success":False},status=400)
+
+def sanction_roll1(request):
+    if request.method == 'GET' and request.is_ajax():  
+        c=0
+        temp=list(M14HW11.objects.raw('SELECT m.id,m."M14_NO" FROM dlw_m14hw11 As m, "M13" as p where m."M13_REF"=p."M13_NO"'))
+        print(temp[0].m14_no)
+        sub=empmast.objects.annotate(emp=Substr("empno",7,5)).distinct()
+
+        for i in Shemp.objects.filter(staff_no__in=Subquery(sub.values('emp')),shopsec='2303',desgn__startswith='JE-I/').values('name','staff_no').distinct():
+            c=c+1
+        
+        print(c)
+        return JsonResponse(c,safe = False)
+    return JsonResponse({"success":False}, status = 400)

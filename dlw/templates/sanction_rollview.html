@@ -89,14 +89,14 @@
                 <thead>
                     <th>Designation</th>
                     <th>Scanction</th>
-                    <th>Roll</th>
+                    <th>On Roll</th>
                     <th>Remark</th>
                 </thead>
                 {% for i in reqf %}
                 <tr>
                     <td>{{i.desig}}</td>
                     <td>{{i.sanc}}</td>
-                    <td>de</td>
+                    <td>{{i.roll}}</td>
                     <td><input type="text" name="remark" value="remark" placeholder="Remark"></td>
                 </tr>
                 {% endfor %}
@@ -143,8 +143,25 @@
 <script  type="text/javaScript"> 
     
     document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-   console.log($("#shop_sec").val());
-   document.querySelector("#myproceed").click();
+        e.preventDefault();
+        document.querySelector("#myproceed").click();
+        shop_sec=$('#shop_sec').val();
+        data={shop_sec};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'sanction_roll1' %}",
+            dataType : 'json',
+            data : data,
+            
+            success : function(response)
+            {   
+               
+                
+
+               
+               
+            }    
+       })
     });
     document.querySelector("#updt_date").addEventListener('change',(e)=>{
         console.log($("#updt_date").val());

@@ -323,6 +323,7 @@ urlpatterns = [
     path('GenPdf/',GenPdf,name='GenPdf'),
     path('partqry/',partqry,name='partqry'),
     path('ajax/partqry1/',partqry1,name='partqry1'),
+    path('ajax/sanction_roll1/',sanction_roll1,name='sanction_roll1'),
 
 ]
 

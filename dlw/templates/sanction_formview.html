@@ -54,15 +54,15 @@
 <br>
 
 <h3 align="center">Sanction Form</h3>
-<h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6>
-<h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <br>
+<h6 align="left" style="margin-left: 100px;">??.??.?. - 9002/ I.S.O. - 9002 </h6>
+<h6 align="left" style="margin-left: 100px;">??? ??? ?? (???????? )/ D.L.W. (Varanasi)</h6> <br>
 
 <br><br>
 <form action="{% url 'sanction_formview' %}" method="POST"> 
     {% csrf_token %}
     <div class="container">
 
-            <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+            <label for="sno"><b>Shop Section NO/??? ???.:</b></label>
             <select class="form-control" id="shop_sec" name="shop_sec" required>
                 <option id="op_shop" selected disabled hidden>Select Shop Section</option>
                 {% if lenm == 1 %}
@@ -103,7 +103,10 @@
     var j=0;
     $("#add").click(function(e) {
         console.log("add click");
+       
         j++;
+        if(j<10)
+        {
         var id="customers"+String(j);
         var desig="desig1"+String(j);
         var san_no="san_no"+String(j);
@@ -115,21 +118,41 @@
             /////////
             document.getElementById("totmebs").value=j;
             ////////////////////
-
+            
             $("#"+desig).append("<option value='SSE'>SSE</option>");
             $("#"+desig).append("<option value='SE'>SE</option>");
             $("#"+desig).append("<option value='JE-I'>JE-I</option>");
             $("#"+desig).append("<option value='JE-II'>JE-II</option>");
-            $("#"+desig).append("<option value='P/MAN'>P/MAN</option>");
+            $("#"+desig).append("<option value='P-MAN'>P/MAN</option>");
             $("#"+desig).append("<option value='HELPER'>HELPER</option>");
             $("#"+desig).append("<option value='OS'>OS</option>");
-            $("#"+desig).append("<option value='H/C'>H/C</option>");
+            $("#"+desig).append("<option value='H-C'>H/C</option>");
             $("#"+desig).append("<option value='CLERK'>CLERK</option>");
+            
+            if(j>1)
+            {   for(i=1;i<j;i++)
+                {
+                var des="desig1"+String(i);
+                var optionval = $('#'+des).val();
+                $("#"+desig+" option[value="+ optionval +"]").remove();
+                }
+            }
+        }
+        else{
+            window.alert("MAXIMUM LIMIT REACHED FOR DESIGNATION")
+        }
+
+            
+            
+            
+
     });
 
     
 $(document).on("click", ".delete", function(){
+    j--;
     $(this).parents("table").remove();
+   
    });
 </script> 
 {% endblock content %}
