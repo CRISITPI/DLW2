@@ -324,6 +324,7 @@ urlpatterns = [
     path('GenPdf/',GenPdf,name='GenPdf'),
     path('partqry/',partqry,name='partqry'),
     path('ajax/partqry1/',partqry1,name='partqry1'),
+    
     path('fitcertificate/',fitcertificate,name='fitcertificate'),
     path('ajax/fitCertificateGetEmp',fitCertificateGetEmp,name='fitCertificateGetEmp'),
     path('ajax/fitCertificateGetEmpAllDetails',fitCertificateGetEmpAllDetails,name='fitCertificateGetEmpAllDetails'),
