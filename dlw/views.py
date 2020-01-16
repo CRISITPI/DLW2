@@ -19869,20 +19869,16 @@ def sanction_rollview(request):
         if submitvalue=='Proceed':
             shop_sec= request.POST.get('shop_sec')
             reqf=list(sanctionSSE.objects.filter(shopsec=shop_sec).values('shopsec','desig','sanc'))
+            shopname=list(Shop.objects.filter(shop=shop_sec).values('sh_desc').distinct())
+            print("shopname : ",len(shopname))
             sub=empmast.objects.annotate(emp=Substr("empno",7,5)).distinct() 
             for i in range(0,len(reqf)):
                 c=0
                 for j in Shemp.objects.filter(staff_no__in=Subquery(sub.values('emp')),shopsec='2303',desgn__startswith=reqf[i]['desig']).values('name','staff_no').distinct():
                     c=c+1
-                print(c)
                 reqf[i].update({'roll':c})
-            ###########################Group by####################
-            # a=sanctionSSE.objects.values('shopsec').annotate(Count('shopsec'))
-            # print(a[0].get('shopsec'))
-            #################################################
             if "Superuser" in rolelist:
-                tm=Shemp.objects.all().values('shopsec').distinct()
-                
+                tm=Shemp.objects.all().values('shopsec').distinct()  
                 tmp=[]
                 for on in tm:
                     tmp.append(on['shopsec'])
@@ -19895,6 +19891,8 @@ def sanction_rollview(request):
                     'roles':tmp,
                     'ip':get_client_ip(request),
                     'subnav':subnav,
+                    'shopname':shopname,
+                    
                 }
             elif(len(rolelist)==1):
                 context = {
@@ -19906,6 +19904,7 @@ def sanction_rollview(request):
                     'roles':tmp,
                     'ip':get_client_ip(request),
                     'subnav':subnav,
+                    'shopname':shopname,
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -19917,12 +19916,12 @@ def sanction_rollview(request):
                     'roles':tmp,
                     'ip':get_client_ip(request),
                     'subnav':subnav,
+                    'shopname':shopname,
                 }
             
             
         if submitvalue=='Proceed2':
             val2 = request.POST.get('updt_date')
-            print(val2)
             p=val2.split('-')
             year1=int(p[0])-60
             year=str(year1)
@@ -19930,13 +19929,12 @@ def sanction_rollview(request):
             month=p[1]
             day=p[2]
             dat=day+"-"+month+"-"+year
-            
-            print(dat)
-
+            s = list(val2)
+            date='' . join(map(str,s))
+            date = date[8:10] + "-" + date[5:7] + "-" + date[0:4]
             pre_date_time=str(datetime.datetime.now())
             pre_date_time1=pre_date_time.split(' ')
             pre_date=pre_date_time1[0]
-            print("date pre"+pre_date)
             pre=pre_date.split('-')
             pre_day=pre[2]
             pre_mon=pre[1]
@@ -19944,16 +19942,16 @@ def sanction_rollview(request):
             pre_year=str(pre_year1)
             pre_year=pre_year[2:]
             pre_date_be_60=pre_day+"-"+pre_mon+"-"+pre_year
-            # pre_date_be_60=pre_year+"-"+pre_mon+"-"+pre_day
-            print("fe ",pre_date_be_60,dat)
-            
-            # k=empmast.objects.filter(birthdate__range=(pre_date_be_60,dat)).annotate(mon=ExtractMonth(datetime.datetime.date('birthdatedate::DATE'))).values('empno','empname','birthdate','desig_longdesc')
-            # t=empmast.objects.filter(empno=k).values('empname')
+            shop_sec= request.POST.get('shop_sec')
+            reqf=list(sanctionSSE.objects.filter(shopsec=shop_sec).values('shopsec','desig','sanc'))
+            sub=empmast.objects.annotate(emp=Substr("empno",7,5)).distinct()
+            for i in range(0,len(reqf)):
+                c=0
+                for j in Shemp.objects.filter(staff_no__in=Subquery(sub.values('emp')),shopsec='2303',desgn__startswith=reqf[i]['desig']).values('name','staff_no').distinct():
+                    c=c+1
+                reqf[i].update({'roll':c})
             k=empmast.objects.filter(birthdate__contains="-"+month+"-").filter(birthdate__contains="-"+year).values('empno','empname','birthdate','desig_longdesc')
-            # co=k.count()
-            # print([key['empno'] for key in k])
-            print(k) 
-            # print(t)
+            shopname=list(Shop.objects.filter(shop=shop_sec).values('sh_desc').distinct())
             context = {
                     'sub':1,
                     'k':k,
@@ -19962,6 +19960,10 @@ def sanction_rollview(request):
                     'roles':tmp,
                     'ip':get_client_ip(request),
                     'subnav':subnav,
+                    'shop_sec':shop_sec,
+                    'reqf':reqf,
+                    'date':date,
+                    'shopname':shopname,
                 }
     return render(request,"sanction_rollview.html",context)  
 
@@ -20245,16 +20247,204 @@ def partqry1(request):
                 return JsonResponse(data_list,safe = False)                          
     return JsonResponse({"success":False},status=400)
 
-def sanction_roll1(request):
-    if request.method == 'GET' and request.is_ajax():  
-        c=0
-        temp=list(M14HW11.objects.raw('SELECT m.id,m."M14_NO" FROM dlw_m14hw11 As m, "M13" as p where m."M13_REF"=p."M13_NO"'))
-        print(temp[0].m14_no)
-        sub=empmast.objects.annotate(emp=Substr("empno",7,5)).distinct()
 
-        for i in Shemp.objects.filter(staff_no__in=Subquery(sub.values('emp')),shopsec='2303',desgn__startswith='JE-I/').values('name','staff_no').distinct():
-            c=c+1
+
+
+@login_required
+@role_required(urlpass='/fitcertificate/')
+def fitcertificate(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+   
+    if "Superuser" in rolelist:
+        tm=MG36.objects.all().values('shop_sec').distinct()
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shop_sec'])
+        d_id=empmast.objects.filter(~Q(desig_longdesc__startswith='CONTRACT'),dept_desc="MEDICAL",decode_paycategory='GAZ').values('empno').distinct()
+        tmp1=[]
+        for on in d_id:
+            tmp1.append(on['empno'])
+        form=list(FitCertificate.objects.all().values('id').distinct().order_by('-id'))
         
-        print(c)
-        return JsonResponse(c,safe = False)
-    return JsonResponse({"success":False}, status = 400)
+        if(form==[]):
+            formid=1
+        else:
+            formid=form[0]['id']
+            formid=int(formid)+1
+
+        context={
+            'sub':0,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'doctors':tmp1,
+            'subnav':subnav,
+            'formid':formid,
+        }
+    elif(len(rolelist)==1):        
+        context = {
+            'sub':0,
+            'subnav':subnav,
+            'lenm' :len(rolelist),            
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist
+        }
+       
+    return render(request,"fitcertificate.html",context)        
+
+
+def fitCertificateGetEmp(request):
+    if request.method == "GET" and request.is_ajax():  
+        
+        shop_sec = request.GET.get('shop_sec')
+        staff_no = list(MG36.objects.filter(shop_sec = shop_sec).values('staff_no').distinct())
+        return JsonResponse(staff_no,safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def fitCertificateGetEmpAllDetails(request):
+    if request.method == "GET" and request.is_ajax():   
+        shop_sec = request.GET.get('shop_sec')
+        
+        staff_no = request.GET.get('staff_no')
+              
+        obj = empmast.objects.all().values('empno')
+        
+        for staff in obj:
+            if staff['empno'][-5:] == staff_no:
+                var = staff['empno']
+                obj1 =list(empmast.objects.filter(empno=var).values('empname','desig_longdesc','dept_desc','station_des').distinct())
+
+        return JsonResponse(obj1,safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def fitCertificateGetDoctor(request):
+    if request.method == "GET" and request.is_ajax():  
+        doctor_id = request.GET.get('doctor_id') 
+        obj =list(empmast.objects.filter(empno=doctor_id).values('desig_longdesc','empname').distinct())
+        return JsonResponse(obj,safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FitcertificateGetDate(request):
+    if request.method == "GET" and request.is_ajax():  
+        staff_no = request.GET.get('staff_no')       
+        dat=list(MG36.objects.filter(staff_no=staff_no).values('date_app').distinct())
+        s=list(dat[0]['date_app'])
+        date=''.join(map(str,s))
+        date = date[8:10]+"-"+date[5:7]+"-"+date[0:4]
+        return JsonResponse(date,safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FitCertificatePdf(request, *args, **kwargs):
+    formno = request.GET.get('formno')
+    opdno = request.GET.get('opdno')
+    wardno = request.GET.get('wardno')
+    namep = request.GET.get('namep')
+    desig = request.GET.get('desig')
+    dept = request.GET.get('dept')
+    station = request.GET.get('station')
+    date1 = request.GET.get('date1')
+    date2 = request.GET.get('date2')
+    date3 = request.GET.get('date3')
+    date4 = request.GET.get('date4')
+    date5 = request.GET.get('date5')
+    date6 = request.GET.get('date6')
+    date7 = request.GET.get('date7')
+    design = request.GET.get('design')
+    named = request.GET.get('named')
+    data = {
+        'formno':formno,
+        'opdno':opdno,
+        'wardno':wardno,
+        'namep':namep,
+        'desig':desig,
+        'dept':dept,
+        'station':station,
+        'date1':date1,
+        'date2':date2,
+        'date3':date3,
+        'date4': date4,
+        'date5':date5,
+        'date6':date6,
+        'date7':date7,
+        'design':design, 
+        'named':named,
+        }
+    pdf = render_to_pdf('fitcertificatereport.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
+
+
+def FitInfoSave(request):
+    context={}
+    if request.method == "GET" and request.is_ajax():
+            form_no=request.GET.get('form_no')
+            opd_no=request.GET.get('opd_no')
+            ward_no=request.GET.get('ward_no')   
+            shop_section=request.GET.get('shop_section')     
+            staff_no=request.GET.get('staff_no')         
+            date1=request.GET.get('date1')        
+            date2=request.GET.get('date2')
+            date3=request.GET.get('date3')
+            date4=request.GET.get('date4')
+            date5=request.GET.get('date5')
+            date6=request.GET.get('date6')
+            doc_id=request.GET.get('doc_id')
+            doc_name=request.GET.get('doc_name')
+            desg_doc=request.GET.get('desg_doc')
+            date7=request.GET.get('date7')
+            formno=str(form_no)+"/"+opd_no+"/"+ward_no
+            cuser=request.user
+            now = datetime.datetime.now()
+
+            fitcertiobj =FitCertificate.objects.filter(form_no=formno).distinct()
+            if len(fitcertiobj) == 0:
+                    
+                fitcertiobj=FitCertificate.objects.create(form_no=str(formno),shop_section=shop_section,staff_no=staff_no,treatement_start_date=date1,treatement_end_date=date2,
+                leave_from =date3 ,leave_to=date4,fail_to_avail_from=date5,fail_to_avail_to=date6,desg_doc=desg_doc,
+                date_of_fitcertificate=date7,login_id=str(cuser),doc_employee_id=doc_id,doctor_name=doc_name,last_modified=now)
+            else:
+                FitCertificate.objects.filter(form_no=formno).update(form_no=str(formno),shop_section=shop_section,staff_no=staff_no,treatement_start_date=date1,treatement_end_date=date2,
+                leave_from =date3 ,leave_to=date4,fail_to_avail_from=date5,fail_to_avail_to=date6,desg_doc=desg_doc,
+                date_of_fitcertificate=date7,login_id=str(cuser),doc_employee_id=doc_id,doctor_name=doc_name,last_modified=now)
+                staff_no=FitCertificate.objects.all().values('staff_no').distinct()
+
+            return JsonResponse(context,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+def FitDetails(request):
+    if request.method == "GET" and request.is_ajax():  
+        form_no = request.GET.get('formno') 
+        l=[]
+        obj =list(FitCertificate.objects.filter(form_no = form_no).values('treatement_start_date','treatement_end_date','staff_no','shop_section','leave_from','leave_to','fail_to_avail_from','fail_to_avail_to','doc_employee_id','doctor_name','desg_doc').distinct())
+        for i in obj:
+            s = i['staff_no']
+        temp = empmast.objects.all().values('empno')
+        for staff in temp:
+            if staff['empno'][-5:] == s:
+                var = staff['empno']
+                obj1 =list(empmast.objects.filter(empno=var).values('empname','desig_longdesc','dept_desc','station_des').distinct())
+        
+        l.append(obj)
+        l.append(obj1)
+        return JsonResponse(l,safe = False)
+    return JsonResponse({"success":False}, status=400)
+

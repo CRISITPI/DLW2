@@ -1,0 +1,177 @@
+{% block content %} 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<style> 
+    input[type=text]
+    {
+        padding: 5px 40px;
+        width:50%;
+        border:none;
+        outline: none;       
+    }
+</style>
+
+<br>
+<br> 
+
+<h2 align="center" >FIT CERTIFICATE</h2>
+<br><br>
+
+        <table  cellpadding="5" align="center" width=53% border=0>
+            <tr >
+                <td colspan="2"><u>Hospital</u></td>
+                <td align="right">No.</td>                                                                                                                                                                                                                                                                                           
+                
+                <td>{{formno}}{{"/"}}
+                {{opdno}}{{"/"}}
+                {{wardno}}</td>
+            </tr>
+            <tr>
+                <td colspan="4">Dispensary</td>
+            </tr>                  
+            </tr>
+                <td colspan="4" id="space">I hereby certify that i have examined-</td>
+            </tr>
+            <tr style="margin-top:100px;">
+                <td colspan="4">(Name)&nbsp;&nbsp;
+                {{namep}}</td>
+            </tr>
+
+            <tr>
+            <td colspan="4">(Designation)&nbsp;&nbsp;
+                {{desig}}
+            </td>
+            </tr>
+        
+            <tr>
+            <td colspan="4">(Branch of Department)&nbsp;&nbsp;
+                {{dept}}
+            </td>
+            </tr>
+        
+            <tr>  
+                <td colspan="4">(Station where employed)&nbsp;&nbsp;
+                {{station}}
+            </td>
+            </tr>
+
+            <tr>
+                <td colspan="4">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;who was sick and under treatment from (date) &nbsp;&nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td>{{date1}}&nbsp;
+                            to (date)&nbsp;
+                            {{date2}}&nbsp;
+                            and on *leave on</td>
+                        </tr>
+                    </table>
+                </td>
+                
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td> medical recommendation from (date)&nbsp;&nbsp;
+                            {{date3}}</td>
+                        </tr>
+                    </table>
+                </td>  
+            </tr>
+            
+             <tr>
+                <td colspan="4"> 
+                    <table>
+                        <tr>
+                            <td>to (date) &nbsp;
+                            {{date4}} &nbsp;is now fit to attend to his duties.</td>
+                        </tr>
+                    </table>
+                </td> 
+                
+            </tr> 
+
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td>He failed to avail of treatment from&nbsp;
+                            {{date5}}&nbsp;
+                            to&nbsp;
+                            {{date6}}</td> 
+                        </tr>
+                    </table>             
+                </td> 
+            </tr>
+            
+            <tr>
+            <td colspan="4" align="center"><b>Fit For Duty<b></td>
+            </tr>
+            &nbsp;&nbsp;
+            <tr></tr>
+            <tr>
+                <td>{{"........................................"}}</td colspan="2">
+                <td colspan="2" style="text-align: right;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{"..................................."}}</td>
+            </tr> 
+
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                        <td>Signature of Employees</td>
+                        <td style="text-align: left;">Signature of Railway Doctor
+                        </td>
+                        </tr>
+                    </table>
+                </td> 
+            </tr>
+            <tr>
+                <td colspan="4" >
+                    <table>
+                        <tr>
+                        <td align="right" >Doctor's name:&nbsp;&nbsp;</td>
+                        <td style="text-align: left;">{{named}}</td>
+                        </tr>
+                    </table>
+                </td> 
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                        <td>Date&nbsp;
+                        {{date7}}</td>&nbsp;
+                        <td colspan="2" style="text-align: left;">Designation:&nbsp;{{design}}</
+                        </tr>
+                    </table>
+                </td> 
+            </tr>
+            <tr>   
+                <td colspan="4">*Strike out if inapplicable</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                <hr color="BLACK">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">NOTE: No recommendation contained in this Certificate</td>
+            </tr>
+            <tr>
+                <td colspan="4">shall be evidence of a claim to any leave not admissible</td>
+            </tr>
+            <tr>
+                <td colspan="4">to the railway servant under the terms of his contract or </td>
+            </tr>
+            <tr>   
+                <td colspan="4">to the rules to which he is subject.</td>
+            </tr>
+         
+        </table>
+
+{% endblock content %}   

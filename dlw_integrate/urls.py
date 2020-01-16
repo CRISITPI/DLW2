@@ -314,6 +314,7 @@ urlpatterns = [
     path('ajax/edit_status/',edit_status,name='edit_status'),
     path('sanction_formview/',sanction_formview,name='sanction_formview'),
     path('sanction_rollview/',sanction_rollview,name='sanction_rollview'),
+   
 
     path('IDcertificate/',IDcertificate,name='IDcertificate'),
     path('ajax/certificate/',certificate,name='certificate'),
@@ -323,7 +324,14 @@ urlpatterns = [
     path('GenPdf/',GenPdf,name='GenPdf'),
     path('partqry/',partqry,name='partqry'),
     path('ajax/partqry1/',partqry1,name='partqry1'),
-    path('ajax/sanction_roll1/',sanction_roll1,name='sanction_roll1'),
+    path('fitcertificate/',fitcertificate,name='fitcertificate'),
+    path('ajax/fitCertificateGetEmp',fitCertificateGetEmp,name='fitCertificateGetEmp'),
+    path('ajax/fitCertificateGetEmpAllDetails',fitCertificateGetEmpAllDetails,name='fitCertificateGetEmpAllDetails'),
+    path('ajax/fitCertificateGetDoctor',fitCertificateGetDoctor,name='fitCertificateGetDoctor'),
+    path('ajax/FitcertificateGetDate',FitcertificateGetDate,name='FitcertificateGetDate'),
+    path('FitCertificatePdf/',FitCertificatePdf, name='FitCertificatePdf'),
+    path('ajax/FitInfoSave',FitInfoSave,name='FitInfoSave'),
+    path('ajax/FitDetails',FitDetails,name='FitDetails'),
 
 ]
 

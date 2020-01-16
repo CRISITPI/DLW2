@@ -4803,3 +4803,23 @@ class table2_id(models.Model):
     nature=models.CharField(db_column='NATURE_INJURY',max_length=200)
     disability=models.IntegerField(db_column='DISABILITY_DAYS')
     medicalcno=models.ForeignKey(table1_id,on_delete=models.CASCADE)
+
+
+
+
+class FitCertificate(models.Model):
+    form_no = models.CharField(db_column='form_no',max_length=50,null=True)
+    login_id = models.CharField(db_column='login_id', max_length=50, null=True)
+    staff_no= models.CharField(db_column='staff_no', max_length=50,null=True)  
+    shop_section = models.CharField(db_column='shop_section', max_length=5, null=True)
+    treatement_start_date = models.CharField(db_column='treatement_start_date', max_length=50,null=True)
+    treatement_end_date= models.CharField(db_column='treatement_end_date', max_length=50, null=True)  
+    leave_from = models.CharField(db_column='leave_from', max_length=50, null=True)
+    leave_to = models.CharField(db_column='leave_to', max_length=50,null=True)
+    fail_to_avail_from=models.CharField(db_column='fail_to_avail_from', max_length=50, null=True)
+    fail_to_avail_to=models.CharField(db_column='fail_to_avail_to', max_length=50, null=True)
+    date_of_fitcertificate= models.CharField(db_column='date_of_fitcertificate', max_length=50, null=True)
+    doc_employee_id=models.CharField(db_column='doc_employee_id', max_length=50, null=True)
+    doctor_name=models.CharField(db_column='doctor_name', max_length=50, null=True)
+    desg_doc=models.CharField(db_column='desg_doc', max_length=50,null=True)
+    last_modified = models.DateTimeField(db_column='last_modified',blank=True, null=True)
