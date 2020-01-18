@@ -7251,7 +7251,11 @@ def m27view(request):
     stfrate="staff rate"
     stfname="staff name"
     stfdesg="staff designation"
-    if "Superuser" in rolelist:
+    if "Superuser" in rolelist: 
+        shop_sec_temp = request.POST.get('shop_sec')
+        stfno_temp = request.POST.get('staffNo')
+        getDateList = list(M21DOCNEW1.objects.filter(shop_sec=shop_sec_temp,staff_no=stfno_temp).values('date').exclude(date__isnull=True)) 
+        print("getDateList : ",getDateList)
         tm=shop_section.objects.all()
         tmp=[]
         for on in tm:
@@ -7266,6 +7270,7 @@ def m27view(request):
             'stfname': stfname,
             'stfdesg': stfdesg,
             'stfrate': stfrate,
+            'getDateList':getDateList,
         }
     elif(len(rolelist)==1):
         # print("in else")
@@ -7280,6 +7285,7 @@ def m27view(request):
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
+            'getDateList':getDateList,
         }
     elif(len(rolelist)>1):
         context = {
@@ -7290,6 +7296,7 @@ def m27view(request):
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
+            'getDateList':getDateList,
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
@@ -7324,6 +7331,7 @@ def m27view(request):
                         'subnav':subnav,
                         'totindb':0,
                         'batch_no':wono,
+                        'getDateList':getDateList,
                   }
             elif(len(rolelist)==1):
                   for i in range(0,len(rolelist)):
@@ -7347,6 +7355,7 @@ def m27view(request):
                         'stfname': stfname,
                         'stfdesg': stfdesg,
                         'subnav':subnav,
+                        'getDateList':getDateList,
                   }
             elif(len(rolelist)>1):
                   context = {
@@ -7362,6 +7371,7 @@ def m27view(request):
                         'stfname': stfname,
                         'stfdesg': stfdesg,
                         'subnav':subnav,
+                        'getDateList':getDateList,
                   }
 
         if submitvalue=='Save':
@@ -7383,8 +7393,11 @@ def m27view(request):
                 M27TimeSheet.objects.create(shop_sec=shop_sec, staff_no=staffNo, rate=staffRate, month=date1, tot_hrs=tothrs, ofc_date=ofcdate, wo_date=wodate, wo_no=wono, desg=staffDesg, name=staffName)
                 print("data saved ",i)
 
-                messages.success(request, 'Successfully Saved !') 
-    return render(request,'m27view1.html',context)    
+            emp_detail= emp_details.objects.filter(empno='12136').values('email_id','mobileno')                  
+            smsM18(emp_detail[0]['mobileno'],"Dear Employee thank you for summit Timesheet, for dates are : "+wodate)
+            messages.success(request, 'Successfully Saved !')     
+    return render(request,'m27view1.html',context)      
+
 
 
 
@@ -7400,7 +7413,7 @@ def m27getStaffNo(request):
 def m27getDetails(request):
     if request.method == "GET" and request.is_ajax():
         staffNo = request.GET.get('staffNo')        
-        getdetail = list(M5SHEMP.objects.filter(staff_no = staffNo).values('name').exclude(name__isnull=True).distinct())
+        getdetail = list(M5SHEMP.objects.filter(staff_no = staffNo).values('name','desgn').exclude(name__isnull=True).distinct())
         return JsonResponse(getdetail, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -7410,6 +7423,7 @@ def m27getDesignation(request):
         staffNo = request.GET.get('staffNo')    
         staffName = request.GET.get('staffName')      
         getdetaildesgn = list(M5SHEMP.objects.filter(staff_no = staffNo, name = staffName).values('desgn').exclude(staff_no__isnull=True).distinct())
+        print("getdetaildesgn ---: ",getdetaildesgn)
         return JsonResponse(getdetaildesgn, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -7498,9 +7512,12 @@ def m18view(request):
             setExtraTime    = request.POST.get('setExtraTime')    
             setno           = request.POST.get('setno')  
 
-            M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno))
-            #messages.success(request, 'Successfully Saved ! Select new values to update')   
+            M18.objects.create(shopIncharge=str(shopIncharge),shop_sec=str(shop_sec),wo_no=str(wo_no),part_nop=str(part_nop), refNo=str(refNo), extraTimePartNo=str(extraTimePartNo), reasonSpecialAllowance=str(reasonSpecialAllowance), forSpecialAllowance=str(forSpecialAllowance), totalExtraTime=str(totalExtraTime),opno=str(opno),opdesc=str(opdesc), discription=str(discription), quantity=str(quantity), setExtraTime=str(setExtraTime), setno=str(setno), proReason=str(proReason))
+            emp_detail= emp_details.objects.filter(empno='12136').values('email_id','mobileno')                  
+            smsM18(emp_detail[0]['mobileno'],"Dear Employee Extra Time Card(M18) has been created. Your Ref No.- "+refNo+".")
+            #email("erpdlw@gmail.com", "erpdlw@123", emp_detail[0]['email_id']," M20 Card Saved")
             messages.success(request, 'Successfully Saved ! Your ref No is :'+refNo) 
+
     return render(request,"m18view.html",context)
 
 
@@ -8284,11 +8301,12 @@ def m13getno(request):
 def ShowLeaf(request,part,res,code):
     obj1 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc=code,l_to='9999').values('cp_part').distinct()
     final = obj1
+    print("final  :  part  ",len(obj1),part)
     if final is not None and len(final):
         for i in range(len(final)):
             if final[i]['cp_part'] not in res:
                 res.append(final[i]['cp_part'])
-                print("showLeaf  :  ",len(res))
+                print("showLeaf  :  ",len(res),res)
                 ShowLeaf(request,final[i]['cp_part'],res,code)
     return res
     
@@ -8433,7 +8451,21 @@ def m27getBatchNo(request):
     return JsonResponse({"success": False}, status=400)
 
 
+def smsM18(phoneno,message):
+    url = "http://enterprise.smsgupshup.com/GatewayAPI/rest?method=SendMessage&send_to=91"+str(phoneno)+"&msg="+message+" &msg_type=TEXT&userid=2000184632&auth_scheme=plain&password=pWK3H5&v=1.1&format=text"
+    
+    print("Message ---->>",message)
+    response = requests.request("POST", url)
+    print(response.text)
 
+def email(sender_email_id,sender_email_id_password,receiver_email_id,message):
+    print(sender_email_id)
+    s = smtplib.SMTP('smtp.gmail.com', 587) 
+    s.starttls()
+    s.login(sender_email_id,sender_email_id_password)  
+    s.sendmail(sender_email_id,receiver_email_id, message) 
+    s.quit()
+	
 
 
 @login_required
@@ -13231,7 +13263,8 @@ def mg6gettool(request):
         print("tool_no",tool_no)
     return JsonResponse({"success":False}, status=400)
 
-
+@login_required
+@role_required(urlpass='/m21view/')
 def m21view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -13284,37 +13317,15 @@ def m21view(request):
     if request.method == "POST":
         
         submitvalue = request.POST.get('proceed')
-        if submitvalue=='Proceed':
-            
+        if submitvalue=='Proceed':            
             shop_sec = request.POST.get('shop_sec')
             staff_no = request.POST.get('staff_no')
             yymm = request.POST.get('yymm')
             obj = M5SHEMP.objects.filter(shopsec=shop_sec,staff_no=staff_no,yymm=yymm).values('name','desgn','cat').distinct()
             obj1 =M21.objects.filter(shop_sec=shop_sec,staff_no=staff_no).values('in1','out','in2','out2','total_time','date')
-
-            # patotal=0
-            # a=0
-            # b=0
-            # if len(obj1):
-            #   for op in range(len(obj1)):
-            #     patotal=obj1[op]['total_time']
-            #     p=patotal.split(':')
-            #     a=a+Decimal(p[0])
-            #     b=b+Decimal(p[1])
-            #     if (b>=60):
-            #         a=a+1
-            #         b=b%60
-            #     rr=str(a)+':'+str(b)    
-            #     print(rr)
-                
-           
-            # print("a",a)
-            # print("b",b)
-            
+          
             leng = obj.count()
-            leng1 = obj1.count()
-
-            
+            leng1 = obj1.count()           
 
             context = {
                         'obj': obj,
@@ -13323,72 +13334,119 @@ def m21view(request):
                         'len1': leng1,
                         'shop_sec': shop_sec,
                         'ran':range(1,2),
-                        'staff_no': staff_no,
-                        
+                        'staff_no': staff_no,                        
                         'yymm': yymm,
                         'sub' : 1,
-                        #'r1':rr,
                         'nav':nav,
                         'ip':get_client_ip(request),  
                         'subnav':subnav,
             }
-        if submitvalue =='Submit':
-                
-                leng=request.POST.get('len')
-                now = datetime.datetime.now()
-                shop_sec = request.POST.get('shop_sec')
-                staff_no = request.POST.get('staff_no')
-                name = request.POST.get('name')
-                desgn = request.POST.get('desgn')
-                cat = request.POST.get('cat')
-                #in1 = request.POST.get('in1')
-                #out = request.POST.get('out')
-                #total_time = request.POST.get('total_time')
-                #date = request.POST.get('date')
-                inoutnum = request.POST.get("inoutnum")
-                print(inoutnum)
+        
+        if submitvalue =='Submit': 
+            inoutnum         =   request.POST.get("inoutnum")   
+            print("inoutnum---",inoutnum)          
 
-                m21obj = M21.objects.filter(shop_sec=shop_sec,staff_no=staff_no).distinct()
-                 
-                print(m21obj)
-                if((m21obj)):
-                    m21obj.delete()
-                
-                for i in range(1, int(leng)+1):
-                    in1 = request.POST.get('in1'+str(i))
-                    out = request.POST.get('out'+str(i))
-                    in2 = request.POST.get('in2'+str(i))
-                    out2 = request.POST.get('out2'+str(i))
-                    date = request.POST.get('date'+str(i))
-                    total_time = request.POST.get('total_time'+str(i))
-                    
-                
-                    #print(in1,out,date,mon)
-
-                    M21.objects.filter(shop_sec=shop_sec,staff_no=staff_no).update(date=str(date),in1=str(in1),out=str(out),in2=str(in2),out2=str(out2),total_time=str(total_time))
+            in1     =   request.POST.get('in1')
+            date    =   request.POST.get('date')
+            out     =   request.POST.get('out')
+            outdate =   request.POST.get('outdate')
+            in2     =   request.POST.get('in2')
+            out2    =   request.POST.get('out2')
+            total_time = request.POST.get('total_time')                  
                     
 
-                for i in range(1, int(inoutnum)+1):
-                    in1 = request.POST.get('in1add'+str(i))
-                    out = request.POST.get('outadd'+str(i))
-                    in2 = request.POST.get('in2add'+str(i))
-                    out2 = request.POST.get('out2add'+str(i))
+            leng                    =   request.POST.get('len')               
+            now                     =   datetime.datetime.now()
+            shop_sec                =  request.POST.get('shop_sec')
+            staff_no                =  request.POST.get('staff_no')
+            name                    =   request.POST.get('name')
+            cat                     =   request.POST.get('cat')
+            desgn                   =   request.POST.get('desgn')
+            lastWeekPerHour         =   request.POST.get('lastWeekPerHour')
+            lastWeekPerAmount       =   request.POST.get('lastWeekPerAmount')
+            baseRatePerHour         =   request.POST.get('baseRatePerHour')
+            baseRatePerHourAmount   =   request.POST.get('baseRatePerHourAmount')  
+            cutTimeDay              =   request.POST.get('cutTimeDay')  
+            cutTimeHours            =   request.POST.get('cutTimeHours')  
+            additionalWagesDay      =   request.POST.get('additionalWagesDay')  
+            additionalWagesHours    =   request.POST.get('additionalWagesHours')  
+            factoryHalfDay          =   request.POST.get('factoryHalfDay')  
+            factoryHalfHours        =   request.POST.get('factoryHalfHours')  
+            generalOTDay            =   request.POST.get('generalOTDay')  
+            generalOTHours          =   request.POST.get('generalOTHours')  
+            nightAllowanceDay       =   request.POST.get('nightAllowanceDay')
+            nightAllowanceHours     =   request.POST.get('nightAllowanceHours')
+            halfHolidayDay          =   request.POST.get('halfHolidayDay')
+            halfHolidayHours        =   request.POST.get('halfHolidayHours')
+            payOffLeaveDay          =   request.POST.get('payOffLeaveDay')
+            payOffLeaveHours        =   request.POST.get('payOffLeaveHours')
+            unusedHolidaysDay       =   request.POST.get('unusedHolidaysDay')
+            unusedHolidaysHours     =   request.POST.get('unusedHolidaysHours')
+            supplementaryHolidaysDay=   request.POST.get('supplementaryHolidaysDay')
+            supplementaryHolidaysHours  =   request.POST.get('supplementaryHolidaysHours')
                     
-                    total_time = request.POST.get('total_time_add'+str(i))
-                    
-                    date = request.POST.get('dateadd'+str(i))
+            M21DOCNEW1.objects.create(shop_sec=shop_sec,staff_no=staff_no,name=str(name),cat=str(cat),desgn=str(desgn),lastWeekPerHour=str(lastWeekPerHour),lastWeekPerAmount=str(lastWeekPerAmount),baseRatePerHour=str(baseRatePerHour),baseRatePerHourAmount=str(baseRatePerHourAmount),cutTimeDay=str(cutTimeDay), cutTimeHours=str(cutTimeHours),additionalWagesDay=str(additionalWagesDay),additionalWagesHours=str(additionalWagesHours),factoryHalfDay=str(factoryHalfDay), factoryHalfHours=str(factoryHalfHours),generalOTDay=str(generalOTDay),generalOTHours=str(generalOTHours),nightAllowanceDay=str(nightAllowanceDay), nightAllowanceHours=str(nightAllowanceHours),halfHolidayDay=str(halfHolidayDay),halfHolidayHours=str(halfHolidayHours),payOffLeaveDay=str(payOffLeaveDay),payOffLeaveHours=str(payOffLeaveHours),unusedHolidaysDay=str(unusedHolidaysDay),unusedHolidaysHours=str(unusedHolidaysHours),supplementaryHolidaysDay=str(supplementaryHolidaysDay), supplementaryHolidaysHours=str(supplementaryHolidaysHours),date=str(date), in1=str(in1),out=str(out), in2=str(in2),out2=str(out2), total_time=str(total_time), outdate = str(outdate))
 
-                    M21DOC.objects.create(shop_sec=shop_sec,staff_no=staff_no,in1=str(in1),out=str(out),in2=str(in2),out2=str(out2),total_time=str(total_time),date=str(date))
-                    
-                    staff_no = M5SHEMP.objects.all().values('staff_no').distinct()
-                
 
+            for i in range(1, int(inoutnum)+1):
+                    
+                    in1     =   request.POST.get('in1'+str(i))
+                    date    =   request.POST.get('date'+str(i))
+                    out     =   request.POST.get('out'+str(i))
+                    outdate =   request.POST.get('outdate'+str(i))
+                    in2     =   request.POST.get('in2'+str(i))
+                    out2    =   request.POST.get('out2'+str(i))
+                    total_time = request.POST.get('total_time'+str(i)) 
+                    print("in1 : ",in1)
+                    print("date : ",date)
+                    print("out : ",out)
+                    print("outdate : ",outdate)
+                    print("in2 : ",in2)
+                    print("out2 : ",out2)
+                    print("total_time : ",total_time)
+                    
+
+                    leng                    =   request.POST.get('len')               
+                    now                     =   datetime.datetime.now()
+                    shop_sec                =  request.POST.get('shop_sec')
+                    staff_no                =  request.POST.get('staff_no')
+                    name                    =   request.POST.get('name')
+                    cat                     =   request.POST.get('cat')
+                    desgn                   =   request.POST.get('desgn')
+                    lastWeekPerHour         =   request.POST.get('lastWeekPerHour')
+                    lastWeekPerAmount       =   request.POST.get('lastWeekPerAmount')
+                    baseRatePerHour         =   request.POST.get('baseRatePerHour')
+                    baseRatePerHourAmount   =   request.POST.get('baseRatePerHourAmount')  
+                    cutTimeDay              =   request.POST.get('cutTimeDay')  
+                    cutTimeHours            =   request.POST.get('cutTimeHours')  
+                    additionalWagesDay      =   request.POST.get('additionalWagesDay')  
+                    additionalWagesHours    =   request.POST.get('additionalWagesHours')  
+                    factoryHalfDay          =   request.POST.get('factoryHalfDay')  
+                    factoryHalfHours        =   request.POST.get('factoryHalfHours')  
+                    generalOTDay            =   request.POST.get('generalOTDay')  
+                    generalOTHours          =   request.POST.get('generalOTHours')  
+                    nightAllowanceDay       =   request.POST.get('nightAllowanceDay')
+                    nightAllowanceHours     =   request.POST.get('nightAllowanceHours')
+                    halfHolidayDay          =   request.POST.get('halfHolidayDay')
+                    halfHolidayHours        =   request.POST.get('halfHolidayHours')
+                    payOffLeaveDay          =   request.POST.get('payOffLeaveDay')
+                    payOffLeaveHours        =   request.POST.get('payOffLeaveHours')
+                    unusedHolidaysDay       =   request.POST.get('unusedHolidaysDay')
+                    unusedHolidaysHours     =   request.POST.get('unusedHolidaysHours')
+                    supplementaryHolidaysDay=   request.POST.get('supplementaryHolidaysDay')
+                    supplementaryHolidaysHours  =   request.POST.get('supplementaryHolidaysHours')
+                    
+                    M21DOCNEW1.objects.create(shop_sec=shop_sec,staff_no=staff_no,name=str(name),cat=str(cat),desgn=str(desgn),lastWeekPerHour=str(lastWeekPerHour),lastWeekPerAmount=str(lastWeekPerAmount),baseRatePerHour=str(baseRatePerHour),baseRatePerHourAmount=str(baseRatePerHourAmount),cutTimeDay=str(cutTimeDay), cutTimeHours=str(cutTimeHours),additionalWagesDay=str(additionalWagesDay),additionalWagesHours=str(additionalWagesHours),factoryHalfDay=str(factoryHalfDay), factoryHalfHours=str(factoryHalfHours),generalOTDay=str(generalOTDay),generalOTHours=str(generalOTHours),nightAllowanceDay=str(nightAllowanceDay), nightAllowanceHours=str(nightAllowanceHours),halfHolidayDay=str(halfHolidayDay),halfHolidayHours=str(halfHolidayHours),payOffLeaveDay=str(payOffLeaveDay),payOffLeaveHours=str(payOffLeaveHours),unusedHolidaysDay=str(unusedHolidaysDay),unusedHolidaysHours=str(unusedHolidaysHours),supplementaryHolidaysDay=str(supplementaryHolidaysDay), supplementaryHolidaysHours=str(supplementaryHolidaysHours),date=str(date), in1=str(in1),out=str(out), in2=str(in2),out2=str(out2), total_time=str(total_time), outdate = str(outdate))
+               
+            messages.success(request, 'GATE ATTENDANCE CARD Successfully generated.')
     return render(request,"m21view.html",context)
                         
 def m21getempno(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
+        print("shop_sec----",shop_sec)
         staff_no=list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        print("staff_no----",staff_no)
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -20382,12 +20440,7 @@ def m27getWorkOrder(request):
 
 
 
-def m27getDetails(request):
-    if request.method == "GET" and request.is_ajax():
-        staffNo = request.GET.get('staffNo')        
-        getdetail = list(M5SHEMP.objects.filter(staff_no = staffNo).values('name').exclude(name__isnull=True).distinct())
-        return JsonResponse(getdetail, safe = False)
-    return JsonResponse({"success":False}, status=400)
+
 
 def m338get_details(request):
     if request.method == "GET" and request.is_ajax():

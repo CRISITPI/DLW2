@@ -4310,7 +4310,6 @@ class M27TimeSheet(models.Model):
     wo_date=models.CharField(max_length=20,null=True)
     tot_hrs=models.CharField(max_length=20,null=True)
 
-
 class WheelMachining(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)
@@ -4836,3 +4835,48 @@ class Intershop338(models.Model):
     login_id = models.CharField(db_column='LOGIN_ID',max_length=10, blank=True, null=True)
     status = models.CharField(db_column='STATUS',max_length=5, blank=True, null=True)
     current_date= models.DateTimeField(db_column='CURRENT_DATE', blank=True, null=True)  # Field name made lowercase.
+
+    
+class M21DOCNEW1(models.Model):
+    shop_sec = models.CharField(db_column='SHOP_SEC', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    staff_no = models.CharField(db_column='STAFF_NO', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    name = models.CharField(db_column='NAME', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    cat = models.CharField(db_column='CAT', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    desgn = models.CharField(db_column='DESGN', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    lastWeekPerHour = models.CharField(db_column='LATWEEKPERHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    lastWeekPerAmount = models.CharField(db_column='LASTWEEKPERAMOUNT', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    baseRatePerHour = models.CharField(db_column='BASERATEPERHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    baseRatePerHourAmount = models.CharField(db_column='BASRRATEPERAMOUNT', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    cutTimeDay = models.CharField(db_column='CUTTIMEDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    cutTimeHours = models.CharField(db_column='CUTTIMEHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    additionalWagesDay = models.CharField(db_column='ADDITIONALWAGESDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    additionalWagesHours = models.CharField(db_column='ADDITIONALWAGESHOURS', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    factoryHalfDay = models.CharField(db_column='FACTORYHALFDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    factoryHalfHours = models.CharField(db_column='FACTORYHALFHOURS', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    generalOTDay = models.CharField(db_column='GENERALOTDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    generalOTHours = models.CharField(db_column='GENERALOTHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    nightAllowanceDay = models.CharField(db_column='NIGHTALLOWANCEDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    nightAllowanceHours = models.CharField(db_column='NIGHTALLOWANCEHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    halfHolidayDay = models.CharField(db_column='HALFHOLIDAYDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    halfHolidayHours = models.CharField(db_column='HALFHOLIDAYHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    payOffLeaveDay = models.CharField(db_column='PAYOFFLEAVEDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    payOffLeaveHours = models.CharField(db_column='PAYOFFLEAVEHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    unusedHolidaysDay = models.CharField(db_column='UNUSEDHOLIDAYDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    halfHolidayHours = models.CharField(db_column='HALFHOLIDAYHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    payOffLeaveDay = models.CharField(db_column='PAYOFFLEAVEDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    payOffLeaveHours = models.CharField(db_column='PAYOFFLEAVEHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    unusedHolidaysDay = models.CharField(db_column='UNUSEDHOLIDAYDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    unusedHolidaysHours = models.CharField(db_column='UNUSEDHOLIDAYHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    supplementaryHolidaysDay = models.CharField(db_column='SUPPLEMENTARYHOLIDAYDAY', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    supplementaryHolidaysHours = models.CharField(db_column='SUPPLEMENTARYHOLIDAYHOUR', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(db_column='DATE', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    in1 = models.CharField(db_column='IN_TIME', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    out = models.CharField(db_column='OUT_TIME', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    outdate = models.CharField(db_column='OUTDATE', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    in2 = models.CharField(db_column='IN_TIME_OVER_TIME', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    out2 = models.CharField(db_column='OUT_TIME_OVER_TIME', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    total_time = models.CharField(db_column='TOTAL_TIME', max_length=50, blank=True, null=True)  # Field name made lowercase. 
+    
+    class Meta:
+        managed = True
+        db_table = 'M21DOCNEW1' 
