@@ -251,7 +251,7 @@ urlpatterns = [
     path('ajax/mgrgetinsno/', mgrgetinsno, name='mgrgetinsno'),
     path('mgrreports/', mgrreports, name='mgrreports'),
     path('ajax/mg21getstaff/', mg21getstaff, name='mg21getstaff'),
-    path('mg21view/', mg21view, name='mg21view'),
+   
     path('mg21report/',mg21report,name='mg21report'),
     path('mg21getstaff/',mg21getstaff,name='mg21getstaff'),
     path('mg9compreportviews/',mg9compreportviews,name='mg9compreportviews'),
@@ -309,9 +309,16 @@ urlpatterns = [
     path('ajax/m14hwbatch_no1/',m14hwbatch_no1,name='m14hwbatch_no1'),
     path('ajax/m14hwpm1/',m14hwpm1,name='m14hwpm1'),
     path('GeneratePdf/',GeneratePdf, name='GeneratePdf'),
+
     path('m338view/',m338view,name='m338view'),
     path('ajax/m338authority/',m338authority,name='m338authority'),
     path('ajax/edit_status/',edit_status,name='edit_status'),
+    path('ajax/m338get_details/',m338get_details,name='m338get_details'),    
+    path('ajax/m338getempno/', m338getempno, name='m338getempno'),
+    path('ajax/gen_report/',gen_report,name='gen_report'),
+    
+
+
     path('sanction_formview/',sanction_formview,name='sanction_formview'),
     path('sanction_rollview/',sanction_rollview,name='sanction_rollview'),
    
@@ -332,6 +339,13 @@ urlpatterns = [
     path('FitCertificatePdf/',FitCertificatePdf, name='FitCertificatePdf'),
     path('ajax/FitInfoSave',FitInfoSave,name='FitInfoSave'),
     path('ajax/FitDetails',FitDetails,name='FitDetails'),
+
+
+    path('mg21views/', mg21views, name='mg21views'),
+    path('ajax/mg21getreportno/', mg21getreportno, name='mg21getreportno'),
+     
+   
+    
 
 ]
 

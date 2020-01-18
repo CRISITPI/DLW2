@@ -34,7 +34,7 @@
   }
   
   input[type=button] {
-      width: 30%;
+      width: 50%;
       text-align: center;
       background-color: #4CAF50;
       color: white;
@@ -57,13 +57,13 @@
 </style>
 
 <br>
-<h3 align="center">Inter-shop Transfers (M 338)</h3>
+<h3 align="center">Accident Report (MG 21)</h3>
 
-<div id="div1"> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
-<div id="div2"> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम. -338/ M 338 </h6></div><br>
+<div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
+<div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम. -338/ M 338 </h6></div><br>
 
 <br><br>
-<form action="{% url 'm338view' %}" method="POST"> 
+<form action="{% url 'mg21views' %}" method="POST"> 
     {% csrf_token %}
     <div class="container">
         <table  class="table" width = 100%>
@@ -92,25 +92,16 @@
                   </select>        
              </td>   
             </tr>
-            <!-- <tr>
-              <td>
-                <input type  ="text" id = "text1" name = "text1" value = "text1">
-              </td>
-            </tr> -->
+
         </table >
+        <input type="submit" value="proceed" name="proceed" id="proceed" hidden/>
+        
+
 
         <div id="divHideShow" style="align:center; display:none">
           <center>
           <table >
-            <tr> 
-              <td>
-               <label for="staff_no"><b>Shop section</b></label> </br></br>                 
-              </td>
             
-              <td>
-                <input type = "text" id = "shop_sec1" name = "shop_sec1" value = "shop_sec1">
-              </td>
-            </tr>
             <tr> 
               <td>
                <label for="staff_no"><b>Employee No./कर्मचारी :</b></label> </br></br>                 
@@ -139,163 +130,60 @@
                       <input type = "text" id = "staffDesg" name = "staffDesg" value = "staffDesg">
                     </td>
                   </tr>
-                  <tr>
-                    <td>
-                        <label for="staff_no"><b>Rate of Pay/
-                            वेतन की दर:</b></label></br></br>
-                     </td>
-                   
-                      <td>
-                      <input type = "text" id = "staffRate" name = "staffRate" value = "staffRate">
-                     </td>
+                  <tr> 
                     </tr>
           <tr>
             <td>
-                <label for="sno"><b>Date of Transfer/ 
-                    स्थानांतरण की तारीख:</b></label>
+                <label for="sno"><b>Date of Reporting Accident/ 
+                    दुर्घटना की रिपोर्टिंग तारीख:</b></label>
                 </td>
                 <td>
                 <input type="text" name="date1" id="date1" readonly class="form-control" required>
             </td>
           <tr>
+            <tr>
+                <td>
+                    <label for="sno"><b>Date of not resuming duty/ड्यूटी फिर से शुरू नहीं करने की तारीख:</b></label>
+                    </td>
+                    <td>
+                    <input type="text" name="date2" id="date2" onclick="fun1()" readonly class="form-control" required>
+                </td>
+              <tr>
         <td>
-            <label for="staff_no"><b>Reference to the Authority for transfer/हस्तांतरण के अधिकार का संदर्भ:</b></label></br></br>
+            <label for="sse"><b>To The shop superintendent/
+                सेवा में शाप अधीक्षक :</b></label></br></br>
         </td>
         <td>
-            <input type="text" id="reference_authority" name="reference_authority">
+            <input type="text" id="sse" name="sse">
         </td>
-      </tr>
         <tr>
         <td>
-            <label for="staff_no"><b>To Shop Section No./
-                शॉप अधी. में:</b></label></br></br>
-            </td>
-            <td>
-                <select class="form-control" id="toshop_sec" name="toshop_sec" required>
-                    <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-                {% if lenm == 1 %}
-                    <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
-                {% endif %}
-                {% if lenm > 1 %}
-                {% for role in roles %}
-                <option>{{role}}</option>
-                {% endfor %}
-                {% endif %}                         
-        </select>
+            <label for="sse1"><b>Report No./
+                रिपोर्ट संख्या :</b></label></br></br>
         </td>
-    </tr>   
+        <td>
+            <input type="text" id="sse1" name="sse1">
+        </td>
+      </tr>
+        
   </table>
-  <input type="Submit" value="draft" name="draft" id="draft" />
-  <input type="Submit" value="final" name="final" id="final" />
 </center>
 </div>
 
     <br>   
     <center>
-    <input type="Submit" value="viewdraft" name="viewdraft" id="viewdraft"/>
-  </center>
+    <input type="submit" value="SAVE" name="SAVE" id="SAVE" />
+    <input type="submit" value="back" name="back" id="back" href="mg21views.html"/>
+    </center>
     </div>
-    <div>
-      <table border="1" align="center" id = "rtable">
-          <thead>
-            <th>Shop_sec</th>
-            <th>Emp No</th>
-            <th>Emp Name</th>
-            <th>Designation</th>
-            <th>Reference authority</th>
-            <th>Staff rate</th>
-            <th>Toshop_sec</th>
-            <th>Transfer_date</th>
-            <th>Select_status</th>
-              
-          </thead>
-          <tbody>
-              {% for i in obj %}
-              <tr>
-                
-                <td><input type="text" name="shop_sec" id="shop_sec" value="{{i.shop_sec}}" readonly></td>
-                <td><input type="text" name="staffNo" id="staffNo" value="{{i.staffNo}}"readonly></td>
-                <td><input type="text" name="staffName" id="staffName" value="{{i.staffName}}"readonly></td>
-                <td><input type="text" name="staffDesg" id="staffDesg" value="{{i.staffDesg}}"readonly></td>
-                <td><input type="text" name="reference_authority" id="reference_authority" value="{{i.reference_authority}}"readonly></td>
-                <td><input type="text" name="staffRate" id="staffRate" value="{{i.staffRate}}"readonly></td>
-                <td><input type="text" name="toshop_sec" id="toshop_sec" value="{{i.toshop_sec}}"readonly></td>
-                <td><input type="text" name="date1" id="date1" value="{{i.date1}}"readonly></td>
-                <td><input  type = "submit" class = "sub" value = "{{i.staffNo}}"  name = "{{i.staffNo}}"  id = "{{i.staffNo}}" onclick="refresh()"></td>
-              </tr>
-              {% endfor %}
-          </tbody>
-          
-      </table> 
-  </div>
-<center>
-  <input type="Submit" value="report" name="report" id="report" class="rg" />
-</center>
-  <div id="reportgeneration" style="align:center; display:none">
-    <center>
-      <table class="table" width = "50%" id="tb">
-          <tr><td>
-            <label for="sno"><b>From Date/ दिनांक. से:</b></label>            
-            <input type="text" name="fromdate" id="fromdate" readonly class="form-control" required>
-        </td>
-                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <td>
-                  <label for="sno"><b>Date/ दिनांक. तक:</b></label>            
-                  <input type="text" name="todate" id="todate" onclick="fun1()" readonly class="form-control" required>
-              </td>
-              
-          </tr>
-          <tr>
-            <td colspan=" 2">
-              <center>
-              <input type="button" value="next" name="next" id="next" class="rn" onclick="clickbutton()"/>
-            </center>
-            </td>
-          </tr>
-         
-        </table>
-      </center>
-    </div>
+    
 
-
-
-<div id = "table" style="align:center; display:none">
-    <table border="1" align="center" id = "table" class = 'tab' >
      
-        <thead>
-          <th>Shop_sec</th>
-          <th>Emp No</th>
-          <th>Emp Name</th>
-          <th>Designation</th>
-          <th>Reference authority</th>
-          <th>Staff rate</th>
-          <th>Toshop_sec</th>
-          <th>Transfer_date</th>
-          
-            
-        </thead>
-        <tbody id="projectData">
-        </tbody>
-        
-    </table> 
-    <input type="hidden" id="i" name="i" value="{{a}}" />
-    <input type="button" align="right" id="generatePDF" value="generatePDF" onclick="Export()" />    
-</div>
-
-
-  </center>
 </div>
 <br>
 </div>  
-<input type= hidden id = "d1" />
-<input type=hidden id = "d2" />
 </form>
-
-<script> 
-function refresh(){
-  location.reload();
-}
-$('.sub').click(function(e){
+<script> $('.sub').click(function(e){
   e.preventDefault();
   var id1 = document.getElementById(this.id).value;
   
@@ -306,132 +194,45 @@ $('.sub').click(function(e){
         url : "{% url 'edit_status' %}",
         data : data,
         dataType : 'json',
+        
+      
   })
-  $('.sub').focus();
  });
-document.querySelector("#todate").addEventListener('click',(e)=>{
-  e.preventDefault();
-  $('#todate').focus();
-});
 
- $(document).ready(function () {
-     $('#fromdate').datepicker({ dateFormat: 'dd-mm-yy', }); 
-                                    
-});
 
-function fun1()
-{
-  $('#todate').datepicker({ dateFormat: 'dd-mm-yy',minDate:$('#fromdate').val() }); 
-}
-
-$('.rg').click(function(e){
-  $('#reportgeneration').show();
-    e.preventDefault();
-});
-
-//table script for dynamic data and table
-
-$('.rn').click(function(e){
-  $('#table').show();
- 
-    e.preventDefault();
-    var table = document.querySelector('table');
-        var from = $('#fromdate').val();
-        var to = $('#todate').val();
-        var month1 = from.substring(3,5);
-        var day1 = from.substring(0,2);
-        var year1 = from.substring(6,10);
-        var date1 =  year1 + "-" + month1 + "-" + day1;
-
-        var month2 = to.substring(3,5);
-        var day2 = to.substring(0,2);
-        var year2 = to.substring(6,10);
-        var date2 =  year2+ "-" + month2 + "-" + day2;
-        var data = {date1,date2}
-        t = []
-        $.ajax({
-        type : 'GET',
-        url : "{% url 'gen_report' %}",
-        dataType : 'json',
-        data : data,
-        success : function(response){
-        if(response == ''){
-          alert("No Record Found.....please referesh")
-        }
-        else{
-          
-          for(var i=0;i<response.length;i++) {
-            t[i]  = response[i].staffDesg;
-            $("#projectData").append("<tr><td>"+response[i].shop_sec+"</td><td>"+response[i].staffNo+"</td><td>"+response[i].staffName+"</td><td>"+t[i]+"</td><td>"+response[i].staffRate+"</td><td>"+response[i].reference_authority+"</td><td>"+response[i].toshop_sec+"</td><td>"+response[i].date+"</td></tr>");
-      }
-    }
-  }
-  });
-});
-
-function Export() {
-  var p = document.getElementById('generatePDF')
-  p.style.display = "none";
-  var d1 = document.getElementById('div1').innerHTML;
-  var d2 = document.getElementById('div2').innerHTML;
-  var printContents = document.getElementById('table').innerHTML;
-   
-   var style = "<style>";
-    style = style + "table {width: 100%;font: 17px Calibri;}";
-    style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
-    style = style + "padding: 2px 3px;text-align: left;}";
-    style = style + "</style>";
-  var win = window.open('', '', 'height=500,width=500');
-
-    win.document.write('<html><head>');
-    win.document.write('<h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6>');
-    win.document.write('<h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम. -338/ M 338 </h6>');
-    win.document.write('<title> Report of transfer employees from one shop to another </title>');
-    win.document.write(style);
-    win.document.write('</head>');
-    win.document.write('<body>');
-   
-    win.document.write(printContents);
-    win.document.write('</body></html>');
-
-    win.print();
-    win.close();
-}
-
- 
-document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-    e.preventDefault();
-    var shop_sec = $("#shop_sec").val()
-    var data = {shop_sec};
-      $.ajax({
-        type : 'GET',
-        url : "{% url 'm338getempno' %}",
-        dataType : 'json',
-        data : data,
-        success : function(response){
-          var elementsadded = document.querySelectorAll(".neweleempno");
-              if(elementsadded.length>0){
-                  var elementsaddedarr = Array.from(elementsadded);
-                  elementsaddedarr.forEach((el)=> el.remove());
-          
-                  document.querySelector("#op_emp").selected=true;
-                  
-
-                  
-                }
-              var brarr,mystr,html;
-              brarr = response.map((el)=>el.staff_no);
-              mystr = "";
-              brarr.forEach((el,index)=>{
-                html = `<option class="neweleempno">${brarr[index]}</option>`
-                mystr = html.concat(mystr);
-              });
-              html = "";
-              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
-              mystr=""; 
-        }
-          })
-});
+ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                          e.preventDefault();
+                          var shop_sec = $("#shop_sec").val()
+                          var data = {shop_sec};
+                            $.ajax({
+                              type : 'GET',
+                              url : "{% url 'm338getempno' %}",
+                              dataType : 'json',
+                              data : data,
+                              success : function(response){
+                                var elementsadded = document.querySelectorAll(".neweleempno");
+                                    if(elementsadded.length>0){
+                                        var elementsaddedarr = Array.from(elementsadded);
+                                        elementsaddedarr.forEach((el)=> el.remove());
+                                
+                                        document.querySelector("#op_emp").selected=true;
+                                       
+    
+                                        
+                                     }
+                                    var brarr,mystr,html;
+                                    brarr = response.map((el)=>el.staff_no);
+                                    mystr = "";
+                                    brarr.forEach((el,index)=>{
+                                      html = `<option class="neweleempno">${brarr[index]}</option>`
+                                      mystr = html.concat(mystr);
+                                    });
+                                    html = "";
+                                    document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                                    mystr=""; 
+                              }
+                                })
+                      });
 
 document.querySelector("#staff_no").addEventListener('change',(e)=>{
     $('#divHideShow').show();
@@ -519,16 +320,26 @@ document.querySelector("#staff_no").addEventListener('change',(e)=>{
                  });
  
  
+ </script>
+ 
+ 
+ <script>
+    
 
-  
-      $(document).ready(function () {
-         $('#date1').datepicker({ dateFormat: 'dd-mm-yy', }); 
-    });
-     
-    $(document).ready(function () {
-         $('#date2').datepicker({ dateFormat: 'yy-mm-dd', }); 
-    });
-     
+     $(document).ready(function () {
+    $('#date1').datepicker({ dateFormat: 'dd-mm-yy',});
+     });
+
+     document.querySelector("#date2").addEventListener('click',(e)=>{
+      e.preventDefault();
+      $('#date2').focus();
+     });
+
+    function fun1()
+    {
+      $('#date2').datepicker({ dateFormat: 'dd-mm-yy',minDate:$("#date1").val()});
+    }
+   
      $( document ).ready(function() {    
      var totindb=document.getElementById('totindb').value; 
      });
