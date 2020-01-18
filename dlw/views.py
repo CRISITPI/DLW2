@@ -20428,8 +20428,6 @@ def mg21getreportno(request):
         return JsonResponse(reportno, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
-
 def m27getWorkOrder(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
