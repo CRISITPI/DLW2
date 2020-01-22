@@ -13356,7 +13356,7 @@ def m21view(request):
                     
 
             leng                    =   request.POST.get('len')               
-            now                     =   datetime.datetime.now()
+            #now                     =   datetime.datetime.now()
             shop_sec                =  request.POST.get('shop_sec')
             staff_no                =  request.POST.get('staff_no')
             name                    =   request.POST.get('name')
@@ -13407,7 +13407,7 @@ def m21view(request):
                     
 
                     leng                    =   request.POST.get('len')               
-                    now                     =   datetime.datetime.now()
+                    #now                     =   datetime.datetime.now()
                     shop_sec                =  request.POST.get('shop_sec')
                     staff_no                =  request.POST.get('staff_no')
                     name                    =   request.POST.get('name')
