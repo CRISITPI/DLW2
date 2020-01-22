@@ -8298,17 +8298,23 @@ def m13getno(request):
 
 
 
-def ShowLeaf(request,part,res,code):
-    obj1 = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc=code,l_to='9999').values('cp_part').distinct()
-    final = obj1
-    print("final  :  part  ",len(obj1),part)
-    if final is not None and len(final):
-        for i in range(len(final)):
-            if final[i]['cp_part'] not in res:
-                res.append(final[i]['cp_part'])
-                print("showLeaf  :  ",len(res),res)
-                ShowLeaf(request,final[i]['cp_part'],res,code)
-    return res
+
+
+def Childnode(request,part,res,code):
+    arr=[]
+    obj = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc=code,l_to='9999').values('cp_part').distinct()
+    for i in range(0,len(obj)):
+        arr.append(obj[i]['cp_part'])
+    for i in arr:   
+        obj1=Nstr.objects.filter(pp_part=i,cp_part__isnull=False,ptc=code,l_to='9999').values('cp_part').distinct() 
+      
+        if len(obj1):
+            for i in range(len(obj1)):
+                if obj1[i]['cp_part'] not in arr:
+                    arr.append(obj1[i]['cp_part'])
+    print(arr)
+    return arr
+
     
 
 
@@ -8328,7 +8334,7 @@ def CardGeneration(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     #assmno = EpcCode.objects.all().values('num_1').distinct()
-    assmno = Batch.objects.all().values('part_no').exclude(part_no__isnull=True).distinct()
+    assmno = Batch.objects.all().values('part_no').exclude(part_no__isnull=True).distinct().order_by('part_no')
     context = {
         'ip':get_client_ip(request),
         'nav':nav,
@@ -8346,7 +8352,7 @@ def CardGeneration(request):
                 first = []
                 second = []
                 third = []
-                obj1 = ShowLeaf(request,asmno,res,'M')
+                obj1 = Childnode(request,asmno,res,'M')
                 print("obj1 :  = ",len(obj1),batch,bval,asmno,card)
                 getShopSecDetails = list(Oprn.objects.filter(part_no=asmno).values('shop_sec').distinct())
                 print(getShopSecDetails)
@@ -13356,7 +13362,7 @@ def m21view(request):
                     
 
             leng                    =   request.POST.get('len')               
-            now                     =   datetime.datetime.now()
+            #now                     =   datetime.datetime.now()
             shop_sec                =  request.POST.get('shop_sec')
             staff_no                =  request.POST.get('staff_no')
             name                    =   request.POST.get('name')
@@ -13407,7 +13413,7 @@ def m21view(request):
                     
 
                     leng                    =   request.POST.get('len')               
-                    now                     =   datetime.datetime.now()
+                    #now                     =   datetime.datetime.now()
                     shop_sec                =  request.POST.get('shop_sec')
                     staff_no                =  request.POST.get('staff_no')
                     name                    =   request.POST.get('name')
