@@ -1,6 +1,7 @@
 {% load static %}
 <style>
 
+
     .submenu-scroll{
         max-height: 300px;
         overflow-y: auto;
@@ -59,6 +60,10 @@
         -webkit-border-radius: 6px 0 6px 6px;
         -moz-border-radius: 6px 0 6px 6px;
         border-radius: 6px 0 6px 6px;
+    }
+
+    li:hover > ul {
+        display:block;
     }
     </style>
 <div class="page-header navbar-dark bg-dark">
@@ -156,7 +161,7 @@
                 <ul class="dropdown-menu submenu-scroll">
                     {% for obj in subnav %}
                         {% if obj.parentmenu in menu.navitem %}
-                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                            <li><a class="dropdown-item"  href="{{obj.link}}" >{{obj.childmenu}}</a></li>
                         {% endif %}
                     {% endfor %}
                 </ul>
