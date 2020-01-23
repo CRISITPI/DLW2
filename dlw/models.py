@@ -4837,6 +4837,30 @@ class Intershop338(models.Model):
     current_date= models.DateTimeField(db_column='CURRENT_DATE', blank=True, null=True)  # Field name made lowercase.
 
     
+
+class MG47_table1(models.Model):
+    to_sse=models.CharField(db_column='ToSSE', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    num=models.CharField(db_column='No.',max_length=20,primary_key=True)
+    date=models.CharField(db_column='Date',max_length=50,null=True)
+    allocable_to=models.CharField(db_column='allocable_to', max_length=50, blank=True, null=True,default=0) 
+    issued_on=models.CharField(db_column='Issued_on',max_length=20,null=True,blank=True)
+    empno=models.CharField(db_column='EmployeeID', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    from_sse=models.CharField(db_column='FromSSE', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
+    login_id = models.CharField(db_column='LOGINID',max_length=10, blank=True, null=True)
+    current_date= models.DateTimeField(db_column='CURRENTDATE', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'MG47_table1'
+
+class MG47_table2(models.Model):
+    desc=models.CharField(db_column='description',max_length=50,null=True)
+    demand=models.CharField(db_column='QTY_demand',max_length=50,null=True)
+    issued=models.CharField(db_column='QTY_issued',max_length=50,null=True)
+    num=models.ForeignKey(MG47_table1,on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'MG47_table2'
+
 class M21DOCNEW1(models.Model):
     shop_sec = models.CharField(db_column='SHOP_SEC', max_length=50, blank=True, null=True)  # Field name made lowercase.
     staff_no = models.CharField(db_column='STAFF_NO', max_length=50, blank=True, null=True)  # Field name made lowercase.

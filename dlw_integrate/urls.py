@@ -344,6 +344,11 @@ urlpatterns = [
 
     path('mg21views/', mg21views, name='mg21views'),
     path('ajax/mg21getreportno/', mg21getreportno, name='mg21getreportno'),
+
+    path('mg47view/',mg47view,name='mg47view'),
+    path('ajax/mg47getfrom_sse/',mg47getfrom_sse,name='mg47getfrom_sse'),
+    path('mg47reportview/',mg47reportview,name='mg47reportview'),
+    path('ajax/ExistingNumDetails/',ExistingNumDetails,name='ExistingNumDetails')
      
    
     

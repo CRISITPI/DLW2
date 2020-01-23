@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from datetime import date,datetime,timedelta,time
+from datetime import date,timedelta,time
 import time
 import datetime,calendar
 from calendar import monthrange
@@ -36,7 +36,7 @@ from random import randint
 import datetime
 import smtplib 
 import requests
-from datetime import datetime,date
+
 
 # Create your views here.
 #
@@ -20462,3 +20462,109 @@ def m338get_details(request):
         return JsonResponse(obj1, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+@login_required
+@role_required(urlpass='/mg47view/')
+def mg47view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    des=list(empmast.objects.filter(desig_longdesc__startswith="SENIOR SECTION").values('desig_longdesc','empno').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr.SECTION").values('desig_longdesc','empno').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr. SECTION ENGINEER").values('desig_longdesc','empno').distinct() | empmast.objects.filter(desig_longdesc__startswith="SECTION").values('desig_longdesc','empno').distinct())
+    if "Superuser" in rolelist:
+        tm=empmast.objects.all().values('empno').distinct()
+        tmp=[]     
+        for on in tm:
+             tmp.append(on['empno'])
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':des,
+            'subnav':subnav,
+        }   
+    if request.method == "POST":
+        submitvalue = request.POST.get('Submit')
+        if submitvalue=='Submit':
+            to_sse = request.POST.get('to_sse')
+            num= request.POST.get('num')
+            date = request.POST.get('date')
+            allocable_to = request.POST.get('allocable_to')
+            issued_on = request.POST.get('issued_on')
+            empno = request.POST.get('empno')
+            from_sse = request.POST.get('from_sse')
+            now = datetime.datetime.now()
+            user=request.user
+            obj =MG47_table1.objects.filter(num=num).distinct()
+            print(obj)
+            b=num
+            if len(obj) == 0:      
+                b=MG47_table1.objects.create(to_sse=str(to_sse), num=str(num), date=str(date), allocable_to=str(allocable_to), issued_on=str(issued_on), empno=str(empno), from_sse=str(from_sse), login_id=str(user), current_date=str(now))
+            else:
+                MG47_table1.objects.filter(num=num).update(to_sse=str(to_sse), num=str(num), date=str(date), allocable_to=str(allocable_to), issued_on=str(issued_on), empno=str(empno), from_sse=str(from_sse), login_id=str(user), current_date=str(now))  
+            hidtext=request.POST.get('hidtext')
+            obj1 =list(MG47_table2.objects.values('id').filter(num=num).distinct())
+            if len(obj1) == 0:    
+                for i in range(1,int(hidtext)+1):
+                    desc=request.POST.get('desc'+str(i))
+                    demand=request.POST.get('demand'+str(i))
+                    issued=request.POST.get('issued'+str(i))  
+                    c=MG47_table2.objects.create(num=b,desc=str(desc), demand=str(demand), issued=str(issued))
+            else:
+                for i in range(1,int(hidtext)):
+                    desc=request.POST.get('desc'+str(i))
+                    demand=request.POST.get('demand'+str(i))
+                    issued=request.POST.get('issued'+str(i))  
+                    MG47_table2.objects.filter(id=obj1[i-1]['id']).update(num=b, desc=str(desc), demand=str(demand), issued=str(issued))  
+    return render(request,'mg47view.html',context)
+def mg47getfrom_sse(request):
+    if request.method == "GET" and request.is_ajax():   
+        empno = request.GET.get('empno')
+        from_sse=list(empmast.objects.filter(empno= empno,desig_longdesc__startswith="SENIOR SECTION").values('desig_longdesc').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr.SECTION",empno= empno).values('desig_longdesc').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr. SECTION ENGINEER",empno= empno).values('desig_longdesc').distinct() | empmast.objects.filter(desig_longdesc__startswith="SECTION",empno= empno).values('desig_longdesc').distinct())
+        return JsonResponse(from_sse,safe = False)
+    return JsonResponse({"success":False}, status=400)
+    
+def mg47reportview(request, *args, **kwargs):
+    to_sse = request.GET.get('to_sse')
+    num = request.GET.get('num')
+    date = request.GET.get('date')
+    allocable_to = request.GET.get('allocable_to')
+    issued_on = request.GET.get('issued_on')
+    empno = request.GET.get('empno')
+    from_sse = request.GET.get('from_sse')
+    hidtext=request.GET.get('hidtext')
+    for i in range(1,int(hidtext)+1):
+        desc=request.GET.get('desc'+str(i))
+        demand=request.GET.get('demand'+str(i))
+        issued=request.GET.get('issued'+str(i))
+        data = {
+        'to_sse':to_sse,
+        'num':num,
+        'date':date,
+        'desc':desc,
+        'demand':demand,
+        'issued':issued,
+        'allocable_to':allocable_to,
+        'issued_on':issued_on,
+        'empno':empno,
+        'from_sse':from_sse, 
+        }
+    pdf = render_to_pdf('mg47reportview.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
+
+def ExistingNumDetails(request):
+    l=[]
+    if request.method=="GET" and request.is_ajax():
+        num=request.GET.get('num')
+        obj=list(MG47_table1.objects.filter(num=num).values('to_sse','date','allocable_to','issued_on','empno','from_sse').distinct())
+        obj1=list(MG47_table2.objects.filter(num=num).values('desc','demand','issued').distinct())
+        l.append(obj)
+        l.append(obj1)
+        return JsonResponse(l,safe=False)
+    return JsonResponse({"success":False}, status=400)

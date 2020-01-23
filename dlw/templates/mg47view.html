@@ -1,0 +1,299 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<style>
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    input[type=submit] {
+        width: 15%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }   
+    input[type=button] {
+        width: 15%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    @media print {
+    input,
+    textarea {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    }
+    select {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border: none !important;
+    background: none !important;
+  }
+  .delete{
+    display: none !important;
+  }
+ }
+</style>
+<br>
+<form action="{% url 'mg47view' %}" method="POST"> 
+{% csrf_token %}
+<h5 align="center"><b>(M.G.-47)</b><br><b>REQUISITION FOR INTER-SHOP</b><br> <b>TRANSFER OF MATERIAL/STATIONAERY<b></h5>
+    <div class="container">
+        <table class="table" border="0" >
+            <tr>
+                <td>
+                    <label><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No.</b></label>
+					<input type="text" id="num" name="num" style=" padding: 6px 15px; margin: 8px 0;
+                    border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"required/>        
+                </td>
+                <td>
+                    <label><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To S.S.E</b></label>
+					<input type="text" id="to_sse" name="to_sse"  style=" padding: 6px 15px; margin: 8px 0;
+                    border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"required/>       
+                </td>
+                  <td>
+                    <label><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date</b></label>
+                    <input type="date" id="date" name="date"  style=" padding: 6px 15px; margin: 8px 0;
+                    border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" required/> 
+                 </td>
+            </tr>
+        </table>
+     </div>
+
+    <br><br><br> 
+	<center>
+    <div id="divadd" style="display:none">
+        <table id="id1" align="center" border="1" class="table table-striped" style="width:70%;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Description</th>
+                    <th>Qty. Demand</th>
+                    <th>Qty. Issued</th>
+                </tr>
+            </thead>
+            <tbody  id="items"></tbody>
+        </table>
+        <br><br>
+		<input type="button" value="Add Rows" name="add" id="add"/><br><br>
+     </div>
+     <div id="divadd2" style="display:none">
+	    <table border="1" align="center" style="margin-left:150px;margin-right:150px;width:70%;">
+	        <tr>
+              <td><b><font size="4">The Materials are allocable to</font></b>
+			  <input type="text" id="allocable_to" name="allocable_to" style=" padding: 6px 15px; margin-left: 50px; margin: 8px 0;
+                border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" required/></td>
+			  <td><b><font size="4">The Materials asked for above have been issued on</font></b>
+              <input type="date" id="issued_on" name="issued_on" value="issued_on"style=" padding: 6px 15px; margin: 8px 0;
+                border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" required/></td></td>
+             </tr>  
+            </table>
+        </div>
+     </center></center>
+ <div id="divadd3" style="display:none">  
+     <br><br>
+    <table border="0" align="center" style="margin-left:570px;">
+    <tr>
+        <td >
+            <label for="sno"><b>S.S.E EmployeeID</b></label></td>
+           <td><select class="form-control" id="empno" name="empno" required>
+                <option id="op_emp" selected disabled hidden>Select EmployeeID</option>
+                {% if lenm == 1 %}
+                    <option selected readonly>{% for role in roles %}{{role.empno}}{% endfor %}</option>
+                {% endif %}
+                {% if lenm > 1 %}
+                {% for role in roles %}
+                <option>{{role.empno}}</option>
+                {% endfor %}
+                {% endif %}
+           </td></select>
+        </td></td>
+        <td >
+            <label for="from_sse"><b>S.S.E</b></label></td>
+           <td><input type="text" class="form-control" id="from_sse" name="from_sse" style=" padding: 6px 15px; margin: 8px 0;
+            border: 1px solid #ccc; width:265px; border-radius: 4px;box-sizing: border-box;" required/>
+           </td></select>      
+    </tr></table>
+    <center><input type="submit" name="Submit" value="Submit" id="Submit"></center>
+    <center><input type="button" name="print" value="Report" id="print" onclick="setGetParameter();"></center>
+</div>
+<input type="hidden" name="hidtext" id="hidtext" value="0" >
+</form>
+<script  type="text/javaScript">                    
+                    document.querySelector("#empno").addEventListener('change',(e)=>{                       
+                        $("#divHideShow").show();
+                        e.preventDefault();                        
+                        var empno = $("#empno").val()                      
+                        var data = {empno};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'mg47getfrom_sse' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                    
+                            document.getElementById('from_sse').value=response[0].desig_longdesc; 
+                            }
+                              })
+                    });
+</script>
+ <script language="javascript">
+    document.querySelector("#date").addEventListener('change',(e)=>{
+        document.getElementById("divadd").style.display="block"
+        document.getElementById("divadd2").style.display="block"
+        document.getElementById("divadd3").style.display="block"
+    });   
+j=0         
+$("#add").click(function(e) {
+    console.log("click")
+   if(i==1)
+   { 
+    var demand="demand"+String(j);
+    var issued="issued"+String(j);
+    checkValue(demand);
+    checkValue1(issued);
+   }else{
+    j=j+1;
+    var desc="desc"+String(j);
+    var demand="demand"+String(j);
+    var issued="issued"+String(j);
+    var del="delete"+String(j);
+    var del1="delete1"+String(j);
+    var htAppend='<tr id='+del1+'><td><input type="text" name='+desc+' id='+desc+' class="form-control"  required>'+'<td><input type="text" name='+demand+' id='+demand+'  class="form-control" onchange="checkValue(this.id);" required>'+'<td><input type="text" name='+issued+' id='+issued+' class="form-control" onchange="checkValue1(this.id);" required>';
+        htAppend=htAppend+'<td id='+del+'><a class="delete"  title="Delete">Delete row</a></td>';
+        $('#items').append(htAppend);                                                    
+            document.getElementById("hidtext").value=j;
+            var del="delete"+String(j-1);
+            document.getElementById(del).remove();  
+        } });
+            $(document).on("click", ".delete", function(){
+            $(this).parents("tr").remove();
+            j--;
+            var del="delete"+String(j);
+            var del1="delete1"+String(j);
+            // document.getElementById(del1).innerHTML.show();
+            
+            $('#'+del1).append('<td id='+del+'><a class="delete"  title="Delete">Delete row</a></td>')
+             document.getElementById("hidtext").value=j;
+            });
+var de;
+var is;
+var i=0;
+function checkValue1(th){
+    is=th;  
+     i=0;
+         v1=parseInt(document.getElementById(is).value);
+         v2=parseInt(document.getElementById(de).value);
+         if(v1>v2)
+         {
+             alert("Qty. Issued cannot be greater than Qty. demand");
+             i=1;
+         }
+         if(v1<0)
+         {
+             alert("Qty. Issued cannot be less than zero");
+             i=1;
+         }
+         if(v2<0)
+         {
+             alert("Qty. Demand cannot be less than zero");
+             i=1;
+         }
+}   
+    function checkValue(th){
+       de=th;      
+     }
+     function formfun() {
+        document.getElementById("add").style.display="block";
+        document.getElementById("items").innerHTML = "";
+        document.getElementById('to_sse').value= "";
+        document.getElementById('date').value="";
+        document.getElementById('allocable_to').value= "";
+        document.getElementById('issued_on').value="";
+        document.getElementById('empno').value="";
+        document.getElementById('from_sse').value="";
+                        var num = $("#num").val();
+                        var data = {num};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'ExistingNumDetails' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                
+                            var i=0;
+                            $('#divadd').show();
+                            $('#divadd2').show();
+                            $('#divadd3').show();  
+                            document.getElementById('to_sse').value=response[0][0].to_sse; 
+                            document.getElementById('date').value=response[0][0].date;
+                            document.getElementById('allocable_to').value=response[0][0].allocable_to; 
+                            document.getElementById('issued_on').value=response[0][0].issued_on;
+                            document.getElementById('empno').value=response[0][0].empno;
+                            document.getElementById('from_sse').value=response[0][0].from_sse; 
+                            for(i=1;i<=response[1].length;i++)
+                            {
+                                var desc="desc"+String(i);
+                                var demand="demand"+String(i);
+                                var issued="issued"+String(i);
+                                var htAppend='<tr><td><input type="text" name='+desc+' id='+desc+' class="form-control"  required>'+'<td><input type="text" name='+demand+' id='+demand+'  class="form-control" onchange="checkValue(this.id);" required>'+'<td><input type="text" name='+issued+' id='+issued+' class="form-control" onchange="checkValue1(this.id);" required>';
+                                htAppend=htAppend+'<td><a class="delete" title="Delete">Delete row</a></td>'+'</tr></table>'+'</div>';
+                                $('#items').append(htAppend);                                                 
+                                 document.getElementById('desc'+i).value=response[1][i-1].desc; 
+                                 document.getElementById('demand'+i).value=response[1][i-1].demand; 
+                                 document.getElementById('issued'+i).value=response[1][i-1].issued;                                 
+                            }
+                            document.getElementById("hidtext").value=i; 
+                            $('#id1 tr').find('td:eq(3)').remove(); 
+                            if (i>1) 
+                            {
+                                $('#add').hide();
+                            }                        
+                            }
+                              })
+                    } 
+                    document.querySelector("#num").addEventListener('change',(e)=>{
+                        e.preventDefault();  
+                        formfun();                                  
+                    });         
+     function setGetParameter(){ 
+        $('#id1 tr').find('td:eq(3)').remove();
+        var ButtonControl1 = document.getElementById("print");
+        var ButtonControl2 = document.getElementById("add");
+        var ButtonControl3 = document.getElementById("Submit");
+        ButtonControl1.style.visibility = "hidden";
+        ButtonControl2.style.visibility = "hidden";
+        ButtonControl3.style.visibility = "hidden";
+        window.print();
+        ButtonControl1.style.visibility = "visible";
+        ButtonControl2.style.visibility = "visible";
+        ButtonControl3.style.visibility = "visible";
+     }
+    </script> 
+{% endblock content %}                 
