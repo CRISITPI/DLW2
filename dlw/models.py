@@ -3977,51 +3977,7 @@ class Rates(models.Model):
         db_table = 'RATES'  
 
 
-class MG18(models.Model):
-    to = models.CharField(db_column='TO', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    date = models.CharField(db_column='DATE', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    namaddr=models.CharField(db_column='NAME_FACT', max_length=30, blank=True, null=True)#Field name made lowercase.
-    empcode = models.CharField(db_column='EMP_CODE', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    natindus = models.CharField(db_column='NATUREINDUS', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    addr_accdnt = models.CharField(db_column='ADDR_ACCDNT', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    brnchdept = models.CharField(db_column='BRANCH', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    namadrr_inj = models.CharField(db_column='INJ_ADDR', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    insur_no=models.CharField(db_column='INSURANCE', max_length=30, blank=True, null=True)#Field name made lowercase.
-    sex = models.CharField(db_column='SEX', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    age_lstbrth = models.CharField(db_column='AGE', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    occup_inj = models.CharField(db_column='OCCUPATION', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    dthrs_accdnt = models.CharField(db_column='DTHRS_ACCD', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    hr_strtwrk = models.CharField(db_column='STRTWORK', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    #namaddr=models.CharField(db_column='', max_length=10, blank=True, null=True)#Field name made lowercase.
-    cause_accndt = models.CharField(db_column='CAUSE_ACCDNT', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    mach_accdnt = models.CharField(db_column='MACHINE_PART', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    mach_mov = models.CharField(db_column='MACHINE_MOV',  max_length=30, blank=True, null=True)  # Field name made lowercase.
-    inj_doing = models.CharField(db_column='INJR_DOING', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    inj_extent = models.CharField(db_column='EXTENT', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    inj_off=models.CharField(db_column='DAYSOFF', max_length=30, blank=True, null=True) #Field name made lowercase.
-    name_doct = models.CharField(db_column='DOCTORNAME', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    inj_evid = models.CharField(db_column='EVIDENCE', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    how_accdnt = models.CharField(db_column='HOW', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    inj_loc = models.CharField(db_column='LOCATION', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    inj_retrn = models.CharField(db_column='RETURN_NOT', max_length=25, blank=True, null=True)  # Field name made lowercase.
-    dthr_retrn=models.CharField(db_column='RETURN_DTHRS', max_length=20, blank=True, null=True)#Field name made lowercase.
-    inj_died = models.CharField(db_column='DIED_INJ', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    dt_death = models.CharField(db_column='DEATH_DT', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    stloc_insur = models.CharField(db_column='LOCAL_INSUR', max_length=25, blank=True, null=True)  # Field name made lowercase.
-    stinsur_dispns = models.CharField(db_column='LOCAL_DISPENS', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    distrct = models.CharField(db_column='DISTRICT', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    dt_receipt = models.CharField(db_column='RECIEPT_DT', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    accdnt_no = models.CharField(db_column='ACCNDT_NO', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    indus_no = models.CharField(db_column='INDUSTRY_NO', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    cause_no = models.CharField(db_column='CAUSATION', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    sex_1 = models.CharField(db_column='SEX_11', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    particulars = models.CharField(db_column='PARTICUL', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    dt_invstgtn = models.CharField(db_column='INVESTIGATION_DT', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    rslt_invstgtn = models.CharField(db_column='RESLT_INVST', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    effct_frm = models.CharField(db_column='EFFECT', max_length=30, blank=True, null=True)  # Field name made lowercase.
 
-    class Meta:
-        db_table = 'MG18'
 
 
 class M11(models.Model):
@@ -4728,19 +4684,6 @@ class mg11(models.Model):
     last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
 
-
-
-class emp_details(models.Model):
-    empno=models.DecimalField(max_digits=18, decimal_places=0, blank=False, null=False)  # Field name made lowercase.
-    empname=models.CharField(max_length=100, blank=True, null=True)  # Field name made lowercase.
-    shopsec=models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
-    desgn=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
-    grp=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
-    mobileno=models.DecimalField( max_digits=20, decimal_places=0, blank=True, null=True,default=0)  # Field name made lowercase.
-    email_id=models.CharField( max_length=100, blank=True, null=True)  # Field name made lowercase.
-    shop_code=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
-
-
 class M14HW11(models.Model): 
     doc_code = models.CharField(db_column='DOC_CODE', max_length=2, blank=True, null=True)  # Field name made lowercase.
     m14_no = models.CharField(db_column='M14_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
@@ -4904,3 +4847,112 @@ class M21DOCNEW1(models.Model):
     class Meta:
         managed = True
         db_table = 'M21DOCNEW1' 
+
+
+class machine_tools(models.Model):
+    letter_no=models.CharField(primary_key=True,max_length=20)
+    shop_no=models.CharField(max_length=4)
+    shop_desc=models.CharField(max_length=5)
+    date=models.CharField(max_length=20)
+    new_requirement=models.CharField(max_length=10)
+    modification=models.CharField(max_length=10)
+    additional=models.CharField(max_length=10)
+    existing_drawing=models.CharField(max_length=40,default='NONE')
+    component_drawing=models.CharField(max_length=40)
+    machine_no=models.CharField(max_length=20)
+    machine_description=models.CharField(max_length=50)
+    wsm_id=models.CharField(max_length=20)
+    sse_id=models.CharField(max_length=20)
+    wsm_name=models.CharField(max_length=50)
+    wsm_mobile=models.CharField(max_length=10,default='NONE')
+    sse_name=models.CharField(max_length=50)
+    sse_mobile=models.CharField(max_length=10,default='NONE')
+    name_supervisor=models.CharField(max_length=50)
+    desig_supervisor=models.CharField(max_length=50)
+    mobile_supervisor=models.CharField(max_length=10,default='NONE')
+
+
+class mdescription(models.Model):
+    description=models.CharField(max_length=100)
+    quantity=models.IntegerField()
+    lno=models.CharField(max_length=20)
+
+class tooling1(models.Model):
+    name_designer=models.CharField(max_length=50)
+    date_designer=models.CharField(max_length=20)
+    name_guide=models.CharField(max_length=50)
+    date_guide=models.CharField(max_length=20)
+    date_completion=models.CharField(max_length=20)
+    date_loading=models.CharField(max_length=20)
+    sno_loading=models.CharField(max_length=20)
+    commment1=models.CharField(max_length=200,default='NONE')
+    commment2=models.CharField(max_length=200,default='NONE')
+    lno=models.CharField(max_length=20)
+
+class emp_details(models.Model):
+    empno=models.CharField(max_length=10, blank=False, null=False)  # Field name made lowercase.
+    empname=models.CharField(max_length=100, blank=True, null=True)  # Field name made lowercase.
+    shopsec=models.CharField(max_length=20, blank=True, null=True)  # Field name made lowercase.
+    desgn=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
+    grp=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
+    mobileno=models.CharField( max_length=20,  blank=True, null=True)  # Field name made lowercase.
+    email_id=models.CharField( max_length=100, blank=True, null=True)  # Field name made lowercase.
+    shop_code=models.CharField( max_length=20, blank=True, null=True)  # Field name made lowercase.
+    card_details=models.CharField(db_column='CARD_DETAILS',max_length=50,null=True)
+
+class MG18(models.Model):
+    s_no=models.CharField(max_length=30, null=True)
+    login_id = models.CharField(max_length=50, null=True)
+    date = models.CharField( max_length=20, null=True)  
+    name_occupier=models.CharField(max_length=60,null=True)
+    address_occupier=models.CharField(max_length=300,null=True)
+    empcode = models.CharField(max_length=25,null=True)  
+    nature_of_industry = models.CharField(max_length=110,null=True) 
+    address_accident = models.CharField(max_length=300, null=True)  
+    branch_at_accident = models.CharField(max_length=50, null=True)  
+    name_injured = models.CharField(max_length=60, null=True)  
+    address_injured=models.CharField(max_length=300, null=True)
+    insurance_no=models.CharField(max_length=30,null=True)
+    gender = models.CharField(max_length=15, null=True) 
+    age_last_birth = models.CharField(max_length=10,null=True) 
+    occupation_of_injured = models.CharField(max_length=40, null=True)  
+    accident_date = models.CharField(max_length=20,null=True) 
+    accident_time = models.CharField(max_length=20,null=True)
+    hour_of_startwork = models.CharField(max_length=20, null=True) 
+    cause = models.CharField(max_length=130,null=True)  
+    cause_by_machine = models.CharField(max_length=10,null=True)
+
+    machine_part=models.CharField(max_length=100,null=True)
+    mach_mov_state = models.CharField(max_length=100, null=True)  
+    injured_doing = models.CharField(max_length=100, null=True)  
+    
+    injury_nature = models.CharField(max_length=100,null=True)  
+    injured_dayoff=models.CharField(max_length=10, null=True) 
+    doctor_name = models.CharField(max_length=60, null=True)
+    name_evid = models.CharField(max_length=60,null=True) 
+    inj_under_drink_drug =models.CharField(max_length=10,null=True)
+    wilful_disobedience =models.CharField(max_length=10,null=True)
+    wilful_removal =models.CharField(max_length=10,null=True)
+
+    how_accident = models.CharField(max_length=1000,null=True) 
+    injury_location = models.CharField(max_length=100, null=True)  
+    inj_return_to_work = models.CharField(max_length=100,null=True)  
+
+    return_date=models.CharField(max_length=20,null=True)
+    return_time=models.CharField(max_length=20,null=True)
+
+    injured_died = models.CharField(max_length=10,null=True)  
+    date_of_death = models.CharField(max_length=20,null=True) 
+    insur_localoffice_name = models.CharField(max_length=100,null=True) 
+    insur_dispensary_name= models.CharField(max_length=100,null=True) 
+
+    district = models.CharField(max_length=60,null=True) 
+    receipt_date = models.CharField(max_length=20,null=True) 
+    accident_no = models.CharField(max_length=20,null=True) 
+    industry_no = models.CharField(max_length=20,null=True) 
+    causation_no = models.CharField(max_length=20,null=True) 
+    gender_1 = models.CharField(max_length=15,null=True) 
+    particulars = models.CharField( max_length=60,null=True) 
+    investigation_date = models.CharField(max_length=20,null=True) 
+    investigation_result = models.CharField(max_length=500,null=True) 
+    last_modified = models.DateTimeField(null=True)

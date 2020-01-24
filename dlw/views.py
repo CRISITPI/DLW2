@@ -7233,7 +7233,6 @@ def m26view(request):
         }
     return render(request,'m26view.html',context)
 
-
 @login_required
 @role_required(urlpass='/m27view/')
 def m27view(request):
@@ -7393,10 +7392,16 @@ def m27view(request):
                 M27TimeSheet.objects.create(shop_sec=shop_sec, staff_no=staffNo, rate=staffRate, month=date1, tot_hrs=tothrs, ofc_date=ofcdate, wo_date=wodate, wo_no=wono, desg=staffDesg, name=staffName)
                 print("data saved ",i)
 
-            emp_detail= emp_details.objects.filter(empno='12136').values('email_id','mobileno')                  
-            smsM18(emp_detail[0]['mobileno'],"Dear Employee thank you for summit Timesheet, for dates are : "+wodate)
+            emp_detail= emp_details.objects.filter(card_details='M27').values('email_id','mobileno')   
+            mob_temp=[]            
+            for i in emp_detail: 
+                mob_temp.append(i['mobileno'])
+            for j in range(len(mob_temp)):
+                print("mob_temp : ",mob_temp[j])
+                smsM18(mob_temp[j],"Dear Employee TimeSheet of indirect labour(M27) card has been generated.")          
             messages.success(request, 'Successfully Saved !')     
-    return render(request,'m27view1.html',context)      
+    return render(request,'m27view1.html',context) 
+   
 
 
 
@@ -7534,14 +7539,33 @@ def m26getStaffCatWorkHrs(request):
         shop_sec = request.GET.get('shop_sec')
         w_no     = request.GET.get('wno')
         date     = request.GET.get('date')
-        print(date)
-        if shop_sec and w_no and date:
-            wono = list(M5SHEMP.objects.filter(shopsec=shop_sec,date__contains=date).values('staff_no','cat','total_time_taken').exclude(staff_no__isnull=True).exclude(total_time_taken__isnull=True).distinct('staff_no'))
+        print("date",date)
+
+        up_dt=[]       
+        update_date = M5SHEMP.objects.filter(shopsec=shop_sec, date__isnull=False, updt_date__isnull=False).values('updt_date').order_by('-updt_date')
+        print("update_date : ",update_date[0])
+        for i in update_date:
+            up_dt.append(i['updt_date'])
+        print("up_dt : ",up_dt[0])    
+    #    # up_dt.sort(reverse=True)
+    #     up_dt.sort()
+    #     print("tests : ",up_dt) 
+
+          
+
+        if shop_sec and w_no and date:  
+            wono = list(M5SHEMP.objects.filter(shopsec=shop_sec,date__contains=date, updt_date__contains=up_dt[0], staff_no__isnull=False, total_time_taken__isnull=False,date__isnull=False).values('staff_no','cat','total_time_taken').distinct())            
+            emp_detail= emp_details.objects.filter(card_details='M26').values('email_id','mobileno')   
+            mob_temp=[]            
+            for i in emp_detail: 
+                mob_temp.append(i['mobileno'])
+            for j in range(len(mob_temp)):
+                print("mob_temp : ",mob_temp[j])
+                smsM18(mob_temp[j],"Dear Employee TimeSheet of indirect labour(M26) card has been generated.")     
         else:
             wono = "NO"
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
-
 
 
 
@@ -8315,6 +8339,7 @@ def Childnode(request,part,res,code):
     print(arr)
     return arr
 
+
     
 
 
@@ -8352,13 +8377,36 @@ def CardGeneration(request):
                 first = []
                 second = []
                 third = []
-                obj1 = Childnode(request,asmno,res,'M')
-                print("obj1 :  = ",len(obj1),batch,bval,asmno,card)
-                getShopSecDetails = list(Oprn.objects.filter(part_no=asmno).values('shop_sec').distinct())
-                print(getShopSecDetails)
-                for i in range(len(getShopSecDetails)):            
-                    first.append(getShopSecDetails[i]['shop_sec'])  
-                print(first)
+                #obj1 = Childnode(request,asmno,res,'M')
+                data = {
+                      'm14_date':"m14_date",
+                        'rforhw':"rforhw",
+                   'm14_no':"m14_no",
+                    'pm_no':"pm_no",
+                     'unit':"unit",
+                     'quantity':"quantity",
+                    'part_desc':"part_desc",
+                 'part_no':"part_no",
+                          'assly_desc':"assly_desc",
+                  'assly_no':"assly_no",
+                     'loco_to':"loco_to",
+                  'loco_from':"loco_from",
+                    'brn_no':"brn_no",
+                      'epc':"epc",
+                   'batch_no':"batch_no",
+                'sl_no':"sl_no",
+                            'char_wo':"char_wo",
+                  'm13_date':"m13_date",
+                        'm13_no':"m13_no",    
+                   }
+                
+                pdf = render_to_pdf('m14genpdf1.html', data)
+                return HttpResponse(pdf, content_type='application/pdf')
+                #getShopSecDetails = list(Oprn.objects.filter(part_no=asmno).values('shop_sec').distinct())
+                #print(getShopSecDetails)
+                #for i in range(len(getShopSecDetails)):            
+                    #first.append(getShopSecDetails[i]['shop_sec'])  
+                #print(first)
                 #getNstrDetails = list(Nstr.objects.filter(pp_part=asmno,ptc='M',l_to='9999').values('cp_part','ptc','qty','epc','del_fl','epc_old').exclude(pp_part__isnull=True).distinct())
                 #for i in range(len(getNstrDetails)):            
                     #second.append(getNstrDetails[i]['cp_part'],getNstrDetails[i]['ptc'],getNstrDetails[i]['qty'],getNstrDetails[i]['epc'],getNstrDetails[i]['del_fl'],getNstrDetails[i]['epc_old'],)  
@@ -11265,7 +11313,6 @@ def mg49report(request):
             }
     return render(request,"mg49report.html",context)
 
-
 @login_required
 @role_required(urlpass='/mg18view/')
 def mg18view(request):
@@ -11279,215 +11326,250 @@ def mg18view(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
+   
     if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
+        
+        form=list(MG18.objects.all().values('id').distinct().order_by('-id'))
+
+        if(form==[]):
+            sno=1
+        else:
+            sno=form[0]['id']
+            sno=int(sno)+1
+
         context={
             'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles':tmp
-        }
-    elif(len(rolelist)==1):
-        for i in range(0, len(rolelist)):
-            req = Shemp.objects.all().filter(shopsec=rolelist[i]).values('staff_no').exclude(staff_no__isnull=True).distinct()
-            wo_nop =wo_nop | req
-
-
-
-        context = {
-            'sub':0,
-            'subnav':subnav,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
             'nav':nav,
             'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist
-        }
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
             'subnav':subnav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist
+            'sno':sno,
         }
-    if request.method == "POST":
-        submitvalue = request.POST.get('proceed')
-        if submitvalue=='Submit':
-            rolelist=usermaster.role.split(", ")
-            wo_nop = empmast.objects.none()
-            to = request.POST.get('toadrr')
-            date = request.POST.get('dated')
-            namaddr = request.POST.get('nameadrr')
-            empcode = request.POST.get('empcode')
-            natindus = request.POST.get('natindus')
-            addr_accdnt = request.POST.get('addraccd')
-            brnchdept = request.POST.get('brdept')
-            namadrr_inj = request.POST.get('injadrr')
-            insur_no = request.POST.get('insur')
-            sex = request.POST.get('sex')
-            age_lstbrth = request.POST.get('agebirth')
-            occup_inj = request.POST.get('occinj')
-            dthrs_accdnt = request.POST.get('dthrsacc')
-            hr_strtwrk = request.POST.get('hrwork')
-            cause_accndt = request.POST.get('cosacc')
-            mach_accdnt = request.POST.get('namemach')
-            mach_mov = request.POST.get('movmachpwr')
-            inj_doing = request.POST.get('injdoin')
-            inj_extent = request.POST.get('natextinj')
-            inj_off = request.POST.get('injoffwrk')
-            name_doct = request.POST.get('namedoct')
-            inj_evid = request.POST.get('nameprsn')
-            how_accdnt = request.POST.get('howaccoccrd')
-            inj_loc = request.POST.get('locinj')
-            inj_retrn = request.POST.get('injretrn')
-            dthr_retrn = request.POST.get('dthrrtrn')
-            inj_died = request.POST.get('injdied')
-            dt_death = request.POST.get('dtdeath')
-            stloc_insur = request.POST.get('namstins')
-            stinsur_dispns = request.POST.get('stinsdisp')
-            distrct = request.POST.get('distrct')
-            dt_receipt = request.POST.get('dtrct')
-            accdnt_no = request.POST.get('acdntno')
-            indus_no = request.POST.get('indusno')
-            cause_no = request.POST.get('causno')
-            sex_1 = request.POST.get('sex')
-            particulars = request.POST.get('othrparti')
-            dt_invstgtn = request.POST.get('dtinvest')
-            rslt_invstgtn = request.POST.get('rsltinvest')
-            effct_frm = request.POST.get('subj')
-            print(to)
+    return render(request, "mg18view.html",context) 
+  
 
+def mg18InfoSave(request):
+    context={}
+    if request.method == "GET" and request.is_ajax():
+            s_no=request.GET.get('s_no')
+            date=request.GET.get('date')
+            occupier_name=request.GET.get('occupier_name')
+            occupier_addr=request.GET.get('occupier_addr')   
+            empcode_Id=request.GET.get('empcode_Id') 
+            industry_id=request.GET.get('industry_id') 
+            address_acc=request.GET.get('address_acc')  
+            branch_Id=request.GET.get('branch_Id')
+            injured_name=request.GET.get('injured_name')
+            injured_addr=request.GET.get('injured_addr')
+            insur_no=request.GET.get('insur_no')
+            gender1=request.GET.get('gender1')  
+            agebirth_Id=request.GET.get('agebirth_Id')
+            occupation_id=request.GET.get('occupation_id')
+            date_accident=request.GET.get('date_accident')
+            time_accident=request.GET.get('time_accident')
+            time2=request.GET.get('time2')  
+            cause_Id=request.GET.get('cause_Id')
+            yn_id=request.GET.get('yn_id')
+            machine_name=request.GET.get('machine_name')
+            movmachpwr_Id=request.GET.get('movmachpwr_Id')
+            injdoin_Id=request.GET.get('injdoin_Id')  
+            injury_nature=request.GET.get('injury_nature')
+            offwrk_Id=request.GET.get('offwrk_Id')
+            doct_name=request.GET.get('doct_name')
+            evident_name=request.GET.get('evident_name')
+            c1=request.GET.get('c1')
+            c2=request.GET.get('c2')
+            c3=request.GET.get('c3')
+            howaccident=request.GET.get('howaccident')
+            injury_loc=request.GET.get('injury_loc')
+            injretrn_Id=request.GET.get('injretrn_Id')
+            datertn_Id=request.GET.get('datertn_Id')
+            timertn_Id=request.GET.get('timertn_Id')
+            yn1_id=request.GET.get('yn1_id')
+            date_death=request.GET.get('date_death')
+            Insur_lo=request.GET.get('Insur_lo')
+            Insur_dis=request.GET.get('Insur_dis')
+            distrct_Id=request.GET.get('distrct_Id')
+            receipt_date=request.GET.get('receipt_date')
+            accident_no=request.GET.get('accident_no')
+            industry_no=request.GET.get('industry_no')
+            causno=request.GET.get('causno')
+            gender2=request.GET.get('gender2')
+            otherpart=request.GET.get('otherpart')
+            invest_date=request.GET.get('invest_date')
+            invest_result=request.GET.get('invest_result')
+            if c1=='true':
+                c1='Yes'
+            else:
+                c1='No'
 
-            MG18.objects.create(to=str(to),  date=str(date), namaddr=str(namaddr), empcode=str(empcode),
-                                natindus=str(natindus), addr_accdnt=str(addr_accdnt), brnchdept=str(brnchdept), namadrr_inj=str(namadrr_inj),
-                                insur_no=str(insur_no), sex=str(sex), age_lstbrth=str(age_lstbrth), occup_inj=str(occup_inj), dthrs_accdnt=str(dthrs_accdnt),
-                                hr_strtwrk=str(hr_strtwrk), cause_accndt=str(cause_accndt), mach_accdnt=str(mach_accdnt), mach_mov=str(mach_mov),
-                                inj_doing=str(inj_doing), inj_extent=str(inj_extent), inj_off=str(inj_off), name_doct=str(name_doct), inj_evid=str(inj_evid),
-                                how_accdnt=str(how_accdnt), inj_loc=str(inj_loc), inj_retrn=str(inj_retrn),  dthr_retrn=str(dthr_retrn),
-                                inj_died=str(inj_died), dt_death=str(dt_death), stloc_insur=str(stloc_insur), stinsur_dispns=str(stinsur_dispns),
-                                distrct=str(distrct), dt_receipt=str(dt_receipt), accdnt_no=str(accdnt_no), indus_no=str(indus_no), cause_no=str(cause_no),
-                                sex_1=str(sex_1), particulars=str(particulars), dt_invstgtn=str(dt_invstgtn), rslt_invstgtn=str(rslt_invstgtn),
-                                effct_frm=str(effct_frm))
+            if c2=='true':
+                c2='Yes'
+            else:
+                c2='No'
+            if c3=='true':
+                c3='Yes'  
+            else:
+                c3='No'  
+            cuser=request.user
+            now = datetime.datetime.now()
+            temp =MG18.objects.filter(s_no=s_no).distinct()
+            if len(temp) == 0:
+                obj=MG18.objects.create( s_no=str( s_no),date=str(date),login_id=str(cuser),name_occupier=str(occupier_name),address_occupier=str(occupier_addr),empcode=str(empcode_Id),
+                nature_of_industry=str(industry_id),address_accident =str( address_acc),branch_at_accident=str(branch_Id),name_injured=str(injured_name),
+                address_injured=str(injured_addr),insurance_no=str(insur_no),gender=str(gender1),age_last_birth=str(agebirth_Id),occupation_of_injured=str(occupation_id),
+                accident_date=str(date_accident),accident_time=str(time_accident),hour_of_startwork=str(time2),cause=str(cause_Id),cause_by_machine=str(yn_id),
+                machine_part=str(machine_name),mach_mov_state=str(movmachpwr_Id),injured_doing=str(injdoin_Id),injury_nature=str(injury_nature),
+                injured_dayoff=str(offwrk_Id),doctor_name=str(doct_name),name_evid=str(evident_name),inj_under_drink_drug=str(c1),wilful_disobedience=str(c2),
+                wilful_removal=str(c3),how_accident=str(howaccident),injury_location=str(injury_loc),inj_return_to_work=str(injretrn_Id),return_date=str(datertn_Id),
+                return_time=str(timertn_Id),injured_died=str(yn1_id),date_of_death=str(date_death),insur_localoffice_name=str(Insur_lo),insur_dispensary_name=str(Insur_dis),
+                district=str(distrct_Id),receipt_date=str(receipt_date),accident_no=str(accident_no),industry_no=str(industry_no),causation_no=str(causno),gender_1=str(gender2),
+                particulars=str(otherpart),investigation_date =str(invest_date),investigation_result=str(invest_result),last_modified=now)
 
-            messages.info(request, 'Successfully Done!, Select new values to proceed')
+            else:
+                MG18.objects.filter(s_no=s_no).update(s_no=str(s_no),date=str(date),login_id=str(cuser),name_occupier=str(occupier_name),address_occupier=str(occupier_addr),empcode=str(empcode_Id),
+                nature_of_industry=str(industry_id),address_accident =str( address_acc),branch_at_accident=str(branch_Id),name_injured=str(injured_name),
+                address_injured=str(injured_addr),insurance_no=str(insur_no),gender=str(gender1),age_last_birth=str(agebirth_Id),occupation_of_injured=str(occupation_id),
+                accident_date=str(date_accident),accident_time=str(time_accident),hour_of_startwork=str(time2),cause=str(cause_Id),cause_by_machine=str(yn_id),
+                machine_part=str(machine_name),mach_mov_state=str(movmachpwr_Id),injured_doing=str(injdoin_Id),injury_nature=str(injury_nature),
+                injured_dayoff=str(offwrk_Id),doctor_name=str(doct_name),name_evid=str(evident_name),inj_under_drink_drug=str(c1),wilful_disobedience=str(c2),
+                wilful_removal=str(c3),how_accident=str(howaccident),injury_location=str(injury_loc),inj_return_to_work=str(injretrn_Id),return_date=str(datertn_Id),
+                return_time=str(timertn_Id),injured_died=str(yn1_id),date_of_death=str(date_death),insur_localoffice_name=str(Insur_lo),insur_dispensary_name=str(Insur_dis),
+                district=str(distrct_Id),receipt_date=str(receipt_date),accident_no=str(accident_no),industry_no=str(industry_no),causation_no=str(causno),gender_1=str(gender2),
+                particulars=str(otherpart),investigation_date =str(invest_date),investigation_result=str(invest_result),last_modified=now)
 
-            # print(staff_no)
-            # print(shop_sec)
-            # obj = Shemp.objects.filter(shopsec=shop_sec, staff_no=staff_no).values('name', 'desgn', 'cat', 'emp_type').distinct()
-            # # print(obj)
-            # obj1 = MG15.objects.filter(shop_sec=shop_sec, staff_no=staff_no, date=date).values('remarks', 'h1a', 'h2a', 'causeofab', 'ticket_no').distinct()
-            # tt = Shemp.objects.filter(shopsec=shop_sec, staff_no=staff_no).values('ticket_no').distinct()
-            # print(tt)
-            # print("jj")
-            # print(obj1)
-            # if len(obj1)== 0:
-            #     obj1=range(0, 1)
+            return JsonResponse(context,safe=False)
+    return JsonResponse({"success":False}, status=400)
 
+def mg18GenerateReport(request, *args, **kwargs):
+    s_no=request.GET.get('s_no')
+    date=request.GET.get('date')
+    occupier_name=request.GET.get('occupier_name')
+    occupier_addr=request.GET.get('occupier_addr')   
+    empcode_Id=request.GET.get('empcode_Id') 
+    industry_id=request.GET.get('industry_id') 
+    address_acc=request.GET.get('address_acc')  
+    branch_Id=request.GET.get('branch_Id')
+    injured_name=request.GET.get('injured_name')
+    injured_addr=request.GET.get('injured_addr')
+    insur_no=request.GET.get('insur_no')
+    gender1=request.GET.get('gender1')  
+    agebirth_Id=request.GET.get('agebirth_Id')  
+    occupation_id=request.GET.get('occupation_id')
+    date_accident=request.GET.get('date_accident')
+    time_accident=request.GET.get('time_accident')
+    time2=request.GET.get('time2')  
+    cause_Id=request.GET.get('cause_Id')
+    yn_id=request.GET.get('yn_id')
+    machine_name=request.GET.get('machine_name')
+    movmachpwr_Id=request.GET.get('movmachpwr_Id')
+    injdoin_Id=request.GET.get('injdoin_Id')  
+    injury_nature=request.GET.get('injury_nature')
+    offwrk_Id=request.GET.get('offwrk_Id')
+    doct_name=request.GET.get('doct_name')
+    evident_name=request.GET.get('evident_name')
+    c1=request.GET.get('c1')
+    c2=request.GET.get('c2')
+    c3=request.GET.get('c3')
+    howaccident=request.GET.get('howaccident')
+    injury_loc=request.GET.get('injury_loc')
+    injretrn_Id=request.GET.get('injretrn_Id')
+    datertn_Id=request.GET.get('datertn_Id')
+    timertn_Id=request.GET.get('timertn_Id')
+    yn1_id=request.GET.get('yn1_id')
+    date_death=request.GET.get('date_death')
+    Insur_lo=request.GET.get('Insur_lo')
+    Insur_dis=request.GET.get('Insur_dis')
+    distrct_Id=request.GET.get('distrct_Id')
+    receipt_date=request.GET.get('receipt_date')
+    accident_no=request.GET.get('accident_no')
+    industry_no=request.GET.get('industry_no')
+    causno=request.GET.get('causno')
+    gender2=request.GET.get('gender2')
+    otherpart=request.GET.get('otherpart')
+    invest_date=request.GET.get('invest_date')
+    invest_result=request.GET.get('invest_result') 
+    if c1=='true':
+        c1='Yes'
+    else:
+        c1='No'
+    if c2=='true':
+        c2='Yes'
+    else:
+        c2='No'
+    if c3=='true':
+        c3='Yes'
+    else:
+        c3='No'
 
-            if "Superuser" in rolelist:
-                  tm=shop_section.objects.all()
-                  tmp=[]
-                  for on in tm:
-                      tmp.append(on.section_code)
-                  context = {
-                        'roles':tmp,
-                        'lenm' :2,
-                        'nav':nav,
-                        'ip':get_client_ip(request),
-                        # 'obj': obj,
-                        # 'obj1': obj1,
-                        # 'tt': tt,
+    data = {
+        's_no':s_no,
+        'date':date,
+        'occupier_name':occupier_name,
+        'occupier_addr':occupier_addr,
+        'empcode_Id':empcode_Id,
+        'industry_id':industry_id,
+        'address_acc':address_acc,
+        'branch_Id':branch_Id,
+        'injured_name':injured_name,
+        'injured_addr':injured_addr,
+        'insur_no':insur_no,
+        'gender1': gender1,
+        'agebirth_Id':agebirth_Id,
+        'occupation_id':occupation_id,
+        'date_accident':date_accident,
+        'time_accident':time_accident, 
+        'time2':time2,
 
-                        'date' : date,
+        'cause_Id':cause_Id,
+        'yn_id':yn_id,
+        'machine_name':machine_name,
+        'movmachpwr_Id':movmachpwr_Id,
+        'injdoin_Id':injdoin_Id,
+        'injury_nature':injury_nature,
+        'offwrk_Id':offwrk_Id,
+        'doct_name':doct_name,
+        'evident_name':evident_name,
+        'c1':c1,
+        'c2':c2,
+        'c3':c3,
+        'howaccident':howaccident,
+        'injury_loc': injury_loc,
+        'injretrn_Id':injretrn_Id,
+        'datertn_Id':datertn_Id,
+        'timertn_Id':timertn_Id,
+        'yn1_id':yn1_id, 
+        'date_death':date_death,
 
+        'Insur_lo':Insur_lo,
+        'Insur_dis':Insur_dis,
+        'distrct_Id':distrct_Id,
+        'receipt_date':receipt_date,
+        'accident_no':accident_no,
+        'industry_no':industry_no,
+        'causno':causno,
+        'gender2':gender2,
+        'otherpart':otherpart,
+        'invest_date':invest_date,
+        'invest_result': invest_result,
+         
+        }
+    pdf = render_to_pdf('mg18report.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
 
-                        'sub': 1,
+def mg18Details(request):
+    if request.method == "GET" and request.is_ajax():  
+        s_no = request.GET.get('s_no') 
+        obj =list(MG18.objects.filter(s_no = s_no).values('date','name_occupier','address_occupier','empcode','nature_of_industry',
+        'address_accident','branch_at_accident','name_injured','address_injured','insurance_no','gender','age_last_birth',
+        'occupation_of_injured','accident_date','accident_time','hour_of_startwork','cause','cause_by_machine','machine_part',
+        'mach_mov_state','injured_doing','injury_nature','injured_dayoff','doctor_name','name_evid','inj_under_drink_drug',
+        'wilful_disobedience','wilful_removal','how_accident','injury_location','inj_return_to_work','return_date',
+        'return_time','injured_died','date_of_death','insur_localoffice_name','insur_dispensary_name','district',
+        'receipt_date','accident_no','industry_no','causation_no','gender_1','particulars','investigation_date',
+        'investigation_result').distinct())
+        return JsonResponse(obj,safe = False)
+    return JsonResponse({"success":False}, status=400)    
 
-                        # 'staff_no': staff_no,
-                        # 'shop_sec': shop_sec,
-
-                        'subnav':subnav
-                  }
-            elif(len(rolelist)==1):
-                  for i in range(0, len(rolelist)):
-                      req = Shemp.objects.all().filter(shopsec=rolelist[i]).values('staff_no').exclude(staff_no__isnull=True).distinct()
-                      wo_nop = wo_nop | req
-                  context = {
-                        'wo_nop':wo_nop,
-                        'roles' :rolelist,
-                        'usermaster':usermaster,
-                        'lenm' :len(rolelist),
-                        'nav': nav,
-                        'ip': get_client_ip(request),
-                        # 'obj': obj,
-                        # 'obj1': obj1,
-                        # 'tt': tt,
-
-                        'sub': 1,
-                        'date': date,
-
-                        # 'staff_no': staff_no,
-                        # 'shop_sec': shop_sec,
-
-                        'subnav': subnav
-                  }
-            elif(len(rolelist)>1):
-                  context = {
-                        'lenm' :len(rolelist),
-                        'nav':nav,
-                        'ip':get_client_ip(request),
-                        'usermaster':usermaster,
-                        'roles' :rolelist,
-                        # 'obj': obj,
-                        # 'obj1': obj1,
-                        # 'tt': tt,
-
-                        'date': date,
-                        'sub': 1,
-                        #
-                        # 'staff_no': staff_no,
-                        # 'shop_sec': shop_sec,
-
-                        'subnav':subnav
-                  }
-
-        # if submitvalue=='Save':
-        #
-        #         shop_sec= request.POST.get('shop_sec1')
-        #         staff_no = request.POST.get('staff_no1')
-        #         date = request.POST.get('date1')
-        #         name= request.POST.get('name1')
-        #         desgn = request.POST.get('desgn1')
-        #         emp_type = request.POST.get('emp_type1')
-        #         cat = request.POST.get('cat1')
-        #         ticket_no = request.POST.get('ticket_no')
-        #         h1a = request.POST.get('h1a')
-        #         h2a = request.POST.get('h2a')
-        #         remarks = request.POST.get('remarks')
-        #         causeofab = request.POST.get('causeofab')
-        #
-        #         print(h1a)
-        #
-        #         obj2 = MG15.objects.filter(shop_sec=shop_sec, staff_no=staff_no, date=date, ).distinct()
-        #         print(len(obj2))
-        #         if len(obj2) == 0:
-        #             MG15.objects.create(date=str(date), shop_sec=str(shop_sec), staff_no=str(staff_no), cat=str(cat), name=str(name), desgn=str(desgn), emp_type=str(emp_type), remarks=str(remarks), causeofab=str(causeofab), ticket_no=str(ticket_no), h1a=str(h1a), h2a=str(h2a))
-        #
-        #         else:
-        #             MG15.objects.filter(shop_sec=shop_sec, staff_no=staff_no, date=date).update(cat=str(cat), ticket_no=str(ticket_no), name=str(name), desgn=str(desgn), emp_type=str(emp_type), remarks=str(remarks), causeofab=str(causeofab), h1a=str(h1a), h2a=str(h2a))
-        #
-        #         wo_no=MG15.objects.all().values('staff_no').distinct()
-        #         messages.success(request, 'Successfully Done!, Select new values to proceed')
-    return render(request, "mg18view.html", context)
 
 
 @login_required
@@ -13269,8 +13351,6 @@ def mg6gettool(request):
         print("tool_no",tool_no)
     return JsonResponse({"success":False}, status=400)
 
-@login_required
-@role_required(urlpass='/m21view/')
 def m21view(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -13398,7 +13478,7 @@ def m21view(request):
                     
                     in1     =   request.POST.get('in1'+str(i))
                     date    =   request.POST.get('date'+str(i))
-                    out     =   request.POST.get('out'+str(i))
+                    out     =   request.POST.get('outA'+str(i))
                     outdate =   request.POST.get('outdate'+str(i))
                     in2     =   request.POST.get('in2'+str(i))
                     out2    =   request.POST.get('out2'+str(i))
@@ -13446,6 +13526,7 @@ def m21view(request):
                
             messages.success(request, 'GATE ATTENDANCE CARD Successfully generated.')
     return render(request,"m21view.html",context)
+
                         
 def m21getempno(request):
     if request.method == "GET" and request.is_ajax():
@@ -20026,7 +20107,6 @@ def save_s(request):
     context={}
     if request.method == "GET" and request.is_ajax():
             eno=request.GET.get('emp_no')
-
             #eno=request.GET["emp_no"]
             print("eno:=",eno)
             dno=request.GET.get('demp_no')
@@ -20043,8 +20123,19 @@ def save_s(request):
             print("contd:=",dc)
             ad=request.GET.get('acc_date')
             print("acc_date:=",ad)
-            a=table1_id.objects.create(bookno=str(bno),medical=str(mcno),empno=str(eno),demp_no=str(dno))
-            table2_id.objects.create(accdient=str(ad),part=str(pb),nature=str(n),disability=dc,medicalcno=a)
+            #date=''.join(map(str,ad)) change date format in database0
+            #date=date[8:10]+"-"+date[5:7]+"-"+date[0:4]
+           # print(date)
+            obj=table1_id.objects.filter(medical=mcno).distinct()
+            b=obj
+            if len(obj) == 0:
+                table1_id.objects.create(bookno=str(bno),medical=str(mcno),empno=str(eno),demp_no=str(dno))
+                table2_id.objects.create(accdient=str(ad),part=str(pb),nature=str(n),disability=dc,medicalcno=b)
+            else:
+                table1_id.objects.filter(medical=mcno).update(bookno=str(bno),medical=str(mcno),empno=str(eno),demp_no=str(dno))
+                table2_id.objects.filter(medicalcno=mcno).update(accdient=str(ad),part=str(pb),nature=str(n),disability=dc)
+                
+
             return JsonResponse(context,safe=False)
     return JsonResponse({"success":False}, status=400)
 
@@ -20566,5 +20657,211 @@ def ExistingNumDetails(request):
         obj1=list(MG47_table2.objects.filter(num=num).values('desc','demand','issued').distinct())
         l.append(obj)
         l.append(obj1)
+        return JsonResponse(l,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(urlpass='/Tools/')
+def Tools(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=Shop.objects.all().values('shop').distinct()
+        
+        tmp=[]
+        for on in tm:
+            tmp.append(on['shop'])
+        #print("shop number",tmp)  
+
+        #tm1=list(empmast.objects.filter(desig_longdesc__contains='WORKSHOP'  ).values('empno').distinct())
+        tm1=list(empmast.objects.filter(Q(desig_longdesc__contains='WORKSHOP MANAGER')  | Q(desig_longdesc__contains='WORKSHOP  MANAGER')  ).values('empno').distinct())
+        #print(tm1)
+        tmp1=[]
+        for on in tm1:
+            tmp1.append(on['empno'])
+        #print("wsm",tmp1)
+        tm2=list(empmast.objects.filter(desig_longdesc__contains='SECTION ENGINE').values('empno').distinct())
+        
+        tmp2=[]
+        for on in tm2: 
+            tmp2.append(on['empno'])
+        #print("SSE",tmp2)   
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'wm_shop':tmp1,
+            'shop':tmp2,
+            'subnav':subnav,
+        }
+    if request.method =="POST":
+
+        submitvalue = request.POST.get('submit')
+     
+
+        if submitvalue =='submit':
+            form_no=request.POST.get('tool_form')
+            sh_no=request.POST.get('sh_no')
+            #eno=request.GET["emp_no"]
+            #print("shop number:=",sh_no)
+            s_sec=request.POST.get('s_sec')
+            #print("section:=",s_sec)
+            date1=request.POST.get('date1')
+            l_no=request.POST.get('l_no')
+            new_req=request.POST.get('new_req')
+            mod=request.POST.get('mod')
+            add_req=request.POST.get('add_req')
+            e_no=request.POST.get('e_no')
+            d_no=request.POST.get('d_no')
+            m_no=request.POST.get('m_no')
+            des1=request.POST.get('des1')
+            wm_name=request.POST.get('wm_name')
+            wm_contact=request.POST.get('wm_contact')
+            sse_name=request.POST.get('sse_name')
+            sse_contact=request.POST.get('sse_contact')
+            wman=request.POST.get('wman')
+            sse=request.POST.get('sse')
+            sup_name=request.POST.get('sup_name')
+            sup_des=request.POST.get('sup_des')
+            sup_mob=request.POST.get('sup_mob')
+            obj=machine_tools.objects.filter(letter_no=l_no).distinct()
+            b=obj
+            #print("bb====",b)
+            if len(obj) == 0:
+                machine_tools.objects.create(letter_no=str(l_no),shop_no=str(sh_no),shop_desc=str(s_sec),date=str(date1),new_requirement=str(new_req),modification=str(mod),additional=str(add_req),existing_drawing=e_no,component_drawing=str(d_no),machine_no=str(m_no),machine_description=str(des1),wsm_id=str(wman),sse_id=str(sse),wsm_name=str(wm_name),wsm_mobile=str(wm_contact),sse_name=str(sse_name),sse_mobile=str(sse_contact),name_supervisor=str(sup_name),desig_supervisor=str(sup_des),mobile_supervisor=str(sup_mob))
+            else:
+                machine_tools.objects.filter(letter_no=l_no).update(letter_no=str(l_no),shop_no=str(sh_no),shop_desc=str(s_sec),date=str(date1),new_requirement=str(new_req),modification=str(mod),additional=str(add_req),existing_drawing=e_no,component_drawing=str(d_no),machine_no=str(m_no),machine_description=str(des1),wsm_id=str(wman),sse_id=str(sse),wsm_name=str(wm_name),wsm_mobile=str(wm_contact),sse_name=str(sse_name),sse_mobile=str(sse_contact),name_supervisor=str(sup_name),desig_supervisor=str(sup_des),mobile_supervisor=str(sup_mob))
+                
+            hidtext=request.POST.get('hidtext')
+            print(hidtext)
+            obj1 =list(mdescription.objects.values('id').filter(lno=l_no).distinct())
+            if len(obj1) == 0:
+                for i in range(2,int(hidtext)+1):                    
+                    des=request.POST.get("des"+str(i))
+                    print("des : ",des)
+                    quant=request.POST.get('quant'+str(i))
+                    print("1 : ",quant)
+                    mdescription.objects.create(description=str(des),quantity=quant,lno=l_no)
+            else:
+                hidtext=request.POST.get('hidtext')
+                print("hidden ::::",hidtext)
+                for i in range(1,int(hidtext)):
+                    des=request.POST.get('des'+str(i))
+                    print(des)
+                    quant=request.POST.get('quant'+str(i))
+                    mdescription.objects.filter(lno=l_no).update(description=str(des),quantity=quant)        
+    
+    return render(request,"Tools.html",context)
+
+def shop_section_tool(request):
+    if request.method == "GET" and request.is_ajax():
+        sh_no= request.GET.get('sh_no')
+        print("shop section:  ",sh_no)
+        obj=list(Shop.objects.filter(shop=str(sh_no)).values('sh_desc').distinct())
+        #print(obj)
+        return JsonResponse(obj,safe=False)
+    
+    return JsonResponse({"success":False}, status=400)
+def tools1(request):
+    if request.method == "GET" and request.is_ajax():
+        emp= request.GET.get('wman')
+        print(" empNo:  ",emp)
+        obj=list(empmast.objects.filter(empno=emp).values('empname','contactno').distinct())
+        #print("obj---",obj)
+        return JsonResponse(obj,safe=False)
+    
+    return JsonResponse({"success":False}, status=400)
+
+def tools2(request):
+    if request.method == "GET" and request.is_ajax():
+        emp= request.GET.get('sse')
+        print(" empNo:  ",emp)
+        obj=list(empmast.objects.filter(empno=emp).values('empname','contactno').distinct())
+        #print("obj---",obj)
+        return JsonResponse(obj,safe=False)    
+    return JsonResponse({"success":False}, status=400)
+
+def tooling_submit(request):
+    context={}
+    if request.method == "GET" and request.is_ajax():
+        form_no=request.GET.get('tool_form')
+        dname=request.GET.get('dname')
+        print("dname==",dname)
+        d_date=request.GET.get('d_date')
+        print(d_date)
+        gname=request.GET.get('gname')
+        g_date=request.GET.get('g_date')
+        c_date=request.GET.get('c_date')
+        l_date=request.GET.get('l_date')
+        ref_date=request.GET.get('ref_date')
+        comment1=request.GET.get('comment1')
+        comment2=request.GET.get('comment2')
+        l_no=request.GET.get('l_no1')
+        print("lno ----",l_no)
+        obj=list(machine_tools.objects.filter(letter_no=l_no).values('letter_no').distinct())
+        print("obj---",obj)
+        
+        if len(obj)>0:
+            tooling1.objects.create( name_designer=str(dname),date_designer=str(d_date),name_guide=str(gname),date_guide=str(g_date),date_completion=str(c_date),date_loading=str(l_date),sno_loading=str(ref_date),commment1=str(comment1),commment2=str(comment2),lno=str(l_no))
+        return JsonResponse(context,safe=False)
+    return JsonResponse({"success":False}, status=400)    
+
+
+
+def toolPdf(request, *args, **kwargs):
+    l_no = request.GET.get('l_no1')
+    obj=mdescription.objects.filter(lno=l_no).values('description','quantity').distinct()
+    #obj1=tooling1.objects.filter(lno=l_no).values('name_designer','date_designer','name_guide','date_guide','date_completion','date_loading','sno_loading','commment1','commment2').distinct()
+    obj2=list(machine_tools.objects.filter(letter_no=l_no).values('shop_no','shop_desc','date','new_requirement','modification','additional','existing_drawing','component_drawing','machine_no','machine_description','wsm_id','sse_id','wsm_name','wsm_mobile','sse_name','sse_mobile','name_supervisor','desig_supervisor','mobile_supervisor').distinct())
+    #print("obj1:",obj1)
+    print("obj2:",obj2)
+    dname=request.GET.get('dname')
+    d_date=request.GET.get('d_date')
+    gname=request.GET.get('gname')
+    g_date=request.GET.get('g_date')
+    c_date=request.GET.get('c_date')
+    l_date=request.GET.get('l_date')
+    ref_date=request.GET.get('ref_date')
+    comment1=request.GET.get('comment1')
+    comment2=request.GET.get('comment2')
+    data={
+        'l_no':l_no,
+        'obj':obj,
+        #'obj1':obj1,
+        'obj2':obj2,
+        'dname':dname,
+        'gname':gname,
+        'd_date':d_date,
+        'g_date':g_date,
+        'c_date':c_date,
+        'l_date':l_date,
+        'ref_date':ref_date,
+        'comment1':comment1,
+        'comment2':comment2
+    }
+    pdf = render_to_pdf('toolreport.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
+
+def fetchdetails_tools(request):
+    l=[]
+    if request.method == "GET" and request.is_ajax():
+        no= request.GET.get('l_no')
+        print("letter no:  ",no)
+        obj=list(machine_tools.objects.filter(letter_no=no).values('letter_no','shop_no','shop_desc','date','new_requirement','modification','additional','existing_drawing','component_drawing','machine_no','machine_description','wsm_id','sse_id','wsm_name','wsm_mobile','sse_name','sse_mobile','name_supervisor','desig_supervisor','mobile_supervisor').distinct())
+        obj1=list(mdescription.objects.filter(lno=no).values('description','quantity','lno').distinct())
+        l.append(obj)
+        l.append(obj1)
+        print(l)
+        print(len(l))
         return JsonResponse(l,safe=False)
     return JsonResponse({"success":False}, status=400)

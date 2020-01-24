@@ -235,7 +235,7 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 
 </table>
 <br><br>
-<table border="1" align="center">
+<table border="0" align="center">
     <tr>
         <th>OVERTIME DATA FOR LAST WEEK/पिछले सप्ताह के ओवर टाइम के आकड़े</th>
         <th><center>HOURS/घंटे</center></th>
@@ -243,12 +243,12 @@ li.ui-timepicker-selected .ui-timepicker-duration,
     </tr>
     <tr>
         <th><center>1 HOUR TIME/१ घंटे तक का समय </center></th>
-        <th><input type="type" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);" value="00:00"; onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" class="form-control" name="lastWeekPerHour" id="lastWeekPerHour" ></th>
+        <th><input type="type" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" class="form-control" name="lastWeekPerHour" id="lastWeekPerHour"  value="00:00"></th>
         <th><input type="type" maxlength="9" class="form-control" name="lastWeekPerAmount" id="lastWeekPerAmount" onkeypress="return event.charCode >= 46 && event.charCode <= 57"  ></th>
     </tr>
     <tr>
         <th>PAID OVERTIME AT BASE RATE/मूल दर पर भुगतान वाला ओवर टाइम</th>
-        <th><input type="type" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  value="00:00"; onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  class="form-control" name="baseRatePerHour" id="baseRatePerHour" ></th>
+        <th><input type="type" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  class="form-control" name="baseRatePerHour" id="baseRatePerHour"  value="00:00"></th>
         <th><input type="type" maxlength="9" onkeypress="return event.charCode >= 46 && event.charCode <= 57"  class="form-control" name="baseRatePerHourAmount" id="baseRatePerHourAmount" ></th>
     </tr>
 </table>
@@ -268,22 +268,22 @@ li.ui-timepicker-selected .ui-timepicker-duration,
     </tr> 
     <tr>    
         <td>       
-            <input type="text" id="in1"  value="00:00"; class="form-control"  name="in1" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"> 
+            <input type="text" id="in1"  value="00:00" class="form-control"  name="in1" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"> 
         </td> 
         <td>       
             <input type="text" id="date"    name="date" class="form-control"  autocomplete="off">
         </td>    
         <td>     
-          <input type="text" id="out"  value="00:00"; class="form-control"  name="out" onkeypress="return isNumberKey(event)"  onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
+          <input type="text" id="out"  value="00:00" class="form-control"  name="out" onkeypress="return isNumberKey(event)"  onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
        </td>
        <td>       
         <input type="text" id="outdate"   name="outdate" class="form-control"  autocomplete="off">       
         </td>
            <td>        
-        <input type="text" id="in2"  value="00:00"; class="form-control"  name="in2" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">       
+        <input type="text" id="in2"  value="00:00" class="form-control"  name="in2" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">       
       </td> 
       <td>       
-          <input type="text" id="out2" onblur="myfun()"  value="00:00"; class="form-control" name="out2" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
+          <input type="text" id="out2"  value="00:00" class="form-control" name="out2" onblur="myfun()" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
         </td>
        <td>       
             <input type="text" id="total_time" class="form-control"  name="total_time"  readonly>         
@@ -295,10 +295,10 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 </div>
 <center>
 <input  type="button" id="add" value="Add More Row" style="width: 150px;"/>
-<!-- <input type="button" onclick="myfun()" value="Calculate Total Time"> -->
+<input type="button" onclick="myfun()" value="Calculate Total Time">
 </center>
 <br>
-<table border="1" align="center">
+<table border="0" align="center">
 <tr>
     <th></th>
     <th>DAY</th>
@@ -307,47 +307,47 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 <tr>
     <th>Cut time/कटौती का समय</th>
     <th><input type="text" name="cutTimeDay" id="cutTimeDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="cutTimeHours" id="cutTimeHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="cutTimeHours" id="cutTimeHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>Additional wages/अतिरिक्त मजदूरी</th>
     <th><input type="text" name="additionalWagesDay" id="additionalWagesDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="additionalWagesHours" value="00:00"; id="additionalWagesHours" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="additionalWagesHours" id="additionalWagesHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>Factory half O.T./फैक्ट्री आधि ओ.टी. </th>
     <th><input type="text" name="factoryHalfDay" id="factoryHalfDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="factoryHalfHours" id="factoryHalfHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="factoryHalfHours" id="factoryHalfHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>General O.T./सामान्य  ओ.टी. </th>
     <th><input type="text" name="generalOTDay" id="generalOTDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="generalOTHours" id="generalOTHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="generalOTHours" id="generalOTHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>Night allowance hours/रात्रि भत्ते के घंटे </th>
     <th><input type="text" name="nightAllowanceDay" id="nightAllowanceDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="nightAllowanceHours" id="nightAllowanceHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="nightAllowanceHours" id="nightAllowanceHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>Half holiday/अर्द्ध औ.वे. की छुट्टी </th>
     <th><input type="text" name="halfHolidayDay" id="halfHolidayDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="halfHolidayHours" id="halfHolidayHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="halfHolidayHours" id="halfHolidayHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>Pay off leave/औसन वेतन की छुट्टी  </th>
     <th><input type="text" name="payOffLeaveDay" id="payOffLeaveDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="payOffLeaveHours" id="payOffLeaveHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="payOffLeaveHours" id="payOffLeaveHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>Number of unused holidays/उपयोग न हुई छुट्टियों की सं.</th>
     <th><input type="text" name="unusedHolidaysDay" id="unusedHolidaysDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="unusedHolidaysHours" id="unusedHolidaysHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="unusedHolidaysHours" id="unusedHolidaysHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
 </tr>
 <tr>
     <th>Supplementary Holidays Given/दी गयी प्रति पूरक छुट्टियां</th>
     <th><input type="text" name="supplementaryHolidaysDay" id="supplementaryHolidaysDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
-    <th><input type="text" name="supplementaryHolidaysHours" id="supplementaryHolidaysHours" value="00:00"; onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+    <th><input type="text" name="supplementaryHolidaysHours" id="supplementaryHolidaysHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
     
 </tr>
 </table>
@@ -501,13 +501,13 @@ $("#add").click(function(e){
 
         var in1="in1"+String(j);
         var date="date"+String(j)    
-        var out="out"+String(j);
+        var out="outA"+String(j);
         var outdate="outdate"+String(j);
         var in2="in2"+String(j);
         var out2="out2"+String(j);               
-        var total_time="total_time"+String(j)            
+        var total_time="total_time"+String(j);            
 
-        var htAppend='<div><table id="customers" border="1" align="center"><tr>'+'<td ><input type="text" value="00:00"; id='+in1+' name='+in1+'  class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+date+' name='+date+' autocomplete="off" class="odatec, form-control ll"></td>'+'<td ><input type="text"  value="00:00"; id='+out+' name='+out+' class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+outdate+' name='+outdate+' autocomplete="off" class="odatec, form-control ll"  ></td>'+'<td ><input type="text" value="00:00"; id='+in2+' name='+in2+'  class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" value="00:00"; id='+out2+' name='+out2+' onblur="myfun()" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text"  id='+total_time+' name='+total_time+' class="form-control"  disabled="disabled"></td>';
+        var htAppend='<div><table id="customers" border="0" align="center"><tr>'+'<td ><input type="text" value="00:00" id='+in1+' name='+in1+'  class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+date+' name='+date+' autocomplete="off" class="odatec, form-control ll"></td>'+'<td><input type="text" value="00:00" id='+out+' name='+out+' class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+outdate+' name='+outdate+' autocomplete="off" class="odatec, form-control ll"  ></td>'+'<td ><input type="text" id='+in2+' name='+in2+' value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+out2+' name='+out2+' onblur="myfun()" value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+total_time+' name='+total_time+' class="form-control" readonly></td>';
         htAppend=htAppend+'</tr></table>'+'</div>';
         $('#items').append(htAppend);
 
@@ -558,11 +558,13 @@ function myfun(){
      document.getElementById('total_time').value=hrs.toString()+":"+min.toString();
      for(i=1;i<=j;i++) 
         { 
+          
+
         var in1="in1"+String(i);
-        var out="out"+String(i);
+        var out="outA"+String(i);
         var in2="in2"+String(i);
         var out2="out2"+String(i);               
-        var total_time="total_time"+String(i)         
+        var total_time="total_time"+String(i);         
 
         var t1=$('#'+in1).val().toString();
         var t2=$('#'+out).val().toString();
@@ -593,7 +595,8 @@ function myfun(){
         document.getElementById(total_time).value=hrs.toString()+":"+min.toString();
 
         }
-}
+        }
+
 
     
 

@@ -1,0 +1,218 @@
+<html>
+    <head>
+        <style>
+            td{
+                height:40px;
+                margin-left: 5px;
+                margin-top: 5px;
+            }
+        </style>
+    </head>
+    <form>
+        <label style="font-size: 15px;">
+        To,<br>
+        DyCME/Tooling<br>
+        DlW/Varanasi<br>
+        </label>
+        
+        <center>
+            <b><u><label style="font-size: 20px;">Tooling and Machine Accessories Requirement</label></u></b>
+       </center>
+        <table border=1 style="margin-top: 20px;">
+            <tr>
+                <td style="height:50px">
+                    <label style="font-size: 15px;">F/TLG/006<br></label>
+                </td>
+                <td style="height:50px">
+                    <Label style="font-size: 15px;">EDITION 2<br></Label>
+                </td>
+                <td COLSPAN=2 style="height:50px">
+                   <label style="font-size: 15px;">Issue Date:- 15-12-2009<br></label> 
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="height:50px">
+                    <label align="center" style="font-size: 15px;">For the use of indenter</label>
+                </td>
+            </tr>
+            <tr>
+                <td><label style="font-size: 15px;">Letter NO:</label></td>
+                <td>
+                    <label style="font-size: 15px;"><b>{{l_no}}</b></label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">Date</label>
+                </td>
+                {% for o2 in obj2 %}
+                <td>
+                    <label style="font-size: 15px;"><b>{{o2.date}}</b></label>
+                </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="2"><label style="font-size: 15px;"><b>Description of the requirement</b></label></td>
+                <td colspan="2"><label style="font-size: 15px;"><b>Quantity</b></label></td>
+            </tr>
+            <!--<tr>
+                <td colspan="4" width=100%>
+                <table border=1 width=100%>-->
+                    {% for o in obj %}
+                    <tr>
+                        <td colspan="2"><label style="font-size: 15px;">{{o.description}}</label></td>
+                        <td colspan="2"><label style="font-size: 15px;">{{o.quantity}}</label></td>
+                    </tr>
+                    {% endfor %}
+            {% for o1 in obj2 %}   
+            <tr>
+                
+                <td colspan=4 style="margin-left: 0px;">
+                    <table border=1>
+                        <tr>
+                            <td>
+                                <label style="font-size: 15px;">New Requirement <b>{{o1.new_requirement}}</b></label>
+                            </td>
+                            <td>
+                                <label style="font-size: 15px;">Modification in existing facility <b>{{o1.modification}}</b></label>
+                            </td>
+                            <td>
+                                <label style="font-size: 15px;">Additional requirement of existing facility <b>{{o1.additional}}</b></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label style="font-size: 15px;">Existing drawing no. of Jig & fixture if any</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">{{o1.existing_drawing}}</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">
+                        Component drawing number for which required
+                    </label>
+                   
+                </td>
+                <td>
+                    <label style="font-size: 15px;">{{o1.component_drawing}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label style="font-size: 15px;">MAchine No. & Description (as applicable)</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">{{o1.machine_no}} , {{o1.machine_description}}</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">
+                        Shop & section where required 
+                    </label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">{{o1.shop_no}} , {{o1.shop_desc}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4"><label style="font-size: 15px;"> Name of Supervisior and designation to be contacted:- {{o1.name_supervisor}} , {{o1.desig_supervisor}}, {{o1.mobile_supervisor}}</label></td>
+            </tr>
+            <tr>
+                <td>
+                    <label style="font-size: 15px;">WM/AWM of the shop<br>Signature , Name & Mobile No.</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">{{o1.wsm_name}}<br>{{o1.wsm_mobile}}</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">SSE/Signature<br>Name<br>Mobile No.</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">{{o1.sse_name}},{{o1.sse_mobile}}</label>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan=4>
+                    <center><label style="font-size: 15px;">For tooling use</label></center>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <label style="font-size: 15px;">Name of designer</label>
+                </td>
+                <td colspan=2>
+                    <label style="font-size: 15px;">{{dname}}</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">Date:- {{d_date}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label style="font-size: 15px;">Name of guide</label>
+                </td>
+                <td colspan=2>
+                    <label style="font-size: 15px;">{{gname}}</label>
+                </td>
+                <td>
+                    <label style="font-size: 15px;">Date:- {{g_date}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label style="font-size: 15px;">
+                        Date of completion
+                    </label>
+                </td>
+                <td colspan="2">
+                    <label style="font-size: 15px;">
+                        {{c_date}}
+                    </label>
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                <label style="font-size: 15px;">
+                    Date of loading on Tool Room:- {{l_date}}
+                </label>
+                </td>
+                <td colspan="2">
+                    <label style="font-size: 15px;">
+                        Sr No reference of loading:- {{ref_date}}
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <label style="font-size: 15px;">Comments:- {{comment1}}</label>
+                </td>
+                <td colspan=2>
+                    <label style="font-size: 15px;">Comments:- {{comment2}}</label>
+                </td>
+            </tr>
+        </table>
+    </form>
+</html>
+
+
+
+
+
+<!--<html>
+    <body>
+        {{l_no}}
+        <table border=1>
+            {% for o in obj %}
+            <tr>
+                <td>{{o.description}}</td>
+                <td>{{o.quantity}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

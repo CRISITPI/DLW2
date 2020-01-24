@@ -192,7 +192,7 @@ urlpatterns = [
     path('ajax/m11getwono/',m11getwono,name='m11getwono'),
     path('m11view/',m11view,name='m11view'),
     path('m11report/',m11report,name='m11report'),
-    path('mg18view/', mg18view, name='mg18view'),
+    
     path('mg36view/', mg36view, name='mg36view'),
     path('ajax/mg36getempno/', mg36getempno, name='mg36getempno'),
     path('m9view/',m9view,name='m9view'),
@@ -348,10 +348,20 @@ urlpatterns = [
     path('mg47view/',mg47view,name='mg47view'),
     path('ajax/mg47getfrom_sse/',mg47getfrom_sse,name='mg47getfrom_sse'),
     path('mg47reportview/',mg47reportview,name='mg47reportview'),
-    path('ajax/ExistingNumDetails/',ExistingNumDetails,name='ExistingNumDetails')
-     
-   
-    
+    path('ajax/ExistingNumDetails/',ExistingNumDetails,name='ExistingNumDetails'),
+    path('Tools/',Tools,name='Tools'),
+    path('ajax/shop_section_tool/',shop_section_tool,name='shop_section_tool'),
+    path('ajax/tools1/',tools1,name='tools1'),
+    path('ajax/tools2/',tools2,name='tools2'),
+    path('ajax/tooling_submit/',tooling_submit,name='tooling_submit'),
+    path('toolPdf/',toolPdf,name='toolPdf'),
+    path('ajax/fetchdetails_tools/',fetchdetails_tools,name='fetchdetails_tools'),
+
+    path('mg18view/', mg18view, name='mg18view'),
+    path('ajax/mg18InfoSave',mg18InfoSave,name='mg18InfoSave'),
+    path('ajax/mg18Details',mg18Details,name='mg18Details'),
+    path('mg18GenerateReport/',mg18GenerateReport, name='mg18GenerateReport'),
+       
 
 ]
 

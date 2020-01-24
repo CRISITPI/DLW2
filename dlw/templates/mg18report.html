@@ -1,0 +1,358 @@
+{% block content %} 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<br>
+<br>
+
+<h3 align="right">MG-18</h3>
+<h2 align="center">DIESEL LOCOMOTIVE WORKS, VARANASI</h2>
+<h2 align="center">Form No.18</h2>
+<h2 align="center">Section 88, Rule  110</h2>
+<h2 align="center">REPORT OF ACCIDENT</h2>
+<br>
+<br>
+<table class="table" width=80% align="center">
+    <tr>
+        <td colspan="2">
+            To<br>
+            ................................................
+            <br>
+            ................................................
+            <br><br><br>
+        </td>
+    </tr>
+    <tr>
+
+        <td>S.No:&nbsp;&nbsp; {{s_no}}</td>
+        
+        <td>Date:&nbsp;&nbsp;{{date}}</td>
+    </tr>
+    <tr><td colspan="2">
+        <br><br>Sir,                                                                                                                                                 
+        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I hereby give notice under Section 88 of the  Factories  Act, 
+        1948 that fatal/non fatal accident occurred in this Factory to the person mentioned below :<br><br>
+        </td>
+    </tr>
+   
+    <tr>
+        <td colspan="2">1. Name of occupier(of factory) :&nbsp;&nbsp;{{occupier_name}}
+    </tr>
+    <tr>
+        <td colspan="2"><br>2. Address of occupier(of factory) :&nbsp;&nbsp;{{occupier_addr}}
+            <textarea id="occupier_addr" type ="text" name="occupieradrr" maxlength="297" required></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>3. Employer's Code No. :&nbsp;&nbsp;{{empcode_Id}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>4.Nature of Industry :&nbsp;&nbsp;{{industry_id}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>5. Full address of the place where accident or dangerous occurence happened :&nbsp;&nbsp;{{address_acc}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>6. Branch or Department and exact place, where accident or dangerous occurence happened :&nbsp;
+            &nbsp;{{branch_Id}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>7. Injured person's full name :&nbsp;&nbsp;{{injured_name}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>8. Injured person's full address :&nbsp;&nbsp;{{injured_addr}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>9. Insurance No :&nbsp;&nbsp;{{insur_no}}</td>
+    </tr>
+
+    <tr>
+        <td colspan="2"><br>10. (a) Gender :&nbsp;&nbsp;{{gender1}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (b) Age last birthday(In years):&nbsp;&nbsp;{{agebirth_Id}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>(c) Occupation of injured person :&nbsp;&nbsp;{{occupation_id}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>11.  Date and hours of accident or dangerous occurence :&nbsp;&nbsp;{{date_accident}}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{time_accident}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>12. Hours at which he started work on day of occurence :&nbsp;&nbsp;{{time2}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>13. (a) Cause or nature of accident or dangerous occurence :&nbsp;&nbsp;{{cause_Id}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b) If caused by machinery :&nbsp;&nbsp;{{machine_name}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(i) Give name of the machine and part causing the accident and :&nbsp;&nbsp;{{movmachpwr_Id}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ii) State whether it was moved by mechanical power at the time :&nbsp;&nbsp;{{injdoin_Id}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(c) State exactly what injured person was doing at the time :&nbsp;&nbsp;{{injury_nature}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>14. Nature and extent of injuries(e.g. fatal,loss of finger,fracture of leg,scaled,scratch followed 
+            by sepsis) :&nbsp;&nbsp;{{injury_nature}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><b><i><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Form No. 18-Substituted,vide Labour (B) Department Notiication 
+            No. 2179 (LL) XXXVI-B-498 (LL)-52,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dt. Oct 13, 1953.
+        </i></b>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>15. Number of days from which the injured person is likely to be off work :&nbsp;&nbsp;{{offwrk_Id}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>16. Name of the doctor, dispensary or hospital from which the injured person recieved or is recieving
+             treatment:&nbsp;&nbsp;{{doct_name}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>17. Name of the person who saw the accident and can give important evidence:&nbsp;&nbsp;{{evident_name}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>18. In your opinion,was the accident directly attributable to:</td>
+    </tr>
+    <tr>
+        <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(i) the injured person having been at the thereof under the influnce of drink 
+            or drug: &nbsp;&nbsp;{{c1}}
+            <br></td>
+    </tr>
+    <tr>
+        <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ii) the wilful disobedience of the injured person to an order expressly given to a rule expressly framed for 
+            a purpose of securing the safety of employee : &nbsp;&nbsp;{{c2}}<br></td>
+    </tr>
+    <tr>
+        <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(iii) the wilful removal or disregard by the injured person of any safety guard or other devices which he
+             knew to have been providd for the purpose of securing the safety of employees : &nbsp;&nbsp;{{c3}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>19. Describe briefly how accident occured :&nbsp;&nbsp;{{howaccident}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>20. Location of injury(right leg,left hand or left eye etc.) :&nbsp;&nbsp;{{injury_loc}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>21. (i) If the accident is not fatal,state whether the injured person has returned to work : 
+            &nbsp;&nbsp;{{injretrn_Id}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>(ii) If so,date and hour of return to work :&nbsp;&nbsp;{{datertn_Id}}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{timertn_Id}}      
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>22. (i) Has the injured person died ? &nbsp;&nbsp;{{yn1_id}}
+            &nbsp;&nbsp;&nbsp;&nbsp;(ii) If so,Date of death &nbsp;&nbsp;{{date_death}} </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>(ii) If so,Date of death &nbsp;&nbsp;{{date_death}} </td> 
+    </tr>
+    <tr>
+        <td colspan="2"><br>23. Name of the State Insurance Local office to which the injured person is attached :
+            &nbsp;&nbsp;{{Insur_lo}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>24. Name of the State Insurance Dispensary to which the injured person is attached :
+            &nbsp;&nbsp;{{Insur_dis}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>I certify that  the  best of my knowledge and belief, the above particulars are correct in every respect.</b></td>
+    </tr>
+    <tr>
+        <td colspan="2" align=right ><br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <b>..........................................................</b></td>
+    </tr>
+    <tr>
+        <td colspan="2" align=right >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Signature of Occupier or Manager</b></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <br><br><br>Date of dispatch of report......................
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><b><br><br><br><br>Copy to:-</br></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.The Manager and .......................................................................................................................Local Office,
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Employee State Insurance Corporation...............................................................................................................................
+
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.The Medical Officer.......................................................................state,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Insurance Dispensary...................................................................................
+            <br>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <br><br>Notes:
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>1. To 'be completed in legible handwriting or preferably typewritten and the information given should
+            not contain any abbreviations which-are not commonly-used.
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>2. Extra information requlred. in columns I-A.5-A. and 14 to 20 shall be filled in only by those
+            factories which are covered under the Employees State Insurance Act. 1948 and shall be submitted
+            to proper authorities.<br>
+        </td>
+    </tr>
+
+</table>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h6 align="center"><b>This space to be completed <br> by Inspector of Factories</b></h6>
+
+<br>
+<br>
+<br>
+<table class="table" width=80% align="center">
+    <tr>
+        <td>District :&nbsp;&nbsp;{{distrct_Id}}<br></td>    
+    </tr>
+    <tr>
+        <td>Date of Receipt :&nbsp;&nbsp;{{receipt_date}}<br></td>
+    </tr>
+    <tr>
+        <td>Accident No. :&nbsp;&nbsp;{{accident_no}}<br></td>      
+    </tr>
+    <tr>
+        <td>Industry No. :&nbsp;&nbsp;{{industry_no}}<br></td>   
+    </tr>
+    <tr>
+        <td>Causation No. :&nbsp;&nbsp;{{causno}}<br></td>     
+    </tr>
+    <tr>
+        <td>Gender :&nbsp;&nbsp;{{gender2}}<br></td>
+        
+    </tr>
+    <tr>
+        <td>other particulars,e.g.fatal,leg injury,arm injury etc. :&nbsp;&nbsp;{{otherpart}}<br></td>
+    </tr>
+    <tr>
+        <td>Date of Investigation :&nbsp;&nbsp;{{invest_date}}<br></td>
+    </tr>
+    <tr>
+        <td>Result of Investigation :&nbsp;&nbsp;{{invest_result}}<br><br></td>
+    </tr>
+</table>
+<table class="table" width=80% align="center">
+    <tr>
+        <td><br>No. DLW-M/109</td>
+        <td><br>Dated.</td>
+    </tr>
+</table>
+<table class="table" width=80% align="center">
+    <tr>
+        <td>
+            <br><br><br><br><br>Forwarded for disposal to :
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. The Chief Inspector of Eactories, Uttar Pradesh, KANPUR.<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2: The Inspector of Factories, Uttar Pradesh,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5, Mayo Road", ALLAHABAD.
+        </td>
+    </tr>
+    <tr>
+        <td align=right><br><br>....................................................
+        <br>General Manager
+        <br>Diesel Locomotive Works
+        <br>VARANASI, (U: P.)
+        </td>
+    </tr>
+    <tr>
+        <td><br><br><br><br>Copy To;</td>
+    </tr>
+    <tr>
+        <td>
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            * 1. The District Magistrate. Varanasi.
+            <br>
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 2. The Addl, District Magistrate (Executive), Varanasi '
+            <br>
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 3. The Officer Incharge, Police Station...................................................
+            <br>    
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. C.M.E.,/D.L.W.,/Varanasi.
+            <br>
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 5.Time Clerk/H.C.- Est. Branch/Leave sec., D.L.W.,Varanasi
+            <br> 
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            * Copy to be sent to 1,2 & 3 only in case of accident which'is fatal or of such serious nature that it
+            likely to prove fatal.<br><br><br>               
+        </td>
+    </tr> 
+    <tr>
+        <td align=right>...............................
+            <br>Supdt.Mech.(W)
+        </td>
+    </tr>
+</table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<h2 align="center"><b><br>FOR INTER OFFICE USE ONLY</b></h2>
+<br>
+<br>
+<br>
+<table class="table" width=80% align="center">
+    <tr>
+        <td>
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subject: Hospital Leave
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The staff whose particulars ae given overleaf was taken in sick list by Assistant Medical Officer,
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diesel Locomotive Works,Varanasi.As the injury was not/due to his negligence,he is granted hospital 
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leave on full/half pay with effect from.................................................
+                    <br><br><br><br><br>
+        </td>
+    </tr>   
+    <tr>
+        <td align=right>...............................
+            <br>Supdt.Mech.(W)
+        </td>
+    </tr>
+        
+</table>          
+{% endblock content %}
