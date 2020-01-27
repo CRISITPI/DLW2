@@ -235,7 +235,7 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 
 </table>
 <br><br>
-<table border="0" align="center">
+<table border="1" align="center">
     <tr>
         <th>OVERTIME DATA FOR LAST WEEK/पिछले सप्ताह के ओवर टाइम के आकड़े</th>
         <th><center>HOURS/घंटे</center></th>
@@ -295,10 +295,10 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 </div>
 <center>
 <input  type="button" id="add" value="Add More Row" style="width: 150px;"/>
-<input type="button" onclick="myfun()" value="Calculate Total Time">
+<!-- <input type="button" onclick="myfun()" value="Calculate Total Time"> -->
 </center>
 <br>
-<table border="0" align="center">
+<table border="1" align="center">
 <tr>
     <th></th>
     <th>DAY</th>
@@ -507,7 +507,7 @@ $("#add").click(function(e){
         var out2="out2"+String(j);               
         var total_time="total_time"+String(j);            
 
-        var htAppend='<div><table id="customers" border="0" align="center"><tr>'+'<td ><input type="text" value="00:00" id='+in1+' name='+in1+'  class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+date+' name='+date+' autocomplete="off" class="odatec, form-control ll"></td>'+'<td><input type="text" value="00:00" id='+out+' name='+out+' class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+outdate+' name='+outdate+' autocomplete="off" class="odatec, form-control ll"  ></td>'+'<td ><input type="text" id='+in2+' name='+in2+' value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+out2+' name='+out2+' onblur="myfun()" value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+total_time+' name='+total_time+' class="form-control" readonly></td>';
+        var htAppend='<div><table id="customers" border="1" align="center"><tr>'+'<td ><input type="text" value="00:00" id='+in1+' name='+in1+'  class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+date+' name='+date+' autocomplete="off" class="odatec, form-control ll"></td>'+'<td><input type="text" value="00:00" id='+out+' name='+out+' class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+outdate+' name='+outdate+' autocomplete="off" class="odatec, form-control ll"  ></td>'+'<td ><input type="text" id='+in2+' name='+in2+' value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+out2+' name='+out2+' onblur="myfun()" value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+total_time+' name='+total_time+' class="form-control" readonly></td>';
         htAppend=htAppend+'</tr></table>'+'</div>';
         $('#items').append(htAppend);
 
