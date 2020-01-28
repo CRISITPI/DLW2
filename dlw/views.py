@@ -48,15 +48,11 @@ from django.db.models import Q
 from .utils import render_to_pdf 
 from django.db.models.functions import Substr
 from django.db.models import Subquery,Sum,Count
-
-
-
 from .utils import render_to_pdf
 from django.db.models import Sum,Subquery
 from django.utils import formats
 from django.utils.dateformat import DateFormat
-import datetime
-from django.db.models import Count
+
 
 def GeneratePdf(request, *args, **kwargs):
     m13_no = request.GET.get('m13_no')
@@ -21271,10 +21267,14 @@ def btnViewCPM_Click(request):
     ptdes[0].update({'P1Tra':p1tra})
     ptdes[0].update({'G2Tra':g2tra})
     ptdes[0].update({'P2Tra':p2tra}) 
+    today=date.today()
     context={
-        'ptdes':ptdes,  
+        'ptdes':ptdes,
+        'today': today,
+        'EpcAll':EpcAll,
+        'PtcAll':PtcAll,
     }
-    print("hiiiiiiiiiiii")
+    
 
     pdf=render_to_pdf('epcpmreport.html',context)
     return HttpResponse(pdf,content_type='application/pdf')

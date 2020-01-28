@@ -372,7 +372,7 @@ $("#chkAllEpc").on("change", function () {
 
 
 function Cpmfunc(){
-    alert($('#lblDt').val());
+  
     window.location.href="{% url 'btnViewCPM_Click' %}"+"?lblDt="+$('#lblDt').val()+"&dtEpc="+$('#lbldtEpc').val()+"&dtPtc="+$('#lbldtPtc').val()+"&EpcAll="+$('#lblEpcAll').val()+"&PtcAll="+$('#lblPtcAll').val();
     
 }
