@@ -1878,6 +1878,7 @@ class Nstr(models.Model):
     slno = models.CharField(db_column='SLNO', max_length=4, blank=True, null=True)  # Field name made lowercase.
     del_fl = models.CharField(db_column='DEL_FL', max_length=1, blank=True, null=True)  # Field name made lowercase.
     epc_old = models.CharField(db_column='EPC_OLD', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    id_pk=models.AutoField(primary_key=True)
 
     class Meta:
         managed = False
