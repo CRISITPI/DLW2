@@ -7535,26 +7535,15 @@ def m26getwono(request):
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
 def m26getStaffCatWorkHrs(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         w_no     = request.GET.get('wno')
         date     = request.GET.get('date')
-        print("date",date)
-
         up_dt=[]       
         update_date = M5SHEMP.objects.filter(shopsec=shop_sec, date__isnull=False, updt_date__isnull=False).values('updt_date').order_by('-updt_date')
-        print("update_date : ",update_date[0])
         for i in update_date:
-            up_dt.append(i['updt_date'])
-        print("up_dt : ",up_dt[0])    
-    #    # up_dt.sort(reverse=True)
-    #     up_dt.sort()
-    #     print("tests : ",up_dt) 
-
-          
-
+            up_dt.append(i['updt_date'])    
         if shop_sec and w_no and date:  
             wono = list(M5SHEMP.objects.filter(shopsec=shop_sec,date__contains=date, updt_date__contains=up_dt[0], staff_no__isnull=False, total_time_taken__isnull=False,date__isnull=False).values('staff_no','cat','total_time_taken').distinct())            
             emp_detail= emp_details.objects.filter(card_details='M26').values('email_id','mobileno')   
@@ -7562,12 +7551,45 @@ def m26getStaffCatWorkHrs(request):
             for i in emp_detail: 
                 mob_temp.append(i['mobileno'])
             for j in range(len(mob_temp)):
-                print("mob_temp : ",mob_temp[j])
                 smsM18(mob_temp[j],"Dear Employee TimeSheet of indirect labour(M26) card has been generated.")     
         else:
             wono = "NO"
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+# def m26getStaffCatWorkHrs(request):
+#     if request.method == "GET" and request.is_ajax():
+#         shop_sec = request.GET.get('shop_sec')
+#         w_no     = request.GET.get('wno')
+#         date     = request.GET.get('date')
+#         print("date",date)
+
+#         up_dt=[]       
+#         update_date = M5SHEMP.objects.filter(shopsec=shop_sec, date__isnull=False, updt_date__isnull=False).values('updt_date').order_by('-updt_date')
+#         print("update_date : ",update_date[0])
+#         for i in update_date:
+#             up_dt.append(i['updt_date'])
+#         print("up_dt : ",up_dt[0])    
+#     #    # up_dt.sort(reverse=True)
+#     #     up_dt.sort()
+#     #     print("tests : ",up_dt) 
+
+          
+
+#         if shop_sec and w_no and date:  
+#             wono = list(M5SHEMP.objects.filter(shopsec=shop_sec,date__contains=date, updt_date__contains=up_dt[0], staff_no__isnull=False, total_time_taken__isnull=False,date__isnull=False).values('staff_no','cat','total_time_taken').distinct())            
+#             emp_detail= emp_details.objects.filter(card_details='M26').values('email_id','mobileno')   
+#             mob_temp=[]            
+#             for i in emp_detail: 
+#                 mob_temp.append(i['mobileno'])
+#             for j in range(len(mob_temp)):
+#                 print("mob_temp : ",mob_temp[j])
+#                 smsM18(mob_temp[j],"Dear Employee TimeSheet of indirect labour(M26) card has been generated.")     
+#         else:
+#             wono = "NO"
+#         return JsonResponse(wono, safe = False)
+#     return JsonResponse({"success":False}, status=400)
 
 
 
@@ -8322,30 +8344,12 @@ def m13getno(request):
         return JsonResponse(pp, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
 def Childnode(request,part,res,code):
-    arr=[]
-    obj = Nstr.objects.filter(pp_part=part).filter(cp_part__isnull=False,ptc=code,l_to='9999').values('cp_part').distinct()
-    for i in range(0,len(obj)):
-        arr.append(obj[i]['cp_part'])
-    for i in arr:   
-        obj1=Nstr.objects.filter(pp_part=i,cp_part__isnull=False,ptc=code,l_to='9999').values('cp_part').distinct() 
-      
-        if len(obj1):
-            for i in range(len(obj1)):
-                if obj1[i]['cp_part'] not in arr:
-                    arr.append(obj1[i]['cp_part'])
-    return arr
-
-
-    
-
-
-
-
+    arr1=[]
+    for i in Nstr.objects.raw('WITH RECURSIVE temp AS (SELECT id_pk,"CP_PART" FROM public."NSTR" WHERE "PP_PART"=%s and "CP_PART" is not null and "PTC"=%s and "L_TO"=%s UNION SELECT e.id_pk,e."CP_PART" FROM public."NSTR" e INNER JOIN temp t ON t."CP_PART" = e."PP_PART" where e."CP_PART" is not null and e."PTC"=%s and e."L_TO"=%s ) select * from temp;',[part,code,'9999',code,'9999']):
+        if i.cp_part not in arr1:
+            arr1.append(i.cp_part)
+    return arr1
 
 @login_required
 @role_required(urlpass='/CardGeneration/')
@@ -8379,7 +8383,6 @@ def CardGeneration(request):
                 second = []
                 third = []
                 res = Childnode(request,asmno,res,'M')
-                
                 ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
                 ades=ades[0]['des']
                 #val = list(Oprn.objects.filter(part_no__in=res).values('part_no','des','shop_sec','opn').distinct('part_no'))
@@ -8397,10 +8400,7 @@ def CardGeneration(request):
                       'asl':asmno,
                       'batch':batch,
                       'val':val,
-                      'ades':ades,
-                      
-                      
-
+                      'ades':ades, 
                    }
                 
                 pdf = render_to_pdf('cardpdf.html', data)
