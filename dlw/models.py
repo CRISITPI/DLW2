@@ -4956,3 +4956,8 @@ class MG18(models.Model):
     investigation_date = models.CharField(max_length=20,null=True) 
     investigation_result = models.CharField(max_length=500,null=True) 
     last_modified = models.DateTimeField(null=True)
+
+class t_tables(models.Model):
+    pp_part = models.CharField(db_column='PP_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    epc = models.CharField(db_column='QTY', max_length=2, blank=True, null=True)
+    qty = models.DecimalField(db_column='EPC', max_digits=9, decimal_places=3, blank=True, null=True)  # Field name made lowercase.

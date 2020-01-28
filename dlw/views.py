@@ -36,8 +36,6 @@ from random import randint
 import datetime
 import smtplib 
 import requests
-
-
 # Create your views here.
 #
 #
@@ -46,11 +44,19 @@ import requests
 #
 #
 #
-
 from django.db.models import Q
 from .utils import render_to_pdf 
 from django.db.models.functions import Substr
-from django.db.models import Subquery
+from django.db.models import Subquery,Sum,Count
+
+
+
+from .utils import render_to_pdf
+from django.db.models import Sum,Subquery
+from django.utils import formats
+from django.utils.dateformat import DateFormat
+import datetime
+from django.db.models import Count
 
 def GeneratePdf(request, *args, **kwargs):
     m13_no = request.GET.get('m13_no')
@@ -8336,7 +8342,6 @@ def Childnode(request,part,res,code):
             for i in range(len(obj1)):
                 if obj1[i]['cp_part'] not in arr:
                     arr.append(obj1[i]['cp_part'])
-    print(arr)
     return arr
 
 
@@ -8377,56 +8382,58 @@ def CardGeneration(request):
                 first = []
                 second = []
                 third = []
-                #obj1 = Childnode(request,asmno,res,'M')
+                res = Childnode(request,asmno,res,'M')
+                
+                ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+                ades=ades[0]['des']
+                #val = list(Oprn.objects.filter(part_no__in=res).values('part_no','des','shop_sec','opn').distinct('part_no'))
+                    #obj1[i].update({'shop_sec':val[0]['shop_sec'],'des':val[0]['des'],'opn':val[0]['opn']})
+                #for i in range(0,len(res)):
+                val=M2Doc.objects.filter(part_no__in=res,batch_no=batch,assly_no=asmno).values('part_no','qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                    #msb=list(Batch.objects.filter(part_no=res[i]).values('mark','status','brn_no'))
+                    
+                    #res[i].update({'mark':msb[0]['mark'],'status':msb[0]['status'],'brn_no':msb[0]['brn_no']})
+                print(res) 
+                print(len(val))   
+                print(val)
                 data = {
-                      'm14_date':"m14_date",
-                        'rforhw':"rforhw",
-                   'm14_no':"m14_no",
-                    'pm_no':"pm_no",
-                     'unit':"unit",
-                     'quantity':"quantity",
-                    'part_desc':"part_desc",
-                 'part_no':"part_no",
-                          'assly_desc':"assly_desc",
-                  'assly_no':"assly_no",
-                     'loco_to':"loco_to",
-                  'loco_from':"loco_from",
-                    'brn_no':"brn_no",
-                      'epc':"epc",
-                   'batch_no':"batch_no",
-                'sl_no':"sl_no",
-                            'char_wo':"char_wo",
-                  'm13_date':"m13_date",
-                        'm13_no':"m13_no",    
+                      'card':card,
+                      'asl':asmno,
+                      'batch':batch,
+                      'val':val,
+                      'ades':ades,
+                      
+                      
+
                    }
                 
-                pdf = render_to_pdf('m14genpdf1.html', data)
+                pdf = render_to_pdf('cardpdf.html', data)
                 return HttpResponse(pdf, content_type='application/pdf')
-                #getShopSecDetails = list(Oprn.objects.filter(part_no=asmno).values('shop_sec').distinct())
-                #print(getShopSecDetails)
-                #for i in range(len(getShopSecDetails)):            
-                    #first.append(getShopSecDetails[i]['shop_sec'])  
-                #print(first)
-                #getNstrDetails = list(Nstr.objects.filter(pp_part=asmno,ptc='M',l_to='9999').values('cp_part','ptc','qty','epc','del_fl','epc_old').exclude(pp_part__isnull=True).distinct())
-                #for i in range(len(getNstrDetails)):            
-                    #second.append(getNstrDetails[i]['cp_part'],getNstrDetails[i]['ptc'],getNstrDetails[i]['qty'],getNstrDetails[i]['epc'],getNstrDetails[i]['del_fl'],getNstrDetails[i]['epc_old'],)  
+               
+                # print(getShopSecDetails)
+                # for i in range(len(getShopSecDetails)):            
+                #     first.append(getShopSecDetails[i]['shop_sec'])  
+                # print(first)
+                # getNstrDetails = list(Nstr.objects.filter(pp_part=asmno,ptc='M',l_to='9999').values('cp_part','ptc','qty','epc','del_fl','epc_old').exclude(pp_part__isnull=True).distinct())
+                # for i in range(len(getNstrDetails)):            
+                #     second.append(getNstrDetails[i]['cp_part'],getNstrDetails[i]['ptc'],getNstrDetails[i]['qty'],getNstrDetails[i]['epc'],getNstrDetails[i]['del_fl'],getNstrDetails[i]['epc_old'],)  
 
-                #getBatchDetails = list(Batch.objects.filter(part_no=asmno,loco_to='9999').values('mark','status','brn_no'))
-                #for i in range(len(getBatchDetails)):            
-                    #third.append(getBatchDetails[i]['mark'],getBatchDetails[i]['status'],getBatchDetails[i]['brn_no'])  
+                # getBatchDetails = list(Batch.objects.filter(part_no=asmno,loco_to='9999').values('mark','status','brn_no'))
+                # for i in range(len(getBatchDetails)):            
+                #     third.append(getBatchDetails[i]['mark'],getBatchDetails[i]['status'],getBatchDetails[i]['brn_no'])  
 
 
-                #for i in range(len(obj1)):
+                # for i in range(len(obj1)):
                     
-                    # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
-                    # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
-                    # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
-                    #  obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
-                    #  if len(obj2):
-                     #   print("len1----",len(obj2))  
-                        #print("tset ----------",len(obj2))
-                    #print(i)
-                    #M2Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
+                #     #obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
+                #     obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
+                #     epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
+                #     obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                #      #if len(obj2):
+                #        #print("len1----",len(obj2))  
+                #         #print("tset ----------",len(obj2))
+                #     #print(i)
+                #     #M2Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
 
                 # try:
                 #     for j in range(len(obj1)):
@@ -20865,3 +20872,413 @@ def fetchdetails_tools(request):
         print(len(l))
         return JsonResponse(l,safe=False)
     return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(urlpass='/rmqry/')
+def rmqry(request):  
+    return render(request,"rmqry.html")  
+
+def rm_part_no_checkpartno(request): # for validations in entering part no in first field in UI
+    
+    if request.method == "GET" and request.is_ajax():
+        part_no = request.GET.get('rm_part_no')     
+        
+        print("pno",part_no)
+        rm_part_no=list(Part.objects.filter(partno= part_no).values('des').distinct())
+        print(rm_part_no)
+        rm_nstr=list(Nstr.objects.filter(ptc ='R').values('cp_part').distinct() | Nstr.objects.filter(ptc ='Q').values('cp_part').distinct()) 
+       # print("rmstr is",rm_nstr)  
+        print(len(rm_nstr)) 
+      
+        flag=0
+        print(rm_part_no)
+        if(len(rm_part_no)==0):
+            rm_part_no.insert(0,'N')
+            
+        else:
+            rm_part_no.insert(0,'P')
+            
+        if(len(rm_nstr)==0):
+            rm_nstr.insert(0,'X')
+        else:
+            rm_nstr.insert(0, 'W')
+        rm_part_no.insert(2, rm_nstr)
+        
+        #return JsonResponse(rm_nstr,safe= False)
+        return JsonResponse(rm_part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def rmqry_proceed(request):  # a function for process button click
+    print('hii')
+    if request.method == "GET" and request.is_ajax():
+       # submitted = False
+        part_no =request.GET.get('proceed')    
+        proceed=list(Part.objects.filter(partno=part_no).values('shop_ut').distinct())
+        print("proceed is",proceed)
+        name=proceed[0]
+        print(name)
+        val=name.get('shop_ut')
+        print("----",val)
+       
+        proceed1=list(Code.objects.filter(code=val).values('alpha_1').distinct() & Code.objects.filter(cd_type='51').values('alpha_1').distinct())
+        print("updated proceed is  ",proceed1)
+        return JsonResponse(proceed,safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+ 
+def rmqry_rpt(request):
+            # print("aaaaaa")
+            part_no = request.GET.get('rm_part_no')
+            des= request.GET.get('des')   
+            epcc=request.GET.get('epc')
+
+
+            tem_list=[]
+            tem_list_des=[]
+            tem_list_drgno=[]
+            tem_list_shop_ut=[]
+            pp_part_from_t_table=[]
+            qty_from_t_table=[]
+            e_tem_list=[]
+            e_tem_list_des=[]
+            e_tem_list_drgno=[]
+            e_tem_list_shop_ut=[]
+            e_pp_part_from_t_table=[]
+            e_qty_from_t_table=[]
+            unit_list=[]
+            
+            ls=[]
+            
+            tt_tables=list(Nstr.objects.filter( ~Q(del_fl ='Y'),cp_part=part_no, l_to='9999').values('pp_part','epc','qty' ).order_by('epc','pp_part').distinct())
+            for i in range(len(tt_tables)):
+                val1=tt_tables[i].get('pp_part')
+                val2=tt_tables[i].get('epc')
+                val3=tt_tables[i].get('qty')
+                t_tables.objects.create(pp_part=val1,epc=val2,qty=val3) 
+            #print("nstr table--------------",tt_tables)
+            # pp_part_from_t_table=[]
+            # qty_from_t_table=[]
+            for z in range(len(tt_tables)):
+                pp_part_from_t_table.append(tt_tables[z].get('pp_part'))
+                
+                length_pp_part_ttable=len(pp_part_from_t_table)
+            print("length",length_pp_part_ttable)    
+           
+            for y in range(len(tt_tables)):
+                qty_from_t_table.append(tt_tables[y].get('qty') )
+                len_qty_from_t_table= len(qty_from_t_table)
+            print("qty_from_t_table-----------",qty_from_t_table)       
+            part_table = list(Part.objects.values('partno').distinct())
+  
+            for k in range(len(pp_part_from_t_table)):
+                pp_part_val=pp_part_from_t_table[k]
+                final1=list(Part.objects.filter(partno=pp_part_val).values('ptc','des','shop_ut','drgno' ))
+            print("final1",final1)
+            
+            for i in range(len(final1)):
+                var=final1[i]
+                tem=var.get('ptc')
+                tem_list.append(tem)
+            print("temmm------",tem_list) 
+            len_tem_list=len(tem_list)
+            #print("length of tem_list is-----",len_tem_list)
+
+            for a in range(len(final1)):
+                var11=final1[a]
+                tem11=var11.get('des')
+                tem_list_des.append(tem11)
+            #print("temmm------",tem_list_des) 
+            len_tem_list_des=len(tem_list_des)
+            print("len_tem_list_des--------",len_tem_list_des)
+
+            for s in range(len(final1)):
+                var12=final1[s]
+                tem12=var12.get('drgno')
+                tem_list_drgno.append(tem12)
+            print("temmm------",tem_list_drgno) 
+            len_tem_list_drgno=len(tem_list_drgno)
+
+            for ss in range(len(final1)):
+                var13=final1[ss]
+                tem13=var13.get('shop_ut')
+                tem_list_shop_ut.append(tem13)
+            #print("temmm------",tem_list_shop_ut) 
+            len_tem_list_shop_ut=len(tem_list_shop_ut)       
+            # print(count(ptt))
+            for ss in range(len(final1)):
+                unit=list(Code.objects.filter(code=tem_list_shop_ut[i]).values('alpha_1').distinct() & Code.objects.filter(cd_type='51').values('alpha_1').distinct())        
+                for i in range(len(unit)):
+                    f=unit[i].get('alpha_1')
+                    print(f)
+
+                # unit_var=unit[].get('alpha_1')
+                unit_list.append(f)
+            print("shop unit-------",unit_list)
+                 
+            epc=list(Nstr.objects.filter( ~Q(del_fl ='Y'),cp_part=part_no,l_to='9999').values('epc').distinct())
+            ct=len(epc)
+        # #     #print("epccc",epc)
+            #ls=[]
+            for i in range(len(epc)):
+                val=epc[i].get('epc')
+                print("epc----",val)
+                ls.append(val)  
+            
+           
+            # for q in range(len_tem_list_des):
+            #     qty_from_cpm=list(Cpm.objects.filter(part_no=pp_part_from_t_table[i],epc=ls[i]).values('qty'))
+            # print("qty from cpm-------------",qty_from_cpm)  
+
+            # for w in range(len_tem_list_des):
+            #     if qty_from_cpm !=0:
+            #         ppq_loco=float(qty_from_cpm[i])
+
+            context={
+                'rm_part_no':part_no,
+                'des': des,
+                'epc':ls,
+                'count':len_tem_list_des,
+                'pp_part_from_t_table': pp_part_from_t_table,
+                'length_pp_part_ttable': length_pp_part_ttable,
+                'tem_list': tem_list,
+                'len_tem_list': len_tem_list,
+                'tem_list_des': tem_list_des,
+                'len_tem_list_des': len_tem_list_des,
+                'tem_list_drgno':tem_list_drgno,
+                'len_tem_list_drgno': len_tem_list_drgno,
+                'tem_list_shop_ut': tem_list_shop_ut,
+                'len_tem_list_shop_ut' : len_tem_list_shop_ut,
+                'qty_from_t_table': qty_from_t_table,
+                'len_qty_from_t_table': len_qty_from_t_table,
+                'unit_list':unit_list,
+            } 
+            return render(request,"rmqry_rpt.html",context) 
+
+@login_required
+@role_required(urlpass='/EpCpm/')
+def EpCpm(request):
+    my_date=Cpm.objects.all().values('updt_dt').distinct()
+    my=[]
+    for i in my_date:
+        my.append(i['updt_dt'])
+    my.sort(reverse= True)
+    
+    context={
+        'lblDt': my[0],
+    }
+
+    return render(request,'EpCpm.html',context)
+      
+
+def unbound(request):
+    if request.method == "GET" and request.is_ajax():
+        Unbound = Code.objects.filter(cd_type='11').values('code').distinct()
+        un=[]
+        for j in Unbound:
+            un.append(j['code'])
+        un.sort()
+        data =  {
+            'un': un
+        }
+        return JsonResponse(un, safe=False)
+    return JsonResponse({"success": False}, status=400)
+
+
+
+def btnViewCPM_Click(request):
+    lblDt= request.GET.get('lblDt')
+    dtEpc= request.GET.get('dtEpc')
+    dtPtc= request.GET.get('dtPtc')
+    EpcAll= request.GET.get('EpcAll')
+    PtcAll= request.GET.get('PtcAll')
+    
+    
+    p=Cpm.objects.values_list('part_no')
+    
+
+    monthTemp=lblDt.split(' ')[0]
+    dateTemp=lblDt.split(' ')[1]
+    final1=monthTemp[0:3]+' '+dateTemp.split(',')[0]+' '+lblDt.split(' ')[2]
+    date_time_str=final1
+    date_time_obj=datetime.datetime.strptime(date_time_str,'%b %d %Y')
+    date_1=date_time_obj.date()
+   
+    
+    len1=len(dtEpc)
+    len2=len(dtPtc)
+
+    
+    e=[]
+    for k in range(0,len1):
+        if(dtEpc[k]==" " or dtEpc[k]==","):
+            pass
+        else:
+            e.append(dtEpc[k])
+
+    pt=[]
+    for k in range(0,len2):
+        if(dtPtc[k]==","):
+            pass
+        else:
+            pt.append(dtPtc[k])
+            
+
+    
+    elen=len(e)
+    plen=len(pt)
+    p=[]
+
+    for m in range(0,elen,2):
+        epc=str(e[m])+str(e[m+1])
+
+        for j in range(0,plen):
+
+            if(EpcAll=='B' and PtcAll=='B'):
+                c=Cpm.objects.filter(epc=epc,ptc=pt[j],qty__gt=0).values('epc','shop_ut','part_no','ptc').order_by('part_no').distinct()
+                p.extend(c)
+            
+            else:
+                c=Cpm.objects.filter(epc=epc,ptc=pt[j]).values('epc','shop_ut','part_no','ptc').order_by('part_no').distinct()
+
+    
+    seen = set()
+    new_l = []
+    for d in p:
+        t = tuple(d.items())
+        if t not in seen:
+            seen.add(t)
+            new_l.append(d)
+    
+
+    ptdes=[]
+    epc = [] 
+    ptc = [] 
+    shop_ut = [] 
+    part_no=[]
+    part=[]
+    
+    for x in p:
+        epc.append(x['epc'])
+        shop_ut.append(x['shop_ut'])
+        if x['part_no'] not in part:
+            part.append(x['part_no'])
+        ptc.append(x['ptc'])
+    for x in part:    
+        ptdes.append({'part_no':x})
+    
+        
+
+    for i in range(0,len(ptdes)):
+        a =list(Part.objects.filter(partno=ptdes[i]['part_no']).values('des'))
+        ptdes[i].update({'sl':(i+1)})
+        ptdes[i].update({'ptc':ptc[i]})   
+        ptdes[i].update({'des':a[0]['des']})
+        ptdes[i].update({'epc':epc[i]})
+        ptdes[i].update({'part_no':ptdes[i]['part_no']})
+        ptdes[i].update({'shop_ut':shop_ut[i]})
+
+    
+    
+
+    M2Eng =Cpm.objects.filter(epc='01',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    S6Eng = Cpm.objects.filter(epc='02',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    M2cEng = Cpm.objects.filter(epc='1F',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    G2Eng = Cpm.objects.filter(epc='1A',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    P2Eng = Cpm.objects.filter(epc='1C',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    M2Loc = Cpm.objects.filter(epc='03',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    M4Loc = Cpm.objects.filter(epc='04',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    M2CaLoc = Cpm.objects.filter(epc='1E',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    S6Loc = Cpm.objects.filter(epc='08',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    G2ALoc = Cpm.objects.filter(epc='1N',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    P2ALoc = Cpm.objects.filter(epc='1R',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    M2Tra = Cpm.objects.filter(epc='1G',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    M4Tra = Cpm.objects.filter(epc='1H',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    S6Tra = Cpm.objects.filter(epc='1J',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    P1Tra = Cpm.objects.filter(epc='1K',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    G2Tra = Cpm.objects.filter(epc='1L',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+    P2Tra = Cpm.objects.filter(epc='1M',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
+
+
+
+
+    for value1 in M2Eng.values():
+        m2eng=str(value1)
+
+    for value2 in S6Eng.values():
+        s6eng=str(value2)
+
+    for value3 in M2cEng.values():
+        m2ceng=str(value3)
+
+    for value4 in G2Eng.values():
+        g2eng=str(value4)
+    
+    for value5 in P2Eng.values():
+        p2eng=str(value5)
+
+    for value6 in M2Loc.values():
+        m2loc=str(value6)
+
+    for value7 in M4Loc.values():
+        m4loc=str(value7)
+
+    for value8 in M2CaLoc.values():
+        m2caloc=str(value8)
+    
+    for value9 in S6Loc.values():
+        s6loc=str(value9)
+    
+    for value10 in G2ALoc.values():
+        g2aloc=str(value10)
+
+    for value11 in P2ALoc.values():
+        p2aloc=str(value11)
+
+    for value12 in M2Tra.values():
+        m2tra=str(value12)
+    
+    for value13 in M4Tra.values():
+        m4tra=str(value13)
+
+    for value14 in S6Tra.values():
+        s6tra=str(value14)
+
+    for value15 in P1Tra.values():
+        p1tra=str(value15)
+
+    for value16 in G2Tra.values():
+        g2tra=str(value16)
+    
+    for value17 in P2Tra.values():
+        p2tra=str(value17)
+
+        
+    ptdes[0].update({'M2Eng':m2eng})
+    ptdes[0].update({'S6Eng':s6eng})
+    ptdes[0].update({'M2cEng':m2ceng})
+    ptdes[0].update({'G2Eng':g2eng})
+    ptdes[0].update({'P2Eng':p2eng})
+    ptdes[0].update({'M2Loc':m2loc})
+    ptdes[0].update({'M4Loc':m4loc})
+    ptdes[0].update({'M2CaLoc':m2caloc})
+    ptdes[0].update({'S6Loc':s6loc})
+    ptdes[0].update({'G2ALoc':g2aloc})
+    ptdes[0].update({'P2ALoc':p2aloc})
+    ptdes[0].update({'M2Tra':m2tra})
+    ptdes[0].update({'M4Tra':m4tra})
+    ptdes[0].update({'S6Tra':s6tra})
+    ptdes[0].update({'P1Tra':p1tra})
+    ptdes[0].update({'G2Tra':g2tra})
+    ptdes[0].update({'P2Tra':p2tra}) 
+    context={
+        'ptdes':ptdes,  
+    }
+    print("hiiiiiiiiiiii")
+
+    pdf=render_to_pdf('epcpmreport.html',context)
+    return HttpResponse(pdf,content_type='application/pdf')
+
+
+def btnClear_Click(request):
+    return render(request,'EpCpm.html')

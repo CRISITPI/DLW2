@@ -361,6 +361,14 @@ urlpatterns = [
     path('ajax/mg18InfoSave',mg18InfoSave,name='mg18InfoSave'),
     path('ajax/mg18Details',mg18Details,name='mg18Details'),
     path('mg18GenerateReport/',mg18GenerateReport, name='mg18GenerateReport'),
+    path('rmqry/',rmqry,name='rmqry'),
+    path('ajax/rm_part_no_checkpartno',rm_part_no_checkpartno,name='rm_part_no_checkpartno'),
+    path('ajax/rmqry_proceed',rmqry_proceed,name='rmqry_proceed'),
+    path('rmqry_rpt',rmqry_rpt,name='rmqry_rpt'),
+    path('EpCpm/',EpCpm,name='EpCpm'),
+    path('ajax/unbound/',unbound,name='unbound'),
+    path('btnClear_Click/',btnClear_Click,name='btnClear_Click'),
+    path('btnViewCPM_Click/',btnViewCPM_Click,name='btnViewCPM_Click'),
        
 
 ]

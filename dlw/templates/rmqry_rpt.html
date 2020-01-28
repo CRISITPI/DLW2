@@ -1,0 +1,239 @@
+
+{% extends 'rmqry.html' %} {% block content %}
+<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
+<br><br><br>
+<style>
+    input[type=button] {
+        width: 220px;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin-top: -19px ;
+        margin-left: 850px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }  
+    #new{
+        margin-left: 50px;
+    } 
+    d {
+  margin: 300px;
+    }
+</style>
+
+<h2 align="center" ><u>INDIAN RAILWAYS</u></h2>
+<h2 align="center"><u> DIESEL LOCOMOTIVE WORKS</u></h2>
+<h2 align="center"> <u><b>VARANASI</b></u></h2><br><br>
+<h2 align="center"> <b> LIST PARTS MANUFACTURED FROM A RAW MATERIAL </b></h2><br><br>
+<button type="button" id="tempo" name="tempo" style="width:267px;height: 46px;margin-left: 770px; background-color: #4CAF50;"  onclick="addMoreRows(); func1();">Generate Report</button> <br><br><br><br>
+<label style="margin-left: 320px;">RM PART NO</label>
+<input type="text" id="new" readonly value="{{rm_part_no}}">
+<div id="print" style="align:center" class="table">
+    
+    
+        <table align="center" id="idd" border="1" width="500px" height="150px">
+            
+            <tr style="visibility: hidden;">
+                               
+                <td>
+                    <select id="dd2" >
+                        {% for role in pp_part_from_t_table %}
+                        
+                          <option>{{role}}</option>
+                        {% endfor %}
+                    </select>
+                   
+                </td>
+                <td>
+                    <select id="dd1" >
+                        {% for role in epc %}
+                        
+                          <option>{{role}}</option>
+                        {% endfor %}
+                    </select>
+                    <!-- <input type="text"  id="epc" value='{{epc}}'  name="epc" > -->
+                </td>
+                
+                
+                
+                <td>
+                    <input type="text" id="_assly" value="{{part_nop}}" name="rmpt" >
+                </td>
+                
+                <td>
+                    <select id="dd4" >
+                        {% for role in tem_list_des %}
+                        
+                          <option>{{role}}</option>
+                        {% endfor %}
+                    </select>
+                    <!-- <input type="text" id="rmpt" value="{{des}}" name="rmpt" > -->
+                </td>
+                
+                <td><u>{{proceed}}</u>
+                    <input type="text" id="rmpt" name="rmpt" ></td>
+               
+				<td>
+                    <select id="dd3" >
+                        {% for role in tem_list %}
+                        
+                          <option>{{role}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <!-- <input type="text" id="ptc" value="{{ptc}}" name="rmpt" > -->
+                </td>
+                <td>
+                <select id="dd6" >
+                    {% for role in unit_list %}
+                    
+                      <option>{{role}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+                
+                <td>
+                    <select id="dd7" >
+                        {% for role in qty_from_t_table %}
+                        
+                          <option>{{role}}</option>
+                        {% endfor %}
+                        </select>
+                </td>
+                <td>
+                    <select id="dd5" >
+                        {% for role in tem_list_drgno %}
+                        
+                          <option>{{role}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+              
+            </tr>
+            <tr>
+                <th> PART NO</th>
+                <th>PTC </th>
+				<th>RM DES</th>          
+				<th>DRG NO</th>
+				<th>EPC</th>				
+				<th>RMQ-PC</th>
+                <th>UNIT</th>
+                
+            </tr>
+        </table>
+        <button type="button" id="pdf"  onclick="func2(); pdfform(); "  style="width:267px;height: 46px;margin-left: 770px; background-color: #4CAF50; visibility: hidden;">Print</button>   
+        </div>
+ <script>
+     function f2() {
+         for(i=0;i<=3;i++){
+
+             document.getElementById("epc".value())
+         }
+         
+     }
+
+     function func1(){
+
+        document.getElementById("tempo").style.visibility = 'hidden';     
+        document.getElementById("pdf").style.visibility = 'visible';     
+
+     }
+    function func2(){
+
+       document.getElementById("pdf").style.visibility = 'hidden';     
+ 
+
+}
+     
+     function addMoreRows() 
+     {
+
+        var dd=[];
+        var d=[];
+        var ptc=[];
+        var des=[];
+        var drgno=[];
+        var shop_ut=[];
+        var qty=[];
+        var ls=[1,2,4,5,6];
+        var lenn={{length_pp_part_ttable}};
+        var len_ptc={{len_tem_list}};
+        var len_des={{len_tem_list_des}};
+        var len_shop_ut={{len_tem_list_shop_ut}};
+        var len_drgno={{len_tem_list_drgno}};
+        var rowsAdded = {{count}};
+        var len={{len_qty_from_t_table}};
+        var dd2=document.getElementById('dd2');
+        for(i=0;i<lenn;i++)
+        d[i]=dd2.options[i].value;
+        
+        var dd1=document.getElementById('dd1');
+        for(j=0;j<rowsAdded;j++) 
+        dd[j]=dd1.options[j].value;
+        
+        var dd3=document.getElementById('dd3');
+        for(k=0;k<len_ptc;k++) 
+        ptc[k]=dd3.options[k].value;
+        
+        var dd4=document.getElementById('dd4');
+        for(m=0;m<len_des;m++)
+        des[m]=dd4.options[m].value;
+
+        var dd5=document.getElementById('dd5');
+        for(n=0;n<len_drgno;n++)
+        drgno[n]=dd5.options[n].value;
+
+        var dd6=document.getElementById('dd6');
+        for(n=0;n<len_shop_ut;n++)
+        shop_ut[n]=dd6.options[n].value;
+
+        var dd7=document.getElementById('dd7');
+        for(v=0;v<len;v++)
+        qty[v]=dd7.options[v].value;
+        
+
+        for(var x=0; x<rowsAdded; x++) {
+        
+        var newRow = document.getElementById('idd').insertRow();
+        
+
+        var newCell = newRow.insertCell();
+        newCell.innerHTML=d[x];
+        
+        newCell = newRow.insertCell();
+        newCell.innerHTML=ptc[x]
+
+        newCell = newRow.insertCell();
+        newCell.innerHTML=des[x];
+       
+        
+        newCell = newRow.insertCell();
+        newCell.innerHTML=drgno[x]    ;
+
+
+        newCell = newRow.insertCell();
+        newCell.innerHTML=dd[x];
+
+        newCell = newRow.insertCell();
+        newCell.innerHTML=qty[x];
+
+        newCell = newRow.insertCell();
+        newCell.innerHTML=shop_ut[x];
+
+    }
+
+
+
+    function pdfform(){
+        print();
+        
+           win.close();   } 
+</script>         
+
+    
+      
+
+
+{% endblock content %}

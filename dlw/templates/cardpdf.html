@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>card generation</title>
+        <style type="text/css">
+          
+         
+        </style>
+    </head>
+    <body> 
+           
+        <H>{{card}} CARD GENERATION</H>
+        <table border="0px">
+            <tr >
+                <td ><p style="font-size: 15px;" >ASSEMBLY NO :  </p></td >
+                <td ><p style="font-size: 15px;">{{asl}} </p></td>
+                <td ><p style="font-size: 15px;" >DESCRIPTION : </p></td>
+                <td colspan="2"><p style="font-size: 15px;">{{ades}}</p></td>
+            </tr>
+            <tr>
+                <td ><p style="font-size: 15px;" >BATCH NO : </p></td>
+                <td ><p style="font-size: 15px;">{{batch}}</p></td>
+                <td ><p style="font-size: 15px;" id="p1">EPC : </p></td>
+                <td><p style="font-size: 15px;">M</p></td>
+                <td ><p style="font-size: 15px;"> LOCO TO :   </p></td>
+                <td ><p style="font-size: 15px;">9999 </p></td>
+            </tr>
+
+        </table>
+        <hr>
+        <table >
+            <tr>
+            <td>C_PART NO</td>
+            <td>QUANTITY</td>
+            <td>PTC</td>
+            <td>FCL_CL</td>
+            <td>F_SHOPSEC</td>
+            <td>RC_ST_WK</td>
+            <td>BRN NO</td>
+            
+            
+           </tr>
+           <hr>
+              {% for i in val %}
+            <tr>
+             <td>{{i.part_no}}</td> 
+             <td>{{i.qty}}</td>
+             <td>{{i.ptc}}</td>
+             <td>{{i.scl_cl}}</td> 
+             <td>{{i.f_shopsec}}</td>
+             <td>{{i.rc_st_wk}}</td>
+             <td>{{i.brn_no}}</td> 
+            </tr>
+            {% endfor %}
+       
+            
+        
+            
+        </table>
+       
+       
+
+
+    </body>
+</html>
