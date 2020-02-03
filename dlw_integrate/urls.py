@@ -376,6 +376,7 @@ urlpatterns = [
     path('railwayshedmastermaintence/',railwayshedmastermaintence, name='railwayshedmastermaintence'),
     path('ajax/RailwayMasterGetDetails/',RailwayMasterGetDetails,name='RailwayMasterGetDetails'),
     path('ajax/SaveInfoRailwayShed/',SaveInfoRailwayShed,name='SaveInfoRailwayShed'),
+    
     path('oprnview/',oprnview,name='oprnview'),
     path('ajax/oprn_part_details/',oprn_part_details,name='oprn_part_details'),
     path('ajax/oprnget_opn',oprnget_opn,name='oprnget_opn'),
