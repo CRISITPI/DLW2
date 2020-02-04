@@ -8394,14 +8394,6 @@ def CardGeneration(request):
                 res = Childnode(request,asmno,res,'M')
                 ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
                 ades=ades[0]['des']
-                #val = list(Oprn.objects.filter(part_no__in=res).values('part_no','des','shop_sec','opn').distinct('part_no'))
-                    #obj1[i].update({'shop_sec':val[0]['shop_sec'],'des':val[0]['des'],'opn':val[0]['opn']})
-                #for i in range(0,len(res)):
-                #val=M2Doc.objects.filter(part_no__in=res,batch_no=batch,assly_no=asmno).values('part_no','qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
-                    #msb=list(Batch.objects.filter(part_no=res[i]).values('mark','status','brn_no'))
-                    
-                    #res[i].update({'mark':msb[0]['mark'],'status':msb[0]['status'],'brn_no':msb[0]['brn_no']})
-               
                 res.sort()
                 a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
                 bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no')
@@ -8506,37 +8498,6 @@ def CardGeneration(request):
                 pdf = render_to_pdf('cardpdf.html', data)
                 return HttpResponse(pdf, content_type='application/pdf')
                
-                # print(getShopSecDetails)
-                # for i in range(len(getShopSecDetails)):            
-                #     first.append(getShopSecDetails[i]['shop_sec'])  
-                # print(first)
-                # getNstrDetails = list(Nstr.objects.filter(pp_part=asmno,ptc='M',l_to='9999').values('cp_part','ptc','qty','epc','del_fl','epc_old').exclude(pp_part__isnull=True).distinct())
-                # for i in range(len(getNstrDetails)):            
-                #     second.append(getNstrDetails[i]['cp_part'],getNstrDetails[i]['ptc'],getNstrDetails[i]['qty'],getNstrDetails[i]['epc'],getNstrDetails[i]['del_fl'],getNstrDetails[i]['epc_old'],)  
-
-                # getBatchDetails = list(Batch.objects.filter(part_no=asmno,loco_to='9999').values('mark','status','brn_no'))
-                # for i in range(len(getBatchDetails)):            
-                #     third.append(getBatchDetails[i]['mark'],getBatchDetails[i]['status'],getBatchDetails[i]['brn_no'])  
-
-
-                # for i in range(len(obj1)):
-                    
-                #     #obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
-                #     obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
-                #     epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
-                #     obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
-                #      #if len(obj2):
-                #        #print("len1----",len(obj2))  
-                #         #print("tset ----------",len(obj2))
-                #     #print(i)
-                #     #M2Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
-
-                # try:
-                #     for j in range(len(obj1)):
-                #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
-                #     messages.success(request, 'Successfully Done!')
-                # except:
-                #     messages.error(request,'Some Error Occurred')
             elif bval=="Generate Cards" and card=="M4":
                 res = []
                 obj1 = ShowLeaf(request,asmno,res,'R')
