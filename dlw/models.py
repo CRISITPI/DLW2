@@ -2550,12 +2550,12 @@ class ReqRegi(models.Model):
 
 
 class Rlyshed(models.Model):
+    id=models.AutoField(primary_key=True)
     bo_no = models.CharField(db_column='BO_NO', max_length=7, blank=True, null=True)  # Field name made lowercase.
     consignee = models.CharField(db_column='CONSIGNEE', max_length=10, blank=True, null=True)  # Field name made lowercase.
     railway = models.CharField(db_column='RAILWAY', max_length=5, blank=True, null=True)  # Field name made lowercase.
     shed = models.CharField(db_column='SHED', max_length=10, blank=True, null=True)  # Field name made lowercase.
     updt_dt = models.DateField(db_column='UPDT_DT', blank=True, null=True)  # Field name made lowercase.
-
     class Meta:
         managed = False
         db_table = 'RLYSHED'
@@ -3774,7 +3774,6 @@ class M15(models.Model):
 
 
 
-
 class M2Docnew1(models.Model):
     scl_cl = models.CharField(db_column='SCL_CL', max_length=1, blank=True, null=True)  # Field name made lowercase.
     batch_no = models.CharField(db_column='BATCH_NO', max_length=7, blank=True, null=True)  # Field name made lowercase.
@@ -3789,10 +3788,10 @@ class M2Docnew1(models.Model):
     rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
     cut_shear = models.CharField(db_column='CUT_SHEAR', max_length=8, blank=True, null=True)  # Field name made lowercase.
     m2sln = models.DecimalField(db_column='M2SLN', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
-    m2prtdt = models.DateField(db_column='M2PRTDT', blank=True, null=True)  # Field name made lowercase.
+    m2prtdt = models.CharField(db_column='M2PRTDT', max_length=10, blank=True, null=True)  # Field name made lowercase.
     seq = models.DecimalField(db_column='SEQ', max_digits=3, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
     brn_no = models.DecimalField(db_column='BRN_NO', max_digits=5, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
-    m4_no = models.DecimalField(db_column='M4_NO', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    m4_no = models.CharField(db_column='M4_NO', max_length=6, blank=True, null=True)  # Field name made lowercase.
     epc = models.CharField(db_column='EPC', max_length=2, blank=True, null=True)  # Field name made lowercase.
     version = models.CharField(db_column='VERSION', max_length=1, blank=True, null=True)  # Field name made lowercase.
     status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
@@ -3802,6 +3801,7 @@ class M2Docnew1(models.Model):
 
     class Meta:
         db_table = 'M2DOCNEW1'
+
 
 
 
@@ -4962,3 +4962,11 @@ class t_tables(models.Model):
     pp_part = models.CharField(db_column='PP_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
     epc = models.CharField(db_column='QTY', max_length=2, blank=True, null=True)
     qty = models.DecimalField(db_column='EPC', max_digits=9, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+
+class Oprn_audit(models.Model):
+    updt_by = models.CharField(db_column='UPDT_BY', max_length=50, blank=True, null=True)
+    updt_time = models.CharField(db_column='UPDT_TIME', max_length=40, blank=True, null=True)
+    updt_col = models.CharField(db_column='UPDT_COL', max_length=80, blank=True, null=True)
+
+    class Meta:
+        db_table = 'Oprn_audit'

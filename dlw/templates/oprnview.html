@@ -1,0 +1,624 @@
+{% extends 'base.html' %} 
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+  input[type=text],input[type=number],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 30%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 30%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  .button{
+    background-color:aqua;
+    width: 60px;
+  }
+  .table{
+    width:50%;
+    border: none;
+    height: auto;
+
+  }
+
+</style>
+<br>
+<h3 align="center">Operation Maintenance</h3>
+<br>
+<div id="div1"> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
+<br>
+<div id="div2"> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;"></h6></div><br>
+
+<br><br>
+<form action="{% url 'oprnview' %}" method="POST" id="myform"> 
+    {% csrf_token %}
+    <div class="container">
+        <table  class="table" width = 100%>
+            <tr>
+                  <td>
+                    <label for="sno"><b>PART NO :</b></label>
+                    
+                </td>
+                <td>
+                  <input type = "text" id = "partno" name = "partno" value = ''>
+                </td>
+            </tr>
+            <tr>
+              <center>
+                <td>
+                    <br>
+                    <label for="partno" align="left"><b>Part Description</b></label> </br></br>                 
+                   </td>
+
+                   <td colspan="3">
+                     <br>
+                     <textarea rows="2" cols="50" id = "p_des" name = "p_des"></textarea>
+                   </td>
+                   <td>
+                    <br><br>
+                    <label for="partno" align ="right"><b>PTC NO</b></label> </br></br>                 
+                   </td>
+                 
+                   <td>
+                     <br>
+                     <input type = "text" id = "ptcno" name = "ptcno" >
+                   </td>
+                   </center>
+            </tr>
+            
+            <tr>
+                  <td>
+                    <br>
+                    <br>
+                    <label for="partno" align ="right"><b>OPN No:</b></label>
+                  </td>
+                  <td colspan="3">
+                    <br>
+                    <input type="text" id="opnn" name="opnn" style="display:none">
+                      <select class="form-control" id="opnno" name="opnno" required>
+                        <option id="op_opnno" selected disabled hidden>Select OPN NO</option>
+                        {% if lenm == 1 %}
+                        {% for i in op_opnno %}
+                          <option>{{i.opn}}</option>
+                        {% endfor %}
+                        {% endif %}
+                      </select>
+                  </td>
+                  <td>
+                    <br>
+                    <label><b> OPN Description:</b></label>
+                  </td>
+                  <td >
+                    <textarea rows="3" cols="50" id="opndes" name="opndes" ></textarea>
+                  </td>
+            </tr>
+
+             <tr>
+                  <td>
+                    <br>
+                    
+                    <label><b>Shop Sec:</b></label>
+                  </td>
+                  <td>
+                    <input type="text" id="shopsec" name="shopsec" class="shop" >
+                  </td>
+                  
+                  <td>
+                    <br>
+                  
+                    <label><b>LC No:</b></label>
+                  </td>
+                  <td>
+                    <input type="text" id="lcnn" name="lcnn" style="display:none">
+                    <select class="form-control" id="lcno" name="lcno" required>
+                      <option id="op_lcno" selected disabled hidden>Select LC NO</option>
+                      {% if lenm == 1 %}
+                      {% for i in op_lcno %}
+                        <option>{{i.lcno}}</option>
+                      {% endfor %}
+                      {% endif %}
+                    </select>
+                  </td>
+                  <td >
+                    <br>
+                    <label><b>LC No Description:</b></label>
+                  </td >
+                  <td >
+                    <textarea rows="3" cols="50" id="lcdes" name="lcdes" ></textarea>
+                  </td>
+            </tr>
+
+            <tr>
+              <td ><br>
+                <label><b>NCP/JBS:</b></label>                
+              </td>
+              <td colspan="3">
+                <select class="form-control" id="ncp" name="ncp" required>
+                  <option id="op_ncp" selected disabled hidden>Select NCP/JBS</option>
+                    <option>1</option>
+                    <option>2</option>
+                </select>
+              </td>
+              <td ><br>
+                <label><b>M5 Split code</b></label>
+              </td>
+              <td>
+                <select class="form-control" id="scode" name="scode" required>
+                  <option id="op_scode" selected disabled hidden>Select M5 SPLIT CODE</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>5</option>
+                </select>
+              </td>
+            </tr>
+            <tr >
+              <td ><br>
+                <label><b>Property Allowance(PA)</b></label>
+              </td>
+              <td>
+                
+                <input type="number"  id="pa" name="pa" >
+              </td>
+              <td >
+                <br>
+                
+                <label><b>Allowed Time(AT)</b></label>
+              </td>
+              <td >
+               
+                <input type="number" id="at" name="at" >
+              </td>
+              <td ><br>
+                <label><b>Lot size</b></label>
+              </td>
+              <td>
+                <input type="number" id="lot" name="lot" >
+              </td>
+            </tr>
+            
+              
+        </table>
+        </center>
+        <tr></tr>
+        <center>
+          <td>
+            <input type=button value="add" id="oprn_add" name="oprn_add" class="op_s" onclick="oprn_add()">
+          </td>
+          <td colspan="2">
+          <input type=button value="save" id="op_save" name="op_save" onclick="oprn_save()">
+          </td>
+          <td>
+          <input type=button value="clear" id="clear" name="clear" onclick="window.location.reload()">
+          </td>
+          <td colspan="2">
+          <input type=button value="delete" id="delete" name="delete" onclick="oprn_del()">
+        </td colspan="2">
+        </center>
+      </tr>
+
+    </div>
+</form>
+<script>
+// validation for shop_sec
+document.querySelector("#shopsec").addEventListener('change',(e)=>{
+  
+  e.preventDefault();
+  var sec = document.getElementById('shopsec').value;
+  document.getElementById('lcno').value = '';
+  data = {sec};
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_shop_validate' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){  
+      for(var i =0;i<response.length;i++)
+      {
+        if(sec == response[i].shop)
+        {
+          break;
+        }
+      }
+      fun1();
+    }
+  });
+});
+
+  // function for add data(opn no corresponding part no)
+$('.op_s').click(function(e){
+  
+  e.preventDefault();
+  $('#opnno').hide();
+  $('#opnn').show();
+  var opnno = $("#opnn").val();
+  if(!opnno)
+  {
+    alert("enter OPN no and Corresponding data");
+    document.getElementById('opndes').value = '';
+    document.getElementById('shopsec').value = '';
+    document.getElementById('lcno').value = '';
+    document.getElementById('pa').value = '';
+    document.getElementById('at').value = '';
+    document.getElementById('lot').value = '';
+    document.getElementById('scode').value = '';
+    document.getElementById('ncp').value = '';
+  }
+  else{
+    fun_insert();
+    window.location.reload();
+  }
+  return;
+
+});
+
+  // function for delete(change status in database as 'y')
+
+  function oprn_del(){
+  var partno = $("#partno").val();
+  var opnno = $("#opnno").val();
+  var data = {partno,opnno};
+  if(partno == ''){
+    alert("please select PART no");
+    return;
+  }
+
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_dele_status' %}",
+    dataType : 'json',
+    data : data,
+    
+    success : function(response){  
+    window.location.reload();
+  }
+  })
+}
+
+// function for save button( insert(when does not exist) or update() when exist)
+function oprn_save(){
+  var partno = $("#partno").val();
+  var data = {partno};
+  if (partno == '') 
+  {
+    alert("Please select partno")
+    return;
+  }
+  else
+  { 
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_dupdate' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){   
+    if(response.length != 0)
+    {
+      if(response[0].opn == '') 
+      {
+        fun_insert();
+      }
+      else
+      {
+        fun_update();
+      }
+    }
+  }
+  });
+}
+}
+
+// function to insert new data either for existing opn no or new opn no for existing part no.
+function fun_insert(){
+  var part_no = $("#partno").val();
+  var opn =  $("#opnn").val();
+  var des =  $("#opndes").val();
+  var lc_no = $("#lcno").val();
+  var shop_sec =$("#shopsec").val();
+  var m5_cd =  $("#scode").val();
+  var ncp_jbs =$("#ncp").val();
+  var pa  = parseFloat($("#pa").val());
+  var at = parseFloat($("#at").val());
+  var lot =$("#lot").val();
+  data = {part_no, des, opn, lc_no,  shop_sec, m5_cd, ncp_jbs, pa, at, lot}
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_insert' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){ 
+      window.location.reload();
+    }
+    
+  });
+}
+// function for updation of data for existing opn no corresponding to part no.
+
+function fun_update(){
+  var part_no = $("#partno").val();
+  var opnno =  $("#opnno").val();
+  var des =  $("#opndes").val();
+  var lc_no =  $("#lcno").val();
+  var shop_sec = $("#shopsec").val();
+  var m5_cd =  $("#scode").val();
+  var ncp_jbs = $("#ncp").val();
+  var pa  = parseFloat($("#pa").val());
+  var at = parseFloat($("#at").val());
+  var lot = $("#lot").val();
+  data = {part_no, des, opnno, lc_no,  shop_sec, m5_cd, ncp_jbs, pa, at, lot};
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_update' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){ 
+      
+      var d = {};
+      if(shop_sec != response[0].shop_sec)
+    
+        d['shop_sec'] = shop_sec;
+      if(lc_no != response[0].lc_no)
+        d['lc_no'] = lc_no;
+      if(m5_cd != response[0].m5_cd)
+        d['m5_cd'] = m5_cd;
+      if(ncp_jbs != response[0].ncp_jbs)
+        d['ncp_jbs'] = ncp_jbs;
+      if(pa != response[0].pa)
+        d['pa'] = pa;
+      if(at != response[0].at)
+        d['at'] = at;
+      if(lot != response[0].lot)
+        d['lot'] = lot;
+        var len = Object.keys(d).length;
+      fun_audit(d);
+      window.location.reload();
+    }
+  });
+}
+
+function fun_audit(d)
+
+{
+    var data = d;
+
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_audit_save' %}",
+    dataType : 'json',
+    data : data,
+  
+    success : function(response){ 
+      
+    }
+  });
+
+}
+// function to fetch description of lc no:
+
+function lc(){
+  var lcno = $("#lcno").val();
+  var shopsec = $("#shopsec").val();
+  var data = {lcno,shopsec};
+
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_lc_des' %}",
+    dataType : 'json',
+    data : data,
+  
+    success : function(response){ 
+      document.getElementById('lcdes').value = response[0].des;
+    }
+  });
+}
+  // function to fetch details for part no
+
+function fun(){                 
+  var partno = $("#partno").val();
+  var data = {partno};
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_part_details' %}",
+    dataType : 'json',
+    data : data,
+
+    success : function(response)
+    { 
+      if(response.length == 0)
+      {         
+        alert("no record");
+        return;
+
+      }
+      else
+      {
+        if(response[0].ptc == 'M')
+        {
+          document.getElementById('p_des').value = response[0].des;
+          document.getElementById('ptcno').value = response[0].ptc; 
+        }
+        else
+        {
+          alert("No record");
+          return;
+        }
+      }
+    }
+  });
+}
+
+// for opn no based upon part no entered by user.
+document.querySelector("#partno").addEventListener('change',(e)=>{ 
+  e.preventDefault();
+  var partno = $('#partno').val();
+  var data = {partno};
+  fun();
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'oprnget_opn' %}",
+    dataType : 'json',
+    data : data,
+
+    success : function(response){     
+      if(response.length == 0){
+        alert("enter data.");
+        $('#opnno').hide();
+        $('#opnn').show();
+        } 
+      else{
+        $('#opnn').hide();
+        var elementsadded = document.querySelectorAll(".newelebr");
+        if(elementsadded.length>0){
+          var elementsaddedarr = Array.from(elementsadded);
+          elementsaddedarr.forEach((el)=> el.remove());
+          document.querySelector("#opnno").selected = true;                             
+        }
+        var brarr,mystr,html;
+        brarr = response.map((el)=>el.opn);
+        mystr = "";
+        brarr.forEach((el,index)=>{
+        html = `<option class="newelewono">${brarr[index]}</option>`
+        mystr = html.concat(mystr);
+        });
+        html = "";
+        document.querySelector("#opnno").insertAdjacentHTML('beforeend',mystr);
+        mystr="";  
+      }
+    }
+  })
+});
+
+document.querySelector("#opnno").addEventListener('change',(e)=>{
+  e.preventDefault();  
+  var opnno = $('#opnno').val();
+  var partno = $('#partno').val();
+  var data = {opnno, partno};
+  if (partno == '') 
+  {
+    alert("Please select partno")
+    return;
+  }
+  if(opnno == '')
+  {
+    alert("Please select OPN no")
+    return;
+  }
+  else{
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'oprn_opndetails' %}",
+      dataType : 'json',
+      data : data,
+      success : function(response){   
+                
+          if(response == '')
+          {
+                alert("Record Not Found.");
+          }
+          else{                   
+            document.getElementById('shopsec').value = response[0].shop_sec
+            document.getElementById('opndes').value = response[0].des
+            document.getElementById('lcnn').value = response[0].lc_no
+            
+            document.getElementById('scode').value = response[0].m5_cd
+            document.getElementById('ncp').value = response[0].ncp_jbs
+            document.getElementById('pa').value = response[0].pa
+            document.getElementById('at').value = response[0].at
+            document.getElementById('lot').value = response[0].lot
+           
+            fun1();
+            lc();
+            }
+      }
+  })
+}
+});
+
+// for lcno based on shop_section.
+// document.querySelector("#shopsec").addEventListener('click',(e)=>{ 
+  function fun1(){
+  var shopsec = $('#shopsec').val();
+  var data = {shopsec};
+  fun();
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'oprn_lc_no' %}",
+    dataType : 'json',
+    data : data,
+
+    success : function(response){     
+      if(response.length == 0){
+        alert("NO RECORD FOUND");
+        document.getElementById('shopsec').value = ''
+        } 
+      else{
+        var elementsadded = document.querySelectorAll(".newelebr");
+        if(elementsadded.length>0){
+          var elementsaddedarr = Array.from(elementsadded);
+          elementsaddedarr.forEach((el)=> el.remove());
+          document.querySelector("#lcno").selected = true;                             
+        }
+        var brarr,mystr,html;
+        brarr = response.map((el)=>el.lcno);
+        mystr = "";
+        brarr.forEach((el,index)=>{
+        html = `<option class="newelewono">${brarr[index]}</option>`
+        mystr = html.concat(mystr);
+        });
+        html = "";
+        document.querySelector("#lcno").insertAdjacentHTML('beforeend',mystr);
+        mystr="";  
+        lc();
+      }
+    }
+    
+    })
+  }
+// for lc description on change of lc no.
+document.querySelector("#lcno").addEventListener('change',(e)=>{ 
+  e.preventDefault();
+  lc();
+});
+
+
+</script>
+{% endblock content %}

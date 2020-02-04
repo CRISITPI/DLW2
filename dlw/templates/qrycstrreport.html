@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<style>
+  @page {
+    size: A2;
+    margin: 2cm;
+  }
+  table {
+    border-collapse: collapse;
+    word-break: break-all;
+  }
+  table.report {
+    table-layout: fixed;
+    width: 100%;
+  }
+  th,td {
+    text-align: left;
+    white-space: nowrap;
+  }
+</style>
+
+<br>
+
+<table >
+  <tr>
+    <td width="42%"><h2>DATE:{{today}}</h2></td>
+    <td><b><u><h2>CHANGE NOTICE UPDATION LIST</h2></u></b></td>
+  </tr>  
+</table>
+
+<br>
+<br>
+    
+<div class="container">
+  <table class="table report">
+      <thead>
+        <tr>
+          <th>REG_No</th>
+          <th>SL_No</th>
+          <th>PP_PART</th>
+          <th>CP_PART</th>
+          <th>DESCRIPTION</th>
+          <th>L_FR</th>
+          <th>L_TO</th>
+          <th>PTC</th>
+          <th>EPC</th>
+          <th>QTY</th>
+          <th>CUTDIA NO</th>
+          <th>CN-NO</th>
+          <th>CN-DATE</th>
+          <th>ACD</th>
+          <th>UPDATE DATE</th>
+          <th>UPDATEION REMARK</th>
+          <th>DESIGN CN-NO</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in tmpstr %}
+        <tr>
+          <td>{{i.reg_no}}</td>
+          <td>{{i.slno}}</td>
+          <td>{{i.pp_part}}</td>
+          <td>{{i.cp_part}}</td>
+          <td>{{i.des}}</td>
+          <td>{{i.l_fr}}</td> 
+          <td>{{i.l_to}}</td> 
+          <td>{{i.ptc}}</td> 
+          <td>{{i.epc}}</td> 
+          <td>{{i.qty}}</td> 
+          <td>{{i.cutdia_no}}</td> 
+          <td>{{i.cn_no}}</td> 
+          <td>{{i.cn_date}}</td> 
+          <td>{{i.acd}}</td> 
+          <td>{{i.updt_dt}}</td> 
+          <td>{{i.errmsg}}</td> 
+          <td>{{i.design}}</td> 
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

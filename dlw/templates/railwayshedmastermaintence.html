@@ -1,0 +1,119 @@
+{% extends 'base.html' %} 
+{% block content %}
+<style>
+    label{
+        font-weight: bold;
+    }
+    input[type=text], select,textarea {
+        padding: 10px 20px;
+        width: 200px;
+      }
+</style>
+<form action="{% url 'railwayshedmastermaintence' %}" method="POST" id="rsmm"> {% csrf_token %}
+    <br><br>
+    <center><h3 style="color: red;"> RAILWAY SHED MASTER MAINTENENCE </h3></center>
+    <br>
+    <br>
+    <table align="center">
+        <tr>
+            <td><label>&nbsp;&nbsp;BO NO :&nbsp;</label><select id="bono_id" type=text name="bono_id" required>
+                <option id="op_bonoid" selected disabled hidden></option>
+                {% for role in bono %}
+
+                <option>{{role}}</option>
+                {% endfor %}
+            </select></td>
+            <td><label>&nbsp;&nbsp;Consignee :&nbsp;</label><input type="text" id="consignee_id" maxlength="10"></td>
+        </tr>
+        <tr>
+            <td><label><br>Railway :&nbsp;</label><input type="text" id="railway_id" maxlength="5"></td>
+            
+            <td><label><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shed :&nbsp;</label><input type="text" id="shed_id" maxlength="10"></td>
+            </tr>
+    </table>
+<br>
+<center>
+    <input type=button value="Save" id="save" name="save" class="btn btn-primary" onclick="ValidateFormRSM()">
+    <input type=button value="Clear" id="clear" name="clear" class="btn btn-primary" onclick="window.location.reload();">
+</center>
+    
+</form>
+<script>
+    document.querySelector("#bono_id").addEventListener('change',(e)=>{
+        e.preventDefault();
+        var bono=$("#bono_id").val();
+        var data={bono}
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'RailwayMasterGetDetails' %}",
+            dataType : 'json',
+            data : data,
+            success :function(response){
+                if(response.length==1)
+                {
+                    document.getElementById('consignee_id').value=response[0].consignee;
+                    document.getElementById('railway_id').value=response[0].railway;
+                    document.getElementById('shed_id').value=response[0].shed;
+                }
+                else
+                {
+                    document.getElementById('consignee_id').value="";
+                    document.getElementById('railway_id').value="";
+                    document.getElementById('shed_id').value="";
+                }
+                
+            }
+        })
+    });
+    function ValidateFormRSM()
+    {
+        var bono=$("#bono_id").val();
+        var consignee=$("#consignee_id").val();
+        var railway=$("#railway_id").val();
+        var shed=$("#shed_id").val();
+        
+        if(bono == null)
+        {
+            alert("Please Fill The BO NO");
+            return false;
+        }
+        else if(consignee == "")
+        {
+            alert("Please Fill The Consignee");
+            return false;
+        }
+        else if(railway == "")
+        {
+            alert("Please Fill The Railway");
+            return false;
+        }
+        else if(shed == "")
+        {
+            alert("Please Fill The Shed");
+            return false;
+        }
+        else
+        {
+            saveRSMM();
+        }
+    }
+    function saveRSMM()
+    {
+        var temp={bono:$('#bono_id').val(),consignee:$('#consignee_id').val(),railway:$('#railway_id').val(),shed:$('#shed_id').val()};
+        var data=temp;
+        $.ajax({
+            type : 'GET',
+            url :"{% url 'SaveInfoRailwayShed' %}",
+            dataType :'json',
+            data : data,
+            success:function(response){
+                alert("Data saved successfully");
+            }
+        })
+    }
+    function ClearFormRSM()
+    {
+        window.location.reload();
+    }
+</script>
+{% endblock content %}

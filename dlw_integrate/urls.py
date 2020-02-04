@@ -369,7 +369,25 @@ urlpatterns = [
     path('ajax/unbound/',unbound,name='unbound'),
     path('btnClear_Click/',btnClear_Click,name='btnClear_Click'),
     path('btnViewCPM_Click/',btnViewCPM_Click,name='btnViewCPM_Click'),
-       
+    path('qrycstr/',qrycstr,name='qrycstr'),
+    path('ajax/qrycstr1/',qrycstr1,name='qrycstr1'),
+    path('ajax/qrycstr_ddCn_fun/',qrycstr_ddCn_fun,name='qrycstr_ddCn_fun'),
+    path('qrycstr_viewstatus/',qrycstr_viewstatus,name='qrycstr_viewstatus'),
+    path('railwayshedmastermaintence/',railwayshedmastermaintence, name='railwayshedmastermaintence'),
+    path('ajax/RailwayMasterGetDetails/',RailwayMasterGetDetails,name='RailwayMasterGetDetails'),
+    path('ajax/SaveInfoRailwayShed/',SaveInfoRailwayShed,name='SaveInfoRailwayShed'),
+    path('oprnview/',oprnview,name='oprnview'),
+    path('ajax/oprn_part_details/',oprn_part_details,name='oprn_part_details'),
+    path('ajax/oprnget_opn',oprnget_opn,name='oprnget_opn'),
+    path('ajax/oprn_opndetails',oprn_opndetails,name='oprn_opndetails'),
+    path('ajax/oprn_dele_status',oprn_dele_status,name='oprn_dele_status'),
+    path('ajax/oprn_dupdate',oprn_dupdate,name='oprn_dupdate'),
+    path('ajax/oprn_lc_des',oprn_lc_des,name='oprn_lc_des'),
+    path('ajax/oprn_insert',oprn_insert,name='oprn_insert'),
+    path('ajax/oprn_update/',oprn_update,name='oprn_update'),
+    path('ajax/oprn_shop_validate/',oprn_shop_validate,name='oprn_shop_validate'),
+    path('ajax/oprn_audit_save/',oprn_audit_save,name='oprn_audit_save'),
+    path('ajax/oprn_lc_no/',oprn_lc_no,name='oprn_lc_no')
 
 ]
 

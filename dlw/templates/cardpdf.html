@@ -2,14 +2,11 @@
 <html>
     <head>
         <title>card generation</title>
-        <style type="text/css">
-          
-         
-        </style>
     </head>
     <body> 
            
-        <H1 align="center">{{card}} CARD GENERATION</H1>
+        <p style="font-size: 30px;" ALIGN="CENTER">{{card}} CARD GENERATION</p>
+        <hr>
         <table border="0px">
             <tr >
                 <td ><p style="font-size: 15px;" >ASSEMBLY NO :  </p></td >
@@ -30,26 +27,32 @@
         <hr>
         <table >
             <tr>
+            <td>SCL_CL</td>    
             <td>C_PART NO</td>
-            <td>QUANTITY</td>
-            <td>PTC</td>
-            <td>FCL_CL</td>
-            <td>F_SHOPSEC</td>
+            <td>SHOP SEC</td>
+            <td>QTY</td>
             <td>RC_ST_WK</td>
-            <td>BRN NO</td>
+            <td>R_PART</td>
+            <td>R_PTC</td>
+            <td>R_QTY</td>
+            <td>CUT SHEAR</td>
             
             
            </tr>
            <hr>
-              {% for i in val %}
+              {% for i in dat %}
             <tr>
-             <td>{{i.part_no}}</td> 
-             <td>{{i.qty}}</td>
-             <td>{{i.ptc}}</td>
              <td>{{i.scl_cl}}</td> 
-             <td>{{i.f_shopsec}}</td>
-             <td>{{i.rc_st_wk}}</td>
-             <td>{{i.brn_no}}</td> 
+             <td>{{i.partno}}</td> 
+             <td>{{i.shop}}</td>
+             <td>{{i.qty}}</td>
+             <td>{{i.rm}}</td>
+             <td>{{i.r_part}}</td> 
+             
+             
+             <td>{{i.r_ptc}}</td> 
+             <td>{{i.r_qty}}</td>
+             <td>{{i.cut_Shear}}</td> 
             </tr>
             {% endfor %}
        
@@ -58,8 +61,12 @@
             
         </table>
        
-       
 
 
     </body>
 </html>
+
+
+
+
+
