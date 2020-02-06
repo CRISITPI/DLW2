@@ -67,7 +67,7 @@ urlpatterns = [
     path('ajax/m14getbr/',m14getbr,name='m14getbr'),
     path('ajax/m14getassly/',m14getassly,name='m14getassly'),
     path('ajax/m14getpart_no/',m14getpart_no,name='m14getpart_no'),
-    path('ajax/m14getdoc_no/',m14getdoc_no,name='m14getdoc_no'),
+    path('ajax/m14getdoc_no1/',m14getdoc_no1,name='m14getdoc_no1'),
     path('ajax/m14getwono',m14getwono,name='m14getwono'),
     path('ajax/get_yr_dgp/',getYrDgp,name='get_yr_dgp'),
     path('ajax/check_loco/',checkloco,name='check_loco'),
@@ -388,7 +388,15 @@ urlpatterns = [
     path('ajax/oprn_update/',oprn_update,name='oprn_update'),
     path('ajax/oprn_shop_validate/',oprn_shop_validate,name='oprn_shop_validate'),
     path('ajax/oprn_audit_save/',oprn_audit_save,name='oprn_audit_save'),
-    path('ajax/oprn_lc_no/',oprn_lc_no,name='oprn_lc_no')
+    path('ajax/oprn_lc_no/',oprn_lc_no,name='oprn_lc_no'),
+    path('ajax/m13get1',m13get1,name='m13get1'),
+    path('ajax/m13getdata',m13getdata,name='m13getdata'),
+    path('smsM13',smsM13,name='smsM13'),
+    path('ajax/m13viewgetwono',m13viewgetwono,name='m13viewgetwono'),
+    path('ajax/m13viewgetpano',m13viewgetpano,name='m13viewgetpano'),
+    path('ajax/m13getslno',m13getslno,name='m13getslno'),
+
+
 
 ]
 
