@@ -477,6 +477,7 @@ class CstProcess(models.Model):
 
 
 class Cutdia(models.Model):
+    id=models.AutoField(primary_key=True)
     cutdia_no = models.CharField(db_column='CUTDIA_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     ep_part = models.CharField(db_column='EP_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
     epc = models.CharField(db_column='EPC', max_length=2, blank=True, null=True)  # Field name made lowercase.

@@ -257,10 +257,16 @@
                       document.getElementById('cd_no').value=document.getElementById('part_nop').value;
                       document.getElementById('shop').value=document.getElementById('shop_sec').value;
                       document.getElementById('qty_tot').value=response[1][0].qty;
-                      var x=parseInt(response[2]);
-                      // alert(parseInt(response[2]))
-                      x=x+1;
-                      document.getElementById('slno').value=x;
+                      if(response[2]=='')
+                      {
+                          document.getElementById('slno').value=1;
+                      }
+                      else{
+                        x=parseInt(response[2])
+                        x=x+1;
+                        document.getElementById('slno').value=x;
+                      }
+                        
                       document.getElementById('epc').value=response[3][0].ep_type;
                       var d = new Date();
                       var day = ('0' + d.getDate()).slice(-2);

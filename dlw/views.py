@@ -8465,46 +8465,150 @@ def CardGeneration(request):
                 return HttpResponse(pdf, content_type='application/pdf')
                
             elif bval=="Generate Cards" and card=="M4":
+                code='M'
                 res = []
-                res = Childnode(request,asmno,res,'R')
+                r_qty=0
+                r_ptc=''
+                r_part=''
+                r_part2=[]
+                arr1=[asmno]
+                ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+                ades=ades[0]['des']
                 res.sort()
                 a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
-                bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no','loco_to','loco_fr')
+                bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no')
+                del1=M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).values('batch_no')
+                if len(del1)!=0:
+                    M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).delete()
+               
                 prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
                 epc=bat[0]['ep_type']
                 brn=bat[0]['brn_no']
+                m4_no=''
                 seq=0
+                version=''
+                status=''
+                mark=''
+                epc_old=''
+                del_fl=''
                 u=0
                 x=0
-                print(res)
-                print(a)
-                if len(a)!=0:
-                    if a[0]['uot_wk_f'] is not None:
+                if len(a) !=0:
+                     if a[0]['uot_wk_f'] is not None:
                         u=int(a[0]['uot_wk_f'])
                    
                 if u>3000:
                         x=(int(u/100)*52)+(u%100)
                 else:
                         x=(int((u/100) + 100)*52)+(u%100)
-                for i in res:
+                j=0
+                dat=[]
+                sl=M2Docnew1.objects.values('m2sln').order_by('-m2sln')
+                if len(sl)!=0:
+                    m2sln=int(sl[0]['m2sln'])+1
+                else:
+                    m2sln=1
+                for i in Nstr.objects.raw('WITH RECURSIVE temp AS (SELECT id_pk,"CP_PART" FROM public."NSTR" WHERE "PP_PART"=%s and "CP_PART" is not null and "PTC"=%s UNION SELECT e.id_pk,e."CP_PART" FROM public."NSTR" e INNER JOIN temp t ON t."CP_PART" = e."PP_PART" where e."CP_PART" is not null and e."PTC"=%s) select * from temp;',[asmno,'M','M']):
+                     if i.cp_part not in arr1:
+                         arr1.append(i.cp_part)
+                for j in arr1:
                     z=[]
+                    r=0
+                    o=0
+                    s=0
                     shop=''
-                    for k in Oprn.objects.raw('SELECT id, "SHOP_SEC", "OPN" :: int FROM public."OPRN" WHERE "PART_NO"=%s order by "OPN" :: int ',[i]):
+                    r_qty=0
+                    r_ptc=''
+                    r_part=''
+                    qty=0
+                    scl=''
+                    for k in Oprn.objects.raw('SELECT id, "SHOP_SEC", "OPN" :: int FROM public."OPRN" WHERE "PART_NO"=%s order by "OPN" :: int ',[j]):
                         shop=k.shop_sec
                         break
                     if len(shop)!= 4:
                         continue
                     z=Shop.objects.filter(shop=shop).values('shop_ldt').order_by('shop')
-                    r=0
-                    o=0
-                    s=0
+                   
                     if x != 0:
                         o=x
                     if len(z)!=0:
                         s=int(z[0]['shop_ldt'])
                     d=int((o-s)/52)
                     r=((d % 100) * 100 + ((o - s) % 52))
-                    print(r)
+                    r_cqp=Nstr.objects.filter(pp_part=j).aggregate(a=Max('qty'),b=Max('ptc'))
+                    r_part1=Nstr.objects.filter(pp_part=j).values('cp_part').order_by('cp_part').distinct()
+                    if r_cqp['b']=='R' or r_cqp['b']=='Q':
+                        r_qty=r_cqp['a']
+                        r_ptc=r_cqp['b']
+                        if len(r_part1) !=0:
+                            r_part=r_part1[0]['cp_part']
+                            if r_part not in r_part2:
+                               r_part2.append(r_part)
+                            else:
+                                continue 
+                    # r_cqp=Nstr.objects.filter(pp_part=j).aggregate(a=Max('qty'),b=Max('ptc'))
+                    # r_part1=Nstr.objects.filter(pp_part=j).values('cp_part').order_by('cp_part').distinct()
+                    # if r_cqp['b']=='R' or r_cqp['b']=='Q':
+                    #     r_qty=r_cqp['a']
+                    #     r_ptc=r_cqp['b']
+                    #     if len(r_part1) !=0:
+                    #         r_part=r_part1[0]['cp_part']
+                    #         if r_part not in r_part2:
+                    #            r_part2.append(r_part)
+                    #         else:
+                    #             continue 
+                    # r_cqp=Nstr.objects.filter(pp_part=i).aggregate(a=Max('qty'),b=Max('ptc'))
+                    # r_part1=Nstr.objects.filter(pp_part=j).values('cp_part').order_by('cp_part').distinct()
+                    # if r_cqp['b']=='R' or r_cqp['b']=='Q':
+                    #     r_qty=r_cqp['a']
+                    #     r_ptc=r_cqp['b']
+                    #     if len(r_part1) !=0:
+                    #         if r_part1[0]['cp_part'] not in r_part2:
+                    #             r_part2.append(r_part1[0]['cp_part'])
+                    #         else:
+                    #             continue 
+                print(r_part2)
+
+
+                # res = Childnode(request,asmno,res,'R')
+                # res.sort()
+                # a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
+                # bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no','loco_to','loco_fr')
+                # prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
+                # epc=bat[0]['ep_type']
+                # brn=bat[0]['brn_no']
+                # seq=0
+                # u=0
+                # x=0
+                # print(res)
+                # print(a)
+                # if len(a)!=0:
+                #     if a[0]['uot_wk_f'] is not None:
+                #         u=int(a[0]['uot_wk_f'])
+                   
+                # if u>3000:
+                #         x=(int(u/100)*52)+(u%100)
+                # else:
+                #         x=(int((u/100) + 100)*52)+(u%100)
+                # for i in res:
+                #     z=[]
+                #     shop=''
+                #     for k in Oprn.objects.raw('SELECT id, "SHOP_SEC", "OPN" :: int FROM public."OPRN" WHERE "PART_NO"=%s order by "OPN" :: int ',[i]):
+                #         shop=k.shop_sec
+                #         break
+                #     if len(shop)!= 4:
+                #         continue
+                #     z=Shop.objects.filter(shop=shop).values('shop_ldt').order_by('shop')
+                #     r=0
+                #     o=0
+                #     s=0
+                #     if x != 0:
+                #         o=x
+                #     if len(z)!=0:
+                #         s=int(z[0]['shop_ldt'])
+                #     d=int((o-s)/52)
+                #     r=((d % 100) * 100 + ((o - s) % 52))
+                    
                
                 # for i in range(len(obj1)):
                 #     # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
@@ -10316,7 +10420,7 @@ def m13get1(request):
     if request.method == "GET" and request.is_ajax():
         # o=[]
         user=request.user
-        # print(user)
+        print(user)
         part_no = request.GET.get('part_no')
         wo_no = request.GET.get('wo_no')
         # print(part_no)
@@ -10324,7 +10428,7 @@ def m13get1(request):
         m=''
         obj1 = list(M2Doc.objects.filter(part_no=part_no,batch_no=wo_no).values('qty').distinct())
         
-        for k in M13.objects.raw('SELECT id, "SLNO"::int as s FROM public."M13" WHERE "USR_CD"=%s order by "SLNO"::int desc',['INSP21    ']):
+        for k in M13.objects.raw('SELECT id, "SLNO"::int as s FROM public."M13" WHERE "USR_CD"=%s order by "SLNO"::int desc',[str(user)]):
             # print('hiiiiiiiiiii')
             m=k.s
             break
@@ -21182,7 +21286,7 @@ def btnViewCPM_Click(request):
             
             else:
                 c=Cpm.objects.filter(epc=epc,ptc=pt[j]).values('epc','shop_ut','part_no','ptc').order_by('part_no').distinct()
-
+                p.extend(c)
     
     seen = set()
     new_l = []
@@ -21603,4 +21707,160 @@ def oprn_audit_save(request):
         Oprn_audit.objects.create(updt_by = by, updt_time = time, updt_col = k)
         return JsonResponse(by, safe = False)
     return JsonResponse({"success":False}, status = 400)
+
+@login_required
+@role_required(urlpass='/screenforcutdiagramupdation/')
+def screenforcutdiagramupdation(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+   
+    if "Superuser" in rolelist:
+        context={
+            'nav' : nav,
+            'ip' : get_client_ip(request),
+            'subnav' : subnav,
+        }
+    return render(request,'screenforcutdiagramupdation.html',context)
+def ScreenCutGetAllDetails(request):
+    if request.method == "GET" and request.is_ajax():
+        cno=request.GET.get('cutno')
+        temp=list(Part.objects.filter(partno=cno).values('partno').distinct())
+        if(len(temp)==0):
+            return JsonResponse(temp,safe=False)
+        else:
+
+            obj=list(Cutdia.objects.filter(cutdia_no=cno,del_fl__isnull=True).values('ep_part','epc','l_fr','l_to','rm_part','rm_desc','thick_rm','rm_width',
+            'rm_len','rm_spec','wt_rm','rm_unit','batch_size','rm_unit').distinct())
+            obj1=list(Part.objects.filter(partno=cno).values('des','ptc').distinct())
+            i=[]
+            v=''
+            v1=''
+            if len(obj)!=0:
+                v=obj[0]['epc']
+                v1=obj[0]['rm_part']
+            obj2=[]
+            obj3=[]
+            
+            if v != "":
+                obj2=list(Code.objects.filter(code=v,cd_type='11').values('alpha_1').distinct())
+               
+            if v1 != "":
+                obj3=list(Part.objects.filter(partno=v1).values('ptc').distinct())
+                   
+            i.append(obj)
+            i.append(obj1)
+            i.append(obj2)
+            i.append(obj3)
+            return JsonResponse(i,safe=False)
+    return JsonResponse({"success:False"},status=400)
+
+def ScreenCutDiaValidateEpc(request):
+    if request.method == "GET" and request.is_ajax():
+        epc=request.GET.get('epc')
+        
+        obj=list(Code.objects.filter(code=epc,cd_type='11').values('alpha_1','code').distinct())
+        if len(obj)==0:
+            i=[]
+            return JsonResponse(i,safe=False)
+        else:    
+            return JsonResponse(obj,safe=False)
+    return JsonResponse({"success:False"},status=400)
+
+def ScreenCutDiaValidateEpPartNo(request):
+    if request.method == "GET" and request.is_ajax():
+        eppartno = request.GET.get('eppartno')
+        obj=list(Part.objects.filter(partno=eppartno).values('partno').distinct())
+        if len(obj)==0:
+            i=[]
+            return JsonResponse(i,safe=False)
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success:False"},status=400)
+
+def ScreenCutDiaValidateRmPartNo(request):
+    if request.method == "GET" and request.is_ajax():
+        rmpartno = request.GET.get('rmpartno')
+        obj=list(Part.objects.filter(partno=rmpartno).values('ptc','partno').distinct())
+        if len(obj)==0:
+            i=[]
+            return JsonResponse(i,safe=False)
+        else:   
+            return JsonResponse(obj,safe=False)
+    return JsonResponse({"success:False"},status=400)  
+
+def ScreenCutDiaSave(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        cutdiano=request.GET.get('cutdiano') 
+        epc=request.GET.get('epc')  
+        eppartno=request.GET.get('eppartno')
+        rmpartno=request.GET.get('rmpartno')
+        rmdesc=request.GET.get('rmdesc')
+        rmunit=request.GET.get('rmunit')
+        rmthick=request.GET.get('rmthick') 
+        rmwidth=request.GET.get('rmwidth')
+        rmlength=request.GET.get('rmlength')
+        rmspec=request.GET.get('rmspec')
+        rmweight=request.GET.get('rmweight')
+        batchsize=request.GET.get('batchsize')  
+        locofr=request.GET.get('locofr')
+        locoto=request.GET.get('locoto')
+        d1 = date.today()
+
+        temp=Cutdia.objects.values('cutdia_no','del_fl').filter(cutdia_no=cutdiano).distinct()
+        if len(temp) == 0:
+            temp=Cutdia.objects.create(cutdia_no=str(cutdiano),ep_part=str(eppartno),epc=str(epc),l_fr=str(locofr),
+            l_to=str(locoto),rm_part=str(rmpartno),rm_desc=str(rmdesc),thick_rm=rmthick,rm_width=rmwidth,rm_len=rmlength,
+            rm_spec=str(rmspec),wt_rm = rmweight,rm_unit=str(rmunit),batch_size=str(batchsize),updt_dt=d1)
+        elif temp[0]['del_fl']== 'Y' and len(temp) != 0:
+            Cutdia.objects.filter(cutdia_no=cutdiano).update(cutdia_no=str(cutdiano),ep_part=str(eppartno),epc=str(epc),l_fr=str(locofr),
+            l_to=str(locoto),rm_part=str(rmpartno),rm_desc=str(rmdesc),thick_rm=rmthick,rm_width=rmwidth,rm_len=rmlength,
+            rm_spec=str(rmspec),wt_rm = rmweight,rm_unit=str(rmunit),batch_size=str(batchsize),updt_dt=d1,del_fl=None)
+        
+        else:
+            obj=[1]
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenCutDiaUpdateYes(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        cutdiano=request.GET.get('cutdiano') 
+        epc=request.GET.get('epc')  
+        eppartno=request.GET.get('eppartno')
+        rmpartno=request.GET.get('rmpartno')
+        rmdesc=request.GET.get('rmdesc')
+        rmunit=request.GET.get('rmunit')
+        rmthick=request.GET.get('rmthick') 
+        rmwidth=request.GET.get('rmwidth')
+        rmlength=request.GET.get('rmlength')
+        rmspec=request.GET.get('rmspec')
+        rmweight=request.GET.get('rmweight')
+        batchsize=request.GET.get('batchsize')  
+        locofr=request.GET.get('locofr')
+        locoto=request.GET.get('locoto')
+        d1 = date.today()
+        Cutdia.objects.filter(cutdia_no=cutdiano).update(cutdia_no=str(cutdiano),ep_part=str(eppartno),epc=str(epc),l_fr=str(locofr),
+            l_to=str(locoto),rm_part=str(rmpartno),rm_desc=str(rmdesc),thick_rm=rmthick,rm_width=rmwidth,rm_len=rmlength,
+            rm_spec=str(rmspec),wt_rm = rmweight,rm_unit=str(rmunit),batch_size=str(batchsize),updt_dt=d1)
+
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenCutDiaDeleteYes(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        cutdiano=request.GET.get('cutdiano') 
+        d1 = date.today()
+        Cutdia.objects.filter(cutdia_no=cutdiano).update(del_fl='Y',updt_dt=d1)
+
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success:False"},status=400) 
     

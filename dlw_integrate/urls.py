@@ -395,6 +395,14 @@ urlpatterns = [
     path('ajax/m13viewgetwono',m13viewgetwono,name='m13viewgetwono'),
     path('ajax/m13viewgetpano',m13viewgetpano,name='m13viewgetpano'),
     path('ajax/m13getslno',m13getslno,name='m13getslno'),
+    path('screenforcutdiagramupdation/',screenforcutdiagramupdation,name='screenforcutdiagramupdation'),
+    path('ajax/ScreenCutGetAllDetails/',ScreenCutGetAllDetails,name='ScreenCutGetAllDetails'),
+    path('ajax/ScreenCutDiaValidateEpc/',ScreenCutDiaValidateEpc,name='ScreenCutDiaValidateEpc'),
+    path('ajax/ScreenCutDiaValidateEpPartNo/',ScreenCutDiaValidateEpPartNo,name='ScreenCutDiaValidateEpPartNo'),
+    path('ajax/ScreenCutDiaValidateRmPartNo/',ScreenCutDiaValidateRmPartNo,name='ScreenCutDiaValidateRmPartNo'),
+    path('ajax/ScreenCutDiaSave/',ScreenCutDiaSave,name='ScreenCutDiaSave'),
+    path('ajax/ScreenCutDiaUpdateYes/',ScreenCutDiaUpdateYes,name='ScreenCutDiaUpdateYes'),
+    path('ajax/ScreenCutDiaDeleteYes/',ScreenCutDiaDeleteYes,name='ScreenCutDiaDeleteYes'),
 
 
 
