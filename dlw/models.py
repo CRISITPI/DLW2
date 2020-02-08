@@ -3855,7 +3855,7 @@ class M14M4new1(models.Model):
     assly_no = models.CharField(db_column='ASSLY_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     seq = models.DecimalField(db_column='SEQ', max_digits=3, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
     due_wk = models.CharField(db_column='DUE_WK', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    prtdt = models.DateField(db_column='PRTDT', blank=True, null=True)  # Field name made lowercase.
+    prtdt = models.CharField(db_column='PRTDT',max_length=10, blank=True, null=True)  # Field name made lowercase.
     brn_no = models.DecimalField(db_column='BRN_NO', max_digits=5, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
     doc_ind = models.CharField(db_column='DOC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
     unit = models.CharField(db_column='UNIT', max_length=2, blank=True, null=True)  # Field name made lowercase.

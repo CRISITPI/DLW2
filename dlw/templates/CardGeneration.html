@@ -26,17 +26,17 @@
             
         <div class="form-row">            
             <div class="form-group col-md-4">
-                <label for="inputZip">Select Card to generate</label>
+                <label for="cardno">Select Card to generate</label>
                 <select class="form-control" name="cardno" id="cardno" required>
                     <option selected disabled hidden>Select Card</option>
-                    <option>M2</option>
-                    <option>M4</option>
-                    <option>M5</option>
-                    <option>M15</option>
+                    <option value="M2">M2</option>
+                    <option value="M4">M4</option>
+                    <option value="M5">M5</option>
+                    <option value="M15">M15</option>
                 </select>
             </div>
             <div class="form-group col-md-4">
-                <label for="inputState">Assembly No.</label>
+                <label for="asslyno">Assembly No.</label>
                 <select class="form-control" name="asslyno" id="asslyno" required>
                     <option id="asslyno_op" selected disabled hidden>Select Assembly No.</option>
                         {% for i in assmno %}
@@ -45,8 +45,7 @@
                 </select>
             </div>
             <div class="form-group col-md-4">
-                <label for="inputCity">Batch Order No.</label>
-               
+                <label for="batchno">Batch Order No.</label>
                  <select class="form-control" id="batchno" name="batchno" required>
                               <option id="op_batchno" selected disabled hidden>Select Batch NO</option>
                               {% if lenm == 1 %}
@@ -57,6 +56,15 @@
                      </select>
             </div>
         </div> 
+        <div class="form-row" id="alt">
+            <div class="form-group col-md-4">
+                <label for="isalt">Is Alternate  :   </label>
+                <input type="radio" id="ralt" name="ralt" value="T" onchange="only1();" > True
+                <input type="radio" id="ralt" name="ralt" value="F" onchange="only1();" > False
+            </div>
+
+
+        </div>
         <br><center><button type="submit" name="cardbutton" value="Generate Cards" class="btn btn-primary" onclick="wait()">Generate Cards</button></center>
     </div> 
     <div id="div2">
@@ -71,8 +79,8 @@ window.onload=function()
 {
     $('#div1').show();
     $('#div2').hide();
+    $('#alt').hide();
 }
-
 
 document.querySelector("#asslyno").addEventListener('change',(e)=>{
                     e.preventDefault();
@@ -110,7 +118,14 @@ function wait()
     $('#div1').hide();
     $('#div2').show();
 }
-
+document.querySelector("#cardno").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                   
+                    var d=$('#cardno option:selected').val();
+                    if(d=='M4')
+                    {$('#alt').show();}
+                    
+});
   
 </script>
 

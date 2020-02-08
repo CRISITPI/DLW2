@@ -8350,6 +8350,7 @@ def CardGeneration(request):
         bval=request.POST.get('cardbutton')
         asmno=request.POST.get('asslyno')
         card = request.POST.get('cardno')
+        alt = request.POST.get('ralt')
         if batch and bval and asmno and card:
             if bval=="Generate Cards" and card=="M2":
                 res = []
@@ -8466,24 +8467,34 @@ def CardGeneration(request):
                
             elif bval=="Generate Cards" and card=="M4":
                 code='M'
-                res = []
                 r_qty=0
                 r_ptc=''
                 r_part=''
                 r_part2=[]
                 arr1=[asmno]
+                dat1=[]
+                dat=[]
                 ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
                 ades=ades[0]['des']
-                res.sort()
                 a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
-                bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no')
-                del1=M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).values('batch_no')
+                bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq')
+                del1=M14M4new1.objects.filter(bo_no=batch,assly_no=asmno,doc_code='88').values('assly_no')
                 if len(del1)!=0:
-                    M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).delete()
-               
+                    M14M4new1.objects.filter(bo_no=batch,assly_no=asmno,doc_code='88').delete()
                 prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
-                epc=bat[0]['ep_type']
-                brn=bat[0]['brn_no']
+                if len(bat)!=0:
+                    epc=bat[0]['ep_type']
+                    brn=bat[0]['brn_no']
+                    l_to=bat[0]['loco_to']
+                    l_fr=bat[0]['loco_fr']
+                    seq=bat[0]['seq']
+                    bqty=bat[0]['batch_qty']
+                    btype=bat[0]['batch_type']
+                sl=M14M4new1.objects.values('doc_no').order_by('-doc_no')
+                if len(sl)!=0:
+                    no=int(sl[0]['doc_no'])+1
+                else:
+                    no=1
                 m4_no=''
                 seq=0
                 version=''
@@ -8520,7 +8531,7 @@ def CardGeneration(request):
                     r_qty=0
                     r_ptc=''
                     r_part=''
-                    qty=0
+                    qty=1
                     scl=''
                     for k in Oprn.objects.raw('SELECT id, "SHOP_SEC", "OPN" :: int FROM public."OPRN" WHERE "PART_NO"=%s order by "OPN" :: int ',[j]):
                         shop=k.shop_sec
@@ -8535,6 +8546,10 @@ def CardGeneration(request):
                         s=int(z[0]['shop_ldt'])
                     d=int((o-s)/52)
                     r=((d % 100) * 100 + ((o - s) % 52))
+                    if alt=='T':
+                        pm_no='XXALT'
+                    else:
+                        pm_no=shop
                     r_cqp=Nstr.objects.filter(pp_part=j).aggregate(a=Max('qty'),b=Max('ptc'))
                     r_part1=Nstr.objects.filter(pp_part=j).values('cp_part').order_by('cp_part').distinct()
                     if r_cqp['b']=='R' or r_cqp['b']=='Q':
@@ -8543,9 +8558,39 @@ def CardGeneration(request):
                         if len(r_part1) !=0:
                             r_part=r_part1[0]['cp_part']
                             if r_part not in r_part2:
-                               r_part2.append(r_part)
-                            else:
-                                continue 
+                                r_part2.append(r_part)
+                    qty1=M2Doc.objects.filter(part_no=j,batch_no=batch,assly_no=asmno).values('qty').distinct()
+                    if len(qty1)!=0:
+                        qty=qty1[0]['qty']
+                    dat1.append({'partno':i,'pm_no':shop,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})
+                   
+                for i in r_part2:
+                    quantity=0 
+                    k=0
+                    part=[]
+                    for j in range(len(dat1)):
+                            if i==dat1[j]['r_part']:
+                                quantity=quantity+(dat1[j]['qty']*dat1[j]['r_qty']*bqty)
+                                if len(part)==0:
+                                    part.append(dat1[j]['r_part'])
+                                    k=j   
+                    unit=Part.objects.filter(partno=i).values('shop_ut').distinct()[0]
+                    if dat1[k]['r_ptc']=='C':
+                        di='C'    
+                    else:
+                        di=dat1[k]['r_ptc']
+                    dat.append({'doc_code':'88','doc_no':no,'pm_no':dat1[k]['pm_no'],'part_no':i,'l_fr':l_fr,'QUANTITY':format(quantity,'.3f'),'l_to':l_to,'batch':batch,'assly':asmno,'seq':seq,'dw':dat1[k]['rm'],'di':di,'unit':unit['shop_ut'],'epc':epc})
+                    
+                    M14M4new1.objects.create(doc_code='88',doc_no=no,pm_no=dat1[k]['pm_no'],part_no=i,qty=format(quantity,'.3f'),l_fr=l_fr,l_to=l_to,bo_no=batch,assly_no=asmno,seq=seq,due_wk=dat1[k]['rm'],prtdt=prtdt,brn_no=brn,doc_ind=di,unit=unit['shop_ut'],epc=epc)
+                    no=no+1 
+                data = {
+                      'card':card,
+                      'dat':dat,
+                   }   
+                pdf = render_to_pdf('m4cardpdf.html', data)
+                return HttpResponse(pdf, content_type='application/pdf')
+                    
+                    
                     # r_cqp=Nstr.objects.filter(pp_part=j).aggregate(a=Max('qty'),b=Max('ptc'))
                     # r_part1=Nstr.objects.filter(pp_part=j).values('cp_part').order_by('cp_part').distinct()
                     # if r_cqp['b']=='R' or r_cqp['b']=='Q':
@@ -8567,7 +8612,7 @@ def CardGeneration(request):
                     #             r_part2.append(r_part1[0]['cp_part'])
                     #         else:
                     #             continue 
-                print(r_part2)
+                
 
 
                 # res = Childnode(request,asmno,res,'R')

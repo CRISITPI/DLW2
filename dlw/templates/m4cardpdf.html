@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>card generation</title>
+    </head>
+    <body> 
+           
+        <p style="font-size: 30px;" ALIGN="CENTER">{{card}} CARD GENERATION</p>
+        <hr>
+        <hr>
+        <table >
+            <tr>    
+                           
+            <td>DOC CODE</td>    
+            <td>DOC NO</td>
+            <td>PM NO</td>
+            <td>PART NO</td>
+            <td>QUANTITY</td>
+            <td>LOCO FROM</td>
+            <td>LOCO TO</td>
+            <td>BATCH NO</td>
+            <td>ASSLY NO</td>
+            <td>SEQ</td>
+            <td>DUE WK</td>
+            <td>DOC IND</td>
+            <td>EPC</td>
+            <td>UNIT</td>
+            
+            
+           </tr>
+           <hr>
+              {% for i in dat %}
+            <tr>
+                 
+             <td>{{i.doc_code}}</td> 
+             <td>{{i.doc_no}}</td> 
+             <td>{{i.pm_no}}</td>
+             <td>{{i.part_no}}</td>
+             <td>{{i.QUANTITY}}</td>
+             <td>{{i.l_fr}}</td>
+             <td>{{i.l_to}}</td> 
+             
+             
+             <td>{{i.batch}}</td> 
+             <td>{{i.assly}}</td>
+             <td>{{i.seq}}</td> 
+             <td>{{i.dw}}</td> 
+             <td>{{i.di}}</td>
+             <td>{{i.epc}}</td> 
+             <td>{{i.unit}}</td>
+            </tr>
+            {% endfor %}
+       
+            
+        
+            
+        </table>
+       
+
+
+    </body>
+</html>
+
+
+
+
+
