@@ -403,6 +403,7 @@ urlpatterns = [
     path('ajax/ScreenCutDiaSave/',ScreenCutDiaSave,name='ScreenCutDiaSave'),
     path('ajax/ScreenCutDiaUpdateYes/',ScreenCutDiaUpdateYes,name='ScreenCutDiaUpdateYes'),
     path('ajax/ScreenCutDiaDeleteYes/',ScreenCutDiaDeleteYes,name='ScreenCutDiaDeleteYes'),
+    
     path('ajax/airbox_addloco/', airbox_addloco, name='airbox_addloco'),
     path('ajax/airbox_addeditloco/', airbox_addeditloco, name='airbox_addeditloco'),
     path('ajax/fetchloco/', fetchloco, name='fetchloco'),
