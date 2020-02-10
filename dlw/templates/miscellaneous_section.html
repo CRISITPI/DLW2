@@ -160,7 +160,7 @@
             <th>Loco Type &nbsp;</th>
             <th>In Quantity &nbsp;</th>
             <th>Out Quantity &nbsp;</th>
-            <th>Shaft Machining &nbsp;</th>
+            <th>Machining &nbsp;</th>
             <th>Date &nbsp;</th>
             <th>Machine In Date &nbsp; </th>
             <th>Machine Out Date &nbsp; </th>
@@ -235,11 +235,11 @@
                                                 </div>
 
                                     <div class="col-6">
-                                        <h6><label>Shaft Machining</label></h6>
+                                        <h6><label>Machining</label></h6>
                                         <select class="btn default" name="shaft_m" id="shaft_m" type="form-control ll" required>
-                                          <option value="" hidden selected>Shaft Machining</option>
+                                          <option value="" hidden selected>Machining</option>
                                           <option value="VERTICAL">Vertical</option>
-                                          <option value="HORIZONTAL">Horizontal</option>
+                                          <option value="HORIZONTAL">Horizontal </option>
                                         </select>
                                     </div>
                                     </div>
@@ -330,10 +330,10 @@
                                                     <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                             </div>
                                         <div class="col-6">
-                                            <h6><label>Shaft Machining</label></h6>
+                                            <h6><label>Machining</label></h6>
                                             <select class="btn default" name="editshaft_m" id="editshaft_m" type="form-control ll" required>
-                                              <option value="" hidden selected>Shaft Machining</option>
-                                              <option value="VERTICAL">Vertical</option>
+                                              <option value="" hidden selected>Machining</option>
+                                              <option value="VERTICAL">Verical</option>
                                               <option value="HORIZONTAL">Horizontal</option>
                                             </select>
                                         </div>
@@ -387,7 +387,7 @@
                                         <br>
                                             <div class="col">
                                                 <div class="dropdown">
-                                                    <select class="btn default" name="dislocos" type="form-control ll" required>
+                                                    <select name="dislocos" type="form-control ll" required>
                                                     <option value="" hidden selected>Dispatch To</option>
                                                     <option value="BogieAssembly">Bogie Assembly and Dispatch</option>
                                                     </select>
@@ -466,12 +466,27 @@
                         data : data,
                         success : function(response){            
                             $("#bo_date").val(`${response[0].rel_date}`);
-                            $("#locos").val(`${response[0].ep_type}`);
                             $("#pt_no").val(`${response[0].part_no}`);
                             $("#bo_qty").val(`${response[0].batch_qty}`);
+                            func1(selbo_no);
                         }
                     })
                 });
+
+                
+        function  func1(batch){
+                    var selbo_no = batch;
+                    var data = {selbo_no};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#locos").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
 
                 $("#editsno").change(function(e){
                     e.preventDefault();
@@ -493,10 +508,25 @@
                                 $("#editshaft_m").val(`${response[0].shaft_m}`);
                                 $("#editin_qty").val(`${response[0].in_qty}`);
                                 $("#editout_qty").val(`${response[0].out_qty}`);
-        
+                                var locodes=document.getElementById('editbo_no').value;
+                                func2(locodes);
                             }
                         })
                 }); 
+
+                function  func2(batch){
+                    var batchNo = batch;
+                    var data = {batchNo};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addeditloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#editlocos").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
 
 
             </script>

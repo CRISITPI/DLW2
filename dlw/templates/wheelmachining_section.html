@@ -261,22 +261,22 @@ footer, .page-content::after{
                                     <div class="row">   
                                     <div class="col-6">
                                             <label for="">Wheel No.</label>
-                                            <input type="number" class="form-control" name="wheel_no" id="wheel_no" required>
+                                            <input type="text" class="form-control" name="wheel_no" id="wheel_no" maxlength="10" required>
                                         </div> 
                                         <div class="col-6">
                                             <label for="">Wheel Part No.</label>
-                                            <input type="number" class="form-control" name="wheelp_no" id="wheelp_no" required>
+                                            <input type="text" class="form-control" name="wheelp_no" id="wheelp_no" maxlength="8" required >
                                         </div>   
                                 </div>
 
                                 <div class="row"> 
                                     <div class="col-6">
                                         <label for="">Wheel Make</label>
-                                        <input type="text" class="form-control" name="wheel_make" id="wheel_make" required>
+                                        <input type="text" class="form-control" name="wheel_make" id="wheel_make" maxlength="20" required>
                                     </div>   
                                 <div class="col-6">
-                                    <label for="">wheel HeatCase No.</label>
-                                    <input type="number" class="form-control" name="wheel_heatcaseno" id="wheel_heatcaseno" required>
+                                    <label for="">Wheel HeatCast No.</label>
+                                    <input type="text" class="form-control" name="wheel_heatcaseno" id="wheel_heatcaseno" maxlength="20" required>
                                 </div>     
                                 </div>
                                 <div class="row">
@@ -363,18 +363,18 @@ footer, .page-content::after{
                                               </div>
                                     <div class="col-md-6 mb-3">
                                             <label for="">Wheel No.</label>
-                                            <input type="number" class="form-control" name="editwheel_no" id="editwheel_no" required>
+                                            <input type="text" class="form-control" name="editwheel_no" id="editwheel_no" maxlength="10" required>
                                         </div>    
                                 </div>
     
                                     <div class="row">
                                      <div class="col-6">
                                       <label for="">Wheel Make</label>
-                                      <input type="text" class="form-control" name="editwheel_make" id="editwheel_make" placeholder="" value="" required>
+                                      <input type="text" class="form-control" name="editwheel_make" id="editwheel_make" placeholder="" value="" maxlength="20" required>
                                     </div>
                                      <div class="col-6">
-                                        <label for="">Wheel HeatCase No.</label>
-                                        <input type="number" class="form-control" name="editwheel_heatcaseno" id="editwheel_heatcaseno" required>
+                                        <label for="">Wheel HeatCast No.</label>
+                                        <input type="text" class="form-control" name="editwheel_heatcaseno" id="editwheel_heatcaseno" maxlength="20" required>
                                     </div>   
                                 </div>
                                 <div class="row">
@@ -390,7 +390,7 @@ footer, .page-content::after{
                                 <div class="row">
                                     <div class="col-6">
                                         <label for="">Wheel Part No.</label>
-                                        <input type="number" class="form-control" name="editwheelp_no" id="editwheelp_no" required>
+                                        <input type="text" class="form-control" name="editwheelp_no" id="editwheelp_no" maxlength="8" required>
                                     </div>
                                 </div>
         </div>
@@ -487,14 +487,14 @@ footer, .page-content::after{
                         </button>
                               </div>
                           
-                              <form method="POST" class="needs-validation" > {% csrf_token %}
+                              <form name="WheelForm" method="POST" class="needs-validation" > {% csrf_token %}
               
                               <div class="modal-body">
                                     <div class="row">
                                     <div class="col">
                                             <label for="">Serial No.</label>
                                             <select name="snowheel" id="addsno" class="form-control ll" required>
-                                                    <option value="" hidden selected>Select S.No.</option>  
+                                                <option value="0">Select S.No.</option>   
                                                     {% for x in mysno %}
                                                     <option>{{x.sno}}</option>
                                                     {% endfor %}
@@ -523,19 +523,19 @@ footer, .page-content::after{
                                               </div>  
                                                 <div class="col-md-6 mb-3">
                                                       <label for="Axle">Hub Length</label>
-                                                      <input type="number" class="form-control" name="hub_lengthwhl" id="hub_lengthwhl" placeholder="" required>
+                                                      <input type="text" class="form-control" name="hub_lengthwhl" id="hub_lengthwhl"  onchange="validateWheelForm(this.id)" placeholder="" required>
                                                     </div>  
                                                     <div class="col-md-6 mb-3">
                                                           <label for="Axle">Tread Dia</label>
-                                                          <input type="number" class="form-control" name="tread_diawhl" id="tread_diawhl" placeholder="" required>
+                                                          <input type="text" class="form-control" name="tread_diawhl" id="tread_diawhl" onchange="validateWheelForm(this.id)" placeholder="" required>
                                                         </div>  
                                                         <div class="col-md-6 mb-3">
                                                               <label for="Axle">Rim Thickness</label>
-                                                              <input type="number" class="form-control" name="rim_thicknesswhl" id="rim_thicknesswhl" placeholder="" required>
+                                                              <input type="text" class="form-control" name="rim_thicknesswhl" id="rim_thicknesswhl" onchange="validateWheelForm(this.id)" placeholder="" required>
                                                             </div>  
                                                             <div class="col-md-6 mb-3">
                                                                   <label for="Axle">Bore Dia</label>
-                                                                  <input type="number" class="form-control" name="bore_diawhl" id="bore_diawhl" placeholder="" required>
+                                                                  <input type="text" class="form-control" name="bore_diawhl" id="bore_diawhl" onchange="validateWheelForm(this.id)" placeholder="" required>
                                                                 </div> 
                                                                 <div class="col-md-6 mb-3">
                                                                         <label for="Axle">Date(Manually)</label>
@@ -544,7 +544,11 @@ footer, .page-content::after{
                                                                 <div class="col-md-6 mb-3">
                                                                       <label for="Axle">Inspector Name</label>
                                                                       <input type="text" class="form-control" name="inspector_namewhl" id="inspector_namewhl" placeholder="" required>
-                                                                    </div>                                      
+                                                                    </div> 
+                                                                    <div class="col-md-6 mb-3">
+                                                                        
+                                                                        <input type="hidden" class="form-control" name="hide" id="hide" placeholder="" required>
+                                                                      </div>                                      
                                                             
                                   </div>
                               </div>                        
@@ -560,6 +564,7 @@ footer, .page-content::after{
 </form>
 
 <script>
+
         $("#addbono").change(function(e){
             e.preventDefault();
             var selbo_no = $(this).val();
@@ -571,12 +576,27 @@ footer, .page-content::after{
                 data : data,
                 success : function(response){            
                     $("#bo_date").val(`${response[0].rel_date}`);
-                    $("#loco_type").val(`${response[0].ep_type}`);
                     $("#pt_no").val(`${response[0].part_no}`);
                     $("#bo_qty").val(`${response[0].batch_qty}`);
+                    func1(selbo_no);
                 }
             })
         });
+
+        function  func1(batch){
+                    var selbo_no = batch;
+                    var data = {selbo_no};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#loco_type").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
+
 
         $("#editsno").change(function(e){
             e.preventDefault();
@@ -593,7 +613,6 @@ footer, .page-content::after{
                         $("#editbo_date").val(`${response[0].bo_date}`);
                         $("#editpt_no").val(`${response[0].pt_no}`);
                         $("#editbo_qty").val(`${response[0].bo_qty}`);
-                        $("#editlocos").val(`${response[0].loco_type}`);
                         $("#editdate").val(`${response[0].date}`);
                         $("#editin_qty").val(`${response[0].in_qty}`);
                         $("#editout_qty").val(`${response[0].out_qty}`);
@@ -601,12 +620,340 @@ footer, .page-content::after{
                         $("#editwheel_no").val(`${response[0].wheel_no}`);
                         $("#editwheel_make").val(`${response[0].wheel_make}`);
                         $("#editwheel_heatcaseno").val(`${response[0].wheel_heatcaseno}`);
-
+                        var locodes=document.getElementById('editbo_no').value;
+                        func2(locodes);
+        
                     }
                 })
         }); 
 
-    </script>
+        function  func2(batch){
+                    var batchNo = batch;
+                    var data = {batchNo};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addeditloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#editlocos").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
 
-    </html>  
+        
+            $("#addsno").change(function(e){
+            e.preventDefault();
+            test();
+            var val_loco;
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'fetchloco' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        $("#hide").val(`${response[0].alpha_1}`);
+                    }
+
+                })
+                
+        });
+
+        $("#addsno").change(function(e){
+            e.preventDefault();
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'FetchWheelInspectDetail' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response=="false")
+                        {
+                        document.getElementById('ustwhl').value ='';
+                        document.getElementById('ustwhl_date').value ='';
+                        document.getElementById('ustwhl_status').value ='';
+                        document.getElementById('hub_lengthwhl').value ='';
+                        document.getElementById('tread_diawhl').value ='';
+                        document.getElementById('rim_thicknesswhl').value ='';
+                        document.getElementById('bore_diawhl').value ='';
+                        document.getElementById('inspector_namewhl').value ='';
+                        document.getElementById('datewhl').value ='';
+                        }
+                        else {
+                        $("#ustwhl").val(`${response[0].ustwhl}`);
+                        $("#ustwhl_date").val(`${response[0].ustwhl_date}`);
+                        $("#ustwhl_status").val(`${response[0].ustwhl_status}`);
+                        $("#hub_lengthwhl").val(`${response[0].hub_lengthwhl}`);
+                        $("#tread_diawhl").val(`${response[0].tread_diawhl}`);
+                        $("#rim_thicknesswhl").val(`${response[0].rim_thicknesswhl}`);
+                        $("#bore_diawhl").val(`${response[0].bore_diawhl}`);
+                        $("#inspector_namewhl").val(`${response[0].inspector_namewhl}`);
+                        $("#datewhl").val(`${response[0].datewhl}`);
+                        }
+
+                    }
+
+                })
+                
+        }); 
+
+        $('#addbono').change(function(e){
+            e.preventDefault();
+            var b_no=$(this).val();
+            var data={b_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'fetchwheelpartno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false"){
+                            document.getElementById('wheelp_no').value ='';
+                        }
+                        else
+                        {
+                            $("#wheelp_no").val(`${response}`);
+                        }
+                    }
+
+                })
+                
+        }); 
+
+        $('#editsno').change(function(e){
+            e.preventDefault();
+            var b_no=$(this).val();
+            var data={b_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'fetchwheeleditpartno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                            $("#wheelp_no").val(`${response[0].wheelp_no}`);
+                    }
+
+                })
+                
+        });
+
+        window.onload=function(){
+            document.getElementById('hub_lengthwhl').readOnly=true;
+                document.getElementById('tread_diawhl').readOnly=true;
+                document.getElementById('rim_thicknesswhl').readOnly=true;
+                document.getElementById('bore_diawhl').readOnly=true;
+        }
+
+        function test()
+        {
+            var x=document.getElementById('addsno').value;
+            if(x==0)
+            {
+                document.getElementById('hub_lengthwhl').readOnly=true;
+                document.getElementById('tread_diawhl').readOnly=true;
+                document.getElementById('rim_thicknesswhl').readOnly=true;
+                document.getElementById('bore_diawhl').readOnly=true;
+            }
+            else
+            {
+                document.getElementById('hub_lengthwhl').readOnly=false;
+                document.getElementById('tread_diawhl').readOnly=false;
+                document.getElementById('rim_thicknesswhl').readOnly=false;
+                document.getElementById('bore_diawhl').readOnly=false;
+            }
+        }
+
+
+    function validateWheelForm(a) {
+        var myval=document.getElementById('hide').value;
+        var x = document.forms["WheelForm"][a].value;
+        if(isNaN(x)==false){
+        // VALIDATION FOR HUB LENGTH
+        if(a=="hub_lengthwhl"){
+        if (myval=="WAP-7") {   
+    var b=7.0745;
+    var c=7.0985;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    var b=5.938;
+    var c=6.080;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR TREAD DIAMETER
+    if(a=="tread_diawhl"){
+        if (myval=="WAP-7") {
+    var b=1092;
+    var c=1095;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    var b=1092;
+    var c=1095;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR RIM THICKNESS
+    if(a=="rim_thicknesswhl"){
+        if (myval=="WAP-7") {
+    var b=5.177;
+    var c=5.295;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    var b=5.230;
+    var c=5.270;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+    //VALIDATION FOR BORE DIAMETER
+    if(a=="bore_diawhl"){
+        if (myval=="WAP-7") {
+    var b=8.6623;
+    var c=8.6625;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    var b=8.6623;
+    var c=8.6625;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+}
+else
+{
+    setvalidation4(a);
+}
+}
+
+function setvalidation1(a,b,c)
+{
+    alert("Please enter the value between "+b+" and "+c);
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
+
+function setvalidation2(a)
+{
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="";
+}
+
+function setvalidation3(a)
+{
+    document.getElementById(a).style.color = "black";
+    document.getElementById(a).style.backgroundColor="";
+}
+function setvalidation4(a)
+{
+    alert("Please enter valid Numeric value");
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
+</script>
+</html>  
 {% endblock content %}

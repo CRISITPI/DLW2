@@ -241,15 +241,15 @@ dateFormat: 'dd-mm-yy'
                                                 <input type="text" class="form-control" name="locos" id="locos" required readonly>
                                                 </div>
                                     <div class="col-6">
-                                        <label for="Axle">Serial Make</label>
-                                        <input type="text" class="form-control" name="airbox_make" id="airbox_make" required>
+                                        <label for="Axle">Make</label>
+                                        <input type="text" class="form-control" name="airbox_make" id="airbox_make" maxlength="20" required>
                                     </div>
                                     </div>
 
                                     <div class="row">
                                     <div class="col-6">
                                             <label for="Axle">Serial No.</label>
-                                            <input type="text" class="form-control" name="airbox_sno" id="airbox_sno" required>
+                                            <input type="text" class="form-control" name="airbox_sno" id="airbox_sno" maxlength="20" required>
                                     </div>
                                         <div class="col-6">
                                             <label for="">Machine In Date</label>
@@ -335,24 +335,24 @@ dateFormat: 'dd-mm-yy'
                                         </div>
                                         <div class="col-6">
                                             <label for="Axle">Serial No.</label>
-                                            <input type="text" class="form-control" name="editairbox_sno" id="editairbox_sno" required>
+                                            <input type="text" class="form-control" name="editairbox_sno" id="editairbox_sno" maxlength="20" required>
                                         </div>
                                         </div>
                                 
                                         <div class="row">
                                             <div class="col-6">
-                                                <label for="Axle">Serial Make</label>
-                                                <input type="text" class="form-control" name="editairbox_make" id="editairbox_make" required>
+                                                <label for="Axle">Make</label>
+                                                <input type="text" class="form-control" name="editairbox_make" id="editairbox_make" maxlength="20" required>
                                             </div>
                                             <div class="col-6">
                                                 <label for="">Machine In Date</label>
-                                                <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" required>
+                                                <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
                                                 <label for="">Machine Out Date</label>
-                                                <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" required>
+                                                <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
                                             </div>
                                         </div>
                         </div>
@@ -394,7 +394,7 @@ dateFormat: 'dd-mm-yy'
                                         <br>
                                             <div class="col">
                                                 <div class="dropdown">
-                                                    <select class="btn default" name="dislocos" type="form-control ll" required>
+                                                    <select name="dislocos" type="form-control ll" required>
                                                     <option value="" hidden selected>Dispatch To</option>
                                                     <option value="BogieAssembly">Bogie Assembly and Dispatch</option>
                                                     </select>
@@ -455,12 +455,28 @@ dateFormat: 'dd-mm-yy'
                         data : data,
                         success : function(response){            
                             $("#bo_date").val(`${response[0].rel_date}`);
-                            $("#locos").val(`${response[0].ep_type}`);
+                            
                             $("#pt_no").val(`${response[0].part_no}`);
                             $("#bo_qty").val(`${response[0].batch_qty}`);
+                            func1(selbo_no);
                         }
                     })
                 });
+
+              function  func1(batch){
+                    var selbo_no = batch;
+                    var data = {selbo_no};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#locos").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
+
 
                 $("#editsno").change(function(e){
                     e.preventDefault();
@@ -475,7 +491,6 @@ dateFormat: 'dd-mm-yy'
                                 console.log(response);
                                 $("#editbo_no").val(`${response[0].bo_no}`);
                                 $("#editbo_date").val(`${response[0].bo_date}`);
-                                $("#editlocos").val(`${response[0].loco_type}`);
                                 $("#editpt_no").val(`${response[0].pt_no}`);
                                 $("#editbo_qty").val(`${response[0].bo_qty}`);
                                 $("#editdate").val(`${response[0].date}`);
@@ -483,10 +498,27 @@ dateFormat: 'dd-mm-yy'
                                 $("#editairbox_make").val(`${response[0].airbox_make}`);
                                 $("#editin_qty").val(`${response[0].in_qty}`);
                                 $("#editout_qty").val(`${response[0].out_qty}`);
+                                var locodes=document.getElementById('editbo_no').value;
+                                func2(locodes);
         
                             }
                         })
                 }); 
+
+                function  func2(batch){
+                    var batchNo = batch;
+                    var data = {batchNo};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addeditloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#editlocos").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
+
 
 
             </script>

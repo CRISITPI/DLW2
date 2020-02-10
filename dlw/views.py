@@ -5911,6 +5911,7 @@ def miscellaneous_section(request):
     return render(request,"miscellaneous_section.html",my_context)
 
 
+
 def miscell_addbo(request):
     if request.method=="GET" and request.is_ajax():
         mybo = request.GET.get('selbo_no')
@@ -6532,7 +6533,7 @@ def pinionpressing_section(request):
             blue_match=request.POST.get('blue_match')
             # loco_type=request.POST.get('locos')
             if pinion_no and pinion_make and pinion_travel and pinion_pressure and blue_match :
-                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match,inspection_status=True) 
+                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match,inspection_status=True,dispatch_to="Inspected") 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
@@ -6544,7 +6545,7 @@ def pinionpressing_section(request):
             dislocos=request.POST.get('dislocos')
             disdate=request.POST.get('dispatch_date')
             if sno and dislocos and disdate:
-                PinionPressing.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_date=disdate)
+                PinionPressing.objects.filter(sno=sno).update(dispatch_date=disdate)
                 messages.success(request, 'Successfully Dispatched!')
             else:
                 messages.error(request,"Please Enter S.No.!")
@@ -9301,6 +9302,8 @@ def bogieassembly_section(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
+    hhpmysno=BogieAssembly.objects.all().filter((Q(pt_no='17010019')|Q(pt_no='17010706')|Q(pt_no='17010639')|Q(pt_no='17010330')|Q(pt_no='17010421')|Q(pt_no='16010085')|Q(pt_no='16010206')|Q(pt_no='16010255')|Q(pt_no='17010019')|Q(pt_no='17010391')),dispatch_status=False).values('sno','pt_no')
+
     mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
     myaxle=AxleMachining.objects.all().values('axle_no')
     mytm=PinionPressing.objects.all().values('tm_no')
@@ -9312,6 +9315,7 @@ def bogieassembly_section(request):
        'usermaster':usermaster,
        'ip':get_client_ip(request),
        'mybo':mybo,
+       'hhpmysno':hhpmysno,
        'mysno':mysno,
        'myaxle':myaxle,
        'mytm':mytm,
@@ -9407,25 +9411,25 @@ def bogieassembly_section(request):
                 messages.error(request,"Please Enter S.No.!")
 
         if submit=='InspectHHP':
-            sno=int(request.POST.get('sno'))
+            sno=int(request.POST.get('hhpaddsno'))
             print(sno)
-            axle_no=request.POST.get('axle_no')
-            axle_location=request.POST.get('axle_location')
-            gear_case_no=request.POST.get('gear_case_no')
-            tm_no=request.POST.get('tm_no')
-            gear_case_make=request.POST.get('gear_case_make')
-            msu_unit_no=request.POST.get('msu_unit_no')
-            break_rigging_make=request.POST.get('break_rigging_make')
-            coil_spring_make=request.POST.get('coil_spring_make')
-            sand_box_make=request.POST.get('sand_box_make')
-            spheri_block_make=request.POST.get('spheri_block_make')
-            elastic_shop_make=request.POST.get('elastic_shop_make')
-            secondary_coil_make=request.POST.get('secondary_coil_make')
-            thrust_pad_make=request.POST.get('thrust_pad_make')
-            break_cylinder_make=request.POST.get('break_cylinder_make')
-            lateral_damper=request.POST.get('lateral_damper')
+            axle_no=request.POST.get('hhpaxle_no')
+            axle_location=request.POST.get('hhpaxle_location')
+            gear_case_no=request.POST.get('hhpgear_case_no')
+            tm_no=request.POST.get('hhptm_no')
+            gear_case_make=request.POST.get('hhpgear_case_make')
+            msu_unit_no=request.POST.get('hhpmsu_unit_no')
+            break_rigging_make=request.POST.get('hhpbreak_rigging_make')
+            coil_spring_make=request.POST.get('hhpcoil_spring_make')
+            sand_box_make=request.POST.get('hhpsand_box_make')
+            spheri_block_make=request.POST.get('hhpspheri_block_make')
+            elastic_shop_make=request.POST.get('hhpelastic_shop_make')
+            secondary_coil_make=request.POST.get('hhpsecondary_coil_make')
+            thrust_pad_make=request.POST.get('hhpthrust_pad_make')
+            break_cylinder_make=request.POST.get('hhpbreak_cylinder_make')
+            lateral_damper=request.POST.get('hhplateral_damper')
             if axle_no and axle_location and gear_case_no and tm_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and secondary_coil_make and thrust_pad_make and break_cylinder_make and lateral_damper :
-                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper) 
+                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper,dispatch_to="HHP_Inspected") 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
@@ -9450,7 +9454,7 @@ def bogieassembly_section(request):
             # break_cylinder_make=request.POST.get('break_cylinder_make')
             # lateral_damper=request.POST.get('lateral_damper')
             if axle_no and axle_location and gear_case_no and tm_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper:
-                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper) 
+                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper,dispatch_to="Inspected") 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
@@ -9471,6 +9475,7 @@ def bogieassembly_section(request):
         return HttpResponseRedirect("/bogieassembly/")
 
     return render(request,"bogieassembly.html",my_context)
+
 
 def bogieassemb_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -10114,6 +10119,7 @@ def axlewheelpressing_section(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=AxleWheelPressing.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
+    hhpmysno=AxleWheelPressing.objects.all().filter((Q(pt_no='17010019')|Q(pt_no='17010706')|Q(pt_no='17010639')|Q(pt_no='17010330')|Q(pt_no='17010421')|Q(pt_no='16010085')|Q(pt_no='16010206')|Q(pt_no='16010255')|Q(pt_no='17010019')|Q(pt_no='17010391')),dispatch_status=False).values('sno')
     mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
     axle=AxleMachining.objects.filter(axlefitting_status=False,axleinspection_status=True).values('axle_no')
     wheelde=WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no')
@@ -10128,6 +10134,7 @@ def axlewheelpressing_section(request):
        'mywheel':wheelde,
        'myaxle':axle,
         'mysno':mysno,
+        'hhpmysno':hhpmysno
        }
     if request.method=="POST":
         
@@ -10235,7 +10242,7 @@ def axlewheelpressing_section(request):
             wheel_nde_pressure=request.POST.get('hhpwheel_nde_pressure')
             axle_no=request.POST.get('hhpaxle_no')
             axle_make=request.POST.get('hhpaxle_make')
-            bullgear_no=request.POST.get('hhpbuhhpllgear_no')
+            bullgear_no=request.POST.get('hhpbullgear_no')
             bullgear_make=request.POST.get('hhpbullgear_make')
             bullgear_pressure=request.POST.get('hhpbullgear_pressure')
             msu_unit_no=request.POST.get('hhpmsu_unit_no')
@@ -10260,8 +10267,10 @@ def axlewheelpressing_section(request):
             journal_no_nde=request.POST.get('hhpjournal_no_nde')
             journal_make_nde=request.POST.get('hhpjournal_make_nde')
             
-            if wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde and cru_bearing_pressure_nde and cru_bearing_make_nde and journal_no_de and journal_make_de and journal_no_nde and journal_make_nde:
-                AxleWheelPressing.objects.filter(sno=sno).update(hhpwheelno_de=wheelno_de,hhpwheel_de_make=wheel_de_make,hhpwheel_nde_make=wheel_nde_make,hhpwheelno_nde=wheelno_nde,hhpwheel_nde_pressure=wheel_nde_pressure,hhpaxle_no=axle_no,hhpaxle_make=axle_make,hhpbull_gear_no=bullgear_no,hhpbull_gear_make=bullgear_make,hhpbullgear_pressure=bullgear_pressure,hhpmsu_unit_no=msu_unit_no,hhpmsu_unit_make=msu_unit_make,hhpaxle_box_no=axle_box_no,hhpaxle_box_make=axle_box_make,hhpaxle_box_clearance=axle_box_clearance,hhpsuspension_bearing_de_no=suspension_bearing_de_no,hhpsuspension_bearing_de_make=suspension_bearing_de_make,hhpsuspension_bearing_nde_no=suspension_bearing_nde_no,hhpsuspension_bearing_nde_make=suspension_bearing_nde_make,hhpcru_bearing_no_de=cru_bearing_no_de,hhpcru_bearing_make_de=cru_bearing_make_de,hhpcru_bearing_pressure_de=cru_bearing_pressure_de,hhpdate=date,hhpinspector_name=inspector_name,hhpcru_bearing_no_nde=cru_bearing_no_nde,hhpcru_bearing_make_nde=cru_bearing_make_nde,hhpcru_bearing_pressure_nde=cru_bearing_pressure_nde,hhpinspection_status=True,hhpjournal_no_de=journal_no_de,hhpjournal_make_de=journal_make_de,hhpjournal_no_nde=journal_no_nde,hhpjournal_make_nde=journal_make_nde)
+            if cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde and journal_no_de and journal_make_de and journal_no_nde and journal_make_nde:
+                
+                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,hhpinspection_status=True,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde,dispatch_to="HHP_Inspected")
+
                 messages.success(request,'Successfully Edited!')
             else:
                 messages.error(request,"Please Enter the all the records!")    
@@ -10295,7 +10304,7 @@ def axlewheelpressing_section(request):
             date=request.POST.get('inspectdate')
             inspector_name=request.POST.get('inspectinspector_name')
             if cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde:
-                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,inspectinspection_status=True)
+                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,inspectinspection_status=True,dispatch_to="Inspected")
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all the records!")
@@ -13083,7 +13092,6 @@ def axlemachining_section(request):
         if submit=='InspectAxle':
             
             sno=int(request.POST.get('snoaxle'))
-            print("sno",sno)
             ustaxle=request.POST.get('ustaxle')
             ustaxle_date=request.POST.get('ustaxle_date')
             ustaxle_status=request.POST.get('ustaxle_status')
@@ -13104,7 +13112,7 @@ def axlemachining_section(request):
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
             if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
-                AxleMachining.objects.filter(sno=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True)
+                AxleMachining.objects.filter(sno=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all records!")
@@ -13113,7 +13121,6 @@ def axlemachining_section(request):
         return HttpResponseRedirect("/axlemachining_section/")
 
     return render(request,"axlemachining_section.html",my_context)
-
 
 def axle_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -13251,7 +13258,7 @@ def wheelmachining_section(request):
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
             if oustwhl_status and oustwhl_date and oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
-                WheelMachining.objects.filter(sno=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_namewhl=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True)
+                WheelMachining.objects.filter(sno=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_namewhl=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Wheel Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -13259,6 +13266,7 @@ def wheelmachining_section(request):
         return HttpResponseRedirect("/wheelmachining_section/")
 
     return render(request,"wheelmachining_section.html",my_context)
+
 
 def whl_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -21909,3 +21917,176 @@ def ScreenCutDiaDeleteYes(request):
         return JsonResponse(obj,safe=False)
     return JsonResponse({"success:False"},status=400) 
     
+def airbox_addloco(request):
+    
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('selbo_no')
+        myval=list(Batch.objects.filter(bo_no=mybo).values('ep_type').distinct())
+        myvalue = list(Code.objects.filter(code=myval[0]['ep_type'],cd_type='11').values('alpha_1'))
+        return JsonResponse(myvalue, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def airbox_addeditloco(request):
+    
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('batchNo')
+        myval=list(Batch.objects.filter(bo_no=mybo).values('ep_type').distinct())
+        myvalue = list(Code.objects.filter(code=myval[0]['ep_type'],cd_type='11').values('alpha_1'))
+        return JsonResponse(myvalue, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def fetchloco(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval1=list(WheelMachining.objects.filter(sno=mysno).values('bo_no').distinct())
+        myval2 = list(Batch.objects.filter(bo_no=myval1[0]['bo_no']).values('ep_type').distinct())
+        myval3 = list(Code.objects.filter(code=myval2[0]['ep_type'],cd_type='11').values('alpha_1').distinct())
+        return JsonResponse(myval3, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def fetchaxleloco(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval1=list(AxleMachining.objects.filter(sno=mysno).values('bo_no').distinct())
+        myval2 = list(Batch.objects.filter(bo_no=myval1[0]['bo_no']).values('ep_type').distinct())
+        myval3 = list(Code.objects.filter(code=myval2[0]['ep_type'],cd_type='11').values('alpha_1').distinct())
+        return JsonResponse(myval3, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def fetchwheelpartno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('b_no')
+        myval1=list(M2Doc.objects.filter(batch_no=mysno,f_shopsec='2304').values('rm_partno').distinct())
+        myval2=''
+        l=[]
+        if len(myval1)>0:
+                for i in range(0,len(myval1)):
+                    l.append(myval1[i]['rm_partno'])
+        if len(l)!=0:
+            myval2 = list(Part.objects.filter(partno__in=l,des__startswith='WHEE').values('partno').distinct())
+            msg=myval2[0]['partno']
+        else:
+             msg="false"
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def fetchaxlepartno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('b_no')
+        myval1=list(M2Doc.objects.filter(batch_no=mysno,f_shopsec='2304').values('rm_partno').distinct())
+        myval2=''
+        l=[]
+        if len(myval1)>0:
+                for i in range(0,len(myval1)):
+                    l.append(myval1[i]['rm_partno'])
+        if len(l)!=0:
+            myval2 = list(Part.objects.filter(partno__in=l,des__startswith='AXL%').values('partno').distinct())
+            ll=len(myval2)
+            if ll>0:
+                msg=myval2[0]['partno']
+            else :
+                msg="false"
+        else:
+             msg="false"
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def fetchwheeleditpartno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('b_no')
+        myval1=list(WheelMachining.objects.filter(sno=mysno).values('wheelp_no').distinct())
+        myval2=myval1[0]['wheelp_no']
+        return JsonResponse(myval1, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def fetchaxleeditpartno(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('b_no')
+        myval1=list(AxleMachining.objects.filter(sno=mysno).values('axlep_no').distinct())
+        myval2=myval1[0]['axlep_no']
+        return JsonResponse(myval1, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FetchWheelInspectDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval1=list(WheelMachining.objects.filter(sno=mysno,dispatch_to="Inspected").values('ustwhl','ustwhl_date','ustwhl_status','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl').distinct())
+        l=len(myval1)
+        if l>0 :
+            msg=myval1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FetchAxleInspectDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval1=list(AxleMachining.objects.filter(sno=mysno,dispatch_to="Inspected").values('ustaxle','ustaxle_date','ustaxle_status','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','dateaxle','bearingaxle','abutmentaxle','inspector_nameaxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE').distinct())
+        l=len(myval1)
+        if l>0 :
+            msg=myval1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FetchPressInspectDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval1=list(AxleWheelPressing.objects.filter(sno=mysno,dispatch_to="Inspected").values('wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','date','wheel_nde_pressure').distinct())
+        l=len(myval1)
+        if l>0 :
+            msg=myval1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FetchPressInspectHHPDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval2=list(AxleWheelPressing.objects.filter(sno=mysno,dispatch_to="HHP_Inspected").values('wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','date','wheel_nde_pressure','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde').distinct())
+        l1=len(myval2)
+        if l1>0 :
+            msg=myval2
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FetchPinionInspectDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval2=list(PinionPressing.objects.filter(sno=mysno,dispatch_to="Inspected").values('pinion_no','pinion_make','pinion_pressure','pinion_travel','blue_match').distinct())
+        l1=len(myval2)
+        if l1>0 :
+            msg=myval2
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FetchBogieInspectDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval2=list(BogieAssembly.objects.filter(sno=mysno,dispatch_to="Inspected").values('axle_no','axle_location','traction_motor_no','gear_case_no','gear_case_make','msu_unit_no','break_rigging_make','coil_spring_make','sand_box_make','spheri_block_make','elastic_shop_make','horizontal_damper').distinct())
+        l1=len(myval2)
+        if l1>0 :
+            msg=myval2
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def FetchBogieInspectHHPDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval2=list(BogieAssembly.objects.filter(sno=mysno,dispatch_to="HHP_Inspected").values('axle_no','axle_location','traction_motor_no','gear_case_no','gear_case_make','msu_unit_no','break_rigging_make','coil_spring_make','sand_box_make','spheri_block_make','elastic_shop_make','horizontal_damper','secondary_coil_make','thrust_pad_make','break_cylinder_make','lateral_damper').distinct())
+        l1=len(myval2)
+        if l1>0 :
+            msg=myval2
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)

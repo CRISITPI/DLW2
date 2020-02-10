@@ -257,21 +257,21 @@ footer, .page-content::after{
                                    <div class="row">
                                    <div class="col-6">
                                     <label for="">Axle No.</label>
-                                    <input type="number" class="form-control" name="axle_no" id="axle_no" required>
+                                    <input type="text" class="form-control" name="axle_no" id="axle_no" maxlength="10" required>
                                 </div>   
                                 <div class="col-6">
                                     <label for="">Axle Part No.</label>
-                                    <input type="number" class="form-control" name="axlep_no" id="axlep_no" required>
+                                    <input type="text" class="form-control" name="axlep_no" id="axlep_no" maxlength="8" required>
                                 </div>   
                                 </div>
                                 <div class="row">
                                             <div class="col-6">
                                                 <label for="">Axle Make</label>
-                                                <input type="text" class="form-control" name="axle_make" id="axle_make" required>
+                                                <input type="text" class="form-control" name="axle_make" id="axle_make" maxlength="20" required>
                                             </div> 
                                             <div class="col-6">
-                                                    <label for="">Axle HeatCase No.</label>
-                                                    <input type="number" class="form-control" name="axle_heatcaseno" id="axle_heatcaseno" required>
+                                                    <label for="">Axle HeatCast No.</label>
+                                                    <input type="text" class="form-control" name="axle_heatcaseno" id="axle_heatcaseno" maxlength="20" required>
                                                 </div> 
                                 </div>
                                 <div class="row">
@@ -312,7 +312,7 @@ footer, .page-content::after{
                                         <label for="">Serial No.</label>
                                         <label for="">S No.</label>
                                         <select name="editsno" id="editsno" class="form-control ll" required>
-                                            <option value="" hidden selected>Select S No.</option>  
+                                            <option value="0"  >Select S No.</option>  
                                             {% for y in mysno %}
                                             <option>{{y.sno}}</option>
                                             {% endfor %}
@@ -350,24 +350,24 @@ footer, .page-content::after{
                                                 </div>
                                                 <div class="col-6">
                                                     <label for="">Axle Part No.</label>
-                                                    <input type="number" class="form-control" name="editaxlep_no" id="editaxlep_no" required>
+                                                    <input type="text" class="form-control" name="editaxlep_no" id="editaxlep_no" maxlength="8" required>
                                                 </div> 
                                     </div>
                                     <div class="row">
                                             <div class="col-6">
                                                 <label for="">Axle No.</label>
-                                                <input type="number" class="form-control" name="editaxle_no" id="editaxle_no" required>
+                                                <input type="text" class="form-control" name="editaxle_no" id="editaxle_no" maxlength="10" required>
                                             </div> 
                                             <div class="col-6">
                                                 <label for="">Axle Make</label>
-                                                <input type="text" class="form-control" name="editaxle_make" id="editaxle_make" required>
+                                                <input type="text" class="form-control" name="editaxle_make" id="editaxle_make" maxlength="20" required>
                                             </div>
                                     </div>
 
                                                 <div class="row">
                                                 <div class="col-6">
-                                                    <label for="">Axle HeatCase No.</label>
-                                                    <input type="number" class="form-control" name="editaxle_heatcaseno" id="editaxle_heatcaseno" required>
+                                                    <label for="">Axle HeatCast No.</label>
+                                                    <input type="text" class="form-control" name="editaxle_heatcaseno" id="editaxle_heatcaseno" maxlength="20" required>
                                                 </div>
                                                 <div class="col-6">
                                                         <label for="">Machine In Date</label>
@@ -480,14 +480,14 @@ footer, .page-content::after{
                             </button>
                         </div>
                     
-                        <form method="POST" class="needs-validation" > {% csrf_token %}
+                        <form name="AxleForm" id="AxleForm" method="POST" class="needs-validation" > {% csrf_token %}
         
                           <div class="modal-body">
                               <div class="row">
                               <div class="col">
                                     <label for="">Serial No.</label>
                                     <select name="snoaxle" id="addsno" class="form-control ll" required>
-                                            <option value="" hidden selected>Select S.No.</option>  
+                                            <option value="0">Select S.No.</option>  
                                             {% for x in mysno %}
                                             <option>{{x.sno}}</option>
                                             {% endfor %}
@@ -515,36 +515,36 @@ footer, .page-content::after{
                           </div>
                             <div class="col-4">
                             <label for="Axle">Axle Length</label>
-                            <input type="number" class="form-control" name="axlelength" id="axlelength" placeholder="" value="" required>
+                            <input type="text" class="form-control" name="axlelength" id="axlelength" onchange="validateAxle(this.id)" placeholder="" value="" required>
                             </div>  
                             <div class="col-4">
                                 <label for="Axle">Journal</label>
-                                <input type="number" class="form-control" name="journalaxle" id="journalaxle" placeholder="" value="" required>
+                                <input type="text" class="form-control" name="journalaxle" id="journalaxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                 </div>  
                                 <div class="col-4">
                                     <label for="Axle">Thrower</label>
-                                    <input type="number" class="form-control" name="throweraxle" id="throweraxle" placeholder="" value="" required>
+                                    <input type="text" class="form-control" name="throweraxle" id="throweraxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                     </div>  
                                     <div class="col-4">
                                     <label for="Axle">Wheel Seat</label>
-                                    <input type="number" class="form-control" name="wheelseataxle" id="wheelseataxle" placeholder="" value="" required>
+                                    <input type="text" class="form-control" name="wheelseataxle" id="wheelseataxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                     </div>  
                                     <div class="col-4">
                                 <label for="Axle">Gear Seat</label>
-                                <input type="number" class="form-control" name="gearseataxle" id="gearseataxle" placeholder="" value="" required>
+                                <input type="text" class="form-control" name="gearseataxle" id="gearseataxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                 </div> 
                                 <div class="col-4">
                                     <label for="Axle">collar</label>
-                                    <input type="number" class="form-control" name="collaraxle" id="collaraxle" placeholder="" value="" required>
+                                    <input type="text" class="form-control" name="collaraxle" id="collaraxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                 </div> 
 
                                         <div class="col-4">
                                             <label for="Axle">Bearing</label>
-                                            <input type="number" class="form-control" name="bearingaxle" id="bearingaxle" placeholder="" value="" required>
+                                            <input type="text" class="form-control" name="bearingaxle" id="bearingaxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                     </div>   
                                     <div class="col-4">
                                         <label for="Axle">Abutment</label>
-                                        <input type="number" class="form-control" name="abutmentaxle" id="abutmentaxle" placeholder="" value="" required>
+                                        <input type="text" class="form-control" name="abutmentaxle" id="abutmentaxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                         </div> 
                                         <div class="col-4">
                                             <label for="Axle">Date(Manually)</label>
@@ -553,8 +553,13 @@ footer, .page-content::after{
                                             </div>   
                                         <div class="col-4">
                                             <label for="Axle">Inspector Name</label>
-                                            <input type="Text" class="form-control" name="inspector_nameaxle" id="inspector_nameaxle" placeholder="" value="" required>
+                                            <input type="text" class="form-control" name="inspector_nameaxle" id="inspector_nameaxle" placeholder="" value="" required>
                                         </div>   
+
+                                        <div class="col-4">
+                                                                     
+                                            <input type="hidden" class="form-control" name="hide" id="hide" placeholder="" required>
+                                          </div>
                                                               
                                               
                     </div>  
@@ -562,15 +567,15 @@ footer, .page-content::after{
                     <div class="row">
                         <div class="col-4">
                             <label for="Axle">Journal</label>
-                            <input type="number" class="form-control" name="journal_surfacefinishGE" id="journal_surfacefinishGE" placeholder="" value="" required>
+                            <input type="text" class="form-control" name="journal_surfacefinishGE" id="journal_surfacefinishGE" onchange="validateGEFE(this.id)" placeholder="" value="" required>
                           </div> 
                           <div class="col-4">
                               <label for="Axle">Wheel Seat</label>
-                              <input type="number" class="form-control" name="wheelseat_surfacefinishGE" id="wheelseat_surfacefinishGE" placeholder="" value="" required>
+                              <input type="text" class="form-control" name="wheelseat_surfacefinishGE" id="wheelseat_surfacefinishGE" onchange="validateGEFE(this.id)" placeholder="" value="" required>
                             </div> 
                             <div class="col-4">
                                 <label for="Axle">Gear Seat</label>
-                                <input type="number" class="form-control" name="gearseat_surfacefinishGE" id="gearseat_surfacefinishGE" placeholder="" value="" required>
+                                <input type="text" class="form-control" name="gearseat_surfacefinishGE" id="gearseat_surfacefinishGE" onchange="validateGEFE(this.id)" placeholder="" value="" required>
                               </div>  
                               
                         </div>
@@ -578,15 +583,15 @@ footer, .page-content::after{
     <div class="row">
         <div class="col-4">
             <label for="Axle">Journal</label>
-            <input type="number" class="form-control" name="journal_surfacefinishFE" id="journal_surfacefinishFE" placeholder="" value="" required>
+            <input type="text" class="form-control" name="journal_surfacefinishFE" id="journal_surfacefinishFE" onchange="validateGEFE(this.id)" placeholder="" value="" required>
           </div> 
           <div class="col-4">
               <label for="Axle">Wheel Seat</label>
-              <input type="number" class="form-control" name="wheelseat_surfacefinishFE" id="wheelseat_surfacefinishFE" placeholder="" value="" required>
+              <input type="text" class="form-control" name="wheelseat_surfacefinishFE" id="wheelseat_surfacefinishFE" onchange="validateGEFE(this.id)" placeholder="" value="" required>
             </div> 
             <div class="col-4">
                 <label for="Axle">Gear Seat</label>
-                <input type="number" class="form-control" name="gearseat_surfacefinishFE" id="gearseat_surfacefinishFE" placeholder="" value="" required>
+                <input type="text" class="form-control" name="gearseat_surfacefinishFE" id="gearseat_surfacefinishFE" onchange="validateGEFE(this.id)" placeholder="" value="" required>
               </div>   
         </div>
  </div>
@@ -601,6 +606,555 @@ footer, .page-content::after{
 </form>
 
 <script>
+
+$("#addsno").change(function(e){
+            e.preventDefault();
+            test();
+            var val_loco;
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'fetchaxleloco' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        $("#hide").val(`${response[0].alpha_1}`);
+                    }
+
+                })
+                
+        });
+
+        $("#addsno").change(function(e){
+            e.preventDefault();
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'FetchAxleInspectDetail' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response=="false")
+                        {
+                        document.getElementById('ustaxle').value ='';
+                        document.getElementById('ustaxle_date').value ='';
+                        document.getElementById('ustaxle_status').value ='';
+                        document.getElementById('axlelength').value ='';
+                        document.getElementById('journalaxle').value ='';
+                        document.getElementById('throweraxle').value ='';
+                        document.getElementById('wheelseataxle').value ='';
+                        document.getElementById('gearseataxle').value ='';
+                        document.getElementById('collaraxle').value ='';
+                        document.getElementById('axled').value ='';
+                        document.getElementById('bearingaxle').value ='';
+                        document.getElementById('abutmentaxle').value ='';
+                        document.getElementById('inspector_nameaxle').value ='';
+                        document.getElementById('journal_surfacefinishGE').value ='';
+                        document.getElementById('wheelseat_surfacefinishGE').value ='';
+                        document.getElementById('gearseat_surfacefinishGE').value ='';
+                        document.getElementById('journal_surfacefinishFE').value ='';
+                        document.getElementById('wheelseat_surfacefinishFE').value ='';
+                        document.getElementById('gearseat_surfacefinishFE').value ='';
+                        }
+                        else{
+                        $("#ustaxle").val(`${response[0].ustaxle}`);
+                        $("#ustaxle_date").val(`${response[0].ustaxle_date}`);
+                        $("#ustaxle_status").val(`${response[0].ustaxle_status}`);
+                        $("#axlelength").val(`${response[0].axlelength}`);
+                        $("#journalaxle").val(`${response[0].journalaxle}`);
+                        $("#throweraxle").val(`${response[0].throweraxle}`);
+                        $("#wheelseataxle").val(`${response[0].wheelseataxle}`);
+                        $("#gearseataxle").val(`${response[0].gearseataxle}`);
+                        $("#collaraxle").val(`${response[0].collaraxle}`);
+                        $("#axled").val(`${response[0].dateaxle}`);
+                        $("#bearingaxle").val(`${response[0].bearingaxle}`);
+                        $("#abutmentaxle").val(`${response[0].abutmentaxle}`);
+                        $("#inspector_nameaxle").val(`${response[0].inspector_nameaxle}`);
+                        $("#journal_surfacefinishGE").val(`${response[0].journal_surfacefinishGE}`);
+                        $("#wheelseat_surfacefinishGE").val(`${response[0].wheelseat_surfacefinishGE}`);
+                        $("#gearseat_surfacefinishGE").val(`${response[0].gearseat_surfacefinishGE}`);
+                        $("#journal_surfacefinishFE").val(`${response[0].journal_surfacefinishFE}`);
+                        $("#wheelseat_surfacefinishFE").val(`${response[0].wheelseat_surfacefinishFE}`);
+                        $("#gearseat_surfacefinishFE").val(`${response[0].gearseat_surfacefinishFE}`);
+                        }
+                    }
+
+                })
+                
+        });
+
+        $('#addbono').change(function(e){
+            e.preventDefault();
+            var b_no=$(this).val();
+            var data={b_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'fetchaxlepartno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false"){
+                            document.getElementById('axlep_no').value = '  ';
+                        }
+                        else
+                        {
+                            $("#axlep_no").val(`${response}`);
+                        }
+                    }
+
+                })
+                
+        });
+
+        $('#editsno').change(function(e){
+            e.preventDefault();
+            var b_no=$(this).val();
+            var data={b_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'fetchaxleeditpartno' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                            $("#axlep_no").val(`${response[0].axlep_no}`);
+                        }
+
+                })
+                
+        });
+
+
+        window.onload=function(){
+            document.getElementById('axlelength').readOnly=true;
+                document.getElementById('journalaxle').readOnly=true;
+                document.getElementById('throweraxle').readOnly=true;
+                document.getElementById('wheelseataxle').readOnly=true;
+                document.getElementById('gearseataxle').readOnly=true;
+                document.getElementById('collaraxle').readOnly=true;
+                document.getElementById('bearingaxle').readOnly=true;
+                document.getElementById('abutmentaxle').readOnly=true;
+        }
+
+        function test()
+        {
+            var x=document.getElementById('addsno').value;
+            if(x==0)
+            {
+                document.getElementById('axlelength').readOnly=true;
+                document.getElementById('journalaxle').readOnly=true;
+                document.getElementById('throweraxle').readOnly=true;
+                document.getElementById('wheelseataxle').readOnly=true;
+                document.getElementById('gearseataxle').readOnly=true;
+                document.getElementById('collaraxle').readOnly=true;
+                document.getElementById('bearingaxle').readOnly=true;
+                document.getElementById('abutmentaxle').readOnly=true;
+            }
+            else
+            {
+                document.getElementById('axlelength').readOnly=false;
+                document.getElementById('journalaxle').readOnly=false;
+                document.getElementById('throweraxle').readOnly=false;
+                document.getElementById('wheelseataxle').readOnly=false;
+                document.getElementById('gearseataxle').readOnly=false;
+                document.getElementById('collaraxle').readOnly=false;
+                document.getElementById('bearingaxle').readOnly=false;
+                document.getElementById('abutmentaxle').readOnly=false;
+            }
+        }
+
+    function validateAxleForm(a) {
+        var myval=document.getElementById('hide').value;
+        var x = document.forms["AxleForm"][a].value;
+        if(isNaN(x)==false)
+        {
+        // VALIDATION FOR JOURNAL
+        if(a=="journalaxle"){ 
+        if (myval=="WAP-7") {           
+    b=5.907;
+    c=5.908;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=6.1905;
+    c=6.1915;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR THROWER
+    if(a=="throweraxle"){
+        if (myval=="WAP-7") {  
+    b=6.698;
+    c=6.700;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=7.530;
+    c=7.532;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR WHEEL SEAT
+    if(a=="wheelseataxle"){
+        if (myval=="WAP-7") {  
+    b=8.581;
+    c=8.582;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=8.672;
+    c=8.673;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR GEAR SEAT
+    if(a=="gearseataxle"){
+        if (myval=="WAP-7") {  
+    b=8.636;
+    c=8.637;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=8.692;
+    c=8.694;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR COLLAR
+    if(a=="collaraxle"){
+        if (myval=="WAP-7") {  
+    b=9.163;
+    c=9.183;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=9.163;
+    c=9.183;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR BEARING
+    if(a=="bearingaxle"){
+        if (myval=="WAP-7") {
+    b=8.6635;
+    c=8.6645;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=8.692;
+    c=8.713;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    //VALIDATION FOR ABUTMENT
+    if(a=="abutmentaxle"){
+        if (myval=="WAP-7") {
+    b=8.6365;
+    c=8.6375;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=8.6365;
+    c=8.6375;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
+    } 
+    else
+    {
+        setvalidation4(a);
+    } 
+    } 
+function validateAxle(a){
+    var myval=document.getElementById('hide').value;
+    var x = document.forms["AxleForm"][a].value;
+    if(isNaN(x)==false){
+    if (myval=="WAP-7"){
+        
+    var b=99.062;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=b + ((relax/100) * b);
+    if (x < min || x > max) {
+    setvalidation1(a,min,max);
+    }
+    else if((x>=min && x<b)||(x>b && x<=max)){
+    setvalidation2(a);
+    }
+    else if(x==b){
+    setvalidation3(a);
+        }   
+    }
+    if(myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    var b=99.250;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=b + ((relax/100) * b);
+    if (x < min || x > max) {5
+    setvalidation1(a,min,max);
+    }
+    else if((x>=min && x<b)||(x>b && x<=max)){
+    setvalidation2(a);
+    }
+    else if(x==b){
+    setvalidation3(a);
+    }   
+}
+}
+else {
+    setvalidation4(a);
+}
+}
+function validateGEFE(a){
+    var x = document.forms["AxleForm"][a].value;
+    if(isNaN(x)==false){
+    if(a=="journal_surfacefinishGE" || a=="journal_surfacefinishFE")
+    {
+        if(x<2.0 || x>7.0)
+        {
+            b=2.0;
+            c=7.0;
+            setvalidation1(a,b,c);
+        }
+        else
+        {
+            setvalidation3(a);
+        }
+    }
+    if(a=="wheelseat_surfacefinishGE" || a=="wheelseat_surfacefinishFE")
+    {
+        if(x<2.0 || x>4.0)
+        {
+            b=2.0;
+            c=4.0;
+            setvalidation1(a,b,c);
+        }
+        else
+        {
+            setvalidation3(a);
+        }
+    }
+    if(a=="gearseat_surfacefinishGE" || a=="gearseat_surfacefinishFE")
+    {
+        if(x<2.0 || x>7.0)
+        {
+            b=2.0;
+            c=7.0;
+            setvalidation1(a,b,c);
+        }
+        else
+        {
+            setvalidation3(a);
+        }
+    }
+}
+else
+{
+    setvalidation4(a);
+}
+}
+function setvalidation1(a,b,c)
+{
+    alert("Please enter the value between "+b+" and "+c);
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
+
+function setvalidation2(a)
+{
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="";
+}
+
+function setvalidation3(a)
+{
+    document.getElementById(a).style.color = "black";
+    document.getElementById(a).style.backgroundColor="";
+}
+
+function setvalidation4(a)
+{
+    alert("Please enter valid Numeric value");
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
+
     $("#addbono").change(function(e){
         e.preventDefault();
         var selbo_no = $(this).val();
@@ -612,12 +1166,26 @@ footer, .page-content::after{
             data : data,
             success : function(response){            
                 $("#bo_date").val(`${response[0].rel_date}`);
-                $("#loco_type").val(`${response[0].ep_type}`);
                 $("#pt_no").val(`${response[0].part_no}`);
                 $("#bo_qty").val(`${response[0].batch_qty}`);
+                func1(selbo_no);
             }
         })
     });
+    function  func1(batch){
+                    var selbo_no = batch;
+                    var data = {selbo_no};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#loco_type").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
+
 
     $("#editsno").change(function(e){
         e.preventDefault();
@@ -636,22 +1204,34 @@ footer, .page-content::after{
                     $("#editbo_qty").val(`${response[0].bo_qty}`);
                     $("#editin_qty").val(`${response[0].in_qty}`);
                     $("#editout_qty").val(`${response[0].out_qty}`);
-                    $("#editlocos").val(`${response[0].loco_type}`);
                     $("#editdate").val(`${response[0].date}`);
                     $("#editaxlep_no").val(`${response[0].axlep_no}`);
                     $("#editaxle_no").val(`${response[0].axle_no}`);
                     $("#editaxle_make").val(`${response[0].axle_make}`);
                     $("#editaxle_heatcaseno").val(`${response[0].axle_heatcaseno}`);
-
+                    var locodes=document.getElementById('editbo_no').value;
+                    func2(locodes);
+        
                 }
             })
     }); 
+
+    function  func2(batch){
+                    var batchNo = batch;
+                    var data = {batchNo};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'airbox_addeditloco' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){           
+                            $("#editlocos").val(`${response[0].alpha_1}`);
+                        }
+                    })
+                }
+
 
 </script>
 
 </html>  
 {% endblock content %}
-
-
-
-

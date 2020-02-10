@@ -403,6 +403,21 @@ urlpatterns = [
     path('ajax/ScreenCutDiaSave/',ScreenCutDiaSave,name='ScreenCutDiaSave'),
     path('ajax/ScreenCutDiaUpdateYes/',ScreenCutDiaUpdateYes,name='ScreenCutDiaUpdateYes'),
     path('ajax/ScreenCutDiaDeleteYes/',ScreenCutDiaDeleteYes,name='ScreenCutDiaDeleteYes'),
+    path('ajax/airbox_addloco/', airbox_addloco, name='airbox_addloco'),
+    path('ajax/airbox_addeditloco/', airbox_addeditloco, name='airbox_addeditloco'),
+    path('ajax/fetchloco/', fetchloco, name='fetchloco'),
+    path('ajax/fetchaxleloco/', fetchaxleloco, name='fetchaxleloco'),
+    path('ajax/fetchwheelpartno/', fetchwheelpartno, name='fetchwheelpartno'),
+    path('ajax/fetchaxlepartno/', fetchaxlepartno, name='fetchaxlepartno'),
+    path('ajax/fetchwheeleditpartno/', fetchwheeleditpartno, name='fetchwheeleditpartno'),
+    path('ajax/fetchaxleeditpartno/', fetchaxleeditpartno, name='fetchaxleeditpartno'),
+    path('ajax/FetchWheelInspectDetail/', FetchWheelInspectDetail, name='FetchWheelInspectDetail'),
+    path('ajax/FetchAxleInspectDetail/', FetchAxleInspectDetail, name='FetchAxleInspectDetail'),
+    path('ajax/FetchPressInspectDetail/', FetchPressInspectDetail, name='FetchPressInspectDetail'),
+    path('ajax/FetchPressInspectHHPDetail/', FetchPressInspectHHPDetail, name='FetchPressInspectHHPDetail'),
+    path('ajax/FetchPinionInspectDetail/', FetchPinionInspectDetail, name='FetchPinionInspectDetail'),
+    path('ajax/FetchBogieInspectDetail/', FetchBogieInspectDetail, name='FetchBogieInspectDetail'),
+    path('ajax/FetchBogieInspectHHPDetail/', FetchBogieInspectHHPDetail, name='FetchBogieInspectHHPDetail'),
 
 
 
