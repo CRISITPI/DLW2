@@ -21980,7 +21980,7 @@ def fetchaxlepartno(request):
                 for i in range(0,len(myval1)):
                     l.append(myval1[i]['rm_partno'])
         if len(l)!=0:
-            myval2 = list(Part.objects.filter(partno__in=l,des__startswith='AXL%').values('partno').distinct())
+            myval2 = list(Part.objects.filter(partno__in=l,des__startswith='AXL').values('partno').distinct())
             ll=len(myval2)
             if ll>0:
                 msg=myval2[0]['partno']
@@ -22090,3 +22090,4 @@ def FetchBogieInspectHHPDetail(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
+
