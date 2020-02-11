@@ -238,7 +238,7 @@ urlpatterns = [
     path('ajax/mg6getcd/',mg6getcd,name='mg6getcd'),
     path('ajax/mg6gettool/',mg6gettool,name='mg6gettool'),
     path('airboxreport/',airboxreport,name='airboxreport'),
-    
+    path('mg9initialreportviews/',mg9initialreportviews,name='mg9initialreportviews'),
     path('ajax/mg9getmw/',mg9getmw,name='mg9getmw'),
     path('ajax/mg9getstaff/',mg9getstaff,name='mg9getstaff'),
     path('miscreport/',miscreport,name='miscreport'),

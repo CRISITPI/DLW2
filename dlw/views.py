@@ -8420,7 +8420,7 @@ def CardGeneration(request):
                     d=int((o-s)/52)
                     r=((d % 100) * 100 + ((o - s) % 52))
                     r_cqp=Nstr.objects.filter(pp_part=i).aggregate(a=Max('qty'),b=Max('ptc'))
-                    r_part1=Nstr.objects.filter(pp_part=i).values('cp_part').order_by('cp_part').distinct()
+                    r_part1=Nstr.objects.filter(pp_part=i,l_to='9999').values('cp_part').order_by('cp_part').distinct()
                     if r_cqp['b']=='R' or r_cqp['b']=='Q':
                         r_qty=r_cqp['a']
                         r_ptc=r_cqp['b']
@@ -8449,7 +8449,8 @@ def CardGeneration(request):
                     qty1=M2Doc.objects.filter(part_no=i,batch_no=batch,assly_no=asmno).values('qty').distinct()
                     if len(qty1)!=0:
                         qty=qty1[0]['qty']
-                    
+                    else:
+                        continue
                     M2Docnew1.objects.create(scl_cl=scl,batch_no=batch,assly_no=asmno,f_shopsec=shop,part_no=i,ptc='M',qty=qty,rc_st_wk=r,rm_partno=r_part,rm_qty=r_qty,rm_ptc=r_ptc,cut_shear=cut_Shear,m2sln=m2sln,m2prtdt=prtdt,seq=seq,brn_no=brn,m4_no=m4_no,epc=epc,version=version,status=status,mark=mark,del_fl=del_fl,epc_old=epc_old)
                     dat.append({'scl_cl':scl,'partno':i,'shop':shop,'cut_Shear':cut_Shear,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})
                     m2sln=m2sln+1
@@ -8515,15 +8516,11 @@ def CardGeneration(request):
                         x=(int((u/100) + 100)*52)+(u%100)
                 j=0
                 dat=[]
-                sl=M2Docnew1.objects.values('m2sln').order_by('-m2sln')
-                if len(sl)!=0:
-                    m2sln=int(sl[0]['m2sln'])+1
-                else:
-                    m2sln=1
                 for i in Nstr.objects.raw('WITH RECURSIVE temp AS (SELECT id_pk,"CP_PART" FROM public."NSTR" WHERE "PP_PART"=%s and "CP_PART" is not null and "PTC"=%s UNION SELECT e.id_pk,e."CP_PART" FROM public."NSTR" e INNER JOIN temp t ON t."CP_PART" = e."PP_PART" where e."CP_PART" is not null and e."PTC"=%s) select * from temp;',[asmno,'M','M']):
                      if i.cp_part not in arr1:
                          arr1.append(i.cp_part)
                 for j in arr1:
+                    check=[]
                     z=[]
                     r=0
                     o=0
@@ -8533,7 +8530,7 @@ def CardGeneration(request):
                     r_ptc=''
                     r_part=''
                     qty=1
-                    scl=''
+                    
                     for k in Oprn.objects.raw('SELECT id, "SHOP_SEC", "OPN" :: int FROM public."OPRN" WHERE "PART_NO"=%s order by "OPN" :: int ',[j]):
                         shop=k.shop_sec
                         break
@@ -8557,32 +8554,32 @@ def CardGeneration(request):
                         r_qty=r_cqp['a']
                         r_ptc=r_cqp['b']
                         if len(r_part1) !=0:
-                            r_part=r_part1[0]['cp_part']
-                            if r_part not in r_part2:
-                                r_part2.append(r_part)
+                            check=str(shop+r_part1[0]['cp_part'])
+                            if check not in r_part2:
+                                r_part2.append(check)
                     qty1=M2Doc.objects.filter(part_no=j,batch_no=batch,assly_no=asmno).values('qty').distinct()
                     if len(qty1)!=0:
                         qty=qty1[0]['qty']
-                    dat1.append({'partno':i,'pm_no':shop,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})
-                   
+                    dat1.append({'partno':i,'pm_no':shop,'r_part':r_part1[0]['cp_part'],'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})     
+                print(r_part2)
                 for i in r_part2:
                     quantity=0 
                     k=0
                     part=[]
                     for j in range(len(dat1)):
-                            if i==dat1[j]['r_part']:
-                                quantity=quantity+(dat1[j]['qty']*dat1[j]['r_qty']*bqty)
+                            if i==(dat1[j]['pm_no'] + dat1[j]['r_part']):
+                                quantity=quantity+(dat1[j]['qty']*dat1[j]['r_qty'])
                                 if len(part)==0:
                                     part.append(dat1[j]['r_part'])
                                     k=j   
-                    unit=Part.objects.filter(partno=i).values('shop_ut').distinct()[0]
+                    unit=Part.objects.filter(partno=i[4:]).values('shop_ut').distinct()[0]
                     if dat1[k]['r_ptc']=='C':
                         di='C'    
                     else:
                         di=dat1[k]['r_ptc']
-                    dat.append({'doc_code':'88','doc_no':no,'pm_no':dat1[k]['pm_no'],'part_no':i,'l_fr':l_fr,'QUANTITY':format(quantity,'.3f'),'l_to':l_to,'batch':batch,'assly':asmno,'seq':seq,'dw':dat1[k]['rm'],'di':di,'unit':unit['shop_ut'],'epc':epc})
+                    dat.append({'doc_code':'88','doc_no':no,'pm_no':dat1[k]['pm_no'],'part_no':i[4:],'l_fr':l_fr,'QUANTITY':format(quantity,'.3f'),'l_to':l_to,'batch':batch,'assly':asmno,'seq':seq,'dw':dat1[k]['rm'],'di':di,'unit':unit['shop_ut'],'epc':epc})
                     
-                    M14M4new1.objects.create(doc_code='88',doc_no=no,pm_no=dat1[k]['pm_no'],part_no=i,qty=format(quantity,'.3f'),l_fr=l_fr,l_to=l_to,bo_no=batch,assly_no=asmno,seq=seq,due_wk=dat1[k]['rm'],prtdt=prtdt,brn_no=brn,doc_ind=di,unit=unit['shop_ut'],epc=epc)
+                    M14M4new1.objects.create(doc_code='88',doc_no=no,pm_no=dat1[k]['pm_no'],part_no=i[4:],qty=format(quantity,'.3f'),l_fr=l_fr,l_to=l_to,bo_no=batch,assly_no=asmno,seq=seq,due_wk=dat1[k]['rm'],prtdt=prtdt,brn_no=brn,doc_ind=di,unit=unit['shop_ut'],epc=epc)
                     no=no+1 
                 data = {
                       'card':card,
@@ -8672,19 +8669,156 @@ def CardGeneration(request):
                 # except:
                 #     messages.error(request,'Some Error Occurred')
             elif bval=="Generate Cards" and card=="M5":
-                res = []
-                obj1 = Childnode(request,asmno,res,'M')
-                print("len = ",obj1)
-                for i in range(len(obj1)):
-                    # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
-                    # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
-                    # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
-                    # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
-                    # if len(obj2):
-                    #     print(obj2[0])
-                    print(i)
-                    M5Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
-                # try:
+                c = 0
+                pn = ""
+                pn_r = ""
+                pr_shopsec = ""
+                rm_unit=""
+                pt_shop=""
+                b_type=""
+                prt_batch=""
+                total_qty=0
+                locoqty=0
+                docqty = 0
+                cardqty = 0
+                n_shopsec=""
+                lfri = ""
+                pa = "00.00"
+                sch = card[:1]
+            
+                a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
+                bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq')
+                if len(bat)!=0:
+                    epc=bat[0]['ep_type']
+                    brn=bat[0]['brn_no']
+                    l_to=bat[0]['loco_to']
+                    l_fr=bat[0]['loco_fr']
+                    seq=bat[0]['seq']
+                    bqty=bat[0]['batch_qty']
+                    btype=bat[0]['batch_type']
+                if alt=='F' and sch=='M' and btype=='O':
+                    return render(request,'CardGeneration.html')
+
+
+                # res = []
+                # res = Childnode(request,asmno,res,'M')
+                # res.sort()
+                # a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
+                # bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no')
+                # del1=M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).values('batch_no')
+                # if len(del1)!=0:
+                #     M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).delete()
+               
+                # prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
+                # epc=bat[0]['ep_type']
+                # brn=bat[0]['brn_no']
+                # m4_no=''
+                # seq=0
+                # version=''
+                # status=''
+                # mark=''
+                # epc_old=''
+                # del_fl=''
+                # u=0
+                # x=0
+                # if len(a) !=0:
+                #      if a[0]['uot_wk_f'] is not None:
+                #         u=int(a[0]['uot_wk_f'])
+                   
+                # if u>3000:
+                #         x=(int(u/100)*52)+(u%100)
+                # else:
+                #         x=(int((u/100) + 100)*52)+(u%100)
+                # j=0
+                # dat=[]
+                # sl=M2Docnew1.objects.values('m2sln').order_by('-m2sln')
+                # if len(sl)!=0:
+                #     m2sln=int(sl[0]['m2sln'])+1
+                # else:
+                #     m2sln=1
+                # for i in res:
+                #     z=[]
+                #     r=0
+                #     o=0
+                #     s=0
+                #     shop=''
+                #     r_qty=0
+                #     r_ptc=''
+                #     r_part=''
+                #     qty=0
+                #     scl=''
+                #     for k in Oprn.objects.raw('SELECT id, "SHOP_SEC", "OPN" :: int FROM public."OPRN" WHERE "PART_NO"=%s order by "OPN" :: int ',[i]):
+                #         shop=k.shop_sec
+                #         break
+                #     if len(shop)!= 4:
+                #         continue
+                #     z=Shop.objects.filter(shop=shop).values('shop_ldt').order_by('shop')
+                   
+                #     if x != 0:
+                #         o=x
+                #     if len(z)!=0:
+                #         s=int(z[0]['shop_ldt'])
+                #     d=int((o-s)/52)
+                #     r=((d % 100) * 100 + ((o - s) % 52))
+                #     r_cqp=Nstr.objects.filter(pp_part=i).aggregate(a=Max('qty'),b=Max('ptc'))
+                #     r_part1=Nstr.objects.filter(pp_part=i).values('cp_part').order_by('cp_part').distinct()
+                #     if r_cqp['b']=='R' or r_cqp['b']=='Q':
+                #         r_qty=r_cqp['a']
+                #         r_ptc=r_cqp['b']
+                #         if len(r_part1) !=0:
+                #             r_part=r_part1[0]['cp_part']
+                #     cut=Cutpart.objects.filter(partno=i,epc=bat[0]['ep_type']).values('cut_dia').order_by('cut_dia',)
+                #     if len(cut)>0:
+                #         cut_Shear=cut[0]['cut_dia']
+                #     else:
+                #         cut_Shear=''
+                #     lst=["01","02","05","1A","1C","1F"]
+                #     if epc in lst:
+                #         if s >35:
+                #             scl='A'
+                #         elif s>25:
+                #             scl='B'
+                #         else:
+                #             scl='C'
+                #     else:  
+                #         if s >25:
+                #             scl='A'
+                #         elif s>15:
+                #             scl='B'
+                #         else:
+                #             scl='C'
+                #     qty1=M2Doc.objects.filter(part_no=i,batch_no=batch,assly_no=asmno).values('qty').distinct()
+                #     if len(qty1)!=0:
+                #         qty=qty1[0]['qty']
+                    
+                #     M2Docnew1.objects.create(scl_cl=scl,batch_no=batch,assly_no=asmno,f_shopsec=shop,part_no=i,ptc='M',qty=qty,rc_st_wk=r,rm_partno=r_part,rm_qty=r_qty,rm_ptc=r_ptc,cut_shear=cut_Shear,m2sln=m2sln,m2prtdt=prtdt,seq=seq,brn_no=brn,m4_no=m4_no,epc=epc,version=version,status=status,mark=mark,del_fl=del_fl,epc_old=epc_old)
+                #     dat.append({'scl_cl':scl,'partno':i,'shop':shop,'cut_Shear':cut_Shear,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})
+                #     m2sln=m2sln+1
+                # data = {
+                #       'card':card,
+                #       'asl':asmno,
+                #       'batch':batch,
+                #       'dat':dat,
+                #       'ades':ades,
+                #       'epc':epc,
+                #       'brn':brn,
+                #       'qty':qty, 
+                #    }   
+                # pdf = render_to_pdf('cardpdf.html', data)
+                # return HttpResponse(pdf, content_type='application/pdf')
+                # # res = []
+                # obj1 = Childnode(request,asmno,res,'M')
+                # print("len = ",obj1)
+                # for i in range(len(obj1)):
+                #     # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
+                #     # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
+                #     # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
+                #     # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+                #     # if len(obj2):
+                #     #     print(obj2[0])
+                #     print(i)
+                #     M5Docnew1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='M',batch_no=batch)
+                # # try:
                 #     for j in range(len(obj1)):
                 #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
                 #     messages.success(request, 'Successfully Done!')
