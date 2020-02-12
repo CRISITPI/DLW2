@@ -8549,6 +8549,7 @@ def CardGeneration(request):
                     else:
                         pm_no=shop
                     r_cqp=Nstr.objects.filter(pp_part=j).aggregate(a=Max('qty'),b=Max('ptc'))
+                    
                     r_part1=Nstr.objects.filter(pp_part=j,l_to='9999').values('cp_part').order_by('cp_part').distinct()
                     if r_cqp['b']=='R' or r_cqp['b']=='Q':
                         r_qty=r_cqp['a']
