@@ -13171,7 +13171,7 @@ def axlemachining_section(request):
 
         if submit=='save':
 
-            sno=int(request.POST.get('editsno'))
+            sno=request.POST.get('editsno')
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
             bo_qty=request.POST.get('editbo_qty')
@@ -13212,7 +13212,7 @@ def axlemachining_section(request):
 
         if submit=='InspectAxle':
             
-            sno=int(request.POST.get('snoaxle'))
+            sno=request.POST.get('snoaxle')
             ustaxle=request.POST.get('ustaxle')
             ustaxle_date=request.POST.get('ustaxle_date')
             ustaxle_status=request.POST.get('ustaxle_status')
@@ -13326,7 +13326,7 @@ def wheelmachining_section(request):
 
         if submit=='save':
 
-            sno=int(request.POST.get('editsno'))
+            sno=request.POST.get('editsno')
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
             bo_qty=request.POST.get('editbo_qty')
@@ -13367,7 +13367,7 @@ def wheelmachining_section(request):
 
         if submit=='InspectWheel':
     
-            sno=int(request.POST.get('snowheel'))
+            sno=request.POST.get('snowheel')
             oustwhl=request.POST.get('ustwhl')
             oustwhl_date=request.POST.get('ustwhl_date')
             oustwhl_status=request.POST.get('ustwhl_status')
