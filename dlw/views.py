@@ -13115,7 +13115,7 @@ def axlemachining_section(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=AxleMachining.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
-    mysno=AxleMachining.objects.filter(dispatch_status=False).values('sno')
+    mysno=AxleMachining.objects.filter(dispatch_status=False).values('axle_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -13184,7 +13184,7 @@ def axlemachining_section(request):
             indate=request.POST.get('editin_qty')
             outdate=request.POST.get('editout_qty')
             if bo_no and bo_date and date and loco_type and axlep_no and axle_no and axle_make and axle_heatcaseno and pt_no and bo_qty and indate and outdate:
-                AxleMachining.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=indate,out_qty=outdate,date=date,axlep_no=axlep_no,loco_type=loco_type,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
+                AxleMachining.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=indate,out_qty=outdate,date=date,axlep_no=axlep_no,loco_type=loco_type,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
                 messages.success(request, 'Successfully Edited!')
             else:
                 messages.error(request,"Please Enter S.No.!")
@@ -13232,7 +13232,7 @@ def axlemachining_section(request):
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
             if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
-                AxleMachining.objects.filter(sno=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True,dispatch_to="Inspected")
+                AxleMachining.objects.filter(axle_no=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all records!")
@@ -13252,10 +13252,9 @@ def axle_addbo(request):
 def axle_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
-        myval=list(AxleMachining.objects.filter(sno=mysno).values('bo_no','bo_date','pt_no','bo_qty','in_qty','out_qty','date','axlep_no','loco_type','axle_no','axle_make','axle_heatcaseno'))
+        myval=list(AxleMachining.objects.filter(axle_no=mysno).values('bo_no','bo_date','pt_no','bo_qty','in_qty','out_qty','date','axlep_no','loco_type','axle_no','axle_make','axle_heatcaseno'))
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
-
 
 @login_required
 @role_required(urlpass='/wheelmachining_section/')
@@ -13271,7 +13270,7 @@ def wheelmachining_section(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     obj2=WheelMachining.objects.all().filter(dispatch_status=False).order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
-    mysno=WheelMachining.objects.filter(dispatch_status=False).values('sno')
+    mysno=WheelMachining.objects.filter(dispatch_status=False).values('wheel_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -13337,10 +13336,10 @@ def wheelmachining_section(request):
             wheel_no=request.POST.get('editwheel_no')
             wheel_make=request.POST.get('editwheel_make')
             wheel_heatcaseno=request.POST.get('editwheel_heatcaseno')
-            indate=request.POST.get('in_qty')
-            outdate=request.POST.get('out_qty')
+            indate=request.POST.get('editin_qty')
+            outdate=request.POST.get('editout_qty')
             if bo_no and bo_date and date and loco_type and wheel_make and wheel_no and wheel_heatcaseno and wheelp_no and pt_no and bo_qty and indate and outdate:
-                WheelMachining.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qyt=indate,out_qty=outdate,date=date,wheel_no=wheel_no,wheel_make=wheel_make,loco_type=loco_type,wheel_heatcaseno=wheel_heatcaseno,wheelp_no=wheelp_no)
+                WheelMachining.objects.filter(wheel_no=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=indate,out_qty=outdate,date=date,wheel_no=wheel_no,wheel_make=wheel_make,loco_type=loco_type,wheel_heatcaseno=wheel_heatcaseno,wheelp_no=wheelp_no)
                 messages.success(request, 'Successfully Edited!')
             else:
                 messages.error(request,"Please Enter S.No.!")
@@ -13378,7 +13377,7 @@ def wheelmachining_section(request):
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
             if oustwhl_status and oustwhl_date and oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
-                WheelMachining.objects.filter(sno=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_namewhl=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True,dispatch_to="Inspected")
+                WheelMachining.objects.filter(wheel_no=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_namewhl=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Wheel Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -13398,7 +13397,7 @@ def whl_addbo(request):
 def whl_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
-        myval=list(WheelMachining.objects.filter(sno=mysno).values('bo_no','bo_date','pt_no','bo_qty','in_qty','out_qty','date','wheel_no','wheel_make','loco_type','wheel_heatcaseno','wheelp_no'))
+        myval=list(WheelMachining.objects.filter(wheel_no=mysno).values('bo_no','bo_date','pt_no','bo_qty','in_qty','out_qty','date','wheel_no','wheel_make','loco_type','wheel_heatcaseno','wheelp_no'))
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
 
@@ -22058,7 +22057,7 @@ def airbox_addeditloco(request):
 def fetchloco(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval1=list(WheelMachining.objects.filter(sno=mysno).values('bo_no').distinct())
+        myval1=list(WheelMachining.objects.filter(wheel_no=mysno).values('bo_no').distinct())
         myval2 = list(Batch.objects.filter(bo_no=myval1[0]['bo_no']).values('ep_type').distinct())
         myval3 = list(Code.objects.filter(code=myval2[0]['ep_type'],cd_type='11').values('alpha_1').distinct())
         return JsonResponse(myval3, safe = False)
@@ -22067,7 +22066,7 @@ def fetchloco(request):
 def fetchaxleloco(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval1=list(AxleMachining.objects.filter(sno=mysno).values('bo_no').distinct())
+        myval1=list(AxleMachining.objects.filter(axle_no=mysno).values('bo_no').distinct())
         myval2 = list(Batch.objects.filter(bo_no=myval1[0]['bo_no']).values('ep_type').distinct())
         myval3 = list(Code.objects.filter(code=myval2[0]['ep_type'],cd_type='11').values('alpha_1').distinct())
         return JsonResponse(myval3, safe = False)
@@ -22114,7 +22113,7 @@ def fetchaxlepartno(request):
 def fetchwheeleditpartno(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('b_no')
-        myval1=list(WheelMachining.objects.filter(sno=mysno).values('wheelp_no').distinct())
+        myval1=list(WheelMachining.objects.filter(wheel_no=mysno).values('wheelp_no').distinct())
         myval2=myval1[0]['wheelp_no']
         return JsonResponse(myval1, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -22122,7 +22121,7 @@ def fetchwheeleditpartno(request):
 def fetchaxleeditpartno(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('b_no')
-        myval1=list(AxleMachining.objects.filter(sno=mysno).values('axlep_no').distinct())
+        myval1=list(AxleMachining.objects.filter(axle_no=mysno).values('axlep_no').distinct())
         myval2=myval1[0]['axlep_no']
         return JsonResponse(myval1, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -22130,7 +22129,7 @@ def fetchaxleeditpartno(request):
 def FetchWheelInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval1=list(WheelMachining.objects.filter(sno=mysno,dispatch_to="Inspected").values('ustwhl','ustwhl_date','ustwhl_status','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl').distinct())
+        myval1=list(WheelMachining.objects.filter(wheel_no=mysno,dispatch_to="Inspected").values('ustwhl','ustwhl_date','ustwhl_status','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl').distinct())
         l=len(myval1)
         if l>0 :
             msg=myval1
@@ -22142,7 +22141,7 @@ def FetchWheelInspectDetail(request):
 def FetchAxleInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval1=list(AxleMachining.objects.filter(sno=mysno,dispatch_to="Inspected").values('ustaxle','ustaxle_date','ustaxle_status','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','dateaxle','bearingaxle','abutmentaxle','inspector_nameaxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE').distinct())
+        myval1=list(AxleMachining.objects.filter(axle_no=mysno,dispatch_to="Inspected").values('ustaxle','ustaxle_date','ustaxle_status','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','dateaxle','bearingaxle','abutmentaxle','inspector_nameaxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE').distinct())
         l=len(myval1)
         if l>0 :
             msg=myval1

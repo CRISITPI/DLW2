@@ -322,12 +322,11 @@ footer, .page-content::after{
         <div class="modal-body"> 
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="">Serial No.</label>
-                                    <label for="">S No.</label>
+                                    <label for="">Wheel No.</label>
                                     <select name="editsno" id="editsno" class="form-control ll" required>
-                                        <option value="" hidden selected>Select S No.</option>  
+                                        <option value="" hidden selected>Select Wheel No.</option>  
                                         {% for y in mysno %}
-                                        <option>{{y.sno}}</option>
+                                        <option>{{y.wheel_no}}</option>
                                         {% endfor %}
                                 </select> 
                                       </div> 
@@ -492,11 +491,11 @@ footer, .page-content::after{
                               <div class="modal-body">
                                     <div class="row">
                                     <div class="col">
-                                            <label for="">Serial No.</label>
+                                            <label for="">Wheel No.</label>
                                             <select name="snowheel" id="addsno" class="form-control ll" required>
-                                                <option value="0">Select S.No.</option>   
+                                                <option value="0">Select Wheel No.</option>   
                                                     {% for x in mysno %}
-                                                    <option>{{x.sno}}</option>
+                                                    <option>{{x.wheel_no}}</option>
                                                     {% endfor %}
                                             </select> 
                                     </div>
