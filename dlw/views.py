@@ -10458,12 +10458,7 @@ def axlewheelpressing_section(request):
 
             sno=int(request.POST.get('delsno'))
             if sno:
-                myval=list(AxleWheelPressing.objects.filter(sno=sno).values('axle_no'))
-                myval1=list(AxleWheelPressing.objects.filter(sno=sno).values('wheel_no'))
-                print(myval)
-                AxleMachining.objects.filter(axle_no=myval[0]['axle_no']).update(axlefitting_status=False)
-                WheelMachining.objects.filter(wheel_no=myval1[0]['wheel_no']).update(wheelfitting_status=False) 
-                AxlewheelPressing.objects.filter(sno=sno).delete()
+                AxleWheelPressing.objects.filter(sno=sno).delete()
                 messages.success(request, 'Successfully Deleted!')
             else:
                 messages.error(request,"Please Enter S.No.!")
