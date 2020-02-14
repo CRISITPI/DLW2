@@ -1,0 +1,376 @@
+{% extends 'base.html' %} 
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+  input[type=text],input[type=number],
+  select {
+      width: 100%;
+      height: 5%;
+      padding: 12px 20px;
+      margin: 2px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 30%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 50%;
+      height:20%;
+      font-size: large;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  .button{
+    background-color:aqua;
+    width: 60px;
+  }
+  .table{
+    width:100%;
+    border: none;
+    height: auto;
+
+  }
+
+</style>
+<br>
+<h3 align="center" style="font-size: x-large;"><b>EXPLODE ASSEMBLY IN STEPS :</b></h3>
+<h4 align = "center" style="font-size: x-large;"><b>NSTR EXPLODE</b></h4>
+<br>
+<div id="div1"> <h6 align="left" style="margin-left: 100px;font-size: x-large;"><b>आई.एस.ओ. - 9002/ I.S.O. - 9002 </b></h6> </div>
+<br>
+<div id="div2"> <h6 align="left" style="margin-left: 100px; font-size: x-large;"><b>डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</b></h6> <h6 align="right" style="margin-right: 100px;"></h6></div><br>
+
+<br><br>
+<form action="{% url 'nstrExpl' %}" method="POST" id="myform"> 
+    {% csrf_token %}
+    <div class="container" width="100%" id="assly_div">
+        <center>
+            <table  border="1" width="100%" align="center" id="assly" class="assly">
+                <thead>
+                    <tr>
+                    <td style="font-size:x-large;"><b><center>SELECT</center></b></td>
+                    <td style="font-size:x-large;"><b><center>CD_TYPE</center></b></td>
+                    <td style="font-size:x-large;"><b><center>CODE</center></b></td>
+                    <td style="font-size:x-large;"><b><center>DESCR</center></b></td>
+                   </tr>                 
+                </thead>
+                <tbody>
+                    {% for i in obj %}
+                    <tr >
+                        <td><center><input type="radio" style="height:20px; width:20px;" id="{{i}}" name="assly" value={{i.code}} style="border: none"></center></td>
+                        <td style="font-size:x-large;"><center>{{i.cd_type}}</center></td>
+                        <td style="font-size:x-large;"><center>{{i.code}}</center></td>
+                       <td style="font-size:x-large;"><center>{{i.alpha_1}}</center></td>
+                    </tr>
+                     {% endfor %}
+                    </tbody>
+                     <tr>
+                        <td colspan="4"><center><input type="button" value="details" name="details" id="details" onclick="details_as()"/></center></td>                
+                     </tr>
+        </table>
+        </center>
+    </div>
+    <div class="container" width="60%" id="explode_assly_div" style="display: none;">
+        <table border="1" width="100%" align="center" id="assly_1" class="assly_1">
+            <thead>
+            <tr>
+                <td style="font-size:x-large;"><b><center>SELECT</center></b></td>
+                <td style="font-size:x-large;"><b><center>EPC</center></b></td>
+                <td style="font-size:x-large;"><b><center>ASSLY</center></b></td>
+                <td style="font-size:x-large;"><b><center>ASSLY_DESCR</center></b></td>
+            </tr>
+        </thead>
+        <tbody id="tb_assly" style="font-size:x-large;">
+
+        </tbody> 
+        </table>
+    </div>
+
+    <div class="container" width="60%" id="nstr_div" >
+        
+        <table border="1" width="100%" align="center" id="assly_2" class="assly_2" style=" display: none;">
+            <thead>
+            <tr>
+                <td style="font-size:x-large;"><b><center>SELECT</center></b></td>
+                <td style="font-size:x-large;"><b><center>PP PART</center></b></td>
+                <td style="font-size:x-large;"><b><center>CP PART</center></b></td>
+                <td style="font-size:x-large;"><b><center>EPC</center></b></td>
+                <td style="font-size:x-large;"><b><center>L_FR</center></b></td>
+                <td style="font-size:x-large;"><b><center>L_TO</center></b></td>
+                <td style="font-size:x-large;"><b><center>PTC</center></b></td>
+                <td style="font-size:x-large;"><b><center>QTY</center></b></td>
+                <td style="font-size:x-large;"><b><center>DES</center></b></td>
+            </tr>
+        </thead>
+        <tbody id="tb_assly_2" style="font-size:x-large;">
+
+        </tbody> 
+        </table>
+    </div>
+</form>
+<script>
+    var back = new Array(); //global array to track parent and child click for back button.
+
+function back_details()
+{
+    var t = $("input[name='ex_as_1']:checked").val();
+    var rc = $("#tb_assly_2 > tr").length;
+    var arr = t.split(',');
+    t1 = arr[0];
+    t2 = arr[1];
+
+    data={t1, t2};
+    if(back.length > 0)
+    {
+        if(back[back.length-1] == 1)
+        {
+            back_parent(t1,t2);
+            back.pop(back.length-1);
+        }
+        else
+        {
+            back_child(t1,t2);
+            back.pop(back.length-1);
+        }
+    }
+    else
+    {
+        document.getElementById("Back").disabled = true;
+    }
+}
+
+function back_parent(t1,t2)
+{
+    var rc = $("#tb_assly_2 > tr").length;
+    data = {t1,t2};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'nstrassly_child' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+        
+            $("#assly_2 > tbody").html("");
+            for(var i=0;i<response.length;i++) {
+                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td  ><center>"+response[i].pp_part+"</center></td><td  ><center>"+response[i].cp_part+"</center></td><td  >"+response[i].epc+"</td><td  ><center>"+response[i].l_fr+"</center></td><td  ><center>"+response[i].l_to+"</center></td><td  ><center>"+response[i].ptc+"</center></td><td  ><center>"+response[i].qty+"</center></td><td  ><center>"+response[i].des+"</center></td></tr>");
+        }
+        $("#tb_assly_2").append('<tr><td ><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>'); 
+      }
+    });
+    
+}
+function back_child(t1,t2)
+{   
+    var rc = $("#tb_assly_2 > tr").length;
+    data= {t1,t2};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'nstrassly_parent' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+        $("#assly_2 > tbody").html("");
+        for(var i=0;i<response.length;i++)
+        {
+            $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td  ><center>"+response[i].pp_part+"</center></td><td  ><center>"+response[i].cp_part+"</center></td><td  >"+response[i].epc+"</td><td  ><center>"+response[i].l_fr+"</center></td><td  ><center>"+response[i].l_to+"</center></td><td  ><center>"+response[i].ptc+"</center></td><td  ><center>"+response[i].qty+"</center></td><td  ><center>"+response[i].des+"</center></td></tr>");
+        }
+        $("#tb_assly_2").append('<tr><td ><center><input type="button" class = " btn btn-primary" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
+     }
+    });
+
+
+}
+
+function Main_Assly_details()
+{
+    $('#nstr_div').hide();
+    $('#assly_1').show();
+    var t = $("input[name='ex_as']:checked").val();
+    var arr = t.split(','); //split string into array on bassis of comma
+    t1 = arr[0];   //assign value of array to pass into ajax
+    t2 = arr[1];
+    data={t1, t2};
+    while(back.length > 0)
+    {
+        back.pop();
+    }
+}
+
+function home_call()
+{
+    window.location.reload();
+    $('#assly_div').show();
+    $('#explode_assly_div').hide();
+}
+
+function Child_details()
+{
+    var t = $("input[name='ex_as_1']:checked").val(); //value of checked radion button (in string), seperated by comma.
+    var rc = $("#tb_assly_2 > tr").length;
+    
+    $('#assly_2').show();
+    var arr = t.split(','); //split string into array on bassis of comma
+    t1 = arr[0];   //assign value of array to pass into ajax
+    t2 = arr[1];
+    data={t1, t2};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'nstrassly_child' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+        
+        if(response.length == 0)
+        {
+            alert("NO CHILD EXIST");
+            $('#assly_2').show();
+        }
+        else{
+            $("#assly_2 > tbody").html("");
+            back.push(0);
+            for(var i=0;i<response.length;i++)
+            {
+                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td  ><center>"+response[i].pp_part+"</center></td><td  ><center>"+response[i].cp_part+"</center></td><td  >"+response[i].epc+"</td><td  ><center>"+response[i].l_fr+"</center></td><td  ><center>"+response[i].l_to+"</center></td><td  ><center>"+response[i].ptc+"</center></td><td  ><center>"+response[i].qty+"</center></td><td  ><center>"+response[i].des+"</center></td></tr>");
+            }
+            $("#tb_assly_2").append('<tr><td ><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
+        
+      }
+     }
+    });
+
+}
+
+
+function parent_details()
+{
+    var t = $("input[name='ex_as_1']:checked").val();
+    var rc = $("#tb_assly_2 > tr").length;
+    $('#assly_2').show();
+
+    var arr = t.split(',');
+    t1 = arr[0];
+    t2 = arr[1];
+    data={t1, t2};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'nstrassly_parent' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+  
+        t = response[0].length;
+        
+        if(response.length == 0)
+        {
+            alert("NO PARENT EXIST");
+            $('#assly_2').show();
+        }
+        else{
+            $("#assly_2 > tbody").html("");
+            back.push(1);
+            for(var i=0;i<response.length;i++) {
+                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td><center>"+response[i].pp_part+"</center></td><td><center>"+response[i].cp_part+"</center></td><td>"+response[i].epc+"</td><td><center>"+response[i].l_fr+"</center></td><td><center>"+response[i].l_to+"</center></td><td><center>"+response[i].ptc+"</center></td><td><center>"+response[i].qty+"</center></td><td><center>"+response[i].des+"</center></td></tr>");
+        }
+        $("#tb_assly_2").append('<tr><td ><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>'); 
+        }
+    }
+});  
+}
+function assly_details()
+{  
+    var t = $("input[name='ex_as']:checked").val();
+    var rc = $("#tb_assly_2 > tr").length;  
+    $('#nstr_div').show();
+    $('#assly_2').show();
+    $('#assly_1').hide();
+    var arr = t.split(',');
+    t1 = arr[0];
+    t2 = arr[1];
+    data={t1, t2};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'nstrassly_det' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+        if(response.length == 0)
+        {
+            alert("NO DATA");
+
+        }
+        else{
+            $('#assly_2').show();
+            $("#assly_2 > tbody").html("");
+            for(var i=0;i<response.length-1;i++) {
+                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i][i].pp_part +","+ response[i][i].cp_part+'>'+"</center></td><td><center>"+response[i][i].pp_part+"</center></td><td><center>"+response[i][i].cp_part+"</center></td><td>"+response[i][i].epc+"</td><td><center>"+response[i][i].l_fr+"</center></td><td><center>"+response[i][i].l_to+"</center></td><td><center>"+response[i][i].ptc+"</center></td><td><center>"+response[i][i].qty+"</center></td><td><center>"+response[i+1][i].des+"</center></td></tr>");
+            }
+            $("#tb_assly_2").append('<tr><td colspan="2"><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td ><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
+        
+      }
+     }
+    });
+}
+
+function details_as()
+{
+    var t = $("input[name='assly']:checked").val();
+    $('#assly_div').hide();
+    $('#explode_assly_div').show();
+    
+    data={t};
+    $.ajax({
+        type : 'GET',
+        url : "{% url 'nstrExpl_assdet' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){
+            if(response.length == 0)
+            {
+                alert("No Corresponding Data");
+            }
+            else{
+                
+                for(var i=0;i<response.length-1;i++)
+                {
+                    $("#tb_assly").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as" value='+response[i].epc +","+ response[i+1][i].num_1+'>'+"</center></td><td><center>"+response[i].epc+"</center></td><td><center>"+response[i+1][i].num_1+"</center></td><td>"+response[i+1][i].alpha_1+"</td></tr>");
+                }
+                $("#tb_assly").append('<tr><td colspan="2"><center><input type="button" value="Assembly_details" name="Assembly_details" id="Assembly_details" onclick="assly_details()" class="ad"/></center></td><td colspan="2"><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
+            }
+        }
+    });
+}
+
+</script>
+{% endblock content %}

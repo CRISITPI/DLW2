@@ -420,7 +420,12 @@ urlpatterns = [
     path('ajax/FetchBogieInspectDetail/', FetchBogieInspectDetail, name='FetchBogieInspectDetail'),
     path('ajax/FetchBogieInspectHHPDetail/', FetchBogieInspectHHPDetail, name='FetchBogieInspectHHPDetail'),
 
-   
+    path('nstrExpl/',nstrExpl,name='nstrExpl'),
+    path('ajax/nstrExpl_assdet/',nstrExpl_assdet,name='nstrExpl_assdet'),
+    path('ajax/nstrassly_det/',nstrassly_det,name='nstrassly_det'),
+    path('ajax/nstrassly_parent/',nstrassly_parent,name='nstrassly_parent'),
+    path('ajax/nstrassly_child/',nstrassly_child,name='nstrassly_child'),
+    path('ajax/nstrassly_back/',nstrassly_back,name='nstrassly_back'),
 
 
 

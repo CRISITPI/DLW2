@@ -8690,8 +8690,12 @@ def CardGeneration(request):
                     else:
                         continue
                     dtm5.append({'scl_cl':scl,'partno':i,'shop':shop,'cut_Shear':cut_Shear,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})
-                print(dat)
-
+                print(dtm5)
+                for i in range(len(dtm5)):
+                    pn=dtm5[i]['partno']
+                    pn_r=dtm5[i]['r_part']
+                    pr_shopsec = ""
+                    pt_shop=list(Part.objects.filter(partno=pn).values('shop_ut').order_by('partno'))
                 # res = []
                 # res = Childnode(request,asmno,res,'M')
                 # res.sort()
@@ -22211,3 +22215,99 @@ def FetchBogieInspectHHPDetail(request):
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+@login_required
+@role_required(urlpass='/nstrExpl/')
+def nstrExpl(request):
+
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    obj = list(Code.objects.filter(cd_type = 'M1').values('cd_type','code','alpha_1').order_by('code').distinct())
+    
+    if "Superuser" in rolelist:
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'obj':obj,
+            'ip':get_client_ip(request),
+            'op_opnno' : wo_nop,
+            'subnav':subnav,
+        }
+
+    return render(request,'nstrExpl.html',context)
+
+def nstrExpl_assdet(request):
+    if request.method == "GET" and request.is_ajax():
+        cd = request.GET.get('t')
+        obj = list(Code.objects.filter(code = cd).values('alpha_2').distinct())
+        alpha_2 = str(obj[0]['alpha_2'])
+        t ={}
+        if alpha_2.find(' ')-1 < 0:
+            t['epc'] = alpha_2[:2]
+        else:
+            t['epc'] = alpha_2[:alpha_2.find(' ')]
+        t2 = list(Code.objects.filter(code = cd,cd_type='M1').values('num_1','alpha_1').order_by('code').distinct())
+        obj= []
+        obj.append(t)
+        obj.append(t2)
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status = 400) 
+
+def nstrassly_det(request):
+    if request.method == "GET" and request.is_ajax():
+        epc = request.GET.get('t1')
+        assly = request.GET.get('t2')
+        o = []
+        obj = list(Nstr.objects.filter(epc = epc, pp_part = assly).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
+        obj1 = list(Part.objects.filter(partno = assly).values('des'))
+        o.append(obj)
+        o.append(obj1)
+        return JsonResponse(o, safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def nstrassly_parent(request):
+    if request.method == "GET" and request.is_ajax():
+        pp = request.GET.get('t1')
+        cp = request.GET.get('t2')
+        obj1 = list(Nstr.objects.filter( cp_part = pp).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
+        for i in range(0,len(obj1)):
+           p = list(Part.objects.filter(partno = obj1[i]['pp_part']).values('des'))
+           if len(p)!=0:
+                obj1[i].update({'des':p[0]['des']})
+        print(obj1)
+        return JsonResponse(obj1, safe = False)
+    return JsonResponse({"success":False}, status = 400)
+
+def nstrassly_child(request):
+    if request.method == "GET" and request.is_ajax():
+        pp = request.GET.get('t1') 
+        cp = request.GET.get('t2') 
+        obj1 = list(Nstr.objects.filter( pp_part = cp).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
+        for i in range(0,len(obj1)):
+           p = list(Part.objects.filter(partno = obj1[i]['cp_part']).values('des'))
+           if len(p)!=0:
+                obj1[i].update({'des':p[0]['des']})
+        print(obj1)
+        return JsonResponse(obj1, safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def nstrassly_back(request):
+    if request.method == "GET" and request.is_ajax():
+        pp = request.GET.get('t1')
+        cp = request.GET.get('t2')
+        for i in range(0,len(obj1)):
+           p = list(Part.objects.filter(partno = obj1[i]['pp_part']).values('des'))
+           if len(p)!=0:
+                obj1[i].update({'des':p[0]['des']})
+        print(obj1)
+        obj1 = list(Nstr.objects.filter( cp_part = pp).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
+        return JsonResponse(obj1, safe = False)
+    return JsonResponse({"success":False}, status = 400)
