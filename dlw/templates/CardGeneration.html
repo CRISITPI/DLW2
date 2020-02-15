@@ -56,14 +56,17 @@
                      </select>
             </div>
         </div> 
+        <div class="form-group col-md-4">
+            <label for="brn_no">BRN NO  :   </label>
+            <input type="text" id="brn_no" name="brn_no" value="" onchange="" > 
+        </div>
         <div class="form-row" id="alt">
+            
             <div class="form-group col-md-4">
                 <label for="isalt">Is Alternate  :   </label>
                 <input type="radio" id="ralt" name="ralt" value="T" onchange="only1();" > True
                 <input type="radio" id="ralt" name="ralt" value="F" onchange="only1();" > False
             </div>
-
-
         </div>
         <br><center><button type="submit" name="cardbutton" value="Generate Cards" class="btn btn-primary" onclick="wait()">Generate Cards</button></center>
     </div> 

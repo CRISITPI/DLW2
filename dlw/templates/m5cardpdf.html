@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>card generation</title>
+    </head>
+    <body> 
+           
+        <p style="font-size: 30px;" ALIGN="CENTER">{{card}} CARD GENERATION</p>
+        <hr>
+        <hr>
+        <table >
+            <tr>    
+                           
+                <td>SCL</td>
+            <td>PART NO</td>
+            <td>SHOP</td>
+            <td>M5_CD</td>
+            <td>LC_NO</td>
+            <td>OPN</td>
+            <td>DES</td>
+            <td>LOT</td>
+            <td>PA</td>
+            <td>AT</td>
+            <td>loco fr</td>
+            <td>loco to</td>
+           
+            
+            
+           </tr>
+           <hr>
+              {% for i in final %}
+            <tr>
+               
+                     
+                <td>{{i.scl}}</td> 
+             <td>{{i.partno}}</td> 
+             <td>{{i.shop}}</td>
+             <td>{{i.M5_CD}}</td>
+             <td>{{i.LC_NO}}</td>
+             <td>{{i.OPN}}</td>
+             <td>{{i.DES}}</td> 
+             <td>{{i.LOT}}</td>
+             <td>{{i.PA}}</td> 
+             <td>{{i.AT}}</td>
+             <td>{{i.lfr}}</td> 
+             <td>{{i.lto}}</td>
+            </tr>
+            {% endfor %}
+       
+            
+        
+            
+        </table>
+       
+
+
+    </body>
+</html>
+
+
+
+
+
