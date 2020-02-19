@@ -574,6 +574,7 @@ footer, .page-content::after{
                             </div> 
                             <div class="col-4">
                                 <label for="Axle">Gear Seat</label>
+                                
                                 <input type="text" class="form-control" name="gearseat_surfacefinishGE" id="gearseat_surfacefinishGE" onchange="validateGEFE(this.id)" placeholder="" value="6.3" required>
                               </div>  
                               
@@ -650,12 +651,12 @@ $("#addsno").change(function(e){
                         document.getElementById('bearingaxle').value ='';
                         document.getElementById('abutmentaxle').value ='';
                         document.getElementById('inspector_nameaxle').value ='';
-                        document.getElementById('journal_surfacefinishGE').value ='';
-                        document.getElementById('wheelseat_surfacefinishGE').value ='';
-                        document.getElementById('gearseat_surfacefinishGE').value ='';
-                        document.getElementById('journal_surfacefinishFE').value ='';
-                        document.getElementById('wheelseat_surfacefinishFE').value ='';
-                        document.getElementById('gearseat_surfacefinishFE').value ='';
+                        document.getElementById('journal_surfacefinishGE').value ='6.3';
+                        document.getElementById('wheelseat_surfacefinishGE').value ='3.2';
+                        document.getElementById('gearseat_surfacefinishGE').value ='6.3';
+                        document.getElementById('journal_surfacefinishFE').value ='6.3';
+                        document.getElementById('wheelseat_surfacefinishFE').value ='3.2';
+                        document.getElementById('gearseat_surfacefinishFE').value ='6.3';
                         }
                         else{
                         $("#ustaxle").val(`${response[0].ustaxle}`);
