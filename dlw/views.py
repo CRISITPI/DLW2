@@ -10027,8 +10027,9 @@ def axlewheelpressing_section(request):
                obj.hhpinspection_status=False
                obj.save()
                messages.success(request, 'Successfully Added!')
-               AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True)
-               WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)  
+               AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
+               WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True,dispatch_status=True)
+               WheelMachining.objects.filter(wheel_no=wheelno_nde).update(wheelfitting_status=True,dispatch_status=True)  
             else:
                 messages.error(request,"Please Enter All Records!")
 
@@ -12896,7 +12897,7 @@ def axlemachining_section(request):
 
         if submit=='save':
 
-            sno=request.POST.get('editsno')
+            sno=int(request.POST.get('editsno'))
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
             bo_qty=request.POST.get('editbo_qty')
@@ -12928,10 +12929,20 @@ def axlemachining_section(request):
         
         if submit=='Delete':
 
-            sno=int(request.POST.get('delsno'))
+            sno=request.POST.get('delsno')
+            # if sno:
+            #     AxleMachining.objects.filter(axle_no=sno).delete()
+            #     messages.success(request, 'Successfully Deleted!')
+            # else:
+            #     messages.error(request,"Please Enter S.No.!")
             if sno:
-                AxleMachining.objects.filter(sno=sno).delete()
-                messages.success(request, 'Successfully Deleted!')
+                w=list(AxleMachining.objects.filter(axle_no=sno).values('axle_no'))
+                l=len(w)
+                if l>0 :
+                    AxleMachining.objects.filter(axle_no=sno).delete()
+                    messages.success(request, 'Successfully Deleted!')
+                else:
+                    messages.error(request,"Please Enter Valid Axle Number!")
             else:
                 messages.error(request,"Please Enter S.No.!")
 
@@ -12947,6 +12958,10 @@ def axlemachining_section(request):
             wheelseataxle=request.POST.get('wheelseataxle')
             gearseataxle=request.POST.get('gearseataxle')
             collaraxle=request.POST.get('collaraxle')
+            journalaxlende=request.POST.get('journalaxlende')
+            throweraxlende=request.POST.get('throweraxlende')
+            wheelseataxlende=request.POST.get('wheelseataxlende')
+            collaraxlende=request.POST.get('collaraxlende')
             dateaxle=request.POST.get('dateaxle')
             bearingaxle=request.POST.get('bearingaxle')
             abutmentaxle=request.POST.get('abutmentaxle')
@@ -12957,8 +12972,8 @@ def axlemachining_section(request):
             journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
-            if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE:
-                AxleMachining.objects.filter(axle_no=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,axleinspection_status=True,dispatch_to="Inspected")
+            if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE and journalaxlende and throweraxlende and wheelseataxlende and collaraxlende:
+                AxleMachining.objects.filter(axle_no=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,journalaxlende=journalaxlende,throweraxlende=throweraxlende,wheelseataxlende=wheelseataxlende,collaraxlende=collaraxlende,axleinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all records!")
@@ -13051,7 +13066,7 @@ def wheelmachining_section(request):
 
         if submit=='save':
 
-            sno=request.POST.get('editsno')
+            sno=int(request.POST.get('editsno'))
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
             bo_qty=request.POST.get('editbo_qty')
@@ -13070,29 +13085,41 @@ def wheelmachining_section(request):
             else:
                 messages.error(request,"Please Enter S.No.!")
                 
-        if submit=="Dispatch":
+        # if submit=="Dispatch":
             
-            sno=int(request.POST.get('dissno'))
-            dislocos=request.POST.get('dislocos')
-            dispatchdate=request.POST.get('dispatch_date')
-            if sno and dislocos:
-                WheelMachining.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True,dispatch_date=dispatchdate)
-                messages.success(request, 'Successfully Dispatched!')
-            else:
-                messages.error(request,"Please Enter S.No.!")
+        #     sno=int(request.POST.get('dissno'))
+        #     dislocos=request.POST.get('dislocos')
+        #     dispatchdate=request.POST.get('dispatch_date')
+        #     if sno and dislocos:
+        #         WheelMachining.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True,dispatch_date=dispatchdate)
+        #         messages.success(request, 'Successfully Dispatched!')
+        #     else:
+        #         messages.error(request,"Please Enter S.No.!")
         
         if submit=='Delete':
 
-            sno=int(request.POST.get('delsno'))
+            sno=request.POST.get('delsno')
+            # if sno:
+            #     WheelMachining.objects.filter(wheel_no=sno).delete()
+            #     messages.success(request, 'Successfully Deleted!')
+            # else:
+            #     messages.error(request,"Please Enter S.No.!")
             if sno:
-                WheelMachining.objects.filter(sno=sno).delete()
-                messages.success(request, 'Successfully Deleted!')
+                w=list(WheelMachining.objects.filter(wheel_no=sno).values('wheel_no'))
+                l=len(w)
+                if l>0 :
+                    WheelMachining.objects.filter(wheel_no=sno).delete()
+                    messages.success(request, 'Successfully Deleted!')
+                else:
+                    messages.error(request,"Please Enter Valid Wheel Number!")
             else:
                 messages.error(request,"Please Enter S.No.!")
 
+
+
         if submit=='InspectWheel':
     
-            sno=request.POST.get('snowheel')
+            sno=int(request.POST.get('snowheel'))
             oustwhl=request.POST.get('ustwhl')
             oustwhl_date=request.POST.get('ustwhl_date')
             oustwhl_status=request.POST.get('ustwhl_status')
@@ -22444,3 +22471,10 @@ def allot_update(request):
             Cnote.objects.filter(chg_ind = chng_ind, ppl_cn_no = cn_no).update(reg_no = edp_reg_no, reg_dt = edp_reg_dt, file_no = file_no, page_no= page_no, cn_dt= cn_dt, updt_dt = up_dt, lett_no = ltr_no, status = sts, ref_1_dt = dt_ref)
         return JsonResponse(num, safe = False)
     return JsonResponse({"success":False}, status = 400)
+
+def m5cardgen_getbrn(request):
+     if request.method == "GET" and request.is_ajax():
+        batch = request.GET.get('batch')
+        obj=list(Batch.objects.filter(bo_no=batch).values('brn_no'))
+        return JsonResponse(obj, safe = False)
+     return JsonResponse({"success":False}, status = 400)

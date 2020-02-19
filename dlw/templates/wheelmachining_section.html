@@ -125,11 +125,11 @@ footer, .page-content::after{
                                 <font color="white">Delete</font>
                          </button>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Dispatch</font>
                          </button>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inspectmodal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Inspect</font>
@@ -181,8 +181,8 @@ footer, .page-content::after{
         <th>Wheel Heat Cast No.</th>
         <th>Machine In Date &nbsp; </th>
         <th>Machine Out Date &nbsp; </th>
-        <th>Dispatch To</th>
-        <th>Dispatch Date &nbsp; </th>
+        <th>Inspection Status</th>
+        <th>Inspection Date </th>
         </tr>
         {% for objec in object %}
         <tr>
@@ -200,7 +200,7 @@ footer, .page-content::after{
         <td>{{objec.in_qty}} <br><br></td>
         <td>{{objec.out_qty}} <br><br></td>
         <td>{{objec.dispatch_to}} <br><br></td>
-        <td>{{objec.dispatch_date}} <br><br></td>
+        <td>{{objec.datewhl}} <br><br></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -276,7 +276,7 @@ footer, .page-content::after{
                                     </div>   
                                 <div class="col-6">
                                     <label for="">Wheel HeatCast No.</label>
-                                    <input type="text" class="form-control" name="wheel_heatcaseno" id="wheel_heatcaseno" maxlength="25" required>
+                                    <input type="text" class="form-control" name="wheel_heatcaseno" id="wheel_heatcaseno" maxlength="20" required>
                                 </div>     
                                 </div>
                                 <div class="row">
@@ -373,7 +373,7 @@ footer, .page-content::after{
                                     </div>
                                      <div class="col-6">
                                         <label for="">Wheel HeatCast No.</label>
-                                        <input type="text" class="form-control" name="editwheel_heatcaseno" id="editwheel_heatcaseno" maxlength="25" required>
+                                        <input type="text" class="form-control" name="editwheel_heatcaseno" id="editwheel_heatcaseno" maxlength="20" required>
                                     </div>   
                                 </div>
                                 <div class="row">
@@ -403,7 +403,7 @@ footer, .page-content::after{
     </div>
 
 <!--Dispatch-->
-<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+<!-- <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -445,7 +445,7 @@ footer, .page-content::after{
                             </form>
                         </div>
                     </div>
-                 </div>
+                 </div> -->
 <!--Delete-->
 <!-- Modal -->
 <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
@@ -459,12 +459,23 @@ footer, .page-content::after{
         </div>
     <form method="POST" class="needs-validation" > {% csrf_token %}
            <div class="modal-body">
+                    <!-- <div class="row">
+                        <div class="col">
+                                <label for="">Wheel No.</label>
+                                <input type="text" class="form-control" id="delsno" name="delsno"  required>
+                        </div> 
+                    </div> -->
                     <div class="row">
                         <div class="col">
-                                <label for="">Serial No.</label>
-                                <input type="number" class="form-control" id="delsno" name="delsno"  required>
-                        </div> 
-                    </div>
+                              <label for="">Wheel No.</label>
+                              <select name="delsno" id="delsno" class="form-control ll" required>
+                                      <option value="0">Select Wheel No.</option>  
+                                      {% for x in mysno %}
+                                      <option>{{x.wheel_no}}</option>
+                                      {% endfor %}
+                              </select> 
+                        </div>
+                        </div>
             </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
