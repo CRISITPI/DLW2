@@ -3831,12 +3831,14 @@ class M5Docnew1(models.Model):
     l_fr = models.CharField(db_column='L_FR', max_length=4, blank=True, null=True)  # Field name made lowercase.
     l_to = models.CharField(db_column='L_TO', max_length=4, blank=True, null=True)  # Field name made lowercase.
     m5glsn = models.DecimalField(db_column='M5GLSN', max_digits=6, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
-    m5prtdt = models.DateField(db_column='M5PRTDT', blank=True, null=True)  # Field name made lowercase.
+    m5prtdt = models.CharField(db_column='M5PRTDT', max_length=10, blank=True, null=True)  # Field name made lowercase.
     seq = models.DecimalField(db_column='SEQ', max_digits=3, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
     brn_no = models.DecimalField(db_column='BRN_NO', max_digits=5, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
     mark = models.CharField(db_column='MARK', max_length=1, blank=True, null=True)  # Field name made lowercase.
     del_fl = models.CharField(db_column='DEL_FL', max_length=1, blank=True, null=True)  # Field name made lowercase.
     status = models.CharField(db_column='STATUS', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    acc_qty = models.IntegerField(db_column='ACC_QTY', default=0, blank=True, null=True)
+    rej_mat = models.IntegerField(db_column='REJ_MAT', default=0, blank=True, null=True)
 
     class Meta:
         db_table = 'M5DOCNEW1'
@@ -5029,3 +5031,17 @@ class Hwm5Inbox(models.Model):
     m5_cd = models.CharField(db_column='M5_CD', max_length=50, blank=True, null=True)  # Field name made lowercase.
     ncp_jbs = models.CharField(db_column='NCP_JBS', max_length=50, blank=True, null=True)  # Field name made lowercase.
     epc_old = models.CharField(db_column='EPC_OLD', max_length=50, blank=True, null=True)  # Field name made lowercase.
+
+
+
+class m2_transaction11(models.Model):
+    work_order=models.CharField(max_length=10)
+    shop_sec=models.CharField(max_length=10)
+    part_no=models.CharField(max_length=10)
+    opn_no=models.CharField(max_length=10)
+    qty_prod=models.CharField(max_length=10)
+    qty_accep=models.CharField(max_length=10)
+    work_rej=models.CharField(max_length=10)
+    mat_rej=models.CharField(max_length=10)
+    inspect_id=models.CharField(max_length=20)
+

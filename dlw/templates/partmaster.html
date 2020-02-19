@@ -1,0 +1,176 @@
+{% extends 'base.html' %} {% block content %}
+
+<style>
+     .container{
+        background-color: #f2f2f2;
+     
+           padding: 100px;
+      }
+      table{
+          align-self: center;
+          width:90%
+          
+      }
+      input[type=text], select,textarea {
+        padding: 5px 10px;
+        width: 200px;
+      }
+</style>
+<form action="{% url 'partmaster' %}" method="POST" id="part_form">{% csrf_token %} 
+      <center><h3><b> PART MASTER MAINTENANACE</b></h3></center><br><br>
+<center>
+<div class="container">
+      <table >
+          <tr>
+            <td align="right"><label ><b >PART NO:&nbsp</b></label></td><td><input type="text" id="partno_id" name="partno_id" maxlength="8"  onblur="AdjustKeyPress(this.value);" onkeypress="return isNumberKey(event)" ></td>
+             
+            
+        
+            <td align="right"><label ><b >DESCRIPTION:&nbsp</b></label></td><td><input type="text" id="descr_id" name="descr_id"></td>
+          </tr>
+	        <tr>
+            <td align="right"><label ><b >DRAWING NO:&nbsp</b></label></td><td><input type="text" id="drng_no_id" name="drng_no_id"></td>
+            <td align="right"><label ><b >SHOP UNIT:&nbsp</b></label></td><td><input type="text" id="shop_unit_id" name="shop_unit_id"></td>
+            
+              
+             
+          
+            <td align="right"><label id="lbl" name="lbl">label</label></td>
+            </tr>   
+          <tr>
+            <td align="right"><label><b>PART TYPE CODE:&nbsp;</b></label></div></td><td><select id="ptc_id" name="ptc_id">
+                <option id="op_ptc" selected disabled hidden>Select  </option>
+                {%for role in role %}
+                <option>{{role}}</option>
+                {% endfor %} </select></td>
+            <td align="right"><label><b >M14-SPLIT CODE:&nbsp</b></label></td><td><input type="text" id="m14split_code_id" name="m14split_code_id"></td>
+          </tr>
+          <tr>
+            <td align="right"><label ><b >%age AllOWANCE:&nbsp</b></label></td><td><input type="text" STYLE="width:40px"id="allowance_id" name="allowance_id"></td>
+          </tr> 
+          
+
+      </table>
+
+</select>
+      
+</center><br><br><br>
+<center>
+
+<input type="submit" value="Clear"> 
+<input type="submit" value="Save/Update" id="submit" name="submit">
+ 
+</center>
+
+
+</div>
+</form>   
+<script>
+   function AdjustKeyPress(value){
+     var p=8;
+     if(value.length<p)
+     {
+        alert("Part number must be 8 digit.")
+        
+        document.getElementById('partno_id').value='';
+     }
+   }
+
+   function isNumberKey(evt) {
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+return true; 
+      
+        
+}
+
+
+document.querySelector("#partno_id").addEventListener('change',(e)=>{
+                         
+                
+                        //alert("test : "+$("#sh_no").val())
+                            e.preventDefault();                        
+                            var partno_id = $("#partno_id").val();
+
+
+                            var data = {partno_id};
+                              $.ajax({
+                                type : 'GET',
+                                url : "{% url 'part_get' %}",
+                                dataType : 'json',
+                                data : data,
+
+
+                                success : function(response){                             
+                                        // alert(response[0].shop_ut)
+                              // if(response.length==0)
+                              // {
+                              //   alert("this is the no");
+
+                              // }
+                              // else{
+                              //   alert("didnt match");
+                              // }
+                            
+                            a=response.length;
+                            // alert(response[a-1]);
+                            // alert(partno_id[7]);
+                            if(partno_id[7]==response[a-1])
+                            { 
+
+                              alert("match");
+                                        document.getElementById('descr_id').value=response[0].des;
+                                        document.getElementById('drng_no_id').value=response[0].drgno;
+                                        document.getElementById('shop_unit_id').value=response[0].shop_ut;
+                                        document.getElementById('ptc_id').value=response[0].ptc;  
+                                        func1();  
+                            }
+                            else
+                            {
+                              alert("last digit should be"+response[a-1]);
+                            }
+                                       
+                                      
+                                        
+                                        var shop_unit_id = $("#shop_unit_id").val()
+                                        var data = {shop_unit_id};
+                                      // $.ajax({
+                                      //        type : 'GET',
+                                      //        url : "{% url 'part_label' %}",
+                                      //        dataType : 'json',
+                                      //         data : data,
+                                      //         success : function(response){                             
+                                      //           var txt=response[0].alpha_1;
+                                      //           $('#lbl').text(txt);
+                                      //        }
+                                      //    })
+                                      //   document.getElementById('ptc_id').value=response[0].ptc;
+                                      //   document.getElementById('m14split_code_id').value=response[0].m14splt_cd;
+                                      //   document.getElementById('allowance_id').value=response[0].allow_perc;
+                                }
+                                  })
+                        }); 
+                        
+    //document.querySelector("#shop_unit_id").addEventListener('change',(e)=>{
+                
+                // alert("test : "+$("#shop_unit_id").val())
+                function func1(){
+                                           
+                    var shop_unit_id = $("#shop_unit_id").val()
+                    var data = {shop_unit_id};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'part_label' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){                             
+                                //alert("afhgtdghfjgfk");
+                                var txt=response[0].alpha_1;
+                                $('#lbl').text(txt);
+                        }
+                          })
+                } 
+               // });    
+</script>
+{% endblock content %}

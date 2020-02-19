@@ -1,7 +1,5 @@
 {% extends 'base.html' %} {% block content %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style>
     input[type=text],
     select {
@@ -52,531 +50,377 @@
 <br>
 <h3 align="center">Route Card (M2)</h3>
 <br>
-<center>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <font size="3">
-                <li>
-                    {{message}}
-                </li>
-            </font>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </center>
-<br>
+
+
 <form action="{% url 'm2view' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
             <tr>
+               
                 <td>
-                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
-                    <select class="form-control" id="shop_sec" name="shop_sec" required>
-            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-            {% if lenm == 1 %}
-            {% for role in roles %}
-                <option selected readonly>{{role}}</option>
-                {% endfor %}
-            {% endif %}
-            {% if lenm > 1 %}
-            {% for role in roles %}
-              <option>{{role}}</option>
-            {% endfor %}
-            {% endif %}
-        </select>
+                    <!-- <label id="lbl" name="lbl">heloo</label> -->
+                    <label for="wno"><b>WORK ORDER NO:/कार्यादेश सं.</b></label>
+                      <select class="form-control" id="work" name="work" required style="width:150px">
+                          <option id="op_work_no" selected disabled hidden>Select Work Order Number</option>
+                          {% if lenm == 1 %}
+                              <option selected readonly>{% for role in work_no %}{{role.bo_no}}{% endfor %}</option>
+                          {% endif %}
+                          {% if lenm > 1 %}
+                          {% for role in work_no %}
+                            <option>{{role}}</option>
+                          {% endfor %}
+                          {% endif %}
+                      </select>
+                </td>  
+                <td><label id="shop_no"><b>SHOP NO/शॉप सं.</b></label>
+                    <select class="form-control" id="shop_no1" name="shop_no1" required style="width:150px" >
+                        <option id="op_no1" selected disabled hidden>Select Shop Section</option>
+                        {% for role in roles1 %}
+                        <option>{{role}}</option>
+                        {% endfor %}
+                    </select>
                 </td>
                 <td>
-                    <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
-                    <select class="form-control" id="wno" name="wo_no" required>
-        <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
-        {% if lenm == 1 %}
-        {% for i in wo_nop %}
-          <option>{{i.batch_no}}</option>
-        {% endfor %}
-        {% endif %}
-    </select>
-                </td>
-                <td>
-                    <label for="br_no"><b>BR NO/बी.आर.नंबर</b></label>
-                    <select class="form-control" id="br_no" name="br_no" required>
-            <option id="op_br" selected disabled hidden>Select BR NO</option>
-            
-              </select>
+               <label id="shop1"><b>PART NO/पार्ट सं.</b><input type="text" placeholder="Enter Part No" id="part_no" name="part_no" ></label>  
+                
+
+                    <label  id="shop2"><b>PART NO/पार्ट सं.  </b></label>
+                    <select class="form-control" id="part_no1" name="part_no1" required style="width:150px" >
+                        <option id="op_part_no" selected disabled hidden>Select Part Number</option>
+                        {% for role in p_no %}
+                        <option>{{role}}</option>
+                        {% endfor %}
+                    </select>        
                 </td>
 
-                <td>
-                    <label for="apn"><b>Assembly NO/एसेम्ब्ली संख्या:</b></label>
-                    <select class="form-control" id="assm_no" name="assm_no" required>
-            <option id="op_assm" selected disabled hidden>Select Assembly No</option>
-        </select>
-                </td>
             </tr>
-            <tr>
-                <td>
-                    <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
-                    <select class="form-control" id="part_nop" name="part_nop" required>
-            <option id="op_part" selected disabled hidden>Select Part No</option>
-        </select>
-                </td>
-                <td>
-                    <label for="docno"><b>Document NO:/प्रलेख सं.:</b></label>
-                    <select class="form-control" id="doc_no" name="doc_no" required>
-            <option id="op_doc" selected disabled hidden>Select Document No</option>
-        </select>
-                </td>
-            </tr>
-
-
         </table>
         
+    </div>
+   
         
-        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+        <table id="table1" align="center" border=1 style="margin-top: 50px;" width=60% >
+            <thead class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;">
+               <tr><th ><center>Part No</center></th>
+                <th ><center>RM Part No</center></th>
+                <th ><center>EPC</center></th>
+                <th><center>PTC</center></th></tr>
+            </thead>
+            <tbody id="items1">
+           
+        </tbody>
+        <tfoot>
+        
+        </tfoot>
+        </table>
+        <table id="table2" align="center" border=1 style="margin-top: 50px;" width=60% >
+            <thead class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;" >
+               <tr><th width=30%><center>Operation No</center></th>
+                <th><center>Shop Section</center></th>
+                <th><center>Load Center</center></th>
+                <th><center>Operation Description</center></th>
+                <th><center>PA</center></th>
+                <th><center>TA</center></th>
+                <th><center>NCP/JBS/M5:</center></th></tr>
+            </thead>
+            <tbody id="items2">
+           
+        </tbody>
+        <tfoot>
+        
+        </tfoot>
+        </table>
+        
+        <div id="print">
+            <table id="table3" align="center" border=1 style="margin-top: 50px;" width=60% >
+                <thead class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;" >
+                   <tr id="tr1"><th><center>Printed Date(DD-MM-YYYY)</center></th>
+                    <th><center>Work Order NO</center></th>
+                    <th><center>BRN NO</center></th>
+                    <th><center>Ordered Quantity</center></th>
+                    <th><center>Assembly Part NO</center></th>
+                    <th><center>Assembly Description</center></th>
+                    <th><center>Loco TO:</center></th>
+                    <th><center>SCL_CL</center></th>
+                    <th><center>RM_Part NO</center></th>
+                    <th><center>RM_Part Desc</center></th>
+                    <th><center>M4 Refrence</center></th>
+                    <th><center>Start Week</center></th>
+                    
+                </tr>
 
+                   
+                </thead>
+                <tbody id="items3">
+            </tbody>
+            <tfoot>
+            </tfoot>
+            </table>
 
-    </div>
-    <br><br> {% if sub == 1 %}
-     <div id="print" style="align:center" >
-    <input type="hidden" name="len" value="{{len}}">
-    <table border="2" align="center">
-        <tr>
-            <th>Printed Date(MM-DD-YYYY)</th>
-            <th>Work Order NO</th>
-            <th>BRN NO</th>
-            <th>Ordered Quantity</th>
-            <th>Assembly Part NO</th>
-            <th>Assembly Description</th>
-        </tr>
-
-        <tr>
-             <td>
-                {% if datel == 0   %}
-                       None
-                {% else %}
-                   {% for i in date %}
-
-                      {{i.m2prtdt}}
-
-                   {% endfor %}
-                {% endif %}
-            </td>
-
-            <td>{{wo_no}}</td>
-            <td>{{brn_no}}</td>
-            <td>
-                {% if datel == 0   %}
-                       None
-                {% else %}
-                   {% for i in date %}
-
-                      {{i.qty}}
-
-                   {% endfor %}
-                {% endif %}
-            </td>
-            <td>{{assembly_no}}</td>
-            {% for g in obj2 %}
-            <td>{{g.des}}</td>{% endfor %}
-        </tr>
-         <tr>
-            <th>Shop Section</th>
-            <th>Part NO</th>
-            <th>Part Description</th>
-            <th>Drawing NO</th>
-            <th>Document NO</th>
-            <th>Order Type</th>
-        </tr>
-        <tr>
-             <td>{{shop_sec}}</td>
-            <input type="hidden" name="shopsec" value="{{shop_sec}}">
-            <td>{{part_no}}</td>
-            <input type="hidden" name="partno" value="{{part_no}}">
-            {% for ii in obj1 %}
-            <td>{{ii.des}}</td>
-            <td>{{ii.drgno}}</td>
-            {% endfor %}
-            <td>{{doc_no}}</td>
-            {% for k in obj3 %}
-            <td>{{k.batch_type}}</td>{% endfor %}
-        </tr>
-    </table>
-    </br>
-
-    <!--<form action="." method = "POST">  {% csrf_token %}-->
-    <table border="2" align="center">
-        <tr>
-            <th>Operation NO:</th>
-            <th>Shop Section:</th>
-            <th>Load Centre:</th>
-            <th>Operation Description:</th>
-            <th>PA:</th>
-            <th>TA:</th>
-            <th>NO:</th>
-            <th>QTY Produced:</th>
-            <th>QTY Accepted:</th>
-            <th>Work Rejected:</th>
-            <th>Material Rejected:</th>
-        </tr>
-        {% for i in obj %}
-        {% if i.shop_sec == shop_sec  %}
-        <tr>
-            <td>
-                {{i.opn}}
-            </td>
-            <input type="hidden" name="opn{{ forloop.counter }}" value="{{i.opn}}">
-
-            <td>
-                {{i.shop_sec}}
-            </td>
-            <td>
-                {{i.lc_no}}
-            </td>
-            <td>
-                {{i.des}}
-            </td>
-            <td>
-                {{i.pa}}
-            </td>
-            <td>
-                {{i.at}}
-            </td>
-            <td>
-                {{i.lot}}
-            </td>
-            <td>
-            {% if i.qty_prod %}
-                <input type="text" id="qtypr" class="myinp" value="{{i.qty_prod}}" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                <input type="text" id="qtypr" class="myinp" value="0" name="qtypr{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% endif %}
-
-            </td>
-            <td>
-            {% if i.qtr_accep %}
-                <input type="text" id="qtyac" class="myinp" value="{{i.qtr_accep}}" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                <input type="text" id="qtyac" class="myinp" value="0" name="qtyac{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-            {% endif %}
-            </td>
-            <td>
-            {% if i.work_rej %}
-                <input type="text" id="wrrej" class="myinp" value="{{i.work_rej}}" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                <input type="text" id="wrrej" value="0" class="myinp" name="wrrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-            {% endif %}
-            </td>
-            <td>
-            {% if i.mat_rej %}
-                <input type="text" id="matrej" class="myinp" value="{{i.mat_rej}}" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-                {% else %}
-                 <input type="text" id="matrej" class="myinp" value="0" name="matrej{{ forloop.counter }}" pattern="[0-9]*" title="Numeric Value" required>
-            {% endif %}
-            </td>
-              {% else %}
-             <td>
-                {{i.opn}}
-            </td>
-            <input type="hidden" name="opn{{ forloop.counter }}" value="{{i.opn}}">
-
-            <td>
-                {{i.shop_sec}}
-            </td>
-            <td>
-                {{i.lc_no}}
-            </td>
-            <td>
-                {{i.des}}
-            </td>
-            <td>
-                {{i.pa}}
-            </td>
-            <td>
-                {{i.at}}
-            </td>
-            <td>
-                {{i.lot}}
-            </td>
-            <td>
-            {% if i.qty_prod %}
-
-                 {{i.qty_prod}}
-
-            {% else %}
-                   0
-
-            {% endif %}
-
-            </td>
-            <td>
-            {% if i.qtr_accep %}
-                {{i.qtr_accep}}
-
-                {% else %}
-                0
-
-            {% endif %}
-            </td>
-            <td>
-            {% if i.work_rej %}
-                {{i.work_rej}}
-
-                {% else %}
-                0
-            {% endif %}
-            </td>
-            <td>
-            {% if i.mat_rej %}
-                {{i.mat_rej}}
-
-                {% else %}
-                0
-            {% endif %}
-            </td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-    </table>
-    </div>
-    <br><br>
-    <center>
-        <input type="submit" name="proceed" value="Save" id="submitted">
-         <input type="button" onclick="printDiv()" value="Print">
-    </center>
-    <br><br> {% endif %}
-
+            <table id="table4" align="center" border=1 style="margin-top: 50px;" width=100% >
+                <thead class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;">
+                   <tr><th><center>Operation No</center></th>
+                    <th ><center>Shop Section</center></th>
+                    <th <center>Load Center</center></th>
+                    <th><center>Operation Description</center></th>
+                    <th ><center>PA</center></th>
+                    <th ><center>TA</center></th>
+                    <th ><center>NO:</center></th>
+                    <th ><center>QTY Produced:</center></th>
+                    <th ><center>QTY Accepted:</center></th>
+                    <th ><center>Work Rejected:</center></th>
+                    <th ><center>Material Rejected:</center></th>
+                    <th ><center>Inspector:</center></th>
+                </tr>
+                </thead>
+                <tbody id="items4">
+            </tbody>
+            <tfoot>
+               
+            </tfoot>
+            </table>
+            
+        </div>
+        <center>
+            <input type="button" id="print1" name="print1" onclick="printDiv()" value="Print">
+            <input type="submit" id="proceed" name="proceed" value="Save">
+            <input type="button" id="printpage" name="printpage" onclick="pdffun();" value="print1">
+        </center>
+        <input type="text" id="hidtxt" name="hidtxt" hidden>
 </form>
-
-
 <script type="text/javaScript">
-document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-                  e.preventDefault();
-                  var shop_sec = $("#shop_sec").val()
-                  var data = {shop_sec};
-                    $.ajax({
-                      type : 'GET',
-                      url : "{% url 'm2getwono' %}",
-                      dataType : 'json',
-                      data : data,
-                      success : function(response){
-                        var elementsadded = document.querySelectorAll(".newelewono");
-                            if(elementsadded.length>0){
-                                var elementsaddedarr = Array.from(elementsadded);
-                                elementsaddedarr.forEach((el)=> el.remove());
-                                document.querySelector("#op_wo").selected=true;
-                                document.querySelector("#op_br").selected=true;
-                                document.querySelector("#op_assm").selected = true;
-                                document.querySelector("#op_part").selected = true;
-                                document.querySelector("#op_doc").selected = true;
-                            }
-                            var brarr,mystr,html;
-                            brarr = response.map((el)=>el.batch_no);
-                            mystr = "";
-                            brarr.forEach((el,index)=>{
-                              html = `<option class="newelewono">${brarr[index]}</option>`
-                              mystr = html.concat(mystr);
-                            });
-                            html = "";
-                            document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
-                            mystr="";
-                      }
-                        })
-              })
-$("#wno").change(function(e){
+$( document ).ready(function() {
+    console.log( "ready!" );
+    $("#part_no1").hide();
+    $("#shop2").hide();
+    $("#table1").hide();
+    $("#table2").hide();
+    $("#table3").hide();
+    $("#table4").hide();
+    $("#print1").hide();
+    $("#printpage").hide();
+    $("#shop_no").hide();
+    $("#shop_no1").hide();
+    $("#proceed").hide();
+});
+var j=0;
+var x=0;
+var y=0;
+var z=0;
+function myfun(i_id)
+{
+    alert("hello"+i_id)
+    var ins_id=i_id;
+    var data={ins_id};
+    $.ajax({
+            type : 'GET',
+            url : "{% url 'm2_getname' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response)
+            {
+                //  alert(response);
+                var myLength = $("#hidtxt").val();
+                //  alert("lengthhhhhh"+myLength)
+                // alert(i)
+                // i=i-1;
+                for(x=1;x<=myLength;x++)
+                {
+                    //  alert("for loop="+document.getElementById('inspect'+x).value)
+                    if(document.getElementById('inspect'+x).value==ins_id)
+                    {
+                        // alert("if loop")
+                        document.getElementById('insp_name'+x).value=response;
+                    }
+                    
+                }    
+            }
+        })
+}
+document.querySelector("#part_no").addEventListener('blur',(e)=>{     
     e.preventDefault();
-    var wo_no = $(this).val();
-    var shop_sec = $("#shop_sec").val();
-    var data = {wo_no,shop_sec};
-      $.ajax({
+    var part_no= $("#part_no").val();
+    $("#items1").empty();
+    $("#items2").empty();
+    // alert(part_no)
+    var data={part_no}
+        
+        $.ajax({
+                type : 'GET',
+                url : "{% url 'm2_process_sheet' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){  
+                    //    alert(response.length)                      
+                    if(response[0].length==0 && response[1].length==0)
+                    {
+                        alert("Please enter valid Part Number");
+                    }
+                    var htAppend='<tr><td>'+response[1][0].pp_part+'</td><td>'+response[1][0].cp_part+'</td><td>'+response[1][0].epc+'</td><td>'+response[1][0].ptc+'</td></tr>';
+                    $('#table1').append(htAppend);
+                    $("#table1").show();
+                    for(i=1;i<=response[0].length;i++)
+                    {
+                        var appen='<tr><td>'+response[0][i-1].opn+'</td><td>'+response[0][i-1].shop_sec+'</td><td>'+response[0][i-1].lc_no+'</td><td>'+response[0][i-1].des+'</td><td>'+response[0][i-1].pa+'</td><td>'+response[0][i-1].at+'</td><td>'+response[0][i-1].ncp_jbs+'</td></tr>'
+                        $('#table2').append(appen);
+                    }
+                    $("#table2").show();
+                 }
+                })
+    });
+
+document.querySelector("#part_no1").addEventListener('change',(e)=>{    
+    e.preventDefault();
+    var part_no = $("#part_no1").val();
+    var work = $("#work").val();
+    var shop_no1=$("#shop_no1").val();
+       
+    $("#table1").hide();
+    $("#table2").hide();      
+    $("#items3").empty();
+    $("#items4").empty();
+    var data={shop_no1,part_no,work};
+         $.ajax({
+                type : 'GET',
+                url : "{% url 'm2_sheet1' %}",
+                 dataType : 'json',
+                 data : data,
+               success : function(response){  
+                     alert("returned successfully")                           
+                       var htAppend='<tr><td>'+response[5][0].m2prtdt+'</td><td>'+work+'</td><td>'+response[0][0].brn_no+'</td><td>'+response[5][0].qty+'</td><td>'+response[0][0].assly_no+'</td><td>'+response[2][0].des+'</td><td>'+response[6][0].l_to+'</td><td>'+response[0][0].scl_cl+'</td><td>'+response[0][0].rm_partno+'</td><td>'+response[7][0].des+'</td><td>'+response[0][0].rc_st_wk+'</td><td>'+response[0][0].m4_no+'</td></tr>';
+                           htAppend=htAppend+'<tr class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;"><th><center>Shop Section</center></th><th><center>Part NO</center></th><th><center>Part Description</center></th><th>Drawing NO</th><th>Document NO</th><th>Order Type</th><th>Loco From:</th><th>Unit:</th><th>Label</th><th>Cut Number</th><th><center>Length/Weight</center></th><center><th>End Week</th></center></tr>';
+                         htAppend=htAppend+'<tr ><td>'+shop_no1+'</td><td>'+part_no+'</td><td>'+response[1][0].des+'</td><td>'+response[1][0].drgno+'</td><td>'+response[0][0].m2sln+'</td><td>'+response[3][0].batch_type+'</td><td>'+response[6][0].l_fr+'</td><td>'+response[9][0].shop_ut+'</td><td>'+response[10][0].alpha_1+'</td><td>'+response[11][0].cutdia_no+'</td><td>'+response[8][0].rm_qty+'</td><td></td></tr>';
+                        $('#table3').append(htAppend);
+                        $("#table3").show();
+                        for(i=1;i<=response[4].length;i++)
+                       {
+                        
+                           if(response[4][i-1].shop_sec==shop_no1){
+                             
+                               j=j+1;
+                               var qty_p="qty_p"+String(j);
+                               var qty_acc="qty_acc"+String(j);
+                               var w_rej="w_rej"+String(j);
+                               var m_rej="m_rej"+String(j);
+                               var onumber="onumber"+String(j);
+                               var inspect="inspect"+String(j);
+                               var insp_name="insp_name"+String(j);
+                               var appen='<tr><td><input type="text" id='+onumber+' name='+onumber+' readonly></td><td>'+response[4][i-1].shop_sec+'</td><td>'+response[4][i-1].lc_no+'</td><td width="40%">'+response[4][i-1].des+'</td><td>'+response[4][i-1].pa+'</td><td>'+response[4][i-1].at+'</td><td>'+response[4][i-1].lot+'</td><td><input type="text" id='+qty_p+' name='+qty_p+' placeholder="0.00"></td><td><input type="text" id='+qty_acc+' name='+qty_acc+' placeholder="0.00" ></td><td><input type="text" id='+w_rej+' name='+w_rej+'  placeholder="0.00"></td><td><input type="text" id='+m_rej+' name='+m_rej+' placeholder="0.00"></td><td><input type="text" id='+inspect+' name='+inspect+' onchange="myfun(this.value);" size="60"><br><input type="text" id='+insp_name+ ' name='+insp_name+' style="border-top-style: hidden;border-right-style: hidden;border-left-style: hidden;border-bottom-style: hidden; size="100"" ></td></tr>';       
+                        }
+                        else
+                        {  
+                            var appen='<tr><td><input type="text" id='+onumber+' name='+onumber+' readonly onchange="this.setAttribute("value",this.value)"></td><td>'+response[4][i-1].shop_sec+'</td><td>'+response[4][i-1].lc_no+'</td><td>'+response[4][i-1].des+'</td><td>'+response[4][i-1].pa+'</td><td>'+response[4][i-1].at+'</td><td>'+response[4][i-1].lot+'</td><td>'+response[12][i-1].qty_prod+'</td><td>'+response[12][i-1].qty_accep+'</td><td>'+response[12][i-1].work_rej+'</td><td>'+response[12][i-1].mat_rej+'</td><td>'+response[12][i-1].inspect_id+'</td></tr>';
+                           }
+                           
+                         $('#table4').append(appen);
+                        document.getElementById(onumber).value=response[4][i-1].opn;
+                       }
+                       for(x=1;x<=response[12].length;x++)
+                         { 
+                               y=y+1;
+                               var qty_p="qty_p"+String(y);
+                               var qty_acc="qty_acc"+String(y);
+                               var w_rej="w_rej"+String(y);
+                               var m_rej="m_rej"+String(y);
+                               var onumber="onumber"+String(y);
+                               var inspect="inspect"+String(y);
+                               var insp_name="insp_name"+String(y);
+                            document.getElementById(qty_p).value=response[12][x-1][0].qty_prod;
+                            document.getElementById(qty_acc).value=response[12][x-1][0].qty_accep;
+                            document.getElementById(w_rej).value=response[12][x-1][0].work_rej;
+                            document.getElementById(m_rej).value=response[12][x-1][0].mat_rej;
+                            document.getElementById(inspect).value=response[12][x-1][0].inspect_id; 
+                        }
+                       $('#table4').show();
+                       $("#printpage").show();
+                       $("#proceed").show();
+                   
+                       document.getElementById("hidtxt").value=j;
+                             
+                 }
+                })
+}); 
+document.querySelector("#shop_no1").addEventListener('blur',(e)=>{     
+    e.preventDefault();
+    
+    var shop_no1= $("#shop_no1").val();
+    var work = $("#work").val();
+   
+    data={work,shop_no1}
+    $.ajax({
+                        type : 'GET',
+                       url : "{% url 'm2_view_shop' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                            if(response.length==0){
+                                alert("Part Number Not Available");
+                            }
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                //   elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_part_no").selected = true;   
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.part_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#part_no1").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                    })
+    
+    });  
+document.querySelector("#work").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var work = $("#work").val()
+                    // $('#m2part').show();
+                     $("#part_no1").show();
+                     $("#shop2").show();
+                    $("#shop_no").show();
+                    $("#shop_no1").show();
+                    $("#part_no").hide();
+                    $("#shop1").hide();
+        var data = {work};
+        $.ajax({
         type : 'GET',
-        url : "{% url 'm2getbr' %}",
+        url : "{% url 'm2_shop' %}",
         dataType : 'json',
         data : data,
-        success : function(response){
-        if(response == ''){
-                       alert("BRN NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no);}
-              var elementsadded = document.querySelectorAll(".newelebr");
-              if(elementsadded.length>0){
-                var elementsaddedarr = Array.from(elementsadded);
-              elementsaddedarr.forEach((el)=> el.remove());
-              document.querySelector("#op_br").selected = true;
-              document.querySelector("#op_assm").selected = true;
-              document.querySelector("#op_part").selected = true;
-              document.querySelector("#op_doc").selected = true;
-              }
-              var brarr,mystr,html;
-              brarr = response.map((el)=>el.brn_no);
-              mystr = "";
-              brarr.forEach((el,index)=>{
-                html = `<option class="newelebr">${brarr[index]}</option>`
-                mystr = html.concat(mystr);
-              });
-              html = "";
-              document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr);
-              mystr="";
+        success : function(response)
+        {
+            if(response.length==0)
+            {
+                alert("Shop Section Not Available")
+            }
+            // alert(response[0].f_shopsec);
+            var elementsadded = document.querySelectorAll(".newelewono");
+            if(elementsadded.length>0){
+            var elementsaddedarr = Array.from(elementsadded);
+            elementsaddedarr.forEach((el)=> el.remove());
+            document.querySelector("#op_no1").selected = true;   
+            }
+            var brarr,mystr,html;
+            brarr = response.map((el)=>el.f_shopsec);
+            mystr = "";
+            brarr.forEach((el,index)=>{
+            html = `<option class="newelewono">${brarr[index]}</option>`
+            mystr = html.concat(mystr);
+            });
+            html = "";
+            document.querySelector("#shop_no1").insertAdjacentHTML('beforeend',mystr);
+             mystr="";
         }
-           })
-           })
-document.querySelector("#br_no").addEventListener('change',(e)=>{
-                  e.preventDefault();
-                  var wo_no = $("#wno").val();
-                  var brn_no = $("#br_no").val();
-                  var shop_sec = $("#shop_sec").val();
-                  var data = {wo_no,brn_no,shop_sec};
-                    $.ajax({
-                      type : 'GET',
-                      url : "{% url 'm2getassly' %}",
-                      dataType : 'json',
-                      data : data,
-                      success : function(response){
-                               if(response == ''){
-                               alert("Assembly Number Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no);}
-                           var elementsadded = document.querySelectorAll(".neweleassm");
-                            if(elementsadded.length>0){
-                                var elementsaddedarr = Array.from(elementsadded);
-                                elementsaddedarr.forEach((el)=> el.remove());
-                                document.querySelector("#op_assm").selected = true;
-                                document.querySelector("#op_part").selected = true;
-                                document.querySelector("#op_doc").selected = true;
-                             }
-                            var brarr,mystr,html;
-                            brarr = response.map((el)=>el.part_no);
-                            mystr = "";
-                            brarr.forEach((el,index)=>{
-                              html = `<option class="neweleassm">${brarr[index]}</option>`
-                              mystr = html.concat(mystr);
-                            });
-                            html = "";
-                            document.querySelector("#assm_no").insertAdjacentHTML('beforeend',mystr);
-                            mystr="";
-                      }
-                        })
-                        })
+    })
 
-document.querySelector("#assm_no").addEventListener('change',(e)=>{
-                  e.preventDefault();
-                  var wo_no = $("#wno").val();
-                  var brn_no = $("#br_no").val();
-                  var shop_sec = $("#shop_sec").val()
-                  var assm_no = $('#assm_no').val()
-                  var data = {wo_no,brn_no,shop_sec,assm_no};
-                    $.ajax({
-                      type : 'GET',
-                      url : "{% url 'm2getpart_no' %}",
-                      dataType : 'json',
-                      data : data,
-                      success : function(response){
-                      if(response == ''){
-                       alert("Part Number Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no+", Assembly NO:"+assm_no);}
-                        var elementsadded = document.querySelectorAll(".newelepart");
-                            if(elementsadded.length>0){
-                                var elementsaddedarr = Array.from(elementsadded);
-                                elementsaddedarr.forEach((el)=> el.remove());
-                                document.querySelector("#op_part").selected = true;
-                                document.querySelector("#op_doc").selected = true;
-                             }
-                            var brarr,mystr,html;
-                            brarr = response.map((el)=>el.part_no);
-                            mystr = "";
-                            brarr.forEach((el,index)=>{
-                              html = `<option class="newelepart">${brarr[index]}</option>`
-                              mystr = html.concat(mystr);
-                            });
-                            html = "";
-                            document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
-                            mystr="";
-                      }
-                        })
-              })
-document.querySelector("#part_nop").addEventListener('change',(e)=>{
-  e.preventDefault();
-  var wo_no = $("#wno").val();
-  var brn_no = $("#br_no").val();
-  var shop_sec = $("#shop_sec").val()
-  var assm_no = $('#assm_no').val()
-  var part_no = $('#part_nop').val()
-  var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
-        $.ajax({
-              type : 'GET',
-              url : "{% url 'm2getdoc_no' %}",
-              dataType : 'json',
-              data : data,
-              success : function(response){
-                       if(response == ''){
-                       alert("Document NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no+", Assembly NO:"+assm_no+", Part NO:"+part_no);}
-                        var elementsadded = document.querySelectorAll(".neweledoc");
-                            if(elementsadded.length>0){
-                                var elementsaddedarr = Array.from(elementsadded);
-                                elementsaddedarr.forEach((el)=> el.remove());
-                                document.querySelector("#op_doc").selected = true;
-                             }
-                            var brarr,mystr,html;
-                            brarr = response.map((el)=>el.m2sln);
-                            mystr = "";
-                            brarr.forEach((el,index)=>{
-                              html = `<option class="neweledoc">${brarr[index]}</option>`
-                              mystr = html.concat(mystr);
-                            });
-                            html = "";
-                            document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
-                            mystr="";
-                      }
-                        })
-              })
-
-
-document.querySelector("#doc_no").addEventListener('change',(e)=>{
-
-    document.querySelector("#myproceed").click();
-})
-document.addEventListener('keypress',(event)=>{
-    if(event.keyCode===13){
-        event.preventDefault();
-    }
-})
-
-
-
-
-
-function printDiv() {
-     var printContents = document.getElementById("print").innerHTML;
-
-       var style = "<style>";
-        style = style + "table {width: 100%;font: 17px Calibri;}";
-        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
-        style = style + "padding: 2px 3px;text-align: left;}";
-        style = style + "</style>";
-      var win = window.open('', '', 'height=500,width=500');
-
-        win.document.write('<html><head>');
-
-        win.document.write('<title>M2(ROUTE CARD) Card</title>');
-        win.document.write(style);
-        win.document.write('</head>');
-        win.document.write('<body>');
-        win.document.write(printContents);
-        win.document.write('</body></html>');
-
-        win.print();
-        win.close();
-
-
-
+                });  
+function pdffun() {
+    window.location.href="{% url 'm2Pdf' %}"+"?work="+$('#work').val()+"&shop_no1="+$('#shop_no1').val()+"&part_no1="+$('#part_no1').val();
 }
-
-
-
-
-
-  </script>
-
-
-
-
-
-
-
-
-
+</script>
 {% endblock content %}
-

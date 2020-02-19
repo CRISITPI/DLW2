@@ -1,0 +1,2759 @@
+{% extends 'base.html' %} {% block content %}
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+
+
+<style>
+  .ui-timepicker-wrapper {
+    overflow-y: auto;
+    max-height: 150px;
+    width: 6.5em;
+    background: #fff;
+    border: 1px solid #ddd;
+    -webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    outline: none;
+    z-index: 10052;
+    margin: 0;
+  }
+  
+  .ui-timepicker-wrapper.ui-timepicker-with-duration {
+    width: 13em;
+  }
+  
+  .ui-timepicker-wrapper.ui-timepicker-with-duration.ui-timepicker-step-30,
+  .ui-timepicker-wrapper.ui-timepicker-with-duration.ui-timepicker-step-60 {
+    width: 11em;
+  }
+  
+  .ui-timepicker-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .ui-timepicker-duration {
+    margin-left: 5px; color: #888;
+  }
+  
+  .ui-timepicker-list:hover .ui-timepicker-duration {
+    color: #888;
+  }
+  
+  .ui-timepicker-list li {
+    padding: 3px 0 3px 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #000;
+    list-style: none;
+    margin: 0;
+  }
+  
+  .ui-timepicker-list:hover .ui-timepicker-selected {
+    background: #fff; color: #000;
+  }
+  
+  li.ui-timepicker-selected,
+  .ui-timepicker-list li:hover,
+  .ui-timepicker-list .ui-timepicker-selected:hover {
+    background: #1980EC; color: #fff;
+  }
+  
+  li.ui-timepicker-selected .ui-timepicker-duration,
+  .ui-timepicker-list li:hover .ui-timepicker-duration {
+    color: #ccc;
+  }
+  
+  .ui-timepicker-list li.ui-timepicker-disabled,
+  .ui-timepicker-list li.ui-timepicker-disabled:hover,
+  .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+    color: #888;
+    cursor: default;
+  }
+  
+  .ui-timepicker-list li.ui-timepicker-disabled:hover,
+  .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+    background: #f2f2f2;
+  }
+  
+  </style>
+  <style>
+      input[type=text],
+      select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: block;
+          border: 0.5px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+      }
+      
+      input[type=submit] {
+          width: 20%;
+          text-align: center;
+          background-color: #4CAF50;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+      }
+      
+      input[type=submit]:hover {
+          background-color: #45a049;
+          text-align: center;
+      }
+      
+      input[type=button] {
+          width: 10%;
+          text-align: center;
+          background-color: #4CAF50;
+          color: white;
+          padding: 6px 6px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+      }
+      
+      input[type=button]:hover {
+          background-color: #45a049;
+          text-align: center;
+      }
+  </style>
+<br>
+<br>
+<h3 align="center">M5</h3>
+<h3 align="center">JOB CARD</h3>
+<br>
+<center>
+  {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+      <font size="3">
+          <li>
+              {{ message }}
+          </li>
+      </font>
+      {% endfor %}
+  </ul>
+  {% endif %}
+</center>
+<br>
+<form action="{% url 'm5newview' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+            {% if lenm == 1 %}
+                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+            {% endif %}
+            {% if lenm > 1 %}
+            {% for role in roles %}
+              <option>{{role}}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+                </td>
+                <td><b>SHOP NAME</b>&nbsp;&nbsp;
+                        <input type="" id="sname" name="sname" readonly class="form-control" style="width:200px; margin-top:15px;"/></td>
+                <td>
+                    <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
+                    <select class="form-control" id="wno" name="wo_no" required>
+        <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+        {% if lenm == 1 %}
+        {% for i in wo_nop %}
+          <option>{{i.batch_no}}</option>
+        {% endfor %}
+        {% endif %}
+    </select>
+                </td>
+                
+                <td>
+                    <label for="br_no"><b>BR NO/बी.आर.नंबर</b></label>
+                    <select class="form-control" id="br_no" name="br_no" required>
+            <option id="op_br" selected disabled hidden>Select BR NO</option>
+            
+              </select>
+                </td>
+
+             
+            </tr>
+            <tr>
+                <td>
+                    <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
+                    <select class="form-control" id="part_nop" name="part_nop" required>
+            <option id="op_part" selected disabled hidden>Select Part No</option>
+        </select>
+                </td>
+                <td>
+                    <label for="docno"><b>Document NO:/प्रलेख सं.:</b></label>
+                    <select class="form-control" id="doc_no" name="doc_no" required>
+            <option id="op_doc" selected disabled hidden>Select Document No</option>
+        </select>
+                </td>
+            </tr>
+
+
+        </table>
+        <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
+        
+        <center><input type="submit" value="Proceed" id="myproceed" name="proceed" hidden  /></center>
+    </div>
+    <input type="hidden" name="sub" id="sub" value={{sub}} >
+    <br><br> {% if sub == 1 %}
+    <div id="print" style="align:center" >
+    <input type="hidden" name="len" value="{{len}}">
+    <input type="hidden" name="len4" id="len4" value="{{len4}}">
+    <input type="hidden" name="len6" id="len6" value="{{len6}}">
+    <input type="hidden" name="len1" id="len1" value="{{len1}}">
+    <input type="hidden" name="len3" id="len3" value="{{len3}}">
+    
+ 
+    <table border="2" align="center">
+        <tr >
+          <th height="30">WORK ORDER NUMBER</th>
+          <th height="30">ORDER TYPE</th>
+
+          <th height="30" colspan="2">BRN NUMBER</th>
+          <th height="30">LOCO FROM</th>
+          <th height="30">LOCO TO</th>
+          <th height="30">ROUTE CARD NO</th>
+          <th height="30">END PRODUCT PART NO</th>
+          <th height="30">DOCUMENT NUMBER</th>
+          <th height="30">W.O. DATE</th>
+
+      </tr>
+      <tr>
+          
+          {% for i in date %}
+          <td height="50">{{i.m2prtdt}}</td>{% endfor %}
+          <td height="50">{{wo_no}}</td>
+          
+          <td height="50" >  
+          {% if obj10 %}    
+          {{obj10.batch_type}} 
+          {% else %}
+          {{rr}}
+          {% endif %} </td>  
+          <td height="50" colspan="2">{{brn_no}}</td>
+          <input type="hidden"  name="brn_no" value="{{brn_no}}">
+          <input type="hidden"  name="shop_sec" value="{{shop_sec}}">
+          <td height="50">
+          {% if obj10 %}    
+         {{obj10.loco_fr}} 
+          {% else %}
+          {{rr}}
+          {% endif %} </td>
+          <td height="50">
+              {% if obj10 %}                
+              {{obj10.loco_to}} 
+              {% else %}
+              {{rr}}
+              {% endif %} </td>   
+              <td height="50">
+                  {% if len1 %}    
+                  {% for i in obj1 %}       
+                  {{i.m2slno}} 
+                  {% endfor %}
+                  {% else %}
+                  {{rr}}
+                  {% endif %} </td> 
+                  <td height="50">
+                      {% if len3 %}    
+                      {% for i in obj3 %}       
+                      {{obj3.part_no}} 
+                      {% endfor %}
+                      {% else %}
+                      {{rr}}
+                      {% endif %} </td>               
+          <td height="50">{{doc_no}}
+          <input type="hidden" name="doc_no" value="{{doc_no}}"></td>
+          <td height="50">
+                  {% if len1 %}    
+                  {% for i in obj1 %}       
+                  {{i.m5prtdt}} 
+                  {% endfor %}
+                  {% else %}
+                  {{rr}}
+                  {% endif %} </td> 
+         
+           
+          
+         
+         
+      </tr>
+  
+            <tr >
+               <th height="30">PART NO:</th>
+               <th height="30" colspan="4">PART DESCRIPTION</th>
+               <th height="30" colspan="4">DRAWING NO</th>
+               <th height="30">ORDERED QUANTITY</th>
+               
+             
+           </tr>
+           
+            <tr>
+              <td height="50">{{part_no}}</td>                
+                <input type="hidden" name="partno" value="{{part_no}}">
+              </td> 
+              {% for i in obj2 %}
+              <td height="50" colspan="4" >{{i.des}}</td>{% endfor %}
+             
+              {% for i in obj2 %}
+              <td height="50" colspan="4">{{i.drgno}} </td>{% endfor %}
+              {% for i in obj1 %}
+              <td height="50"> {{i.qty_ord}} </td>{% endfor %}
+               
+             
+     
+
+
+ 
+
+                  
+           
+           </tr>
+           <tr >
+            <th height="30" >RAW MATERIAL PART NO:</th>
+            <th height="30" colspan="3">RAW MATERIAL DESCRIPTION</th>
+            <th height="30" colspan="3">LENGTH/WT/PIECE.</th>
+            <th height="30">UNIT</th>
+            <th height="30" colspan="2">TOTAL LENGTH/WT</th>
+            
+          
+        </tr>
+        
+         <tr>
+            <td>
+               {% for i in obj1 %}
+               {{i.rm_partno}}
+               {% endfor %}
+            </td>
+            
+          <td height="50" colspan="3">
+            {% for i in obj7 %}
+            {{i.des}}
+            {% endfor %}
+          </td>
+          {% for i in obj1 %}
+          <td height="50" colspan="3" >{{i.rm_qty}} </td> {% endfor %}
+          {% for i in obj1 %}
+          <td height="50" > {{i.rm_ut}} </td> {% endfor %}
+          {% for i in obj1 %}
+          <td height="50" colspan="2" >{{i.tot_rm_qty}}</td>{% endfor %}
+        
+          </tr>    
+  
+          <tr>
+            <th height="30" >PREVIOUS SHOP</th>
+            <th height="30" >PRESENT SHOP</th>
+            <th height="30" >LOAD CENTER</th>
+            <th height="30" >OPERATION NO.</th>
+
+            <th height="30" >P.A.</th>
+            <th height="30" >A.T.</th>
+            <th height="30">PER PIECE</th>
+            <th height="30">RECEIVER</th>
+            
+            <th height="30" >NEXT Shop</th>
+            <th height="30" >CUT-SHEAR</th>
+           
+          
+          
+          </tr>
+         
+          <tr>
+             
+              <td height="50">
+                  {% for i in obj1 %}
+                {{i.pr_shopsec}}
+                {% endfor %}
+              </td>
+              <td height="50" >
+                  {{shop_sec}}
+                 </td>
+
+             <td height="50" >
+              {% for i in obj1 %} 
+              {{i.lc_no}} 
+              {% endfor %}
+              <input type="hidden" id="lc_no" name="lc_no" value="{{i.lc_no}}">
+            </td>
+            <td height="50" >
+                {% for i in obj1 %} 
+                {{i.opn}} 
+                {% endfor %}
+                
+              </td>
+            <td height="50 " >
+                {% for i in obj1 %}
+               {{i.pa}}
+               {% endfor %}
+                <input type="hidden" id="pa" name="pa" value="{{i.pa}}"></td>
+               
+                <td height="50" >
+                {% for i in obj1 %}
+                {{i.at}}
+                {% endfor %}
+                <input type="hidden" id="at" name="at" value="{{i.at}}">
+              </td>
+              <td height="50" >
+                  {% for i in obj %}
+                  {{i.ncp_jbs}}
+                  {% endfor %}
+              </td>
+              <td height="50" >
+                 <h5>CUSTODY</h5>
+              </td>
+               
+                  <td height="50">
+                      {% for i in obj1 %}
+                    {{i.n_shopsec}}
+                    {% endfor %}
+                  </td>
+               
+           
+               
+             
+             <td height="50" >
+              {% for i in obj1 %}
+             {{i.cut_shear}}
+             {% endfor %}   
+            </td> 
+               
+           </tr>
+         
+          
+        
+         
+              <th height="30" colspan="5" >OPERATION DESCRIPTION</th>
+              <th height ="30" colspan="5">END PRODUCT PART DESCRIPTION</th>
+           </tr>
+          
+           <tr>
+             
+              
+              <td height="50"  colspan="5">
+                  {% for i in obj1 %}
+                  {{i.opn_desc}}  
+                  {% endfor %}  
+                </td>
+               
+                <td height="50" colspan="5" >
+                
+                 {{obj9.des}}
+                
+                 </td> 
+                 
+              </tr>           
+         
+           
+
+               
+       </table>    
+       
+          
+
+        <br><br><br>  
+      
+
+  
+<br><br>
+
+
+                  <div id="divadd" style="display:none">
+                    <table id="id1" align="center" border="1" class="table table-striped" style="width:150%;">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>STAFF NO</th>
+                                <th>STAFF NAME</th>
+                                <th>SHIFT TYPE</th>
+                                <th>IN DATE</th>
+                                <th >IN TIME</th>
+                                <th>OUT DATE</th>
+                                <th>OUT TIME</th>
+                                <th>TICKET No</th>
+                                <th>Category</th>
+                                <th>Month Hours</th>
+                                <th>Total Time Taken</th>
+                            </tr>
+                        </thead>
+                        <tbody  id="items"></tbody>
+                    </table>
+                 </div>            
+              
+   
+           
+   
+    
+ <div id="inouttab">
+
+  </div>
+  
+<br><br>
+
+
+<center>
+    
+   <input  type="button"  id="add" value="Add Operations" style="height:50px; width:150px"/>
+
+   
+</center>
+    <br><br> 
+
+    <tr><table border="2" align="center">
+      <tr>
+       
+    <th height="30">QUANTITY INSPECTED</th>
+    <th height="30">QUANTITIY ACCEPTED:</th>
+    <th height="30">WORKER</th>
+    <th height="30">REJECTED MATERIAL</th>
+  
+    <th height="30">REVISED QUANTITY</th>
+    <th height="30">REJECTED QUANTITY</th>
+    <th height="30">INSPECTOR</th>
+    <th height="30">DATE</th>
+    <th height="30">REMARKS</th>
+    
+    
+  
+  
+  </tr>
+  
+  <tr>
+     
+    <td height="50">
+        {% for i in obj1 %}
+        {% if i.qty_insp %}
+      <input type="text" id="qty_insp" value="{{i.qty_insp}}" name="qty_insp" pattern="[0-9]+" title="Numeric Value">
+      {% else %}
+      <input type="text" id="qty_insp"   value="0" name="qty_insp">
+    {% endif %} 
+    {% endfor %}
+    </td >
+  
+   
+       <td height="50">
+          {% if len6 %}
+          {% for i in obj6 %}
+        <input type="text" id="qtyac" value="{{i.qtr_accep}}" name="qtyac" pattern="[0-9]*" title="Numeric Value">{% endfor %}
+        {% else %}
+         <input type="text" id="qtyac"  value="0" name="qtyac">
+      {% endif %}
+      
+      </td>
+      {% for i in obj1 %}
+      <td height="50">
+          <input type="text" id="worker" value="{{i.worker}}" name="worker"  placeholder="Worker Name">
+    
+      </td>{% endfor %}
+    
+      <td height="50">
+          {% if len6 %}
+          {% for i in obj6 %}
+          <input type="text" id="mat_rej" value="{{i.mat_rej}}" name="mat_rej" pattern="[0-9]+" title="Character Value"> {% endfor %}
+          {% else %}
+          <input type="text" id="mat_rej"   value="0" name="mat_rej">
+        {% endif %}
+       
+      </td>
+  
+       {% for i in obj1 %}
+    <td height="50">
+        {% if i.rev_qty %}
+        <input type="text" id="rev_qty"   value="{{i.rev_qty}}" name="rev_qty" pattern="[0-9]+" title="Numeric Value">
+        {% else %}
+        <input type="text" id="rev_qty"   value="0" name="rev_qty">
+      {% endif %}  
+    </td>{% endfor %}
+    {% for i in obj1 %}
+    <td height="50">
+        {% if i.rej_qty %}
+        <input type="text" id="rej_qty"   value="{{i.rej_qty}}" name="rej_qty" pattern="[0-9]+" title="Numeric Value">
+        {% else %}
+        <input type="text" id="rej_qty"   value="0" name="rej_qty">
+      {% endif %}  
+    </td>{% endfor %}
+  
+     
+    
+       {% for i in obj1 %}
+       <td height="50">
+        {% if i.inspector %}
+        <input type="text" id="inspector" value="{{i.inspector}}" name="inspector" pattern="[0-9]+" title="Numeric Value">
+        {% else %}
+        <input type="text" id="inspector"  name="inspector" value="0" pattern="[0-9]+" title="Numeric Value">
+         {% endif %}{% endfor %}
+     </td>
+    
+    <td height="50">
+        {% if len1 %}
+        {% for i in obj1 %}
+        <input type="text"   class="myinp" value="{{i.date}}" name="date" id="datePickerId">{% endfor %}
+        {% else %}
+        <input type="text"  class="myinp" value="0" name="date" id="datePickerId">
+      {% endif %}  
+    </td>
+    <td height="50">
+      {% if len1 %}
+        {% for i in obj1 %}
+        <input type="text" id="remarks" value="{{i.remarks}}" name="remarks" pattern="[a-zA-Z]*" title="Character Value">{% endfor %}
+         {% else %}
+         <input type="text" id="remarks" name="remarks" pattern="[a-zA-Z]*" title="Character Value">
+         {% endif %}
+    </td>
+    
+   
+  </tr>
+  
+  
+  </table>
+  <br><br>
+  <center>
+  <input type="submit" name="proceed" value="submit" style="height:50px; width:100px">
+  <input type="button" onclick="printDiv()" value="print" style="height:50px; width:100px"> 
+</center>
+
+</form>
+
+<div id="items">
+
+
+    </div>
+
+<br>
+    <br><br><br>
+
+<br>
+
+</div>
+
+{% endif %}
+
+</form>
+
+
+</body>
+</html>
+
+<script language="javascript">
+
+
+  
+function validateHhMm(inputField) {
+  var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(inputField.value);		
+  if (isValid) {
+      inputField.style.backgroundColor = '#bfa';
+  } else {
+      inputField.style.backgroundColor = '#fba';			
+  }
+  return isValid;		
+}
+function validate1HhMm(inputField) {       	
+if(inputField.value.length == 2){
+inputField.value += ":";
+}	
+}
+
+function isNumberKey(evt) {
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+return true; 
+
+}
+
+
+
+  
+  $(document).ready(function () {
+    $('#datePickerId').datepicker({ dateFormat: 'dd-mm-yy', }); 
+});
+var j=0;
+$(document).ready(function(){
+  var sub=document.getElementById('sub').value;
+  if (sub == 1)
+  {
+    var vall=document.getElementById('len4').value;
+     j=vall;
+
+
+  
+  $(document).ready(function(){
+    var sub =document.getElementById('sub').value;
+    if(sub==1)
+    {
+        var leng=document.getElementById('len4').value;
+        console.log(leng,"leng");
+    }
+    j=0         
+    $("#add").click(function(e){
+      event.preventDefault()
+      document.getElementById("divadd").style.display="block";
+
+    j=j+1;
+    var staff_no2="staff_noadd"+String(j);
+    var exam_type="staff_nameadd"+String(j);
+    var in_date="in_date"+String(j)
+    var in1="in1add"+String(j);
+    var out="outadd"+String(j);
+    var out_date="out_date"+String(j);
+    var shift="shiftadd"+String(j);
+    var outid="'"+out+"'";
+    var in1id="'"+out+"'";
+    var cat="catadd"+String(j);
+    var ticket_no="ticket_noadd"+String(j);
+    var month_hrs="month_hrsadd"+String(j)
+    var total_time_taken="total_time_takenadd"+String(j);
+    var final_time_taken="final_time_takenadd"+String(j);
+    var del="delete"+String(j);
+    var del1="delete1"+String(j);
+    var htAppend='<tr id='+del1+'><td><select type="text" style="width:150px" class="form-control" name='+staff_no2+' id='+staff_no2+' required  onchange="find2(this)" onclick="findcat(this)"><option id="op_forman" selected disabled hidden>Select Staff_no</option>{% for i in prtstaff %}<option value="{{i}}">{{i}}</option>{% endfor %} </select></td >'+'<td><input type="text" style="width:150px" name='+exam_type+' id='+exam_type+'  class="form-control" value="{{exam_type}}" readonly placeholder="Staff Name"></td>'+'<td> <select class="form-control" style="width:150px" id='+shift+' name='+shift+' onchange="myFunction(this.id)" required><option value="select">SELECT SHIFT TYPE</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="GD">GD</option><option value="GN">GN</option></select></td>'+'<td><input type="text" id='+in_date+' name='+in_date+' class="edatec" required  />'+'<td><input type="text" id='+in1+' name='+in1+' min="06:27"  max="06:45" value="00:00" class="form-control edatec123"  onblur="myfun()" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td><input type="text" style="width:150px" class="edatec1" id='+out_date+' name='+out_date+' required /></td >'+'<td><input type="text" id='+out+' name='+out+' min="14:30" max="14:45" value="00:00" class="form-control edatec123"  onblur="myfun()" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td><input type="text" style="width:150px" id='+ticket_no+' name='+ticket_no+'  class="form-control" value="{{ticket}}" placeholder="Ticket No" required ></td>'+'<td><input type="text" style="width:150px" id='+cat+' name='+cat+'  class="form-control" placeholder="Category"></td>'+'<td><input type="text" style="width:150px" id="month_hrs" name='+month_hrs+'  value="0" class="form-control" placeholder="Month Hrs" pattern="[0-9]+" title="Numeric Value"></td>'+'<td><input type="text" style="width:150px" id='+total_time_taken+' name='+total_time_taken+' placeholder="Total Time Taken"  onclick="myfun1()" class="form-control" readonly></td>'+'<td><input type="text" style="width:150px;display:none" id='+final_time_taken+' name='+final_time_taken+' placeholder="Final Time Taken"  class="form-control" readonly></td>';
+    htAppend=htAppend+'<td id='+del+'><a class="delete"  title="Delete">Delete row</a></td>';
+        $('#items').append(htAppend);                                                    
+            document.getElementById("inoutnum").value=j;
+            var del="delete"+String(j-1);
+
+            $(function(){
+              $('#'+in_date).datepicker({dateFormat:'dd-mm-yy'});
+              $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',
+              onSelect:function(){
+               
+                var out_date=$(this).datepicker('getDate');
+                var ab=this.id;
+                in1=('in_date'+ab[8]).toString();
+                var in_date=$('#'+in1).datepicker('getDate');
+
+                if (in_date > out_date) {
+                 alert("out date should be greater or equal to in date");
+                  //document.getElementById(''+out_date).value="";
+                  $(this).val('');
+                  return false;
+                }
+                myfun2();
+                myfun3();
+              }
+              
+              });
+            });
+            
+    
+ $('.edatec').each(function(){
+    $(this).datepicker({ dateFormat: 'dd/mm/yy' });
+    $(this).addClass("form-control ll");
+    
+});
+      
+$('.edatec1').each(function(){
+  $(this).datepicker({ dateFormat: 'dd/mm/yy' });
+  $(this).addClass("form-control ll");
+ 
+});     
+$('.edatec123').each(function(){
+  
+  $(this).addClass("form-control ll");
+  $(this).timepicker();  
+   
+});
+document.getElementById('del').remove(); 
+
+    });
+   
+
+});
+}
+});
+
+$(document).on("click", ".delete", function(){
+  
+  $(this).parents("tr").remove();
+  j--;
+  var del="delete"+String(j);
+  var del1="delete1"+String(j);
+  
+  $('#'+del1).append('<td id='+del+'><a class="delete"  title="Delete">Delete row</a></td>')
+   document.getElementById("inoutnum").value=j;
+  });
+
+
+$(document).ready(function() {	
+  $('#in1add1').timepicker(); 
+}); 
+
+  </script>
+
+  <script type="text/javaScript">
+    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm5getwono' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_wo").selected=true;
+                                  document.querySelector("#op_br").selected=true;
+                                  document.querySelector("#op_part").selected = true;
+                                  document.querySelector("#op_doc").selected = true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.batch_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+
+                document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                  e.preventDefault();                        
+                  var shop_sec = $("#shop_sec").val()
+                 
+                  var data = {shop_sec};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm5getshop_name' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){                                
+                      document.getElementById('sname').value=response[0].section_desc;                             
+                      $('#sname').attr('readonly', true);
+                      }
+                        })
+
+              });
+
+  $("#wno").change(function(e){
+      e.preventDefault();
+      var wo_no = $(this).val();
+      var shop_sec = $("#shop_sec").val();
+      var data = {wo_no,shop_sec};
+        $.ajax({
+          type : 'GET',
+          url : "{% url 'm5getbr' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+                var elementsadded = document.querySelectorAll(".newelebr");
+                if(elementsadded.length>0){
+                  var elementsaddedarr = Array.from(elementsadded);
+                elementsaddedarr.forEach((el)=> el.remove());
+                document.querySelector("#op_br").selected = true;
+                document.querySelector("#op_part").selected = true;
+                document.querySelector("#op_doc").selected = true; 
+                }
+                var brarr,mystr,html;
+                brarr = response.map((el)=>el.brn_no);
+                mystr = "";
+                brarr.forEach((el,index)=>{
+                  html = `<option class="newelebr">${brarr[index]}</option>`
+                  mystr = html.concat(mystr);
+                });
+                html = "";
+                document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr);
+                mystr="";
+          }
+             })
+             }) 
+ 
+    
+  document.querySelector("#br_no").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var wo_no = $("#wno").val();
+                    var brn_no = $("#br_no").val();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {wo_no,brn_no,shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm5getpart_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelepart");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_part").selected = true;
+                                  document.querySelector("#op_doc").selected = true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.part_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelepart">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+  document.querySelector("#part_nop").addEventListener('change',(e)=>{
+    e.preventDefault();
+    var wo_no = $("#wno").val();
+    var brn_no = $("#br_no").val();
+    var shop_sec = $("#shop_sec").val()
+    var part_no = $('#part_nop').val()
+    var data = {wo_no,brn_no,shop_sec,part_no};
+          $.ajax({
+                type : 'GET',
+                url : "{% url 'm5getdoc_no' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                          var elementsadded = document.querySelectorAll(".neweledoc");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_doc").selected = true; 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.m5glsn);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="neweledoc">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+                </script>
+
+
+<script type="text/javaScript">
+  
+
+
+                document.querySelector("#doc_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M5 Card</title>');
+        win.document.write('<title>M5 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+       
+
+
+        win.print();
+        win.close();
+
+
+}
+
+
+function find2(th){
+
+
+var id = th.id;
+no=id.split("staff_noadd")
+
+var exam_type="staff_nameadd"+no[1];
+var two=document.getElementById(id).value;
+console.log(id+" "+two+" "+exam_type);
+
+var data = {two};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm5getempname' %}",
+                    
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                          console.log(response);
+                       document.getElementById(exam_type).value= response.exam.exam_type;
+                       console.log(document.getElementById(exam_type).value)
+
+                       document.getElementById("ticket_noadd"+no[1]).value= response.exam.ticket;
+                       console.log(document.getElementById("ticket_noadd"+no[1]).value)
+
+                       
+                       console.log(response.exam.ticket)
+                       
+                      }
+                        })
+                        
+
+
+}
+
+function findcat(th){
+
+
+  var id = th.id;
+  no=id.split("staff_noadd")
+  var two=document.getElementById(id).value;
+  
+  var data = {two};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm5getcat' %}",
+                      
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                            console.log(response);
+                        deepika=("catadd"+no[1]).toString();
+                        abc=response[0].cat;
+                        document.getElementById(deepika).value=abc;
+                         
+                        }
+                          })
+                          
+  
+  
+  }
+  
+
+function myfun(){
+    
+  var t1=$('#in1add1').val().toString();
+  var t2=$('#outadd1').val().toString();
+  m1=parseInt(t1.substring(3,5));
+  m2=parseInt(t2.substring(3,5));
+  h1=parseInt(t1.substring(0,2));
+  h2=parseInt(t2.substring(0,2));
+  if(h1>h2)
+     {
+         h2=h2+24;
+     }
+
+
+  tm1=((h2*60)+m2)-((h1*60)+m1);
+  hrs=parseInt((tm1)/60);
+  min=(tm1)%60;
+  document.getElementById('total_time_takenadd1').value=hrs.toString()+":"+min.toString();
+  for(i=2;i<=j;i++) 
+     { 
+       
+
+      var in1add="in1add"+String(i);
+      var outadd="outadd"+String(i);               
+     var total_time_takenadd1="total_time_takenadd"+String(i);         
+
+     var t1=$('#'+in1add).val().toString();
+     var t2=$('#'+outadd).val().toString(); 
+    
+
+     m1=parseInt(t1.substring(3,5));
+     m2=parseInt(t2.substring(3,5));
+     h1=parseInt(t1.substring(0,2));
+     h2=parseInt(t2.substring(0,2));
+     if(h1>h2)
+     {
+         h2=h2+24;
+     }
+
+     tm1=((h2*60)+m2)-((h1*60)+m1);
+     hrs=parseInt((tm1)/60);
+     min=(tm1)%60;
+     document.getElementById(total_time_takenadd1).value=hrs.toString()+":"+min.toString();
+
+     }
+     }
+
+
+
+
+
+
+function myFunction(th) {
+  
+  var id = th;
+  var x = document.getElementById(id).value;
+  console.log("x",id);
+  k=id.split("shiftadd");
+  console.log("kkk",k);
+
+  if ( document.getElementById(id).value=="A") {
+       console.log(document.getElementById(id).value) ;
+       
+       var in1add="in1add"+String(k[1]);
+       $('#'+in1add).timepicker('option','minTime','06:27');
+       $('#'+in1add).timepicker('option','maxTime','14:45');
+       var outadd="outadd"+String(k[1]);
+       $('#'+outadd).timepicker('option','minTime','06:27');
+       $('#'+outadd).timepicker('option','maxTime','14:45');
+
+    }
+    if(document.getElementById(id).value=="B")  {
+      var in1add="in1add"+String(k[1]);
+      $('#'+in1add).timepicker('option','minTime','14:27');
+      $('#'+in1add).timepicker('option','maxTime','14:45');
+      var outadd="outadd"+String(k[1]);
+      $('#'+outadd).timepicker('option','minTime','14:27');
+      $('#'+outadd).timepicker('option','maxTime','14:45');
+
+
+    }
+    if(document.getElementById(id).value=="C")  {
+       console.log(document.getElementById(id).value) ;
+
+       var in1add="in1add"+String(k[1]);
+      $('#'+in1add).timepicker('option','minTime','22:27');
+      $('#'+in1add).timepicker('option','maxTime','22:45');
+      var outadd="outadd"+String(k[1]);
+      $('#'+outadd).timepicker('option','minTime','22:27');
+      $('#'+outadd).timepicker('option','maxTime','22:45');
+
+
+    }
+    if(document.getElementById(id).value=="GD")  {
+       console.log(document.getElementById(id).value) ;
+
+       var in1add="in1add"+String(k[1]);
+       $('#'+in1add).timepicker('option','minTime','06:27');
+       $('#'+in1add).timepicker('option','maxTime','06:45');
+       var outadd="outadd"+String(k[1]);
+       $('#'+outadd).timepicker('option','minTime','06:27');
+       $('#'+outadd).timepicker('option','maxTime','06:45');
+    }
+    if(document.getElementById(id).value=="GN")  {
+       console.log(document.getElementById(id).value) ;
+       var in1add="in1add"+String(k[1]);
+       $('#'+in1add).timepicker('option','minTime','15:57');
+       $('#'+in1add).timepicker('option','maxTime','16:15');
+       var outadd="outadd"+String(k[1]);
+       $('#'+outadd).timepicker('option','minTime','15:57');
+       $('#'+outadd).timepicker('option','maxTime','16:15');
+
+    }
+}
+
+  
+
+function myfun1(){
+  for(i=1;i<=j;i++) 
+     { 
+       var ss=[];
+       var staff_noadd="staff_noadd"+String(i);
+       var in_date="in_date"+String(i);               
+       var out_date="out_date"+String(i); 
+       var total_time_takenadd="total_time_takenadd"+String(i); 
+       var final_time_takenadd="final_time_takenadd"+String(i);       
+       var p1=$('#'+staff_noadd).val().toString();
+       var p2=$('#'+in_date).val().toString(); 
+       var p3=$('#'+out_date).val().toString(); 
+       var p4=$('#'+total_time_takenadd).val().toString();
+       h1=parseInt(p4.substring(0,1));
+       m1=parseInt(p4.substring(2,4));
+       if('p1' in ss)
+       {
+         continue;
+       }
+      for(k=i+1;k<=j;k++)
+      {
+        var staff_noadd="staff_noadd"+String(k);
+        var in_date="in_date"+String(k);               
+        var out_date="out_date"+String(k); 
+        var total_time_takenadd="total_time_takenadd"+String(k);        
+        var q1=$('#'+staff_noadd).val().toString();
+        var q2=$('#'+in_date).val().toString(); 
+        var q3=$('#'+out_date).val().toString(); 
+        var q4=$('#'+total_time_takenadd).val().toString();
+        h2=parseInt(q4.substring(0,1));
+        m2=parseInt(q4.substring(2,4));
+     if((p1==q1) && (p2==q2) && (p3==q3))
+     {
+      document.getElementById(final_time_takenadd).style.display="block";
+      if(h1>h2)
+      {
+          h2=h2+24;
+      }
+ 
+      tm1=((h2*60)+m2)+((h1*60)+m1);
+      hrs=parseInt((tm1)/60);
+      min=(tm1)%60;
+      ss.push('p1');
+      document.getElementById(final_time_takenadd).value=hrs.toString()+":"+min.toString();
+
+     }
+    }
+     
+
+     }
+
+    }
+
+
+function myfun2(){
+  for(i=1;i<=j;i++) 
+  { 
+  var ss=[];
+  var staff_noadd="staff_noadd"+String(i);
+  var in_date="in_date"+String(i);               
+  var out_date="out_date"+String(i); 
+  var in1add="in1add"+String(i); 
+  var shiftadd="shiftadd"+String(i); 
+  var staff_nameadd="staff_nameadd"+String(i); 
+  var ticket_noadd="ticket_noadd"+String(i); 
+  var catadd="catadd"+String(i); 
+  var total_time_takenadd="total_time_takenadd"+String(i);     
+  var p1=$('#'+staff_noadd).val().toString();
+  var p2=$('#'+in_date).val().toString(); 
+  var p3=$('#'+out_date).val().toString(); 
+  var p4=$('#'+in1add).val().toString();
+  var p5=$('#'+shiftadd).val().toString();
+  if('p1' in ss)
+  {
+    continue;
+  }
+    for(k=i+1;k<=j;k++)
+      {
+        var staff_noadd="staff_noadd"+String(k);
+        var in_date="in_date"+String(k);               
+        var out_date="out_date"+String(k); 
+        var in1add="in1add"+String(k); 
+        var shiftadd="shiftadd"+String(k);
+        var staff_nameadd="staff_nameadd"+String(k);
+        var ticket_noadd="ticket_noadd"+String(k); 
+        var catadd="catadd"+String(k);
+        var total_time_takenadd="total_time_takenadd"+String(k);        
+        var q1=$('#'+staff_noadd).val().toString();
+        var q2=$('#'+in_date).val().toString(); 
+        var q3=$('#'+out_date).val().toString(); 
+        var q4=$('#'+in1add).val().toString();
+        var q5=$('#'+shiftadd).val().toString();
+        //alert("hii");
+        if((p1==q1) && (p2==q2) && (p3==q3) && (p4==q4) && (p5==q5))
+        {
+          alert("wrong data entry,fill another one");
+          //alert("hlo");
+          document.getElementById(''+staff_noadd).value="";
+          document.getElementById(''+staff_nameadd).value="";
+          //alert("hlo");
+          document.getElementById(''+in_date).value="";
+          document.getElementById(''+out_date).value="";
+          document.getElementById(''+in1add).value="";
+          document.getElementById(''+shiftadd).value="";
+          document.getElementById(''+ticket_noadd).value="";
+          document.getElementById(''+catadd).value="";
+          document.getElementById(''+total_time_takenadd).value="";
+         
+    
+        }
+        }
+         
+    
+         }
+         
+    
+        }
+
+        function myfun3(){
+          for(i=1;i<=j;i++) 
+          { 
+          var ss=[];
+          var staff_noadd="staff_noadd"+String(i);
+          var in_date="in_date"+String(i);               
+          var out_date="out_date"+String(i); 
+          var in1add="in1add"+String(i); 
+          var shiftadd="shiftadd"+String(i); 
+          var staff_nameadd="staff_nameadd"+String(i); 
+          var ticket_noadd="ticket_noadd"+String(i); 
+          var catadd="catadd"+String(i); 
+          var total_time_takenadd="total_time_takenadd"+String(i);
+          var outadd="outadd"+String(i);     
+          var p1=$('#'+staff_noadd).val().toString();
+          var p2=$('#'+in_date).val().toString(); 
+          //var p3=$('#'+out_date).val().toString(); 
+          var p4=$('#'+in1add).val().toString();
+          var p5=$('#'+shiftadd).val().toString();
+          var p5=$('#'+outadd).val().toString();
+          if('p1' in ss)
+          {
+            continue;
+          }
+            for(k=i+1;k<=j;k++)
+              {
+                var staff_noadd="staff_noadd"+String(k);
+                var in_date="in_date"+String(k);               
+                var out_date="out_date"+String(k); 
+                var in1add="in1add"+String(k); 
+                var outadd="outadd"+String(k);   
+                var shiftadd="shiftadd"+String(k);
+                var staff_nameadd="staff_nameadd"+String(k);
+                var ticket_noadd="ticket_noadd"+String(k); 
+                var catadd="catadd"+String(k);
+                var total_time_takenadd="total_time_takenadd"+String(k);        
+                var q1=$('#'+staff_noadd).val().toString();
+                var q2=$('#'+in_date).val().toString(); 
+                var q3=$('#'+out_date).val().toString(); 
+                var q4=$('#'+in1add).val().toString();
+                var q5=$('#'+shiftadd).val().toString();
+                var q6=$('#'+outadd).val().toString();
+                if((p1==q1) && (p2==q2) && (q4<p5) || (p5==q5))
+                {
+                  alert("wrong data entry for in time,fill another one");
+                  document.getElementById(''+staff_noadd).value="";
+                  document.getElementById(''+staff_nameadd).value="";
+                  document.getElementById(''+in_date).value="";
+                  document.getElementById(''+out_date).value="";
+                  document.getElementById(''+in1add).value="";
+                  document.getElementById(''+shiftadd).value="";
+                  document.getElementById(''+ticket_noadd).value="";
+                  document.getElementById(''+catadd).value="";
+                  document.getElementById(''+total_time_takenadd).value="";
+                 
+            
+                }
+                }
+                 
+            
+                 }
+            
+                }
+             
+    
+
+</script> 
+
+
+
+
+<script>
+  /*!
+   * jquery-timepicker v1.11.15 - A jQuery timepicker plugin inspired by Google Calendar. It supports both mouse and keyboard navigation.
+   * Copyright (c) 2015 Jon Thornton - http://jonthornton.github.com/jquery-timepicker/
+   * License: MIT
+   */
+  
+  (function(factory) {
+    if (
+      typeof exports === "object" &&
+      exports &&
+      typeof module === "object" &&
+      module &&
+      module.exports === exports
+    ) {
+      // Browserify. Attach to jQuery module.
+      factory(require("jquery"));
+    } else if (typeof define === "function" && define.amd) {
+      // AMD. Register as an anonymous module.
+      define(["jquery"], factory);
+    } else {
+      // Browser globals
+      factory(jQuery);
+    }
+  })(function($) {
+    var _ONE_DAY = 86400;
+    var _lang = {
+      am: "am",
+      pm: "pm",
+      AM: "AM",
+      PM: "PM",
+      decimal: ".",
+      mins: "mins",
+      hr: "hr",
+      hrs: "hrs"
+    };
+  
+    var _DEFAULTS = {
+      appendTo: "body",
+      className: null,
+      closeOnWindowScroll: false,
+      disableTextInput: false,
+      disableTimeRanges: [],
+      disableTouchKeyboard: false,
+      durationTime: null,
+      forceRoundTime: false,
+      maxTime: null,
+      minTime: null,
+      noneOption: false,
+      orientation: "l",
+      roundingFunction: function(seconds, settings) {
+        if (seconds === null) {
+          return null;
+        } else if (typeof settings.step !== "number") {
+          // TODO: nearest fit irregular steps
+          return seconds;
+        } else {
+          var offset = seconds % (settings.step * 60); // step is in minutes
+  
+          var start = settings.minTime || 0;
+  
+          // adjust offset by start mod step so that the offset is aligned not to 00:00 but to the start
+          offset -= start % (settings.step * 60);
+  
+          if (offset >= settings.step * 30) {
+            // if offset is larger than a half step, round up
+            seconds += settings.step * 60 - offset;
+          } else {
+            // round down
+            seconds -= offset;
+          }
+  
+          return _moduloSeconds(seconds, settings);
+        }
+      },
+      scrollDefault: null,
+      selectOnBlur: false,
+      show2400: false,
+      showDuration: false,
+      showOn: ["click", "focus"],
+      showOnFocus: true,
+      step: 30,
+      stopScrollPropagation: false,
+      timeFormat: "g:ia",
+      typeaheadHighlight: true,
+      useSelect: false,
+      wrapHours: true
+    };
+  
+    var methods = {
+      init: function(options) {
+        return this.each(function() {
+          var self = $(this);
+  
+          // pick up settings from data attributes
+          var attributeOptions = [];
+          for (var key in _DEFAULTS) {
+            if (self.data(key)) {
+              attributeOptions[key] = self.data(key);
+            }
+          }
+  
+          var settings = $.extend({}, _DEFAULTS, options, attributeOptions);
+  
+          if (settings.lang) {
+            _lang = $.extend(_lang, settings.lang);
+          }
+  
+          settings = _parseSettings(settings);
+          self.data("timepicker-settings", settings);
+          self.addClass("ui-timepicker-input");
+  
+          if (settings.useSelect) {
+            _render(self);
+          } else {
+            self.prop("autocomplete", "off");
+            if (settings.showOn) {
+              for (var i in settings.showOn) {
+                self.on(settings.showOn[i] + ".timepicker", methods.show);
+              }
+            }
+            self.on("change.timepicker", _formatValue);
+            self.on("keydown.timepicker", _keydownhandler);
+            self.on("keyup.timepicker", _keyuphandler);
+            if (settings.disableTextInput) {
+              self.on("keydown.timepicker", _disableTextInputHandler);
+            }
+            self.on("cut.timepicker", _keyuphandler);
+            self.on("paste.timepicker", _keyuphandler);
+  
+            _formatValue.call(self.get(0), null, "initial");
+          }
+        });
+      },
+  
+      show: function(e) {
+        var self = $(this);
+        var settings = self.data("timepicker-settings");
+  
+        if (e) {
+          e.preventDefault();
+        }
+  
+        if (settings.useSelect) {
+          self.data("timepicker-list").focus();
+          return;
+        }
+  
+        if (_hideKeyboard(self)) {
+          // block the keyboard on mobile devices
+          self.blur();
+        }
+  
+        var list = self.data("timepicker-list");
+  
+        // check if input is readonly
+        if (self.prop("readonly")) {
+          return;
+        }
+  
+        // check if list needs to be rendered
+        if (
+          !list ||
+          list.length === 0 ||
+          typeof settings.durationTime === "function"
+        ) {
+          _render(self);
+          list = self.data("timepicker-list");
+        }
+  
+        if (_isVisible(list)) {
+          return;
+        }
+  
+        self.data("ui-timepicker-value", self.val());
+        _setSelected(self, list);
+  
+        // make sure other pickers are hidden
+        methods.hide();
+  
+        // position the dropdown relative to the input
+        list.show();
+        var listOffset = {};
+  
+        if (settings.orientation.match(/r/)) {
+          // right-align the dropdown
+          listOffset.left =
+            self.offset().left +
+            self.outerWidth() -
+            list.outerWidth() +
+            parseInt(list.css("marginLeft").replace("px", ""), 10);
+        } else {
+          // left-align the dropdown
+          listOffset.left =
+            self.offset().left +
+            parseInt(list.css("marginLeft").replace("px", ""), 10);
+        }
+  
+        var verticalOrientation;
+        if (settings.orientation.match(/t/)) {
+          verticalOrientation = "t";
+        } else if (settings.orientation.match(/b/)) {
+          verticalOrientation = "b";
+        } else if (
+          self.offset().top + self.outerHeight(true) + list.outerHeight() >
+          $(window).height() + $(window).scrollTop()
+        ) {
+          verticalOrientation = "t";
+        } else {
+          verticalOrientation = "b";
+        }
+  
+        if (verticalOrientation == "t") {
+          // position the dropdown on top
+          list.addClass("ui-timepicker-positioned-top");
+          listOffset.top =
+            self.offset().top -
+            list.outerHeight() +
+            parseInt(list.css("marginTop").replace("px", ""), 10);
+        } else {
+          // put it under the input
+          list.removeClass("ui-timepicker-positioned-top");
+          listOffset.top =
+            self.offset().top +
+            self.outerHeight() +
+            parseInt(list.css("marginTop").replace("px", ""), 10);
+        }
+  
+        list.offset(listOffset);
+  
+        // position scrolling
+        var selected = list.find(".ui-timepicker-selected");
+  
+        if (!selected.length) {
+          var timeInt = _time2int(_getTimeValue(self));
+          if (timeInt !== null) {
+            selected = _findRow(self, list, timeInt);
+          } else if (settings.scrollDefault) {
+            selected = _findRow(self, list, settings.scrollDefault());
+          }
+        }
+  
+        // if not found or disabled, intelligently find first selectable element
+        if (!selected.length || selected.hasClass("ui-timepicker-disabled")) {
+          selected = list.find("li:not(.ui-timepicker-disabled):first");
+        }
+  
+        if (selected && selected.length) {
+          var topOffset =
+            list.scrollTop() + selected.position().top - selected.outerHeight();
+          list.scrollTop(topOffset);
+        } else {
+          list.scrollTop(0);
+        }
+  
+        // prevent scroll propagation
+        if (settings.stopScrollPropagation) {
+          $(
+            document
+          ).on("wheel.ui-timepicker", ".ui-timepicker-wrapper", function(e) {
+            e.preventDefault();
+            var currentScroll = $(this).scrollTop();
+            $(this).scrollTop(currentScroll + e.originalEvent.deltaY);
+          });
+        }
+  
+        // attach close handlers
+        $(document).on(
+          "touchstart.ui-timepicker mousedown.ui-timepicker",
+          _closeHandler
+        );
+        $(window).on("resize.ui-timepicker", _closeHandler);
+        if (settings.closeOnWindowScroll) {
+          $(document).on("scroll.ui-timepicker", _closeHandler);
+        }
+  
+        self.trigger("showTimepicker");
+  
+        return this;
+      },
+  
+      hide: function(e) {
+        var self = $(this);
+        var settings = self.data("timepicker-settings");
+  
+        if (settings && settings.useSelect) {
+          self.blur();
+        }
+  
+        $(".ui-timepicker-wrapper").each(function() {
+          var list = $(this);
+          if (!_isVisible(list)) {
+            return;
+          }
+  
+          var self = list.data("timepicker-input");
+          var settings = self.data("timepicker-settings");
+  
+          if (settings && settings.selectOnBlur) {
+            _selectValue(self);
+          }
+  
+          list.hide();
+          self.trigger("hideTimepicker");
+        });
+  
+        return this;
+      },
+  
+      option: function(key, value) {
+        if (typeof key == "string" && typeof value == "undefined") {
+          return $(this).data("timepicker-settings")[key];
+        }
+  
+        return this.each(function() {
+          var self = $(this);
+          var settings = self.data("timepicker-settings");
+          var list = self.data("timepicker-list");
+  
+          if (typeof key == "object") {
+            settings = $.extend(settings, key);
+          } else if (typeof key == "string") {
+            settings[key] = value;
+          }
+  
+          settings = _parseSettings(settings);
+  
+          self.data("timepicker-settings", settings);
+  
+          _formatValue.call(self.get(0), { type: "change" }, "initial");
+  
+          if (list) {
+            list.remove();
+            self.data("timepicker-list", false);
+          }
+  
+          if (settings.useSelect) {
+            _render(self);
+          }
+        });
+      },
+  
+      getSecondsFromMidnight: function() {
+        return _time2int(_getTimeValue(this));
+      },
+  
+      getTime: function(relative_date) {
+        var self = this;
+  
+        var time_string = _getTimeValue(self);
+        if (!time_string) {
+          return null;
+        }
+  
+        var offset = _time2int(time_string);
+        if (offset === null) {
+          return null;
+        }
+  
+        if (!relative_date) {
+          relative_date = new Date();
+        }
+  
+        // construct a Date from relative date, and offset's time
+        var time = new Date(relative_date);
+        time.setHours(offset / 3600);
+        time.setMinutes((offset % 3600) / 60);
+        time.setSeconds(offset % 60);
+        time.setMilliseconds(0);
+  
+        return time;
+      },
+  
+      isVisible: function() {
+        var self = this;
+        var list = self.data("timepicker-list");
+        return !!(list && _isVisible(list));
+      },
+  
+      setTime: function(value) {
+        var self = this;
+        var settings = self.data("timepicker-settings");
+  
+        if (settings.forceRoundTime) {
+          var prettyTime = _roundAndFormatTime(_time2int(value), settings);
+        } else {
+          var prettyTime = _int2time(_time2int(value), settings);
+        }
+  
+        if (value && prettyTime === null && settings.noneOption) {
+          prettyTime = value;
+        }
+  
+        _setTimeValue(self, prettyTime, "initial");
+        _formatValue.call(self.get(0), { type: "change" }, "initial");
+  
+        if (self.data("timepicker-list")) {
+          _setSelected(self, self.data("timepicker-list"));
+        }
+  
+        return this;
+      },
+  
+      remove: function() {
+        var self = this;
+  
+        // check if this element is a timepicker
+        if (!self.hasClass("ui-timepicker-input")) {
+          return;
+        }
+  
+        var settings = self.data("timepicker-settings");
+        self.removeAttr("autocomplete", "off");
+        self.removeClass("ui-timepicker-input");
+        self.removeData("timepicker-settings");
+        self.off(".timepicker");
+  
+        // timepicker-list won't be present unless the user has interacted with this timepicker
+        if (self.data("timepicker-list")) {
+          self.data("timepicker-list").remove();
+        }
+  
+        if (settings.useSelect) {
+          self.show();
+        }
+  
+        self.removeData("timepicker-list");
+  
+        return this;
+      }
+    };
+  
+    // private methods
+  
+    function _isVisible(elem) {
+      var el = elem[0];
+      return el.offsetWidth > 0 && el.offsetHeight > 0;
+    }
+  
+    function _parseSettings(settings) {
+      if (settings.minTime) {
+        settings.minTime = _time2int(settings.minTime);
+      }
+  
+      if (settings.maxTime) {
+        settings.maxTime = _time2int(settings.maxTime);
+      }
+  
+      if (settings.durationTime && typeof settings.durationTime !== "function") {
+        settings.durationTime = _time2int(settings.durationTime);
+      }
+  
+      if (settings.scrollDefault == "now") {
+        settings.scrollDefault = function() {
+          return settings.roundingFunction(_time2int(new Date()), settings);
+        };
+      } else if (
+        settings.scrollDefault &&
+        typeof settings.scrollDefault != "function"
+      ) {
+        var val = settings.scrollDefault;
+        settings.scrollDefault = function() {
+          return settings.roundingFunction(_time2int(val), settings);
+        };
+      } else if (settings.minTime) {
+        settings.scrollDefault = function() {
+          return settings.roundingFunction(settings.minTime, settings);
+        };
+      }
+  
+      if (
+        $.type(settings.timeFormat) === "string" &&
+        settings.timeFormat.match(/[gh]/)
+      ) {
+        settings._twelveHourTime = true;
+      }
+  
+      if (
+        settings.showOnFocus === false &&
+        settings.showOn.indexOf("focus") != -1
+      ) {
+        settings.showOn.splice(settings.showOn.indexOf("focus"), 1);
+      }
+  
+      if (settings.disableTimeRanges.length > 0) {
+        // convert string times to integers
+        for (var i in settings.disableTimeRanges) {
+          settings.disableTimeRanges[i] = [
+            _time2int(settings.disableTimeRanges[i][0]),
+            _time2int(settings.disableTimeRanges[i][1])
+          ];
+        }
+  
+        // sort by starting time
+        settings.disableTimeRanges = settings.disableTimeRanges.sort(function(
+          a,
+          b
+        ) {
+          return a[0] - b[0];
+        });
+  
+        // merge any overlapping ranges
+        for (var i = settings.disableTimeRanges.length - 1; i > 0; i--) {
+          if (
+            settings.disableTimeRanges[i][0] <=
+            settings.disableTimeRanges[i - 1][1]
+          ) {
+            settings.disableTimeRanges[i - 1] = [
+              Math.min(
+                settings.disableTimeRanges[i][0],
+                settings.disableTimeRanges[i - 1][0]
+              ),
+              Math.max(
+                settings.disableTimeRanges[i][1],
+                settings.disableTimeRanges[i - 1][1]
+              )
+            ];
+            settings.disableTimeRanges.splice(i, 1);
+          }
+        }
+      }
+  
+      return settings;
+    }
+  
+    function _render(self) {
+      var settings = self.data("timepicker-settings");
+      var list = self.data("timepicker-list");
+  
+      if (list && list.length) {
+        list.remove();
+        self.data("timepicker-list", false);
+      }
+  
+      if (settings.useSelect) {
+        list = $("<select />", { class: "ui-timepicker-select" });
+        if (self.attr('name')) {
+          list.attr('name', 'ui-timepicker-' + self.attr('name'));
+        }
+        var wrapped_list = list;
+      } else {
+        list = $("<ul />", { class: "ui-timepicker-list" });
+  
+        var wrapped_list = $("<div />", {
+          class: "ui-timepicker-wrapper",
+          tabindex: -1
+        });
+        wrapped_list.css({ display: "none", position: "absolute" }).append(list);
+      }
+  
+      if (settings.noneOption) {
+        if (settings.noneOption === true) {
+          settings.noneOption = settings.useSelect ? "Time..." : "None";
+        }
+  
+        if ($.isArray(settings.noneOption)) {
+          for (var i in settings.noneOption) {
+            if (parseInt(i, 10) == i) {
+              var noneElement = _generateNoneElement(
+                settings.noneOption[i],
+                settings.useSelect
+              );
+              list.append(noneElement);
+            }
+          }
+        } else {
+          var noneElement = _generateNoneElement(
+            settings.noneOption,
+            settings.useSelect
+          );
+          list.append(noneElement);
+        }
+      }
+  
+      if (settings.className) {
+        wrapped_list.addClass(settings.className);
+      }
+  
+      if (
+        (settings.minTime !== null || settings.durationTime !== null) &&
+        settings.showDuration
+      ) {
+        var stepval =
+          typeof settings.step == "function" ? "function" : settings.step;
+        wrapped_list.addClass("ui-timepicker-with-duration");
+        wrapped_list.addClass("ui-timepicker-step-" + settings.step);
+      }
+  
+      var durStart = settings.minTime;
+      if (typeof settings.durationTime === "function") {
+        durStart = _time2int(settings.durationTime());
+      } else if (settings.durationTime !== null) {
+        durStart = settings.durationTime;
+      }
+      var start = settings.minTime !== null ? settings.minTime : 0;
+      var end =
+        settings.maxTime !== null ? settings.maxTime : start + _ONE_DAY - 1;
+  
+      if (end < start) {
+        // make sure the end time is greater than start time, otherwise there will be no list to show
+        end += _ONE_DAY;
+      }
+  
+      if (
+        end === _ONE_DAY - 1 &&
+        $.type(settings.timeFormat) === "string" &&
+        settings.show2400
+      ) {
+        // show a 24:00 option when using military time
+        end = _ONE_DAY;
+      }
+  
+      var dr = settings.disableTimeRanges;
+      var drCur = 0;
+      var drLen = dr.length;
+  
+      var stepFunc = settings.step;
+      if (typeof stepFunc != "function") {
+        stepFunc = function() {
+          return settings.step;
+        };
+      }
+  
+      for (var i = start, j = 0; i <= end; j++, i += stepFunc(j) * 60) {
+        var timeInt = i;
+        var timeString = _int2time(timeInt, settings);
+  
+        if (settings.useSelect) {
+          var row = $("<option />", { value: timeString });
+          row.text(timeString);
+        } else {
+          var row = $("<li />");
+          row.addClass(
+            timeInt % _ONE_DAY < _ONE_DAY / 2
+              ? "ui-timepicker-am"
+              : "ui-timepicker-pm"
+          );
+          row.data("time", _moduloSeconds(timeInt, settings));
+          row.text(timeString);
+        }
+  
+        if (
+          (settings.minTime !== null || settings.durationTime !== null) &&
+          settings.showDuration
+        ) {
+          var durationString = _int2duration(i - durStart, settings.step);
+          if (settings.useSelect) {
+            row.text(row.text() + " (" + durationString + ")");
+          } else {
+            var duration = $("<span />", { class: "ui-timepicker-duration" });
+            duration.text(" (" + durationString + ")");
+            row.append(duration);
+          }
+        }
+  
+        if (drCur < drLen) {
+          if (timeInt >= dr[drCur][1]) {
+            drCur += 1;
+          }
+  
+          if (dr[drCur] && timeInt >= dr[drCur][0] && timeInt < dr[drCur][1]) {
+            if (settings.useSelect) {
+              row.prop("disabled", true);
+            } else {
+              row.addClass("ui-timepicker-disabled");
+            }
+          }
+        }
+  
+        list.append(row);
+      }
+  
+      wrapped_list.data("timepicker-input", self);
+      self.data("timepicker-list", wrapped_list);
+  
+      if (settings.useSelect) {
+        if (self.val()) {
+          list.val(_roundAndFormatTime(_time2int(self.val()), settings));
+        }
+  
+        list.on("focus", function() {
+          $(this)
+            .data("timepicker-input")
+            .trigger("showTimepicker");
+        });
+        list.on("blur", function() {
+          $(this)
+            .data("timepicker-input")
+            .trigger("hideTimepicker");
+        });
+        list.on("change", function() {
+          _setTimeValue(self, $(this).val(), "select");
+        });
+  
+        _setTimeValue(self, list.val(), "initial");
+        self.hide().after(list);
+      } else {
+        var appendTo = settings.appendTo;
+        if (typeof appendTo === "string") {
+          appendTo = $(appendTo);
+        } else if (typeof appendTo === "function") {
+          appendTo = appendTo(self);
+        }
+        appendTo.append(wrapped_list);
+        _setSelected(self, list);
+  
+        list.on("mousedown click", "li", function(e) {
+          // hack: temporarily disable the focus handler
+          // to deal with the fact that IE fires 'focus'
+          // events asynchronously
+          self.off("focus.timepicker");
+          self.on("focus.timepicker-ie-hack", function() {
+            self.off("focus.timepicker-ie-hack");
+            self.on("focus.timepicker", methods.show);
+          });
+  
+          if (!_hideKeyboard(self)) {
+            self[0].focus();
+          }
+  
+          // make sure only the clicked row is selected
+          list.find("li").removeClass("ui-timepicker-selected");
+          $(this).addClass("ui-timepicker-selected");
+  
+          if (_selectValue(self)) {
+            self.trigger("hideTimepicker");
+  
+            list.on("mouseup.timepicker click.timepicker", "li", function(e) {
+              list.off("mouseup.timepicker click.timepicker");
+              wrapped_list.hide();
+            });
+          }
+        });
+      }
+    }
+  
+    function _generateNoneElement(optionValue, useSelect) {
+      var label, className, value;
+  
+      if (typeof optionValue == "object") {
+        label = optionValue.label;
+        className = optionValue.className;
+        value = optionValue.value;
+      } else if (typeof optionValue == "string") {
+        label = optionValue;
+        value = '';
+      } else {
+        $.error("Invalid noneOption value");
+      }
+  
+      if (useSelect) {
+        return $("<option />", {
+          value: value,
+          class: className,
+          text: label
+        });
+      } else {
+        return $("<li />", {
+          class: className,
+          text: label
+        }).data("time", String(value));
+      }
+    }
+  
+    function _roundAndFormatTime(seconds, settings) {
+      seconds = settings.roundingFunction(seconds, settings);
+      if (seconds !== null) {
+        return _int2time(seconds, settings);
+      }
+    }
+  
+    // event handler to decide whether to close timepicker
+    function _closeHandler(e) {
+      if (e.target == window) {
+        // mobile Chrome fires focus events against window for some reason
+        return;
+      }
+  
+      var target = $(e.target);
+  
+      if (
+        target.closest(".ui-timepicker-input").length ||
+        target.closest(".ui-timepicker-wrapper").length
+      ) {
+        // active timepicker was focused. ignore
+        return;
+      }
+  
+      methods.hide();
+      $(document).unbind(".ui-timepicker");
+      $(window).unbind(".ui-timepicker");
+    }
+  
+    function _hideKeyboard(self) {
+      var settings = self.data("timepicker-settings");
+      return (
+        (window.navigator.msMaxTouchPoints || "ontouchstart" in document) &&
+        settings.disableTouchKeyboard
+      );
+    }
+  
+    function _findRow(self, list, value) {
+      if (!value && value !== 0) {
+        return false;
+      }
+  
+      var settings = self.data("timepicker-settings");
+      var out = false;
+      var value = settings.roundingFunction(value, settings);
+  
+      // loop through the menu items
+      list.find("li").each(function(i, obj) {
+        var jObj = $(obj);
+        if (typeof jObj.data("time") != "number") {
+          return;
+        }
+  
+        if (jObj.data("time") == value) {
+          out = jObj;
+          return false;
+        }
+      });
+  
+      return out;
+    }
+  
+    function _setSelected(self, list) {
+      list.find("li").removeClass("ui-timepicker-selected");
+  
+      var settings = self.data("timepicker-settings");
+      var timeValue = _time2int(_getTimeValue(self), settings);
+      if (timeValue === null) {
+        return;
+      }
+  
+      var selected = _findRow(self, list, timeValue);
+      if (selected) {
+        var topDelta = selected.offset().top - list.offset().top;
+  
+        if (
+          topDelta + selected.outerHeight() > list.outerHeight() ||
+          topDelta < 0
+        ) {
+          list.scrollTop(
+            list.scrollTop() + selected.position().top - selected.outerHeight()
+          );
+        }
+  
+        if (settings.forceRoundTime || selected.data("time") === timeValue) {
+          selected.addClass("ui-timepicker-selected");
+        }
+      }
+    }
+  
+    function _formatValue(e, origin) {
+      if (origin == "timepicker") {
+        return;
+      }
+  
+      var self = $(this);
+  
+      if (this.value === "") {
+        _setTimeValue(self, null, origin);
+        return;
+      }
+  
+      if (self.is(":focus") && (!e || e.type != "change")) {
+        return;
+      }
+  
+      var settings = self.data("timepicker-settings");
+      var seconds = _time2int(this.value, settings);
+  
+      if (seconds === null) {
+        self.trigger("timeFormatError");
+        return;
+      }
+  
+      var rangeError = false;
+      // check that the time in within bounds
+      if (
+        settings.minTime !== null &&
+        settings.maxTime !== null &&
+        (seconds < settings.minTime || seconds > settings.maxTime)
+      ) {
+        rangeError = true;
+      }
+  
+      // check that time isn't within disabled time ranges
+      $.each(settings.disableTimeRanges, function() {
+        if (seconds >= this[0] && seconds < this[1]) {
+          rangeError = true;
+          return false;
+        }
+      });
+  
+      if (settings.forceRoundTime) {
+        var roundSeconds = settings.roundingFunction(seconds, settings);
+        if (roundSeconds != seconds) {
+          seconds = roundSeconds;
+          origin = null;
+        }
+      }
+  
+      var prettyTime = _int2time(seconds, settings);
+  
+      if (rangeError) {
+        if (
+          _setTimeValue(self, prettyTime, "error") ||
+          (e && e.type == "change")
+        ) {
+          self.trigger("timeRangeError");
+        }
+      } else {
+        _setTimeValue(self, prettyTime, origin);
+      }
+    }
+  
+    function _getTimeValue(self) {
+      if (self.is("input")) {
+        return self.val();
+      } else {
+        // use the element's data attributes to store values
+        return self.data("ui-timepicker-value");
+      }
+    }
+  
+    function _setTimeValue(self, value, source) {
+      if (self.is("input")) {
+        self.val(value);
+  
+        var settings = self.data("timepicker-settings");
+        if (settings.useSelect && source != "select" && self.data("timepicker-list")) {
+          self
+            .data("timepicker-list")
+            .val(_roundAndFormatTime(_time2int(value), settings));
+        }
+      }
+  
+      if (self.data("ui-timepicker-value") != value) {
+        self.data("ui-timepicker-value", value);
+        if (source == "select") {
+          self
+            .trigger("selectTime")
+            .trigger("changeTime")
+            .trigger("change", "timepicker");
+        } else if (["error", "initial"].indexOf(source) == -1) {
+          self.trigger("changeTime");
+        }
+  
+        return true;
+      } else {
+        if (["error", "initial"].indexOf(source) == -1) {
+          self.trigger("selectTime");
+        }
+        return false;
+      }
+    }
+  
+    /*
+    *  Filter freeform input
+    */
+    function _disableTextInputHandler(e) {
+      switch (e.keyCode) {
+        case 13: // return
+        case 9: //tab
+          return;
+  
+        default:
+          e.preventDefault();
+      }
+    }
+  
+    /*
+    *  Keyboard navigation via arrow keys
+    */
+    function _keydownhandler(e) {
+      var self = $(this);
+      var list = self.data("timepicker-list");
+  
+      if (!list || !_isVisible(list)) {
+        if (e.keyCode == 40) {
+          // show the list!
+          methods.show.call(self.get(0));
+          list = self.data("timepicker-list");
+          if (!_hideKeyboard(self)) {
+            self.focus();
+          }
+        } else {
+          return true;
+        }
+      }
+  
+      switch (e.keyCode) {
+        case 13: // return
+          if (_selectValue(self)) {
+            _formatValue.call(self.get(0), { type: "change" });
+            methods.hide.apply(this);
+          }
+  
+          e.preventDefault();
+          return false;
+  
+        case 38: // up
+          var selected = list.find(".ui-timepicker-selected");
+  
+          if (!selected.length) {
+            list.find("li").each(function(i, obj) {
+              if ($(obj).position().top > 0) {
+                selected = $(obj);
+                return false;
+              }
+            });
+            selected.addClass("ui-timepicker-selected");
+          } else if (!selected.is(":first-child")) {
+            selected.removeClass("ui-timepicker-selected");
+            selected.prev().addClass("ui-timepicker-selected");
+  
+            if (selected.prev().position().top < selected.outerHeight()) {
+              list.scrollTop(list.scrollTop() - selected.outerHeight());
+            }
+          }
+  
+          return false;
+  
+        case 40: // down
+          selected = list.find(".ui-timepicker-selected");
+  
+          if (selected.length === 0) {
+            list.find("li").each(function(i, obj) {
+              if ($(obj).position().top > 0) {
+                selected = $(obj);
+                return false;
+              }
+            });
+  
+            selected.addClass("ui-timepicker-selected");
+          } else if (!selected.is(":last-child")) {
+            selected.removeClass("ui-timepicker-selected");
+            selected.next().addClass("ui-timepicker-selected");
+  
+            if (
+              selected.next().position().top + 2 * selected.outerHeight() >
+              list.outerHeight()
+            ) {
+              list.scrollTop(list.scrollTop() + selected.outerHeight());
+            }
+          }
+  
+          return false;
+  
+        case 27: // escape
+          list.find("li").removeClass("ui-timepicker-selected");
+          methods.hide();
+          break;
+  
+        case 9: //tab
+          methods.hide();
+          break;
+  
+        default:
+          return true;
+      }
+    }
+  
+    /*
+    *	Time typeahead
+    */
+    function _keyuphandler(e) {
+      var self = $(this);
+      var list = self.data("timepicker-list");
+      var settings = self.data("timepicker-settings");
+  
+      if (!list || !_isVisible(list) || settings.disableTextInput) {
+        return true;
+      }
+  
+      if (e.type === "paste" || e.type === "cut") {
+        setTimeout(function() {
+          if (settings.typeaheadHighlight) {
+            _setSelected(self, list);
+          } else {
+            list.hide();
+          }
+        }, 0);
+        return;
+      }
+  
+      switch (e.keyCode) {
+        case 96: // numpad numerals
+        case 97:
+        case 98:
+        case 99:
+        case 100:
+        case 101:
+        case 102:
+        case 103:
+        case 104:
+        case 105:
+        case 48: // numerals
+        case 49:
+        case 50:
+        case 51:
+        case 52:
+        case 53:
+        case 54:
+        case 55:
+        case 56:
+        case 57:
+        case 65: // a
+        case 77: // m
+        case 80: // p
+        case 186: // colon
+        case 8: // backspace
+        case 46: // delete
+          if (settings.typeaheadHighlight) {
+            _setSelected(self, list);
+          } else {
+            list.hide();
+          }
+          break;
+      }
+    }
+  
+    function _selectValue(self) {
+      var settings = self.data("timepicker-settings");
+      var list = self.data("timepicker-list");
+      var timeValue = null;
+  
+      var cursor = list.find(".ui-timepicker-selected");
+  
+      if (cursor.hasClass("ui-timepicker-disabled")) {
+        return false;
+      }
+  
+      if (cursor.length) {
+        // selected value found
+        timeValue = cursor.data("time");
+      }
+  
+      if (timeValue !== null) {
+        if (typeof timeValue != "string") {
+          timeValue = _int2time(timeValue, settings);
+        }
+  
+        _setTimeValue(self, timeValue, "select");
+      }
+  
+      return true;
+    }
+  
+    function _int2duration(seconds, step) {
+      seconds = Math.abs(seconds);
+      var minutes = Math.round(seconds / 60),
+        duration = [],
+        hours,
+        mins;
+  
+      if (minutes < 60) {
+        // Only show (x mins) under 1 hour
+        duration = [minutes, _lang.mins];
+      } else {
+        hours = Math.floor(minutes / 60);
+        mins = minutes % 60;
+  
+        // Show decimal notation (eg: 1.5 hrs) for 30 minute steps
+        if (step == 30 && mins == 30) {
+          hours += _lang.decimal + 5;
+        }
+  
+        duration.push(hours);
+        duration.push(hours == 1 ? _lang.hr : _lang.hrs);
+  
+        // Show remainder minutes notation (eg: 1 hr 15 mins) for non-30 minute steps
+        // and only if there are remainder minutes to show
+        if (step != 30 && mins) {
+          duration.push(mins);
+          duration.push(_lang.mins);
+        }
+      }
+  
+      return duration.join(" ");
+    }
+  
+    function _int2time(timeInt, settings) {
+      if (typeof timeInt != "number") {
+        return null;
+      }
+  
+      var seconds = parseInt(timeInt % 60),
+        minutes = parseInt((timeInt / 60) % 60),
+        hours = parseInt((timeInt / (60 * 60)) % 24);
+  
+      var time = new Date(1970, 0, 2, hours, minutes, seconds, 0);
+  
+      if (isNaN(time.getTime())) {
+        return null;
+      }
+  
+      if ($.type(settings.timeFormat) === "function") {
+        return settings.timeFormat(time);
+      }
+  
+      var output = "";
+      var hour, code;
+      for (var i = 0; i < settings.timeFormat.length; i++) {
+        code = settings.timeFormat.charAt(i);
+        switch (code) {
+          case "a":
+            output += time.getHours() > 11 ? _lang.pm : _lang.am;
+            break;
+  
+          case "A":
+            output += time.getHours() > 11 ? _lang.PM : _lang.AM;
+            break;
+  
+          case "g":
+            hour = time.getHours() % 12;
+            output += hour === 0 ? "12" : hour;
+            break;
+  
+          case "G":
+            hour = time.getHours();
+            if (timeInt === _ONE_DAY) hour = settings.show2400 ? 24 : 0;
+            output += hour;
+            break;
+  
+          case "h":
+            hour = time.getHours() % 12;
+  
+            if (hour !== 0 && hour < 10) {
+              hour = "0" + hour;
+            }
+  
+            output += hour === 0 ? "12" : hour;
+            break;
+  
+          case "H":
+            hour = time.getHours();
+            if (timeInt === _ONE_DAY) hour = settings.show2400 ? 24 : 0;
+            output += hour > 9 ? hour : "0" + hour;
+            break;
+  
+          case "i":
+            var minutes = time.getMinutes();
+            output += minutes > 9 ? minutes : "0" + minutes;
+            break;
+  
+          case "s":
+            seconds = time.getSeconds();
+            output += seconds > 9 ? seconds : "0" + seconds;
+            break;
+  
+          case "\\":
+            // escape character; add the next character and skip ahead
+            i++;
+            output += settings.timeFormat.charAt(i);
+            break;
+  
+          default:
+            output += code;
+        }
+      }
+  
+      return output;
+    }
+  
+    function _time2int(timeString, settings) {
+      if (timeString === "" || timeString === null) return null;
+      if (typeof timeString == "object") {
+        return (
+          timeString.getHours() * 3600 +
+          timeString.getMinutes() * 60 +
+          timeString.getSeconds()
+        );
+      }
+      if (typeof timeString != "string") {
+        return timeString;
+      }
+  
+      timeString = timeString.toLowerCase().replace(/[\s\.]/g, "");
+  
+      // if the last character is an "a" or "p", add the "m"
+      if (timeString.slice(-1) == "a" || timeString.slice(-1) == "p") {
+        timeString += "m";
+      }
+  
+      var ampmRegex =
+        "(" +
+        _lang.am.replace(".", "") +
+        "|" +
+        _lang.pm.replace(".", "") +
+        "|" +
+        _lang.AM.replace(".", "") +
+        "|" +
+        _lang.PM.replace(".", "") +
+        ")?";
+  
+      // try to parse time input
+      var pattern = new RegExp(
+        "^" +
+          ampmRegex +
+          "([0-9]?[0-9])\\W?([0-5][0-9])?\\W?([0-5][0-9])?" +
+          ampmRegex +
+          "$"
+      );
+  
+      var time = timeString.match(pattern);
+      if (!time) {
+        return null;
+      }
+  
+      var hour = parseInt(time[2] * 1, 10);
+      var ampm = time[1] || time[5];
+      var hours = hour;
+      var minutes = time[3] * 1 || 0;
+      var seconds = time[4] * 1 || 0;
+  
+      if (hour <= 12 && ampm) {
+        var isPm = ampm == _lang.pm || ampm == _lang.PM;
+  
+        if (hour == 12) {
+          hours = isPm ? 12 : 0;
+        } else {
+          hours = hour + (isPm ? 12 : 0);
+        }
+      } else if (settings) {
+        var t = hour * 3600 + minutes * 60 + seconds;
+        if (t >= _ONE_DAY + (settings.show2400 ? 1 : 0)) {
+          if (settings.wrapHours === false) {
+            return null;
+          }
+  
+          hours = hour % 24;
+        }
+      }
+  
+      var timeInt = hours * 3600 + minutes * 60 + seconds;
+  
+      // if no am/pm provided, intelligently guess based on the scrollDefault
+      if (
+        hour < 12 &&
+        !ampm &&
+        settings &&
+        settings._twelveHourTime &&
+        settings.scrollDefault
+      ) {
+        var delta = timeInt - settings.scrollDefault();
+        if (delta < 0 && delta >= _ONE_DAY / -2) {
+          timeInt = (timeInt + _ONE_DAY / 2) % _ONE_DAY;
+        }
+      }
+  
+      return timeInt;
+    }
+  
+    function _pad2(n) {
+      return ("0" + n).slice(-2);
+    }
+  
+    function _moduloSeconds(seconds, settings) {
+      if (seconds == _ONE_DAY && settings.show2400) {
+        return seconds;
+      }
+  
+      return seconds % _ONE_DAY;
+    }
+  
+    // Plugin entry
+    $.fn.timepicker = function(method) {
+      if (!this.length) return this;
+      if (methods[method]) {
+        // check if this element is a timepicker
+        if (!this.hasClass("ui-timepicker-input")) {
+          return this;
+        }
+        return methods[method].apply(
+          this,
+          Array.prototype.slice.call(arguments, 1)
+        );
+      } else if (typeof method === "object" || !method) {
+        return methods.init.apply(this, arguments);
+      } else {
+        $.error("Method " + method + " does not exist on jQuery.timepicker");
+      }
+    };
+  });
+  
+  
+  </script>
+{% endblock content %}

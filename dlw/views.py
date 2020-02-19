@@ -747,6 +747,9 @@ class ChartData(APIView):
 @login_required
 @role_required(urlpass='/m2view/')
 def m2view(request):
+    # obj=0
+    # submitvalue=0
+    context={}
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -758,243 +761,309 @@ def m2view(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
+        tm2=list(Batch.objects.filter(status='R').values('bo_no').distinct())
+        tmp2=[]
+        for on in tm2:
+            tmp2.append(on['bo_no'])   
+                   
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
-            'roles':tmp
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-            # wo_nop =wo_nop | req
-
-            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-            req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
-            wo_nop = wo_nop | req
-
-        context = {
-            'sub':0,
-            'subnav':subnav,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist
-        }
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist
-        }
-    if request.method == "POST":
-        submitvalue = request.POST.get('proceed')
-        if submitvalue=='Proceed':
-            rolelist=usermaster.role.split(", ")
-            wo_nop = empmast.objects.none()
-            shop_sec = request.POST.get('shop_sec')
-            part_no = request.POST.get('part_nop')
-            wo_no = request.POST.get('wo_no')
-            brn_no = request.POST.get('br_no')
-            assembly_no = request.POST.get('assm_no')
-            doc_no = request.POST.get('doc_no')
-            kkk=Oprn.objects.all()
-            obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
-            obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
-            # print(obj2)
-            obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
-            check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-            # obgg = Oprn.objects.filter(part_no=part_no, shop_sec=shop_sec).values('shop_sec').distinct()
-            # obggg = Oprn.objects.filter(part_no=part_no).values('shop_sec').distinct()
-            # obgggg = obggg.union(obgg)
-            # if obgg.count() != 0:
-            obj = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot','mat_rej','qtr_accep', 'qty_prod','work_rej').order_by('opn')
-            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt','qty').distinct()
-            leng = obj.count()
-            datel= date.count()
-
-
-            if "Superuser" in rolelist:
-                  tm=shop_section.objects.all()
-                  tmp=[]
-                  for on in tm:
-                      tmp.append(on.section_code)
-                  context = {
-                        'roles':tmp,
-                        'lenm' :2,
-                        'nav':nav,
-                        'ip':get_client_ip(request),
-                        'obj': obj,
-                        'obj1': obj1,
-                        'obj2': obj2,
-                        'obj3': obj3,
-                        'sub': 1,
-                        'len': leng,
-                        'date': date,
-                        'datel': datel,
-                        'shop_sec': shop_sec,
-                        'part_no': part_no,
-                        'wo_no': wo_no,
-                        'brn_no': brn_no,
-                        'assembly_no': assembly_no,
-                        'doc_no': doc_no,
-                        'subnav':subnav
-                  }
-            elif(len(rolelist)==1):
-                  for i in range(0,len(rolelist)):
-                        # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
-                        # wo_nop =wo_nop | req
-
-                        w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-                        req = M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
-                        wo_nop = wo_nop | req
-                  context = {
-                        'wo_nop':wo_nop,
-                        'roles' :rolelist,
-                        'usermaster':usermaster,
-                        'lenm' :len(rolelist),
-                        'nav': nav,
-                        'ip': get_client_ip(request),
-                        'obj': obj,
-                        'obj1': obj1,
-                        'obj2': obj2,
-                        'obj3': obj3,
-                        'sub': 1,
-                        'len': leng,
-                        'date': date,
-                        'datel': datel,
-                        'shop_sec': shop_sec,
-                        'part_no': part_no,
-                        'wo_no': wo_no,
-                        'brn_no': brn_no,
-                        'assembly_no': assembly_no,
-                        'doc_no': doc_no,
-                        'subnav':subnav
-                  }
-            elif(len(rolelist)>1):
-                  context = {
-                        'lenm' :len(rolelist),
-                        'nav':nav,
-                        'ip':get_client_ip(request),
-                        'usermaster':usermaster,
-                        'roles' :rolelist,
-                        'obj': obj,
-                        'obj1': obj1,
-                        'obj2': obj2,
-                        'obj3': obj3,
-                        'sub': 1,
-                        'len': leng,
-                        'date': date,
-                        'datel': datel,
-                        'shop_sec': shop_sec,
-                        'part_no': part_no,
-                        'wo_no': wo_no,
-                        'brn_no': brn_no,
-                        'assembly_no': assembly_no,
-                        'doc_no': doc_no,
-                        'subnav':subnav
-                  }
-            # else:
-            #     messages.error(request,'Corresponding Data For Shop-Section and PartNumber Not Found!, Select other values to check')
-        if submitvalue=='Save':
-            leng=request.POST.get('len')
-            shopsec= request.POST.get('shopsec')
-            partno= request.POST.get('partno')
-            for i in range(1, int(leng)+1):
-                qtypr=request.POST.get('qtypr'+str(i))
-                qtyac = request.POST.get('qtyac'+str(i))
-                wrrej = request.POST.get('wrrej'+str(i))
-                matrej = request.POST.get('matrej'+str(i))
-                opn=request.POST.get('opn'+str(i))
-                print(shopsec)
-
-                Oprn.objects.filter(shop_sec=shopsec, part_no=partno, opn=opn).update(qty_prod=qtypr, qtr_accep=qtyac, work_rej=wrrej, mat_rej=matrej)
-                wo_no=M2Doc.objects.all().values('batch_no').distinct()
-            messages.success(request, 'Successfully Updated!, Select new values to update')
+            'work_no':tmp2
+        }  
+        if request.method == "POST":
+            submitvalue = request.POST.get('proceed')
+            if submitvalue=='Save':
+                
+                leng=request.POST.get('hidtxt')
+                work=request.POST.get('work')
+                shopsec= request.POST.get('shop_no1')
+                partno= request.POST.get('part_no1')
+                obj=m2_transaction11.objects.filter(work_order=work,shop_sec=shopsec, part_no=partno).distinct()
+                if len(obj)==0:
+                    for i in range(1, int(leng)+1):
+                        qtypr=request.POST.get('qty_p'+str(i))
+                        # print(qtypr)
+                        print("save")
+                        qtyac = request.POST.get('qty_acc'+str(i))
+                        wrrej = request.POST.get('w_rej'+str(i))
+                        matrej =request.POST.get('m_rej'+str(i))
+                        opn=request.POST.get('onumber'+str(i))
+                        ins=request.POST.get('inspect'+str(i))
+                        # print(opn)
+                        m2_transaction11.objects.create(work_order=str(work),shop_sec=str(shopsec),part_no=str(partno),opn_no=str(opn),qty_prod=str(qtypr), qty_accep=str(qtyac), work_rej=str(wrrej), mat_rej=str(matrej),inspect_id=str(ins))
+                else:
+                    for i in range(1, int(leng)+1):
+                        qtypr=request.POST.get('qty_p'+str(i))
+                        qtyac =request.POST.get('qty_acc'+str(i))
+                        wrrej =request.POST.get('w_rej'+str(i))
+                        matrej =request.POST.get('m_rej'+str(i))
+                        opn=request.POST.get('onumber'+str(i))
+                        ins=request.POST.get('inspect'+str(i))
+                        # print(opn)
+                        print("updated")
+                        m2_transaction11.objects.filter(work_order=work,shop_sec=shopsec, part_no=partno, opn_no=opn).update(qty_prod=str(qtypr), qty_accep=str(qtyac), work_rej=str(wrrej), mat_rej=str(matrej),inspect_id=ins)
     return render(request, "m2view.html", context)
 
 
-def m2getwono(request):
+def m2_view_shop(request):
+    obj=[]
     if request.method == "GET" and request.is_ajax():
-        from.models import Batch
-        shop_sec = request.GET.get('shop_sec')
-        w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2=M2Doc.objects.filter(part_no__in=w1).values('batch_no').distinct()
-        wono = list(w2)
-        return JsonResponse(wono, safe = False)
+        work_no = request.GET.get('work')
+        shop_no1=request.GET.get('shop_no1')
+        obj=list(M2Docnew1.objects.filter(batch_no=work_no,f_shopsec=shop_no1).values('part_no').distinct())
+        return JsonResponse(obj, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-def m2getbr(request):
+def m2_process_sheet(request):
+    l=[]
     if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        shop_sec = request.GET.get('shop_sec')
-        br_no = list(M2Doc.objects.filter(batch_no =wo_no).values('brn_no').distinct())
-        return JsonResponse(br_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-def m2getassly(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        br_no = request.GET.get('brn_no')
-        shop_sec = request.GET.get('shop_sec')
-        w2=M2Doc.objects.filter(batch_no=wo_no).values('assly_no').distinct()
-        w1=Oprn.objects.filter(part_no__in=w2).values('shop_sec', 'part_no').distinct()
-        print(w1)
-        w3=w1.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w4=M2Doc.objects.filter(batch_no=wo_no, f_shopsec=shop_sec, brn_no=br_no).values('assly_no').distinct()
-        w5=w3.union(w4)
-        w6=w5.distinct()
-        print(w6)
-        assm_no = list(w6)
-        return JsonResponse(assm_no, safe=False)
-    return JsonResponse({"success":False}, status=400)
-
-
-
-def m2getpart_no(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        br_no = request.GET.get('brn_no')
-        shop_sec = request.GET.get('shop_sec')
-        assembly_no = request.GET.get('assm_no')
-        w2 = M2Doc.objects.filter(batch_no=wo_no).values('part_no').distinct()
-        w1 = Oprn.objects.filter(part_no__in=w2).all().distinct()
-        w3= w1.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w4 = M2Doc.objects.filter(batch_no=wo_no, f_shopsec=shop_sec, brn_no=br_no,assly_no=assembly_no).values('part_no').distinct()
-        w5=w3.union(w4)
-        w6=w5.distinct()
-        part_no = list(w6)
-        return JsonResponse(part_no, safe=False)
-    return JsonResponse({"success":False}, status=400)
-
-
-
-def m2getdoc_no(request):
-    if request.method == "GET" and request.is_ajax():
-        wo_no = request.GET.get('wo_no')
-        # br_no = request.GET.get('brn_no')
-        # shop_sec = request.GET.get('shop_sec')
-        # assembly_no = request.GET.get('assm_no')
         part_no = request.GET.get('part_no')
-        doc_no = list(M2Doc.objects.filter(batch_no=wo_no,part_no=part_no).values('m2sln').distinct())
+        print("=====",part_no)
+        obj1=list(Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec','opn'))
+        print("value for table2,",obj1)
+        obj2=list(Nstr.objects.filter(pp_part=part_no).values('pp_part','epc','ptc','cp_part').distinct())
+        l.append(obj1)
+        l.append(obj2)
+        print(l)
+        return JsonResponse(l, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
-        return JsonResponse(doc_no, safe=False)
-    return JsonResponse({"success": False}, status=400)
+def m2_sheet1(request):
+    # print("helooo")
+    if request.method == "GET" and request.is_ajax():
+        # print("helooo")
+        l=[]
+        brn_no=0
+        assembly_no=0
+        doc_no=0
+        rm_partno=0
+        shop_unit=0
+        opn_no=0
+        l2=[]
+        obj12=[]
+        l3=[]
+        shop_sec = request.GET.get('shop_no1')
+        print("shop_no1",shop_sec)
+        part_no = request.GET.get('part_no')
+        print("shop_no1",shop_sec)
+        wo_no = request.GET.get('work')
+        
+        kkk=Oprn.objects.all()
+        obj=list(M2Docnew1.objects.filter(batch_no=wo_no).values('m2sln','brn_no','assly_no','scl_cl','rm_partno','m4_no','rc_st_wk').distinct())
+
+        if len(obj):
+            brn_no=obj[0]['brn_no']
+            assembly_no=obj[0]['assly_no']
+            doc_no=obj[0]['m2sln']
+            rm_partno=obj[0]['rm_partno']
+        if len(obj)==0:
+            obj=[{'m2sln':"",'brn_no':'','assly_no':'','scl_cl':'','rm_partno':'','m4_no':'','rc_st_wk':''}]
+        obj1=list(Part.objects.filter(partno=part_no).values('des','drgno').distinct())
+        if len(obj1)==0:
+            obj1=[{'des':'','drgno':''}]
+        obj2=list(Part.objects.filter(partno=assembly_no).values('des').distinct())
+        if len(obj2)==0:
+            obj2=[{'des':''}]
+        obj3=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type'))
+        if len(obj3)==0:
+            obj3=[{'batch_type':''}]
+        obj4= list(Oprn.objects.filter(part_no=part_no,shop_sec=shop_sec).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot').order_by('opn'))
+        print("obj4===",obj4)
+        for i in range(1, int(len(obj4))+1):
+            opn_no=obj4[i-1]['opn']
+            l2.append(opn_no)
+        print("opn_no====",l2)    
+        if len(obj4)==0:
+            obj4=[{'opn':'', 'shop_sec':'', 'lc_no':'', 'des':'','pa':'','at':'','lot':''}]
+        # print("obj4==",obj4)
+        obj5 = list(M2Docnew1.objects.filter(batch_no=wo_no).values('m2prtdt','qty').distinct())
+        if len(obj5)==0:
+            obj5=[{'m2prtdt':'','qty':""}]
+        now =obj5[0]['m2prtdt']
+        date_string = now
+        obj5[0]['m2prtdt']=date_string
+        obj6=list(Proddem.objects.filter(part_no=part_no).values('l_fr','l_to').distinct())
+        obj7=list(Part.objects.filter(partno=rm_partno).values('des').distinct())
+        obj8=list(M2Docnew1.objects.filter(rm_partno=rm_partno).values('rm_qty').distinct())
+        obj9=list(Part.objects.filter(partno=part_no).values('shop_ut').distinct())
+        if len(obj9):
+            shop_unit=obj9[0]['shop_ut']
+        if len(obj6)==0:
+            
+            obj6=[{'l_fr':'','l_to':''}]
+        if len(obj7)==0:
+            obj7=[{'des':''}]  
+        if len(obj8)==0:
+            obj8=[{'rm_qty':''}]  
+        if len(obj9)==0:
+            obj9=[{'shop_ut':''}]
+        obj10=list(Code.objects.filter(cd_type='51',code=shop_unit).values('alpha_1').distinct()) 
+        
+        if len(obj10)==0:
+            obj10=[{'alpha_1':''}]  
+        obj11=list(Cutdia.objects.filter(ep_part=part_no,rm_part=rm_partno).values('cutdia_no').distinct())    
+        
+        if len(obj11)==0:
+            obj11=[{'cutdia_no':''}]
+        for i in range(1,len(l2)+1):
+        #     # print(i.opn_no)
+
+            l3=list(m2_transaction11.objects.filter(work_order=wo_no,opn_no=l2[i-1]).values('qty_prod','qty_accep','work_rej','mat_rej','inspect_id').distinct())
+            if len(l3)==0:
+                l3=[{'qty_prod':'','qty_accep':'','work_rej':'','mat_rej':'','inspect_id':''}]
+            obj12.append(l3)
+            # print("obj12==",obj12)
+        # if len(obj12)==0:
+        #     obj12=[{'qty_prod':'','qty_accep':'','work_rej':'','mat_rej':'','inspect_id':''}]
+        #  print("obj12==",obj12)
+        l.append(obj)
+        l.append(obj1)
+        l.append(obj2)
+        l.append(obj3)
+        l.append(obj4)
+        l.append(obj5)
+        l.append(obj6)
+        l.append(obj7)
+        l.append(obj8)
+        l.append(obj9)
+        l.append(obj10)
+        l.append(obj11)
+        l.append(obj12)
+        print(l)
+        return JsonResponse(l, safe = False)
+    return JsonResponse({"success":False}, status=400)    
+
+def m2_shop(request):
+    if request.method == "GET" and request.is_ajax():
+        
+        work=request.GET.get('work')
+        obj=list(M2Docnew1.objects.filter(batch_no=str(work)).values('f_shopsec').distinct())
+        
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m2_getname(request):
+    if request.method =="GET" and request.is_ajax():
+        ins_id=request.GET.get('ins_id')
+        print("ins_id",ins_id)
+        for i in (empmast.objects.annotate(emp=Substr("empno",7,5)).filter(emp=ins_id).values('empname').distinct()):
+            print(i)
+            break
+        # obj=list(empmast.objects.filter(empno__in=Subquery(sub.values('emp'))).values('empname').distinct())
+        # print("===",obj)
+        obj=i['empname']
+        if len(obj)==0:
+            obj=[]
+        return JsonResponse(obj, safe=False)
+    return JsonResponse({"success":False}, status=400)   
+
+def m2Pdf(request, *args, **kwargs):
+    l=[]
+    brn_no=0
+    assembly_no=0
+    doc_no=0
+    rm_partno=0
+    shop_unit=0
+    opn_no=0
+    l2=[]
+    obj12=[]
+    l3=[]
+    m4_no=0
+    scl_cl=0
+    rc_st_wk=0
+    rm_qty=0
+    alpha_1=0
+    cutdia_no=0
+    shop_sec = request.GET.get('shop_no1')
+    print("shop_no1",shop_sec)
+    part_no = request.GET.get('part_no1')
+    print("shop_no1",shop_sec)
+    wo_no = request.GET.get('work')
+    obj=list(M2Docnew1.objects.filter(batch_no=wo_no).values('m2sln','brn_no','assly_no','scl_cl','rm_partno','m4_no','rc_st_wk').distinct())
+
+    if len(obj):
+        brn_no=obj[0]['brn_no']
+        assembly_no=obj[0]['assly_no']
+        doc_no=obj[0]['m2sln']
+        rm_partno=obj[0]['rm_partno']
+        scl_cl=obj[0]['scl_cl']
+        m4_no=obj[0]['m4_no']
+        rc_st_wk=obj[0]['rc_st_wk']
 
 
+    
+    obj1=list(Part.objects.filter(partno=part_no).values('des','drgno').distinct())
+    
+    obj2=list(Part.objects.filter(partno=assembly_no).values('des').distinct())
+   
+    obj3=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type'))
+    
+    obj4= list(Oprn.objects.filter(part_no=part_no,shop_sec=shop_sec).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot').order_by('opn'))
+    
+    for i in range(1, int(len(obj4))+1):
+        opn_no=obj4[i-1]['opn']
+        l2.append(opn_no)
+    
+    obj5 = list(M2Doc.objects.filter(batch_no=wo_no).values('m2prtdt','qty').distinct())
+    
+    now =obj5[0]['m2prtdt']
+    date_string = now
+    obj5[0]['m2prtdt']=date_string
+    obj6=list(Proddem.objects.filter(part_no=part_no).values('l_fr','l_to').distinct())
+    obj7=list(Part.objects.filter(partno=rm_partno).values('des').distinct())
+    obj8=list(M2Docnew1.objects.filter(rm_partno=rm_partno).values('rm_qty').distinct())
+    if len(obj8):
+        rm_qty=obj8[0]['rm_qty']
 
+    obj9=list(Part.objects.filter(partno=part_no).values('shop_ut').distinct())
+   
+    obj10=list(Code.objects.filter(cd_type='51',code=shop_unit).values('alpha_1').distinct())
+    if len(obj10):
+        alpha_1=obj10[0]['alpha_1'] 
+      
+    obj11=list(Cutdia.objects.filter(ep_part=part_no,rm_part=rm_partno).values('cutdia_no').distinct())    
+    if len(obj11):
+        cutdia_no=obj11[0]['cutdia_no']
+    for i in range(1,len(l2)+1):
+        l3=list(m2_transaction11.objects.filter(work_order=wo_no,opn_no=l2[i-1]).values('qty_prod','qty_accep','work_rej','mat_rej','inspect_id').distinct())
+        obj12.append(l3)
+    for i in range(0,int(len(obj4))):
+        obj4[i].update({'qty_prod':obj12[i][0]['qty_prod'],'qty_accep':obj12[i][0]['qty_accep'],'work_rej':obj12[i][0]['work_rej'],'mat_rej':obj12[i][0]['mat_rej'],'inspect_id':obj12[i][0]['inspect_id']})
+    pdfcontext={
+        'cutdia_no':cutdia_no,
+        'alpha_1':alpha_1,
+        'rm_qty':rm_qty,
+        'm4_no':m4_no,
+        'scl_cl':scl_cl,
+        'rc_st_wk':rc_st_wk,
+        'brn_no':brn_no,
+        'assembly_no':assembly_no,
+        'doc_no':doc_no,
+        'rm_partno':rm_partno,
+        'shop_unit':shop_unit,
+        'wo_no':wo_no,
+        'part_no':part_no,
+        'shop_sec':shop_sec,
+        'obj':obj,
+        'obj1':obj1,
+        'obj2':obj2,
+        'obj3':obj3,
+        'obj4':obj4,
+        'obj5':obj5,
+        'obj6':obj6,
+        'obj7':obj7,
+        'obj8':obj8,
+        'obj9':obj9,
+        'obj10':obj10,
+        'obj11':obj11,
+        'obj12':obj12
+    }  
+    pdf = render_to_pdf('m2report.html',pdfcontext)
+    return HttpResponse(pdf, content_type='application/pdf') 
 
 
 
@@ -4873,10 +4942,9 @@ def m1genrept1(request):
 
 
 
-
 @login_required
-@role_required(urlpass='/m5view/')
-def m5view(request):
+@role_required(urlpass='/m5newview/')
+def m5newview(request):
     cuser=request.user
     usermaster=user_master.objects.filter(emp_id=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -4886,9 +4954,6 @@ def m5view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-
-    wo_nop = user_master.objects.none()
-  
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -4903,29 +4968,6 @@ def m5view(request):
             'roles':tmp,
             'subnav':subnav,
         }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
-            wo_nop =wo_nop | req
-        context = {
-            'sub':0,
-            'subnav':subnav,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'roles' :rolelist
-        }
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'subnav':subnav,
-            
-            'ip':get_client_ip(request),
-            'roles' :rolelist
-        }
 
     if request.method == "POST":
         
@@ -4936,26 +4978,11 @@ def m5view(request):
             wo_no = request.POST.get('wo_no')
             brn_no = request.POST.get('br_no')
             doc_no = request.POST.get('doc_no')
-            staff_no = request.POST.get('staff_no')
-            ticket_no = request.POST.get('ticket_no')
-            name = request.POST.get('name')
-            doc_no =request.POST.get('doc_no')
             current_yr=int(datetime.datetime.now().year)
-
-
-            print("Current year",current_yr)
-            print("shop_sec",shop_sec)
-       
-
-            
-           # print(doc_no)
             res = [int(x) for x in str(wo_no)] 
-            print("WORK",str(res))
-            # workorder=np.trim_zeros(res)
 
             s = [str(i) for i in res] 
             workorder = int("".join(s)) 
-            print("wo_no",workorder)
             obj1 = M5DOCnew.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('opn','n_shopsec','rm_partno','cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty','lc_no','pa','at','opn_desc').distinct()
             obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
             obj3 = Batch.objects.filter(bo_no=workorder,brn_no=brn_no,b_close_dt__isnull=True).values('part_no').distinct()
@@ -4963,7 +4990,6 @@ def m5view(request):
             obj5 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('shopsec','staff_no','name','ticket_no','flag').distinct()
             obj6  = Oprn.objects.filter(shop_sec=shop_sec,part_no=part_no).values('qtr_accep','mat_rej').exclude(qtr_accep=None,mat_rej=None).distinct()
             obj10= Batch.objects.filter(bo_no=workorder).values('batch_type','loco_fr','loco_to')[0]
-            print(obj3)
             leng=0
             leng5=0
             leng9=0
@@ -4976,54 +5002,21 @@ def m5view(request):
                 obj7 = Part.objects.filter(partno=raw_mat).values('des').distinct()
                 obj  = Oprn.objects.filter(part_no=part_no,opn=opn).values('ncp_jbs').distinct()
                 leng = obj.count()
-                print(raw_mat,opn)
-                print(obj)
-                print(obj7)
                 leng5=obj7.count()
             if len(obj3):
                 end_part=obj3[0]['part_no']
                 obj9 = Part.objects.filter(partno=end_part).values('des').distinct()
                 leng9=obj9.count()
 
-            print("OBJ",obj)
-            print("OBJ1",obj1)
-            print("OBJ2",obj2)
-            print("OBJ3",obj3)
-            print("OBJ4",obj4)
-            print("OBJ5",obj5)
-            print("OBJ6",obj6)
-            print("OBJ7",obj7)
-            # print("OBJ8",obj8)
-            print("OBJ9",obj9)
-
-            
-            
-           
-
-        
-           
             obj8 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('flag').distinct()
-            print("OBJ8",obj8)
-            # obj9 = empmast.objects.filter()
             staff=5548
             rr=0
-
-           
-            # # print("OBJ!0",obj10)
-            # print("obj7",obj7)
-            # print("ibj",obj6)
-            # print("OBJ5",obj5)
-            # print("OBJ!",obj8)
 
             staff=M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()
            
             prtstaff=[]
             for i in staff:
               prtstaff.append(i['staff_no'])
-            # print(prtstaff)  
-    #    .    print(prtlist) 
-            # print("obj4",obj4)
-            # print("oj4 len",len(obj4))
             ticket= randint(1111,9999)
            
             leng1=obj1.count()
@@ -5035,7 +5028,6 @@ def m5view(request):
             leng6=obj6.count()
            
             leng8=obj8.count()
-            #print("lengg4",leng4)
             
             
             if obj != None:
@@ -5077,111 +5069,18 @@ def m5view(request):
                         'part_no': part_no,
                         'wo_no': wo_no,
                         'cyear':current_yr,
-                        #'assm_no':assm_no,
                         'brn_no': brn_no,
                         'doc_no': doc_no,
                         'prtstaff':prtstaff,
-                        'staff_no':staff_no,
                         'subnav':subnav,
-                    }
-                elif(len(rolelist)==1):
-                    # print("in m5 else")
-                    for i in range(0,len(rolelist)):
-                        req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
-                        wo_nop =wo_nop | req
-                    context = {
-                        'lenm' :len(rolelist),
-                        'wo_nop':wo_nop,
-                        'nav':nav,
-                        'subnav':subnav,
-                        'ip':get_client_ip(request),
-                        'roles' :rolelist,
-                        'obj': obj,
-                        'obj1':obj1,
-                        'obj2':obj2,
-                        'obj3':obj3,
-                        'obj4':obj4,
-                        'obj5':obj5,
-                        'obj6':obj6,
-                        'obj7':obj7,
-                        'obj8':obj8,
-                        'obj9':obj9,
-                        'obj10':obj10,
-                        'rr':rr,
-                        'len9':leng9,
-                        'len8':leng8,
-                        'sub': 1,
-                        'len': leng,
-                        'len1':leng1,
-                        'len2':leng2,
-                        'len3':leng3,
-                        'len4':leng4,
-                        'len5':leng5,
-                        'len6':leng6,
-                        'len7':leng7,
-                        'shop_sec': shop_sec,
-                        'part_no': part_no,
-                        'wo_no': wo_no,
-                        'cyear':current_yr,
-                        #'assm_no':assm_no,
-                        'brn_no': brn_no,
-                        'doc_no': doc_no,
-                        'prtstaff':prtstaff,
-                        'staff_no':staff_no,
-                        'subnav':subnav
-                    }
-                elif(len(rolelist)>1):
-                    context = {
-                        'lenm' :len(rolelist),
-                        'nav':nav,
-                        'subnav':subnav,
-                        'ip':get_client_ip(request),
-                        'roles' :rolelist,
-                        'obj': obj,
-                        'obj1':obj1,
-                        'obj2':obj2,
-                        'obj3':obj3,
-                        'obj4':obj4,
-                        'obj5':obj5,
-                        'obj6':obj6,
-                        'obj7':obj7,
-                        'obj8':obj8,
-                        'obj9':obj9,
-                        'obj10':obj10,
-                        'rr':rr,
-                        'len9':leng9,
-                        'len8':leng8,
-                        'sub': 1,
-                        'len': leng,
-                        'len1':leng1,
-                        'len2':leng2,
-                        'len3':leng3,
-                        'len4':leng4,
-                        'len5':leng5,
-                        'len6':leng6,
-                        'len7':leng7,
-                        'cyear':current_yr,
-                        'shop_sec': shop_sec,
-                        'part_no': part_no,
-                        'wo_no': wo_no,
-                        #'assm_no':assm_no,
-                        'brn_no': brn_no,
-                        'doc_no': doc_no,
-                        'prtstaff':prtstaff,
-                        'staff_no':staff_no,
-                        'subnav':subnav
-                    }    
+                    } 
         if submitvalue=='submit':
-            print("M%n")
             leng=request.POST.get('len')
             shopsec= request.POST.get('shop_sec')
             partno= request.POST.get('partno')
             brn_no = request.POST.get('brn_no')
             inoutnum=request.POST.get("inoutnum")
-            #name = request.Post.get('name')
-
             len4=request.POST.get('len4')
-
             qty_insp = request.POST.get('qty_insp')
             inspector = request.POST.get('inspector')
             date = request.POST.get('date')
@@ -5189,152 +5088,36 @@ def m5view(request):
             rev_qty=request.POST.get('rev_qty')
             rej_qty=request.POST.get('rej_qty')
             worker=request.POST.get('worker')
-            #worker = request.POST.get('worker')
+            qty_acc=request.POST.get('qtyac')
+            mat_rej=request.POST.get('mat_rej')
             
-            # in1 = request.POST.get('in1')
-            # out = request.POST.get('out')
-            # #lc_no = request.POST.get('lc_no'+str(i))
-            # # brn_no = request.POST.get('brn_no'+str(i))
-            # cat = request.POST.get('cat')
-            # staff_no = request.POST.get('staff_no')
-            # ticket_no = request.POST.get('ticket_no')
-            # month_hrs = request.POST.get('month_hrs')
-            # total_time_taken = request.POST.get('total_time_taken')
-            # in_date =  request.POST.get('in_date')
-            # out_date= request.POST.get('out_date')
-            # rm_ut =  request.POST.get('rm_ut')
-
-
-           # print(remarks)
-           # print(qty_insp)
-
-
-
-           # print(inspector)
-           # print(worker)
-            print(date)
-
-            print("@")
-            print(shopsec)
-            print(partno)
-            print(brn_no)
-            print(inspector)
-            print(worker)
-            print(date)
-            print(remarks)
-            print(qty_insp)
-            print(rev_qty)
-            print(rej_qty)
-            #print(in1)
-            #print(out)
-           # print(date)
-
-            M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=str(qty_insp),inspector=str(inspector),date=str(date),remarks=str(remarks),rev_qty=str(rev_qty),rej_qty=str(rej_qty),worker=str(worker))             
-            
-            # staff_no = request.POST.get('staff_nohid')
-            # name = request.POST.get('namehid')
-            # ticket_no = request.POST.get('ticket_nohid')
-            # cat = request.POST.get('cat1')
-            # m5upd=M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat)
-            # print("m5upd",m5upd)
-            
-        #     for i in range(1, int(len4)+1):
-
-        #         print("i",i)
-        #         in1 = request.POST.get('in1'+str(i))
-
-                
-
-        #         out = request.POST.get('out'+str(i))
-        #         lc_no = request.POST.get('lc_no'+str(i))
-        #        # brn_no = request.POST.get('brn_no'+str(i))
-        #         cat = request.POST.get('cat'+str(i))
-        #         # staff_no = request.POST.get('staff_no'+str(i))
-        #         # ticket_no = request.POST.get('ticket_no'+str(i))
-        #         month_hrs = request.POST.get('month_hrs'+str(i))
-        #         total_time_taken = request.POST.get('total_time_taken'+str(i))
-        #         # name = request.POST.get('name'+str(i))
-        #         in_date = request.POST.get('in_date'+str(i))
-        #         out_date = request.POST.get('out_date'+str(i))
-
-
-        #         # M5SHEMP.objects.filter(shopsec=shopsec,staff_no=staff_no,cat=cat).update(in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),date=str(date),ticket_no=int(ticket_no))
-
-        #    # print(worker)
-           # print(date)
-            print("leng",leng)
+            M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=str(qty_insp),inspector=str(inspector),date=str(date),remarks=str(remarks),rev_qty=str(rev_qty),rej_qty=str(rej_qty),worker=str(worker),acc_qty=str(qty_acc),rej_mat=str(mat_rej))           
             len4=request.POST.get('len4')
             
-            for i in range(1, int(leng)+1):
-                qtyac = request.POST.get('qtyac')
-                matrej = request.POST.get('mat_rej')
-                lc_no = request.POST.get('lc_no')
-                pa = request.POST.get('pa')
-                at = request.POST.get('at')
-                shopsec = request.POST.get('shop_sec')
-                # partno = request.POST.get('part_no')
-                
-               
-                print("staff No")
-                print(shopsec)
-                print(partno)
-                print(lc_no)
-                print(qtyac)
-                print(matrej)
-                print(at)
-                print(pa)
-                Oprn.objects.filter(shop_sec=shopsec).update(qtr_accep=int(qtyac),mat_rej=int(matrej))
-               
-                 
-
-                print("len4",len4,"inoutnum",inoutnum)
-                len4=request.POST.get('len4')
             for i in range(int(len4)+1, int(inoutnum)+1):
                 in1 = request.POST.get('in1add'+str(i))
                 out = request.POST.get('outadd'+str(i))
                 lc_no = request.POST.get('lc_no'+str(i))
-                # brn_no = request.POST.get('brn_no'+str(i))
                 cat = request.POST.get('catadd'+str(i))
                 staff_no = request.POST.get('staff_noadd'+str(i))
                 staff_name = request.POST.get('staff_nameadd'+str(i))
                 ticket_no = request.POST.get('ticket_noadd'+str(i))
                 month_hrs = request.POST.get('month_hrsadd'+str(i))
                 total_time_taken = request.POST.get('total_time_takenadd'+str(i))
-                # name = request.POST.get('name'+str(i))
-                in_date = request.POST.get('in_dateadd'+str(i))
-                out_date = request.POST.get('out_dateadd'+str(i))
+                in_date = request.POST.get('in_date'+str(i))
+                out_date = request.POST.get('out_date'+str(i))
                 shift = request.POST.get('shiftadd'+str(i))
-                
-                print("j",i)
-                print("shift",shift)
                 
                 if len(cat)==1:
                     cat="0"+cat
-                print("stf no",staff_no) 
-
-                print("name",staff_name)
-                print("in_time",in1)
-                print("in_date",in_date)
-                print("out",out)
-                print("Out_date",out_date) 
-                print("month_hrs",month_hrs)   
-                print("cat",cat)
-                print("ticket_no",ticket_no)
-                print("total time",total_time_taken)
-                print("Create new row")
                 M5SHEMP1.objects.create(shopsec=shopsec,staff_no=str(staff_no),name=str(staff_name),in1=str(in1),out=str(out),month_hrs=int(month_hrs),total_time_taken=str(total_time_taken),cat=str(cat),in_date=str(in_date),out_date=str(out_date),ticket_no=int(ticket_no),shift_typename=str(shift))
-                
-                
-            wo_no=M5DOCnew.objects.all().values('batch_no').distinct()
+            messages.success(request, 'Successfully Updated!, Select new values to update')
 
-    return render(request,"m5view.html",context)
-
+    return render(request,"m5newview.html",context)
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        # print(shop_sec)
         wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').exclude(batch_no__isnull=True).distinct())
-        # print(wono)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5366,49 +5149,52 @@ def m5getdoc_no(request):
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
         doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').distinct())
-        print(doc_no)
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
 
 def m5getstaff_no(request):
     if request.method == "GET" and request.is_ajax():
-        # staff_no = request.GET.get('wo_no')
         shop_sec = request.GET.get('shop_sec')
         br_no = list(M5SHEMP.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+def m5getshop_name(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        shop_name = list(shop_section.objects.filter(section_code=shop_sec).values('section_desc').distinct())
+        return JsonResponse(shop_name , safe = False)
+    return JsonResponse({"success":False}, status=400)
+
 def m5getempname(request):
+
    if request.method == "GET" and request.is_ajax():  
         examcode= request.GET.get('two')
         x =512000
         y=15719
         a = math.floor(math.log10(y))
         hello= int(x*10**(1+a)+y)
-        print(hello)
         ex = M5SHEMP.objects.filter(staff_no= examcode).all()  
-        # print(ex[0].get("name"))
         obj10= empmast.objects.filter(empno__contains=examcode).all()
-        # print("ONKJJ",obj10[0]['ticket_no'])
-        # print(obj10[0].get("ticket_no"))
         ticket=0
         if len(obj10):
             ticket=obj10[0].ticket_no
-            print("ticket",ticket)
-        
-        # print(obj10)
         exam ={
             "exam_type":ex[0].name,
             "ticket":ticket,
-             
-           
-           
-        }
-    
-        
-
+              }
         return JsonResponse({"exam":exam}, safe = False)
+        return JsonResponse({"success":False}, status=400)
+
+def m5getcat(request):
+   if request.method == "GET" and request.is_ajax():  
+        staff_no= request.GET.get('two')
+        O=[]
+        obj7=Shemp.objects.filter(staff_no=staff_no).values('cat').order_by('-updt_date')
+        if len(obj7)!=0:
+            O.append(obj7[0])
+        return JsonResponse(O, safe = False)
         return JsonResponse({"success":False}, status=400)
 
 @login_required
@@ -8610,8 +8396,16 @@ def CardGeneration(request):
                 res=[]
                 final=[]
                 seq=0
+                m5sl=0
                 a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
                 bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq')
+                del1=M5Docnew1.objects.filter(batch_no=batch,assly_no=asmno).all()
+                if len(del1)!=0:
+                    M5Docnew1.objects.filter(batch_no=batch,assly_no=asmno).delete()
+                prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
+                sl=M5Docnew1.objects.values('m5glsn').order_by('-m5glsn')
+                if len(sl)!=0:
+                    m5sl=int(sl[0]['m5glsn'])+1
                 if len(bat)!=0:
                     epc=bat[0]['ep_type']
                     brn=bat[0]['brn_no']
@@ -8690,54 +8484,82 @@ def CardGeneration(request):
                         qty=qty1[0]['qty']
                     else:
                         continue
-                    dtm5.append({'scl_cl':scl,'partno':i,'shop':shop,'cut_Shear':cut_Shear,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})
+                    dtm5.append({'scl_cl':scl,'partno':i,'shop':shop,'cut_Shear':cut_Shear,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty,'ptc':'M'})
                 
                 for i in range(len(dtm5)):
                     pn=dtm5[i]['partno']
                     pn_r=dtm5[i]['r_part']
                     pr_shopsec = ""
                     pt_shop=list(Part.objects.filter(partno=pn).values('shop_ut').order_by('partno'))
+
+                    #################################
+                    if len(pn_r)==0 or len(pt_shop)==0:
+                        rm_unit=''
+                    else:
+                        rm_unit=pt_shop[0]['shop_ut']
+                    #################################
+                    
                     print('part no',dtm5[i]['partno'])
                     
                     scl=dtm5[i]['scl_cl']
-                    for j in Oprn.objects.raw('select distinct id,"SHOP_SEC","PART_NO","M5_CD","LC_NO",lpad("OPN",3,%s) as opn ,substr(trim("DES"),1,30) as des,substr("LOT" :: text,1,2) as lot,COALESCE("PA",00.00) as pa,COALESCE("AT",000.00) as at1,COALESCE("NCP_JBS", %s) as ncp from public."OPRN" where  COALESCE("NCP_JBS",%s)=%s and COALESCE("DEL_FL",%s)=%s and trim("PART_NO")=%s order by "SHOP_SEC";',['0','','#','#','#','#',pn]):
+                    next=0
+                    obj=M2Docnew1.objects.filter(part_no=pn,batch_no=batch,assly_no=asmno).values('m2sln').distinct()
+                    if len(obj)!=0:
+                        m2sl=obj[0]['m2sln']
+                    for j in Oprn.objects.raw('select distinct id,"SHOP_SEC","PART_NO","M5_CD","LC_NO",lpad("OPN",3,%s) as opn ,substr(trim("DES"),1,30) as des,substr("LOT" :: text,1,1) as lot,COALESCE("PA",00.00) as pa,COALESCE("AT",000.00) as at1,COALESCE("NCP_JBS", %s) as ncp from public."OPRN" where  COALESCE("NCP_JBS",%s)=%s and COALESCE("DEL_FL",%s)=%s and trim("PART_NO")=%s order by opn;',['0','','#','#','#','#',pn]):
                         lf=int(l_fr)
                         if j is not None:
+                            next=next+1
+                            n=0
+                            n_shopsec=''
+                            for k in Oprn.objects.raw('select distinct id,"SHOP_SEC","PART_NO","M5_CD","LC_NO",lpad("OPN",3,%s) as opn ,substr(trim("DES"),1,30) as des,substr("LOT" :: text,1,1) as lot,COALESCE("PA",00.00) as pa,COALESCE("AT",000.00) as at1,COALESCE("NCP_JBS", %s) as ncp from public."OPRN" where  COALESCE("NCP_JBS",%s)=%s and COALESCE("DEL_FL",%s)=%s and trim("PART_NO")=%s order by opn;',['0','','#','#','#','#',pn]):
+                                if k is not None:
+                                    if n==next:
+                                        n_shopsec=k.shop_sec
+                                        break
+                                    n=n+1
                             print('SHOP_SEC',j.shop_sec,j.m5_cd,j.lc_no,j.opn,j.des,j.at1,lf)
+                            
                             if j.m5_cd.strip()=='5':
                                 for l in range(0,5):
-                                    final.append({'scl':scl,'partno':j.part_no,'shop':j.shop_sec,'M5_CD':j.m5_cd,'LC_NO':j.lc_no,'OPN':j.opn,'DES':j.des,'LOT':j.lot,'PA':j.pa,'AT':j.at1,'lfr':lf,'lto':lf})
+                                    no_off=M5Doc.objects.filter(part_no=pn,batch_no=batch,assly_no=asmno,shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn).values('qty_ord')
+                                    if len(no_off)!=0:
+                                        qo=no_off[0]['qty_ord']
+                                    else:
+                                        qo=0
+                                    m5sl=m5sl+1
+                                    M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_Shear'],rm_qty =float(dtm5[i]['r_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['r_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))
+                                    final.append({'scl':scl,'p_shop':pr_shopsec,'n_shop':n_shopsec,'partno':j.part_no,'shop':j.shop_sec,'M5_CD':j.m5_cd,'LC_NO':j.lc_no,'OPN':j.opn,'DES':j.des,'LOT':j.lot,'PA':j.pa,'AT':j.at1,'lfr':lf,'lto':lf})
                                     lf=lf+1
                             else:
-                                final.append({'scl':scl,'partno':j.part_no,'shop':j.shop_sec,'M5_CD':j.m5_cd,'LC_NO':j.lc_no,'OPN':j.opn,'DES':j.des,'LOT':j.lot,'PA':j.pa,'AT':j.at1,'lfr':l_fr,'lto':l_to})
-                        
-                print(len(final))            
-                data={'final':final,'card':card,}
-                pdf = render_to_pdf('m5cardpdf.html', data)
-                return HttpResponse(pdf, content_type='application/pdf')  
-                print(final)     
+                                m5sl=m5sl+1
+                                M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_Shear'],rm_qty =float(dtm5[i]['r_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['r_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))                                 
+                                final.append({'scl':scl,'p_shop':pr_shopsec,'n_shop':n_shopsec,'partno':j.part_no,'shop':j.shop_sec,'M5_CD':j.m5_cd,'LC_NO':j.lc_no,'OPN':j.opn,'DES':j.des,'LOT':j.lot,'PA':j.pa,'AT':j.at1,'lfr':l_fr,'lto':l_to})
+                            pr_shopsec = j.shop_sec
+                
+          
 
             elif bval=="Generate Cards" and card=="M14":
                 res = []
-                obj1 = ShowLeaf(request,asmno,res,'P')
-                print("len = ",obj1)
-                for i in range(len(obj1)):
-                    # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
-                    # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
-                    # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
-                    # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
-                    # if len(obj2):
-                    #     print(obj2[0])
-                    print(i)
-                    M14M4new1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='P',batch_no=batch)
-                # try:
-                #     for j in range(len(obj1)):
-                #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
-                #     messages.success(request, 'Successfully Done!')
-                # except:
-                #     messages.error(request,'Some Error Occurred')
-            else:
-                messages.error(request,'Enter all values!')
+            #     obj1 = ShowLeaf(request,asmno,res,'P')
+            #     print("len = ",obj1)
+            #     for i in range(len(obj1)):
+            #         # obj2=Tempexplsum.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc').distinct()
+            #         # obj3=Wgrptable.objects.filter(part_no=obj1[i]).values('scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark').distinct()
+            #         # epcold=Code.objects.filter(num_1=asmno).values('epc_old').distinct()
+            #         # obj2=M2Doc.objects.filter(part_no=obj1[i]).values('qty','ptc','rm_partno','rm_qty','rm_ptc','scl_cl','f_shopsec','rc_st_wk','cut_shear','seq','brn_no','del_fl','version','status','epc','mark','epc_old').distinct()
+            #         # if len(obj2):
+            #         #     print(obj2[0])
+            #         print(i)
+            #         M14M4new1.objects.create(part_no=obj1[i],assly_no=asmno,ptc='P',batch_no=batch)
+            #     # try:
+            #     #     for j in range(len(obj1)):
+            #     #         cstr_buffer.objects.create(pp_part=asmno,cp_part=obj1[j])
+            #     #     messages.success(request, 'Successfully Done!')
+            #     # except:
+            #     #     messages.error(request,'Some Error Occurred')
+            # else:
+            #     messages.error(request,'Enter all values!')
     return render(request,'CardGeneration.html',context)
 
 # def m27getAsslyNo(request):
@@ -14798,8 +14620,6 @@ def axlereport(request):
     return render(request,'axlereport.html',context)
 
 
-
-
 @login_required
 @role_required(urlpass='/wheelreport/')
 def wheelreport(request):
@@ -14812,7 +14632,9 @@ def wheelreport(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    a=0
     context={
+        'a':a,
        'nav':nav,
        'subnav':subnav,
        'usermaster':usermaster,
@@ -14868,34 +14690,275 @@ def wheelreport(request):
             'ip':get_client_ip(request),
             'sub':10,
             }
+        if bval=='Wheel Record of Loco Type (date wise)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':20,
+            }
+        if bval=='Wheel Record of Loco Type (date range)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':22,
+            }
         if bval=='Proceed1':
+            pt=[]
+            pto=[]
+            lt=[]
+            lto=[]
+            count=[]
+            count1=[]
+            myval=[]
+            myval1=[]
+            unique_myval=[]
+            unique_myval1=[]
+            c1=0
+            c2=0
             dt=request.POST.get('datew')
-            ob1=WheelMachining.objects.filter(in_qty=dt).values('sno','pt_no')
-            ob2=WheelMachining.objects.filter(out_qty=dt).values('sno','pt_no')
+            ob1=list(WheelMachining.objects.filter(in_qty=dt).values('pt_no','loco_type','wheel_no'))
+            ob2=list(WheelMachining.objects.filter(out_qty=dt).values('pt_no','loco_type','wheel_no'))   
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+            # print("myval..................  ",myval)
+
+            # for x in myval:  
+            #     if x not in unique_myval: 
+            #         unique_myval.append(x)
+            # print("uniquemyval.......   ",unique_myval)
+
+
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            # print("myval1..................  ",myval1)
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
+            # print("uniquefinal.......   ",unique_final)
+            # print('final   ',final)
+            # myval3=[]
+            # unique_myval3=[]        
+            # if(len(myval1) > len(myval)):
+            #     # print("greater myval1")
+            #     for i in range(0,len(myval1)):
+            #         for j in range(0,len(myval)):
+            #             if (myval1[i]['pt_no']==myval[j]['pt_no']):
+            #                myval1[i].update({'count1':myval[j]['count1']})
+            #             else:
+            #                 myval1[i].update({'pt_no':myval[j]['pt_no'],'loco_type':myval[j]['loco_type'],'count2':myval[j]['count2'],'count1':'0'})
+            #     myval3=myval1
+            #     # print("myval3......................1.........",myval3)
+
+            # else:
+            #     # print("greater myval")
+            #     # if(len(unique_myval) > len(unique_myval1)):
+            #     for i in range(0,len(myval)):
+            #         for j in range(0,len(myval1)):
+            #             if (myval[i]['pt_no']==myval1[j]['pt_no']):
+            #                myval[i].update({'count2':myval1[j]['count2']})
+            #             else:
+            #                 myval[i].update({'count2':'0','pt_no':myval1[j]['pt_no'],'loco_type':myval1[j]['loco_type'],'count1':myval1[j]['count1'],})
+            # myval3=myval
+            # print("myval3..................2............",myval3)
+            
+            
+
+            # for x in myval3:  
+            #     if x not in unique_myval3: 
+            #         unique_myval3.append(x)
+            # print("uniquemyval3.......   ",unique_myval3)
+
+            # for x in myval1:  
+            #     if x not in unique_myval1: 
+            #         unique_myval1.append(x)
+            # print("uniquemyval1.......     ",unique_myval1)  
+            # myval3=[]        
+            # if(len(unique_myval1) > len(unique_myval)):
+            #     print("greater myval1")
+            #     for i in range(0,len(unique_myval1)):
+            #         for j in range(0,len(unique_myval)):
+            #             if (unique_myval1[i]['pt_no']==unique_myval[j]['pt_no']):
+            #                unique_myval1.append({'count1':unique_myval[j]['count']})
+            #             # else:
+            #             #     unique_myval1.append({'count2':'0'})
+            # # myval3=myval1
+            # # print("myval3......................1.........",myval3)
+
+            # else:
+            #     print("greater myval")
+            # # if(len(unique_myval) > len(unique_myval1)):
+            #     for i in range(0,len(unique_myval)):
+            #         for j in range(0,len(unique_myval1)):
+            #             if (unique_myval[i]==unique_myval1[j]):
+            #                unique_myval.append({'count2':count[i]})
+            #             # else:
+            #             #    unique_myval.append({'count2':'0'})
+            # myval3=myval1
+            # print("myval3..................2............",myval3)
+                         
+
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':1,
-            'ob1':ob1,
-            'ob2':ob2,
+            # 'ob1':ob1,
+            # 'ob2':ob2,
             'dt':dt,
+            'len1':len1,
+            'len2':len2,
+            # 'myval':myval,
+            # 'unique_myval':unique_myval,
+            # 'unique_myval1':unique_myval1,
+            # 'myval3':myval3,
+            # 'unique_myval3':unique_myval3,
+            # 'final':final,
+            'unique_final':unique_final,
             }
         if bval=='Proceed2':
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=WheelMachining.objects.filter(in_qty__range=(dt1,dt2)).values('sno','pt_no','in_qty').order_by('in_qty')
-            ob2=WheelMachining.objects.filter(out_qty__range=(dt1,dt2)).values('sno','pt_no','out_qty').order_by('out_qty')
+            ob1=WheelMachining.objects.filter(in_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            ob2=WheelMachining.objects.filter(out_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            pt=[] 
+            lt=[] 
+            pto=[]
+            lto=[]
+            myval=[]
+            myval1=[]
+            final=[]
+            unique_final=[]
+            count=[]
+            count1=[]
+            c1=0
+            c2=0
+
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+            # print("myval..................  ",myval)
+
+            # for x in myval:  
+            #     if x not in unique_myval: 
+            #         unique_myval.append(x)
+            # print("uniquemyval.......   ",unique_myval)
+
+
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            # print("myval1..................  ",myval1)
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':3,
-            'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,'dt2':dt2,
+            # 'ob1':ob1,
+            # 'ob2':ob2,
+            'dt1':dt1,
+            'dt2':dt2,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
         if bval=='Proceed3':
             dt1=request.POST.get('date3')
@@ -14958,6 +15021,20 @@ def wheelreport(request):
             'sub':11,
             'ob1':ob1,
             'mon':mon,
+            }
+        if bval=='Proceed20':
+            a=1
+            datel=request.POST.get('datel')
+            ob1=list(WheelMachining.objects.filter(datewhl=datel).values('wheel_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
+            context={
+            'a':a,
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':21,
+            'ob1':ob1,
+            'datel':datel,   
             }
 
     return render(request,'wheelreport.html',context)
@@ -20016,7 +20093,7 @@ def sanction_rollview(request):
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
-    menulist=set()
+    menulist=set()                                          
     for ob in nav:
         menulist.add(ob.navitem)
     menulist=list(menulist)
@@ -20040,7 +20117,7 @@ def sanction_rollview(request):
             'subnav':subnav,
             'lenm' :len(rolelist),
             'nav':nav,
-            'ip':get_client_ip(request),
+            'ip':get_client_ip(request),                                                                                  
             'roles' :rolelist
         }
     elif(len(rolelist)>1):
@@ -22208,3 +22285,92 @@ def nstrassly_back(request):
         obj1 = list(Nstr.objects.filter( cp_part = pp).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
         return JsonResponse(obj1, safe = False)
     return JsonResponse({"success":False}, status = 400)
+
+
+@login_required
+@role_required(urlpass='/partmaster/')
+def partmaster(request):
+    obj=list(Part.objects.values('ptc').distinct())
+    # print(obj)
+    tmp=[]
+    for on in obj:
+        tmp.append(on['ptc'])
+    context={
+        'role':tmp,
+    }    
+    if request.method =="POST":
+        submitvalue = request.POST.get('submit')
+        print(submitvalue)
+        if submitvalue =='Save/Update':
+            part_no=request.POST.get('partno_id')
+            print("part no :",part_no)
+            descr_id=request.POST.get('descr_id')
+            print("des:",descr_id)
+            drng_no_id=request.POST.get('drng_no_id')
+            print("drawing:",drng_no_id)
+            shop_unit_id=request.POST.get('shop_unit_id')
+            print("shop unit",shop_unit_id)
+            lbl=request.POST.get('lbl')
+            print("lbl:",lbl)
+            ptc_id=request.POST.get('ptc_id')
+            print("ptc:",ptc_id)
+            m14split_code_id=request.POST.get('m14split_code_id')
+            print("m14:",m14split_code_id)
+            allowance_id=request.POST.get('allowance_id')
+            print("allow:",allowance_id)
+            obj=Part.objects.filter(partno=part_no).distinct()
+            print("obj:",obj)
+            if len(obj) == 0:
+                print("yes")
+                Part.objects.create(partno=str(part_no),des=str(descr_id),drgno=str(drng_no_id),shop_ut=str(shop_unit_id),ptc=str(ptc_id),m14splt_cd=str(m14split_code_id),allow_perc=int(allowance_id))
+                
+            else:
+               Part.objects.filter(partno=part_no).update(des=str(descr_id),drgno=str(drng_no_id),shop_ut=str(shop_unit_id),ptc=str(ptc_id),m14splt_cd=str(m14split_code_id),allow_perc=int(allowance_id))
+    return render(request,"partmaster.html",context)
+
+
+
+
+def part_get(request):
+    if request.method == "GET" and request.is_ajax():
+        no= request.GET.get('partno_id')
+        majg =no[0:2]
+        subg1=no[2:4] 
+        subg2=no[4:6] 
+        sl_no=no[6:7] 
+        lst=[majg,subg1,subg2,sl_no]
+        part=''.join(map(str,lst))
+        
+        lst=[]
+        for i in range(0,len(part)):
+            lst.insert(i,int(part[i]))
+        sum=0 
+        cal=8
+        for i in range(0,7):
+            sum=sum + (lst[i] * cal)
+            cal= cal - 1
+        mod = sum % 11
+        lst.insert(len(lst),mod) 
+        part=''.join(map(str,lst)) 
+        if mod==int(no[7]): 
+
+                print('ok')
+        else:
+                print('not ok')
+        
+        obj=list(Part.objects.filter(partno=no).values('des','drgno','shop_ut','ptc','m14splt_cd','allow_perc').distinct())
+        print("obj=",obj)
+        obj.append(mod)
+        return JsonResponse(obj,safe=False)
+
+    return JsonResponse({"success":False}, status=400)   
+
+def part_label(request):
+    if request.method == "GET" and request.is_ajax():
+        shop= request.GET.get('shop_unit_id')
+        # print("part n==",shop)
+        obj=list(Code.objects.filter(cd_type='51',code=shop).values('alpha_1').distinct())
+        # print(obj)
+        return JsonResponse(obj,safe=False)
+
+    return JsonResponse({"success":False}, status=400)   

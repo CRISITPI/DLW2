@@ -1,0 +1,124 @@
+
+<html>
+    <body><center><h1>M2(ROUTE CARD) Card</h1></center>
+        <table id="table3" align="center" border=1 style="margin-top: 50px;" width=100% cellpadding="5">
+        <!-- <thead class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;" > -->
+           <tr id="tr1">
+            <td width=15%><center><b>Printed Date (DD-MM-YYYY)</b></center></td>
+            <td><center><b>Work Order NO</b></center></td>
+            <td><center><b>BRN NO</b></center></td>
+            <td><center><b>Ordered Quantity</b></center></td>
+            <td><center><b>Assembly Part NO</b></center></td>
+            <td width=25%><center><b>Assembly Description</b></center></td>
+            <td><center><b>Loco TO:</b></center></td>
+            <td><center><b>SCL_CL</b></center></td>
+            <td><center><b>RM_Part NO</b></center></td>
+            <td><center><b>RM_Part Desc</b></center></td>
+            <td><center><b>M4 Refrence</b></center></td>
+            <td><center><b>Start Week</b></center></td>
+            
+        </tr>
+               <tr>
+            {% for o5 in obj5 %}
+            <td>{{o5.m2prtdt}}</td>
+            {% endfor %}
+            <td>{{wo_no}}</td>
+            <td>{{brn_no}}</td>
+            {% for o5 in obj5 %}
+            <td>{{o5.qty}}</td>
+            {% endfor %}
+            <td>{{assembly_no}}</td>
+            {% for o2 in obj2 %}
+            <td><label>{{o2.des}}</label></td>
+            {% endfor %}
+            {% for o6 in obj6 %}
+            <td>{{o6.l_to}}</td>
+            {% endfor %}
+            
+            <td>{{scl_cl}}</td>
+            
+            <td>{{rm_partno}}</td>
+            {% for o7 in obj7 %}
+            <td>{{o7.des}}</td>
+            {% endfor %}
+            
+            <td>{{m4_no}}</td>
+            <td>{{rc_st_wk}}</td>
+            
+            
+        </tr>
+        <tr>
+        <td><center><b>Shop Section</b></center></td>
+        <td><center><b>Part NO</b></center></td>
+        <td><b>Order Type</b></td>
+        <td><b>Drawing NO</b></td>
+        <td><b>Document NO</b></td>
+        <td><center><b>Part Description</b></center></td>
+        <td><b>Loco From:</b></td>
+        <td><b>Unit:</b></td>
+        <td><b>Label</b></td>
+        <td><b>Cut Number</b></td>
+        <td><center><b>Length / Weight</b></center>
+        </td><center><td><b>End Week</b></td></center>
+        </tr>
+        <tr>
+            <td>{{shop_sec}}</td>
+            <td>{{part_no}}</td>
+            {% for o3 in obj3 %}
+            <td>{{o3.batch_type}}</td>
+            {% endfor %}
+            {% for o1 in obj1 %}
+            <td>{{o1.drgno}}</td>
+            {% endfor %}
+            <td>{{doc_no}}</td>
+            {% for o1 in obj1 %}
+            <td>{{o1.des}}</td>
+            {% endfor %}
+            {% for o6 in obj6 %}
+            <td>{{o6.l_fr}}</td>
+            {% endfor %}
+            {% for o9 in obj9 %}
+            <td>{{o9.shop_ut}}</td>
+            {% endfor %}
+            <td>{{alpha_1}}</td>
+            <td>{{cutdia_no}}</td>
+            <td>{{rm_qty}}</td>   
+        </tr>
+    </table>
+    
+    <table id="table4" align="center" border=1 style="margin-top: 50px;" width=100% cellpadding="5">
+           <tr>
+            <td><center><b>Operation No</b></center></td>
+            <td ><center><b>Shop Section</b></center></td>
+            <td><center><b>Load Center</b></center></td>
+            <td width=50%><center><b>Operation Description</b></center></td>
+            <td ><center><b>PA</b></center></td>
+            <td ><center><b>TA</b></center></td>
+            <td ><center><b>NO:</b></center></td>
+            <td ><center><b>QTY Produced:</b></center></td>
+            <td ><center><b>QTY Accepted:</b></center></td>
+            <td ><center><b>Work Rejected:</b></center></td>
+            <td ><center><b>Material Rejected:</b></center></td>
+            <td ><center><b>Inspector:</b></center></td>
+        </tr>
+        
+            {% for o4 in obj4%}
+            <tr>
+            <td>{{o4.opn}}</td>
+            <td>{{o4.shop_sec}}</td>
+            <td>{{o4.lc_no}}</td>
+            <td>{{o4.des}}</td>
+            <td>{{o4.pa}}</td>
+            <td>{{o4.at}}</td>
+            <td>{{o4.lot}}</td>
+            <td>{{o4.qty_prod}}</td>
+            <td>{{o4.qty_accep}}</td>
+            <td>{{o4.work_rej}}</td>
+            <td>{{o4.mat_rej}}</td>
+            <td>{{o4.inspect_id}}</td>
+            </tr>
+            {% endfor %}
+        
+    </table></body>
+</html>
+

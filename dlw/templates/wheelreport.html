@@ -36,6 +36,8 @@
 <center><input type="submit" name="btn" value="No. of Wheel (date wise)" class="form-control ll" required style="width:250px;" /></center><br>
 <center><input type="submit" name="btn" value="No. of Wheel (date range)" class="form-control ll" required style="width:250px;" /></center><br>
 <center><input type="submit" name="btn" value="Month Wise Detail" class="form-control ll" required style="width:250px;" /></center><br>
+<center><input type="submit" name="btn" value="Wheel Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center><br>
+<!-- <center><input type="submit" name="btn" value="Wheel Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center><br> -->
 <br>
 {% if sub == 0 %}
 <center><input type="text" name="datew" id='datew' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
@@ -69,58 +71,144 @@
 <center><h3>Month:</h3><input type="text" class="form-control ll" id="month" name="month" onchange ="monthc()" style="width:250px;" required autocomplete="off"/>
 <input type="submit" value="Proceed10" name="btn" id="monthdata" hidden/>
 {% endif %}
+{% if sub == 20 %}
+<center><input type="text" name="datel" id="datel" class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed20" name="btn" id="Proceed20" hidden/>
+<br><br>
+{% endif %}
+<!-- {% if sub == 22 %}
+<center><input type="text" name="datell" id="datell" class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed22" name="btn" id="Proceed22" hidden/>
+<br><br>
+{% endif %} -->
 <div id="print">
 {% if sub == 1 %}
 <center><h2>DLW Varanasi</h2></center>
-<h2 align="right">Shop : TMS</h2>
-<h2 align="left">Date : {{dt}}</h2>
+<h2 align="left">Shop : TMS</h2>
+<h2 align="right">Date : {{dt}}</h2>
 <h2 align="left">Shop Section : Wheel Machining</h2>
+<br><br>
+<br><br>
 <table id="customers" align="left">
 <tr>
     <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Loco Type</th>
+    <th style="width:250px;text-align:center;">In Quantity</th>
+    <th style="width:250px;text-align:center;">Out Quantity</th>
 </tr>
-{% for i in ob1 %}
+{% for i in unique_final %}
 <tr>
     <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+    <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
+    <td style="width:250px;text-align:center;">{{i.count1}}</td>
+    <td style="width:250px;text-align:center;">{{i.count2}}</td>
 </tr>
 {% endfor %}
 </table>
+<!-- <br><br><br><br><br><br><br><br> -->
+<!-- <center><h2>Out for Machining</h2></center>
+<br><br>
 <table id="customers" align="right">
 <tr>
     <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Loco Type</th>
+    <th style="width:250px;text-align:center;">Out Quantity</th>
 </tr>
-{% for i in ob2 %}
+{% for i in unique_myval1 %}
 <tr>
     <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+    <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
+    <td style="width:250px;text-align:center;">{{i.count}}</td>
+</tr>
+{% endfor %}
+</table> -->
+<br><br><br><br><br><br><br><br><br><br>
+<table id="customers" align="right">
+    <tr>
+        <th style="width:250px;text-align:center;">Total In Quantity</th>
+        <th style="width:250px;text-align:center;">Total Out Quantity</th>
+    </tr>
+    <tr>
+        <td style="width:250px;text-align:center;">{{len1}}</td>
+        <td style="width:250px;text-align:center;">{{len2}}</td>
+    </tr>
+</table>
+<br><br><br><br><br><br>
+<br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 21 %}
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="left">Shop : TMS</h2>
+<h2 align="right">Date : {{datel}}</h2>
+<h2 align="left">Shop Section : Wheel Machining</h2>
+<br><br>
+<br><br>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">WHEEL NO.</th>
+    <th style="width:250px;text-align:center;">HEAT CAST NO.</th>
+    <th style="width:250px;text-align:center;">UST</th>
+    <th style="width:250px;text-align:center;">HUB LENGTH</th>
+    <th style="width:250px;text-align:center;">TREAD DIAMETER</th>
+    <th style="width:250px;text-align:center;">RIM THICKNESS</th>
+    <th style="width:250px;text-align:center;">BORE DIAMETER</th>
+    <th style="width:250px;text-align:center;">INSPECTION DATE</th>
+    <th style="width:250px;text-align:center;">INSPECTOR NAME</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.wheel_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.wheel_heatcaseno}}</td>
+    <td style="width:250px;text-align:center;">{{i.ustwhl}}</td>
+    <td style="width:250px;text-align:center;">{{i.hub_lengthwhl}}</td>
+    <td style="width:250px;text-align:center;">{{i.tread_diawhl}}</td>
+    <td style="width:250px;text-align:center;">{{i.rim_thicknesswhl}}</td>
+    <td style="width:250px;text-align:center;">{{i.bore_diawhl}}</td>
+    <td style="width:250px;text-align:center;">{{i.datewhl}}</td>
+    <td style="width:250px;text-align:center;">{{i.inspector_namewhl}}</td>
 </tr>
 {% endfor %}
 </table>
-<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+
+<br><br><br><br><br><br>
+<br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+<br><br><br><br><br><br>
 {% endif %}
+
 {% if sub == 3 %}
 <center><h2>DLW Varanasi</h2></center>
-<h2 align="right">Shop : TMS</h2>
-<h2 align="left">Date : {{dt1}} to {{dt2}}</h2>
+<h2 align="left">Shop : TMS</h2>
+<h2 align="right">Date : {{dt1}} to {{dt2}}</h2>
 <h2 align="left">Shop Section : Wheel Machining</h2>
 <table id="customers" align="left">
 <tr>
-    <th style="width:250px;text-align:center;">Date</th>
     <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Loco Type</th>
+    <th style="width:250px;text-align:center;">In Quantity</th>
+    <th style="width:250px;text-align:center;">Out Quantity</th>
 </tr>
-{% for i in ob1 %}
+{% for i in unique_final %}
 <tr>
-    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
     <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+    <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
+    <td style="width:250px;text-align:center;">{{i.count1}}</td>
+    <td style="width:250px;text-align:center;">{{i.count2}}</td>
 </tr>
 {% endfor %}
 </table>
+<br><br><br><br><br><br><br><br><br><br>
 <table id="customers" align="right">
+    <tr>
+        <th style="width:250px;text-align:center;">Total In Quantity</th>
+        <th style="width:250px;text-align:center;">Total Out Quantity</th>
+    </tr>
+    <tr>
+        <td style="width:250px;text-align:center;">{{len1}}</td>
+        <td style="width:250px;text-align:center;">{{len2}}</td>
+    </tr>
+</table>
+<br><br><br><br><br><br>
+<!-- <table id="customers" align="right">
 <tr>
     <th style="width:250px;text-align:center;">Date</th>
     <th style="width:250px;text-align:center;">Part No.</th>
@@ -133,8 +221,8 @@
     <td style="width:250px;text-align:center;">{{i.sno}}</td>
 </tr>
 {% endfor %}
-</table>
-<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+</table> -->
+<br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
 {% if sub == 4 %}
 <table id="customers" align="left">
@@ -303,6 +391,14 @@ $(document).ready(function () {
 });                   
 });
 $(document).ready(function () {
+    $('#datel').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#Proceed20").click();
+    }
+});                   
+});
+$(document).ready(function () {
     $('#date1').datepicker({
         dateFormat: 'dd-mm-yy',
 });                   
@@ -357,9 +453,28 @@ $(document).ready(function () {
     }
 });                   
 });
-function printDiv() {
-     var printContents = document.getElementById("print").innerHTML;
+// window.onload=function(){
+    
+//     if(document.getElementById('a').value==1){
+//         $('#print_report').show();
+//         $('#datel').show();
+//     }
+//     else{
+//         $('#print_report').hide();
+//         $('#datel').show();
+//     }
+    
+// }
 
+// function hide_print()
+// {
+//     alert("hiiiiii");
+//     document.getElementById('print_report').hide;
+// }
+
+function printDiv() {
+    $("#print_report").hide();
+     var printContents = document.getElementById("print").innerHTML;
        var style = "<style>";
         style = style + "table {width: 100%;font: 17px Calibri;}";
         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
@@ -375,7 +490,7 @@ function printDiv() {
         win.document.write('<body>');
         win.document.write(printContents);
         win.document.write('</body></html>');
-
+        // $("#print_report").hide();
         win.print();
         win.close();
 
