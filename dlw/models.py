@@ -3431,6 +3431,9 @@ class M5DOCnew(models.Model):
     worker = models.CharField(db_column='WORKER',  max_length=15, blank=True, null=True)  # Field name made lowercase.
     rej_qty = models.IntegerField(db_column='REJ_QTY', default=0, blank=True, null=True)  # Field name made lowercase.
     rev_qty = models.IntegerField(db_column='REV_QTY', default=0, blank=True, null=True)  # Field name made lowercase.
+    acc_qty = models.IntegerField(db_column='ACC_QTY', default=0, blank=True, null=True)
+    rej_mat = models.IntegerField(db_column='REJ_MAT', default=0, blank=True, null=True)
+
 
     class Meta:
         db_table = 'M5DOCnew'
