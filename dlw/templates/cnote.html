@@ -1,0 +1,322 @@
+{% extends 'base.html' %} 
+{% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+
+<style>
+  input[type=text],input[type=number],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 3px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+      width: 30%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  
+  input[type=button] {
+      width: 100%;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  
+  input[type=button]:hover {
+      background-color: #45a049;
+      text-align: center;
+  }
+  .button{
+    background-color:aqua;
+    width: 60px;
+  }
+
+</style>
+  
+  <br>
+  <br>
+  <h3 align="center"><b>Module For EDP Rrg No. Allotment for STR/OPN Change Notice</b></h3>
+  <br>
+  <br>
+
+  <div id="div1"> <h5 align="left" style="margin-left: 100px;"><b>आई.एस.ओ. - 9002/ I.S.O. - 9002 </b></h5> </div>
+  <div id="div2"> <h5 align="left" style="margin-left: 100px;"><b>डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</b></h5>
+  <br>
+<form action="{% url 'cnote' %}" method="POST" id="myform"> 
+    {% csrf_token %}
+    <div class="container" width="100%" id="cn_div">
+        <center>
+            <table  width="100%" align="center" id="cn_tb">
+                    <tr>
+                    <td colspan="2" style="width:fit-content;"><label for="sno" align ="right"><h4><b> Change Index</b></h4></label></td>
+                    <td  style="width: fit-content;"><select class="form-control" id="chng_ind" name="chng_ind" required>
+                        <option id="chng_ind" style="border: 8px solid #ccc;" selected disabled hidden></option>
+                        {% if lenm == 1 %}
+                        {% for i in obj %}
+                          <option>{{i.chg_ind}}</option>
+                        {% endfor %}
+                        {% endif %}
+                      </select></td>
+                    
+                   <td><center><label for="chng_ind" align ="right"><h4><b> CN No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="cn_no" name="cn_no" ></center></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><label for="chng_ind" align ="right"><h4><b> CN Reg. Date.</b></h4></label></td>
+                    <td><input type="text" id="cn_reg_dt" name="cn_reg_dt" class="date"></td>
+
+                    <td><center><label for="chng_ind" align ="right"><h4><b> Letter No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="ltr_no" name="ltr_no" align ="right"></center></td>
+
+                    <td><center><label for="chng_ind" align ="right"><h4><b> CN Date.</b></h4></label></center></td>
+                    <td><center><input type="text" id="cn_dt" name="cn_dt" class="date"> </center></td>
+                </tr>
+                <tr>
+                    <td><center><label for="chng_ind" align ="right"><h4><b> EDP Reg. No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="edp_reg_no" name="edp_reg_no" ></center></td>
+
+                    <td><center><label for="chng_ind" align ="right"><h4><b> EDP Reg. Date.</b></h4></label></center></td>
+                    <td><center><input type="text" id="edp_reg_dt" name="edp_reg_dt" class="date"></center></td>
+
+                    <td><center><label for="chng_ind" align ="right"><h4><b> Update Date.</b></h4></label></center></td>
+                    <td><center><input type="text" id="up_dt" name="up_dt" readonly></center></td>
+                </tr>
+                <br>
+                <br>
+                <tr>
+                    <td><center><label for="chng_ind" align ="right"><h4><b> File No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="file_no" name="file_no" ></center></td>
+
+                    <td><center><label for="chng_ind" align ="right"><h4><b> Page No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="page_no" name="page_no"> </center></td>
+
+                    <td><center><label for="chng_ind" align ="right"><h4><b> Status</b></h4></label></center></td>
+                    <td><center><input type="text" id="sts" name="sts" </center></td>
+                </tr>
+                <tr>
+                    <td><center><label for="chng_ind" align ="right"><h4><b> Assly No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="assly_no" name="assly_no" ></center></td>
+
+                    <td ><center><label for="chng_ind" align ="right"><h4><b> Assly Desc</b></h4></label></center></td>
+                    <td colspan="2"><center><input type="text" id="assly_desc" name="assly_desc" ></center></td>
+                </tr>
+                <tr>
+                    <td><center><label for="chng_ind" align ="right"><h4><b>Ref_1</b></h4></label></center></td>
+                    <td colspan="2"><center><input type="text" id="ref_1" name="ref_1" </center></td>
+
+                    <td><center><label for="chng_ind" align ="right"><h4><b> Date Ref</b></h4></label></center></td>
+                    <td><center><input type="text" id="dt_ref" name="dt_ref" class="date"></center></td>
+                </tr>
+                <tr>
+                    <td colspan="3"> </td>
+                    <center><td colspan="2"><input type="button" id="updt" name="updt" value="Allot EDP_Reg No /Update status " onclick="allot_update()"></td>
+                    <td colspan="1"><input type="button" id="clear" name="clear" value="Clear" onclick="window.location.reload()"></td></center>
+                
+                </tr>
+        </table>
+        </center>
+    </div>
+</form>
+<script>
+$(document).ready(function(){
+    $('.date').datepicker({
+        dateFormat:'dd-mm-yy'
+    });
+});
+
+// java scripts for fetching data on basis of change_index and cn_no.
+document.querySelector("#cn_no").addEventListener('change',(e)=>{ 
+  e.preventDefault();
+  var cn = $('#cn_no').val();
+  var chng_ind = $('#chng_ind').val();
+  var data = {cn,chng_ind};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'cnote_get_details' %}",
+    dataType : 'json',
+    data : data,
+
+    success : function(response){     
+      if(response.length == 0){
+        alert("NO DATA");
+        } 
+      else{
+        document.getElementById('edp_reg_no').value = response[0].reg_no;
+        if(response[0].reg_dt)
+        {
+            var today1 = response[0].reg_dt;
+            var month1 = today1.substring(5,7);
+            var day1 = today1.substring(8,10);
+            var year1 = today1.substring(0,4);
+            var date1 =  day1 + '-' + month1 + '-' + year1;
+        }
+        document.getElementById('edp_reg_dt').value = date1;
+
+        document.getElementById('ref_1').value = response[0].ref_1;
+       if(response[0].ref_1_dt)
+        { 
+            var today2 = response[0].ref_1_dt;
+            var month2 = today2.substring(5,7);
+            var day2 = today2.substring(8,10);
+            var year2 = today2.substring(0,4);
+            var date2 =  day2 + '-' + month2 + '-' + year2;
+        }
+        document.getElementById('dt_ref').value = date2;
+        if(response[0].cn_reg_dt)
+        {
+            var today3 = response[0].cn_reg_dt;
+            var month3 = today3.substring(5,7);
+            var day3 = today3.substring(8,10);
+            var year3 = today3.substring(0,4);
+            var date3 =  day3 + '-' + month3 + '-' + year3;
+        }
+        document.getElementById('cn_reg_dt').value = date3;
+        if(response[0].cn_dt)
+        {
+            var today4 = response[0].cn_dt;
+            var month4 = today4.substring(5,7);
+            var day4 = today4.substring(8,10);
+            var year4 = today4.substring(0,4);
+            var date4 =  day4 + '-' + month4 + '-' + year4;
+        }
+        document.getElementById('cn_dt').value = date4;
+        document.getElementById('sts').value = response[0].status;
+        document.getElementById('file_no').value = response[0].file_no;
+        document.getElementById('ltr_no').value = response[0].lett_no;
+        document.getElementById('assly_no').value = response[0].assly_no;
+        document.getElementById('assly_desc').value= response[0].assly_desc;
+        document.getElementById('page_no').value = response[0].page_no;
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+        dd = '0' + dd;
+        } 
+        if (mm < 10) {
+        mm = '0' + mm;
+        } 
+        var today = dd + '-' + mm + '-' + yyyy;
+        document.getElementById('up_dt').value = today;   
+      }
+    }
+  })
+});
+function allot_update()
+{
+    if($("#cn_no").val() == null)
+    {
+        alert("PLEASE ENTER CN NO.");
+    }
+    if($("#chng_ind").val() == null)
+    {
+        alert("ENTER CHANGE INDEX");
+    }
+    
+    else
+    {
+        var cn_no = $('#cn_no').val();
+        var chng_ind = $('#chng_ind').val();
+        var page_no = $("#page_no").val();
+        var file_no =  $("#file_no").val();
+        var ref_1 =  $("#ref_1").val();
+        var dt_ref =  $("#dt_ref").val();
+        
+        if(dt_ref != null)
+        {
+            var month1 = dt_ref.substring(3,5);
+            var day1 = dt_ref.substring(0,2);
+            var year1 = dt_ref.substring(6,10);
+            var date1 =  year1 + "-" + month1 + "-" + day1;
+            dt_ref = date1;
+            
+        }
+        var edp_reg_dt = $("#edp_reg_dt").val();
+        if(edp_reg_dt != null)
+        {
+            var month1 = edp_reg_dt.substring(3,5);
+            var day1 = edp_reg_dt.substring(0,2);
+            var year1 = edp_reg_dt.substring(6,10);
+            var date1 =  year1 + "-" + month1 + "-" + day1;
+            edp_reg_dt = date1;
+        }
+        // alert(edp_reg_dt);
+        var edp_reg_no =  $("#edp_reg_no").val();
+        var up_dt = $("#up_dt").val();
+        if(up_dt != null)
+        {
+            var month1 = up_dt.substring(3,5);
+            var day1 = up_dt.substring(0,2);
+            var year1 = up_dt.substring(6,10);
+            var date1 =  year1 + "-" + month1 + "-" + day1;
+            up_dt = date1;
+        }
+        var sts  = $("#sts").val();
+        var assly_no =$("#assly_no").val();
+        var assly_desc = $("#assly_desc").val();
+        var cn_dt = $("#cn_dt").val();
+        if(cn_dt != null)
+        {
+            var month1 = cn_dt.substring(3,5);
+            var day1 = cn_dt.substring(0,2);
+            var year1 = cn_dt.substring(6,10);
+            var date1 =  year1 + "-" + month1 + "-" + day1;
+            cn_dt = date1;
+        }
+        var ltr_no = $("#ltr_no").val();
+        var cn_reg_dt = $("#cn_reg_dt").val();
+        if(cn_reg_dt != null)
+        {
+            var month1 = cn_reg_dt.substring(3,5);
+            var day1 = cn_reg_dt.substring(0,2);
+            var year1 = cn_reg_dt.substring(6,10);
+            var date1 =  year1 + "-" + month1 + "-" + day1;
+            cn_reg_dt = date1;
+        }
+        var data ={cn_no,chng_ind,ref_1,dt_ref,assly_no,assly_desc,sts,page_no,file_no,up_dt,edp_reg_no,edp_reg_dt,cn_dt,ltr_no,cn_reg_dt};
+        $.ajax({
+        type : 'GET',
+        url : "{% url 'allot_update' %}",
+        dataType : 'json',
+        data : data,
+
+        success : function(response)
+        {     
+            if(response.length == 0){
+                alert("NOT UPDATED");
+            } 
+            else{
+                alert("updated");
+                window.location.reload();
+            }
+        }
+        });
+    }
+}
+</script>
+{% endblock content %}
+  

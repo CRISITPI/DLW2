@@ -22374,3 +22374,71 @@ def part_label(request):
         return JsonResponse(obj,safe=False)
 
     return JsonResponse({"success":False}, status=400)   
+
+@login_required
+@role_required(urlpass='/cnote/')
+def cnote(request):
+
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    obj = list(Cnote.objects.values('chg_ind').distinct())
+    
+    if "Superuser" in rolelist:
+        context={
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'obj':obj,
+            'ip':get_client_ip(request),
+            'op_opnno' : wo_nop,
+            'subnav':subnav,
+        }
+
+    return render(request,'cnote.html',context)
+
+def cnote_get_details(request):
+    if request.method == "GET" and request.is_ajax():
+        cno = request.GET.get('cn')
+        cind = request.GET.get('chng_ind')
+        obj = list(Cnote.objects.filter(chg_ind = cind, ppl_cn_no = cno).values('reg_no','reg_dt','ref_1','ref_1_dt','cn_reg_dt','cn_dt','status','file_no','page_no','lett_no','assly_no', 'assly_desc').distinct())
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status = 400)
+
+def allot_update(request):
+    if request.method == "GET" and request.is_ajax():
+        cn_no = request.GET.get('cn_no')
+        chng_ind = request.GET.get('chng_ind')
+        num = list(Code.objects.filter(cd_type = '21', code = 'MRG').values('num_1').order_by('cd_type','code').distinct())
+        num = num[0]['num_1'] +1
+        ref_1 = request.GET.get('ref_1')
+        dt_ref = request.GET.get('dt_ref')
+        cn_reg_dt = request.GET.get('cn_reg_dt')
+        cn_dt = request.GET.get('cn_dt')
+        edp_reg_no = request.GET.get('edp_reg_no')
+        edp_reg_dt = request.GET.get('edp_reg_dt')
+        page_no = request.GET.get('page_no')
+        file_no = request.GET.get('file_no')
+        ltr_no = request.GET.get('ltr_no')
+        assly_no = request.GET.get('assly_no')
+        assly_desc = request.GET.get('assly_desc')
+        up_dt = request.GET.get('up_dt')
+        sts = request.GET.get('sts')
+        Code.objects.filter(cd_type = '21' , code = 'MRG').update(num_1 = num, lupd_date = up_dt)
+        Cpart.objects.filter(ppl_cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
+        Cstr.objects.filter(pp_part = None , cp_part = None).delete()
+        Cstr.objects.filter(chg_ind = chng_ind, cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
+        if(chng_ind == 'OPN'):
+            Copn.objects.filter(part_no = None).delete()
+            Copn.objects.filter(cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
+        else:
+            Cnote.objects.filter(chg_ind = chng_ind, ppl_cn_no = cn_no).update(reg_no = edp_reg_no, reg_dt = edp_reg_dt, file_no = file_no, page_no= page_no, cn_dt= cn_dt, updt_dt = up_dt, lett_no = ltr_no, status = sts, ref_1_dt = dt_ref)
+        return JsonResponse(num, safe = False)
+    return JsonResponse({"success":False}, status = 400)

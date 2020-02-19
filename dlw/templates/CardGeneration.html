@@ -58,7 +58,7 @@
         </div> 
         <div class="form-group col-md-4">
             <label for="brn_no">BRN NO  :   </label>
-            <input type="text" id="brn_no" name="brn_no" value="" onchange="" > 
+            <input type="text" id="brn_no" name="brn_no" value=""  maxlength="6" onchange="myFunc1();" onkeypress="return isNumberKey(event)"> 
         </div>
         <div class="form-row" id="alt">
             
@@ -78,6 +78,24 @@
 </center>
 
 <script>
+
+function myFunc1(){
+    var brn_no = $("#brn_no").val();
+    if(brn_no.length < '6'){
+        //document.getElementById('brn_no').focus();
+        $("#brn_no").focus();
+        alert("BRN NO must be 6 character.")
+    }
+}
+
+function isNumberKey(evt) {
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+return true;
+
+}
+
 window.onload=function()
 {
     $('#div1').show();

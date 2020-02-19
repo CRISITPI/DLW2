@@ -430,9 +430,11 @@ urlpatterns = [
     path('ajax/nstrassly_back/',nstrassly_back,name='nstrassly_back'),
     path('ajax/m5getshop_name/',m5getshop_name,name='m5getshop_name'),
     path('partmaster/',partmaster, name='partmaster'),
-    path('ajax/part_get',part_get,name='part_get'),
-    path('ajax/part_label',part_label,name='part_label'),
-
+    path('ajax/part_get/',part_get,name='part_get'),
+    path('ajax/part_label/',part_label,name='part_label'),
+    path('cnote/',cnote,name='cnote'),
+    path('ajax/cnote_get_details/',cnote_get_details,name='cnote_get_details'),
+    path('ajax/allot_update/',allot_update,name='allot_update'),
 
 ]
 
