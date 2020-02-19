@@ -8506,6 +8506,8 @@ def CardGeneration(request):
                     obj=M2Docnew1.objects.filter(part_no=pn,batch_no=batch,assly_no=asmno).values('m2sln').distinct()
                     if len(obj)!=0:
                         m2sl=obj[0]['m2sln']
+                    else:
+                        m2sl=''
                     for j in Oprn.objects.raw('select distinct id,"SHOP_SEC","PART_NO","M5_CD","LC_NO",lpad("OPN",3,%s) as opn ,substr(trim("DES"),1,30) as des,substr("LOT" :: text,1,1) as lot,COALESCE("PA",00.00) as pa,COALESCE("AT",000.00) as at1,COALESCE("NCP_JBS", %s) as ncp from public."OPRN" where  COALESCE("NCP_JBS",%s)=%s and COALESCE("DEL_FL",%s)=%s and trim("PART_NO")=%s order by opn;',['0','','#','#','#','#',pn]):
                         lf=int(l_fr)
                         if j is not None:
