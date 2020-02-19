@@ -4259,6 +4259,10 @@ class AxleMachining(models.Model):
     inspection_status=models.NullBooleanField()
     dispatch_date=models.CharField(max_length=20,null=True)
     axlep_no=models.CharField(max_length=20,null=True)
+    journalaxlende=models.CharField(max_length=20,blank=True)
+    throweraxlende=models.CharField(max_length=20,blank=True)
+    wheelseataxlende=models.CharField(max_length=20,blank=True)
+    collaraxlende=models.CharField(max_length=20,blank=True)
 
 
 class M27TimeSheet(models.Model):

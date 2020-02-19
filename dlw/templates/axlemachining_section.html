@@ -124,10 +124,10 @@ footer, .page-content::after{
                                 <font color="white">Delete</font>
                          </button>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Dispatch</font>
-                         </button>
+                         </button> -->
                     </li>
                     <li class="nav-item">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inspectmodal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
@@ -179,8 +179,8 @@ footer, .page-content::after{
                 <th>Axle Heat Cast No. </th>
                 <th>Machine In Date &nbsp; </th>
                 <th>Machine Out Date &nbsp; </th>
-                <th>Dispatch To</th>
-                <th>Dispatch Date &nbsp; </th>
+                <th>Inspection Status</th>
+                <th>Inspection Date </th>
                 </tr>
                 {% for objec in object %}
                 <tr>
@@ -198,7 +198,7 @@ footer, .page-content::after{
                 <td>{{objec.in_qty}} <br><br></td>
                 <td>{{objec.out_qty}} <br><br></td>
                 <td>{{objec.dispatch_to}} <br><br></td>
-                <td>{{objec.dispatch_date}} <br><br></td>
+                <td>{{objec.dateaxle}} <br><br></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -395,7 +395,7 @@ footer, .page-content::after{
     
          <!--Dispatch-->
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <!-- <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -437,7 +437,7 @@ footer, .page-content::after{
                                 </form>
                             </div>
                         </div>
-                     </div>
+                     </div> -->
     <!--Delete-->
     <!-- Modal -->
     <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
@@ -451,12 +451,23 @@ footer, .page-content::after{
             </div>
         <form method="POST" class="needs-validation" > {% csrf_token %}
                <div class="modal-body">
+                        <!-- <div class="row">
+                            <div class="col">
+                                    <label for="">Axle No.</label>
+                                    <input type="text" class="form-control" id="delsno" name="delsno"  required>
+                            </div> 
+                        </div> -->
                         <div class="row">
                             <div class="col">
-                                    <label for="">Serial No.</label>
-                                    <input type="number" class="form-control" id="delsno" name="delsno"  required>
-                            </div> 
-                        </div>
+                                  <label for="">Axle No.</label>
+                                  <select name="delsno" id="delsno" class="form-control ll" required>
+                                          <option value="0">Select Axle No.</option>  
+                                          {% for x in mysno %}
+                                          <option>{{x.axle_no}}</option>
+                                          {% endfor %}
+                                  </select> 
+                            </div>
+                            </div>
                 </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -517,25 +528,41 @@ footer, .page-content::after{
                             <input type="text" class="form-control" name="axlelength" id="axlelength" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                             </div>  
                             <div class="col-4">
-                                <label for="Axle">Journal</label>
+                                <label for="Axle">Journal (DE)</label>
                                 <input type="text" class="form-control" name="journalaxle" id="journalaxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                 </div>  
                                 <div class="col-4">
-                                    <label for="Axle">Thrower</label>
+                                    <label for="Axle">Journal (NDE)</label>
+                                    <input type="text" class="form-control" name="journalaxlende" id="journalaxlende" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
+                                    </div>
+                                <div class="col-4">
+                                    <label for="Axle">Thrower (DE)</label>
                                     <input type="text" class="form-control" name="throweraxle" id="throweraxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
-                                    </div>  
+                                    </div>
                                     <div class="col-4">
-                                    <label for="Axle">Wheel Seat</label>
+                                        <label for="Axle">Thrower (NDE)</label>
+                                        <input type="text" class="form-control" name="throweraxlende" id="throweraxlende" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
+                                        </div>  
+                                    <div class="col-4">
+                                    <label for="Axle">Wheel Seat (DE)</label>
                                     <input type="text" class="form-control" name="wheelseataxle" id="wheelseataxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                     </div>  
+                                    <div class="col-4">
+                                        <label for="Axle">Wheel Seat (NDE)</label>
+                                        <input type="text" class="form-control" name="wheelseataxlende" id="wheelseataxlende" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
+                                        </div>
                                     <div class="col-4">
                                 <label for="Axle">Gear Seat</label>
                                 <input type="text" class="form-control" name="gearseataxle" id="gearseataxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                 </div> 
                                 <div class="col-4">
-                                    <label for="Axle">collar</label>
+                                    <label for="Axle">collar (DE)</label>
                                     <input type="text" class="form-control" name="collaraxle" id="collaraxle" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                                 </div> 
+                                <div class="col-4">
+                                    <label for="Axle">collar (NDE)</label>
+                                    <input type="text" class="form-control" name="collaraxlende" id="collaraxlende" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
+                                </div>
 
                                         <div class="col-4">
                                             <label for="Axle">Bearing</label>
@@ -574,12 +601,13 @@ footer, .page-content::after{
                             </div> 
                             <div class="col-4">
                                 <label for="Axle">Gear Seat</label>
-                                
-                                <input type="text" class="form-control" name="gearseat_surfacefinishGE" id="gearseat_surfacefinishGE" onchange="validateGEFE(this.id)" placeholder="" value="6.3" required>
+                                <input type="text" class="form-control" name="gearseat_surfacefinishGE" id="gearseat_surfacefinishGE" onchange="validateGEFE(this.id)" placeholder="" value="6.3
+                                " required>
                               </div>  
                               
                         </div>
-                        <strong class="mb-3" style="margin-top:2%">Surface Finish FE</strong>
+                        <strong c
+                        lass="mb-3" style="margin-top:2%">Surface Finish FE</strong>
     <div class="row">
         <div class="col-4">
             <label for="Axle">Journal</label>
@@ -590,7 +618,7 @@ footer, .page-content::after{
               <input type="text" class="form-control" name="wheelseat_surfacefinishFE" id="wheelseat_surfacefinishFE" onchange="validateGEFE(this.id)" placeholder="" value="3.2" required>
             </div> 
             <div class="col-4">
-                <label for="Axle">Gear Seat</label>
+                <label for="Axle">Bearing Seat</label>
                 <input type="text" class="form-control" name="gearseat_surfacefinishFE" id="gearseat_surfacefinishFE" onchange="validateGEFE(this.id)" placeholder="" value="6.3" required>
               </div>   
         </div>
@@ -645,8 +673,12 @@ $("#addsno").change(function(e){
                         document.getElementById('journalaxle').value ='';
                         document.getElementById('throweraxle').value ='';
                         document.getElementById('wheelseataxle').value ='';
+                        document.getElementById('journalaxlende').value ='';
+                        document.getElementById('throweraxlende').value ='';
+                        document.getElementById('wheelseataxlende').value ='';
                         document.getElementById('gearseataxle').value ='';
                         document.getElementById('collaraxle').value ='';
+                        document.getElementById('collaraxlende').value ='';
                         document.getElementById('axled').value ='';
                         document.getElementById('bearingaxle').value ='';
                         document.getElementById('abutmentaxle').value ='';
@@ -668,6 +700,10 @@ $("#addsno").change(function(e){
                         $("#wheelseataxle").val(`${response[0].wheelseataxle}`);
                         $("#gearseataxle").val(`${response[0].gearseataxle}`);
                         $("#collaraxle").val(`${response[0].collaraxle}`);
+                        $("#journalaxlende").val(`${response[0].journalaxlende}`);
+                        $("#throweraxlende").val(`${response[0].throweraxlende}`);
+                        $("#wheelseataxlende").val(`${response[0].wheelseataxlende}`);
+                        $("#collaraxlende").val(`${response[0].collaraxlende}`);
                         $("#axled").val(`${response[0].dateaxle}`);
                         $("#bearingaxle").val(`${response[0].bearingaxle}`);
                         $("#abutmentaxle").val(`${response[0].abutmentaxle}`);
@@ -733,6 +769,10 @@ $("#addsno").change(function(e){
                 document.getElementById('wheelseataxle').readOnly=true;
                 document.getElementById('gearseataxle').readOnly=true;
                 document.getElementById('collaraxle').readOnly=true;
+                document.getElementById('journalaxlende').readOnly=true;
+                document.getElementById('throweraxlende').readOnly=true;
+                document.getElementById('wheelseataxlende').readOnly=true;
+                document.getElementById('collaraxlende').readOnly=true;
                 document.getElementById('bearingaxle').readOnly=true;
                 document.getElementById('abutmentaxle').readOnly=true;
         }
@@ -748,6 +788,10 @@ $("#addsno").change(function(e){
                 document.getElementById('wheelseataxle').readOnly=true;
                 document.getElementById('gearseataxle').readOnly=true;
                 document.getElementById('collaraxle').readOnly=true;
+                document.getElementById('journalaxlende').readOnly=true;
+                document.getElementById('throweraxlende').readOnly=true;
+                document.getElementById('wheelseataxlende').readOnly=true;
+                document.getElementById('collaraxlende').readOnly=true;
                 document.getElementById('bearingaxle').readOnly=true;
                 document.getElementById('abutmentaxle').readOnly=true;
             }
@@ -759,6 +803,10 @@ $("#addsno").change(function(e){
                 document.getElementById('wheelseataxle').readOnly=false;
                 document.getElementById('gearseataxle').readOnly=false;
                 document.getElementById('collaraxle').readOnly=false;
+                document.getElementById('journalaxlende').readOnly=false;
+                document.getElementById('throweraxlende').readOnly=false;
+                document.getElementById('wheelseataxlende').readOnly=false;
+                document.getElementById('collaraxlende').readOnly=false;
                 document.getElementById('bearingaxle').readOnly=false;
                 document.getElementById('abutmentaxle').readOnly=false;
             }
@@ -770,8 +818,8 @@ $("#addsno").change(function(e){
         if(isNaN(x)==false)
         {
         // VALIDATION FOR JOURNAL
-        if(a=="journalaxle"){ 
-        if (myval=="WAP-7") {           
+        if(a=="journalaxle"||a=="journalaxlende"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
     b=150.043;
     c=150.068;
     var relax = 10;
@@ -806,9 +854,11 @@ $("#addsno").change(function(e){
         }
     }
 
+    
+
     //VALIDATION FOR THROWER
-    if(a=="throweraxle"){
-        if (myval=="WAP-7") {  
+    if(a=="throweraxle"||a=="throweraxlende"){
+        if (myval=="WAP-7"||myval=="WAP-9") {  
     b=170.146;
     c=170.186;
     var relax = 10;
@@ -845,8 +895,8 @@ if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO
     }
 
     //VALIDATION FOR WHEEL SEAT
-    if(a=="wheelseataxle"){
-        if (myval=="WAP-7") {  
+    if(a=="wheelseataxle"||a=="wheelseataxlende"){
+        if (myval=="WAP-7"||myval=="WAP-9") {  
     b=217.971;
     c=218.00;
     var relax = 10;
@@ -883,7 +933,7 @@ if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO
 
     //VALIDATION FOR GEAR SEAT
     if(a=="gearseataxle"){
-        if (myval=="WAP-7") {  
+        if (myval=="WAP-7"||myval=="WAP-9") {  
     b=219.360;
     c=219.390;
     var relax = 10;
@@ -920,7 +970,7 @@ if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO
 
     //VALIDATION FOR COLLAR
     if(a=="collaraxle"){
-        if (myval=="WAP-7") {  
+        if (myval=="WAP-7"||myval=="WAP-9") {  
     b=232.75;
     c=233.25;
     var relax = 10;
@@ -955,9 +1005,46 @@ if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO
         }
     }
 
+    //VALIDATION FOR COLLARNDE
+    if(a=="collaraxlende"){
+        if (myval=="WAP-7"||myval=="WAP-9") {  
+    b=232.75;
+    c=233.20;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+        }
+    }
+
+if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
+    b=9.163;
+    c=9.183;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+            }
+        }
+    }
+
     //VALIDATION FOR BEARING
     if(a=="bearingaxle"){
-        if (myval=="WAP-7") {
+        if (myval=="WAP-7"||myval=="WAP-9") {
     b=220.050;
     c=220.079;
     var relax = 10;
@@ -994,7 +1081,7 @@ if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO
 
     //VALIDATION FOR ABUTMENT
     if(a=="abutmentaxle"){
-        if (myval=="WAP-7") {
+        if (myval=="WAP-7"||myval=="WAP-9") {
     b=219.360;
     c=219.390;
     var relax = 10;
@@ -1030,7 +1117,7 @@ if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO
     }
         //VALIDATION FOR AXLE LENGTH
         if(a=="axlelength"){
-        if (myval=="WAP-7") {
+        if (myval=="WAP-7"||myval=="WAP-9") {
     b=2440;
     c=2441;
     var relax = 10;
@@ -1269,3 +1356,7 @@ function setvalidation4(a)
 
 </html>  
 {% endblock content %}
+
+
+
+
