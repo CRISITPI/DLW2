@@ -12924,7 +12924,7 @@ def axlemachining_section(request):
 
         if submit=='save':
 
-            sno=int(request.POST.get('editsno'))
+            sno=request.POST.get('editsno')
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
             bo_qty=request.POST.get('editbo_qty')
@@ -13093,7 +13093,7 @@ def wheelmachining_section(request):
 
         if submit=='save':
 
-            sno=int(request.POST.get('editsno'))
+            sno=request.POST.get('editsno')
             bo_no=request.POST.get('editbo_no')
             bo_date=request.POST.get('editbo_date')
             bo_qty=request.POST.get('editbo_qty')
