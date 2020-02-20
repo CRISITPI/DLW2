@@ -13146,7 +13146,7 @@ def wheelmachining_section(request):
 
         if submit=='InspectWheel':
     
-            sno=int(request.POST.get('snowheel'))
+            sno=request.POST.get('snowheel')
             oustwhl=request.POST.get('ustwhl')
             oustwhl_date=request.POST.get('ustwhl_date')
             oustwhl_status=request.POST.get('ustwhl_status')
