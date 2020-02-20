@@ -435,6 +435,7 @@ urlpatterns = [
     path('cnote/',cnote,name='cnote'),
     path('ajax/cnote_get_details/',cnote_get_details,name='cnote_get_details'),
     path('ajax/allot_update/',allot_update,name='allot_update'),
+    path('ajax/assly_validation/',assly_validation,name='assly_validation'),
     path('ajax/m5cardgen_getbrn/',m5cardgen_getbrn,name='m5cardgen_getbrn'),
 
 ]

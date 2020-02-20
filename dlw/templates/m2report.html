@@ -1,8 +1,8 @@
 
 <html>
-    <body><center><h1>M2(ROUTE CARD) Card</h1></center>
+    <body><center><label>M2(ROUTE CARD) Card</label></center>
         <table id="table3" align="center" border=1 style="margin-top: 50px;" width=100% cellpadding="5">
-        <!-- <thead class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;" > -->
+     
            <tr id="tr1">
             <td width=15%><center><b>Printed Date (DD-MM-YYYY)</b></center></td>
             <td><center><b>Work Order NO</b></center></td>
@@ -15,37 +15,27 @@
             <td><center><b>RM_Part NO</b></center></td>
             <td><center><b>RM_Part Desc</b></center></td>
             <td><center><b>M4 Refrence</b></center></td>
-            <td><center><b>Start Week</b></center></td>
-            
+            <td><center><b>Start Week</b></center></td>   
         </tr>
                <tr>
-            {% for o5 in obj5 %}
-            <td>{{o5.m2prtdt}}</td>
-            {% endfor %}
+        
+            <td>{{date_string}}</td>
             <td>{{wo_no}}</td>
             <td>{{brn_no}}</td>
-            {% for o5 in obj5 %}
-            <td>{{o5.qty}}</td>
-            {% endfor %}
+            <td>{{qty}}</td>
             <td>{{assembly_no}}</td>
             {% for o2 in obj2 %}
             <td><label>{{o2.des}}</label></td>
             {% endfor %}
-            {% for o6 in obj6 %}
-            <td>{{o6.l_to}}</td>
-            {% endfor %}
             
+            <td>{{l_to}}</td>
             <td>{{scl_cl}}</td>
-            
             <td>{{rm_partno}}</td>
             {% for o7 in obj7 %}
             <td>{{o7.des}}</td>
             {% endfor %}
-            
             <td>{{m4_no}}</td>
-            <td>{{rc_st_wk}}</td>
-            
-            
+            <td>{{rc_st_wk}}</td>    
         </tr>
         <tr>
         <td><center><b>Shop Section</b></center></td>
@@ -67,22 +57,16 @@
             {% for o3 in obj3 %}
             <td>{{o3.batch_type}}</td>
             {% endfor %}
-            {% for o1 in obj1 %}
-            <td>{{o1.drgno}}</td>
-            {% endfor %}
+            <td>{{drgno}}</td>
             <td>{{doc_no}}</td>
-            {% for o1 in obj1 %}
-            <td>{{o1.des}}</td>
-            {% endfor %}
-            {% for o6 in obj6 %}
-            <td>{{o6.l_fr}}</td>
-            {% endfor %}
-            {% for o9 in obj9 %}
-            <td>{{o9.shop_ut}}</td>
-            {% endfor %}
+            <td>{{des1}}</td>
+            <td>{{l_fr}}</td>
+            <td>{{shop_unit}}</td>
             <td>{{alpha_1}}</td>
             <td>{{cutdia_no}}</td>
-            <td>{{rm_qty}}</td>   
+            <td>{{rm_qty}}</td>
+        
+               
         </tr>
     </table>
     
@@ -119,6 +103,7 @@
             </tr>
             {% endfor %}
         
-    </table></body>
+    </table>
+</body>
 </html>
 

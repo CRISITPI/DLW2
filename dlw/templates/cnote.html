@@ -58,7 +58,7 @@
   
   <br>
   <br>
-  <h3 align="center"><b>Module For EDP Rrg No. Allotment for STR/OPN Change Notice</b></h3>
+  <h3 align="center"><b>Module For EDP Reg No. Allotment for STR/OPN Change Notice</b></h3>
   <br>
   <br>
 
@@ -72,7 +72,7 @@
             <table  width="100%" align="center" id="cn_tb">
                     <tr>
                     <td colspan="2" style="width:fit-content;"><label for="sno" align ="right"><h4><b> Change Index</b></h4></label></td>
-                    <td  style="width: fit-content;"><select class="form-control" id="chng_ind" name="chng_ind" required>
+                    <td  style="width: fit-content; width: 150px;"><select class="form-control" id="chng_ind" name="chng_ind" style="margin-left: -80px;" required>
                         <option id="chng_ind" style="border: 8px solid #ccc;" selected disabled hidden></option>
                         {% if lenm == 1 %}
                         {% for i in obj %}
@@ -81,22 +81,22 @@
                         {% endif %}
                       </select></td>
                     
-                   <td><center><label for="chng_ind" align ="right"><h4><b> CN No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="cn_no" name="cn_no" ></center></td>
+                   <td><center><label for="chng_ind" align ="right" style="margin-left: -100px;"><h4><b> CN No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="cn_no" name="cn_no" style="margin-left: -80px;"></center></td>
                 </tr>
                 <tr>
                     <td colspan="2"><label for="chng_ind" align ="right"><h4><b> CN Reg. Date.</b></h4></label></td>
-                    <td><input type="text" id="cn_reg_dt" name="cn_reg_dt" class="date"></td>
+                    <td><input type="text" id="cn_reg_dt" name="cn_reg_dt" class="date" style="margin-left: -80px; width: 150px;"></td>
 
-                    <td><center><label for="chng_ind" align ="right"><h4><b> Letter No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="ltr_no" name="ltr_no" align ="right"></center></td>
+                    <td><center><label for="chng_ind" align ="right" style="margin-left: -80px;"><h4><b> Letter No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="ltr_no" name="ltr_no" align ="right" style="margin-left: -80px; width: 160px;"></center></td>
 
                     <td><center><label for="chng_ind" align ="right"><h4><b> CN Date.</b></h4></label></center></td>
                     <td><center><input type="text" id="cn_dt" name="cn_dt" class="date"> </center></td>
                 </tr>
                 <tr>
-                    <td><center><label for="chng_ind" align ="right"><h4><b> EDP Reg. No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="edp_reg_no" name="edp_reg_no" ></center></td>
+                    <td colspan="2"><center><label for="chng_ind" align ="right" style="margin-left: -120px;"><h4><b> EDP Reg. No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="edp_reg_no" name="edp_reg_no" style="margin-left: -160px; width: 150px;"></center></td>
 
                     <td><center><label for="chng_ind" align ="right"><h4><b> EDP Reg. Date.</b></h4></label></center></td>
                     <td><center><input type="text" id="edp_reg_dt" name="edp_reg_dt" class="date"></center></td>
@@ -107,7 +107,7 @@
                 <br>
                 <br>
                 <tr>
-                    <td><center><label for="chng_ind" align ="right"><h4><b> File No.</b></h4></label></center></td>
+                    <td><center><label for="chng_ind" align ="right" style="margin-left: -80px; width: 150px;"><h4><b> File No.</b></h4></label></center></td>
                     <td><center><input type="text" id="file_no" name="file_no" ></center></td>
 
                     <td><center><label for="chng_ind" align ="right"><h4><b> Page No.</b></h4></label></center></td>
@@ -117,14 +117,14 @@
                     <td><center><input type="text" id="sts" name="sts" </center></td>
                 </tr>
                 <tr>
-                    <td><center><label for="chng_ind" align ="right"><h4><b> Assly No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="assly_no" name="assly_no" ></center></td>
+                    <td><center><label for="chng_ind" align ="right" style="margin-left: -60px; width: 150px;"><h4><b> Assly No.</b></h4></label></center></td>
+                    <td><center><input type="text" id="assly_no" name="assly_no" maxlength="8"></center></td>
 
                     <td ><center><label for="chng_ind" align ="right"><h4><b> Assly Desc</b></h4></label></center></td>
                     <td colspan="2"><center><input type="text" id="assly_desc" name="assly_desc" ></center></td>
                 </tr>
                 <tr>
-                    <td><center><label for="chng_ind" align ="right"><h4><b>Ref_1</b></h4></label></center></td>
+                    <td><center><label for="chng_ind" align ="right" style="margin-left: -80px; width: 100px;"><h4><b>Ref_1</b></h4></label></center></td>
                     <td colspan="2"><center><input type="text" id="ref_1" name="ref_1" </center></td>
 
                     <td><center><label for="chng_ind" align ="right"><h4><b> Date Ref</b></h4></label></center></td>
@@ -226,6 +226,28 @@ document.querySelector("#cn_no").addEventListener('change',(e)=>{
     }
   })
 });
+
+document.querySelector("#assly_no").addEventListener('change',(e)=>{ 
+  e.preventDefault();
+  var an = $('#assly_no').val();
+  var data = {an};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'assly_validation' %}",
+    dataType : 'json',
+    data : data,
+
+    success : function(response){     
+      if(response.length == 0){
+        alert("NO SUCH ASSLY NO");
+        document.getElementById('assly_no').value = '';
+
+        } 
+
+    }
+    })
+});
+
 function allot_update()
 {
     if($("#cn_no").val() == null)
@@ -319,4 +341,3 @@ function allot_update()
 }
 </script>
 {% endblock content %}
-  

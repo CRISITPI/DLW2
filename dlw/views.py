@@ -978,6 +978,11 @@ def m2Pdf(request, *args, **kwargs):
     rm_qty=0
     alpha_1=0
     cutdia_no=0
+    date_string=0
+    l_to=0
+    l_fr=0
+    des1=0
+    drgno=0
     shop_sec = request.GET.get('shop_no1')
     print("shop_no1",shop_sec)
     part_no = request.GET.get('part_no1')
@@ -993,47 +998,69 @@ def m2Pdf(request, *args, **kwargs):
         scl_cl=obj[0]['scl_cl']
         m4_no=obj[0]['m4_no']
         rc_st_wk=obj[0]['rc_st_wk']
-
-
-    
-    obj1=list(Part.objects.filter(partno=part_no).values('des','drgno').distinct())
-    
+    obj1=list(Part.objects.filter(partno=part_no).values('des','drgno').distinct())  
     obj2=list(Part.objects.filter(partno=assembly_no).values('des').distinct())
-   
     obj3=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type'))
-    
     obj4= list(Oprn.objects.filter(part_no=part_no,shop_sec=shop_sec).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','lot').order_by('opn'))
-    
+    if len(obj1):
+        des1=obj1[0]['des']
+        drgno=obj1[0]['drgno']
     for i in range(1, int(len(obj4))+1):
         opn_no=obj4[i-1]['opn']
         l2.append(opn_no)
     
-    obj5 = list(M2Doc.objects.filter(batch_no=wo_no).values('m2prtdt','qty').distinct())
+    obj5 = list(M2Docnew1.objects.filter(batch_no=wo_no).values('m2prtdt','qty').distinct())
     
     now =obj5[0]['m2prtdt']
+    qty =obj5[0]['qty']
     date_string = now
+    print(date_string)
+    print("qtyyy",qty)
     obj5[0]['m2prtdt']=date_string
     obj6=list(Proddem.objects.filter(part_no=part_no).values('l_fr','l_to').distinct())
+    if len(obj6):
+        l_to=obj6[0]['l_to']
+        l_fr=obj6[0]['l_fr']
+    print("loco from:-",l_fr)
     obj7=list(Part.objects.filter(partno=rm_partno).values('des').distinct())
     obj8=list(M2Docnew1.objects.filter(rm_partno=rm_partno).values('rm_qty').distinct())
     if len(obj8):
         rm_qty=obj8[0]['rm_qty']
 
     obj9=list(Part.objects.filter(partno=part_no).values('shop_ut').distinct())
-   
+    
     obj10=list(Code.objects.filter(cd_type='51',code=shop_unit).values('alpha_1').distinct())
     if len(obj10):
         alpha_1=obj10[0]['alpha_1'] 
-      
+    if len(obj9):
+            shop_unit=obj9[0]['shop_ut']
+    if len(obj6)==0:    
+        obj6=[{'l_fr':'','l_to':''}]
+    if len(obj7)==0:
+        obj7=[{'des':''}]  
+    if len(obj8)==0:
+        obj8=[{'rm_qty':''}]  
+    if len(obj9)==0:
+        obj9=[{'shop_ut':''}]  
     obj11=list(Cutdia.objects.filter(ep_part=part_no,rm_part=rm_partno).values('cutdia_no').distinct())    
     if len(obj11):
         cutdia_no=obj11[0]['cutdia_no']
     for i in range(1,len(l2)+1):
         l3=list(m2_transaction11.objects.filter(work_order=wo_no,opn_no=l2[i-1]).values('qty_prod','qty_accep','work_rej','mat_rej','inspect_id').distinct())
+        if len(l3)==0:
+            l3=[{'qty_prod':'','qty_accep':'','work_rej':'','mat_rej':'','inspect_id':''}]
         obj12.append(l3)
+        # obj12.append(l3)
     for i in range(0,int(len(obj4))):
         obj4[i].update({'qty_prod':obj12[i][0]['qty_prod'],'qty_accep':obj12[i][0]['qty_accep'],'work_rej':obj12[i][0]['work_rej'],'mat_rej':obj12[i][0]['mat_rej'],'inspect_id':obj12[i][0]['inspect_id']})
     pdfcontext={
+        'des1':des1,
+        'drgno':drgno,
+        'l_to':l_to,
+        'qty':qty,
+        'l_fr':l_fr,
+        'shop_unit':shop_unit,
+        'date_string':date_string,
         'cutdia_no':cutdia_no,
         'alpha_1':alpha_1,
         'rm_qty':rm_qty,
@@ -1063,7 +1090,7 @@ def m2Pdf(request, *args, **kwargs):
         'obj12':obj12
     }  
     pdf = render_to_pdf('m2report.html',pdfcontext)
-    return HttpResponse(pdf, content_type='application/pdf') 
+    return HttpResponse(pdf, content_type='application/pdf')
 
 
 
@@ -22441,6 +22468,13 @@ def cnote_get_details(request):
         return JsonResponse(obj, safe = False)
     return JsonResponse({"success":False}, status = 400)
 
+def assly_validation(request):
+    if request.method == "GET" and request.is_ajax():
+        asno = request.GET.get('an')
+        obj = list(Part.objects.filter(partno = asno).values('partno','des').distinct())
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status = 400)
+
 def allot_update(request):
     if request.method == "GET" and request.is_ajax():
         cn_no = request.GET.get('cn_no')
@@ -22468,7 +22502,7 @@ def allot_update(request):
             Copn.objects.filter(part_no = None).delete()
             Copn.objects.filter(cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
         else:
-            Cnote.objects.filter(chg_ind = chng_ind, ppl_cn_no = cn_no).update(reg_no = edp_reg_no, reg_dt = edp_reg_dt, file_no = file_no, page_no= page_no, cn_dt= cn_dt, updt_dt = up_dt, lett_no = ltr_no, status = sts, ref_1_dt = dt_ref)
+            Cnote.objects.filter(chg_ind = chng_ind, ppl_cn_no = cn_no).update(reg_no = edp_reg_no, reg_dt = edp_reg_dt, file_no = file_no, page_no= page_no, cn_dt= cn_dt, updt_dt = up_dt, lett_no = ltr_no, status = sts, ref_1_dt = dt_ref, assly_no = assly_no, assly_desc = assly_desc, cn_reg_dt=cn_reg_dt)
         return JsonResponse(num, safe = False)
     return JsonResponse({"success":False}, status = 400)
 
