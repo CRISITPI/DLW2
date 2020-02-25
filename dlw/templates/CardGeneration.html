@@ -116,7 +116,7 @@
             <div class="form-group col-md-4">
                 <label for="batchno">Batch Order No.</label>
                   <div class="autocomplete" style="width:300px;">
-                        <input id="batchno" autocomplete="off" type="text" name="batchno" placeholder="BATCH NO" onclick="funbatch();"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
+                        <input id="batchno"  type="text" name="batchno" placeholder="BATCH NO" onclick="funbatch();"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
                         <br><span id="lblErrorb" style="color: red"></span> 
                     </div>
         
@@ -203,9 +203,11 @@ var imp;
 var countries = [' '];
 var countries1 = [' '];
 var countries2 = [' '];
-document.querySelector("#batchno").addEventListener('change',(e)=>{
+
+document.querySelector("#brn_no").addEventListener('click',(e)=>{
     e.preventDefault();
     var batch=$('#batchno').val();
+    
     var data={batch};
     $.ajax({
     type : 'GET',
@@ -219,11 +221,12 @@ document.querySelector("#batchno").addEventListener('change',(e)=>{
       {
         countries.push((response[i].brn_no).toString());
       }
-      if (response.length==0)
+     if (response.length==0)
       {
         alert("Batch Does not exist in master.  CREATE NEW! ");
         $('#id3').show();
         $('#id4').show();
+        $("#ep_type").focus();
         imp=1;
           
       }
@@ -236,13 +239,14 @@ document.querySelector("#batchno").addEventListener('change',(e)=>{
     
     }); 
                 
-                })
+ })
 
 function funcbtncg()
 {
     myFunc1();
     myFunc2();
-   myFunc3();
+    myFunc3();
+    
     var d=$('#cardno option:selected').val();
     if (imp==0)
     {
@@ -640,7 +644,7 @@ function funbrn()
        $("#batchno").focus();
    }
 }
-document.querySelector("#asslyno").addEventListener('change',(e)=>{
+document.querySelector("#batchno").addEventListener('click',(e)=>{
                     e.preventDefault();
                     var mAsslyno = $("#asslyno").val();
                                      

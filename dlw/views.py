@@ -8203,10 +8203,10 @@ def CardGeneration(request):
                 prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
                 if len(bat)!=0:
                     epc=bat[0]['ep_type']
-                    brn=bat[0]['brn_no']
+                    brn=bno1
                 else:
                     epc=''
-                    brn=''
+                    brn=bno1
 
                 m4_no=''
                 seq=0
@@ -8313,7 +8313,7 @@ def CardGeneration(request):
                 prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
                 if len(bat)!=0:
                     epc=bat[0]['ep_type']
-                    brn=bat[0]['brn_no']
+                    brn=bno1
                     l_to=bat[0]['loco_to']
                     l_fr=bat[0]['loco_fr']
                     seq=bat[0]['seq']
@@ -8321,7 +8321,7 @@ def CardGeneration(request):
                     btype=bat[0]['batch_type']
                 else:
                     epc=''
-                    brn=''
+                    brn=bno1
                     l_to=''
                     l_fr=''
                     seq=''
@@ -8450,7 +8450,7 @@ def CardGeneration(request):
                     m5sl=int(sl[0]['m5glsn'])+1
                 if len(bat)!=0:
                     epc=bat[0]['ep_type']
-                    brn=bat[0]['brn_no']
+                    brn=bno1
                     l_to=bat[0]['loco_to']
                     l_fr=bat[0]['loco_fr']
                     seq=bat[0]['seq']
@@ -8458,7 +8458,7 @@ def CardGeneration(request):
                     btype=bat[0]['batch_type']
                 else:
                     epc=''
-                    brn=''
+                    brn=bno1
                     l_to=''
                     l_fr=''
                     seq=''
