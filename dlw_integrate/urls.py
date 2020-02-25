@@ -437,6 +437,8 @@ urlpatterns = [
     path('ajax/allot_update/',allot_update,name='allot_update'),
     path('ajax/assly_validation/',assly_validation,name='assly_validation'),
     path('ajax/m5cardgen_getbrn/',m5cardgen_getbrn,name='m5cardgen_getbrn'),
+    path('ajax/m5cardgen_getassembly/',m5cardgen_getassembly,name='m5cardgen_getassembly'),
+    path('ajax/cggetBatchNo/',cggetBatchNo,name='cggetBatchNo'),
 
 ]
 

@@ -195,6 +195,7 @@
             <th>Drawing NO</th>
             <th>PM NO</th>
             <th>DUE WK</th>
+            <th>Opn No</th>
             <th>Document NO</th>
             <th>Order Type</th>
         </tr>
@@ -209,6 +210,7 @@
             {% for i1 in obj5 %}
             <td>{{i1.pm_no}}</td>
             <td>{{i1.due_wk}}</td>
+            <td>{{i1.opn_no}}</td>
             {% endfor %}
             <td>{{doc_no}}</td>
             <input type="hidden" name="doc_no1" value="{{doc_no}}">
@@ -498,7 +500,7 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
   var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
         $.ajax({
               type : 'GET',
-              url : "{% url 'm14getdoc_no1' %}",
+              url : "{% url 'm14getdoc_no' %}",
               dataType : 'json',
               data : data,
               success : function(response){
@@ -521,19 +523,19 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
                             document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
                             mystr="";
                       }
-                        })
-              })
+                        });
+              });
 
 
 document.querySelector("#doc_no").addEventListener('change',(e)=>{
 
     document.querySelector("#myproceed").click();
-})
+});
 document.addEventListener('keypress',(event)=>{
     if(event.keyCode===13){
         event.preventDefault();
     }
-})
+});
 
 
 $(document).ready(function()

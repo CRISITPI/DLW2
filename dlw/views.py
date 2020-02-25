@@ -1396,7 +1396,7 @@ def m14view(request):
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             obj4 =  M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('l_fr','l_to')
-            obj5 =  M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('pm_no','due_wk')
+            obj5 =  M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('opn_no','pm_no','due_wk')
             obj = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('received_mat14', 'issued_qty14', 'received_qty14', 'laser_pst14', 'line14', 'closing_bal14', 'remarks14', 'posted_date14', 'wardkp_date14', 'shopsup_date14', 'posted1_date14')
             obj6 = Part.objects.filter(partno=part_no).values('m14splt_cd').distinct()
             code = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('unit').distinct()
@@ -1528,10 +1528,9 @@ def m14getdoc_no1(request):
         assembly_no = request.GET.get('assm_no')
         part_no = request.GET.get('part_no')
         doc_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
+
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
 
 
 
@@ -5010,13 +5009,17 @@ def m5newview(request):
 
             s = [str(i) for i in res] 
             workorder = int("".join(s)) 
-            obj1 = M5DOCnew.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('opn','n_shopsec','rm_partno','cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty','lc_no','pa','at','opn_desc').distinct()
+            obj1 = M5Docnew1.objects.filter(batch_no=wo_no,shop_sec=shop_sec, part_no=part_no,brn_no=brn_no,m5glsn=doc_no).values('opn','n_shopsec','rm_partno','cut_shear','pr_shopsec','n_shopsec','l_fr','l_to','qty_insp','inspector','date','remarks','worker','m2slno','qty_ord','m5prtdt','rm_ut','rm_qty','tot_rm_qty','rej_qty','rev_qty','lc_no','pa','at','opn_desc').distinct()
             obj2 = Part.objects.filter(partno=part_no).values('drgno','des','partno').order_by('partno').distinct()
             obj3 = Batch.objects.filter(bo_no=workorder,brn_no=brn_no,b_close_dt__isnull=True).values('part_no').distinct()
             obj4 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('shopsec','staff_no','in_date','flag','name','cat','in1','out','ticket_no','month_hrs','total_time_taken','out_date','in_date','shift_typename').distinct()
             obj5 = M5SHEMP1.objects.filter(shopsec=shop_sec).values('shopsec','staff_no','name','ticket_no','flag').distinct()
             obj6  = Oprn.objects.filter(shop_sec=shop_sec,part_no=part_no).values('qtr_accep','mat_rej').exclude(qtr_accep=None,mat_rej=None).distinct()
-            obj10= Batch.objects.filter(bo_no=workorder).values('batch_type','loco_fr','loco_to')[0]
+            obj10= Batch.objects.filter(bo_no=workorder).values('batch_type','loco_fr','loco_to')
+            if len(obj10)!=0:
+                obj10=[{'batch_type':obj10[0]['batch_type'],'loco_fr':obj10[0]['loco_fr'],'loco_to':obj10[0]['loco_to']}]
+            else:
+                obj10=[{'batch_type':'','loco_fr':'','loco_to':''}]
             leng=0
             leng5=0
             leng9=0
@@ -5118,7 +5121,7 @@ def m5newview(request):
             qty_acc=request.POST.get('qtyac')
             mat_rej=request.POST.get('mat_rej')
             
-            M5DOCnew.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=str(qty_insp),inspector=str(inspector),date=str(date),remarks=str(remarks),rev_qty=str(rev_qty),rej_qty=str(rej_qty),worker=str(worker),acc_qty=str(qty_acc),rej_mat=str(mat_rej))           
+            M5Docnew1.objects.filter(shop_sec=shopsec,part_no=partno,brn_no=brn_no).update(qty_insp=str(qty_insp),inspector=str(inspector),date=str(date),remarks=str(remarks),rev_qty=str(rev_qty),rej_qty=str(rej_qty),worker=str(worker),acc_qty=str(qty_acc),rej_mat=str(mat_rej))           
             len4=request.POST.get('len4')
             
             for i in range(int(len4)+1, int(inoutnum)+1):
@@ -5144,7 +5147,7 @@ def m5newview(request):
 def m5getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        wono = list(M5DOCnew.objects.filter(shop_sec = shop_sec).values('batch_no').exclude(batch_no__isnull=True).distinct())
+        wono = list(M5Docnew1.objects.filter(shop_sec = shop_sec).values('batch_no').exclude(batch_no__isnull=True).distinct())
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5152,7 +5155,7 @@ def m5getbr(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
         shop_sec = request.GET.get('shop_sec')
-        br_no = list(M5DOCnew.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('brn_no').exclude(brn_no__isnull=True).distinct())
+        br_no = list(M5Docnew1.objects.filter(batch_no =wo_no,shop_sec=shop_sec).values('brn_no').exclude(brn_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5163,7 +5166,7 @@ def m5getpart_no(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
-        part_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec).values('part_no').exclude(part_no__isnull=True).distinct())
+        part_no = list(M5Docnew1.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec).values('part_no').exclude(part_no__isnull=True).distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5175,7 +5178,7 @@ def m5getdoc_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_no')
-        doc_no = list(M5DOCnew.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').distinct())
+        doc_no = list(M5Docnew1.objects.filter(batch_no =wo_no,brn_no=br_no,shop_sec=shop_sec,part_no=part_no).values('m5glsn').distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -8157,14 +8160,30 @@ def CardGeneration(request):
         'ip':get_client_ip(request),
         'nav':nav,
         'subnav':subnav,
-        'assmno':assmno,
     }
     if request.method=="POST":
         batch = request.POST.get('batchno')
         bval=request.POST.get('cardbutton')
         asmno=request.POST.get('asslyno')
         card = request.POST.get('cardno')
+        et = request.POST.get('ep_type')
+        et=et.upper()
+        lofr=request.POST.get('loco_fr')
+        loto=request.POST.get('loco_to')
+        bpe = request.POST.get('b_type')
+        bpe=bpe.upper()
+        bty=request.POST.get('b_qty')
+        wkf1 = request.POST.get('wkf')
         alt = request.POST.get('ralt')
+        bno1 = request.POST.get('brn_no')
+        prtdt=datetime.datetime.now().strftime ("%Y-%m-%d")
+        print(et)
+        Batch1=Batch.objects.filter(part_no=asmno,bo_no=batch).values('bo_no')
+        if len(Batch1)==0:
+            print('Batch Created')
+            Batch.objects.create(bo_no=batch,part_no =asmno,ep_type =et,loco_fr =lofr,loco_to =loto,batch_qty =int(bty),batch_type =bpe,uot_wk_f =int(wkf1),brn_no =int(bno1),b_expl_dt=prtdt )
+
+        
         if batch and bval and asmno and card:
             if bval=="Generate Cards" and card=="M2":
                 res = []
@@ -8182,8 +8201,13 @@ def CardGeneration(request):
                     M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).delete()
                
                 prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
-                epc=bat[0]['ep_type']
-                brn=bat[0]['brn_no']
+                if len(bat)!=0:
+                    epc=bat[0]['ep_type']
+                    brn=bat[0]['brn_no']
+                else:
+                    epc=''
+                    brn=''
+
                 m4_no=''
                 seq=0
                 version=''
@@ -8239,7 +8263,7 @@ def CardGeneration(request):
                         r_ptc=r_cqp['b']
                         if len(r_part1) !=0:
                             r_part=r_part1[0]['cp_part']
-                    cut=Cutpart.objects.filter(partno=i,epc=bat[0]['ep_type']).values('cut_dia').order_by('cut_dia',)
+                    cut=Cutpart.objects.filter(partno=i,epc=epc).values('cut_dia').order_by('cut_dia',)
                     if len(cut)>0:
                         cut_Shear=cut[0]['cut_dia']
                     else:
@@ -8262,23 +8286,10 @@ def CardGeneration(request):
                     qty1=M2Doc.objects.filter(part_no=i,batch_no=batch,assly_no=asmno).values('qty').distinct()
                     if len(qty1)!=0:
                         qty=qty1[0]['qty']
-                    else:
-                        continue
+                    
                     M2Docnew1.objects.create(scl_cl=scl,batch_no=batch,assly_no=asmno,f_shopsec=shop,part_no=i,ptc='M',qty=qty,rc_st_wk=r,rm_partno=r_part,rm_qty=r_qty,rm_ptc=r_ptc,cut_shear=cut_Shear,m2sln=m2sln,m2prtdt=prtdt,seq=seq,brn_no=brn,m4_no=m4_no,epc=epc,version=version,status=status,mark=mark,del_fl=del_fl,epc_old=epc_old)
-                    dat.append({'scl_cl':scl,'partno':i,'shop':shop,'cut_Shear':cut_Shear,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})
-                    m2sln=m2sln+1
-                data = {
-                      'card':card,
-                      'asl':asmno,
-                      'batch':batch,
-                      'dat':dat,
-                      'ades':ades,
-                      'epc':epc,
-                      'brn':brn,
-                      'qty':qty, 
-                   }   
-                pdf = render_to_pdf('cardpdf.html', data)
-                return HttpResponse(pdf, content_type='application/pdf')
+                messages.success(request, 'Card generated Successfully!')  
+                
                
             elif bval=="Generate Cards" and card=="M4":
                 code='M'
@@ -8289,8 +8300,11 @@ def CardGeneration(request):
                 arr1=[asmno]
                 dat1=[]
                 dat=[]
-                ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
-                ades=ades[0]['des']
+                ades=list(Part.objects.filter(partno = asmno).values('des').distinct())
+                if len(ades)!=0: 
+                    ades=ades[0]['des']
+                else:
+                    ades=''
                 a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
                 bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq')
                 del1=M14M4new1.objects.filter(bo_no=batch,assly_no=asmno,doc_code='88').values('assly_no')
@@ -8305,6 +8319,14 @@ def CardGeneration(request):
                     seq=bat[0]['seq']
                     bqty=bat[0]['batch_qty']
                     btype=bat[0]['batch_type']
+                else:
+                    epc=''
+                    brn=''
+                    l_to=''
+                    l_fr=''
+                    seq=''
+                    bqty=''
+                    btype=''
                 sl=M14M4new1.objects.values('doc_no').order_by('-doc_no')
                 if len(sl)!=0:
                     no=int(sl[0]['doc_no'])+1
@@ -8391,17 +8413,10 @@ def CardGeneration(request):
                         di='C'    
                     else:
                         di=dat1[k]['r_ptc']
-                    dat.append({'doc_code':'88','doc_no':no,'pm_no':dat1[k]['pm_no'],'part_no':i[4:],'l_fr':l_fr,'QUANTITY':format(quantity,'.3f'),'l_to':l_to,'batch':batch,'assly':asmno,'seq':seq,'dw':dat1[k]['rm'],'di':di,'unit':unit['shop_ut'],'epc':epc})
                     
                     M14M4new1.objects.create(doc_code='88',doc_no=no,pm_no=dat1[k]['pm_no'],part_no=i[4:],qty=format(quantity,'.3f'),l_fr=l_fr,l_to=l_to,bo_no=batch,assly_no=asmno,seq=seq,due_wk=dat1[k]['rm'],prtdt=prtdt,brn_no=brn,doc_ind=di,unit=unit['shop_ut'],epc=epc)
                     no=no+1 
-                data = {
-                      'card':card,
-                      'dat':dat,
-                   }   
-                pdf = render_to_pdf('m4cardpdf.html', data)
-                return HttpResponse(pdf, content_type='application/pdf')
-                    
+                messages.success(request, 'Card generated Successfully!')    
             elif bval=="Generate Cards" and card=="M5":
                 c = 0
                 pn = ""
@@ -8423,7 +8438,7 @@ def CardGeneration(request):
                 res=[]
                 final=[]
                 seq=0
-                m5sl=0
+                m5sl=1
                 a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
                 bat=Batch.objects.filter(part_no=asmno,bo_no=batch).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq')
                 del1=M5Docnew1.objects.filter(batch_no=batch,assly_no=asmno).all()
@@ -8441,81 +8456,28 @@ def CardGeneration(request):
                     seq=bat[0]['seq']
                     bqty=bat[0]['batch_qty']
                     btype=bat[0]['batch_type']
+                else:
+                    epc=''
+                    brn=''
+                    l_to=''
+                    l_fr=''
+                    seq=''
+                    bqty=''
+                    btype=''
                 if alt=='F' and sch=='M' and btype=='O':
                     return render(request,'CardGeneration.html')
-                res = Childnode(request,asmno,res,'M')
-                res.sort()
-                prtdt=datetime.datetime.now().strftime ("%d-%m-%Y")
-                u=0
-                x=0
-                if len(a) !=0:
-                     if a[0]['uot_wk_f'] is not None:
-                        u=int(a[0]['uot_wk_f'])
-                if u>3000:
-                        x=(int(u/100)*52)+(u%100)
-                else:
-                        x=(int((u/100) + 100)*52)+(u%100)
-                j=0
-                for i in res:
-                    z=[]
-                    r=0
-                    o=0
-                    s=0
-                    shop=''
-                    r_qty=0
-                    r_ptc=''
-                    r_part=''
-                    qty=0
-                    scl=''
-                    for k in Oprn.objects.raw('SELECT id, "SHOP_SEC", "OPN" :: int FROM public."OPRN" WHERE "PART_NO"=%s order by "OPN" :: int ',[i]):
-                        shop=k.shop_sec
-                        break
-                    if len(shop)!= 4:
-                        continue
-                    z=Shop.objects.filter(shop=shop).values('shop_ldt').order_by('shop')
-                    if x != 0:
-                        o=x
-                    if len(z)!=0:
-                        s=int(z[0]['shop_ldt'])
-                    d=int((o-s)/52)
-                    r=((d % 100) * 100 + ((o - s) % 52))
-                    r_cqp=Nstr.objects.filter(pp_part=i).aggregate(a=Max('qty'),b=Max('ptc'))
-                    r_part1=Nstr.objects.filter(pp_part=i,l_to='9999').values('cp_part').order_by('cp_part').distinct()
-                    if r_cqp['b']=='R' or r_cqp['b']=='Q':
-                        r_qty=r_cqp['a']
-                        r_ptc=r_cqp['b']
-                        if len(r_part1) !=0:
-                            r_part=r_part1[0]['cp_part']
-                    cut=Cutpart.objects.filter(partno=i,epc=bat[0]['ep_type']).values('cut_dia').order_by('cut_dia',)
-                    if len(cut)>0:
-                        cut_Shear=cut[0]['cut_dia']
-                    else:
-                        cut_Shear=''
-                    lst=["01","02","05","1A","1C","1F"]
-                    if epc in lst:
-                        if s >35:
-                            scl='A'
-                        elif s>25:
-                            scl='B'
-                        else:
-                            scl='C'
-                    else:  
-                        if s >25:
-                            scl='A'
-                        elif s>15:
-                            scl='B'
-                        else:
-                            scl='C'
-                    qty1=M2Doc.objects.filter(part_no=i,batch_no=batch,assly_no=asmno).values('qty').distinct()
-                    if len(qty1)!=0:
-                        qty=qty1[0]['qty']
-                    else:
-                        continue
-                    dtm5.append({'scl_cl':scl,'partno':i,'shop':shop,'cut_Shear':cut_Shear,'r_part':r_part,'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty,'ptc':'M'})
+
+                dtm2=list(M2Docnew1.objects.filter(batch_no=batch,assly_no=asmno).values('scl_cl','part_no','f_shopsec','cut_shear','rm_partno','rm_ptc','rm_qty','rc_st_wk','qty','ptc','m2sln'))
+                dtm5=dtm2
+                print(dtm2)
+                if len(dtm5)==0:
+                    msg='Root Card not exist for assembly no.'+ asmno +' and batch no. '+ batch + '    Generate root card first!'
+                    messages.error(request,msg)
+                    return render(request,'CardGeneration.html',context)
                 
                 for i in range(len(dtm5)):
-                    pn=dtm5[i]['partno']
-                    pn_r=dtm5[i]['r_part']
+                    pn=dtm5[i]['part_no']
+                    pn_r=dtm5[i]['rm_partno']
                     pr_shopsec = ""
                     pt_shop=list(Part.objects.filter(partno=pn).values('shop_ut').order_by('partno'))
 
@@ -8525,16 +8487,10 @@ def CardGeneration(request):
                     else:
                         rm_unit=pt_shop[0]['shop_ut']
                     #################################
-                    
-                    print('part no',dtm5[i]['partno'])
-                    
+                    m2sl=dtm5[i]['m2sln']
                     scl=dtm5[i]['scl_cl']
                     next=0
-                    obj=M2Docnew1.objects.filter(part_no=pn,batch_no=batch,assly_no=asmno).values('m2sln').distinct()
-                    if len(obj)!=0:
-                        m2sl=obj[0]['m2sln']
-                    else:
-                        m2sl=''
+                   
                     for j in Oprn.objects.raw('select distinct id,"SHOP_SEC","PART_NO","M5_CD","LC_NO",lpad("OPN",3,%s) as opn ,substr(trim("DES"),1,30) as des,substr("LOT" :: text,1,1) as lot,COALESCE("PA",00.00) as pa,COALESCE("AT",000.00) as at1,COALESCE("NCP_JBS", %s) as ncp from public."OPRN" where  COALESCE("NCP_JBS",%s)=%s and COALESCE("DEL_FL",%s)=%s and trim("PART_NO")=%s order by opn;',['0','','#','#','#','#',pn]):
                         lf=int(l_fr)
                         if j is not None:
@@ -8547,7 +8503,6 @@ def CardGeneration(request):
                                         n_shopsec=k.shop_sec
                                         break
                                     n=n+1
-                            print('SHOP_SEC',j.shop_sec,j.m5_cd,j.lc_no,j.opn,j.des,j.at1,lf)
                             
                             if j.m5_cd.strip()=='5':
                                 for l in range(0,5):
@@ -8557,17 +8512,14 @@ def CardGeneration(request):
                                     else:
                                         qo=0
                                     m5sl=m5sl+1
-                                    M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_Shear'],rm_qty =float(dtm5[i]['r_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['r_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))
-                                    final.append({'scl':scl,'p_shop':pr_shopsec,'n_shop':n_shopsec,'partno':j.part_no,'shop':j.shop_sec,'M5_CD':j.m5_cd,'LC_NO':j.lc_no,'OPN':j.opn,'DES':j.des,'LOT':j.lot,'PA':j.pa,'AT':j.at1,'lfr':lf,'lto':lf})
+                                    print(scl,batch,asmno,pn ,int(m2sl) ,pn_r,rm_unit,dtm5[i]['cut_shear'],float(dtm5[i]['rm_qty']),j.shop_sec,j.lc_no,j.opn,j.des,float(j.pa),float(j.at1),float(j.lot),float(qo),float(qo*dtm5[i]['rm_qty']),j.m5_cd,pr_shopsec,n_shopsec,lf,lf,m5sl,prtdt,brn,seq)
+                                    M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_shear'],rm_qty =float(dtm5[i]['rm_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['rm_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))
                                     lf=lf+1
                             else:
                                 m5sl=m5sl+1
-                                M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_Shear'],rm_qty =float(dtm5[i]['r_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['r_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))                                 
-                                final.append({'scl':scl,'p_shop':pr_shopsec,'n_shop':n_shopsec,'partno':j.part_no,'shop':j.shop_sec,'M5_CD':j.m5_cd,'LC_NO':j.lc_no,'OPN':j.opn,'DES':j.des,'LOT':j.lot,'PA':j.pa,'AT':j.at1,'lfr':l_fr,'lto':l_to})
+                                M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_shear'],rm_qty =float(dtm5[i]['rm_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['rm_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))                                 
                             pr_shopsec = j.shop_sec
-                
-          
-
+                messages.success(request, 'Card generated Successfully!')
             elif bval=="Generate Cards" and card=="M14":
                 res = []
             #     obj1 = ShowLeaf(request,asmno,res,'P')
@@ -21411,15 +21363,66 @@ def rmqry_rpt(request):
 @login_required
 @role_required(urlpass='/EpCpm/')
 def EpCpm(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+
     my_date=Cpm.objects.all().values('updt_dt').distinct()
     my=[]
     for i in my_date:
         my.append(i['updt_dt'])
     my.sort(reverse= True)
+
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lblDt': my[0],
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+            'lblDt': my[0],
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+            'lblDt': my[0],
+        }
     
-    context={
-        'lblDt': my[0],
-    }
+
 
     return render(request,'EpCpm.html',context)
       
@@ -21646,7 +21649,57 @@ import datetime
 @login_required
 @role_required(urlpass='/qrycstr/')
 def qrycstr(request):
-    return render(request,'qrycstr.html')
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+
+
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'qrycstr.html',context)
 
 def qrycstr1(request):
     if request.method == "GET" and request.is_ajax():   
@@ -22512,3 +22565,25 @@ def m5cardgen_getbrn(request):
         obj=list(Batch.objects.filter(bo_no=batch).values('brn_no'))
         return JsonResponse(obj, safe = False)
      return JsonResponse({"success":False}, status = 400)
+
+def cggetBatchNo(request):
+     if request.method == "GET" and request.is_ajax():
+        batch = request.GET.get('batch')
+        mAsslyno = request.GET.get('mAsslyno')
+        obj=list(Batch.objects.filter(part_no=mAsslyno).values('bo_no'))
+        return JsonResponse(obj, safe = False)
+     return JsonResponse({"success":False}, status = 400)
+
+def m5cardgen_getassembly(request):
+     if request.method == "GET" and request.is_ajax():
+        obj=list(Batch.objects.all().values('part_no').exclude(part_no__isnull=True).distinct().order_by('part_no'))
+        return JsonResponse(obj, safe = False)
+     return JsonResponse({"success":False}, status = 400)
+
+
+
+
+
+
+
+     

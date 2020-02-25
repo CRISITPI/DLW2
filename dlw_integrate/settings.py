@@ -155,4 +155,3 @@ EMAIL_HOST_PASSWORD = 'cris@itpi'
 # EMAIL_HOST_USER = 'testsite_app'
 # EMAIL_HOST_PASSWORD = 'mys3cr3tp4ssw0rd'
 # SESSION_COOKIE_SECURE = True
-
