@@ -8512,7 +8512,6 @@ def CardGeneration(request):
                                     else:
                                         qo=0
                                     m5sl=m5sl+1
-                                    print(scl,batch,asmno,pn ,int(m2sl) ,pn_r,rm_unit,dtm5[i]['cut_shear'],float(dtm5[i]['rm_qty']),j.shop_sec,j.lc_no,j.opn,j.des,float(j.pa),float(j.at1),float(j.lot),float(qo),float(qo*dtm5[i]['rm_qty']),j.m5_cd,pr_shopsec,n_shopsec,lf,lf,m5sl,prtdt,brn,seq)
                                     M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_shear'],rm_qty =float(dtm5[i]['rm_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['rm_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))
                                     lf=lf+1
                             else:

@@ -18,7 +18,7 @@
     }
     
     input {
-      border: 1px solid transparent;
+      border: 1px solid transparent;    
       background-color: #f1f1f1;
       padding: 10px;
       font-size: 16px;
@@ -200,6 +200,7 @@
     },5000)
 var ch;
 var imp;
+var D=0;
 var countries = [' '];
 var countries1 = [' '];
 var countries2 = [' '];
@@ -221,6 +222,8 @@ document.querySelector("#brn_no").addEventListener('click',(e)=>{
       {
         countries.push((response[i].brn_no).toString());
       }
+      if (d==0)
+{   d=1;
      if (response.length==0)
       {
         alert("Batch Does not exist in master.  CREATE NEW! ");
@@ -235,7 +238,7 @@ document.querySelector("#brn_no").addEventListener('click',(e)=>{
         $('#id4').hide();
       }
       
-    }
+    }}
     
     }); 
                 
@@ -380,6 +383,7 @@ window.onload=function()
     $('#id4').hide();
     imp=0;
     ch=0;
+    d=0;
                       var a=0;
                       var data = {a};
                       $.ajax({
