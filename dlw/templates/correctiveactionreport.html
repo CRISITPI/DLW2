@@ -1,0 +1,107 @@
+{% block content %} 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Report</title>
+    <style>
+        pre{
+            color: black;
+            margin-top:0px;
+            font-weight: bold;
+        }
+        textarea{
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <br>
+<br>
+<center>DIESEL LOCOMOTIVE WORKS, VARANASI<br>
+    Corrective Action(CA)</center>
+
+<br>
+<br>
+{% for i in obj %}
+<table width="70%" align="center" border=0>
+    
+    <tr>
+        <td>&nbsp;S.No:&nbsp;&nbsp; {{i.sno}}</td> 
+        <td></td>
+        <td>Date:&nbsp;&nbsp;{{i.date}}</td>
+    </tr>
+</table>
+<table width="70%" align="center" border=0>
+    <tr>
+        <td colspan="2"><br><br>1. <u>Description Of Problem/Non Conformance</u></td>        
+    </tr>
+    <tr> 
+        <td><br>PL No. :&nbsp;&nbsp;</td><td><br>{{i.pl_no}}</td>
+    </tr>
+    <tr>
+        <td><br>Type of Engine/Loco :&nbsp;&nbsp;</td>
+        <td><br>{{i.engine_loco_type}}</td>
+    </tr>
+    <tr>
+        <td><br>Name of Supplier :&nbsp;&nbsp;</td>
+        <td><br>{{i.supplier_name}}</td>
+    </tr>
+    <tr>
+        <td><br>Current % rejection :&nbsp;&nbsp;</td>
+        <td><br>{{i.rejection_percentage}}</td>
+    </tr>
+</table>
+<table width="70%" align="center" border=0>
+    <tr><td valign="top"><br><br>Past Failure Details :</td>
+        <td><br><pre><textarea>{{i.past_failure_details}}</textarea></pre></td>
+    </tr>
+    <tr>
+        <td colspan="2"><br><u>For external customer complaints</u></td> 
+    </tr>
+    <tr>
+        <td valign="top"><br><br>a. Name of Reporting Agency :</td>
+        <td><br><pre><textarea>{{i.reporting_agency_name}}</textarea></pre></td>
+    </tr>
+    <tr>
+        <td valign="top"><br><br>b. Failure since last six months :</td>
+            <td><br><pre><textarea>{{i.failure_since_last_six_months}}</textarea></pre></td>
+    </tr>
+    <tr>
+        <td valign="top"><br><br>2. <u>Brief Comments on Probable Cause and Redemy</u> :</td>
+        <td><br><pre><textarea>{{i.probable_cause_redemy}}</textarea></pre></td>
+    </tr>
+    {% for j in obj1 %}
+    <tr>
+        <td><br>&nbsp;&nbsp;&nbsp;&nbsp;Employee ID :&nbsp;&nbsp;{{i.employee_id}}</td>
+        <td><br>Name :&nbsp;&nbsp;{{j.empname}}</td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td><br>Designation :&nbsp;&nbsp;{{j.desig_longdesc}}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td></td>
+        <td><br>Signature :&nbsp;&nbsp;....................................</td>
+    </tr>
+    <tr>
+        <td><br><br>3. <u>C.A. Registration Number</u> :&nbsp;&nbsp;{{i.ca_regis_no}}</td>
+        <td><br><br>Date(to be given by MR office) :&nbsp;&nbsp;{{i.date_by_mroffice}}</td>
+
+    </tr>
+    <tr>
+        <td valign="top"><br><br>4. <u>Follow up</u> :</td>
+        <td><br><pre><textarea>{{i.follow_up}}</textarea></pre></td>
+    </tr>
+    <tr>
+        <td valign="top"><br><br>5. <u>Decision of MR office :</u></td>
+        <td><br><pre><textarea>{{i.mr_office_decision}}</textarea></pre></td>
+    </tr>
+    
+</table>
+{% endfor %}
+</body>
+</html>
+{% endblock content %} 

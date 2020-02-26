@@ -439,6 +439,13 @@ urlpatterns = [
     path('ajax/m5cardgen_getbrn/',m5cardgen_getbrn,name='m5cardgen_getbrn'),
     path('ajax/m5cardgen_getassembly/',m5cardgen_getassembly,name='m5cardgen_getassembly'),
     path('ajax/cggetBatchNo/',cggetBatchNo,name='cggetBatchNo'),
+    path('correctiveaction/',correctiveaction,name='correctiveaction'),
+    path('ajax/CorrectionActionSave/',CorrectionActionSave,name='CorrectionActionSave'),
+    path('ajax/CorrectiveActionValidatePlno/',CorrectiveActionValidatePlno,name='CorrectiveActionValidatePlno'),
+    path('ajax/CorrectiveActionValidateEid/',CorrectiveActionValidateEid,name='CorrectiveActionValidateEid'),
+    path('ajax/CorrectiveActionGetAllDetails/',CorrectiveActionGetAllDetails,name='CorrectiveActionGetAllDetails'),
+    path('ajax/CorrectionActionUpdate/',CorrectionActionUpdate,name='CorrectionActionUpdate'),
+   
 
 ]
 
