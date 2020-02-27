@@ -445,6 +445,8 @@ urlpatterns = [
     path('ajax/CorrectiveActionValidateEid/',CorrectiveActionValidateEid,name='CorrectiveActionValidateEid'),
     path('ajax/CorrectiveActionGetAllDetails/',CorrectiveActionGetAllDetails,name='CorrectiveActionGetAllDetails'),
     path('ajax/CorrectionActionUpdate/',CorrectionActionUpdate,name='CorrectionActionUpdate'),
+    path('prodqry/',prodqry,name='prodqry'),
+    path('ajax/sel_main/',sel_main,name='sel_main'),
    
 
 ]
