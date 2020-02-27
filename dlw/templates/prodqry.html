@@ -1,0 +1,1113 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+{% load static %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> 
+
+
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.class1 {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.class1 a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.class2 {
+  float: left;
+  overflow: hidden;
+}
+
+.class2 .class3 {
+  font-size: 16px;  
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.class1 a:hover, .class2:hover .class3 {
+  background-color: red;
+}
+
+.class4 {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.class4 a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.class4 a:hover {
+  background-color: #ddd;
+}
+
+.class2:hover .class4{
+  display: block;
+}   
+</style>
+
+
+<form action="{% url 'prodqry' %}" method="POST"> 
+    {% csrf_token %}
+    <div class="container" id="div1">
+      <h4 style="margin-left: 0px;">PRODUCTION QUERY</h4>
+<center><h4 id="hi">Please Choose Your Option</h4></center><br><br>
+<div class="class1" id="link">
+<div class="class2">
+  <button class="class3">Batch</button>
+  <div class="class4">
+    <a href="javascript:anchor_test()" id="11">WORK ORDER NO</a>
+    <a href="javascript:an_test()" id="12">PART NO</a>
+    <a href="javascript:a_test()" id="13">BRN NO</a>
+  </div>
+</div>
+
+<div class="class2">
+  <button class="class3">ROUTE CARD</button>
+  <div class="class4">
+    <a href="javascript:anc_test()" id="21">WORK ORDER NO</a>
+    <a href="javascript:anch_test()" id="22">ROUTE CARD NO</a>
+    <a href="javascript:test()" id="23">PART NO</a>
+	<a href="javascript:a_test()" id="24">BRN NO</a>
+  </div>
+</div>
+
+<div class="class2">
+  <button class="class3">JOB CARD</button>
+  <div class="class4">
+    <a href="javascript:anc_test()" id="31">WORK ORDER NO</a>
+    <a href="javascript:anch_test()" id="32">ROUTE CARD NO</a>
+    <a href="javascript:ancho_test()" id="33">JOB CARD NO</a>
+	  <a href="javascript:test()" id="34">PART NO</a>
+	  <a href="javascript:a_test()" id="35">BRN NO</a>
+  </div>
+</div>
+
+<div class="class2">
+  <button class="class3">M14(PUR ISSUE SLIP)</button>
+  <div class="class4">
+    <a href="javascript:anchor_test()" id="41">PART NO</a>
+    <a href="javascript:a_test()" id="42">BRN NO</a>
+  </div>
+</div>
+
+<!-- <div class="class2">
+  <button class="class3">JBS</button>
+  <div class="class4">
+    <a href="#" id="51">WORK ORDER NO</a>
+    <a href="#" id="52">PART NO</a>
+    <a href="#" id="53">BRN NO</a>
+  </div>
+</div>
+
+<div class="class2">
+  <button class="class3">VOUCHER POSTING</button>
+  <div class="class4">
+    <a href="javascript:anchor_test()" id="61">PART NO</a>
+    <a href="#" id="62">BRN NO</a>
+  </div>
+</div> -->
+
+<div class="class2">
+  <button class="class3">ALT-DOC</button>
+  <div class="class4">
+    <a href="javascript:anchor_test()" id="71">PART NO</a>
+  </div>
+</div>
+</div>
+<label id="lbl" style="display: none; margin-left: 300px;">Feed Query Key=></label>
+<div id="view11" style="display:none;">
+<table align="center" >
+<tr id='1'>
+<td>Batch No:</td>
+<td><input type="text" id="b_no"></td>
+</tr>
+<tr id='2'>
+<td>Part No:</td>
+<td><input type="text" id="p_no"></td>
+</tr>
+<tr>
+<td></td>
+<td><input type="button" name="Proc" id="Proc" value="Proceed" onclick="func()">
+<input type="button" name="Back" id="Back" value="Go Back" onclick="back()"></td>
+</tr>
+</table>
+</div>
+
+<div id="view_ptbt" style="display:none;">
+<table align="center">
+<tr id='3'>
+<td>Part No:</td>
+<td><input type="text" id="pa_no"></td>
+</tr>
+<tr id='4'>
+<td>Batch No:</td>
+<td><input type="text" id="bo_no"></td>
+</tr>
+<tr>
+<td></td>
+<td><input type="button" name="Proc" id="Proc1" value="Proceed" onclick="func()">
+<input type="button" name="Back" id="Back" value="Go Back" onclick="back()"></td>
+</tr>
+</table>
+</div>
+
+<div id="view_brn" style="display:none;">
+<table align="center">
+<tr id='5'>
+<td>Brn No:</td>
+<td><input type="text" id="br_no"></td>
+</tr>
+<tr>
+<td></td>
+<td><input type="button" name="Proc" id="Proc2" value="Proceed" onclick="func()">
+<input type="button" name="Back" id="Back" value="Go Back" onclick="back()"></td>
+</tr>
+</table>
+</div>
+
+<div id="view_part" style="display:none;">
+<table align="center">
+<tr id='6'>
+<td>Part No:</td>
+<td><input type="text" id="par_no"></td>
+</tr>
+<tr>
+<td></td>
+<td><input type="button" name="Proc" id="Proc3" value="Proceed" onclick="func()">
+<input type="button" name="Back" id="Back" value="Go Back" onclick="back()"></td>
+</tr>
+</table>
+</div>
+
+<div  id="view_assly" style="display:none;">
+<table align="center">
+<tr id='7'>
+<td>Batch No:</td>
+<td><input type="text" id="ba_no"></td>
+</tr>
+<tr id='8'>
+<td>Assly No:</td>
+<td><input type="text" id="as_no"></td>
+</tr>
+<tr>
+<td></td>
+<td><input type="button" name="Proc" id="Proc4" value="Proceed" onclick="func()">
+<input type="button" name="Back" id="Back" value="Go Back" onclick="back()"></td>
+</tr>
+</table>
+</div>
+
+<div id="view_Rcrd" style="display:none;"> 
+<table align="center">
+<tr id='9'>
+<td>Route Card No:</td>
+<td><input type="text" id="rc_no"></td>
+</tr>
+<tr>
+<td></td>
+<td><input type="button" name="Proc" id="Proc5" value="Proceed" onclick="func()">
+<input type="button" name="Back" id="Back" value="Go Back" onclick="back()"></td>
+</tr>
+</table>
+</div>
+
+<div id="view_jbcrd" style="display:none;">
+<table align="center" >
+<tr id='10'>
+<td>Job Card No:</td>
+<td><input type="text" id="jc_no"></td>
+</tr>
+<tr>
+<td></td>
+<td><input type="button" name="Proc" id="Proc6" value="Proceed" onclick="func()">
+<input type="button" name="Back" id="Back" value="Go Back" onclick="back()"></td>
+</tr>
+</table>
+</div>
+<table align="center" id="first" class="table table-striped table-bordered" style=" display: none;">
+  <thead style="background-color:ghostwhite; font-size:12px;">
+      <tr>
+          <th>PART NO</th>
+          <th>BO NO</th>
+          <th>EP_TYPE</th>
+          <th>LOCO_FR</th>
+          <th>LOCO_TO</th>
+          <th>BATCH_QTY</th>
+          <th>BATCH_TYPE</th>
+          <th>SEQ</th>
+          <th>BRN_NO</th>
+          <th>STATUS</th>
+          <th>SO_NO</th>
+      </tr>
+  </thead>
+  <tbody style="font-size:11px; font-weight: 610;">
+</table>
+
+<table id="second" align="center" class="table table-striped table-bordered" style=" display: none;">
+  <thead style="background-color:ghostwhite; font-size:12px;">
+      <tr>
+          <th>SCL_CL</th>
+          <th>PART NO</th>
+          <th>EPC</th>
+          <th>F_SHOPSEC</th>
+          <th>QTY</th>
+          <th>PTC</th>
+          <th>ASSLY_NO</th>
+          <th>RM_PARTNO</th>
+          <th>RM_QTY</th>
+          <th>RM_PTC</th>
+          <th>M4_NO</th>
+          <th>BRN_NO</th>
+          <th>M2SLN</th>
+          <th>M2PRTDT</th>
+          <th>CUT_SHEAR</th>
+      </tr>
+  </thead>
+  <tbody style="font-size:11px; font-weight: 610;">
+</table>
+
+<table id="third1" align="center" class="table table-striped table-bordered" style=" display: none;">
+  <thead style="background-color:ghostwhite; font-size:12px;">
+      <tr>
+        <th>SCL_CL</th>
+        <th>PART NO</th>
+        <th>BATCH_NO</th>
+        <th>QTY_ORD</th>
+        <th>ASSLY_NO</th>
+        <th>RM_PARTNO</th>
+        <th>RM_QTY</th>
+        <th>CUT_SHEAR</th>
+        <th>M5GLSN</th>
+        <th>BRN</th>
+        <th>M2SLNO</th>
+        <th>M5PRTDT</th>
+        <th>SHOP_SEC</th>
+        <th>LC_NO</th>
+        <th>DES</th>
+      </tr>
+  </thead>
+  <tbody style="font-size:11px; font-weight: 610;">
+</table>
+
+<table id="third" align="center" class="table table-striped table-bordered" style=" display: none;">
+  <thead style="background-color:ghostwhite; font-size:12px;">
+      <tr>
+        <th>SCL_CL</th>
+        <th>PART NO</th>
+        <th>QTY_ORD</th>
+        <th>ASSLY_NO</th>
+        <th>RM_PARTNO</th>
+        <th>RM_QTY</th>
+        <th>CUT_SHEAR</th>
+        <th>M5GLSN</th>
+        <th>BATCH_NO</th>
+        <th>M2SLNO</th>
+        <th>M5PRTDT</th>
+        <th>SHOP_SEC</th>
+        <th>LC_NO</th>
+        <th>OPN</th>
+        <th>DES</th>
+      </tr>
+  </thead>
+  <tbody style="font-size:11px; font-weight: 610;">
+</table>
+
+<table id="fourth" align="center" class="table table-striped table-bordered" style=" display: none;">
+  <thead style="background-color:ghostwhite; font-size:12px;">
+      <tr>
+          <th>PART NO</th>
+          <th>BO NO</th>
+          <th>PM_NO</th>
+          <th>QTY</th>
+          <th>L_FR</th>
+          <th>L_TO</th>
+          <th>ASSLY_NO</th>
+          <th>BRN_NO</th>
+          <th>DOC_NO</th>
+      </tr>
+  </thead>
+  <tbody style="font-size:11px; font-weight: 610;">
+</table>
+
+<table id="seventh" align="center" class="table table-striped table-bordered" style=" display: none;">
+  <thead style="background-color:ghostwhite; font-size:12px;">
+      <tr>
+          <th>BRN NO</th>
+          <th>PART NO</th>
+          <th>L_FR</th>
+          <th>L_TO</th>
+          <th>M2_FR</th>
+          <th>M2_TO</th>
+          <th>M5_FR</th>
+          <th>M5_TO</th>
+          <th>M14_FR</th>
+          <th>M14_TO</th>
+          <th>M4_FR</th>
+          <th>M4_TO</th>
+          <th>EXPL_DT</th>
+          <th>PRT_DT</th>
+      </tr>
+  </thead>
+  <tbody style="font-size:11px; font-weight: 610;">
+</table>
+</div>
+<div id="img" style="display: none;">
+  <center><img src="{% static 'dlw/images/loading.gif' %}" style="width: 20%; height: 20%;"></center></div>
+</form>
+
+<script>
+    
+    function anchor_test() {
+        $("#lbl").show();
+        $("#view11").show();
+        $("#link").hide();
+        $("#hi").hide();
+        $("#view_ptbt").hide();
+        $("#view_brn").hide();
+        $("#view_part").hide();
+        $("#view_assly").hide();
+        $("#view_Rcrd").hide();
+        $("#view_jbcrd").hide();
+    }
+    function test() {
+      $("#lbl").show();
+        $("#view11").hide();
+        $("#link").hide();
+        $("#hi").hide();
+        $("#view_ptbt").show();
+        $("#view_brn").hide();
+        $("#view_part").hide();
+        $("#view_assly").hide();
+        $("#view_Rcrd").hide();
+        $("#view_jbcrd").hide();
+    }
+    function a_test() {
+        $("#lbl").show();
+        $("#view11").hide();
+        $("#link").hide();
+        $("#hi").hide();
+        $("#view_ptbt").hide();
+        $("#view_brn").show();
+        $("#view_part").hide();
+        $("#view_assly").hide();
+        $("#view_Rcrd").hide();
+        $("#view_jbcrd").hide();
+    }
+    function an_test() {
+      $("#lbl").show();
+        $("#view11").hide();
+        $("#view_ptbt").hide();
+        $("#view_brn").hide();
+        $("#link").hide();
+        $("#hi").hide();
+        $("#view_part").show();
+        $("#view_assly").hide();
+        $("#view_Rcrd").hide();
+        $("#view_jbcrd").hide();
+    }
+    function anc_test() {
+      $("#lbl").show();
+        $("#view11").hide();
+        $("#link").hide();
+        $("#hi").hide();
+        $("#view_ptbt").hide();
+        $("#view_brn").hide();
+        $("#view_part").hide();
+        $("#view_assly").show();
+        $("#view_Rcrd").hide();
+        $("#view_jbcrd").hide();
+    }
+    function anch_test() {
+      $("#lbl").show();
+        $("#view11").hide();
+        $("#link").hide();
+        $("#hi").hide();
+        $("#view_ptbt").hide();
+        $("#view_brn").hide();
+        $("#view_part").hide();
+        $("#view_assly").hide();
+        $("#view_Rcrd").show();
+        $("#view_jbcrd").hide();
+    }
+    function ancho_test() {
+      $("#lbl").show();
+        $("#view11").hide();
+        $("#link").hide();
+        $("#hi").hide();
+        $("#view_ptbt").hide();
+        $("#view_brn").hide();
+        $("#view_part").hide();
+        $("#view_assly").hide();
+        $("#view_Rcrd").hide();
+        $("#view_jbcrd").show();
+    }
+
+var val,val1,val2;
+
+
+$("#b_no").on("change", function() { 
+  val1=$('#b_no').val();
+});
+$("#p_no").on("change", function() { 
+  val2=$('#p_no').val();
+});
+   
+
+$("#pa_no").on("change", function() { 
+  val1=$('#pa_no').val();
+});
+$("#bo_no").on("change", function() { 
+  val2=$('#bo_no').val();
+});
+
+
+$("#br_no").on("change", function() { 
+  val1=$('#br_no').val();
+});
+
+$("#par_no").on("change", function() { 
+  val1=$('#par_no').val();
+});
+
+
+$("#ba_no").on("change", function() { 
+  val1=$('#ba_no').val();
+});
+$("#as_no").on("change", function() { 
+  val2=$('#as_no').val();
+});
+
+
+$("#rc_no").on("change", function() { 
+  val1=$('#rc_no').val();
+});
+
+
+$("#jc_no").on("change", function() { 
+  val1=$('#jc_no').val();
+});
+
+
+$('a').click(function() {
+  val=$(this).attr("id");
+  
+});
+ 
+ function func()
+ {
+   $("#img").show();
+   $("#div1").hide();
+    data={val,val1,val2};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'sel_main' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+        if(response=='BP')
+        {alert("Enter Correct Batch Number And Part Number");
+         $("#img").hide();
+          $("#div1").show();
+        }
+        else if(response=="B")
+        {alert("Enter Correct Batch Number");
+        $("#img").hide();
+          $("#div1").show();}
+        else if(response=='P')
+        {alert("Enter Correct Part Number");
+        $("#img").hide();
+          $("#div1").show();}
+        else if(response=='Brn')
+        {alert("Enter Correct Brn Number"); 
+        $("#img").hide();
+          $("#div1").show();}
+        else if(response=='BA')
+        {alert("Enter Correct Batch Number and Assly Number"); 
+        $("#img").hide();
+          $("#div1").show();}
+        else if(response=="N")
+        {alert("Enter Correct Number");
+         $("#img").hide();
+          $("#div1").show();}
+        else if(response=="EP")
+        {alert("Enter Part Number");}
+        else if(response=="BrP")
+        {alert("Enter Correct Brn No and Part No");
+        $("#img").hide();
+          $("#div1").show();
+          }
+        else{
+        if(val=='11' || val=='12' || val=='13')
+        {
+          $("#1").hide();
+          $("#2").hide();
+          $("#3").hide();
+          $("#4").hide();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+          $("#10").hide();
+          $("#lbl").hide();
+          $("#Proc").hide();
+          $("#Proc1").hide();
+          $("#Proc2").hide();
+          $("#Proc3").hide();
+          $("#Proc4").hide();
+          $("#Proc5").hide();
+          $("#Proc6").hide();
+          $("#Back").show();
+        $("#first").show();
+                    var trHTML = '';
+                    $.each(response, function (i, item) {
+                      if(item.part_no == null)
+                      {
+                        item.part_no="";
+                      }
+                      if(item.bo_no == null)
+                      {
+                        item.bo_no="";
+                      }
+                      if(item.ep_type == null)
+                      {
+                        item.ep_type="";
+                      }
+                      if(item.loco_fr == null)
+                      {
+                        item.loco_fr="";
+                      }
+                      if(item.loco_to == null)
+                      {
+                        item.loco_to="";
+                      }
+                      if(item.batch_qty == null)
+                      {
+                        item.batch_qty="";
+                      }
+                      if(item.batch_type == null)
+                      {
+                        item.batch_type="";
+                      }
+                      if(item.seq == null)
+                      {
+                        item.seq="";
+                      }
+                      if(item.brn_no == null)
+                      {
+                        item.brn_no="";
+                      }
+                      if(item.status == null)
+                      {
+                        item.status="";
+                      }
+                      if(item.so_no == null)
+                      {
+                        item.so_no="";
+                      }
+                        trHTML += '<tr><td>' + item.part_no + '</td><td>' + item.bo_no + '</td><td>' + item.ep_type + '</td><td>' + item.loco_fr + '</td><td>' + item.loco_to + '</td><td>' + item.batch_qty + '</td><td>' + item.batch_type + '</td><td>' + item.seq + '</td><td>' + item.brn_no + '</td><td>' + item.status + '</td><td>' + item.so_no + '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $('#first').append(trHTML);
+                    $("#img").hide();
+                    $("#div1").show();
+                    $(document).ready(function() {         
+    $('#first').DataTable();  
+
+});
+                   
+        }
+        if(val=='21' || val=='22' || val=='23' || val=='24')
+        {
+          $("#1").hide();
+          $("#2").hide();
+          $("#3").hide();
+          $("#4").hide();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+          $("#10").hide();
+          $("#lbl").hide();
+          $("#Proc").hide();
+          $("#Proc1").hide();
+          $("#Proc2").hide();
+          $("#Proc3").hide();
+          $("#Proc4").hide();
+          $("#Proc5").hide();
+          $("#Proc6").hide();
+          $("#Back").show();
+        $("#second").show();
+                    var trHTML = '';
+                    $.each(response, function (i, item) {
+                      if(item.scl_cl == null)
+                      {
+                        item.scl_cl="";
+                      }
+                      if(item.part_no == null)
+                      {
+                        item.part_no="";
+                      }
+                      if(item.epc == null)
+                      {
+                        item.epc="";
+                      }
+                      if(item.f_shopsec == null)
+                      {
+                        item.f_shopsec="";
+                      }
+                      if(item.qty == null)
+                      {
+                        item.qty="";
+                      }
+                      if(item.ptc == null)
+                      {
+                        item.ptc="";
+                      }
+                      if(item.assly_no == null)
+                      {
+                        item.assly_no="";
+                      }
+                      if(item.rm_partno == null)
+                      {
+                        item.rm_partno="";
+                      }
+                      if(item.rm_qty == null)
+                      {
+                        item.rm_qty="";
+                      }
+                      if(item.rm_ptc == null)
+                      {
+                        item.rm_ptc="";
+                      }
+                      if(item.m4_no == null)
+                      {
+                        item.m4_no="";
+                      }
+                      if(item.brn_no == null)
+                      {
+                        item.brn_no="";
+                      }
+                      if(item.m2sln == null)
+                      {
+                        item.m2sln="";
+                      }
+                      if(item.m2prtdt == null)
+                      {
+                        item.m2prtdt="";
+                      }
+                      if(item.cut_shear == null)
+                      {
+                        item.cut_shear ="";
+                      }
+                        trHTML += '<tr><td>' + item.scl_cl + '</td><td>' + item.part_no + '</td><td>' + item.epc + '</td><td>' + item.f_shopsec + '</td><td>' + item.qty + '</td><td>' + item.ptc + '</td><td>' + item.assly_no + '</td><td>' + item.rm_partno + '</td><td>' + item.rm_qty + '</td><td>' + item.rm_ptc + '</td><td>' + item.m4_no + '</td><td>' + item.brn_no + '</td><td>' + item.m2sln + '</td><td>' + item.m2prtdt + '</td><td>' + item.cut_shear + '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $('#second').append(trHTML);
+                    $("#img").hide();
+                    $("#div1").show();
+                    $(document).ready(function() {         
+    $('#second').DataTable();  
+
+});
+                    
+        }
+        if(val=='32' || val=='33' || val=='34')
+        {
+          $("#1").hide();
+          $("#2").hide();
+          $("#3").hide();
+          $("#4").hide();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+          $("#10").hide();
+          $("#lbl").hide();
+          $("#Proc").hide();
+          $("#Proc1").hide();
+          $("#Proc2").hide();
+          $("#Proc3").hide();
+          $("#Proc4").hide();
+          $("#Proc5").hide();
+          $("#Proc6").hide();
+          $("#Back").show();
+        $("#third1").show();
+                    var trHTML = '';
+                    $.each(response, function (i, item) {
+                      if(item.scl_cl == null)
+                      {
+                        item.scl_cl="";
+                      }
+                      if(item.part_no == null)
+                      {
+                        item.part_no="";
+                      }
+                      if(item.batch_no == null)
+                      {
+                        item.batch_no="";
+                      }
+                      if(item.qty_ord == null)
+                      {
+                        item.qty_ord="";
+                      }
+                      if(item.assly_no == null)
+                      {
+                        item.assly_no="";
+                      }
+                      if(item.rm_partno == null)
+                      {
+                        item.rm_partno="";
+                      }
+                      if(item.rm_qty == null)
+                      {
+                        item.rm_qty="";
+                      }
+                      if(item.cut_shear == null)
+                      {
+                        item.cut_shear="";
+                      }
+                      if(item.m5glsn == null)
+                      {
+                        item.m5glsn="";
+                      }
+                      if(item.brn_no == null)
+                      {
+                        item.brn_no="";
+                      }
+                      if(item.m2slno == null)
+                      {
+                        item.m2slno="";
+                      }
+                      if(item.m5prtdt == null)
+                      {
+                        item.m5prtdt="";
+                      }
+                      if(item.shop_sec == null)
+                      {
+                        item.shop_sec="";
+                      }
+                      if(item.lc_no == null)
+                      {
+                        item.lc_no="";
+                      }
+                      if(item.opn_desc == null)
+                      {
+                        item.opn_desc ="";
+                      }
+                        trHTML += '<tr><td>' + item.scl_cl + '</td><td>' + item.part_no + '</td><td>' + item.batch_no + '</td><td>' + item.qty_ord + '</td><td>' + item.assly_no + '</td><td>' + item.rm_partno + '</td><td>' + item.rm_qty + '</td><td>' + item.cut_shear + '</td><td>' + item.m5glsn + '</td><td>'+item.brn_no+ '</td><td>' + item.m2slno + '</td><td>' + item.m5prtdt + '</td><td>' + item.shop_sec + '</td><td>' + item.lc_no + '</td><td>' + item.opn_desc + '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $('#third1').append(trHTML);
+                    $("#img").hide();
+                    $("#div1").show();
+                    $(document).ready(function() {         
+    $('#third1').DataTable();  
+
+});
+
+                    
+        }
+        if(val=='31' || val=='35')
+        {
+          $("#1").hide();
+          $("#2").hide();
+          $("#3").hide();
+          $("#4").hide();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+          $("#10").hide();
+          $("#lbl").hide();
+          $("#Proc").hide();
+          $("#Proc1").hide();
+          $("#Proc2").hide();
+          $("#Proc3").hide();
+          $("#Proc4").hide();
+          $("#Proc5").hide();
+          $("#Proc6").hide();
+        $("#third").show();
+                    var trHTML = '';
+                    $.each(response, function (i, item) {
+                      if(item.scl_cl == null)
+                      {
+                        item.scl_cl="";
+                      }
+                      if(item.part_no == null)
+                      {
+                        item.part_no="";
+                      }
+                      if(item.qty_ord == null)
+                      {
+                        item.qty_ord="";
+                      }
+                      if(item.assly_no == null)
+                      {
+                        item.assly_no="";
+                      }
+                      if(item.rm_partno == null)
+                      {
+                        item.rm_partno="";
+                      }
+                      if(item.rm_qty == null)
+                      {
+                        item.rm_qty="";
+                      }
+                      if(item.cut_shear == null)
+                      {
+                        item.cut_shear="";
+                      }
+                      if(item.m5glsn == null)
+                      {
+                        item.m5glsn="";
+                      }
+                      if(item.batch_no == null)
+                      {
+                        item.batch_no="";
+                      }
+                      if(item.m2slno == null)
+                      {
+                        item.m2slno="";
+                      }
+                      if(item.m5prtdt == null)
+                      {
+                        item.m5prtdt="";
+                      }
+                      if(item.shop_sec == null)
+                      {
+                        item.shop_sec="";
+                      }
+                      if(item.lc_no == null)
+                      {
+                        item.lc_no="";
+                      }
+                      if(item.opn == null)
+                      {
+                        item.opn="";
+                      }
+                      if(item.des == null)
+                      {
+                        item.des ="";
+                      }
+                        trHTML += '<tr><td>' + item.scl_cl + '</td><td>' + item.part_no + '</td><td>' + item.qty_ord + '</td><td>' + item.assly_no + '</td><td>' + item.rm_partno + '</td><td>' + item.rm_qty + '</td><td>' + item.cut_shear + '</td><td>' + item.m5glsn + '</td><td>'+item.batch_no+ '</td><td>' + item.m2slno + '</td><td>' + item.m5prtdt + '</td><td>' + item.shop_sec + '</td><td>' + item.lc_no + '</td><td>'+item.opn+'</td><td>' + item.des + '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $('#third').append(trHTML);
+                    $("#img").hide();
+                    $("#div1").show();
+                    $(document).ready(function() {         
+    $('#third').DataTable();  
+
+});
+                   
+        }
+        if(val=='41' || val=='42')
+        {
+          $("#1").hide();
+          $("#2").hide();
+          $("#3").hide();
+          $("#4").hide();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+          $("#10").hide();
+          $("#lbl").hide();
+          $("#Proc").hide();
+          $("#Proc1").hide();
+          $("#Proc2").hide();
+          $("#Proc3").hide();
+          $("#Proc4").hide();
+          $("#Proc5").hide();
+          $("#Proc6").hide();
+        $("#fourth").show();
+                    var trHTML = '';
+                    $.each(response, function (i, item) {
+                      if(item.part_no == null)
+                      {
+                        item.part_no="";
+                      }
+                      if(item.bo_no == null)
+                      {
+                        item.bo_no="";
+                      }
+                      if(item.pm_no == null)
+                      {
+                        item.pm_no="";
+                      }
+                      if(item.qty == null)
+                      {
+                        item.qty="";
+                      }
+                      if(item.l_fr == null)
+                      {
+                        item.l_fr="";
+                      }
+                      if(item.l_to == null)
+                      {
+                        item.l_to="";
+                      }
+                      if(item.assly_no == null)
+                      {
+                        item.assly_no="";
+                      }
+                      if(item.brn_no == null)
+                      {
+                        item.brn_no="";
+                      }
+                      if(item.doc_no == null)
+                      {
+                        item.doc_no="";
+                      }
+                      
+                     
+                        trHTML += '<tr><td>' + item.part_no + '</td><td>' + item.bo_no + '</td><td>' + item.pm_no + '</td><td>' + item.qty + '</td><td>' + item.l_fr + '</td><td>' + item.l_to + '</td><td>' + item.assly_no + '</td><td>' + item.brn_no + '</td><td>' + item.doc_no + '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $('#fourth').append(trHTML);
+                    $("#img").hide();
+                    $("#div1").show();
+                    $(document).ready(function() {         
+    $('#fourth').DataTable();  
+
+});
+                    
+        }
+        if(val=='71')
+        {
+          $("#1").hide();
+          $("#2").hide();
+          $("#3").hide();
+          $("#4").hide();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+          $("#10").hide();
+          $("#lbl").hide();
+          $("#Proc").hide();
+          $("#Proc1").hide();
+          $("#Proc2").hide();
+          $("#Proc3").hide();
+          $("#Proc4").hide();
+          $("#Proc5").hide();
+          $("#Proc6").hide();
+        $("#seventh").show();
+                    var trHTML = '';
+                    $.each(response, function (i, item) {
+                      if(item.brn_no == null)
+                      {
+                        item.brn_no="";
+                      }
+                      if(item.part_no == null)
+                      {
+                        item.part_no="";
+                      }
+                      if(item.l_fr == null)
+                      {
+                        item.l_fr="";
+                      }
+                      if(item.l_to == null)
+                      {
+                        item.l_to="";
+                      }
+                      if(item.m2_fr == null)
+                      {
+                        item.m2_fr="";
+                      }
+                      if(item.m2_to == null)
+                      {
+                        item.m2_to="";
+                      }
+                      if(item.m5_fr == null)
+                      {
+                        item.m5_fr="";
+                      }
+                      if(item.m5_to == null)
+                      {
+                        item.m5_to="";
+                      }
+                      if(item.m14_fr == null)
+                      {
+                        item.m14_fr="";
+                      }
+                      if(item.m14_to == null)
+                      {
+                        item.m14_to="";
+                      }
+                      if(item.m4_fr == null)
+                      {
+                        item.m4_fr="";
+                      }
+                      if(item.m4_to == null)
+                      {
+                        item.m4_to="";
+                      }
+                      if(item.expl_dt == null)
+                      {
+                        item.expl_dt="";
+                      }
+                      if(item.prt_dt == null)
+                      {
+                        item.prt_dt="";
+                      }
+                        trHTML += '<tr><td>' + item.brn_no + '</td><td>' + item.part_no + '</td><td>' + item.l_fr + '</td><td>' + item.l_to + '</td><td>' + item.m2_fr + '</td><td>' + item.m2_to + '</td><td>' + item.m5_fr + '</td><td>' + item.m5_to + '</td><td>' + item.m14_fr + '</td><td>' + item.m14_to + '</td><td>' + item.m4_fr + '</td><td>' + item.m4_to + '</td><td>' + item.expl_dt + '</td><td>' + item.prt_dt + ' </td></tr>'; 
+                    });
+                    trHTML+='</tbody>'
+                    $('#seventh').append(trHTML);
+                    $("#img").hide();
+                    $("#div1").show();
+                    $(document).ready(function() {         
+    $('#seventh').DataTable();  
+
+});
+                    
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 111
+      }
+      }
+    });
+ }
+
+
+
+function back() {
+    window.location.reload();
+}
+</script>
+
+{% endblock content %}
