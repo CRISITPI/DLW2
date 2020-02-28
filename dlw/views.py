@@ -1125,7 +1125,7 @@ def m4view(request):
         for i in range(0,len(rolelist)):
 
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-            req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+            req = M14M4new1.objects.filter(assly_no__in=w1).values('bo_no').distinct()
             wo_nop = wo_nop | req
 
         context = {
@@ -1164,12 +1164,12 @@ def m4view(request):
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
             check_obj=Oprn.objects.all().filter(shop_sec=shop_sec)
-            obj = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
+            obj = M14M4new1.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('received_mat', 'issued_qty', 'received_qty', 'laser_pst', 'line', 'closing_bal', 'remarks', 'posted_date', 'wardkp_date', 'shopsup_date', 'posted1_date')
             print("hh")
             print(obj)
             if len(obj) == 0:
                 obj = range(0,1)
-            date = M14M4.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('prtdt','qty').distinct()
+            date = M14M4new1.objects.filter(doc_no=doc_no,assly_no=assembly_no,brn_no=brn_no,part_no=part_no).values('prtdt','qty').distinct()
             leng = obj.count()
             datel = date.count()
             print(datel)
@@ -1208,7 +1208,7 @@ def m4view(request):
                     # wo_nop =wo_nop | req
 
                     w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-                    req = M14M4.objects.filter(assly_no__in=w1).values('bo_no').distinct()
+                    req = M14M4new1.objects.filter(assly_no__in=w1).values('bo_no').distinct()
                     wo_nop = wo_nop | req
 
                 context = {
@@ -1291,8 +1291,8 @@ def m4view(request):
             # print(temp_date)
 
             posted1_date = request.POST.get('posted1_date')
-            M14M4.objects.filter(part_no=part_no,doc_no=doc_no,brn_no=brn_no,bo_no=wo_no).update(received_mat=str(received_mat), issued_qty=int(issued_qty), received_qty=int(received_qty), laser_pst=str(laser_pst), line=str(line), closing_bal=int(closing_bal), remarks=str(remarks), posted_date=str(posted_date), wardkp_date=str(wardkp_date), shopsup_date=str(shopsup_date), posted1_date=str(posted1_date))
-            wo_no=M14M4.objects.all().values('bo_no').distinct()
+            M14M4new1.objects.filter(part_no=part_no,doc_no=doc_no,brn_no=brn_no,bo_no=wo_no).update(received_mat=str(received_mat), issued_qty=int(issued_qty), received_qty=int(received_qty), laser_pst=str(laser_pst), line=str(line), closing_bal=int(closing_bal), remarks=str(remarks), posted_date=str(posted_date), wardkp_date=str(wardkp_date), shopsup_date=str(shopsup_date), posted1_date=str(posted1_date))
+            wo_no=M14M4new1.objects.all().values('bo_no').distinct()
             messages.success(request, 'Successfully Updated!, Select new values to update')
     return render(request, "m4view.html", context)
 
@@ -1304,7 +1304,7 @@ def m4getwono(request):
         from.models import Batch
         shop_sec = request.GET.get('shop_sec')
         w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2 = M14M4.objects.filter(assly_no__in=w1).values('bo_no').exclude(bo_no__isnull=True).distinct()
+        w2 = M14M4new1.objects.values('bo_no').exclude(bo_no__isnull=True).distinct()
         # print(w2)
         wono = list(w2)
         return JsonResponse(wono, safe = False)
@@ -1313,7 +1313,7 @@ def m4getwono(request):
 def m4getbr(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
-        br_no = list(M14M4.objects.filter(bo_no =wo_no).values('brn_no').exclude(brn_no__isnull=True).distinct())
+        br_no = list(M14M4new1.objects.filter(bo_no =wo_no).values('brn_no').exclude(brn_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -1321,7 +1321,7 @@ def m4getassly(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
-        assm_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no).values('assly_no').exclude(assly_no__isnull=True).distinct())
+        assm_no = list(M14M4new1.objects.filter(bo_no =wo_no,brn_no=br_no).values('assly_no').exclude(assly_no__isnull=True).distinct())
         return JsonResponse(assm_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -1332,7 +1332,7 @@ def m4getpart_no(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         assembly_no = request.GET.get('assm_no')
-        part_no = list(M14M4.objects.filter(brn_no=br_no,assly_no=assembly_no,bo_no=wo_no).values('part_no').exclude(part_no__isnull=True).distinct())
+        part_no = list(M14M4new1.objects.filter(brn_no=br_no,assly_no=assembly_no,bo_no=wo_no).values('part_no').exclude(part_no__isnull=True).distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -1345,7 +1345,7 @@ def m4getdoc_no(request):
         shop_sec = request.GET.get('shop_sec')
         assembly_no = request.GET.get('assm_no')
         part_no = request.GET.get('part_no')
-        doc_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
+        doc_no = list(M14M4new1.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
