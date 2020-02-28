@@ -118,20 +118,20 @@
         </table>
     </div>
 
-    <div class="container" width="60%" id="nstr_div" >
+    <div width= "100%" id="nstr_div" >
         
         <table border="1" width="100%" align="center" id="assly_2" class="assly_2" style=" display: none;">
             <thead>
             <tr>
                 <td style="font-size:x-large;"><b><center>SELECT</center></b></td>
-                <td style="font-size:x-large;"><b><center>PP PART</center></b></td>
-                <td style="font-size:x-large;"><b><center>CP PART</center></b></td>
-                <td style="font-size:x-large;"><b><center>EPC</center></b></td>
-                <td style="font-size:x-large;"><b><center>L_FR</center></b></td>
-                <td style="font-size:x-large;"><b><center>L_TO</center></b></td>
-                <td style="font-size:x-large;"><b><center>PTC</center></b></td>
-                <td style="font-size:x-large;"><b><center>QTY</center></b></td>
-                <td style="font-size:x-large;"><b><center>DES</center></b></td>
+                <td style="font-size:x-large;width: 10%;"><b><center>PP PART</center></b></td>
+                <td style="font-size:x-large;width: 20%;"><b><center>CP PART</center></b></td>
+                <td style="font-size:x-large; width: 7%;"><b><center>EPC</center></b></td>
+                <td style="font-size:x-large; width: 7%;"><b><center>L_FR</center></b></td>
+                <td style="font-size:x-large;width: 10%;"><b><center>L_TO</center></b></td>
+                <td style="font-size:x-large; width: 10%;"><b><center>PTC</center></b></td>
+                <td style="font-size:x-large; width:5%;"><b><center>QTY</center></b></td>
+                <td style="font-size:x-large;width: 60%;"><b><center>DES</center></b></td>
             </tr>
         </thead>
         <tbody id="tb_assly_2" style="font-size:x-large;">
@@ -186,7 +186,7 @@ function back_parent(t1,t2)
             for(var i=0;i<response.length;i++) {
                 $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td  ><center>"+response[i].pp_part+"</center></td><td  ><center>"+response[i].cp_part+"</center></td><td  >"+response[i].epc+"</td><td  ><center>"+response[i].l_fr+"</center></td><td  ><center>"+response[i].l_to+"</center></td><td  ><center>"+response[i].ptc+"</center></td><td  ><center>"+response[i].qty+"</center></td><td  ><center>"+response[i].des+"</center></td></tr>");
         }
-        $("#tb_assly_2").append('<tr><td ><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>'); 
+        $("#tb_assly_2").append('<tr><td colspan="2"><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="2"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>'); 
       }
     });
     
@@ -206,7 +206,7 @@ function back_child(t1,t2)
         {
             $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td  ><center>"+response[i].pp_part+"</center></td><td  ><center>"+response[i].cp_part+"</center></td><td  >"+response[i].epc+"</td><td  ><center>"+response[i].l_fr+"</center></td><td  ><center>"+response[i].l_to+"</center></td><td  ><center>"+response[i].ptc+"</center></td><td  ><center>"+response[i].qty+"</center></td><td  ><center>"+response[i].des+"</center></td></tr>");
         }
-        $("#tb_assly_2").append('<tr><td ><center><input type="button" class = " btn btn-primary" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
+        $("#tb_assly_2").append('<tr><td colspan="2"><center><input type="button" class = " btn btn-primary" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="2"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
      }
     });
 
@@ -262,9 +262,9 @@ function Child_details()
             back.push(0);
             for(var i=0;i<response.length;i++)
             {
-                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td  ><center>"+response[i].pp_part+"</center></td><td  ><center>"+response[i].cp_part+"</center></td><td  >"+response[i].epc+"</td><td  ><center>"+response[i].l_fr+"</center></td><td  ><center>"+response[i].l_to+"</center></td><td  ><center>"+response[i].ptc+"</center></td><td  ><center>"+response[i].qty+"</center></td><td  ><center>"+response[i].des+"</center></td></tr>");
+                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td  ><center>"+response[i].pp_part+"</center></td><td  ><center>"+response[i].cp_part+"</center></td><td  >"+response[i].epc+"</td><td  ><center>"+response[i].l_fr+"</center></td><td  ><center>"+response[i].l_to+"</center></td><td  ><center>"+response[i].ptc+"'</center></td><td><center>"+response[i].qty+"</center></td><td  ><center>"+response[i].des+"</center></td></tr>");
             }
-            $("#tb_assly_2").append('<tr><td ><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
+            $("#tb_assly_2").append('<tr><td colspan="2"><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td ><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
         
       }
      }
@@ -289,7 +289,6 @@ function parent_details()
     dataType : 'json',
     data : data,
     success : function(response){
-  
         t = response[0].length;
         
         if(response.length == 0)
@@ -303,7 +302,7 @@ function parent_details()
             for(var i=0;i<response.length;i++) {
                 $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td><center>"+response[i].pp_part+"</center></td><td><center>"+response[i].cp_part+"</center></td><td>"+response[i].epc+"</td><td><center>"+response[i].l_fr+"</center></td><td><center>"+response[i].l_to+"</center></td><td><center>"+response[i].ptc+"</center></td><td><center>"+response[i].qty+"</center></td><td><center>"+response[i].des+"</center></td></tr>");
         }
-        $("#tb_assly_2").append('<tr><td ><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td colspan="2"><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>'); 
+        $("#tb_assly_2").append('<tr><td colspan="2"><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2q"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="2"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td colspan="2"><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>'); 
         }
     }
 });  
@@ -333,12 +332,11 @@ function assly_details()
         else{
             $('#assly_2').show();
             $("#assly_2 > tbody").html("");
-            for(var i=0;i<response.length-1;i++) {
-                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i][i].pp_part +","+ response[i][i].cp_part+'>'+"</center></td><td><center>"+response[i][i].pp_part+"</center></td><td><center>"+response[i][i].cp_part+"</center></td><td>"+response[i][i].epc+"</td><td><center>"+response[i][i].l_fr+"</center></td><td><center>"+response[i][i].l_to+"</center></td><td><center>"+response[i][i].ptc+"</center></td><td><center>"+response[i][i].qty+"</center></td><td><center>"+response[i+1][i].des+"</center></td></tr>");
-            }
-            $("#tb_assly_2").append('<tr><td colspan="2"><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td ><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back()"/></center></td><td colspan="3"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td ><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>');
-        
-      }
+            for(var i=0;i<response.length;i++) {
+                $("#tb_assly_2").append("<tr><td><center>"+'<input type="radio" style="height:20px; width:20px;" name = "ex_as_1" value='+response[i].pp_part +","+ response[i].cp_part+'>'+"</center></td><td><center>"+response[i].pp_part+"</center></td><td><center>"+response[i].cp_part+"</center></td><td>"+response[i].epc+"</td><td><center>"+response[i].l_fr+"</center></td><td><center>"+response[i].l_to+"</center></td><td><center>"+response[i].ptc+"</center></td><td><center>"+response[i].qty+"</center></td><td><center>"+response[i].des+"</center></td></tr>");
+        }
+        $("#tb_assly_2").append('<tr><td colspan="2"><center><input type="button" value="Parent" name="Parent" id="Parent" onclick="parent_details()"/></center></td><td ><center><input type="button" value="Child" name="Child" id="Child" onclick="Child_details()"/></center></td><td colspan="2"><center><input type="button" value="Back" name="Back" id="Back" onclick="back_details()"/></center></td><td colspan="2"><center><input type="button" value="Main_Assly" name="Main_Assly" id="Main_Assly" onclick="Main_Assly_details()"/></center></td><td colspan="2"><center><input type="button" value="home" name="home" id="home" onclick="home_call()"/></center></td></tr>'); 
+        }
      }
     });
 }
@@ -374,3 +372,5 @@ function details_as()
 
 </script>
 {% endblock content %}
+
+

@@ -174,7 +174,7 @@
             </div>
                 <div class="form-group col-md-4" id="alt">
                     <label for="isalt" style=" margin-top: 31px;">Is Alternate  :   </label>
-                    <input type="radio" id="ralt" name="ralt" value="T" onclick="only1();"> True
+                    <input type="radio" id="ralt" name="ralt" value="T" onclick="only1();" checked="checked"> True
                     <input type="radio" id="ralt" name="ralt" value="F" onclick="only1();" > False
                 </div>
             </div>
@@ -205,7 +205,7 @@ var countries = [' '];
 var countries1 = [' '];
 var countries2 = [' '];
 
-document.querySelector("#brn_no").addEventListener('click',(e)=>{
+document.querySelector("#brn_no").addEventListener('focus',(e)=>{
     e.preventDefault();
     var batch=$('#batchno').val();
     
@@ -649,7 +649,7 @@ function funbrn()
        $("#batchno").focus();
    }
 }
-document.querySelector("#batchno").addEventListener('click',(e)=>{
+document.querySelector("#batchno").addEventListener('focus',(e)=>{
                     e.preventDefault();
                     var mAsslyno = $("#asslyno").val();
                                      

@@ -447,6 +447,17 @@ urlpatterns = [
     path('ajax/CorrectionActionUpdate/',CorrectionActionUpdate,name='CorrectionActionUpdate'),
     path('prodqry/',prodqry,name='prodqry'),
     path('ajax/sel_main/',sel_main,name='sel_main'),
+    path('ajax/wheelreport_validate',wheelreport_validate,name='wheelreport_validate'),
+    path('ajax/validate_axleno',validate_axleno,name='validate_axleno'),
+    path('ajax/validate_wheelnonde',validate_wheelnonde,name='validate_wheelnonde'),
+    path('ajax/validate_wheelnode',validate_wheelnode,name='validate_wheelnode'),
+    path('ajax/axlereport_validate',axlereport_validate,name='axlereport_validate'),
+    path('ajax/delInfo/',delInfo,name='delInfo'),
+    path('ajax/updateInfo/',updateInfo,name='updateInfo'),
+    path('ajax/updatetool/',updatetool,name='updatetool'),
+    path('ajax/getShopDesc/',getShopDesc,name='getShopDesc'),
+    path('ajax/addInfo/',addInfo,name='addInfo'),
+    path('tool_report/',tool_report,name='tool_report'),
    
 
 ]

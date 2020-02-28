@@ -190,7 +190,7 @@ footer, .page-content::after{
         <td>{{objec.pt_no}} <br><br></td>
         <td>{{objec.bo_qty}} <br><br></td>
         <td>{{objec.bo_date}} <br><br></td>
-        <td>{{objec.locos}} <br><br></td>
+        <td>{{objec.loco_type}} <br><br></td>
         <td>{{objec.date}} <br><br></td>
         <td>{{objec.axle_no}} <br><br></td>
         <td>{{objec.wheelno_de}} <br><br></td>
@@ -707,19 +707,16 @@ footer, .page-content::after{
 
                                  <div class="col-6">
                                               <label for="">Axle No.</label>
-                                              <input type="text" name="editaxle_no" id="editaxle_no" class="form-control ll" required>
-                                                   
+                                              <input type="text" name="editaxle_no" id="editaxle_no" class="form-control ll" placeholder="" required>
                                   </div>
 
                                   <div class="col-6">
                                           <label for="">Wheel No(DE)</label>
-                                          <input type="text" class="form-control" name="editwheelno_de" id="editwheelno_de" required>
-                                                 
+                                          <input type="text" class="form-control" name="editwheelno_de" id="editwheelno_de" placeholder="" required>
                                   </div> 
                                   <div class="col-6">
                                           <label for="">Wheel No(NDE)</label>
                                           <input type="text" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
-                                          
                                   </div> 
                                   <div class="col-6">
                                           <label for="">Bull Gear No.</label>
@@ -731,12 +728,23 @@ footer, .page-content::after{
                                   </div>  
                                         <div class="col-6">
                                             <label for="">Machine In Date</label>
-                                            <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" >
+                                            <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
                                         </div>
                                         <div class="col-6">
+
                                             <label for="">Machine Out Date</label>
-                                            <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" >
+                                            <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
                                         </div>
+                                        <div class="col-6">
+                                          <input type="hidden" class="form-control" name="hide1" id="hide1" placeholder="" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <input type="hidden" class="form-control" name="hide2" id="hide2" placeholder="" required>
+                                    </div>
+                                    <div class="col-6">
+                                      <input type="hidden" class="form-control" name="hide3" id="hide3" placeholder="" required>
+                                  </div>
+
                   </div>  
               </div>                      
       <div class="modal-footer">
@@ -858,6 +866,75 @@ footer, .page-content::after{
                     })
                 }
 
+
+           $("#editaxle_no").change(function(e){
+            e.preventDefault();
+            var axle_no = $(this).val();
+            var x=$("#hide1").val();
+            var data = {axle_no,x};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'validate_axleno' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                  if(response == "false"){
+                        alert("Please Enter Valid Axle Number.");
+                        document.getElementById("editaxle_no").value="";
+                        document.getElementById("")
+                        $("#editaxle_no").focus();
+                        }   
+                }
+            })
+        });
+
+       $("#editwheelno_de").change(function(e){
+            e.preventDefault();
+            var wheelno_de = $(this).val();
+            var x=$("#hide3").val();
+            var data = {wheelno_de, x};
+            
+            // var data1={x};
+           // alert(x);
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'validate_wheelnode' %}",
+                dataType : 'json',
+                data : data,
+                // data1 : data1,
+                success : function(response){
+                  if(response == "false"){
+                        // alert("Please Enter Valid Wheel Number.");
+                        document.getElementById("editwheelno_de").value="";
+                        alert("Please Enter Valid Wheel Number.");
+                        document.getElementById("")
+                        $("#editwheelno_de").focus();
+                        }   
+                }
+            })
+        });
+
+        $("#editwheelno_nde").change(function(e){
+            e.preventDefault();
+            var wheelno_nde= $(this).val();
+            var x=$("#hide2").val();
+            var data = {wheelno_nde,x};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'validate_wheelnonde' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                  if(response == "false"){
+                        alert("Please Enter Valid Wheel Number.");
+                        document.getElementById("editwheelno_nde").value="";
+                        document.getElementById("")
+                        $("#editwheelno_nde").focus();
+                        }   
+                }
+            })
+        });
+
         $("#editsno").change(function(e){
             e.preventDefault();
             var sels_no=$(this).val();
@@ -881,6 +958,9 @@ footer, .page-content::after{
                         $("#editwheelno_nde").val(`${response[0].wheelno_nde}`);
                         $("#editbullgear_no").val(`${response[0].bullgear_no}`);
                         $("#editbullgear_make").val(`${response[0].bullgear_make}`);
+                        $("#hide1").val(`${response[0].axle_no}`);
+                        $("#hide2").val(`${response[0].wheelno_de}`);
+                        $("#hide3").val(`${response[0].wheelno_nde}`);
                         var locodes=document.getElementById('editbo_no').value;
                     func2(locodes);
                     }
@@ -1115,37 +1195,6 @@ footer, .page-content::after{
                                 }
                                   })
                         });
-
-document.querySelector("#editwheelno_de").addEventListener('change',(e)=>{
-    e.preventDefault();
-    var wheel_no = $("#editwheelno_de").val();
-    var data = {wheel_no};
-            $.ajax({
-                type : 'GET',
-                url : "{% url 'wheelnde' %}",
-                dataType : 'json',
-                data : data,
-                success : function(response){
-                            var elementsadded = document.querySelectorAll(".neweledoc");
-                            if(elementsadded.length>0){
-                                var elementsaddedarr = Array.from(elementsadded);
-                                elementsaddedarr.forEach((el)=> el.remove());
-                                document.querySelector("#wheelnonde").selected = true; 
-                             }
-                                var brarr,mystr,html;
-                                brarr = response.map((el)=>el.wheel_no);
-                                mystr = "";
-                                brarr.forEach((el,index)=>{
-                                html = `<option class="neweledoc">${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                                });
-                                html = "";
-                                document.querySelector("#editwheelno_nde").insertAdjacentHTML('beforeend',mystr);
-                                mystr=""; 
-                        }
-                            })
-                })
-
 </script>
 
     </html>  
