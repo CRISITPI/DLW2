@@ -3562,6 +3562,8 @@ class AxleWheelPressing(models.Model):
     inspectinspection_status=models.NullBooleanField()
     hhpinspection_status=models.NullBooleanField()
     dispatch_date=models.CharField(max_length=20,null=True)
+    edit_date=models.CharField(max_length=20,null=True)
+    inspect_date=models.CharField(max_length=20,null=True)
 
 
 
@@ -5079,3 +5081,29 @@ class CorrectiveAction(models.Model):
     follow_up = models.CharField( max_length=200,null=True)
     mr_office_decision = models.CharField( max_length=200,null=True)
     last_modified = models.DateTimeField(null=True)
+
+class toolmdata(models.Model):
+    TOOL_NUM= models.CharField(db_column='TOOL_NUM',max_length=15 ,blank=True,null=True,default=0) 
+    dg_num= models.CharField(db_column='DG_NUM',max_length=35,null=True)
+    tl_desc=models.CharField(db_column='TOOL_DESCRIPTION', max_length=35, null=True,blank=True)
+    pl_num= models.CharField(db_column='PL_NUMP',max_length=20,null=True) 
+    sh_locn= models.CharField(db_column='SHOP_LOCATION', max_length=15,null=True)
+    tr_shopdesc=models.CharField(db_column='SHOP_DESCRIPTION', max_length=15,null=True)
+    po_no= models.CharField(db_column='po_no', max_length=15,null=True)
+    doe= models.CharField(db_column='DATE_OF_ENTRY', max_length=15,null=True)
+    make= models.CharField(db_column='MAKE', max_length=15,null=True)
+    model= models.CharField(db_column='MODEL', max_length=15,null=True)
+    cost= models.CharField(db_column='COST', max_length=15,null=True)
+    rangee= models.CharField(db_column='Rangee', max_length=15,null=True)
+    uom= models.CharField(db_column='UNIT_OF_MEASUREMENT', max_length=15,null=True)
+    cal_freq= models.CharField(db_column='CALIBRATION_FREQUENCY', max_length=15,null=True)
+    acc_cri= models.CharField(db_column='ACCURACY_CRITERIA', max_length=15,null=True)
+    cal_link= models.CharField(db_column='CALIBRATION_LINK', max_length=15,null=True)
+    pro_tol= models.CharField(db_column='PROCESS_TOLERANCE', max_length=15,null=True)
+    perror=models.CharField(db_column='PLUS_ERROR', max_length=15,null=True)
+    merror=models.CharField(db_column='MINUS_ERROR', max_length=15,null=True)
+    rsn=models.CharField(db_column='REFRENCE_STANDARD_NUMBER', max_length=15,null=True)
+    win=models.CharField(db_column='WORK_INSTRUCTION_NUMBER', max_length=15,null=True)    
+    flag=models.CharField(db_column='flag',max_length=2,null=True)
+    lastupddate=models.CharField(db_column='LastUpdateDate',max_length=15,null=True) 
+    user=models.CharField(db_column='User',max_length=15,null=True)

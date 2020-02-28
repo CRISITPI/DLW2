@@ -9950,9 +9950,10 @@ def axlewheelpressing_section(request):
     mybo=Batch.objects.all().values('bo_no')
     hhpmysno=AxleWheelPressing.objects.all().filter((Q(pt_no='17010019')|Q(pt_no='17010706')|Q(pt_no='17010639')|Q(pt_no='17010330')|Q(pt_no='17010421')|Q(pt_no='16010085')|Q(pt_no='16010206')|Q(pt_no='16010255')|Q(pt_no='17010019')|Q(pt_no='17010391')),dispatch_status=False).values('sno')
     mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
-    axle=AxleMachining.objects.filter(axlefitting_status=False,axleinspection_status=True).values('axle_no')
-    wheelde=WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no')
-    wheelnde=WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no')
+    axle=list(AxleMachining.objects.filter(axlefitting_status=False,axleinspection_status=True).values('axle_no'))
+    wheelde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no'))
+    wheelpressde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no'))
+    wheelnde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no'))
     my_context={
        'object':obj2,
        'nav':nav,
@@ -9961,6 +9962,7 @@ def axlewheelpressing_section(request):
        'ip':get_client_ip(request),
        'mybo':mybo,
        'mywheel':wheelde,
+       'mywheel1':wheelnde,
        'myaxle':axle,
         'mysno':mysno,
         'hhpmysno':hhpmysno
@@ -10056,9 +10058,10 @@ def axlewheelpressing_section(request):
             out_qty=request.POST.get('editout_qty')
 
             if bo_no and bo_date and date and loco_type and pt_no and bo_qty and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
-               AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,axle_no=axle_no,in_qty=in_qty,out_qty=out_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make,pt_no=pt_no,bo_qty=bo_qty)
-               AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True)
-               WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True)
+               AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,edit_date=date,loco_type=loco_type,axle_no=axle_no,in_qty=in_qty,out_qty=out_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make,pt_no=pt_no,bo_qty=bo_qty)
+               AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
+               WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True,dispatch_status=True)
+               WheelMachining.objects.filter(wheel_no=wheelno_nde).update(wheelfitting_status=True,dispatch_status=True)
                messages.success(request, 'Successfully Edited!')
             else:
                messages.error(request,"Please Enter S.No.!")
@@ -10099,7 +10102,7 @@ def axlewheelpressing_section(request):
             
             if cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde and journal_no_de and journal_make_de and journal_no_nde and journal_make_nde:
                 
-                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,hhpinspection_status=True,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde,dispatch_to="HHP_Inspected")
+                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,inspect_date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,hhpinspection_status=True,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde,dispatch_to="HHP_Inspected")
 
                 messages.success(request,'Successfully Edited!')
             else:
@@ -10134,7 +10137,7 @@ def axlewheelpressing_section(request):
             date=request.POST.get('inspectdate')
             inspector_name=request.POST.get('inspectinspector_name')
             if cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde:
-                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,inspectinspection_status=True,dispatch_to="Inspected")
+                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,inspect_date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,inspectinspection_status=True,dispatch_to="Inspected")
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all the records!")
@@ -10162,6 +10165,7 @@ def axlewheelpressing_section(request):
         return HttpResponseRedirect("/axlewheelpressing_section/")
 
     return render(request,"axlewheelpressing_section.html",my_context)
+
 
 def axlepress_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -14499,31 +14503,7 @@ def axlereport(request):
             'ip':get_client_ip(request),
             'sub':2,
             }
-        if bval=='Axle Make Report(date range)':
-            context={
-            'nav':nav,
-            'subnav':subnav,
-            'usermaster':usermaster,
-            'ip':get_client_ip(request),
-            'sub':5,
-            }
-        if bval=='No. of Axle (date wise)':
-            context={
-            'nav':nav,
-            'subnav':subnav,
-            'usermaster':usermaster,
-            'ip':get_client_ip(request),
-            'sub':6,
-            }
-        if bval=='No. of Axle (date range)':
-            context={
-            'nav':nav,
-            'subnav':subnav,
-            'usermaster':usermaster,
-            'ip':get_client_ip(request),
-            'sub':7,
-            }
-        if bval=='Month Wise Detail':
+        if bval=='Axle Report':
             context={
             'nav':nav,
             'subnav':subnav,
@@ -14531,36 +14511,194 @@ def axlereport(request):
             'ip':get_client_ip(request),
             'sub':10,
             }
+        if bval=='Axle Record of Loco Type (date wise)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':6,
+            }
+        if bval=='Axle Record of Loco Type (date range)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':7,
+            }
         if bval=='Proceed1':
+                    
+            pt=[]
+            pto=[]
+            lt=[]
+            lto=[]
+            count=[]
+            count1=[]
+            myval=[]
+            myval1=[]
+            unique_myval=[]
+            unique_myval1=[]
+            c1=0
+            c2=0
             dt=request.POST.get('datew')
-            ob1=AxleMachining.objects.filter(in_qty=dt).values('sno','pt_no')
-            ob2=AxleMachining.objects.filter(out_qty=dt).values('sno','pt_no')
+            ob1=list(AxleMachining.objects.filter(in_qty=dt).values('pt_no','loco_type','axle_no'))
+            ob2=list(AxleMachining.objects.filter(out_qty=dt).values('pt_no','loco_type','axle_no'))   
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+
+
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
+            
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':1,
-            'ob1':ob1,
-            'ob2':ob2,
             'dt':dt,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
+            
         if bval=='Proceed2':
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            xyz=request.POST.get('axlemake')
-            ob1=AxleMachining.objects.filter(in_qty__range=(dt1,dt2)).values('sno','pt_no','in_qty').order_by('in_qty')
-            ob2=AxleMachining.objects.filter(out_qty__range=(dt1,dt2)).values('sno','pt_no','out_qty').order_by('out_qty')
+            ob1=AxleMachining.objects.filter(in_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            ob2=AxleMachining.objects.filter(out_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            pt=[] 
+            lt=[] 
+            pto=[]
+            lto=[]
+            myval=[]
+            myval1=[]
+            final=[]
+            unique_final=[]
+            count=[]
+            count1=[]
+            c1=0
+            c2=0
+
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+            
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':3,
-            'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,'dt2':dt2,
+            'dt1':dt1,
+            'dt2':dt2,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
+
         if bval=='Proceed3':
             dt1=request.POST.get('date3')
             dt2=request.POST.get('date4')
@@ -14577,11 +14715,11 @@ def axlereport(request):
             'dt1':dt1,'dt2':dt2,
             }
         if bval=='Proceed6':
-            dt1=request.POST.get('datea')
-            ob1=AxleMachining.objects.filter(in_qty=dt1).values('sno','axle_no','in_qty').order_by('in_qty')
-            ob2=AxleMachining.objects.filter(out_qty=dt1).values('sno','axle_no','out_qty').order_by('out_qty')
-            l1=len(ob1)
-            l2=len(ob2)
+            datel=request.POST.get('datea')
+            #ob1=list(AxleMachining.objects.filter(dateaxle=datel).values('axle_no','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle'))
+            ob1=list(AxleMachining.objects.filter(dateaxle=datel).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            l=len(ob1)
+            #ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('wheelno_de','wheelno_nde','inspect_date','inspector_name'))
             context={
             'nav':nav,
             'subnav':subnav,
@@ -14589,17 +14727,15 @@ def axlereport(request):
             'ip':get_client_ip(request),
             'sub':8,
             'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,
-            'l1':l1,'l2':l2,
+            'datel':datel,
             }
         if bval=='Proceed7':
-            dt1=request.POST.get('datea1')
-            dt2=request.POST.get('datea2')
-            ob1=AxleMachining.objects.filter(in_qty__range=(dt1,dt2)).values('sno','axle_no','in_qty').order_by('in_qty')
-            ob2=AxleMachining.objects.filter(out_qty__range=(dt1,dt2)).values('sno','axle_no','out_qty').order_by('out_qty')
-            l1=len(ob1)
-            l2=len(ob2)
+            datell1=request.POST.get('datea1')
+            datell2=request.POST.get('datea2')
+            #ob1=list(AxleMachining.objects.filter(dateaxle__range=(datell1,datell2)).values('axle_no','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle'))
+            ob1=list(AxleMachining.objects.filter(dateaxle__range=(datell1,datell2)).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            l=len(ob1)
+            #ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('wheelno_de','wheelno_nde','inspect_date','inspector_name'))
             context={
             'nav':nav,
             'subnav':subnav,
@@ -14607,24 +14743,31 @@ def axlereport(request):
             'ip':get_client_ip(request),
             'sub':9,
             'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,'dt2':dt2,
-            'l1':l1,'l2':l2,
+            #'ob2':ob2,
+            'datell1':datell1, 
+            'datell2':datell2,
             }
-        if bval=='Proceed10':
-            mon=request.POST.get('month')
-            ob1=AxleMachining.objects.filter(date__contains=mon).values('sno','axle_no','in_qty','out_qty','pt_no','date').order_by('date')
+        if bval=='Proceed':
+            axle_no=request.POST.get('axle_no')
+            ob1=list(AxleMachining.objects.filter(axle_no=axle_no).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            ax=ob1[0]['axle_no']
+            l=len(ob1)
+            ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('wheelno_de','wheelno_nde','inspect_date','inspector_name'))
+            
             context={
-            'nav':nav,
-            'subnav':subnav,
-            'usermaster':usermaster,
-            'ip':get_client_ip(request),
-            'sub':11,
-            'ob1':ob1,
-            'mon':mon,
+                'nav':nav,
+                'subnav':subnav,
+                'usermaster':usermaster,
+                'ip':get_client_ip(request),
+                'sub':4,
+                'ob1':ob1,
+                'ob2':ob2,
+                'l':l,
+                'ax':ax,
             }
 
     return render(request,'axlereport.html',context)
+
 
 
 @login_required
@@ -14655,7 +14798,7 @@ def wheelreport(request):
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
-            'sub':0,
+            'sub':88,
             }
         if bval=='Date Range Report':
             context={
@@ -14665,7 +14808,7 @@ def wheelreport(request):
             'ip':get_client_ip(request),
             'sub':2,
             }
-        if bval=='Wheel Make Report(date range)':
+        if bval=='Wheel Report':
             context={
             'nav':nav,
             'subnav':subnav,
@@ -14743,13 +14886,6 @@ def wheelreport(request):
                 c1=0
             for i in range (0,len(pt)):
                 myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
-            # print("myval..................  ",myval)
-
-            # for x in myval:  
-            #     if x not in unique_myval: 
-            #         unique_myval.append(x)
-            # print("uniquemyval.......   ",unique_myval)
-
 
             for i in range(0,len(ob2)):
                 pto.append(ob2[i]['pt_no'])
@@ -14766,7 +14902,6 @@ def wheelreport(request):
 
             for i in range (0,len(pto)):
                 myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
-            # print("myval1..................  ",myval1)
             id=[]
             final=[]
             unique_final=[]
@@ -14791,86 +14926,16 @@ def wheelreport(request):
             for x in final:  
                 if x not in unique_final: 
                     unique_final.append(x)
-            # print("uniquefinal.......   ",unique_final)
-            # print('final   ',final)
-            # myval3=[]
-            # unique_myval3=[]        
-            # if(len(myval1) > len(myval)):
-            #     # print("greater myval1")
-            #     for i in range(0,len(myval1)):
-            #         for j in range(0,len(myval)):
-            #             if (myval1[i]['pt_no']==myval[j]['pt_no']):
-            #                myval1[i].update({'count1':myval[j]['count1']})
-            #             else:
-            #                 myval1[i].update({'pt_no':myval[j]['pt_no'],'loco_type':myval[j]['loco_type'],'count2':myval[j]['count2'],'count1':'0'})
-            #     myval3=myval1
-            #     # print("myval3......................1.........",myval3)
-
-            # else:
-            #     # print("greater myval")
-            #     # if(len(unique_myval) > len(unique_myval1)):
-            #     for i in range(0,len(myval)):
-            #         for j in range(0,len(myval1)):
-            #             if (myval[i]['pt_no']==myval1[j]['pt_no']):
-            #                myval[i].update({'count2':myval1[j]['count2']})
-            #             else:
-            #                 myval[i].update({'count2':'0','pt_no':myval1[j]['pt_no'],'loco_type':myval1[j]['loco_type'],'count1':myval1[j]['count1'],})
-            # myval3=myval
-            # print("myval3..................2............",myval3)
             
-            
-
-            # for x in myval3:  
-            #     if x not in unique_myval3: 
-            #         unique_myval3.append(x)
-            # print("uniquemyval3.......   ",unique_myval3)
-
-            # for x in myval1:  
-            #     if x not in unique_myval1: 
-            #         unique_myval1.append(x)
-            # print("uniquemyval1.......     ",unique_myval1)  
-            # myval3=[]        
-            # if(len(unique_myval1) > len(unique_myval)):
-            #     print("greater myval1")
-            #     for i in range(0,len(unique_myval1)):
-            #         for j in range(0,len(unique_myval)):
-            #             if (unique_myval1[i]['pt_no']==unique_myval[j]['pt_no']):
-            #                unique_myval1.append({'count1':unique_myval[j]['count']})
-            #             # else:
-            #             #     unique_myval1.append({'count2':'0'})
-            # # myval3=myval1
-            # # print("myval3......................1.........",myval3)
-
-            # else:
-            #     print("greater myval")
-            # # if(len(unique_myval) > len(unique_myval1)):
-            #     for i in range(0,len(unique_myval)):
-            #         for j in range(0,len(unique_myval1)):
-            #             if (unique_myval[i]==unique_myval1[j]):
-            #                unique_myval.append({'count2':count[i]})
-            #             # else:
-            #             #    unique_myval.append({'count2':'0'})
-            # myval3=myval1
-            # print("myval3..................2............",myval3)
-                         
-
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':1,
-            # 'ob1':ob1,
-            # 'ob2':ob2,
             'dt':dt,
             'len1':len1,
             'len2':len2,
-            # 'myval':myval,
-            # 'unique_myval':unique_myval,
-            # 'unique_myval1':unique_myval1,
-            # 'myval3':myval3,
-            # 'unique_myval3':unique_myval3,
-            # 'final':final,
             'unique_final':unique_final,
             }
         if bval=='Proceed2':
@@ -14905,13 +14970,6 @@ def wheelreport(request):
                 c1=0
             for i in range (0,len(pt)):
                 myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
-            # print("myval..................  ",myval)
-
-            # for x in myval:  
-            #     if x not in unique_myval: 
-            #         unique_myval.append(x)
-            # print("uniquemyval.......   ",unique_myval)
-
 
             for i in range(0,len(ob2)):
                 pto.append(ob2[i]['pt_no'])
@@ -14928,7 +14986,6 @@ def wheelreport(request):
 
             for i in range (0,len(pto)):
                 myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
-            # print("myval1..................  ",myval1)
             id=[]
             final=[]
             unique_final=[]
@@ -14959,29 +15016,29 @@ def wheelreport(request):
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':3,
-            # 'ob1':ob1,
-            # 'ob2':ob2,
             'dt1':dt1,
             'dt2':dt2,
             'len1':len1,
             'len2':len2,
             'unique_final':unique_final,
             }
-        if bval=='Proceed3':
-            dt1=request.POST.get('date3')
-            dt2=request.POST.get('date4')
-            ob1=WheelMachining.objects.filter(in_qty__range=(dt1,dt2)).values('sno','pt_no','wheel_no','ustwhl_status','in_qty').order_by('in_qty')
-            ob2=WheelMachining.objects.filter(out_qty__range=(dt1,dt2)).values('sno','pt_no','wheel_no','ustwhl_status','out_qty').order_by('out_qty')
+        if bval=='Proceed':
+            wheel_no=request.POST.get('wheel_no')
+            ob1=list(WheelMachining.objects.filter(wheel_no=wheel_no).values('wheel_no','loco_type','date','bo_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
+            l=len(ob1)
+            ob2=list(AxleWheelPressing.objects.filter(Q(wheelno_de=wheel_no)|Q(wheelno_nde=wheel_no)).values('axle_no','inspect_date','inspector_name'))
+            
             context={
-            'nav':nav,
-            'subnav':subnav,
-            'usermaster':usermaster,
-            'ip':get_client_ip(request),
-            'sub':4,
-            'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,'dt2':dt2,
+                'nav':nav,
+                'subnav':subnav,
+                'usermaster':usermaster,
+                'ip':get_client_ip(request),
+                'sub':4,
+                'ob1':ob1,
+                'ob2':ob2,
+                'l':l,
             }
+
         if bval=='Proceed6':
             dt1=request.POST.get('datea')
             ob1=WheelMachining.objects.filter(in_qty=dt1).values('sno','wheel_no','in_qty').order_by('in_qty')
@@ -15043,8 +15100,25 @@ def wheelreport(request):
             'ob1':ob1,
             'datel':datel,   
             }
+        if bval=='Proceed22':
+            datell1=request.POST.get('datell1')
+            datell2=request.POST.get('datell2')
+            ob1=list(WheelMachining.objects.filter(datewhl__range=(datell1,datell2)).values('wheel_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
+            context={
+            'a':a,
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':23,
+            'ob1':ob1,
+            'datell1':datell1, 
+            'datell2':datell2,  
+            }
+            
 
     return render(request,'wheelreport.html',context)
+
 
 
 
@@ -22348,23 +22422,25 @@ def nstrassly_det(request):
         epc = request.GET.get('t1')
         assly = request.GET.get('t2')
         o = []
-        obj = list(Nstr.objects.filter(epc = epc, pp_part = assly).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
-        obj1 = list(Part.objects.filter(partno = assly).values('des'))
-        o.append(obj)
-        o.append(obj1)
-        return JsonResponse(o, safe = False)
+        obj1 = list(Nstr.objects.filter(epc = epc, pp_part = assly).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
+        for i in range(0,len(obj1)):
+           p = list(Part.objects.filter(partno = obj1[i]['pp_part']).values('des'))
+           if len(p)!=0:
+                obj1[i].update({'des':p[0]['des']})
+        print(obj1)
+        return JsonResponse(obj1, safe = False)
     return JsonResponse({"success":False}, status = 400)  
 
 def nstrassly_parent(request):
     if request.method == "GET" and request.is_ajax():
         pp = request.GET.get('t1')
         cp = request.GET.get('t2')
-        obj1 = list(Nstr.objects.filter( cp_part = pp).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
+        obj1 = list(Nstr.objects.filter( cp_part = pp ).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
         for i in range(0,len(obj1)):
            p = list(Part.objects.filter(partno = obj1[i]['pp_part']).values('des'))
            if len(p)!=0:
                 obj1[i].update({'des':p[0]['des']})
-        print(obj1)
+        # print(obj1)
         return JsonResponse(obj1, safe = False)
     return JsonResponse({"success":False}, status = 400)
 
@@ -22377,7 +22453,7 @@ def nstrassly_child(request):
            p = list(Part.objects.filter(partno = obj1[i]['cp_part']).values('des'))
            if len(p)!=0:
                 obj1[i].update({'des':p[0]['des']})
-        print(obj1)
+        # print(obj1)
         return JsonResponse(obj1, safe = False)
     return JsonResponse({"success":False}, status = 400)  
 
@@ -22389,11 +22465,10 @@ def nstrassly_back(request):
            p = list(Part.objects.filter(partno = obj1[i]['pp_part']).values('des'))
            if len(p)!=0:
                 obj1[i].update({'des':p[0]['des']})
-        print(obj1)
+        # print(obj1)
         obj1 = list(Nstr.objects.filter( cp_part = pp).values('pp_part','cp_part','ptc','epc','l_fr','l_to','qty').order_by('cp_part').distinct())
         return JsonResponse(obj1, safe = False)
     return JsonResponse({"success":False}, status = 400)
-
 
 @login_required
 @role_required(urlpass='/partmaster/')
@@ -23139,3 +23214,191 @@ def sel_main(request):
         
         return JsonResponse(list(BT), safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
+def wheelreport_validate(request):
+    if request.method=="GET" and request.is_ajax():
+        wheel_no = request.GET.get('wheel_no')
+        ob1=list(WheelMachining.objects.filter(wheel_no=wheel_no).values('wheel_no','loco_type','date','bo_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
+        l=len(ob1)
+        if l>0 :
+            msg=ob1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)  
+
+def axlereport_validate(request):
+    if request.method=="GET" and request.is_ajax():
+        axle_no = request.GET.get('axle_no')
+        ob1=list(AxleMachining.objects.filter(axle_no=axle_no).values('axle_no'))
+        l=len(ob1)
+        if l>0 :
+            msg=ob1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400) 
+
+def validate_axleno(request):
+    if request.method=="GET" and request.is_ajax():
+        w=request.GET.get('x')
+        axle_no = request.GET.get('axle_no')
+        ob1=list(AxleMachining.objects.filter(axle_no=axle_no,axleinspection_status=True).values('axle_no'))
+        l=len(ob1)
+        if l>0 :
+            msg=ob1
+            # AxleMachining.objects.filter(axle_no=x).update(axlefitting_status=False,dispatch_status=False)
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def validate_wheelnode(request):
+    if request.method=="GET" and request.is_ajax():
+        wheelno_de = request.GET.get('wheelno_de')
+        w=request.GET.get('x')
+        ob1=list(WheelMachining.objects.filter(wheel_no=wheelno_de,wheelinspection_status=True).values('wheel_no'))
+        l=len(ob1)
+        if l>0 and wheelno_de!=w:
+            msg=ob1
+            # WheelMachining.objects.filter(wheel_no=x).update(wheelfitting_status=False,dispatch_status=False)
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def validate_wheelnonde(request):
+    if request.method=="GET" and request.is_ajax():
+        wheelno_nde = request.GET.get('wheelno_nde')
+        w=request.GET.get('x')
+        ob1=list(WheelMachining.objects.filter(wheel_no=wheelno_nde,wheelinspection_status=True).values('wheel_no'))
+        l=len(ob1)
+        if l>0 and wheelno_nde!=w:
+            msg=ob1
+            # WheelMachining.objects.filter(wheel_no=x).update(wheelfitting_status=False,dispatch_status=False)
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(urlpass='/tool_report/')
+def tool_report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        obj=Shop.objects.all().values('shop').distinct()
+        temp=[]
+        for i in obj:
+             temp.append(i['shop'])
+        #print("list...",temp)
+        context={
+            'trlocation': temp,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
+
+        }
+    return render(request,'tool_report.html',context)
+
+def  getShopDesc(request):
+    if request.method == "GET" and request.is_ajax():
+        shopdesc = request.GET.get('tr_location')
+        #print("SHOP...",shopdesc)
+        sd = list(Shop.objects.filter(shop =shopdesc).values('sh_desc').distinct())
+        #print("sd ----- : ",sd)
+        return JsonResponse(sd, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def addInfo(request):
+    if request.method == "GET" and request.is_ajax():
+        tr_toolnum = request.GET.get('tr_toolnum')
+        tr_dgnum = request.GET.get('tr_dgnum')
+        tr_tooldesc = request.GET.get('tr_tooldesc')
+        tr_plnum = request.GET.get('tr_plnum')
+        sh_locn=request.GET.get('tr_location')
+        doe = request.GET.get('doe')
+        po_no = request.GET.get('po_no')
+        make = request.GET.get('make')
+        model = request.GET.get('model')
+        cost = request.GET.get('cost')
+        rangee = request.GET.get('rangee')
+        uom = request.GET.get('uom')
+        cal_freq = request.GET.get('cal_freq')
+        acc_cri = request.GET.get('acc_cri')
+        cali_link = request.GET.get('cali_link')
+        pro_tol = request.GET.get('pro_tol')
+        perror = request.GET.get('perror')
+        merror = request.GET.get('merror')
+        refstdno = request.GET.get('refstdno')
+        win = request.GET.get('win')
+        tr_shopdesc=request.GET.get('tr_shopdesc')
+        today = str(date.today().strftime('%d-%m-%y'))
+        cuser=request.user
+        toolmdata.objects.create(TOOL_NUM=tr_toolnum,uom=uom,dg_num=tr_dgnum,tl_desc=tr_tooldesc,pl_num=tr_plnum,doe=doe,make=make,model=model,cost=cost,cal_freq=cal_freq,rangee=rangee,perror=perror,merror=merror,rsn=refstdno,win=win,acc_cri=acc_cri,cal_link=cali_link,pro_tol=pro_tol,po_no=po_no,sh_locn=sh_locn,tr_shopdesc=tr_shopdesc,flag='y',lastupddate=today,user=cuser)
+        a=[]
+        return JsonResponse(a, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def delInfo(request):
+    if request.method == "GET" and request.is_ajax():
+        tr_toolnum = request.GET.get('tr_toolnum')
+        print(tr_toolnum)
+        toolmdata.objects.filter(TOOL_NUM=tr_toolnum).update(flag='n')
+        a=[]
+        return JsonResponse(a, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def updateInfo(request):
+    if request.method == "GET" and request.is_ajax():
+        tr_toolnum = request.GET.get('tr_toolnum')
+        a=list(toolmdata.objects.filter(TOOL_NUM=tr_toolnum).values())
+        return JsonResponse(a, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def updatetool(request):
+    cuser=request.user
+    if request.method == "GET" and request.is_ajax():
+        tr_toolnum = request.GET.get('tr_toolnum')
+        tr_dgnum = request.GET.get('tr_dgnum')
+        tr_tooldesc = request.GET.get('tr_tooldesc')
+        tr_plnum = request.GET.get('tr_plnum')
+        sh_locn=request.GET.get('tr_location')
+        doe = request.GET.get('doe')
+        po_no = request.GET.get('po_no')
+        make = request.GET.get('make')
+        model = request.GET.get('model')
+        cost = request.GET.get('cost')
+        rangee = request.GET.get('rangee')
+        uom = request.GET.get('uom')
+        cal_freq = request.GET.get('cal_freq')
+        acc_cri = request.GET.get('acc_cri')
+        cali_link = request.GET.get('cali_link')
+        pro_tol = request.GET.get('pro_tol')
+        perror = request.GET.get('perror')
+        merror = request.GET.get('merror')
+        refstdno = request.GET.get('refstdno')
+        win = request.GET.get('win')
+        tr_shopdesc=request.GET.get('tr_shopdesc')
+        today = str(date.today().strftime('%d-%m-%y'))
+        b=list(toolmdata.objects.filter(TOOL_NUM=tr_toolnum).values('flag'))
+        if(b[0]['flag']=='n'):
+            toolmdata.objects.filter(TOOL_NUM=tr_toolnum).update(TOOL_NUM=tr_toolnum,uom=uom,dg_num=tr_dgnum,tl_desc=tr_tooldesc,pl_num=tr_plnum,doe=doe,make=make,model=model,cost=cost,cal_freq=cal_freq,rangee=rangee,perror=perror,merror=merror,rsn=refstdno,win=win,acc_cri=acc_cri,cal_link=cali_link,pro_tol=pro_tol,po_no=po_no,sh_locn=sh_locn,tr_shopdesc=tr_shopdesc,flag='y',lastupddate=today,user=str(cuser))
+        elif(b[0]['flag']=='y'):
+            toolmdata.objects.filter(TOOL_NUM=tr_toolnum).update(TOOL_NUM=tr_toolnum,dg_num=tr_dgnum,tl_desc=tr_tooldesc,pl_num=tr_plnum,doe=doe,make=make,model=model,cost=cost,cal_freq=cal_freq,rangee=rangee,perror=perror,merror=merror,rsn=refstdno,win=win,acc_cri=acc_cri,cal_link=cali_link,pro_tol=pro_tol,po_no=po_no,sh_locn=sh_locn,tr_shopdesc=tr_shopdesc,flag='y',uom=uom,lastupddate=today,user=str(cuser))
+        a=[]
+        return JsonResponse(a, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
