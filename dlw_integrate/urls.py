@@ -463,4 +463,4 @@ urlpatterns = [
     path('ajax/m5hwGetbatchNo',m5hwGetbatchNo,name='m5hwGetbatchNo'),
     path('ajax/m5hwGetbatchQtyDetails',m5hwGetbatchQtyDetails,name='m5hwGetbatchQtyDetails'),
     path('ajax/HWM5Validate',HWM5Validate,name='HWM5Validate')
-   
+]
