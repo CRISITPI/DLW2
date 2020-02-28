@@ -458,14 +458,9 @@ urlpatterns = [
     path('ajax/getShopDesc/',getShopDesc,name='getShopDesc'),
     path('ajax/addInfo/',addInfo,name='addInfo'),
     path('tool_report/',tool_report,name='tool_report'),
-    path('ajax/m1getshopsec/',m1getshopsec,name='m1getshopsec'),
-   
-   
+
+
     path('ajax/m5hwGetbatchNo',m5hwGetbatchNo,name='m5hwGetbatchNo'),
     path('ajax/m5hwGetbatchQtyDetails',m5hwGetbatchQtyDetails,name='m5hwGetbatchQtyDetails'),
     path('ajax/HWM5Validate',HWM5Validate,name='HWM5Validate')
-
-]
-
-
-
+   
