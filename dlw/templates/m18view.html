@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %} {% block content %}
 <style>
 table, td, th {  
@@ -80,7 +81,7 @@ function myFunction() {
   window.print();
 }
 </script>
-  <br><h4 align="center">Extra Time Card (M 18)</h4>
+  <br><h4 align="center">Extra Time Card - (M18)</h4>
     <div class="container">
         <table style="width:100%; margin-right: 10px; margin-left: 10px;">
             <tr>
@@ -133,7 +134,11 @@ function myFunction() {
                     <select class="form-control" id="opdesc" name="opdesc" required style="width:300px;">
                             <option id="wo_opdesc" selected disabled hidden>Select Operation Desc</option>                           
                     </select>
-                </td>                                                                             
+                </td> 
+                <td>
+                    <label for="br_no"><b>Probable reason</b></label>
+                    <input type="text" class="form-control" name="proReason" id="proReason" required>
+                </td>                                                                            
             </tr>      
             <tr> 
                 <td>
@@ -370,4 +375,3 @@ function myFunction() {
 
 </script>
 {% endblock content %}
-

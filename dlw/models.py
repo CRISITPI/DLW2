@@ -3434,7 +3434,7 @@ class M5DOCnew(models.Model):
     rev_qty = models.IntegerField(db_column='REV_QTY', default=0, blank=True, null=True)  # Field name made lowercase.
     acc_qty = models.IntegerField(db_column='ACC_QTY', default=0, blank=True, null=True)
     rej_mat = models.IntegerField(db_column='REJ_MAT', default=0, blank=True, null=True)
-
+    proReason       = models.CharField(db_column='PROBABLE REASON', max_length=100, blank=True, null=True)
 
     class Meta:
         db_table = 'M5DOCnew'
@@ -3582,7 +3582,9 @@ class M22(models.Model):
     class Meta:
         db_table = 'M22'
 
-class M18(models.Model):
+
+
+class m18(models.Model):
     shopIncharge   = models.CharField(db_column='SHOPINCHARGE', max_length=100, blank=True, null=True,default=0)  # Field name made lowercase.
     shop_sec       = models.CharField(db_column='SHOPSEC', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
     wo_no          = models.CharField(db_column='WONO', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
@@ -3597,9 +3599,9 @@ class M18(models.Model):
     quantity        = models.CharField(db_column='QUANTITY', max_length=100, blank=True, null=True)  # Field name made lowercase.
     setExtraTime    = models.CharField(db_column='SET_EXTRA_TIME', max_length=200, blank=True, null=True)  # Field name made lowercase.
     setno           = models.CharField(db_column='SETNO', max_length=100, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'M18'
+    refNo           = models.CharField(db_column='REFNO', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    proReason       = models.CharField(db_column='PROBABLE REASON', max_length=100, blank=True, null=True)
+        
 
 class MG7(models.Model):
     fromshop = models.CharField(db_column='FROMSHOP', max_length=4, blank=True, null=True)  # Field name made lowercase.
