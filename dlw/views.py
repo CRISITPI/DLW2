@@ -4685,6 +4685,7 @@ def m1view(request):
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
     menulist=set()
+    part11=''
     for ob in nav:
         menulist.add(ob.navitem)
     menulist=list(menulist)
@@ -4727,10 +4728,11 @@ def m1view(request):
             'ip':get_client_ip(request),
         }
     if request.method == "POST":
-        print("hi")
+        
         submitvalue = request.POST.get('proceed')
         shop_sec = request.POST.get('shop_sec')
         part_no = request.POST.get('part_nop')
+        part11=part_no
         obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec','opn')
         leng = obj.count()
         epcv=0
@@ -4760,6 +4762,7 @@ def m1view(request):
                     'part_no': part_no,
                     'obj': obj,
                     'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'part':part11,
                 }
             elif(len(rolelist)==1):
                 lent=len(rolelist)
@@ -4778,6 +4781,7 @@ def m1view(request):
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'obj': obj,'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'part':part11,
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -4792,29 +4796,46 @@ def m1view(request):
                     'shop_sec': shop_sec,
                     'part_no': part_no,
                     'obj': obj,'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'part':part11,
                 }
+        
         if submitvalue=='Generate Report':
-            return m1genrept1(request)
-    
-
+            part11=request.POST.get('h1')
+            print("part 1",part11)
+            context = {
+                    'lenm' :'',
+                  
+                    'roles' :'',
+                    'nav':'',
+                    'subnav':'',
+                    'ip':'',
+                    'sub': '',
+                    'part_no': '',
+                    'obj1':'',
+                    'dtl':'',
+                    'obj3':'',
+                    'pttl':'',
+                    'attl':'',
+                    'dt':'d1',
+                    'epcv':'','ptcv':'','rmpart':'',
+                    'part':part11,
+                }
+            return render(request,"M1report.html",context)
     return render(request,"m1view.html",context)
 
 
 def m1getpano(request):
     if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        print(shop_sec)
-        pano = list(Oprn.objects.filter(shop_sec = shop_sec).values('part_no').distinct())
-        # print(pano)
+        pano = list(Oprn.objects.filter(part_no__isnull=False).values('part_no').distinct())
+        return JsonResponse(pano, safe = False)
+    return JsonResponse({"success":False}, status=400)
+    
+def m1getshopsec(request):
+    if request.method == "GET" and request.is_ajax():
+        pano = list(shop_section.objects.values('section_code').distinct())
         return JsonResponse(pano, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
-
-
-
-@login_required
-@role_required(urlpass='/m1view/')
 def m1genrept1(request):
     from .models import Part,Partalt,Nstr
     pa_no = empmast.objects.none()
@@ -4822,6 +4843,8 @@ def m1genrept1(request):
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
     nav=dynamicnavbar(request,rolelist)
+    part_no = request.POST.get('h1')
+    print("part_no 2 ",part_no)
     menulist=set()
     for ob in nav:
         menulist.add(ob.navitem)
@@ -4870,7 +4893,7 @@ def m1genrept1(request):
         }
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
-        part_no = request.POST.get('part_nop')
+        part_no = part_no
         print("prtno",part_no)
         if submitvalue=='Proceed':
             print("in report proceed")
@@ -4879,7 +4902,7 @@ def m1genrept1(request):
             epcv=0
             ptcv=0
             rmpart=0
-            obj=Part.objects.filter(partno=part_no).values('des','drgno','drg_alt','size_m','spec','weight').distinct()
+            obj=Part.objects.filter(partno=part_no).values('des','drgno','drg_alt','size_m','spec','weight','des').distinct()
             print(obj)
             obj3=Nstr.objects.filter(pp_part=part_no).values('epc','ptc','cp_part').distinct()
             # print(obj3[0])
@@ -4887,6 +4910,9 @@ def m1genrept1(request):
                 epcv=obj3[0]['epc']
                 ptcv=obj3[0]['ptc']
                 rmpart=obj3[0]['cp_part']
+                obj11=Part.objects.filter(partno=rmpart).values('des').distinct()
+                if len(obj11):
+                    rdes=obj11[0]['des']
             obj2 = Oprn.objects.filter(part_no=part_no).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('shop_sec','opn')
             patotal=0
             attotal=0
@@ -4916,6 +4942,8 @@ def m1genrept1(request):
                     'attl':attotal,
                     'dt':d1,
                     'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'rdes':rdes,
+                    'prtno':part_no,
                 }
             elif(len(rolelist)==1):
                 # print("in else")
@@ -4937,6 +4965,8 @@ def m1genrept1(request):
                     'attl':attotal,
                     'dt':d1,'sub': 1,
                     'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'rdes':rdes,
+                    'prtno':part_no,
                 }
             elif(len(rolelist)>1):
                 context = {
@@ -4955,6 +4985,8 @@ def m1genrept1(request):
                     'attl':attotal,
                     'dt':d1,
                     'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'rdes':rdes,
+                    'prtno':part_no,
                 }
 
         bckbtn=request.POST.get('backbutton')
@@ -12459,55 +12491,7 @@ def m9getwono(request):
 
 
 
-@login_required
-@role_required(urlpass='/m5hwview/')
-def m5hwview(request):
-    cuser=request.user
-    usermaster=user_master.objects.filter(emp_id=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = user_master.objects.none()
-    if "Superuser" in rolelist:
-        tm=M5SHEMP.objects.all().values('shopsec').distinct()
-        tmp=[]
-        for on in tm:
-            tmp.append(on['shopsec'])
-        context={
-            'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'roles':tmp,
-            'subnav':subnav,
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = M5DOCnew.objects.all().filter(shop_sec=rolelist[i]).values('batch_no').distinct()
-            wo_nop =wo_nop | req
-        context = {
-            'sub':0,
-            'subnav':subnav,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'roles' :rolelist
-        }
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles' :rolelist
-        }
-    return render(request,"m5hwview.html",context)
+
 
 @login_required
 @role_required(urlpass='/MG33view/')
@@ -23402,3 +23386,500 @@ def updatetool(request):
         return JsonResponse(a, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
+
+@login_required
+@role_required(urlpass='/m5hwview/')
+def m5hwview(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    tempLength = 0
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser
+        }
+         
+    if request.method=="POST":
+        submit = request.POST.get('userNameGo')  
+        submitSelectOPN = request.POST.get('selectOPN')  
+        submitproceed = request.POST.get('proceed')  
+        submitSelectOPNBack = request.POST.get('selectFianlBack')  
+        submitbackSelectOPN = request.POST.get('backSelectOPN')  
+        submitBackMultiplaRowData = request.POST.get('backMultiplaRowData')  
+        SubmitMultipleRowData = request.POST.get('SubmitMultipleRowData') 
+        SubmitSaveAndUpdate = request.POST.get('saveAndUpdate') 
+        submitInbox = request.POST.get('submitInbox')  
+        backSubmitMultipleRowData =request.POST.get('backSubmitMultipleRowData')          
+        SubmitMultipleRowDataInbox = request.POST.get('SubmitMultipleRowDataInbox')  
+        SubmitMultipleRowDatadecision = request.POST.get('SubmitMultipleRowDatadecision')  
+        SubmitSelectDocs = request.POST.get('selectDocs')  
+        SubmitCreateM5M18 = request.POST.get('createM5M18')  
+        printApprovalList = request.POST.get('printApprovalList')  
+
+        if SubmitCreateM5M18=="Create M5/M18":
+            print("SubmitCreateM5M18")
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser        
+           
+            }
+            return render(request,"m5hwviewFinal.html",context) 
+
+
+        if SubmitSelectDocs=="Select Docs":
+            batchQty=request.POST.get('batchQty') 
+            batchNo=request.POST.get('batchNo')  
+            temp=list(Hwm5Inbox.objects.all().filter(sel_sw='Y').exclude(cardstatus='Y'))
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser,
+            'temp':temp,
+            'batchQty':batchQty,
+            'batchNo':batchNo
+            }
+            return render(request,"m5hwviewInboxDecision.html",context) 
+
+
+        if submitInbox=="Submit":
+            batchQty=request.POST.get('batchQty')
+            batchNo=request.POST.get('batchNo')  
+            print("test-----------batchQty----------",batchQty)
+            temp=list(Hwm5Inbox.objects.all().filter(sel_sw='Y').exclude(cardstatus='Y'))
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser,
+            'temp':temp,
+            'batchQty':batchQty,
+            'batchNo':batchNo
+            }
+            return render(request,"m5hwviewInboxDecision.html",context) 
+
+        if backSubmitMultipleRowData=="back": 
+            return render(request,"m5hwview.html",context) 
+
+        if submit=="GO":   
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser
+        }         
+            return render(request,"m5hwviewFinal.html",context)
+        if submitbackSelectOPN=="back":
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser
+        }
+            return render(request,"m5hwviewFinal.html",context)     
+        if submitSelectOPN=="Select OPN":
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser
+        }
+            return render(request,"m5hwViewSelectOPN.html",context)              
+        if submitBackMultiplaRowData=="back":
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser
+        }
+            return render(request,"m5hwViewSelectOPN.html",context)   
+        if submitSelectOPNBack=="back":
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser
+        }
+            return render(request,"m5hwview.html",context)  
+
+        if submitproceed=="Proceed":
+            print("helo sir.")
+            partNo  = request.POST.get('partNo')
+            batchNo = request.POST.get('batchNo')
+            batchQty= request.POST.get('batchQty')
+            print("batchQty 123 : ",batchQty)
+            locoFrom= request.POST.get('locoFrom')
+            locoTo  = request.POST.get('locoTo')
+            m4Req   = request.POST.get('m4Req')
+            selectOPNForm= request.POST.get('selectOPNForm')
+            totDetails = list(Hwm5.objects.filter(part_no = partNo,batch_no=batchNo).values('hw_cd','part_no','des','sel_sw','opn','opn_desc','shop_sec','lc_no','pa','at','time_pcpls','tot_hrspls','batch_no','org_batch','epc','seq','l_fr','l_to','m13_no','m13_date','brn_no','org_brnno','m5_cd','ncp_jbs','okmrq','rm_partno','rm_desc','rm_qty','rm_ut','sn','plregno','pr_shopsec','n_shopsec','usr_cd'))           
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser,
+            'totDetails':totDetails,
+            'batchQty':batchQty,
+            'batchNo':batchNo
+            }
+            return render(request,"m5hwViewMultipelRowData.html",context)  
+        
+        
+        if printApprovalList=="View/Print Approval List":       
+            #temp=list(Hwm5Inbox.objects.all().filter(sel_sw='Y').exclude(cardstatus='Y'))
+            temp=list(Hwm5Inbox.objects.all().filter(cardstatus='Y'))
+            countemp=Hwm5Inbox.objects.all().filter(cardstatus='Y').count()
+            userNameTemp  = request.POST.get('userName')
+            context={  
+            'nav':nav,
+            'ip':get_client_ip(request),           
+            'subnav':subnav,
+            'temp':temp,
+            'userNameTemp':userNameTemp,
+            'countemp':countemp            
+            }                     
+            return render(request,"m5hwViewPrint.html",context) 
+
+
+        if SubmitMultipleRowDatadecision=="Submit":             
+            dataFormTemp  = request.POST.get('dataForm')
+            mID1          = request.POST.get('id')
+            batchQty      = request.POST.get('batchQty')
+            batchNo       = request.POST.get('batchNo')
+            tempID        = dataFormTemp.split(',')[35]
+            
+            Hwm5Inbox.objects.filter(id=tempID).update(cardstatus=str("Y"))  
+            temp=list(Hwm5Inbox.objects.all().filter(sel_sw='Y').exclude(cardstatus='Y'))
+
+            context={
+            'mID1':mID1,   
+            'nav':nav,
+            'ip':get_client_ip(request),           
+            'subnav':subnav,
+            'batchQty' : batchQty,
+            'hwcdTemp' : dataFormTemp.split(',')[0],
+            'partNoTemp' : dataFormTemp.split(',')[1],
+            'desTemp' : dataFormTemp.split(',')[2],
+            'selTemp' : dataFormTemp.split(',')[3],
+            'opnNoTemp' : dataFormTemp.split(',')[4],
+            'opn_descTemp' : dataFormTemp.split(',')[5],
+            'shop_secTemp' : dataFormTemp.split(',')[6],
+            'lc_noTemp' : dataFormTemp.split(',')[7],
+            'paTemp' : dataFormTemp.split(',')[8],
+            'atTemp' : dataFormTemp.split(',')[9],
+            'time_pcplsTemp' : dataFormTemp.split(',')[10],
+            'tot_hrsplsTemp' : dataFormTemp.split(',')[11],
+            'batchNo' : dataFormTemp.split(',')[13],
+            'org_batchTemp' : dataFormTemp.split(',')[12],
+            'epcTemp' : dataFormTemp.split(',')[14],
+            'seqTemp' : dataFormTemp.split(',')[17],
+            'l_frTemp' : dataFormTemp.split(',')[18],
+            'l_toTemp' : dataFormTemp.split(',')[19],
+            'm13_noTemp' : dataFormTemp.split(',')[16],
+            'm13_dateTemp' : dataFormTemp.split(',')[15],
+            'brn_noTemp' : dataFormTemp.split(',')[20],
+            'org_brnnoTemp' : dataFormTemp.split(',')[21],
+            'm5_cdTemp' : dataFormTemp.split(',')[22],
+            'ncp_jbsTemp' : dataFormTemp.split(',')[23],
+            'okmrqTemp' : dataFormTemp.split(',')[26],
+            'rm_partnoTemp' : dataFormTemp.split(',')[28],
+            'rm_descTemp' : dataFormTemp.split(',')[24],
+            'rm_qtyTemp' : dataFormTemp.split(',')[29],
+            'rm_utTemp' : dataFormTemp.split(',')[30],
+            'snTemp' : dataFormTemp.split(',')[27],
+            'plregnoTemp' : dataFormTemp.split(',')[25],
+            'pr_shopsecTemp' : dataFormTemp.split(',')[31],
+            'n_shopsecTemp' : dataFormTemp.split(',')[32],
+            'temp':temp,
+            'testTemp':1
+            }       
+                    
+            return render(request,"m5hwviewInboxDecision.html",context) 
+
+        if SubmitMultipleRowDataInbox=="Submit":             
+            dataFormTemp  = request.POST.get('dataForm')
+            mID1          = request.POST.get('id')
+            batchQty      = request.POST.get('batchQty')
+            batchNo       = request.POST.get('batchNo')
+            print("batchQty : ",batchQty)
+            print("mID1 test--------------------: ",mID1)
+            print("dataFormTemp.split(',')[0]",dataFormTemp)
+            print("dataFormTemp.split(',')[35]",dataFormTemp.split(',')[37])
+            context={
+            'mID1':mID1,   
+            'nav':nav,
+            'ip':get_client_ip(request),           
+            'subnav':subnav,
+            'batchQty' : batchQty,
+            'batchNo' : batchNo,
+            'hwcdTemp' : dataFormTemp.split(',')[0],
+            'partNoTemp' : dataFormTemp.split(',')[1],
+            'desTemp' : dataFormTemp.split(',')[2],
+            'selTemp' : dataFormTemp.split(',')[3],
+            'opnNoTemp' : dataFormTemp.split(',')[4],
+            'opn_descTemp' : dataFormTemp.split(',')[5],
+            'shop_secTemp' : dataFormTemp.split(',')[6],
+            'lc_noTemp' : dataFormTemp.split(',')[7],
+            'paTemp' : dataFormTemp.split(',')[8],
+            'atTemp' : dataFormTemp.split(',')[9],
+            'time_pcplsTemp' : dataFormTemp.split(',')[10],
+            'tot_hrsplsTemp' : dataFormTemp.split(',')[11],
+            #'batchNo' : dataFormTemp.split(',')[13],
+            'org_batchTemp' : dataFormTemp.split(',')[12],
+            'epcTemp' : dataFormTemp.split(',')[14],
+            'seqTemp' : dataFormTemp.split(',')[17],
+            'l_frTemp' : dataFormTemp.split(',')[18],
+            'l_toTemp' : dataFormTemp.split(',')[19],
+            'm13_noTemp' : dataFormTemp.split(',')[16],
+            'm13_dateTemp' : dataFormTemp.split(',')[15],
+            'brn_noTemp' : dataFormTemp.split(',')[20],
+            'org_brnnoTemp' : dataFormTemp.split(',')[21],
+            'm5_cdTemp' : dataFormTemp.split(',')[22],
+            'ncp_jbsTemp' : dataFormTemp.split(',')[23],
+            'okmrqTemp' : dataFormTemp.split(',')[26],
+            'rm_partnoTemp' : dataFormTemp.split(',')[28],
+            'rm_descTemp' : dataFormTemp.split(',')[24],
+            'rm_qtyTemp' : dataFormTemp.split(',')[29],
+            'rm_utTemp' : dataFormTemp.split(',')[30],
+            'snTemp' : dataFormTemp.split(',')[27],
+            'plregnoTemp' : dataFormTemp.split(',')[25],
+            'pr_shopsecTemp' : dataFormTemp.split(',')[31],
+            'n_shopsecTemp' : dataFormTemp.split(',')[32],
+            'id' : dataFormTemp.split(',')[37]
+            }           
+            return render(request,"m5hwviewFinal.html",context) 
+
+        if SubmitMultipleRowData=="Submit":             
+            dataFormTemp  = request.POST.get('dataForm')
+            mID1          = request.POST.get('id')
+            batchQty      = request.POST.get('batchQty')
+            batchNo      = request.POST.get('batchNo')
+            print("batchNo---------------1-",batchNo)
+            print("batchQty : ",batchQty)
+            print("mID1--------------------------1--------- : ",mID1)
+            print("dataFormTemp.split(',')[0]---------------",dataFormTemp)
+            context={
+            'mID1':mID1,   
+            'nav':nav,
+            'ip':get_client_ip(request),           
+            'subnav':subnav,
+            'batchQty' : batchQty,
+            'batchNo' :batchNo,
+            'hwcdTemp' : dataFormTemp.split(',')[0],
+            'partNoTemp' : dataFormTemp.split(',')[1],
+            'desTemp' : dataFormTemp.split(',')[2],
+            'selTemp' : dataFormTemp.split(',')[3],
+            'opnNoTemp' : dataFormTemp.split(',')[4],
+            'opn_descTemp' : dataFormTemp.split(',')[5],
+            'shop_secTemp' : dataFormTemp.split(',')[6],
+            'lc_noTemp' : dataFormTemp.split(',')[7],
+            'paTemp' : dataFormTemp.split(',')[8],
+            'atTemp' : dataFormTemp.split(',')[9],
+            'time_pcplsTemp' : dataFormTemp.split(',')[10],
+            'tot_hrsplsTemp' : dataFormTemp.split(',')[11],
+            #'batchNo' : dataFormTemp.split(',')[13],
+            'org_batchTemp' : dataFormTemp.split(',')[12],
+            'epcTemp' : dataFormTemp.split(',')[14],
+            'seqTemp' : dataFormTemp.split(',')[17],
+            'l_frTemp' : dataFormTemp.split(',')[18],
+            'l_toTemp' : dataFormTemp.split(',')[19],
+            'm13_noTemp' : dataFormTemp.split(',')[16],
+            'm13_dateTemp' : dataFormTemp.split(',')[15],
+            'brn_noTemp' : dataFormTemp.split(',')[20],
+            'org_brnnoTemp' : dataFormTemp.split(',')[21],
+            'm5_cdTemp' : dataFormTemp.split(',')[22],
+            'ncp_jbsTemp' : dataFormTemp.split(',')[23],
+            'okmrqTemp' : dataFormTemp.split(',')[26],
+            'rm_partnoTemp' : dataFormTemp.split(',')[28],
+            'rm_descTemp' : dataFormTemp.split(',')[24],
+            'rm_qtyTemp' : dataFormTemp.split(',')[29],
+            'rm_utTemp' : dataFormTemp.split(',')[30],
+            'snTemp' : dataFormTemp.split(',')[27],
+            'plregnoTemp' : dataFormTemp.split(',')[25],
+            'pr_shopsecTemp' : dataFormTemp.split(',')[31],
+            'n_shopsecTemp' : dataFormTemp.split(',')[32]
+            }           
+            return render(request,"m5hwviewFinal.html",context) 
+
+        if SubmitSaveAndUpdate=="Save/Update":          
+                                             
+            hwcd            = request.POST.get('hwcd')
+            print("hwcd : ",hwcd)
+            partNoTemp      = request.POST.get('partNoTemp')
+            print("partNoTemp--",partNoTemp)
+            desTemp         = request.POST.get('desTemp')
+            if(hwcd == ''):
+                sel         = ''
+            else:
+                sel         = 'Y'
+            opnNoTemp       = request.POST.get('opnNoTemp')
+            opn_descTemp    = request.POST.get('opn_descTemp')
+            shop_secTemp    = request.POST.get('shop_secTemp')
+            lc_noTemp       = request.POST.get('lc_noTemp')
+            paTemp          = request.POST.get('paTemp')
+            atTemp          = request.POST.get('atTemp')
+            noOff           = request.POST.get('noOff')
+            time_pcplsTemp  = request.POST.get('time_pcplsTemp')
+            tot_hrsplsTemp  = request.POST.get('tot_hrsplsTemp')
+            batchNo         = request.POST.get('batchNo')
+            print("batchNo--------------------------:",batchNo)
+            org_batchTemp   = request.POST.get('org_batchTemp')
+            epcTemp         = request.POST.get('epcTemp')
+            seq             = request.POST.get('seq')
+            qtyOrder        = request.POST.get('qtyOrder')
+            locoFrom        = request.POST.get('locoFrom')
+            locoTo          = request.POST.get('locoTo')
+            m13_noTemp      = request.POST.get('m13_noTemp')
+            m13_dateTemp    = request.POST.get('m13_dateTemp')
+            brn_noTemp      = request.POST.get('brn_noTemp')
+            org_brnnoTemp   = request.POST.get('org_brnnoTemp')
+            pShop           = request.POST.get('pShop')               
+            nShop           = request.POST.get('nShop')
+            m5cd            = request.POST.get('m5cd')
+            ncp_jbsTemp     = request.POST.get('ncp_jbsTemp')
+            okmrq           = request.POST.get('okmrq')
+            snTemp          = request.POST.get('snTemp')            
+            rm_partnoTemp   = request.POST.get('rm_partnoTemp')
+            rm_qtyTemp      = request.POST.get('rm_qtyTemp')
+            rm_utTemp       = request.POST.get('rm_utTemp')
+            pr_shopsecTemp  = request.POST.get('pr_shopsecTemp')
+            n_shopsecTemp   = request.POST.get('n_shopsecTemp')
+            remarkM5CD      = request.POST.get('remarkM5CD')
+            mID1           = request.POST.get('mID1')
+            id           = request.POST.get('id')
+            print("id---------------------------------------------- : ",id)
+            print("mID1---------------------------------------------- : ",mID1)
+
+            if id!="":
+                if m5cd=="5":
+                    qtyOrder = qtyOrder
+                    for i in range(0, int(qtyOrder)):   
+                        locoTo=locoFrom                               
+                        Hwm5Inbox.objects.filter(id=id).update(hw_cd=str(hwcd), part_no=str(partNoTemp),  des=str(desTemp),  sel_sw=str(sel),  opn=str(opnNoTemp),  opn_desc=str(opn_descTemp), shop_sec=str(shop_secTemp),  lc_no=str(lc_noTemp), pa=str(paTemp),  at=str(atTemp),  no_off=str(noOff), time_pcpls=str(time_pcplsTemp), tot_hrspls=str(tot_hrsplsTemp), batch_no=str(batchNo), org_batch=str(org_batchTemp), epc=str(epcTemp),  seq=str(seq),  qty_ord=str(qtyOrder),  l_fr=str(locoFrom), l_to=str(locoTo), m13_no=str(m13_noTemp), brn_no=str(brn_noTemp), org_brnno=str(org_brnnoTemp), pr_shopsec=str(pShop), n_shopsec=str(nShop), m5_cd=str(m5cd), ncp_jbs=str(ncp_jbsTemp), okmrq=str(okmrq), sn=str(snTemp), rm_partno=str(rm_partnoTemp), rm_qty=str(rm_qtyTemp), rm_ut=str(rm_utTemp), remarks=str(remarkM5CD))
+                        locoFrom=int(locoFrom)+1 
+                else:
+                    Hwm5Inbox.objects.filter(id=id).update(hw_cd=str(hwcd), part_no=str(partNoTemp),  des=str(desTemp),  sel_sw=str(sel),  opn=str(opnNoTemp),  opn_desc=str(opn_descTemp), shop_sec=str(shop_secTemp),  lc_no=str(lc_noTemp), pa=str(paTemp),  at=str(atTemp),  no_off=str(noOff), time_pcpls=str(time_pcplsTemp), tot_hrspls=str(tot_hrsplsTemp), batch_no=str(batchNo), org_batch=str(org_batchTemp), epc=str(epcTemp),  seq=str(seq),  qty_ord=str(qtyOrder),  l_fr=str(locoFrom), l_to=str(locoTo), m13_no=str(m13_noTemp), brn_no=str(brn_noTemp), org_brnno=str(org_brnnoTemp), pr_shopsec=str(pShop), n_shopsec=str(nShop), m5_cd=str(m5cd), ncp_jbs=str(ncp_jbsTemp), okmrq=str(okmrq), sn=str(snTemp), rm_partno=str(rm_partnoTemp), rm_qty=str(rm_qtyTemp), rm_ut=str(rm_utTemp), remarks=str(remarkM5CD))
+            else:               
+                if m5cd=="5":
+                    qtyOrder = qtyOrder
+                    for i in range(0, int(qtyOrder)):   
+                        locoTo=locoFrom                               
+                        Hwm5Inbox.objects.create(hw_cd=str(hwcd), part_no=str(partNoTemp),  des=str(desTemp),  sel_sw=str(sel),  opn=str(opnNoTemp),  opn_desc=str(opn_descTemp), shop_sec=str(shop_secTemp),  lc_no=str(lc_noTemp), pa=str(paTemp),  at=str(atTemp),  no_off=str(noOff), time_pcpls=str(time_pcplsTemp), tot_hrspls=str(tot_hrsplsTemp), batch_no=str(batchNo), org_batch=str(org_batchTemp), epc=str(epcTemp),  seq=str(seq),  qty_ord=str(qtyOrder),  l_fr=str(locoFrom), l_to=str(locoTo), m13_no=str(m13_noTemp), brn_no=str(brn_noTemp), org_brnno=str(org_brnnoTemp), pr_shopsec=str(pShop), n_shopsec=str(nShop), m5_cd=str(m5cd), ncp_jbs=str(ncp_jbsTemp), okmrq=str(okmrq), sn=str(snTemp), rm_partno=str(rm_partnoTemp), rm_qty=str(rm_qtyTemp), rm_ut=str(rm_utTemp), remarks=str(remarkM5CD))
+                        locoFrom=int(locoFrom)+1 
+                else:
+                    Hwm5Inbox.objects.create(hw_cd=str(hwcd), part_no=str(partNoTemp),  des=str(desTemp),  sel_sw=str(sel),  opn=str(opnNoTemp),  opn_desc=str(opn_descTemp), shop_sec=str(shop_secTemp),  lc_no=str(lc_noTemp), pa=str(paTemp),  at=str(atTemp),  no_off=str(noOff), time_pcpls=str(time_pcplsTemp), tot_hrspls=str(tot_hrsplsTemp), batch_no=str(batchNo), org_batch=str(org_batchTemp), epc=str(epcTemp),  seq=str(seq),  qty_ord=str(qtyOrder),  l_fr=str(locoFrom), l_to=str(locoTo), m13_no=str(m13_noTemp), brn_no=str(brn_noTemp), org_brnno=str(org_brnnoTemp), pr_shopsec=str(pShop), n_shopsec=str(nShop), m5_cd=str(m5cd), ncp_jbs=str(ncp_jbsTemp), okmrq=str(okmrq), sn=str(snTemp), rm_partno=str(rm_partnoTemp), rm_qty=str(rm_qtyTemp), rm_ut=str(rm_utTemp), remarks=str(remarkM5CD))
+            temp = Hwm5Inbox.objects.all()
+                           
+            context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'subnav':subnav,
+            'cuser':cuser,
+            'temp':temp,
+            'tempLength':tempLength,
+            'batchQty':qtyOrder,
+            'batchNo' : batchNo
+            }
+            return render(request,"m5hwviewInbox.html",context)        
+            
+    return render(request,"m5hwview.html",context)
+
+
+def HWM5Validate(request):
+    if request.method == "GET" and request.is_ajax():
+        
+        partNoTemp = request.GET.get('partNoTemp')   
+        batchNo = request.GET.get('batchNo')       
+        shop_secTemp = request.GET.get('shop_secTemp')          
+    
+        bono_Temp = list(M13.objects.filter(shop=shop_secTemp, part_no=partNoTemp,wo=batchNo).values('qty_rej').distinct())
+        print("bono_Temp---------------",bono_Temp)           
+        return JsonResponse(bono_Temp, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def m5hwGetbatchNo(request):
+    if request.method == "GET" and request.is_ajax():
+        partNo = request.GET.get('partNo')
+        msgSet = 'False'
+        mob_temp=[]
+        bono_Temp = Batch.objects.filter(part_no = partNo).values('bo_no').exclude(part_no__isnull=True).distinct()                  
+        for i in bono_Temp: 
+            mob_temp.append(i['bo_no'])
+        for j in range(len(mob_temp)):
+            print("bo_no_Temp : ",mob_temp[j])
+            if len(mob_temp[j]):
+                msgSet = "True"
+        return JsonResponse(msgSet, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m5hwGetbatchQtyDetails(request):
+    if request.method == "GET" and request.is_ajax():
+        partNo = request.GET.get('partNo')
+        batchNo = request.GET.get('batchNo')             
+        mob_temp=[]
+        print("mob_temp : ",mob_temp)
+        b_qty=0
+        bono_Temp = Batch.objects.filter(part_no = partNo, bo_no = batchNo).values('loco_fr','loco_to').distinct() 
+        qty=Batch.objects.filter(part_no = partNo, bo_no = batchNo).aggregate(Sum('batch_qty'))
+        
+        if len(qty)!=0:
+            b_qty=qty['batch_qty__sum']
+        for i in bono_Temp: 
+            mob_temp.append(i['loco_fr'])
+            mob_temp.append(i['loco_to'])
+            mob_temp.append(b_qty)
+            break
+                      
+        return JsonResponse(mob_temp, safe = False)
+    return JsonResponse({"success":False}, status=400)

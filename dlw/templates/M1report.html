@@ -49,20 +49,10 @@
 <!-- <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M1 - MASTER PROCESS SHEET</h1> -->
 <form action="{% url 'm1genrept1' %}" method="POST"> {% csrf_token %}
   <div class="container">
-        <table class="table">
-                <tr>
-                        <td>
-                            <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
-                            <select class="form-control" id="part_nop" name="part_nop" required onchange="clickpr()">
-                <option id="op_part" selected disabled hidden>Select Part No</option>
-                {% for i in newob %}
-                  <option>{{i.partno}}</option>
-                {% endfor %}
-            </select>
-                        </td>
-                        </tr>
-
-                    </table>
+            <input type="hidden"  id="h1" name="h1" value="{{part}}">
+            <input type="hidden"  id="h2" name="h2" value="{{part}}">
+                        
+  
                     
                     <center><input type="submit" value="Proceed" name="proceed" id="proceed" style="display: none"/></center>
 </div>
@@ -79,12 +69,13 @@
 {% for i in obj1 %}
 <table>
 <tr>
-<td><h5><b>PART NO: </b>{{prtno}} {{i.des}}</h5></td><td></td>
+<td><h5><b>PART NO: </b>{{prtno}} </h5></td><td></td>
 <td><h5><b>DRG-NO.:</b> {{i.drgno}}</h5></td>
 </tr><tr></tr>
 <tr>
 <td><h5><b>RM PART NO:</b>{{rmpart}}</h5></td>
-<td><h5><b>EPC: </b>{{epcv}}</b></h5></td><td></td>
+<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;RM PART DES:</b>{{rdes}}</h5></td>
+<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;EPC: </b>{{epcv}}</b></h5></td><td></td>
 <td><h5><b>PTC: </b>{{ptcv}}</h5></td>
 </tr>
 </table>
@@ -153,40 +144,49 @@
 </center>
 </form>
 <script type="text/javaScript">
-function clickpr()
+
+window.onload=function()
 {
-    console.log(document.getElementById('part_nop'));
-    document.getElementById('proceed').click();    
+   if(document.getElementById('h2').value.length!='')
+        document.querySelector("#proceed").click();
+  
+    
 }
-    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-                      e.preventDefault();
-                      var shop_sec = $("#shop_sec").val()
-                      var data = {shop_sec};
-                        $.ajax({
-                          type : 'GET',
-                          url : "{% url 'm1getpano' %}",
-                          dataType : 'json',
-                          data : data,
-                          success : function(response){
-                            var elementsadded = document.querySelectorAll(".newelewono");
-                                if(elementsadded.length>0){
-                                    var elementsaddedarr = Array.from(elementsadded);
-                                    elementsaddedarr.forEach((el)=> el.remove());                                    
-                                    document.querySelector("#op_part").selected = true;                                   
-                                 }
-                                var brarr,mystr,html;
-                                brarr = response.map((el)=>el.part_no);
-                                mystr = "";
-                                brarr.forEach((el,index)=>{
-                                  html = `<option class="newelewono">${brarr[index]}</option>`
-                                  mystr = html.concat(mystr);
-                                });
-                                html = "";
-                                document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
-                                mystr=""; 
-                          }
-                            })
-                  })
+// function clickpr()
+// {
+//     console.log(document.getElementById('part_nop'));
+//     document.getElementById('proceed').click();    
+// }
+    // document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //                   e.preventDefault();
+    //                   var shop_sec = $("#shop_sec").val()
+    //                   var data = {shop_sec};
+    //                     $.ajax({
+    //                       type : 'GET',
+    //                       url : "{% url 'm1getpano' %}",
+    //                       dataType : 'json',
+    //                       data : data,
+    //                       success : function(response){
+    //                         var elementsadded = document.querySelectorAll(".newelewono");
+    //                             if(elementsadded.length>0){
+    //                                 var elementsaddedarr = Array.from(elementsadded);
+    //                                 elementsaddedarr.forEach((el)=> el.remove());                                    
+    //                                 document.querySelector("#op_part").selected = true;                                   
+    //                              }
+    //                             var brarr,mystr,html;
+    //                             brarr = response.map((el)=>el.part_no);
+    //                             mystr = "";
+    //                             brarr.forEach((el,index)=>{
+    //                               html = `<option class="newelewono">${brarr[index]}</option>`
+    //                               mystr = html.concat(mystr);
+    //                             });
+    //                             html = "";
+    //                             document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
+    //                             mystr=""; 
+    //                       }
+    //                         })
+    //               })
+
 function printDiv() {
     var printContents = document.getElementById("print").innerHTML;
 

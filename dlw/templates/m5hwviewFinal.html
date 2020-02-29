@@ -1,0 +1,330 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<style>
+table, td, th {  
+  text-align: left;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  padding: 2px;
+}
+</style>
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        display: block;
+        border: 0px;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+
+<br><h4 align="center">JOB CARDS (M5) DATA ENTRY</h4>
+<body onload="myFunc2()">
+<form action="{% url 'm5hwview' %}" method="POST"> {% csrf_token %}
+<div class="container">
+        <table style="background-color: whitesmoke; border-radius: 30px;">
+        <h6 align="left" style="margin-right: 100px;">M5 DETAILS</h6>
+        <hr style="height:1px; border:none; color:red; background-color:red; width:100%; text-align:center; margin: 0 auto;"><br>
+            <tr>                
+                <td>
+                    <label >&nbsp;&nbsp;HW-CD:</label>
+                       <input type="text" name="hwcd" id="hwcd" value="{{hwcdTemp}}" class="form-control" onchange="myFunc1();" onKeyPress="return ValidateAlpha(event);" maxlength="2" style="text-transform: uppercase;">
+                </td> 
+                <td></td>               
+                <td>
+                    <label >Part-No.:</label>
+                      <input type="text" name="partNoTemp" id="partNoTemp" value="{{partNoTemp}}" class="form-control" >
+                </td>                             
+             </tr>
+             <tr>
+                <td><label >DES:</label>
+                    <textarea  name="desTemp" id="desTemp" class="form-control" >{{desTemp}}</textarea>                
+                </td>    
+             </tr>
+             <tr>
+                <td>
+                    <label >SEL:</label>
+                       <input type="text" name="sel" id="sel" value="Y" readonly class="form-control" >
+                </td>
+                <td></td>  
+                <td>
+                    <label >OPN:</label>
+                      <input type="text" name="opnNoTemp" id="opnNoTemp" value="{{opnNoTemp}}" class="form-control" >
+                </td>                
+             </tr>
+             <tr>
+                <td><label >OPN DES:</label>
+                    <textarea  name="opn_descTemp" id="opn_descTemp" value="{{opn_descTemp}}" class="form-control" ></textarea>                
+                </td>    
+             </tr>
+             <tr>         
+                <td>
+                    <label >Shop-Sec:</label>
+                       <input type="text" name="shop_secTemp" id="shop_secTemp" value="{{shop_secTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >Lc-No.:</label>
+                      <input type="text" name="lc_noTemp" id="lc_noTemp" value="{{lc_noTemp}}" class="form-control" >
+                </td>
+                <td>
+                    <label >PA:</label>
+                      <input type="text" name="paTemp" id="paTemp" value="{{paTemp}}" class="form-control" >
+                </td>                             
+             </tr>
+             <tr>                
+                <td>
+                    <label >AT:</label>
+                       <input type="text" name="atTemp" id="atTemp" value="{{atTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >No-Off:</label>
+                      <input type="text" name="noOff" id="noOff"  class="form-control" >
+                </td>
+                <td>
+                    <label >Time-PCPLS:</label>
+                      <input type="text" name="time_pcplsTemp" id="time_pcplsTemp" value="{{time_pcplsTemp}}" class="form-control" >
+                </td>                             
+             </tr>
+             <tr>             
+                <td>
+                    <label >Tot-HRSPLS:</label>
+                       <input type="text" name="tot_hrsplsTemp" id="tot_hrsplsTemp" value="{{tot_hrsplsTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >Batch-No(9999999):</label>
+                      <input type="text" name="batchNo" id="batchNo" value="{{batchNo}}" class="form-control" >
+                </td>
+                <td>
+                    <label >Org-Batch(9999999):</label>
+                      <input type="text" name="org_batchTemp" id="org_batchTemp" value="{{org_batchTemp}}" class="form-control" >
+                </td>                             
+             </tr>
+             <tr>                
+                <td>
+                    <label >EPC:</label>
+                       <input type="text" name="epcTemp" id="epcTemp" value="{{epcTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >SEQ:</label>
+                      <input type="text" name="seq" id="seq"  class="form-control" >
+                </td>
+                <td>
+                    <label >Qty-Ord:</label>
+                      <input type="text" name="qtyOrder" id="qtyOrder" value="{{seqTemp}}" class="form-control" >
+                </td>                             
+             </tr>
+             <tr>                
+                <td>
+                    <label >L-Fr:</label>
+                       <input type="text" name="locoFrom" id="locoFrom" value="{{l_frTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >L-To:</label>
+                      <input type="text" name="locoTo" id="locoTo" value="{{l_toTemp}}" class="form-control" >
+                </td>
+                <td>
+                    <label >M13-No:(999/9/9999)</label>
+                      <input type="text" name="m13_noTemp" id="m13_noTemp" value="{{m13_noTemp}}" class="form-control" >
+                </td>                             
+             </tr>
+             <tr>                
+                <td>
+                    <label >M13-Date:</label>
+                       <input type="text" name="m13_dateTemp" id="m13_dateTemp" value="{{m13_dateTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >BRN-No.:</label>
+                      <input type="text" name="brn_noTemp" id="brn_noTemp" value="{{brn_noTemp}}" class="form-control" >
+                </td>
+                <td>
+                    <label >ORG-BRN No.:</label>
+                      <input type="text" name="org_brnnoTemp" id="org_brnnoTemp" value="{{org_brnnoTemp}}" class="form-control" >
+                </td>                             
+             </tr>
+             <tr>                
+                <td>
+                    <label >P-Shop:</label>
+                       <input type="text" name="pShop" id="pShop"  class="form-control" >
+                </td>                
+                <td>
+                    <label >N-Shop:</label>
+                      <input type="text" name="nShop" id="nShop"  class="form-control" >
+                </td>
+                <td>
+                    <label >M5-CD:</label>
+                      <input type="text"  name="m5cd" id="m5cd"  class="form-control" placeholder="Only allowed numbers are 1 and 5." onchange="myFunc()" onkeypress="return event.charCode >= 49 && event.charCode <= 53"  maxlength="1" > 
+                </td>                             
+             </tr>
+             <tr>                
+                <td>
+                    <label >NCP-JBS:</label>
+                       <input type="text" name="ncp_jbsTemp" id="ncp_jbsTemp" value="{{ncp_jbsTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >OKMRQ:</label>
+                      <input type="text" name="okmrq" id="okmrq" value="N" class="form-control" onblur="myFunc2()">
+                </td>
+                <td>
+                    <label >RM_Part No.:</label>
+                      <input type="text" name="snTemp" id="snTemp" value="{{snTemp}}" class="form-control" >   
+                </td>                             
+             </tr>
+             <tr>
+                <td><label >RM-DESC:</label>
+                    <textarea  name="rm_partnoTemp" id="rm_partnoTemp"  class="form-control" >{{rm_partnoTemp}}</textarea>                
+                </td>    
+             </tr>
+             <tr>                
+                <td>
+                    <label >RM-Qty:</label>
+                       <input type="text" name="rm_qtyTemp" id="rm_qtyTemp" value="{{rm_qtyTemp}}" class="form-control" >
+                </td>                
+                <td>
+                    <label >RM-Unit:</label>
+                      <input type="text" name="rm_utTemp" id="rm_utTemp" value="{{rm_utTemp}}" class="form-control" >
+                </td>
+                <td>
+                    <label >SN:</label>
+                      <input type="text" name="pr_shopsecTemp" id="pr_shopsecTemp" value="{{pr_shopsecTemp}}" class="form-control" >  
+                </td>                             
+             </tr>
+             <tr>                
+                <td>
+                    <label >PL-Reg No:</label>
+                       <input type="text" name="n_shopsecTemp" id="n_shopsecTemp" value="{{n_shopsecTemp}}" class="form-control" >
+                </td>                
+                <td><label >Remarks:</label>
+                    <textarea  name="remarkM5CD" id="remarkM5CD"  class="form-control"></textarea>               
+                </td>                                           
+             </tr>
+        </table><br><br>     
+        <div><center>
+                <input type="submit"  name="saveAndUpdate" id="saveAndUpdate" value="Save/Update" />&nbsp;
+                {% comment %} <input type="submit" disabled name="" id="" value="Select LOCO From-To"/>&nbsp; {% endcomment %}
+                <input type="submit" name="selectOPN" id="selectOPN" value="Select OPN"/>&nbsp;
+                <input type="submit" name="selectFianlBack" id="selectFianlBack" value="Back"/>&nbsp;<br>
+                <input type="hidden" name="id" id="id" value="{{id}}"/>
+                </center>
+        </div><br><br>    
+</div>                
+</form>  
+</body>  
+<script>
+function myFunc(){
+    var mM5_CD = $("#m5cd").val();
+    if(mM5_CD == "2" || mM5_CD == "3" || mM5_CD == "4"){
+        swal("Only 1 or 5 Digits are allow, Here 1 denote combine and 5 denote split.")
+        $("#m5cd").val("");
+    }else{
+        var mM5_CD = $("#m5cd").val();
+        if(mM5_CD == "1"){
+            confirm("Wants to Combine the Job Card.");
+            document.getElementById("remarkM5CD").value = "Qty-Ord : "+$("#qtyOrder").val()+", M5-CD : "+$("#m5cd").val()+", L-Fr : "+$("#locoFrom").val()+", L-To : "+$("#locoTo").val();            
+        }else{
+            confirm("Wants to Split the Job Card.");
+            document.getElementById("remarkM5CD").value = "Qty-Ord : "+$("#qtyOrder").val()+", M5-CD : "+$("#m5cd").val()+", L-Fr : "+$("#locoFrom").val()+", L-To : "+$("#locoFrom").val();            
+            //document.getElementById("remarkM5CD").value = "";
+        }
+    }
+}
+
+
+document.querySelector("#qtyOrder").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var partNoTemp      = $("#partNoTemp").val();
+                    var batchNo         = $("#batchNo").val();
+                    var shop_secTemp    = $("#shop_secTemp").val();
+                    var qtyOrder        = $("#qtyOrder").val();                  
+
+                    //alert("partNoTemp - "+partNoTemp+": batchNo :"+batchNo+": shop_secTemp :"+shop_secTemp)                    
+                    var data = {partNoTemp, batchNo, shop_secTemp};                  
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'HWM5Validate' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){                            
+                         var testData = response[0].qty_rej;
+                            //alert(testData)
+                            if(testData >= qtyOrder){
+                                //alert()
+                            }else{
+                                swal(" For Shop No. - "+shop_secTemp+", Part No. - "+partNoTemp+", batch No. - "+batchNo+" only Quanty Order "+testData+ "is rejected. so that you are only able to change equal or less.")
+                                document.getElementById("saveAndUpdate").disabled = true; 
+                            }
+                        }
+                   })
+                })
+
+
+
+ function ValidateAlpha(evt)
+    {       
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32)         
+        return false;
+            return true;
+    }
+function myFunc1(){
+    var mHWCD = $("#hwcd").val();
+    if(mHWCD.length < '2'){
+        swal("HW-CD must be 2 character.")
+    }
+}
+function myFunc2(){
+    var mOkmrq = $("#okmrq").val();
+    if(mOkmrq == 'N'){
+        document.getElementById("saveAndUpdate").disabled = true; 
+    }else{
+        document.getElementById("saveAndUpdate").disabled = false; 
+    }
+}
+</script>
+{% endblock content %}
