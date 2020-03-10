@@ -1088,6 +1088,7 @@ class Itemcostsum(models.Model):
 
 
 class Lc1(models.Model):
+    id=models.AutoField(primary_key=True)
     shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
     lcno = models.CharField(db_column='LCNO', max_length=4, blank=True, null=True)  # Field name made lowercase.
     des = models.CharField(db_column='DES', max_length=30, blank=True, null=True)  # Field name made lowercase.
@@ -1836,6 +1837,7 @@ class MnpBd(models.Model):
 
 
 class Mp(models.Model):
+    id=models.AutoField(primary_key=True)
     shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
     lcno = models.CharField(db_column='LCNO', max_length=4, blank=True, null=True)  # Field name made lowercase.
     mwno = models.CharField(db_column='MWNO', max_length=5, blank=True, null=True)  # Field name made lowercase.

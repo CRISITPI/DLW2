@@ -23889,3 +23889,231 @@ def m5hwGetbatchQtyDetails(request):
                       
         return JsonResponse(mob_temp, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(urlpass='/screenforloadmasterupdation/')
+def screenforloadmasterupdation(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        context={
+            'nav' : nav,
+            'ip' : get_client_ip(request),
+            'subnav' : subnav,
+        }
+    return render(request, "screenforloadmasterupdation.html",context) 
+
+def ScreenLoadMasterUpdateValidShop(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec = request.GET.get('shopsec')
+        obj=list(Lc1.objects.filter(shop_sec=shopsec).exclude(del_fl='Y').values('shop_sec'))
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success=false"},status=400)
+
+def ScreenLoadMasterUpdateGetAll(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec = request.GET.get('shopsec')
+        loadcentre = request.GET.get('loadcentre')
+        obj=list(Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).exclude(del_fl='Y').values('des','no_men','no_mcs1','no_mcs2','no_mcs3').distinct())
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success=false"},status=400)
+
+def ScreenLoadMasterUpdateSave(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        desc=request.GET.get('desc')
+        noman=request.GET.get('noman')
+        nomcs1=request.GET.get('nomcs1')
+        nomcs2=request.GET.get('nomcs2')
+        nomcs3=request.GET.get('nomcs3')
+        mwno=request.GET.get('mwno')
+        mcgr=request.GET.get('mcgr')
+        d1 = date.today()
+        temp=list(Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).exclude(del_fl='Y').values('shop_sec').distinct())
+        if len(temp) == 0:
+            temp=Lc1.objects.create(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
+            no_men=noman,no_mcs1=nomcs1,no_mcs2=nomcs2,no_mcs3=nomcs3,updt_dt=d1)
+        
+        else:
+            obj=[1]
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenLoadMasterUpdateUYes(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        desc=request.GET.get('desc')
+        noman=request.GET.get('noman')
+        nomcs1=request.GET.get('nomcs1')
+        nomcs2=request.GET.get('nomcs2')
+        nomcs3=request.GET.get('nomcs3')
+        d1 = date.today()
+        Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).update(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
+            no_men=noman,no_mcs1=nomcs1,no_mcs2=nomcs2,no_mcs3=nomcs3,updt_dt=d1)
+
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenLoadMasterUpdateDelete(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        d1 = date.today()
+        Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).update(del_fl='Y',updt_dt=d1)   
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+    
+def ScreenLoadMasterUpdateAddMwNo(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        mwno=request.GET.get('mwno')
+        mcgr=request.GET.get('mcgr')
+        desc=request.GET.get('desc')
+        obj2=list(Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).exclude(del_fl='Y').values('mwno','mc_gr').distinct())
+        d1 = date.today()
+        if len(obj2) == 0:
+            temp=Mp.objects.create(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
+            mwno=str(mwno),mc_gr=str(mcgr),updt_dt=d1)
+        
+        return JsonResponse(obj2,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenLoadMasterUpdateDelMwNo(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        mwno=request.GET.get('mwno')
+        mcgr=request.GET.get('mcgr')
+        obj2=list(Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).exclude(del_fl='Y').values('mwno').distinct())
+        d1 = date.today()
+        if len(obj2) != 0:
+            Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).update(del_fl='Y',updt_dt=d1)   
+
+        return JsonResponse(obj2,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenLoadMasterUpdateView(request):
+    if request.method == "GET" and request.is_ajax():
+        loadcentre=request.GET.get('loadcentre')
+        obj=list(Lc1.objects.filter(lcno=loadcentre).exclude(del_fl='Y').values('lcno','des').distinct())
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+@login_required
+@role_required(urlpass='/updsh/')
+def updsh(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+
+
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'updsh.html',context)
+
+
+def updshsave(request):
+    if request.method == "GET" and request.is_ajax():
+        txtshop=request.GET.get('shop_val')
+        cat_value=request.GET.get('cat_value')
+        lr_1=request.GET.get('lr_1')
+        lr_2=request.GET.get('lr_2')
+        lr_3=request.GET.get('lr_3')
+        lr_4=request.GET.get('lr_4')
+        up_dt=request.GET.get('up_dt')
+        ls=up_dt.split('-')
+        dt=ls[2]+"-"+ls[1]+"-"+ls[0]
+        print("changed date is.....",dt)
+        ovd_per=request.GET.get('ovd_per')
+        if(txtshop==""):
+            print("printing cos txtshop is nulll......")
+            return JsonResponse({"success":False}, status = 400)
+        shop_list=list(Shop.objects.values('shop'))
+        shop_lt=[d['shop'] for d in shop_list]
+        print("list of shop in save function....",shop_lt)
+        for i in range(0,len(shop_lt)):
+            if shop_lt[i][0:2] == txtshop:
+                print("inside if....")
+                Shop.objects.filter(shop=shop_lt[i]).update(cat_02=cat_value,lr1=lr_1,lr2=lr_2,lr3=lr_3,lr4=lr_4,updt_dt=dt,ovhd_perc=ovd_per)
+          
+        obj=[]
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status = 400)
+
+
+def updsh1(request):
+    if request.method == 'GET' and request.is_ajax():  
+        shop_val= request.GET.get('Txt_shop')
+        print("user entered value is....",shop_val)
+        shop_list=list(Shop.objects.values('shop'))
+        shop_lt=[d['shop'] for d in shop_list]
+        print("list of shop is....",shop_lt)
+        data_list=None
+        for i in range(0,len(shop_lt)):
+            
+            if(shop_lt[i][0:2]==shop_val):
+                
+                data_list=list(Shop.objects.filter(shop=shop_lt[i]).values('cat_02','lr1','lr2','lr3','lr4','updt_dt','ovhd_perc','sh_desc'))   
+
+        print("data list is.....",data_list) 
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)
+    return JsonResponse({"success":False}, status = 400)
