@@ -5045,7 +5045,7 @@ def m5newview(request):
             wo_no = request.POST.get('wo_no')
             brn_no = request.POST.get('br_no')
             doc_no = request.POST.get('doc_no')
-            current_yr=int(datetime.datetime.now().year)
+            #current_yr=int(datetime.datetime.now().year)
             res = [int(x) for x in str(wo_no)] 
 
             s = [str(i) for i in res] 
@@ -5139,7 +5139,7 @@ def m5newview(request):
                         'shop_sec': shop_sec,
                         'part_no': part_no,
                         'wo_no': wo_no,
-                        'cyear':current_yr,
+                        #'cyear':current_yr,
                         'brn_no': brn_no,
                         'doc_no': doc_no,
                         'prtstaff':prtstaff,
@@ -24293,9 +24293,9 @@ def roster(request):
                     for i in range(int(noofdays)):
                         fromdate=request.POST.get('from')
                         fromdate1=fromdate[6:] + "/" + fromdate[3:5] + "/" + fromdate[:2]
-                        date = datetime.strptime(fromdate1, "%Y/%m/%d")
+                        date = datetime.datetime.strptime(fromdate1, "%Y/%m/%d")
                         modified_date = date + timedelta(days=i)
-                        datee=datetime.strftime(modified_date, "%d/%m/%Y")
+                        datee=datetime.datetime.strftime(modified_date, "%d/%m/%Y")
                         print(datee)
                         d1.append(datee)
                         shift=request.POST.get(str(j+1)+str(i))
@@ -24361,7 +24361,7 @@ def rosterreport(request):
             'subnav':subnav,
         }
     return render(request, 'rosterreport.html',context)
-from datetime import * 
+
 def getrosterreport(request):
     if request.method=="GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
@@ -24371,13 +24371,13 @@ def getrosterreport(request):
         datew=datee[6:] + "/" + datee[3:5] + "/" + datee[:2]
         lst=[]
         ls=[]
-        tdate = datetime.strptime(datew, "%Y/%m/%d")
+        tdate = datetime.datetime.strptime(datew, "%Y/%m/%d")
         x=int(noofday)
         d1=[]
 
         for i in range(0,x):
             modified_date = tdate + timedelta(days=i)
-            fdate=datetime.strftime(modified_date, "%d/%m/%Y")
+            fdate=datetime.datetime.strftime(modified_date, "%d/%m/%Y")
             d1.append(fdate)
         tmpstr1=list(roster1.objects.filter(shop_sec=shop_sec,date__in=d1).values('staffNo','staffName','shift'))
         c=-1
@@ -24403,14 +24403,14 @@ def genrosterpdf(request, *args, **kwargs):
     datew=date1[6:] + "/" + date1[3:5] + "/" + date1[:2]
     lst=[]
     ls=[]
-    tdate = datetime.strptime(datew, "%Y/%m/%d")
+    tdate = datetime.datetime.strptime(datew, "%Y/%m/%d")
     x=int(noofday)
     d1=[]
     d2=[]
     for i in range(0,x):
         modified_date = tdate + timedelta(days=i)
-        fdate=datetime.strftime(modified_date, "%Y/%m/%d")
-        fdate1=datetime.strftime(modified_date, "%d/%m/%Y")
+        fdate=datetime.datetime.strftime(modified_date, "%Y/%m/%d")
+        fdate1=datetime.datetime.strftime(modified_date, "%d/%m/%Y")
         d1.append(fdate)
         d2.append(fdate1)
     tmpstr1=list(roster1.objects.filter(shop_sec=shop_sec, date__in=d2).values('staffNo','staffName','shift'))
