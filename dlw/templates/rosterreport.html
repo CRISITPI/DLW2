@@ -124,8 +124,9 @@
             var sdate=document.getElementById('date1').value;
             var edate=document.getElementById('date2').value; 
             var listDate = [];
-            var ssdate=moment(sdate).format('YYYY-DD-MM');
-            var eedate=moment(edate).format('YYYY-DD-MM');
+            
+            var ssdate=sdate.split("-").reverse().join("-");
+            var eedate=edate.split("-").reverse().join("-");
             console.log(ssdate);
             var startDate =ssdate;
             var endDate = eedate;
@@ -150,6 +151,7 @@
                     var edate=$("#date2").val();
                     var leng=$("#hide2").val();
                     console.log(leng);
+                
                     data={shop_sec,sdate,edate,leng};
                       $.ajax({
                         type : 'GET',
@@ -157,11 +159,13 @@
                         dataType : 'json',
                         data : data,
                         success : function(response){
+                          
                           var count=(response.length)
                           console.log(response.length)
                           for(var i=0;i<count;i++){
+
                             console.log(response);
-                          
+                            
       
                           var add=0;
                                
