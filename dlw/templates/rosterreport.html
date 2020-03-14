@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+       
+{% block content %} 
+<style>
+    input[type=text],input[type=number],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+  
+    }
+  </style>
+
+      <div class="container" id="hide3" >
+        <br><h2 align="center">Roster  Report</h2></body></br>
+  
+        <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
+        <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> 
+        <br>
+        <br>
+        <form action="{% url 'roster' %}" method="POST" id="form1"> 
+          {% csrf_token %}
+        <input type="text" id="hide2" name="hide2" readonly class="form-control"  hidden>
+          <table class="table"  >
+              <tr>
+                  <th>
+                    <label for="sno"><b>Shop Section NO/शॉप न०</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+                                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                            {% if lenm == 1 %}
+                                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                            {% endif %}
+                            {% if lenm > 1 %}
+                            {% for role in roles %}
+                            <option>{{role}}</option>
+                            {% endfor %}
+                            {% endif %}                         
+                    </select>
+                    </th>
+                   <th>
+                      <label for="date_from"><b>From Date</b></label>
+                    <input type="text" name="date1" id="date1" readonly class="form-control" required>
+                    <th>
+                      <label for="date_to"><b>To Date</b></label>
+                      <input type="text" name="date2" id="date2" readonly class="form-control" required>
+                    </th>   
+                           
+              </tr>
+              </table>
+           <center><input type="button" name="Get" class="btn btn-primary" value="Get" onclick="generatetable();show2();show1();"></center> 
+      </div>
+        <div id="hide1" class="container" style="display: none;">
+            <br><h3 align="center">Roster Table</h3></br>
+            
+            <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
+            <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">Roster</h6></div><br>
+            <center><b><h4>Indian Railways/भारतीय रेल</h4></b></center>
+
+            <center> <b><h4>Diesel Locomotive Works/डीजल रेल इंजन कारखाना</h4></b></center>
+
+            <center><b><h4>Varanasi/वाराणसी</h4></b></center>
+            <center><b><h4> ROSTER </h4></b></center>
+            <center><h3 id="para"></h3></center>
+            <table border="2" id="table"  style="border: solid black; padding:20px;">
+              <thead class="active">
+                <tr id="days">
+                  <th>#</th>
+                  <th >Staffnumber</th>
+                  <th>StaffName</th>
+                </tr>
+              </thead>
+            </table>
+          <center><input type="button" name="PDF" class="btn btn-primary" value="print" onclick="printPdf();"></center>
+        </div>
+</form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+      <script>
+        
+         function show2(){
+    document.getElementById('hide1').style.display="block";
+         }
+    function show1(){
+    document.getElementById('hide3').style.display="none";
+    }
+          function generatetable(){
+            var sdate=document.getElementById('date1').value;
+            var edate=document.getElementById('date2').value; 
+            var listDate = [];
+            var ssdate=moment(sdate).format('YYYY-DD-MM');
+            var eedate=moment(edate).format('YYYY-DD-MM');
+            console.log(ssdate);
+            var startDate =ssdate;
+            var endDate = eedate;
+            var dateMove = new Date(startDate);
+            var strDate = startDate;
+
+
+            while (strDate < endDate){
+              var strDate = dateMove.toISOString().slice(0,10);
+              listDate.push(moment(strDate).format('DD-MM-YYYY'));
+              dateMove.setDate(dateMove.getDate()+1);
+            };
+            var len=listDate.length;
+            document.getElementById('hide2').value=len;
+            for(l=0;l<len;l++){
+            var row=document.getElementById('days');
+            var x= row.insertCell(l+3);
+            x.innerHTML=listDate[l];
+            }
+                    var shop_sec = $("#shop_sec").val();
+                    var sdate=$("#date1").val();
+                    var edate=$("#date2").val();
+                    var leng=$("#hide2").val();
+                    console.log(leng);
+                    data={shop_sec,sdate,edate,leng};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'getrosterreport' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var count=(response.length)
+                          console.log(response.length)
+                          for(var i=0;i<count;i++){
+                            console.log(response);
+                          
+      
+                          var add=0;
+                               
+                          var htAppend='<tr><td>'+(i+1)+'</td><td><input type="text" name="staffNo" value="'+response[i].staffNo+'"></td><td>'+response[i].staffName+'</td>'
+                          for(var j=0;j<leng;j++){
+                          add+='<td>'+response[i].shift[j]+'</td>'}
+                        '</tr>'
+
+                        $('#table').append(htAppend+add);
+                        }
+                      } 
+                      });
+                      var shop_sec=document.getElementById('shop_sec').value;
+        console.log(shop_sec);
+        document.getElementById('para').innerHTML="SHOP SECTION  : "+shop_sec;
+
+  }
+  function print(divId){
+       var printContents = document.getElementById(divId).innerHTML;
+       var originalContents = document.body.innerHTML;
+       document.body.innerHTML = "<html><head><title></title></head><body>" + printContents + "</body>";
+       window.print();
+       document.body.innerHTML = originalContents;
+   
+
+ }
+
+
+    $(document).ready(function () {
+    $('#date1').datepicker({ dateFormat: 'dd-mm-yy', }); 
+    });
+    $(document).ready(function () {
+    $('#date2').datepicker({ dateFormat: 'dd-mm-yy',});
+
+
+    });
+    function printPdf(){
+  window.location.href = "{% url 'genrosterpdf' %}"+"?shop_sec="+$('#shop_sec').val()+"&date1="+$('#date1').val()+"&date2="+$('#date2').val()+"&hide2="+$('#hide2').val();
+}
+    </script>                   
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.29.0/date_fns.min.js"></script>
+   {% endblock content %}

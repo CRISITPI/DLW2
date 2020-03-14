@@ -93,11 +93,11 @@
     }
     
     input[type=button] {
-        width: 10%;
+        width: 20%;
         text-align: center;
         background-color: #4CAF50;
         color: white;
-        padding: 6px 6px;
+        padding: 14px 20px;
         margin: 8px 0;
         border: none;
         border-radius: 4px;
@@ -122,10 +122,15 @@
                             <label for="shop_sec"><b>Shop Section NO/शॉप अधी.:</b></label>
                           <div class="autocomplete" style="width:300px;">
                           <input type="text" autocomplete="off" class="form-control" id="shop_sec" name="shop_sec" placeholder="shop_sec"  maxlength="4" onkeypress="return isNumberKeya(event)">
+                          
                           <br><span id="lblErrora" style="color: red"></span> 
+                          
                         </div></div>
                         <div class="form-group col-md-4">
-                            <label for="partno"></label>
+                          <label  id="lblpart" style="color: cornflowerblue; margin-top: 50px;margin-left: -55px;"></label>
+                         
+                         
+                            
                         </div>
                         <div class="form-group col-md-4">
                             <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
@@ -134,7 +139,7 @@
                           <br><span id="lblErrorb" style="color: red"></span> 
                         </div></div>
                       </div>
-                      <center><input type="button" value="btn" name="proceed" id="btn" onclick="funb();"/></center>
+                      <center><input type="button" value="Submit" name="proceed" id="btn" onclick="funb();"/></center>
                     <center><input type="submit" value="Proceed" name="proceed" id="proceed" hidden/></center>
                 </div>
 
@@ -214,10 +219,36 @@
 
 </form>
 
+
+
 <script type="text/javaScript">
 
       var p_no1=[' ']  
       var s_sec=[' ']   
+
+
+    document.querySelector("#part_nop").addEventListener('focus',(e)=>{
+    e.preventDefault();
+    var shop_sec=$('#shop_sec').val();
+    
+    var data={shop_sec};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'm5getshop_name' %}",
+    dataType : 'json',
+    data : data,
+
+    success : function(response)
+    {    
+     document.getElementById('lblpart').innerHTML=response[0].section_desc;
+      
+    }
+    
+    }); 
+                
+ })
+
+
 
 function funb()
 {

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ROSTER_PDF</title>
+    
+    <style>
+        @page{
+            size:A3;
+            margin: 2cm;
+        }
+    </style>
+  
+</head>
+<body>
+    <center> <b><p><label style="font-size: 35px;">Diesel Locomotive Works</label></p></b></center>
+    <center><label style="font-size: 25px;">SHOP SECTION:- {{shop_sec}}</label></center>
+    
+    
+  <p align="right"><label style="font-size: 15px;">FROM DATE:- {{date3}}</label></p>  
+   <p align="right"><label style="font-size: 15px;">TO DATE:- {{date4}}</label></p> 
+<br>
+<br>
+
+<table border="1" id="table"  style="margin-top: 20px;" cellpadding="2">
+    <thead class="table table-stripped">
+    <tr>
+        <td style="width: 35px;align-content: center;">S.no</td>
+        <td style="width: 55px;align-content: center;">Staff No</td>
+        <td style="width: 120px;align-content: center;">Staff Name</td>
+        {% for i in d2 %}
+        <td style="width: 55px;"> {{i}} </td>
+        {% endfor %}
+    </tr>
+
+ {% for i in lst%}
+    <tr>
+       
+        <td style="width: 35px;">{{forloop.counter}}</td>
+        <td style="width: 55px;align-content: center;">{{i.staffNo}}</td>
+        <td style="width: 120px;"><label style="font-size: 10px;">{{i.staffName}}</label></td>
+        {% for j in i.shift%}
+        <td style="width: 55px;">{{j}}</td>
+        {%endfor%}
+        
+    </tr>
+    {%endfor%}
+    
+</thead>
+</table>
+<script>
+</script>
+
+</body>
+</html>

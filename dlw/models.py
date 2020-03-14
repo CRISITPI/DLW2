@@ -5111,3 +5111,11 @@ class toolmdata(models.Model):
     flag=models.CharField(db_column='flag',max_length=2,null=True)
     lastupddate=models.CharField(db_column='LastUpdateDate',max_length=15,null=True) 
     user=models.CharField(db_column='User',max_length=15,null=True)
+
+
+class roster1(models.Model):
+    shop_sec=models.CharField(db_column='shop_sec',max_length=20, blank=True, null=True)
+    staffNo = models.CharField(db_column='staffNo', max_length=20, blank=True, null=True) 
+    staffName=models.CharField(db_column='staffName',max_length=100, blank=True, null=True) 
+    shift=models.CharField(db_column='shift', max_length=20, blank=True,null=True)
+    date=models.CharField(db_column='date',max_length=10,blank=True,null=True)

@@ -11,7 +11,12 @@
         border-radius: 4px;
         box-sizing: border-box;
     }
-    
+    th {
+  background-color: #f2f2f2;
+}
+    tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
     input[type=submit] {
         width: 20%;
         text-align: center;
@@ -63,20 +68,22 @@
   
 <br>
 <h5 style="float: left"><b>Date: </b>{{dt}}</h5>
-<center><h4><u><B>DIESEL LOCOMOTIVE WORKS, VARANASI</B></u></h4></center>
+<center><h4><u><b>DIESEL LOCOMOTIVE WORKS, VARANASI</b></u></h4></center>
+<center><h4><u><b>M1 CARD</b></u></h4></center>
 <center><h4><u><b>PROCESS-SHEET</b></u></h4></center>
 <br>
 {% for i in obj1 %}
 <table>
 <tr>
-<td><h5><b>PART NO: </b>{{prtno}} </h5></td><td></td>
-<td><h5><b>DRG-NO.:</b> {{i.drgno}}</h5></td>
+<td><h5><b>PART NO:  </b>{{prtno}} </h5></td>
+<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;DRG-NO.:  </b> {{i.drgno}}</h5></td>
+<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;RM PART NO:  </b>{{rmpart}}</h5></td>
 </tr><tr></tr>
 <tr>
-<td><h5><b>RM PART NO:</b>{{rmpart}}</h5></td>
-<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;RM PART DES:</b>{{rdes}}</h5></td>
-<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;EPC: </b>{{epcv}}</b></h5></td><td></td>
-<td><h5><b>PTC: </b>{{ptcv}}</h5></td>
+
+<td><h5><b>RM PART DES:  </b>{{rdes}}</h5></td>
+<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;EPC: </b>{{epcv}}</h5></td>
+<td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;PTC: </b>{{ptcv}}</h5></td>
 </tr>
 </table>
 <table class="table table-stripped">

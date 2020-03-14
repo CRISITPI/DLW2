@@ -94,7 +94,7 @@
     <div class="container" id="div1">    
             
         <div class="form-row">            
-            <div class="form-group col-md-4">
+            <!-- <div class="form-group col-md-4">
                 <label for="cardno">Select Card to generate</label>
                 <div class="autocomplete" style="width:300px;">
                 <select class="form-control" name="cardno" id="cardno">
@@ -104,7 +104,7 @@
                     <option value="M5">M5</option>
                     <option value="M14">M14</option>
                 </select>
-            </div></div>
+            </div></div> -->
             <div class="form-group col-md-4">
                 <label for="asslyno">Assembly No.</label>
                 <div class="autocomplete" style="width:300px;">
@@ -116,10 +116,17 @@
             <div class="form-group col-md-4">
                 <label for="batchno">Batch Order No.</label>
                   <div class="autocomplete" style="width:300px;">
-                        <input id="batchno"  type="text" name="batchno" placeholder="BATCH NO" onclick="funbatch();"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
+                        <input id="batchno" autocomplete="off" type="text" name="batchno" placeholder="BATCH NO" onclick="funbatch();"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
                         <br><span id="lblErrorb" style="color: red"></span> 
                     </div>
         
+            </div>
+            <div class="form-group col-md-4">
+                <label for="brn_no">BRN NO  :  </label>
+                 <div class="autocomplete" style="width:300px;">
+                    <input id="brn_no" autocomplete="off" type="text" name="brn_no" placeholder="BRN NO"  onclick="funbrn();" maxlength="5" onkeypress="return isNumberKeybr(event)" >
+                    <br><span id="lblErrorbr" style="color: red"></span> 
+                </div>
             </div>
         </div> 
 
@@ -165,14 +172,7 @@
             </div></div>
           </div>
           <div class="form-row" >
-            <div class="form-group col-md-4">
-                <label for="brn_no">BRN NO  :  </label>
-                 <div class="autocomplete" style="width:300px;">
-                    <input id="brn_no" autocomplete="off" type="text" name="brn_no" placeholder="BRN NO"  onclick="funbrn();" maxlength="5" onkeypress="return isNumberKeybr(event)" >
-                    <br><span id="lblErrorbr" style="color: red"></span> 
-                </div>
-            </div>
-                <div class="form-group col-md-4" id="alt">
+                <div class="form-group col-md-4">
                     <label for="isalt" style=" margin-top: 31px;">Is Alternate  :   </label>
                     <input type="radio" id="ralt" name="ralt" value="T" onclick="only1();" checked="checked"> True
                     <input type="radio" id="ralt" name="ralt" value="F" onclick="only1();" > False
@@ -198,7 +198,7 @@
             $('#msg').remove(); 
         }
     },5000)
-var ch;
+var ch,b;
 var imp;
 var D=0;
 var countries = [' '];
@@ -208,7 +208,7 @@ var countries2 = [' '];
 document.querySelector("#brn_no").addEventListener('focus',(e)=>{
     e.preventDefault();
     var batch=$('#batchno').val();
-    
+    myFunc2();
     var data={batch};
     $.ajax({
     type : 'GET',
@@ -222,14 +222,15 @@ document.querySelector("#brn_no").addEventListener('focus',(e)=>{
       {
         countries.push((response[i].brn_no).toString());
       }
-      if (d==0)
-{   d=1;
-     if (response.length==0)
+      if (d==0 && b==1)
+       {
+              d=1;
+        if (response.length==0)
       {
         alert("Batch Does not exist in master.  CREATE NEW! ");
         $('#id3').show();
         $('#id4').show();
-        $("#ep_type").focus();
+        $("#brn_no").focus();
         imp=1;
           
       }
@@ -246,19 +247,16 @@ document.querySelector("#brn_no").addEventListener('focus',(e)=>{
 
 function funcbtncg()
 {
-    myFunc1();
-    myFunc2();
-    myFunc3();
-    
-    var d=$('#cardno option:selected').val();
+   
+    //var d=$('#cardno option:selected').val();
     if (imp==0)
     {
-        if ($("#cardno").val()=='')
-   {
-       alert('Please Select Card First ');
-       $("#cardno").focus();
-   }
-    else
+//         if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//     else
     if($("#asslyno").val()=='')
     {
         alert('Please Enter Assly no. ');
@@ -274,21 +272,11 @@ function funcbtncg()
     if($("#brn_no").val()=='')
     {
         alert('Please Enter Brn No. ');
-       $("#brn_no").focus();
+        $("#brn_no").focus();
+         
     }
     else
-    if(d=='M4' || d=='M5')
-    { 
-        if(ch==0)
-        {
-            alert('Please Select Alternate Part or Not. ');
-            $("#ralt").focus();
-        }
-        else
-    {
-        document.querySelector("#cardbutton").click();
-    }
-    }
+    if(myFunc1());
     else
     {
         document.querySelector("#cardbutton").click();
@@ -296,12 +284,12 @@ function funcbtncg()
     }
     else
     {
-    if ($("#cardno").val()=='')
-   {
-       alert('Please Select Card First ');
-       $("#cardno").focus();
-   }
-    else
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//     else
     if($("#asslyno").val()=='')
     {
         alert('Please Enter Assly no. ');
@@ -354,20 +342,11 @@ function funcbtncg()
     {
         alert('Please Enter Brn No. ');
        $("#brn_no").focus();
+       myFunc1();
     }
     else
-    if(d=='M4' || d=='M5')
-    { 
-        if(ch==0)
-        {
-            alert('Please Select Alternate Part or Not. ');
-            $("#ralt").focus();
-        }
-        else
-    {
-        document.querySelector("#cardbutton").click();
-    }
-    }
+    if(myFunc1());
+      
     else
     {
         document.querySelector("#cardbutton").click();
@@ -378,12 +357,13 @@ window.onload=function()
 {
     $('#div1').show();
     $('#div2').hide();
-    $('#alt').hide();
+    
     $('#id3').hide();
     $('#id4').hide();
     imp=0;
     ch=0;
     d=0;
+    
                       var a=0;
                       var data = {a};
                       $.ajax({
@@ -407,25 +387,35 @@ function only1()
     ch=1;
 }
 
-function myFunc1(){
+function myFunc1()
+{
     var brn_no = $("#brn_no").val();
-    if(brn_no.length < '5'){
+    if(brn_no.length < '5')
+    {
         //document.getElementById('brn_no').focus();
         $("#brn_no").focus();
         alert("BRN NO must be 5 character.");
+        return true;
+       
     }
+    return false;
+    
+
 }
 function myFunc2(){
-    var brn_no = $("#batchno").val();
-    if(brn_no.length < '8'){
+    var brn_no1 = $("#batchno").val();
+    if(brn_no1.length < '8'){
         //document.getElementById('brn_no').focus();
         $("#batchno").focus();
-        alert("Batch NO must be 7 character.");
+        alert("Batch NO must be 8 character.");
+        b=0;
     }
+    else
+        b=1;
 }
 function myFunc3(){
-    var brn_no = $("#asslyno").val();
-    if(brn_no.length < '8'){
+    var brn_no2 = $("#asslyno").val();
+    if(brn_no2.length < '8'){
         //document.getElementById('brn_no').focus();
         $("#asslyno").focus();
         alert("Assly NO must be 8 character.");
@@ -450,10 +440,10 @@ function myFunc5(){
 }
 function myFunc6(){
     var brn_no = $("#loco_to").val();
-    if(brn_no.length < '2'){
+    if(brn_no.length < '4'){
         //document.getElementById('brn_no').focus();
         $("#loco_to").focus();
-        alert("Loco To must be 2 character.");
+        alert("Loco To must be 4 character.");
     }
 }
 function myFunc7(){
@@ -470,7 +460,7 @@ function myFunc8(){
     if(brn_no.length < '4'){
         //document.getElementById('brn_no').focus();
         $("#wkf").focus();
-        alert("Uot-Wk-F must be 2 character.");
+        alert("Uot-Wk-F must be 4 character.");
     }
 }
 function isNumberKeya(evt) {
@@ -606,22 +596,22 @@ return true;
 // }
 
 
-function funcg()
-{ 
-    if ($("#cardno").val()=='')
-   {
-       alert('Please Select Card First ');
-       $("#cardno").focus();
-   }
-}
+// function funcg()
+// { 
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+// }
 function funbatch()
 { 
-    if ($("#cardno").val()=='')
-   {
-       alert('Please Select Card First ');
-       $("#cardno").focus();
-   }
-   else
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//    else
    if(($("#asslyno").val()==''))
    {
       alert('Please Select Assembly First ');
@@ -631,12 +621,12 @@ function funbatch()
 
 function funbrn()
 { 
-    if ($("#cardno").val()=='')
-   {
-       alert('Please Select Card First ');
-       $("#cardno").focus();
-   }
-   else
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//    else
    if(($("#asslyno").val()==''))
    {
       alert('Please Select Assembly No. First ');
@@ -651,6 +641,7 @@ function funbrn()
 }
 document.querySelector("#batchno").addEventListener('focus',(e)=>{
                     e.preventDefault();
+                    myFunc3();
                     var mAsslyno = $("#asslyno").val();
                                      
                     var data = {mAsslyno};
@@ -674,13 +665,13 @@ function wait()
     $('#div1').hide();
     $('#div2').show();
 }
-document.querySelector("#cardno").addEventListener('change',(e)=>{
-                    e.preventDefault();
-                    var d=$('#cardno option:selected').val();
-                    if(d=='M4' || d=='M5')
-                    {$('#alt').show();}
+// document.querySelector("#cardno").addEventListener('change',(e)=>{
+//                     e.preventDefault();
+//                     var d=$('#cardno option:selected').val();
+//                     if(d=='M4' || d=='M5')
+//                     {$('#alt').show();}
                     
-});
+// });
   
 
 

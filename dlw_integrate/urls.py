@@ -477,4 +477,12 @@ urlpatterns = [
     path('updsh/',updsh,name='updsh'),
     path('updshsave/',updshsave,name='updshsave'),
     path('updsh1/',updsh1,name='updsh1'),
+    path('roster/', roster,name='roster'),
+    path('ajax/rosterempno/', rosterempno,name='rosterempno'),
+    path('ajax/rosterempname/', rosterempname, name='rosterempname'),
+    path('ajax/rosterempdesg/', rosterempdesg, name='rosterempdesg'),
+    path('rosterreport/',rosterreport,name='rosterreport'), 
+    path('ajax/getrosterreport/',getrosterreport,name='getrosterreport'),
+    path('genrosterpdf/',genrosterpdf,name='genrosterpdf'),
+
 ]
