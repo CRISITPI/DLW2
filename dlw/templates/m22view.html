@@ -1,6 +1,5 @@
 {% extends 'base.html' %} {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
@@ -52,31 +51,40 @@
         background-color: #45a049;
         text-align: center;
     }
+    table th,td{
+        padding: 5px;
+    }
 </style>
-<br>
+<center>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <font size="3">
+            <li>
+                {{message}}
+            </li>
+        </font>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</center>
 <br>
 <h3 align="center">Duty Certificate (M22) Card </h3>
 <br>
-<center>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <font size="3">
-                <li>
-                    {{message}}
-                </li>
-            </font>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </center>
-<br>
+ 
 <form action="{% url 'm22view' %}" method="POST"> {% csrf_token %}
     <div class="container">
-        <table class="table">
+        <table class="table-response">
+            <tr>
+                <th><label for="sno"><b>Shop Section NO<br>शॉप अधी:</b></label> </th>
+                <th> <label for="wk_ord_no"><b>Work Order NO Of Job Left<br>छोड़ी गए जांच का कार्य आदेश:</b></label></th>
+                <th> <label for="wk_ord_no1"><b>Work Order NO For Time On Duty<br>ड्यूटी के समय के लिए जॉब का कार्य आदेश संख्या:</b></label> </th>
+                <th> <label for="staff_no"><b>STAFF NO<br>स्टाफ संख्या:</b></label> </th>
+                <th> <label for="month"><b>MONTH<br>महीना:</b></label> </th>
+             </tr>
             <tr>
                 <td>
-                    <label for="sno"><b>Shop Section NO/शॉप अधी:</b></label>
+                    
                     <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
             {% if lenm == 1 %}
@@ -92,7 +100,7 @@
         </select>
                 </td>
                 <td>
-                    <label for="wk_ord_no"><b>Work Order NO Of Job Left/छोड़ी गए जांच का कार्य आदेश:</b></label>
+                   
                     <select class="form-control" id="wno" name="wo_no" required>
         <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
         {% if lenm == 1 %}
@@ -103,7 +111,7 @@
     </select>
                 </td>
                  <td>
-                    <label for="wk_ord_no1"><b>Work Order NO For Time On Duty/ड्यूटी के समय के लिए जॉब का कार्य आदेश संख्या:</b></label>
+                   
                     <select class="form-control" id="wno1" name="wo_no1" required>
         <option id="op_wo1" selected disabled hidden>Select Work Order NO</option>
         {% if lenm == 1 %}
@@ -115,16 +123,13 @@
                 </td>
 
                 <td>
-                    <label for="staff_no"><b>STAFF NO/स्टाफ संख्या:</b></label>
+                   
                     <select class="form-control" id="staff_no" name="staff_no" onchange="month()" required>
             <option id="op_staff" selected disabled hidden>Select STAFF NO</option>
 
               </select>
                 </td>
-</tr>
-            <tr>
-                <td>
-                    <label for="month"><b>MONTH/महीना:</b></label>
+                <td> 
                     <select class="form-control" id="mon" name="mon"  disabled required>
                     <option  selected disabled hidden>Select MONTH</option>
                     <option value='1'>January</option>
@@ -141,7 +146,8 @@
                     <option value='12'>December</option>
                     </select>
                 </td>
-            </tr>
+</tr>
+             
 
 
 
@@ -152,8 +158,8 @@
 
 
     </div>
-    <br><br> {% if sub == 1 %}
-    <div id="print" style="align:center"  >
+     <br> {% if sub == 1 %}
+    <div id="print" style="align:center" >
 
         <center><b><h4>Indian Railways/भारतीय रेल</h4></b></center>
 
@@ -162,7 +168,7 @@
         <center><b><h4>Varanasi/वाराणसी</h4></b></center>
         <center><b><h4>DUTY CERTIFICATE/ड्यूटी प्रमाण-पत्र </h4></b></center>
 
-         <br><br><br>
+         <br> 
 
      <table border="2" align="center">
         <tr>
@@ -208,55 +214,37 @@
     </tr>
 
     <tr>
-{% for i in obj1 %}
-        <td>
-            {% if i.datelw %}
-
-                <input type="date"  value="{{i.datelw}}" name="datelw" min="2015-01-01" max="2020-12-31" required>
-
-                {% else %}
-
-                <input type="date"  value="0" name="datelw" min="2015-01-01" max="2020-12-31" required>
-            {% endif %}
+       
+        <td> 
+           <input type="text"  id="leaving_date"  placeholder="dd-mm-yyyy" name="datelw"   required>
+            
             </td>
 
         <td>
-            {% if i.datecc %}
+            <input type="text"   id="completion_date"   placeholder="dd-mm-yyyy"  name="datecc"  placeholder="dd-mm-yyyy" required>
 
-                <input type="date"  value="{{i.datecc}}" name="datecc" min="2015-01-01" max="2020-12-31" required>
-
-                {% else %}
-
-                <input type="date"  value="0" name="datecc" min="2015-01-01" max="2020-12-31" required>
-
-            {% endif %}
+            
             </td>
 
 
         <td>
-            {% if i.daterw %}
+            
+ 
 
-                <input type="date"  value="{{i.daterw}}" name="daterw" min="2015-01-01" max="2020-12-31" required>
+                <input type="text"  id="return_date"  placeholder="dd-mm-yyyy" name="daterw"   required>
 
-                {% else %}
-
-                <input type="date"  value="0" name="daterw" min="2015-01-01" max="2020-12-31" required>
-
-            {% endif %}
+            
             </td>
 
             <td>
-            {% if i.briefdd %}
+            
 
-                <input type="text"  value="{{i.briefdd}}" name="briefdd"  >
-
-                {% else %}
-
+                
                 <input type="text"  value="" name="briefdd" >
 
-            {% endif %}
+           
             </td>
-         {% endfor %}
+          
     </tr>
 
   </table><br><br>
@@ -266,102 +254,110 @@
          <center>
 
 <table border="1" class="tt" align="center" >
+ 
+   <tr>
+    <td>1 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd1" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+    <td>2 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd2" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>3 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd3" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>4 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd4" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>5 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd5" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>6 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd6" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>7 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd7" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>8 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd8" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>9 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd9" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+    <td>10 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd10" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+
+          
+</tr>
 
 
  <tr>
-           {% for i in obj3  %}
-           {% if forloop.counter <= 10  %}
+    <td>11 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd11" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
-            <td>
-                {{forloop.counter}}
-            </td>
-  {% if i.no_hrs %}
+    <td>12 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd12" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
-          <td>
-                <input type = "number" class="form-control" value="{{i.no_hrs}}" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 " step="0.01" min="0.00" max="24.00"  >
-          </td>
-          {% else %}
-          <td>
-                <input type = "number" class="form-control" value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
-          </td>
+    <td>13 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd13" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
-            {% endif %}{% endif %}
-    {% endfor %}</tr>
+    <td>14 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd14" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
+    <td>15 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd15" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
- <tr>
-          {% for i in obj3  %}
-           {% if forloop.counter > 10 and forloop.counter <= 20 %}
+    <td>16 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd16" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
-            <td>
-                {{forloop.counter}}
-            </td>
-  {% if i.no_hrs %}
+    <td>17 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd17" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
-          <td>
-                <input type = "number" class="form-control" value="{{i.no_hrs}}" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 " step="0.01" min="0.00" max="24.00"  >
-          </td>
-          {% else %}
-          <td>
-                <input type = "number" class="form-control"  value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
-          </td>
+    <td>18 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd18" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
-          {% endif %}
+    <td>19 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd19" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
-
-    {% endif %}
-    {% endfor %}
+    <td>20 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd20" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+     
     </tr>
+    <td>21 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd21" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
+    <td>22</td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd22" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
+    <td>23</td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd23" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
 
+    <td>24 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd24" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>25</td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd25" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>26 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd26" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>27</td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd27" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>28 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd28" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>29 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd29" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+
+    <td>30 </td>
+    <td> <input type = "number" class="form-control" value="0.00" name="hd30" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+ 
  <tr>
-          {% for i in obj3  %}
-           {% if forloop.counter > 20 and forloop.counter <= 30 %}
-
-            <td>
-                {{forloop.counter}}
-            </td>
-  {% if i.no_hrs %}
-
-          <td>
-                <input type = "number" class="form-control" value="{{i.no_hrs}}" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 " step="0.01" min="0.00" max="24.00"  >
-          </td>
-          {% else %}
-          <td>
-                <input type = "number" class="form-control"  value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
-          </td>
-
-          {% endif %}
-
-
-    {% endif %}
-    {% endfor %}
-    </tr>
-
-
+         
+    </tr> 
      <tr>
-          {% for i in obj3  %}
-           {% if forloop.counter > 30 %}
-
-            <td>
-                {{forloop.counter}}
-            </td>
-  {% if i.no_hrs %}
-
-          <td>
-                <input type = "number" class="form-control" value="{{i.no_hrs}}" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 " step="0.01" min="0.00" max="24.00"  >
-          </td>
-          {% else %}
-          <td>
-                <input type = "number" class="form-control"  value="0.00" name="datee{{ forloop.counter }}" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >
-          </td>
-
-          {% endif %}
-
-
-    {% endif %}
-    {% endfor %}
+        <td>31 </td>
+        <td> <input type = "number" class="form-control" value="0.00" name="hd31" title="Enter value between 0.00 to 24.00 "  step="0.01" min="0.00" max="24.00"  >   </td>
+    
     </tr>
 
 
@@ -382,6 +378,17 @@
 
 
 <script type="text/javaScript">
+
+$(document).ready(function () {
+
+       $('#leaving_date').datepicker({dateFormat: 'dd-mm-yy'}); 
+       $('#completion_date').datepicker({dateFormat: 'dd-mm-yy'}); 
+       $('#return_date').datepicker({dateFormat: 'dd-mm-yy'}); 
+       
+       
+       });
+
+
 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                   e.preventDefault();
                   var shop_sec = $("#shop_sec").val()
@@ -500,4 +507,3 @@ function printDiv() {
 
 
 {% endblock content %}
-

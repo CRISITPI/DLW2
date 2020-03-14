@@ -3568,22 +3568,52 @@ class AxleWheelPressing(models.Model):
     inspect_date=models.CharField(max_length=20,null=True)
 
 
-
 class M22(models.Model):
     datelw = models.CharField(db_column='DATELW', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     datecc = models.CharField(db_column='DATECC', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     daterw = models.CharField(db_column='DATERW', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     briefdd = models.CharField(db_column='BRIEFDD', max_length=50, blank=True, null=True)  # Field name made lowercase.
     no_hrs = models.CharField(db_column='NO_HRS', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    wo_no = models.CharField(db_column='WORK_ORDER_JOB_LEFT', max_length=7, blank=True, null=True)  # Field name made lowercase.
-    wo_no1 = models.CharField(db_column='WORK_ORDER_TIME_ON_DUTY', max_length=7, blank=True, null=True)  # Field name made lowercase.
+    wo_no = models.CharField(db_column='WORK_ORDER_JOB_LEFT', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    wo_no1 = models.CharField(db_column='WORK_ORDER_TIME_ON_DUTY', max_length=10, blank=True, null=True)  # Field name made lowercase.
     shop_sec = models.CharField(db_column='SHOP_SEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
     staff_no = models.CharField(db_column='STAFF_NO', max_length=10, blank=True, null=True)  # Field name made lowercase.
     month = models.CharField(db_column='MONTH', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    hd1 = models.CharField(db_column='HD1', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd2 = models.CharField(db_column='HD2', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd3 = models.CharField(db_column='HD3', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd4 = models.CharField(db_column='HD4', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd5 = models.CharField(db_column='HD5', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd6 = models.CharField(db_column='HD6', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd7 = models.CharField(db_column='HD7', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd8 = models.CharField(db_column='HD8', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd9 = models.CharField(db_column='HD9', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd10 = models.CharField(db_column='HD10', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd11 = models.CharField(db_column='HD11', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd12 = models.CharField(db_column='HD12', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd13 = models.CharField(db_column='HD13', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd14 = models.CharField(db_column='HD14', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd15 = models.CharField(db_column='HD15', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd16 = models.CharField(db_column='HD16', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd17 = models.CharField(db_column='HD17', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd18 = models.CharField(db_column='HD18', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd19 = models.CharField(db_column='HD19', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd20 = models.CharField(db_column='HD20', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd21 = models.CharField(db_column='HD21', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd22 = models.CharField(db_column='HD22', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd23 = models.CharField(db_column='HD23', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd24 = models.CharField(db_column='HD24', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd25 = models.CharField(db_column='HD25', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd26 = models.CharField(db_column='HD26', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd27 = models.CharField(db_column='HD27', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd28 = models.CharField(db_column='HD28', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd29 = models.CharField(db_column='HD29', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd30 = models.CharField(db_column='HD30', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    hd31 = models.CharField(db_column='HD31', max_length=5, blank=True, null=True)  # Field name made lowercase.
+     
 
     class Meta:
         db_table = 'M22'
-
 
 
 class m18(models.Model):
@@ -4029,9 +4059,12 @@ class M11(models.Model):
 
 
 class MG33new(models.Model):
+    exam_sno = models.CharField(max_length=10, blank=True, null= True)
     exam_code = models.CharField(max_length=10, blank=True, null= True)
+    pramedak_no = models.CharField(max_length=10, blank=True, null= True)
     # empno = models.CharField(max_length=10, blank=True, null= True)
     updt_date = models.CharField(max_length=50, blank=True, null= True)
+    join_date= models.CharField(max_length=50, blank=True, null= True)
     shop_sec = models.CharField(max_length=50, blank=True, null= True)
     skill = models.CharField(max_length=50, blank=True, null= True)
     name = models.CharField(max_length=50, blank=True, null= True)
@@ -4039,13 +4072,20 @@ class MG33new(models.Model):
     exam_date = models.CharField(max_length=10,blank= True, null= True)
     place_of_exam = models.CharField(max_length=50, blank=True, null= True)
     sec_sup = models.CharField(max_length=50, blank=True, null= True)
+    prac_desc = models.CharField(max_length=3000, blank=True, null= True)
     prac_score = models.CharField(max_length=10, blank=True, null= True)
+    oral_desc = models.CharField(max_length=3000, blank=True, null= True)   
     oral_score = models.CharField(max_length=10, blank=True, null= True)
     total_marks = models.CharField(max_length=50, blank=True, null= True)
     trade_test_officer = models.CharField(max_length=50, blank=True, null= True)
     foreman = models.CharField(max_length=50, blank=True, null= True)
     trade_test_admin = models.CharField(max_length=50, blank=True, null= True)
     result = models.CharField(max_length=50, blank=True, null= True)
+    department = models.CharField(max_length=100, blank=True, null= True)
+    designation = models.CharField(max_length=100, blank=True, null= True)
+    attachment = models.FileField(upload_to = 'examdoc/',  blank=True, null= True) 
+
+
 
 class exam_master(models.Model):
     exam_code=models.CharField(max_length=10, blank=True, null= True)
@@ -4055,6 +4095,8 @@ class exam_master(models.Model):
     oral_max = models.CharField(max_length=5, blank=True, null= True)
     exam_type = models.CharField(max_length=500, blank=True, null= True)
     exam_date = models.CharField(max_length=20, blank=True, null= True)
+    department = models.CharField(max_length=100, blank=True, null= True)
+    designation = models.CharField(max_length=100, blank=True, null= True)
 
 class m9(models.Model):
 

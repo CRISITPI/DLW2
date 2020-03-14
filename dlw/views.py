@@ -5784,7 +5784,6 @@ def miscell_editsno(request):
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400) 
 
-
 @login_required
 @role_required(urlpass='/m3view/')
 def m3view(request):
@@ -5799,21 +5798,20 @@ def m3view(request):
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
+        tm=list(shop_section.objects.all())
+        # tm= list(shop_section.objects.filter().values('section_code','section_desc').distinct())         
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
-            'roles':tmp
+            'roles':tm,
+            
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
-            req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+            req = M2Docnew1.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
             wo_nop =wo_nop | req
         context = {
             'sub':0,
@@ -5834,35 +5832,82 @@ def m3view(request):
             'ip':get_client_ip(request),
         }
     if request.method == "POST":
-        print("hi")
+        
         submitvalue = request.POST.get('proceed')
-        if submitvalue=='Proceed':
-            print("ii")
-            shop_sec = request.POST.get('shop_sec')
-            part_no = request.POST.get('part_nop')
+        if submitvalue=='Proceed':             
+            shop_sec = request.POST.get('shop_sec')            
+            part_no = request.POST.get('part_nop')             
             wo_no = request.POST.get('wo_no')
             brn_no = request.POST.get('br_no')
             assembly_no = request.POST.get('assm_no')
             doc_no = request.POST.get('doc_no')
+            
             obj = Part.objects.filter(partno=part_no).values('drgno','des')
-            objj = M2Doc.objects.filter(m2sln=doc_no,f_shopsec=shop_sec).values('qty','rm_partno','m4_no','scl_cl').distinct()
+            objj = list(M2Docnew1.objects.filter(m2sln=doc_no,f_shopsec=shop_sec,part_no=part_no).values('qty','rm_partno','m4_no','scl_cl','rm_qty','m2prtdt','rc_st_wk','cut_shear').distinct())
             obj1 = empmast.objects.filter(role=shop_sec).values('empname','dept_desc')
-            print(obj1)
-            date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
+            
+            prod = list(Proddem.objects.filter(part_no=part_no).values('l_fr','l_to').distinct())             
+            rm_partno=objj[0]['rm_partno']
+            obj3= list(Part.objects.filter(partno=rm_partno).values('des','shop_ut').distinct())            
+            cuntdia=list(Cutdia.objects.filter(ep_part=part_no,rm_part=rm_partno).values('cutdia_no').distinct())    
+            date = M2Docnew1.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
+            shop_ut=  obj3[0]['shop_ut']
+            unit_code=list(Code.objects.filter(cd_type='51',code=shop_ut).values('alpha_1').distinct()) 
+            order_type=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type'))
+            assembly_desc= list(Part.objects.filter(partno=assembly_no).values('des').distinct()) 
+            
             leng = obj.count()
             leng1 = obj1.count()
-            leng2 = objj.count()
+            leng2 = len(objj)
+
+            objj[0].update({'assembly_no':assembly_no})
+            objj[0].update({'part_no':part_no})
+            objj[0].update({'doc_no':doc_no})
+
+            if len(assembly_desc)==0:
+                objj[0].update({'assembly_desc':''})
+            else:
+                objj[0].update({'assembly_desc':assembly_desc[0]['des'] })
+                
+
+            if len(order_type)==0:
+                objj[0].update({'order_type':''})
+            else:
+                objj[0].update({'order_type':order_type[0]['batch_type'] })
+                
+            if len(unit_code)==0:
+                objj[0].update({'unit':''})
+            else:
+                objj[0].update({'unit':unit_code[0]['alpha_1'] })
+                
+            if len(obj)==0:
+                objj[0].update({'drgno':'','part_des':''})
+            else:
+                objj[0].update({'drgno':obj[0]['drgno'],'part_des':obj[0]['des']})
+                
+            if len(obj3)==0:
+                objj[0].update({'rm_des':'','shop_ut':''})
+            else:
+                objj[0].update({'rm_des':obj3[0]['des'],'shop_ut':obj3[0]['shop_ut']})
+                
+            if len(prod)==0:
+                objj[0].update({'l_fr':'','l_to':''}) 
+            else:
+                objj[0].update([{'l_fr':prod[0]['l_fr'],'l_to':prod[0]['l_to']}])
+
+            if len(cuntdia)==0:
+                objj[0].update({'cutdia_no':''}) 
+            else:
+                objj[0].update([{'cutdia_no':cuntdia[0]['cutdia_no'] }])
+
             if "Superuser" in rolelist:
-                tm=shop_section.objects.all()
-                tmp=[]
-                for on in tm:
-                    tmp.append(on.section_code)
+                tm=list(shop_section.objects.all())              
                 context={
                     'lenm' :2,
                     'nav':nav,
                     'subnav':subnav,
                     'ip':get_client_ip(request),
-                    'roles':tmp,
+                    'roles':tm,
                     'obj': obj,
                     'objj': objj,
                     'obj1': obj1,
@@ -5877,10 +5922,11 @@ def m3view(request):
                     'assembly_no': assembly_no,
                     'doc_no': doc_no,
                     'sub':1,
+                     
                 }
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
-                    req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
+                    req = M2Docnew1.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
                     wo_nop =wo_nop | req
                 context = {
                     'lenm' :len(rolelist),
@@ -5953,8 +5999,7 @@ def m3getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         print(shop_sec)
-        wo_no = list(M2Doc.objects.filter(f_shopsec = shop_sec).values('batch_no').distinct())
-        # print(wo_no)
+        wo_no = list(M2Docnew1.objects.filter(f_shopsec = shop_sec).values('batch_no').distinct())     
         return JsonResponse(wo_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5962,7 +6007,7 @@ def m3getwono(request):
 def m3getbr(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
-        br_no = list(M2Doc.objects.filter(batch_no =wo_no).values('brn_no').distinct())
+        br_no = list(M2Docnew1.objects.filter(batch_no =wo_no).values('brn_no').distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5970,7 +6015,7 @@ def m3shopsec(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
-        shop_sec = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no).values('f_shopsec').distinct())
+        shop_sec = list(M2Docnew1.objects.filter(batch_no =wo_no,brn_no=br_no).values('f_shopsec').distinct())
         return JsonResponse(shop_sec, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5979,7 +6024,7 @@ def m3getassly(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
-        assembly_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec).values('assly_no').distinct())
+        assembly_no = list(M2Docnew1.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec).values('assly_no').distinct())
         return JsonResponse(assembly_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -5989,7 +6034,7 @@ def m3getpart_no(request):
         br_no = request.GET.get('brn_no')
         shop_sec = request.GET.get('shop_sec')
         assembly_no = request.GET.get('assm_no')
-        part_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no).values('part_no').distinct())
+        part_no = list(M2Docnew1.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -6000,28 +6045,27 @@ def m3getdoc_no(request):
         shop_sec = request.GET.get('shop_sec')
         assembly_no = request.GET.get('assm_no')
         part_no = request.GET.get('part_no')
-        doc_no = list(M2Doc.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no,part_no=part_no).values('m2sln').distinct())
+        doc_no = list(M2Docnew1.objects.filter(batch_no =wo_no,brn_no=br_no,f_shopsec=shop_sec,assly_no=assembly_no,part_no=part_no).values('m2sln').distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
 
 def m3sub(request):
     if request.method == "POST":
-
         shop_sec = request.POST.get('shop_sec')
         part_no = request.POST.get('part_nop')
         wo_no = request.POST.get('wo_no')
         brn_no = request.POST.get('br_no')
         assembly_no = request.POST.get('assm_no')
         doc_no = request.POST.get('doc_no')
-        obj = Part.objects.filter(partno=part_no).values('drgno','des')
-        objj = M2Doc.objects.filter(m2sln=doc_no,f_shopsec=shop_sec).values('qty','m4_no','scl_cl','rm_partno')
+        obj = Part.objects.filter(partno=part_no).values('drgno','des') 
+        objj = M2Docnew1.objects.filter(m2sln=doc_no,f_shopsec=shop_sec,partno=part_no).values('qty','m4_no','scl_cl','rm_partno')
         obj1 = empmast.objects.filter(role=shop_sec).values('empname','dept_desc')
-        date = M2Doc.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
+        date = M2Docnew1.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
         leng = obj.count()
         leng1 = obj1.count()
         leng2 = objj.count()
-
+         
         context = {
                     'obj': obj,
                     'objj': objj,
@@ -6041,7 +6085,6 @@ def m3sub(request):
     }
 
     return render(request, "m3view.html", context)
-
 
 
 
@@ -6755,9 +6798,14 @@ def MG33view(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
+    empname = empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL').all()
     dictemper={}
     totindb=0
-    
+    examcode = []
+    ex = exam_master.objects.all().values('exam_code',)
+    for i in ex:
+       examcode.append(i['exam_code']) 
+
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -6771,6 +6819,8 @@ def MG33view(request):
             'ip':get_client_ip(request),
             'roles':tmp,
             'lvdate':"dd-mm-yy",
+            'examcode': examcode,
+            'empname':empname,
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -6918,40 +6968,70 @@ def MG33view(request):
             print("data saved")
             tot=request.POST.get('totmebs')
             print("tot",tot)
-            tot=int(tot)+1
-            pract="prac"
-            oral="oral"
-            ttl="total"
-            ename="name"
-            stffn="ticket"
-            skill="skill"
-            remkr="remk"
-            for i in range(1,int(tot)):
-                pscore=request.POST.get(pract+str(i))
-                orscore=request.POST.get(oral+str(i))
-                tscore=request.POST.get(ttl+str(i))
-                skills=request.POST.get(skill+str(i))
-                epname=request.POST.get(ename+str(i))
-                stfno=request.POST.get(stffn+str(i))
-                remk=request.POST.get(remkr+str(i))
-                place_exam = request.POST.get('place')
-                prac_desc = request.POST.get('prac_desc')
-                oral_desc = request.POST.get('oral_desc')
-                sec_sup = request.POST.get('sec_sup')
-                trade_test_officer= request.POST.get('trade_test_officer')
-                foreman = request.POST.get('foreman')
-                trade_test_admin = request.POST.get('trade_test_admin')
-                examdate = request.POST.get('exam_date')
-                shop_sec = request.POST.get('shop_sec')
-                acc_date = request.POST.get('updt_date')
-                examcode = request.POST.get('exam_code')
-            
-                MG33new.objects.create(exam_date=str(examdate),result=str(remk),exam_code=str(examcode),shop_sec = str(shop_sec),name=str(epname), skill=str(skills),staff_no=str(stfno), updt_date =str(acc_date),prac_score= str(pscore),oral_score= str(orscore), total_marks = str(tscore),  sec_sup= str(sec_sup), trade_test_officer = str(trade_test_officer),  foreman= str(foreman), trade_test_admin= str(trade_test_admin), place_of_exam=str(place_exam))
-        
+             
+            place_exam = request.POST.get('place')
+            prac_desc = request.POST.get('pracdesc')
+            oral_desc = request.POST.get('oraldescr')
+            sec_sup = request.POST.get('sec_sup')
+            trade_test_officer= request.POST.get('trade_test_officer')
+            foreman = request.POST.get('foreman')
+            trade_test_admin = request.POST.get('trade_test_admin')
+            examdate = request.POST.get('exam_date')
+            shop_sec = request.POST.get('shop_sec')
+            # acc_date = request.POST.get('updt_date')
+            examcode = request.POST.get('exam_code')
+            exam_sno=request.POST.get('exam_sno')
+            orscore=request.POST.get('orscore')
+            pscore=request.POST.get('prac')
+            skills=request.POST.get('skillname')
+            epname=request.POST.get('nameoname')
+            stfno=request.POST.get('ticketfname')               
+            pramedakno=request.POST.get('pramedakno')
+            attachment=request.FILES['attachment']
+            join_date=request.POST.get('updt_date')
+            designation=request.POST.get('designation')
+            department=request.POST.get('department')
+            temp=float(orscore)+float(pscore)
+            print(temp)
+            if temp >55:
+              result='PASS'
+            else:
+              result='FAIL' 
+
+            # remk=10
+
+            newdoc= MG33new(
+                exam_sno=str(exam_sno),
+                exam_date=str(examdate),
+                updt_date =str(datetime.datetime.now().strftime ("%d-%m-%Y")),
+                join_date =str(join_date),
+                result=str(result),
+                exam_code=str(examcode),
+                shop_sec = str(shop_sec),
+                name=str(epname), 
+                skill=str(skills),
+                staff_no=str(stfno),                 
+                prac_score= str(pscore),
+                oral_score= str(orscore),
+                prac_desc= str(prac_desc),
+                oral_desc= str(oral_desc),
+                total_marks = str(temp), 
+                sec_sup= str(sec_sup), 
+                trade_test_officer = str(trade_test_officer),
+                foreman= str(foreman),
+                trade_test_admin= str(trade_test_admin), 
+                place_of_exam=str(place_exam),
+                pramedak_no=str(pramedakno),
+                department=str(department),
+                designation=str(designation),
+                attachment=attachment,
+                )
+            newdoc.save()
             # print(updt_date, shop_sec, name, staff_no, ticketno, acc_Date, cause, reason_neg, reason_y_neg, equip_check, suggestions, bgc, bgc2, sec_sup, chargeman, mistry, c1, c2, c3, c4, a1, a2, a3, SSFO)
 
             messages.success(request, 'Successfully Saved !!!, Select new values to update')
     return render(request, "MG33view.html", context)
+
 
 def mg33getstaffno(request):
     if request.method == "GET" and request.is_ajax():  
@@ -6971,24 +7051,92 @@ def mg33getstaffno(request):
 
     return JsonResponse({"success":False}, status=400)
 
+def mg33getstaffdetails(request):
+    if request.method == "GET" and request.is_ajax():  
+        from.models import Batch      
+        shop_sec = request.GET.get('shop_sec')        
+        shop=list(Shemp.objects.filter(shopsec=shop_sec).values('updt_date','staff_no','name').distinct()) 
+         
+        return JsonResponse({'data':shop}, safe = False)
+
+    return JsonResponse({"success":False}, status=400)
+
+
+def mg33getexamdata(request):
+    if request.method == "GET" and request.is_ajax():  
+       
+        id= request.GET.get('id')
+        ex = MG33new.objects.filter(staff_no=id).all()
+        officer= ex[0].trade_test_officer
+        admin= ex[0].trade_test_admin
+        foreman= ex[0].foreman
+        sec_sup= ex[0].sec_sup
+        
+        empsec_supdet= empmast.objects.filter(empno=sec_sup,dept_desc='MECHANICAL').all()        
+        empadmindet= empmast.objects.filter(empno=admin,dept_desc='MECHANICAL').all()       
+        empforemandet=empmast.objects.filter(empno=foreman,dept_desc='MECHANICAL').all()  
+        empofficerdet=empmast.objects.filter(empno=officer,dept_desc='MECHANICAL').all()
+         
+        data ={
+        "sno":ex[0].exam_sno,
+        "updt_date":ex[0].updt_date,
+        "join_date":ex[0].join_date,
+        "shop_sec":ex[0].shop_sec,
+        "name":ex[0].name,
+        "staff_no":ex[0].staff_no,
+        "skill":ex[0].skill,
+        "exam_code":ex[0].exam_code,
+        "exam_date":ex[0].exam_date,
+        "prac_desc":ex[0].prac_desc,
+        "prac_score":ex[0].prac_score,
+        "oral_desc":ex[0].oral_desc,
+        "oral_score":ex[0].oral_score,
+        "total_marks":ex[0].total_marks,
+        "result":ex[0].result,
+        "place_of_exam":ex[0].place_of_exam, 
+        "sec_sup_no":empsec_supdet[0].empno,
+        "sec_sup_name":empsec_supdet[0].empname,
+        "sec_sup_design":empsec_supdet[0].desig_longdesc,
+        
+        "foreman_no":empforemandet[0].empno,
+        "foreman_name":empforemandet[0].empname,
+        "foreman_design":empforemandet[0].desig_longdesc,
+        "officer_no":empofficerdet[0].empno,
+        "officer_name":empofficerdet[0].empname,
+        "officer_design":empofficerdet[0].desig_longdesc,
+        "admin_no":empadmindet[0].empno,
+        "admin_name":empadmindet[0].empname,
+        "admin_design":empadmindet[0].desig_longdesc,          
+        "department":ex[0].department,
+        "designation":ex[0].designation,
+        "pramedak_no":ex[0].pramedak_no,
+        
+       # "attachment":ex[0].attachment,             
+        }
+        
+        return JsonResponse({"data":data}, safe = False)
+
+    return JsonResponse({"success":False}, status=400)  
+
 
 def mg33getexam(request):
     if request.method == "GET" and request.is_ajax():  
         examcode= request.GET.get('two')
-
+        
         ex = exam_master.objects.filter(exam_code= examcode).all()    
      
         exam ={
 
             "exam_type":ex[0].exam_type,
             "exam_date":ex[0].exam_date,
-            "prac_exam":ex[0].prac_desc,
-            "oral_exam":ex[0].oral_desc,
+            "department":ex[0].department,
+            "designation":ex[0].designation,
         }
         
         return JsonResponse({"exam":exam}, safe = False)
 
     return JsonResponse({"success":False}, status=400)
+	
 
 @login_required
 @role_required(urlpass='/m26view/')
@@ -7388,8 +7536,6 @@ def m26getStaffCatWorkHrs(request):
 
 
 
-
-
 @login_required
 @role_required(urlpass='/m22view/')
 def m22view(request):
@@ -7584,64 +7730,70 @@ def m22view(request):
         if submitvalue=='Save':
             leng=request.POST.get('mt1')
             # leng1=request.POST.get('mt2')
-            print(leng)
+            # print('hd1 = ',request.POST.get('hd1'))
             # print(leng1)
-            datelw = request.POST.get('datelw')
-            datecc = request.POST.get('datecc')
-            daterw = request.POST.get('daterw')
-            briefdd = request.POST.get('briefdd')
-            shop_sec = request.POST.get('shop__sec')
-            wo_no = request.POST.get('wo__no')
-            wo_no1 = request.POST.get('wo__no1')
-            staff_no = request.POST.get('staff__no')
-            month = request.POST.get('month')
-            print(month)
-            print(shop_sec)
-            print(wo_no)
-            print(wo_no1)
-            print(staff_no)
-            print(datelw)
-            print(datecc)
-            print(daterw)
-            print(briefdd)
+            # datelw = request.POST.get('datelw')
+            # datecc = request.POST.get('datecc')
+            # daterw = request.POST.get('daterw')
+            # briefdd = request.POST.get('briefdd')
+            
+            # print(month)
+            # print(shop_sec)
+            # print(wo_no)
+            # print(wo_no1)
             # print(staff_no)
-            obj2 = M22.objects.filter(shop_sec=shop_sec, staff_no=staff_no, month=month, wo_no=wo_no, wo_no1=wo_no1).values('no_hrs').distinct()
-            print(len(obj2))
-            print(obj2)
-            print(leng)
-            # print(leng1)
-            if len(obj2) == 0:
-                for i in range(1, int(leng) + 1):
-                    datee = request.POST.get('datee' + str(i))
-                    print(datee)
-                    # print(i)
-                    M22.objects.create(datelw=str(datelw), datecc=str(datecc), daterw=str(daterw), briefdd=str(briefdd), no_hrs=str(datee), shop_sec=str(shop_sec), wo_no=str(wo_no), wo_no1=str(wo_no1), staff_no=str(staff_no), month=str(month))
-                # for i in range(1, int(leng1) + 1):
-                #
-                #     datee1 = request.POST.get('datee1' + str(i))
-                #     # print(datee1)
-                #     print(i)
-                #     M22.objects.create(datelw=str(datelw), datecc=str(datecc), daterw=str(daterw), briefdd=str(briefdd), no_hrs=str(datee1), shop_sec=str(shop_sec), wo_no=str(wo_no), wo_no1=str(wo_no1), staff_no=str(staff_no), month=str(month))
-
-            if len(obj2) != 0:
-                M22.objects.filter(shop_sec=shop_sec, staff_no=staff_no, month=month, wo_no=wo_no, wo_no1=wo_no1).delete()
-                for i in range(1, int(leng) + 1):
-                    # print("j")
-                    # rr='1'
-                    no_hrs=request.POST.get('datee' + str(i))
-                    print(no_hrs)
-                    M22.objects.create(datelw=str(datelw), datecc=str(datecc), daterw=str(daterw), briefdd=str(briefdd), no_hrs=str(no_hrs), shop_sec=str(shop_sec), wo_no=str(wo_no), wo_no1=str(wo_no1), staff_no=str(staff_no), month=str(month))
-                    # M22.objects.filter(shop_sec=shop_sec, staff_no=staff_no, month=month, wo_no=wo_no, wo_no1=wo_no1).update(no_hrs=str(no_hrs), datelw=str(datelw), datecc=str(datecc), daterw=str(daterw), briefdd=str(briefdd))
-                # for i in range(1, int(leng1) + 1):
-                #     print("jj")
-                #     datee1 = request.POST.get('datee1' + str(i))
-                #     print(datee1)
-                #     M22.objects.filter(shop_sec=shop_sec, staff_no=staff_no, month=month, wo_no=wo_no, wo_no1=wo_no1).update(no_hrs=str(datee1), datelw=str(datelw), datecc=str(datecc), daterw=str(daterw), briefdd=str(briefdd))
-
-
-            wo_no=M22.objects.all().values('wo_no').distinct()
+            # print(datelw)
+            # print(datecc)
+            # print(daterw)
+            # print(briefdd)
+            # print(staff_no)
+            obj = M22(
+             shop_sec=request.POST.get('shop__sec'),
+             staff_no= request.POST.get('staff__no'), 
+             month=request.POST.get('month'), 
+             wo_no=request.POST.get('wo__no'),
+             wo_no1=request.POST.get('wo__no1'),
+             datelw = request.POST.get('datelw'),
+             datecc = request.POST.get('datecc'),
+             daterw = request.POST.get('daterw'),
+             briefdd = request.POST.get('briefdd'), 
+             hd1 = request.POST.get('hd1'),
+             hd2 = request.POST.get('hd2'),
+             hd3 = request.POST.get('hd3'),            
+             hd4 = request.POST.get('hd4'),
+             hd5 = request.POST.get('hd5'),
+             hd6 = request.POST.get('hd6'),
+             hd7 = request.POST.get('hd7'),
+             hd8 = request.POST.get('hd8'),
+             hd9 = request.POST.get('hd9'),
+             hd10 = request.POST.get('hd10'),
+             hd11 = request.POST.get('hd11'),
+             hd12 = request.POST.get('hd12'),
+             hd13 = request.POST.get('hd13'),
+             hd14 = request.POST.get('hd14'),
+             hd15 = request.POST.get('hd15'),
+             hd16 = request.POST.get('hd16'),
+             hd17 = request.POST.get('hd17'),
+             hd18 = request.POST.get('hd18'),
+             hd19 = request.POST.get('hd19'),
+             hd20 = request.POST.get('hd20'),
+             hd21 = request.POST.get('hd21'),
+             hd22 = request.POST.get('hd22'),
+             hd23 = request.POST.get('hd23'),
+             hd24 = request.POST.get('hd24'),
+             hd25 = request.POST.get('hd25'),
+             hd26 = request.POST.get('hd26'),
+             hd27 = request.POST.get('hd27'),
+             hd28 = request.POST.get('hd28'),
+             hd29 = request.POST.get('hd29'),
+             hd30 = request.POST.get('hd30'),
+             hd31 = request.POST.get('hd31'),             
+             )
+            obj.save()
+            
             messages.success(request, 'Successfully Updated!, Select new values to update')
     return render(request, "m22view.html", context)
+
 
 
 def m22getwono(request):
@@ -12640,6 +12792,7 @@ def m9getwono(request):
 
 
 
+
 @login_required
 @role_required(urlpass='/MG33view/')
 def exam_detail(request):
@@ -12688,7 +12841,9 @@ def exam_detail(request):
                         orald=request.POST.get("oral"+str(i))
                         oralmarks=request.POST.get("orlmax"+str(i))
                         edate=request.POST.get("edate"+str(i))
-                        exam_master.objects.create(exam_code=ecode,exam_type=etype,exam_date=edate,prac_desc=prctd,prac_max=prcmarks,oral_desc=orald,oral_max=oralmarks)
+                        department =request.POST.get("department"+str(i))
+                        designation=request.POST.get("designation"+str(i))
+                        exam_master.objects.create(designation=designation,department=department,exam_code=ecode,exam_type=etype,exam_date=edate,prac_desc=prctd,prac_max=prcmarks,oral_desc=orald,oral_max=oralmarks)
             ex1=request.POST.get('length')
             print("exist",ex1)
             for j in range(1,len(ex1)+1):
@@ -12718,11 +12873,13 @@ def view_exam_data(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    ex=MG33new.objects.all().order_by('id')
     context={
             'totindb':0,
             'nav':nav,
             'ip':get_client_ip(request),
             'subnav':subnav,
+            'obj':ex,
         }
     if request.method=="POST":
         bval=request.POST.get('btn')

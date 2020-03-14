@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from dlw.views import *
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -120,6 +121,9 @@ urlpatterns = [
     path('M20view/',M20view,name='M20view'),
     path('m20getstaffno/',m20getstaffno,name='m20getstaffno'),
     path('mg33getstaffno/',mg33getstaffno,name='mg33getstaffno'),
+    path('ajax/mg33getstaffdetails/', mg33getstaffdetails, name='mg33getstaffdetails'),
+    path('ajax/mg33getexamdata/', mg33getexamdata, name='mg33getexamdata'),
+    
     path('m26view/',m26view,name='m26view'),
     path('m27view/',m27view,name='m27view'),
     path('ajax/m27getStaffNo/', m27getStaffNo, name='m27getStaffNo'),   
@@ -486,3 +490,8 @@ urlpatterns = [
     path('genrosterpdf/',genrosterpdf,name='genrosterpdf'),
 
 ]
+
+
+if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)

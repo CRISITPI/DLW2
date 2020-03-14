@@ -61,22 +61,25 @@
         <table class="table">
             <tr>
                 <td>
-                    <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>
-                  
-
-                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+                    <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>                 
+ 
+            <select class="form-control" id="shop_sec" name="shop_sec" required>
             <option id="op_shop" selected disabled hidden>Select Shop Section</option>
             {% if lenm == 1 %}
-                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
-                {{role}}
-            {% endif %}
-            {% if lenm > 1 %}
-            {% for role in roles %}
-            {{role}}
-              <option>{{role}}</option>
-            {% endfor %}
-            {% endif %}
-        </select>
+            <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+          {% endif %}
+        {% if lenm > 1 %}
+        {% for role in roles %}
+        <option  id="{{role.section_desc}}">{{role.section_code}}</option>
+        {% endfor %}
+        {% endif %}
+ 
+           </select>
+          </td>
+
+                <td>
+                    <label for="sname"><b>SHOP NAME/शॉप नाम : </b></label>
+                    <input type="" id="sname" name="sname" readonly="readonly" class="form-control" style="width:230px; margin-top:8px;">
                 </td>
                 <td>
                     <label for="wk_ord_no"><b>WORK ORDER NO:/कार्यादेश सं. :</b></label>
@@ -96,16 +99,15 @@
             
               </select>
                 </td>
-
+ 
+            </tr>
+            <tr>
                 <td>
                     <label for="apn"><b>ASSEMBLY NO/एसेम्ब्ली संख्या:</b></label>
                     <select class="form-control" id="assm_no" name="assm_no" required>
             <option id="op_assm" selected disabled hidden>Select Assembly No</option>
-        </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
+          </select>
+                 </td> <td>
                     <label for="partno"><b>PART NO:/पार्ट सं.:</b></label>
                     <select class="form-control" id="part_nop" name="part_nop" required>
             <option id="op_part" selected disabled hidden>Select Part No</option>
@@ -115,7 +117,7 @@
                 <td>
                     <label for="docno"><b>DOCUMENT NO:/प्रलेख सं.:</b></label>
                     <select class="form-control" id="doc_no" name="doc_no" required>
-            <option id="op_doc" selected disabled hidden>Select Document No</option>
+                    <option id="op_doc" selected disabled hidden>Select Document No</option>
         </select>
                 </td>
             </tr>
@@ -129,90 +131,144 @@
 
     </div>
 <br><br> {% if sub == 1 %}
-<div id="print" style="align:center" >
+<div id="print" style= "align:center" >
 <input type="hidden" name="len" value="{{len}}">
+ 
+     
+
 <table border="2" align="center">
-<tr>
-    
-    <th>Date</th>          
+<tr>       
     <th>Work Order NO</th>
     <th>BRN NO</th>
     <th>Shop Section</th>
-    <th>Assembly NO</th>
-    <th>Part NO</th>
-
-<!--<th>Part Description</th>-->
-<th>Document NO</th>
+    <th>Order type</th>
+    <th>Loco From</th>
+    <th>Loco To</th>
+     <th>M4 Reference</th>    
+     <th>Date</th> 
+     <th>Part NO</th> 
+     <th>Part Description</th> 
+     <th>Document NO</th>
+     
+    
 </tr>
         <tr>
-            {% for i in date %}
-            <td>{{i.m2prtdt}}</td>
-            {% endfor %}
-
+            
             <td>{{wo_no}}</td>
             <td>{{brn_no}}</td>
-            <td>{{shop_sec}}</td>
+            <td> {{shop_sec}}</td> 
+             {% for i in objj %} 
+             <td>{{i.order_type}}</td>          
+            <td>{{i.l_fr}}</td> 
+            <td>{{i.l_to}}</td>
+            <td>{{i.m4_no}}</td>
+            <td>{{i.m2prtdt}}</td>            
+            <td>{{i.part_no}}</td>
+            <td>{{i.part_des}}</td>
+            <td>{{i.doc_no}}</td>
+             {% endfor %}
+ 
             <input type="hidden" name="shopsec" value="{{shop_sec}}">
-            <td>{{assembly_no}}</td>
-            <td>{{part_no}}</td>
+             
+           
             <input type="hidden" name="partno" value="{{part_no}}">
-            <!--<td>{{obj1}}</td>-->
-            <!-- <td>{{rm_partno}}</td> -->
-            <td>{{doc_no}}</td>
+            
+            
+           
+           
             
         </tr>
             
     </table>
     </br>
-
+    <br> 
     <!--<form action="." method = "POST">  {% csrf_token %}-->
     <table border="2" align="center">
         
         <tr>
-            <th>Ordered Qty:</th>
-            <th>Raw material Part No:</th>
-            <th>M4 Reference:</th>
-            <th>Category Class:</th>
-        </tr>
-        {% for i in objj %}
+           
+            <th>Drawing NO</th> 
+            <th>Order Qty </th>            
+            <th>Row Material Part No</th> 
+            <th>length/Weight Per Pice </th> 
+            <th>Total length/Weight </th> 
+            <th>Unit </th> 
+            <th>Row Material Description</th> 
+            <th>Assembly NO</th>  
+            <th>Assembly Description</th> 
+
+           
+            
+       
+           
+
+        </tr> 
+       
         <tr>
+        {% for i in objj %}
+       
+            <td>
+                {{i.drgno}}
+            </td>  
             <td>
                 {{i.qty}}
-            </td>
+            </td>           
             <td>
                 {{i.rm_partno}}
             </td>
+            <td> </td>
+            <td>  {{i.rm_qty}}</td>
+            
             <td>
-                {{i.m4_no}} 
+                {{i.unit}}
             </td>
-            <td>
-                {{i.scl_cl}}
-            </td>
-          </tr>
+             <td>
+                {{i.rm_des}}
+            </td> 
+            <td>{{i.assembly_no}}</td>
+            <td>{{i.assembly_desc}}</td>
         {% endfor %}
+        
+       
+         
+    </tr>
     </table><br><br>
     <table border="2" align="center">
          
         <tr>
-            <th>Drawing No:</th>
-            <th>Part Description</th>
-            <th>Shop Owner:</th>
-            <th>Store Keeper:</th>
+            <th>Cut Shear No</th>
+            <th>Start Week</th>
+            <th>End Week</th>
+            <th>Category Class</th>
+            <th>Date of Despatch </th>
+            <th>Date of Receiving </th>
+            <th>Shop Supertenden</th>
+            <th>Shop Keeper</th>
         </tr>
-        {% for i in obj %}
-        <tr>
+      
+       
+        <tr> 
+        {% for i in objj %}
+       
             <td>
-                {{i.drgno}}
+             {{i.cut_shear}}
             </td>
+            <td>{{i.rc_st_wk}} </td>            
+            <td></td>
             <td>
-                {{i.des}}
+            {{i.scl_cl}}
             </td>
-        
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            
+            
         {% endfor %}
-        
+        </tr>
          
         
-        {% for i in obj1 %}
+        <!-- {% for i in obj1 %}
             <td>
                 {{i.name}}
             </td>
@@ -223,7 +279,7 @@
             
         
         </tr>
-        {% endfor %}
+        {% endfor %} -->
 
         
          
@@ -242,8 +298,11 @@
 
 <script type="text/javaScript">
 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-                  e.preventDefault();
-                  var shop_sec = $("#shop_sec").val()
+                  e.preventDefault();                  
+                 
+                  var shop_sec = $("#shop_sec").val();
+                  var shop_name = $('#shop_sec option:selected').attr('id');              
+                 
                   var data = {shop_sec};
                     $.ajax({
                       type : 'GET',
@@ -251,6 +310,7 @@ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                       dataType : 'json',
                       data : data,
                       success : function(response){
+                          
                         var elementsadded = document.querySelectorAll(".newelewono");
                             if(elementsadded.length>0){
                                 var elementsaddedarr = Array.from(elementsadded);
@@ -271,6 +331,7 @@ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                             });
                             html = "";
                             document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                            document.getElementById('sname').value=shop_name; 
                             mystr=""; 
                       }
                         })
@@ -321,6 +382,7 @@ document.querySelector("#br_no").addEventListener('change',(e)=>{
                       dataType : 'json',
                       data : data,
                       success : function(response){
+                          
                            var elementsadded = document.querySelectorAll(".neweleassm");
                             if(elementsadded.length>0){
                                 var elementsaddedarr = Array.from(elementsadded);
@@ -348,7 +410,7 @@ document.querySelector("#assm_no").addEventListener('change',(e)=>{
                   e.preventDefault();
                   var wo_no = $("#wno").val();
                   var brn_no = $("#br_no").val();
-                  var shop_sec = $("#shop_sec").val()
+                  var shop_sec = $("#shop_sec").val();
                   var assm_no = $('#assm_no').val()
                   var data = {wo_no,brn_no,shop_sec,assm_no};
                     $.ajax({
@@ -382,7 +444,7 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
   e.preventDefault();
   var wo_no = $("#wno").val();
   var brn_no = $("#br_no").val();
-  var shop_sec = $("#shop_sec").val()
+  var shop_sec = $("#shop_sec").val();
   var assm_no = $('#assm_no').val()
   var part_no = $('#part_nop').val()
   var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
@@ -412,10 +474,12 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
                       }
                         })
               })
-document.querySelector("#doc_no").addEventListener('change',(e)=>{
 
-document.querySelector("#myproceed").click();
-})
+
+document.querySelector("#doc_no").addEventListener('change',(e)=>{
+    
+        document.querySelector("#myproceed").click();
+   })
 document.addEventListener('keypress',(event)=>{
 if(event.keyCode===13){
     event.preventDefault();
@@ -423,24 +487,26 @@ if(event.keyCode===13){
 })
 
 function printDiv() {
-     var printContents = document.getElementById("print").innerHTML;
-
+       let current_datetime = new Date()
+      let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
+       var printContents = document.getElementById("print").innerHTML;
        var style = "<style>";
         style = style + "table {width: 100%;font: 17px Calibri;}";
         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
         style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "title {font: 50px Calibri;}";         
         style = style + "</style>";
-      var win = window.open('', '', 'height=500,width=500');
-
-        win.document.write('<html><head>');
-
-        win.document.write('<title>M2(ROUTE CARD) Card</title>');
+       var win = window.open('', '', 'height=500,width=500');
         win.document.write(style);
+        win.document.write('<html><head>');           
+        win.document.write('<title style="font-size:50px"> M3 (ROUTE CARD) Card</title>');       
         win.document.write('</head>');
         win.document.write('<body>');
+        win.document.write('<h4 style="text-align: center;">   M3 (ROUTE CARD) Card  </h4>');
+        
+        win.document.write('<p style="text-align: right; top: -40px;    position: relative;">  '+formatted_date+'</p>') 
         win.document.write(printContents);
-        win.document.write('</body></html>');
-       
+        win.document.write('</body> </html>');      
         win.print();
         win.close();
         
@@ -448,6 +514,5 @@ function printDiv() {
 }
 </script>    
 {% endblock content %} 
-
 
 

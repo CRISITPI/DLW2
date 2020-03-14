@@ -71,20 +71,26 @@ input[type=submit] {
 {% if sub == 1 %}
 <table id="customers">
 <tr>
-<th>Exam Code</th><th>Exam Type</th><th>Exam Date</th>
-<th>Practical Exam Description</th><th>Practical Max. Marks</th>
-<th>Oral Exam Description</th><th>Oral Max. Marks</th>
+<th>Exam Code</th><th>Exam Type</th>
+<!-- <th>Exam Date</th> -->
+<!-- <th>Practical Exam Description</th> -->
+<th>Practical Max. Marks</th>
+<!-- <th>Oral Exam Description</th> -->
+<th>Oral Max. Marks</th>
+<th>Designation</th><th>Department</th>
 </tr>
 {% for i in obj %}
 <tr>
 <td><input type="text" name="code{{forloop.counter}}" class="form-control ll" value="{{i.exam_code}}" readonly /></td>
 <td><input type="text" name="type{{forloop.counter}}" class="form-control ll" value="{{i.exam_type}}" required /></td>
-<td><input type="text" name="date{{forloop.counter}}" class="datepick" value="{{i.exam_date}}" readonly required /></td>
-<td><input type="text" name="prc{{forloop.counter}}" class="form-control ll" value="{{i.prac_desc}}" required /></td>
+<!-- <td><input type="text" name="date{{forloop.counter}}" class="datepick" value="{{i.exam_date}}" readonly required /></td> -->
+<!-- <td><input type="text" name="prc{{forloop.counter}}" class="form-control ll" value="{{i.prac_desc}}" required /></td> -->
 <td><input type="text" name="pmax{{forloop.counter}}" class="form-control ll" value="{{i.prac_max}}" required /></td>
-<td><input type="text" name="orl{{forloop.counter}}" class="form-control ll" value="{{i.oral_desc}}" required /></td>
+<!-- <td><input type="text" name="orl{{forloop.counter}}" class="form-control ll" value="{{i.oral_desc}}" required /></td> -->
 <td><input type="text" name="omax{{forloop.counter}}" class="form-control ll" value="{{i.oral_max}}" required /></td>
-<td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>
+<td><input type="text" name="omax{{forloop.counter}}" class="form-control ll" value="{{i.designation}}" required /></td>
+<td><input type="text" name="omax{{forloop.counter}}" class="form-control ll" value="{{i.department}}" required /></td>
+<!-- <td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td> -->
 </tr>
 {% endfor %}
 {% endif %}
@@ -125,22 +131,29 @@ $("#add").click(function(e) {
         odesc="oral"+String(j);
         omax="orlmax"+String(j);
         edate="edate"+String(j);
+        designation="designation"+String(j);
+        department="department"+String(j);
+        var happ='<div><table id="customers">';
         var totindb=document.getElementById('totindb').value;
         if(j==1 && totindb == 0)
         {
-            var happ='<div><table id="customers">'+'<tr><th style="width:250px;">Exam Code</th><th style="width:250px;">Exam Type</th><th style="width:260px;">Exam Date</th><th>Practical Exam Desc.</th><th>Oral Exam Desc.</th>'+
-            '<th>Practical Max. Marks</th><th>Oral Max. Marks</th>';
-
-    happ=happ+'</tr></table></div>';
-        $('#items').append(happ);
-
+      happ=happ+'<tr><th  >Exam Code</th><th >Exam Type</th>'+
+        //   '<th  >Exam Date</th><th>Practical Exam Desc.</th><th>Oral Exam Desc.</th>'+
+            '<th>Practical Max. Marks</th><th>Oral Max. Marks</th> <th>Designation</th><th>Department</th></tr>';
+      
         }
-var htAppend='<div><table id="customers"><tr>'+'<td><input type="text" id='+ecode+' name='+ecode+' class="form-control ll" placeholder="exam code" required /></td>'+'<td><input type="text" id="'+etype+'" name="'+etype+'" class="form-control ll" required></td>'+
-'<td><input type="text" id='+edate+' name='+edate+' class="edatec" required></td>'+
-'<td><input type="text" id='+pdesc+' name='+pdesc+' class="form-control ll" required></td><td><input type="text" id='+pmax+' name='+pmax+' value="60" class="form-control ll" required></td>'+
-'<td><input type="text" id='+odesc+' name='+odesc+' class="form-control ll" required></td><td><input type="text" id='+omax+' name='+omax+' value="40" class="form-control ll" required></td>';
- htAppend=htAppend+'<td><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>'+'</tr></table>'+'</div>';
-     $('#items').append(htAppend);
+var happ1=happ+'<tr> <td><input type="text" id='+ecode+' name='+ecode+' class="form-control ll" placeholder="exam code" required /></td>'+'<td><input type="text" id="'+etype+'" name="'+etype+'" class="form-control ll" required></td>'+
+// '<td><input type="text" id='+edate+' name='+edate+' class="edatec" required></td>'+
+// '<td><input type="text" id='+pdesc+' name='+pdesc+' class="form-control ll" required></td>'+
+ '<td><input type="text" id='+pmax+' name='+pmax+' value="60" class="form-control ll" required></td>'+
+// '<td><input type="text" id='+odesc+' name='+odesc+' class="form-control ll" required></td>'+
+'<td><input type="text" id='+omax+' name='+omax+' value="40" class="form-control ll" required></td>'+
+'<td><input type="text" id='+designation+' name='+designation+' class="form-control ll"  required /></td>'+
+'<td><input type="text" id='+department+'  name='+department+' class="form-control ll"   required /></td></tr>'; 
+
+$('#items').append(happ1);
+happ=happ+' </table>'+'</div>';
+    
      document.getElementById("total").value=j;
      $('.edatec').each(function(){
     $(this).datepicker({ dateFormat: 'dd/mm/yy' });
