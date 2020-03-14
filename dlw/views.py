@@ -8433,6 +8433,7 @@ def CardGeneration(request):
                     r_cqp=Nstr.objects.filter(pp_part=j).aggregate(a=Max('qty'),b=Max('ptc'))
                     
                     r_part1=Nstr.objects.filter(pp_part=j,l_to='9999').values('cp_part').order_by('cp_part').distinct()
+                   
                     if r_cqp['b']=='R' or r_cqp['b']=='Q':
                         r_qty=r_cqp['a']
                         r_ptc=r_cqp['b']
@@ -8443,7 +8444,11 @@ def CardGeneration(request):
                     qty1=M2Doc.objects.filter(part_no=j,batch_no=batch,assly_no=asmno).values('qty').distinct()
                     if len(qty1)!=0:
                         qty=qty1[0]['qty']
-                    dat1.append({'partno':i,'pm_no':shop,'r_part':r_part1[0]['cp_part'],'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty})     
+                    if len(r_part1) !=0:
+                        
+                        dat1.append({'partno':i,'pm_no':shop,'r_part':r_part1[0]['cp_part'],'r_ptc':r_ptc,'r_qty':r_qty,'rm':r,'qty':qty}) 
+                       
+
                 for i in r_part2:
                     quantity=0 
                     k=0
@@ -24296,7 +24301,6 @@ def roster(request):
                         date = datetime.datetime.strptime(fromdate1, "%Y/%m/%d")
                         modified_date = date + timedelta(days=i)
                         datee=datetime.datetime.strftime(modified_date, "%d/%m/%Y")
-                        print(datee)
                         d1.append(datee)
                         shift=request.POST.get(str(j+1)+str(i))
                         roster1.objects.filter(shop_sec=shop_sec,staffNo=staffNo,date=datee).delete()
@@ -24380,6 +24384,7 @@ def getrosterreport(request):
             fdate=datetime.datetime.strftime(modified_date, "%d/%m/%Y")
             d1.append(fdate)
         tmpstr1=list(roster1.objects.filter(shop_sec=shop_sec,date__in=d1).values('staffNo','staffName','shift'))
+        print(tmpstr1)
         c=-1
         for j in range(len(tmpstr1)):
             a=[]
@@ -24441,3 +24446,5 @@ def genrosterpdf(request, *args, **kwargs):
 
     pdf = render_to_pdf('rosterpdf.html',context)
     return HttpResponse(pdf, content_type='application/pdf')
+
+

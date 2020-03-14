@@ -356,8 +356,8 @@ ui-lightness/jquery-ui.css'
     var sdate=document.getElementById('from').value;
     var edate=document.getElementById('to').value; 
     var listDate = [];
-    var ssdate=moment(sdate).format('YYYY-DD-MM');
-    var eedate=moment(edate).format('YYYY-DD-MM');
+    var ssdate=sdate.split("-").reverse().join("-");
+    var eedate=edate.split("-").reverse().join("-");
     var startDate =ssdate;
     console.log(startDate);
     var endDate = eedate;
