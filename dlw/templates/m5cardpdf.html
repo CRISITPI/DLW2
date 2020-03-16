@@ -4,50 +4,77 @@
         <title>card generation</title>
     </head>
     <body> 
+        <style>
+             input[type=button] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+
+     
+    text-align: center;
+    
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+}
+    }
+        </style>
            
-        <p style="font-size: 30px;" ALIGN="CENTER">{{card}} CARD GENERATION</p>
+        <p style="font-size: 40px;" ALIGN="CENTER">M5 CARD GENERATION</p>
+        <hr>
+        <table border="0px">
+            <tr >
+                <td ><p style="font-size: 20px;margin-left: 10px;">ASSEMBLY NO :  </p></td >
+                <td ><p style="font-size: 20px;">{{asl}} </p></td>
+                <td ><p style="font-size: 20px; margin-left:200px">DESCRIPTION : </p></td>
+                <td colspan="2"><p style="font-size: 20px;">{{ades}}</p></td>
+                <td><input type="button" name="btncg" id="btncg" value="PRINT" onclick="funcbtncg()" style="margin-left:160px;"></button></td>
+            </tr>
+            <tr>
+                <td ><p style="font-size: 20px;margin-left: 10px;" >BATCH NO : </p></td>
+                <td ><p style="font-size: 20px;">{{batch}}</p></td>
+            </tr>
+            
+        </table>
         <hr>
         <hr>
-        <table >
+        <table  cellspacing="30">
             <tr>    
                            
-            <td>SCL</td>
-            <td>P SHOP</td>
-            <td>N SHOP</td>
-            <td>PART NO</td>
-            <td>SHOP</td>
-            <td>M5_CD</td>
-            <td>LC_NO</td>
-            <td>OPN</td>
-            <td>DES</td>
-            <td>LOT</td>
-            <td>PA</td>
-            <td>AT</td>
-            <td>loco fr</td>
-            <td>loco to</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">SCL</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">P SHOP</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">M2 SL NO</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">PART NO</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">SHOP</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">M5_CD</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">OPN</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">DES</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">loco fr</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">loco to</td>
            
-            
+            <hr>
             
            </tr>
            <hr>
-              {% for i in final %}
+              {% for i in m5 %}
             <tr>
                
                      
-             <td>{{i.scl}}</td>
-             <td>{{i.p_shop}}</td>
-             <td>{{i.n_shop}}</td> 
-             <td>{{i.partno}}</td> 
-             <td>{{i.shop}}</td>
-             <td>{{i.M5_CD}}</td>
-             <td>{{i.LC_NO}}</td>
-             <td>{{i.OPN}}</td>
-             <td>{{i.DES}}</td> 
-             <td>{{i.LOT}}</td>
-             <td>{{i.PA}}</td> 
-             <td>{{i.AT}}</td>
-             <td>{{i.lfr}}</td> 
-             <td>{{i.lto}}</td>
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.scl_cl}}</td>
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.pr_shopsec}}</td>
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.m2slno}}</td> 
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.part_no}}</td>
+              
+             <td style="font-size: 20px;" ALIGN="CENTER" >{{i.shop_sec}}</td>
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.m5_cd}}</td>
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.opn}}</td>
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.opn_desc}}</td>
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.l_fr}}</td> 
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.l_to}}</td>
             </tr>
             {% endfor %}
        
@@ -56,9 +83,16 @@
             
         </table>
        
-
+       
 
     </body>
+    <script>
+        function funcbtncg()
+        {
+            document.getElementById('btncg').style.display = "none";        
+        window.print();
+        }
+    </script>
 </html>
 
 

@@ -488,6 +488,7 @@ urlpatterns = [
     path('rosterreport/',rosterreport,name='rosterreport'), 
     path('ajax/getrosterreport/',getrosterreport,name='getrosterreport'),
     path('genrosterpdf/',genrosterpdf,name='genrosterpdf'),
+    path('CardGenerationreport/',CardGenerationreport,name='CardGenerationreport'),
 
 ]
 

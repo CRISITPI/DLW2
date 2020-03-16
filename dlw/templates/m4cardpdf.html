@@ -5,7 +5,21 @@
     </head>
     <body> 
            
-        <p style="font-size: 30px;" ALIGN="CENTER">{{card}} CARD GENERATION</p>
+        <p style="font-size: 30px;" ALIGN="CENTER">M4 CARD GENERATION</p>
+        <hr>
+        <table border="0px">
+            <tr >
+                <td ><p style="font-size: 15px;" >ASSEMBLY NO :  </p></td >
+                <td ><p style="font-size: 15px;">{{asl}} </p></td>
+                <td ><p style="font-size: 15px;" >DESCRIPTION : </p></td>
+                <td colspan="2"><p style="font-size: 15px;">{{ades}}</p></td>
+            </tr>
+            <tr>
+                <td ><p style="font-size: 15px;" >BATCH NO : </p></td>
+                <td ><p style="font-size: 15px;">{{batch}}</p></td>
+            </tr>
+
+        </table>
         <hr>
         <hr>
         <table >
@@ -15,39 +29,29 @@
             <td>DOC NO</td>
             <td>PM NO</td>
             <td>PART NO</td>
-            <td>QUANTITY</td>
             <td>LOCO FROM</td>
             <td>LOCO TO</td>
-            <td>BATCH NO</td>
-            <td>ASSLY NO</td>
-            <td>SEQ</td>
             <td>DUE WK</td>
             <td>DOC IND</td>
             <td>EPC</td>
-            <td>UNIT</td>
+            <td>BRN NO</td>
             
             
            </tr>
            <hr>
-              {% for i in dat %}
+              {% for i in m4 %}
             <tr>
                  
              <td>{{i.doc_code}}</td> 
              <td>{{i.doc_no}}</td> 
              <td>{{i.pm_no}}</td>
              <td>{{i.part_no}}</td>
-             <td>{{i.QUANTITY}}</td>
              <td>{{i.l_fr}}</td>
              <td>{{i.l_to}}</td> 
-             
-             
-             <td>{{i.batch}}</td> 
-             <td>{{i.assly}}</td>
-             <td>{{i.seq}}</td> 
-             <td>{{i.dw}}</td> 
-             <td>{{i.di}}</td>
-             <td>{{i.epc}}</td> 
-             <td>{{i.unit}}</td>
+             <td>{{i.due_wk}}</td> 
+             <td>{{i.doc_ind}}</td>
+             <td>{{i.epc}}</td>
+             <td>{{i.brn_no}}</td> 
             </tr>
             {% endfor %}
        

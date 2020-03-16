@@ -5853,11 +5853,12 @@ def m3view(request):
             date = M2Docnew1.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
             shop_ut=  obj3[0]['shop_ut']
             unit_code=list(Code.objects.filter(cd_type='51',code=shop_ut).values('alpha_1').distinct()) 
-            order_type=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type'))
+            order_type=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type','loco_fr','loco_to'))
             assembly_desc= list(Part.objects.filter(partno=assembly_no).values('des').distinct()) 
             
             leng = obj.count()
             leng1 = obj1.count()
+            
             leng2 = len(objj)
 
             objj[0].update({'assembly_no':assembly_no})
@@ -5871,9 +5872,9 @@ def m3view(request):
                 
 
             if len(order_type)==0:
-                objj[0].update({'order_type':''})
+                objj[0].update({'order_type':'','l_fr':'','l_to':''})
             else:
-                objj[0].update({'order_type':order_type[0]['batch_type'] })
+                objj[0].update({'order_type':order_type[0]['batch_type'],'l_fr':order_type[0]['loco_fr'],'l_to':order_type[0]['loco_to'] })
                 
             if len(unit_code)==0:
                 objj[0].update({'unit':''})
@@ -5890,10 +5891,10 @@ def m3view(request):
             else:
                 objj[0].update({'rm_des':obj3[0]['des'],'shop_ut':obj3[0]['shop_ut']})
                 
-            if len(prod)==0:
-                objj[0].update({'l_fr':'','l_to':''}) 
-            else:
-                objj[0].update([{'l_fr':prod[0]['l_fr'],'l_to':prod[0]['l_to']}])
+            # if len(prod)==0:
+            #     objj[0].update({'l_fr':'','l_to':''}) 
+            # else:
+            #     objj[0].update([{'l_fr':prod[0]['l_fr'],'l_to':prod[0]['l_to']}])
 
             if len(cuntdia)==0:
                 objj[0].update({'cutdia_no':''}) 
@@ -8487,6 +8488,7 @@ def CardGeneration(request):
                         qty=qty1[0]['qty']
                     
                     M2Docnew1.objects.create(scl_cl=scl,batch_no=batch,assly_no=asmno,f_shopsec=shop,part_no=i,ptc='M',qty=qty,rc_st_wk=r,rm_partno=r_part,rm_qty=r_qty,rm_ptc=r_ptc,cut_shear=cut_Shear,m2sln=m2sln,m2prtdt=prtdt,seq=seq,brn_no=brn,m4_no=m4_no,epc=epc,version=version,status=status,mark=mark,del_fl=del_fl,epc_old=epc_old)
+                    m2sln=m2sln+1
                 # messages.success(request, 'Card generated Successfully!')  
                 
                
@@ -8712,10 +8714,16 @@ def CardGeneration(request):
                             else:
                                 qo=0
                             if j.m5_cd.strip()=='5':
+                                diff=int(l_to) - int(l_fr)
+                                count=0
                                 for l in range(0,5):
                                     m5sl=m5sl+1
                                     M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_shear'],rm_qty =float(dtm5[i]['rm_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['rm_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))
-                                    lf=lf+1
+                                    if count >=diff:
+                                        lf=lf
+                                    else:
+                                        lf=lf + 1
+                                    count= count +1
                             else:
                                 m5sl=m5sl+1
                                 M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_shear'],rm_qty =float(dtm5[i]['rm_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['rm_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))                                 
@@ -22924,7 +22932,8 @@ def allot_update(request):
 def m5cardgen_getbrn(request):
      if request.method == "GET" and request.is_ajax():
         batch = request.GET.get('batch')
-        obj=list(Batch.objects.filter(bo_no=batch).values('brn_no'))
+        assly = request.GET.get('assly')
+        obj=list(Batch.objects.filter(bo_no=batch,part_no=assly).values('brn_no'))
         return JsonResponse(obj, safe = False)
      return JsonResponse({"success":False}, status = 400)
 
@@ -24603,5 +24612,91 @@ def genrosterpdf(request, *args, **kwargs):
 
     pdf = render_to_pdf('rosterpdf.html',context)
     return HttpResponse(pdf, content_type='application/pdf')
+
+
+@login_required
+@role_required(urlpass='/CardGenerationreport/')
+def CardGenerationreport(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
+    }
+    if request.method=="POST":
+        batch = request.POST.get('batchno')
+        bval=request.POST.get('cardbutton')
+        asmno=request.POST.get('asslyno')
+        card = request.POST.get('cardno')
+        bno1 = request.POST.get('brn_no')
+        if bval=="Generate Cards" and card=="M2":
+            ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+
+            m2=list(M2Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).all())
+            if len(m2)==0:
+                messages.error(request,'Card is Not Generated Yet!')
+                return render(request,"CardGenerationreport.html",context)
+
+            ades=ades[0]['des']
+            data ={
+                'asl':asmno,
+                'ades':ades,
+                'batch':batch,
+                'brn':bno1,
+                'm2':m2,
+            }
+            pdf = render_to_pdf('cardpdf.html', data)
+            return HttpResponse(pdf, content_type='application/pdf')
+        elif bval=="Generate Cards" and card=="M4":
+            ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+            m4=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1).all())
+            if len(m4)==0:
+                messages.error(request,'Card is Not Generated Yet!')
+                return render(request,"CardGenerationreport.html",context)
+            ades=ades[0]['des']
+            data ={
+                'asl':asmno,
+                'ades':ades,
+                'batch':batch,
+                'brn':bno1,
+                'm4':m4,
+            }
+            pdf = render_to_pdf('m4cardpdf.html', data)
+            return HttpResponse(pdf, content_type='application/pdf')
+
+        elif bval=="Generate Cards" and card=="M14":
+            messages.error(request,'This Module is under Development')
+            return render(request,"CardGenerationreport.html",context)
+              
+        elif bval=="Generate Cards" and card=="M5":
+            ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+            m5=list(M5Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).all())
+            if len(m5)==0:
+                messages.error(request,'Card is Not Generated Yet!')
+                return render(request,"CardGenerationreport.html",context)
+            ades=ades[0]['des']
+            data ={
+                'asl':asmno,
+                'ades':ades,
+                'batch':batch,
+                'brn':bno1,
+                'm5':m5,
+                
+            }
+            return render(request,"m5cardpdf.html",data)
+            #pdf = render_to_pdf('m5cardpdf.html', data)
+            #return HttpResponse(pdf, content_type='application/pdf') 
+    return render(request,"CardGenerationreport.html",context)
+            
+
+            
 
 
