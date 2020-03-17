@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
        
 {% block content %} 
@@ -15,22 +16,22 @@
 
                     <td>
                         <label for="tool_no"><b>Tool Number/ औज़ार संख्या:</b></label>
-                        <input type="text" class="form-control" placeholder="Enter Tool Number" id="tr_toolnum" name="tr_toolnum">
+                        <input type="text" class="form-control" placeholder="Enter Tool Number" id="tr_toolnum" name="tr_toolnum" value="{{TOOL_NUM}}" >
                         
                    </td>
                    <td>
                     <label for="pl_no"><b>PL Number/ पी एल संख्या:</b></label>
-                    <input type="text" class="form-control" placeholder="Enter PL Number" id="tr_plnum" name="tr_plnum">
+                    <input type="text" class="form-control" placeholder="Enter PL Number" id="tr_plnum" name="tr_plnum" value="{{pl_num}}" >
                     </td>
 
                     <td>
                          <label for="dg_no"><b>DG Number/ डी जी संख्या :</b></label>
-                        <input type="text" class="form-control" placeholder="Enter DG Number" id="tr_dgnum" name="tr_dgnum">
+                        <input type="text" class="form-control" placeholder="Enter DG Number" id="tr_dgnum" name="tr_dgnum" value="{{dg_num}}">
                     </td>
 
                     <td>
                         <label for="tooldesc"><b>Tool Description/ औज़ार विवरण:</b></label>
-                        <input type="text" class="form-control" placeholder="Tool Description" id="tr_tooldesc" name="tr_tooldesc">
+                        <input type="text" class="form-control" placeholder="Tool Description" id="tr_tooldesc" name="tr_tooldesc" value="{{tl_desc}}">
                     </td>
 
                 </tr>
@@ -39,88 +40,87 @@
                 <tr>
                     <td>
                         <label for="location"><b>Location/ स्थान:</b></label>
-                        <select class="form-control" id="tr_location" name="tool_no" required>
-                            <option id="location" selected disabled hidden>Select Location</option>
-                            
+                        <select class="form-control" id="tr_location" name="tool_no"  required>
+                            <option id="location">{{sh_locn}}</option>
                                      {% for role in trlocation %}
-                                       <option>{{role}}</option>
+                                       <option >{{role}}</option>
                                      {% endfor %}
                                      
                         </select>
                      </td>
                      <td>
                         <label for=shop_desc><b>Shop Description/ दुकान विवरण:</b></label>
-                        <input type="text" class="form-control" placeholder="Shop Description" id="tr_shopdesc" name="tr_shopdesc">
+                        <input type="text" class="form-control" placeholder="Shop Description" id="tr_shopdesc" name="tr_shopdesc" value="{{tr_shopdesc}}">
                     </td>
                     <th>
                         <label for="from">Date Of Entry</label>
-                        <input type="text" id="date2" name="from" readonly class="form-control" >
+                        <input type="text" id="date2" name="from" readonly class="form-control" value="{{doe}}" >
                     </th>
                 </tr>
                 <tr>
                     <td>
                         <label for="po_no"><b>po_no</b></label>
-                        <input type="text" class="form-control" placeholder="po_no" id="po_no" name="po_no">
+                        <input type="text" class="form-control" placeholder="po_no" id="po_no" name="po_no" value="{{po_no}}">
                     </td>
                     <td>
                         <label for="make"><b>Make</b></label>
-                        <input type="text" class="form-control" placeholder="Make" id="make" name="make">
+                        <input type="text" class="form-control" placeholder="Make" id="make" name="make" value="{{make}}">
                     </td>
                     <td>
                         <label for="model"><b>Model</b></label>
-                        <input type="text" class="form-control" placeholder="Model" id="model" name="model">
+                        <input type="text" class="form-control" placeholder="Model" id="model" name="model" value="{{model}}">
                     </td>
                     <td>
                         <label for="cost"><b>Cost</b></label>
-                        <input type="text" class="form-control" placeholder="Cost" id="cost" name="cost" >
+                        <input type="text" class="form-control" placeholder="Cost" id="cost" name="cost" value="{{cost}}" >
                     </td>
                 </tr>
                     <tr>
                     <td>
                         <label for="Range"><b>Range</b></label>
-                        <input type="text" class="form-control" placeholder="Tool Range" id="rangee" name="rangee">
+                        <input type="text" class="form-control" placeholder="Tool Range" id="rangee" name="rangee" value="{{rangee}}">
                     </td>
                     <td>
                         <label for="UnitOfMeasure"><b>UnitOfMeasure</b></label>
-                        <input type="text" class="form-control" placeholder="UnitOfMeasure" id="unitofmeasure" name="unitofmeasure">
+                        <input type="text" class="form-control" placeholder="UnitOfMeasure" id="unitofmeasure" name="unitofmeasure" value="{{uom}}">
                     </td>
                     <td>
                         <label for="cal_freq"><b>Calibration frequency</b></label>
-                        <input type="text" class="form-control" placeholder="Calibration frequency" id="cal_freq" name="cal_freq">
+                        <input type="text" class="form-control" placeholder="Calibration frequency" id="cal_freq" name="cal_freq" value="{{cal_freq}}">
                     </td>
                     </tr>
                     <tr>
                         <td>
                             <label for="acc_cri"><b>Accuracy Criteria</b></label>
-                            <input type="text" class="form-control" placeholder="Accuracy Criteria" id="acc_cri" name="acc_cri">
+                            <input type="text" class="form-control" placeholder="Accuracy Criteria" id="acc_cri" name="acc_cri" value="{{acc_cri}}">
                         </td>
                      <td>
                         <label for="cali_link"><b>Calibration link</b></label>
-                        <input type="text" class="form-control" placeholder="Calibration link" id="cali_link" name="cali_link">
+                        <input type="text" class="form-control" placeholder="Calibration link" id="cali_link" name="cali_link" value="{{cal_link}}">
                      </td>
                      <td>
                         <label for="pro_tol"><b>Process Tolerance</b></label>
-                        <input type="text" class="form-control" placeholder="Process Tolerance" id="pro_tol" name="pro_tol">
+                        <input type="text" class="form-control" placeholder="Process Tolerance" id="pro_tol" name="pro_tol" value="{{pro_tol}}">
                      </td>
                 </tr>
                 <tr>
                      <td>
                         <label for="perror"><b>Plus Error</b></label>
-                        <input type="text" class="form-control" placeholder="Plus Error" id="perror" name="perror">
+                        <input type="text" class="form-control" placeholder="Plus Error" id="perror" name="perror" value="{{perror}}">
                      </td>
                      <td>
 
                         <label for="merror"><b>Minus Error</b></label>
-                        <input type="text" class="form-control" placeholder="Minus Error" id="merror" name="merror">
+                        <input type="text" class="form-control" placeholder="Minus Error" id="merror" name="merror" value="{{merror}}">
                      </td>
                      <td>
 
                         <label for="refstdno"><b>Reference Standard Number</b></label>
-                        <input type="text" class="form-control" placeholder="Reference Standard Number" id="refstdno" name="refstdno">
+                        <input type="text" class="form-control" placeholder="Reference Standard Number" id="refstdno" name="refstdno" value="{{rsn}}">
                      </td>
                      <td>
                         <label for="win"><b>Work Instruction Number</b></label>
-                        <input type="text" class="form-control" placeholder="Work Instruction Number" id="win" name="win">
+                        <input type="text" class="form-control" placeholder="Work Instruction Number" id="win" name="win" value="{{win}}">
                      </td>
         
     
@@ -134,10 +134,14 @@
             </table>
             <table>
                 <tr>
-                     
-                    <div id="sve" style="display: block;"><input type="submit" onclick="myclick();" class="btn btn-success", name="save"  value="SAVE"></input> &nbsp;&nbsp;&nbsp;&nbsp;</div>
-                    <div><input type="submit" onclick="deltool();" class="btn btn-success", name="DELETE" value="DELETE"></input>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <input type="submit" onclick="updtool();" class="btn btn-success", name="UPDATE" value="UPDATE"></div>
+
+                    <input type="submit" onclick="myclick();" class="btn btn-success", name="save"  value="SAVE" id="sve" display="block">&nbsp;&nbsp;&nbsp;
+                    <input type="submit" onclick="deltool();" class="btn btn-success", name="DELETE" value="DELETE">&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="submit" onclick="updtool();" class="btn btn-success", name="UPDATE" value="UPDATE">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button onclick="location.href = 'http://127.0.0.1:8000/tool_reportedit/';" id="myButton" class="btn btn-success" >MASTER LIST</button>
+                
+                  
+                    
                 </tr>
             </table>
            
@@ -219,7 +223,7 @@
                                    dataType : 'json',
                                    data : data,
                                    success : function(response){             
-                                    alert('tool is delete');                   
+                                    alert('tool is deleted');                   
            
                                    }
                                      })
@@ -240,7 +244,7 @@
                 success : function(response){   
                     console.log(response[0].flag);        
                     if(response[0].flag=='n'){
-                        alert("deleted previously do you want to make changes") };              
+                        confirm("deleted previously do you want to make changes") };              
                     document.getElementById('tr_dgnum').value=response[0].dg_num;
                     document.getElementById('tr_plnum').value=response[0].pl_num;
                     document.getElementById('tr_tooldesc').value=response[0].tl_desc;
@@ -319,10 +323,18 @@
 
 
     });
-
+        if ("{{flag}}"=='n'|| "{{flag}}"=='y'){
+            document.getElementById('sve').style.display="none";
+        }
+        if ("{{flag}}"=='n'){
+           var y=confirm('This tool was deleted.Are you sure you want to make changes?');
+           if(!y){
+                location.href = location.href;
+            }
+        }
+        
+        
             </script>
            
 
 {% endblock content %}
-
-

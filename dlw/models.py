@@ -5161,3 +5161,37 @@ class roster1(models.Model):
     staffName=models.CharField(db_column='staffName',max_length=100, blank=True, null=True) 
     shift=models.CharField(db_column='shift', max_length=20, blank=True,null=True)
     date=models.CharField(db_column='date',max_length=10,blank=True,null=True)
+
+class TempQtysum(models.Model):
+    partno = models.CharField(db_column='PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=1000, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
+    shop_ut = models.CharField(db_column='SHOP_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    l_fr = models.CharField(db_column='L_FR', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    l_to = models.CharField(db_column='L_TO', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    rm_part = models.CharField(db_column='RM_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=1000, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
+    rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    rm_lf = models.CharField(db_column='RM_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    rm_lt = models.CharField(db_column='RM_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    dt_run = models.DateField(db_column='DT_RUN', blank=True, null=True)  # Field name made lowercase.
+    cur_time = models.CharField(db_column='CUR_TIME', max_length=40, blank=True, null=True)  # Field name made lowercase.
+
+
+
+class Wrap_table(models.Model):
+    partno = models.CharField(db_column='PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=1000, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
+    shop_ut = models.CharField(db_column='SHOP_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    pt_lf = models.CharField(db_column='PT_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    pt_lt = models.CharField(db_column='PT_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    rm_part = models.CharField(db_column='RM_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=1000, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
+    rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    rm_lf = models.CharField(db_column='RM_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    rm_lt = models.CharField(db_column='RM_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    rem = models.CharField(db_column='REM',max_length=10, blank=True, null=True)  # Field name made lowercase.
+    v_qty = models.CharField(db_column='V_QTY', max_length=40, blank=True, null=True)  # Field name made lowercase.

@@ -488,7 +488,22 @@ urlpatterns = [
     path('rosterreport/',rosterreport,name='rosterreport'), 
     path('ajax/getrosterreport/',getrosterreport,name='getrosterreport'),
     path('genrosterpdf/',genrosterpdf,name='genrosterpdf'),
+<<<<<<< HEAD
     path('CardGenerationreport/',CardGenerationreport,name='CardGenerationreport'),
+=======
+    path('qtysum/', qtysum ,name='qtysum'),
+    path('ajax/qtysum1/', qtysum1 ,name='qtysum1'),
+    path('ajax/qtysum2/', qtysum2 ,name='qtysum2'), 
+    path('report1/', report1 , name='report1'),
+    path('ajax/m9getshop_name/', m9getshop_name, name='m9getshop_name'),
+    path('ajax/save_sm9/', save_sm9, name='save_sm9'),
+    path('ajax/m9getmw/',m9getmw,name='m9getmw'),
+    path('ajax/m9getsbc/',m9getsbc,name='m9getsbc'),
+    path('ajax/m9getrjc/',m9getrjc,name='m9getrjc'),
+    path('ajax/get_value/',get_value,name='get_value'),
+    path('tool_reportedit/',tool_reportedit,name='tool_reportedit'),
+
+>>>>>>> abhi
 
 ]
 
