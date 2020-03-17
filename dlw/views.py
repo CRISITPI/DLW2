@@ -5853,7 +5853,7 @@ def m3view(request):
             date = M2Docnew1.objects.filter(m2sln=doc_no).values('m2prtdt').distinct()
             shop_ut=  obj3[0]['shop_ut']
             unit_code=list(Code.objects.filter(cd_type='51',code=shop_ut).values('alpha_1').distinct()) 
-            order_type=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type'))
+            order_type=list(Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type','loco_fr','loco_to'))
             assembly_desc= list(Part.objects.filter(partno=assembly_no).values('des').distinct()) 
             
             leng = obj.count()
@@ -5871,9 +5871,9 @@ def m3view(request):
                 
 
             if len(order_type)==0:
-                objj[0].update({'order_type':''})
+                objj[0].update({'order_type':'','l_fr':'','l_to':''})
             else:
-                objj[0].update({'order_type':order_type[0]['batch_type'] })
+                objj[0].update({'order_type':order_type[0]['batch_type'],'l_fr':order_type[0]['loco_fr'],'l_to':order_type[0]['loco_to'] })
                 
             if len(unit_code)==0:
                 objj[0].update({'unit':''})
@@ -5890,10 +5890,10 @@ def m3view(request):
             else:
                 objj[0].update({'rm_des':obj3[0]['des'],'shop_ut':obj3[0]['shop_ut']})
                 
-            if len(prod)==0:
-                objj[0].update({'l_fr':'','l_to':''}) 
-            else:
-                objj[0].update([{'l_fr':prod[0]['l_fr'],'l_to':prod[0]['l_to']}])
+            # if len(prod)==0:
+            #     objj[0].update({'l_fr':'','l_to':''}) 
+            # else:
+            #     objj[0].update([{'l_fr':prod[0]['l_fr'],'l_to':prod[0]['l_to']}])
 
             if len(cuntdia)==0:
                 objj[0].update({'cutdia_no':''}) 
@@ -12638,7 +12638,6 @@ def mg36getempno(request):
     return JsonResponse({"success":False}, status=400)
 
 
-
 @login_required
 @role_required(urlpass='/m9view/')
 def m9view(request):
@@ -12666,31 +12665,6 @@ def m9view(request):
             'ip':get_client_ip(request),
             'roles':tmp
         }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = Oprn.objects.all().filter(shop=rolelist[i]).values('partno').distinct()
-            wo_nop =wo_nop | req
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
-        
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
     if request.method == "POST":
         
         submitvalue = request.POST.get('proceed')
@@ -12698,8 +12672,10 @@ def m9view(request):
             from datetime import date
             shop_sec = request.POST.get('shop_sec')
             wo_no = request.POST.get('wo_no')
+            print(wo_no)
             part_no = request.POST.get('part_nop')
             op_no=request.POST.get('op_no')
+            print(op_no)
             dt=date.today
             context = {
                         'date':dt,
@@ -12713,44 +12689,7 @@ def m9view(request):
                         'subnav':subnav,
             }
 
-        if submitvalue=='Save':
-                from decimal import Decimal
-                chng_optr=request.POST.get('cngoptr')
-                sbc= request.POST.get('sbc')
-                rjc = request.POST.get('rjc')
-                cit = request.POST.get('cit')
-                mw = request.POST.get('mw')
-                mg9 = request.POST.get('mg9')
-                optno = request.POST.get('optno')
-                prvopt = request.POST.get('prvopt')
-                remarks = request.POST.get('remarks')
-                idlecard=request.POST.get('itc')
-                idle=request.POST.get('ittime')
-                
-
-                m9obj=m9.objects.create()
-                m9obj.empname=chng_optr
-                m9obj.sus_jbno=Decimal(sbc)
-                m9obj.date=request.POST.get('ddate')
-                m9obj.res_jno=Decimal(rjc)
-                m9obj.cat=cit
-                m9obj.mw_no=mw
-                m9obj.mg9_no=mg9
-                m9obj.empno=optno
-                m9obj.prev_empno=prvopt
-                m9obj.remark=remarks
-                m9obj.idle_time_man_mac=idlecard
-                m9obj.on_off=idle
-                m9obj.shop_sec=request.POST.get('shopsec')
-                m9obj.part_no=request.POST.get('partno')
-                m9obj.wo_no=request.POST.get('wono')
-                m9obj.aff_opn=request.POST.get('opnno')
-
-                
-                m9obj.save()
-                print(m9obj)
-
-    
+       
 
 
     
@@ -23691,7 +23630,6 @@ def updatetool(request):
     return JsonResponse({"success":False}, status=400)
 
 
-
 @login_required
 @role_required(urlpass='/m5hwview/')
 def m5hwview(request):
@@ -24605,3 +24543,274 @@ def genrosterpdf(request, *args, **kwargs):
     return HttpResponse(pdf, content_type='application/pdf')
 
 
+@login_required
+@role_required(urlpass='/qtysum/')
+def qtysum(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    Ptld.objects.all().delete()   
+    return render(request,"qtysum.html",context)
+
+    
+def qtysum1(request):
+    if request.method == 'GET' and request.is_ajax():  
+        part= request.GET.get('asslyno')
+        data_list=list(Part.objects.filter(partno=part).values('des').distinct())       
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                                  
+    return JsonResponse({"success":False},status=400)           
+
+def qtysum2(request):
+    if request.method == 'GET' and request.is_ajax():  
+        part = request.GET.get('asslyno')
+        part1 = request.GET.get('Txtpartno')
+        val = request.GET.get('qty')
+        drg_no=list(Part.objects.filter(partno=part).values('drgno').distinct())
+        drg=drg_no[0].get('drgno')
+
+        Ptld.objects.create(part_no=part, p_desc=part1,qty=val  ,epc='',ptc='',rem='',drgno=drg)
+        data_list2=list(Ptld.objects.values('part_no','p_desc','qty','epc','ptc','rem').distinct())
+        #if(len(data_list2)>0):
+        return JsonResponse(data_list2,safe = False)                                               
+    return JsonResponse({"success":False},status=400)
+
+  
+def report1(request): 
+    data_list4=list(Ptld.objects.values('part_no','ptc','p_desc','qty','epc','rem','drgno'))
+    df=pandas.DataFrame(data_list4)
+    pn=[]
+    pd=[]
+    qt=[]
+    ep=[]
+    rm=[]
+    drg=[]
+    dt_length=len(data_list4)    
+    for i in range(len(data_list4)):
+        pn.append(data_list4[i].get('part_no'))
+        pd.append(data_list4[i].get('p_desc'))
+        qt1=str(data_list4[i].get('qty'))
+        qt.append(qt1)
+        ep.append(data_list4[i].get('epc')) 
+        rm.append(data_list4[i].get('rem'))
+        drg.append(data_list4[i].get('drgno'))
+    data=process()
+    a=data['DESC']
+    partno=list(a.keys())
+    desc=data["DESC"].values.tolist()
+    qty=data["QTY"].values.tolist()
+    ptc=data["PTC"].values.tolist()
+    context={
+     'val1':pn,
+     'val2':pd,
+     'val3':qt,
+     'val4':ep,
+     'val5':rm,
+     'val6':drg,
+     'count':dt_length,
+     'l1':len(pn),
+     'l2':len(pd),
+     'l3':len(qt),
+     'l4':len(ep),
+     'l6':len(rm),
+     'd':partno,
+     'd1':desc,
+     'd2':qty,
+     'd3':ptc,
+     'count1':len(desc),
+    }
+    return render(request,'report1.html',context)
+
+def m9getmw(request):
+    if request.method == "GET" and request.is_ajax():
+        mwno = request.GET.get('mw')
+        mw_no=list(MG9Initial.objects.filter(id=mwno).values('mw_no').distinct())
+        return JsonResponse(mw_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m9getsbc(request):
+    if request.method == "GET" and request.is_ajax():
+        sbc = request.GET.get('sbc')
+        sbc_no=list(M5DOCnew.objects.filter(m5glsn=sbc).values('m5glsn').distinct())
+        if len(sbc_no)!=0:
+            return JsonResponse(sbc_no, safe = False)
+        else:
+            i=[]
+            return JsonResponse(i, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m9getrjc(request):
+    if request.method == "GET" and request.is_ajax():
+        rjc = request.GET.get('rjc')
+        rjc_no=list(M5DOCnew.objects.filter(m5glsn=rjc).values('m5glsn').distinct())
+        if len(rjc_no)!=0:
+            return JsonResponse(rjc_no, safe = False)
+        else:
+            i=[]
+            return JsonResponse(i, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m9getshop_name(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        shop_name = list(shop_section.objects.filter(section_code=shop_sec).values('section_desc').distinct())
+        return JsonResponse(shop_name , safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+    
+def save_sm9(request):
+    context={}
+    if request.method == "GET" and request.is_ajax():
+            date=request.GET.get('val1')
+            idle_time_man_mac=request.GET.get('val2')
+            wo_no=request.GET.get('val')
+            part_no=request.GET.get('val3')
+            sus_jbno=request.GET.get('val4')
+            res_jno=request.GET.get('val5')
+            mw_no=request.GET.get('val6')
+            mg9_no=request.GET.get('val7')
+            aff_opn=request.GET.get('val8')
+            empno=request.GET.get('val9')
+            empname=request.GET.get('val10')
+            prev_empno=request.GET.get('val11')
+            cat=request.GET.get('val12')
+            remark=request.GET.get('val13')
+            shop=request.GET.get('val15')
+            on_off=request.GET.get('val14')
+
+            m9obj=m9.objects.create()
+            m9obj.empname=empname
+            m9obj.sus_jbno=sus_jbno
+            m9obj.res_jno=res_jno
+            m9obj.cat=cat
+            m9obj.mw_no=mw_no
+            m9obj.mg9_no=mg9_no
+            m9obj.empno=empno
+            m9obj.prev_empno=prev_empno
+            m9obj.remark=remark
+            m9obj.idle_time_man_mac=idle_time_man_mac
+            m9obj.date=date
+            m9obj.shop_sec=shop
+            m9obj.part_no=part_no
+            m9obj.wo_no=wo_no
+            m9obj.aff_opn=aff_opn
+            m9obj.on_off=on_off
+            m9obj.save()
+            return JsonResponse(context,safe=False)
+    return JsonResponse({"success":False}, status=400)
+def get_value(request):
+    if request.method == "GET" and request.is_ajax():
+        date=request.GET.get('val1')
+        idle_time_man_mac=request.GET.get('val2')
+        wo_no=request.GET.get('val')
+        part_no=request.GET.get('val3')
+        sus_jbno=request.GET.get('val4')
+        res_jno=request.GET.get('val5')
+        mw_no=request.GET.get('val6')
+        mg9_no=request.GET.get('val7')
+        aff_opn=request.GET.get('val8')
+        empno=request.GET.get('val9')
+        empname=request.GET.get('val10')
+        prev_empno=request.GET.get('val11')
+        cat=request.GET.get('val12')
+        remark=request.GET.get('val13')
+        shop=request.GET.get('val15')
+        lst=[]
+        lst=list(m9.objects.filter(shop_sec=shop,wo_no=wo_no,part_no=part_no,aff_opn=aff_opn).values('date','idle_time_man_mac','wo_no','part_no','sus_jbno','res_jno','mw_no','mg9_no','aff_opn','empno','empname','prev_empno','cat','remark',).distinct())
+        a={'date':date,'idle_time_man_mac':idle_time_man_mac,'wo_no':wo_no,'part_no':part_no,'sus_jbno':sus_jbno,'res_jno':res_jno,'mw_no':mw_no,'mg9_no':mg9_no,'aff_opn':aff_opn,'empno':empno,'empname':empname,'prev_empno':prev_empno,'cat':cat,'remark':remark}
+        for key,value in a.items():
+            if key in lst:
+                print(ab)
+                lst.append(a)
+        return JsonResponse(lst, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+@login_required
+@role_required(urlpass='/tool_reportedit/')
+def tool_reportedit(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tool=list(toolmdata.objects.values())
+        print(tool)
+        obj=Shop.objects.all().values('shop').distinct()
+        temp=[]
+        for i in obj:
+                temp.append(i['shop'])
+        context={
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
+            'tool':tool,
+        }
+    if request.method == "POST":       
+        SubmitMultipleRowData = request.POST.get('SubmitMultipleRowData')
+        print("SubmitMultipleRowData---",SubmitMultipleRowData)     
+        dataForm = request.POST.get('dataForm')
+        print("dataForm---",dataForm) 
+        if SubmitMultipleRowData=="Submit":
+            dataFormTemp  = request.POST.get('dataForm')
+            print(dataFormTemp)
+            TOOL_NUM=dataFormTemp.split(',')[0]
+            print(TOOL_NUM)
+            context={
+            'trlocation': temp,
+            'nav':nav,
+            'ip':get_client_ip(request),           
+            'subnav':subnav,
+            'TOOL_NUM' : TOOL_NUM,
+            'dg_num':dataFormTemp.split(',')[1],
+            'tl_desc':dataFormTemp.split(',')[2],
+            'pl_num':dataFormTemp.split(',')[3],
+            'sh_locn':dataFormTemp.split(',')[4],
+            'tr_shopdesc':dataFormTemp.split(',')[5],
+            'po_no':dataFormTemp.split(',')[7],
+            'doe':dataFormTemp.split(',')[6],
+            'make':dataFormTemp.split(',')[8],
+            'model':dataFormTemp.split(',')[9],
+            'cost':dataFormTemp.split(',')[10],
+            'rangee':dataFormTemp.split(',')[11],
+            'uom':dataFormTemp.split(',')[12],
+            'cal_freq':dataFormTemp.split(',')[13],
+            'acc_cri':dataFormTemp.split(',')[14],
+            'cal_link':dataFormTemp.split(',')[15],
+            'pro_tol':dataFormTemp.split(',')[16],
+            'perror':dataFormTemp.split(',')[17],
+            'merror':dataFormTemp.split(',')[18],
+            'rsn':dataFormTemp.split(',')[19],
+            'win':dataFormTemp.split(',')[21],
+            'flag':dataFormTemp.split(',')[20],
+            }
+            return render(request,'tool_report.html',context)
+
+    return render(request,'tool_reportedit.html',context)
