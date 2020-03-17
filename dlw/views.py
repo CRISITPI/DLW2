@@ -24813,5 +24813,4 @@ def tool_reportedit(request):
             'flag':dataFormTemp.split(',')[20],
             }
             return render(request,'tool_report.html',context)
-
     return render(request,'tool_reportedit.html',context)
