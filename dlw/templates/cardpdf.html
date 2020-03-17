@@ -5,7 +5,7 @@
     </head>
     <body> 
            
-        <p style="font-size: 30px;" ALIGN="CENTER">{{card}} CARD GENERATION</p>
+        <p style="font-size: 30px;" ALIGN="CENTER">M2 CARD GENERATION</p>
         <hr>
         <table border="0px">
             <tr >
@@ -27,32 +27,29 @@
         <hr>
         <table >
             <tr>
+            
+            <td>SL NO.</td>
             <td>SCL_CL</td>    
             <td>C_PART NO</td>
             <td>SHOP SEC</td>
-            <td>QTY</td>
+            <td>BRN NO</td>
             <td>RC_ST_WK</td>
             <td>R_PART</td>
             <td>R_PTC</td>
-            <td>R_QTY</td>
-            <td>CUT SHEAR</td>
-            
             
            </tr>
            <hr>
-              {% for i in dat %}
+              {% for i in m2 %}
             <tr>
+            <td>{{i.m2sln}}</td>
              <td>{{i.scl_cl}}</td> 
-             <td>{{i.partno}}</td> 
-             <td>{{i.shop}}</td>
-             <td>{{i.qty}}</td>
-             <td>{{i.rm}}</td>
-             <td>{{i.r_part}}</td> 
+             <td>{{i.part_no}}</td> 
+             <td>{{i.f_shopsec}}</td>
+             <td>{{brn}}</td>
+             <td>{{i.rc_st_wk}}</td>
+             <td>{{i.rm_partno}}</td> 
+             <td>{{i.rm_ptc}}</td> 
              
-             
-             <td>{{i.r_ptc}}</td> 
-             <td>{{i.r_qty}}</td>
-             <td>{{i.cut_Shear}}</td> 
             </tr>
             {% endfor %}
        

@@ -5858,6 +5858,7 @@ def m3view(request):
             
             leng = obj.count()
             leng1 = obj1.count()
+            
             leng2 = len(objj)
 
             objj[0].update({'assembly_no':assembly_no})
@@ -8487,6 +8488,7 @@ def CardGeneration(request):
                         qty=qty1[0]['qty']
                     
                     M2Docnew1.objects.create(scl_cl=scl,batch_no=batch,assly_no=asmno,f_shopsec=shop,part_no=i,ptc='M',qty=qty,rc_st_wk=r,rm_partno=r_part,rm_qty=r_qty,rm_ptc=r_ptc,cut_shear=cut_Shear,m2sln=m2sln,m2prtdt=prtdt,seq=seq,brn_no=brn,m4_no=m4_no,epc=epc,version=version,status=status,mark=mark,del_fl=del_fl,epc_old=epc_old)
+                    m2sln=m2sln+1
                 # messages.success(request, 'Card generated Successfully!')  
                 
                
@@ -8712,10 +8714,16 @@ def CardGeneration(request):
                             else:
                                 qo=0
                             if j.m5_cd.strip()=='5':
+                                diff=int(l_to) - int(l_fr)
+                                count=0
                                 for l in range(0,5):
                                     m5sl=m5sl+1
                                     M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_shear'],rm_qty =float(dtm5[i]['rm_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['rm_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))
-                                    lf=lf+1
+                                    if count >=diff:
+                                        lf=lf
+                                    else:
+                                        lf=lf + 1
+                                    count= count +1
                             else:
                                 m5sl=m5sl+1
                                 M5Docnew1.objects.create(scl_cl =scl,batch_no =batch, assly_no =asmno,part_no =pn ,m2slno =int(m2sl) ,rm_partno =pn_r,rm_ut =rm_unit,cut_shear =dtm5[i]['cut_shear'],rm_qty =float(dtm5[i]['rm_qty']),shop_sec =j.shop_sec,lc_no =j.lc_no,opn =j.opn,opn_desc =j.des,pa =float(j.pa),at =float(j.at1),no_off=float(j.lot),qty_ord=float(qo),tot_rm_qty=float(qo*dtm5[i]['rm_qty']),m5_cd =int(j.m5_cd),pr_shopsec =pr_shopsec,n_shopsec =n_shopsec,l_fr =lf,l_to =lf,m5glsn =int(m5sl),m5prtdt =prtdt,brn_no=int(brn),seq =(seq),acc_qty=int('0'),rej_mat=int('0'))                                 
@@ -22864,7 +22872,8 @@ def allot_update(request):
 def m5cardgen_getbrn(request):
      if request.method == "GET" and request.is_ajax():
         batch = request.GET.get('batch')
-        obj=list(Batch.objects.filter(bo_no=batch).values('brn_no'))
+        assly = request.GET.get('assly')
+        obj=list(Batch.objects.filter(bo_no=batch,part_no=assly).values('brn_no'))
         return JsonResponse(obj, safe = False)
      return JsonResponse({"success":False}, status = 400)
 
@@ -24545,8 +24554,8 @@ def genrosterpdf(request, *args, **kwargs):
 
 
 @login_required
-@role_required(urlpass='/qtysum/')
-def qtysum(request):
+@role_required(urlpass='/CardGenerationreport/')
+def CardGenerationreport(request):
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -24556,197 +24565,78 @@ def qtysum(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
-        context={
-            'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles':tmp
-        }
-    Ptld.objects.all().delete()   
-    return render(request,"qtysum.html",context)
-
-    
-def qtysum1(request):
-    if request.method == 'GET' and request.is_ajax():  
-        part= request.GET.get('asslyno')
-        data_list=list(Part.objects.filter(partno=part).values('des').distinct())       
-        if(len(data_list)>0):
-            return JsonResponse(data_list,safe = False)                                  
-    return JsonResponse({"success":False},status=400)           
-
-def qtysum2(request):
-    if request.method == 'GET' and request.is_ajax():  
-        part = request.GET.get('asslyno')
-        part1 = request.GET.get('Txtpartno')
-        val = request.GET.get('qty')
-        drg_no=list(Part.objects.filter(partno=part).values('drgno').distinct())
-        drg=drg_no[0].get('drgno')
-
-        Ptld.objects.create(part_no=part, p_desc=part1,qty=val  ,epc='',ptc='',rem='',drgno=drg)
-        data_list2=list(Ptld.objects.values('part_no','p_desc','qty','epc','ptc','rem').distinct())
-        #if(len(data_list2)>0):
-        return JsonResponse(data_list2,safe = False)                                               
-    return JsonResponse({"success":False},status=400)
-
-  
-def report1(request): 
-    data_list4=list(Ptld.objects.values('part_no','ptc','p_desc','qty','epc','rem','drgno'))
-    df=pandas.DataFrame(data_list4)
-    pn=[]
-    pd=[]
-    qt=[]
-    ep=[]
-    rm=[]
-    drg=[]
-    dt_length=len(data_list4)    
-    for i in range(len(data_list4)):
-        pn.append(data_list4[i].get('part_no'))
-        pd.append(data_list4[i].get('p_desc'))
-        qt1=str(data_list4[i].get('qty'))
-        qt.append(qt1)
-        ep.append(data_list4[i].get('epc')) 
-        rm.append(data_list4[i].get('rem'))
-        drg.append(data_list4[i].get('drgno'))
-    data=process()
-    a=data['DESC']
-    partno=list(a.keys())
-    desc=data["DESC"].values.tolist()
-    qty=data["QTY"].values.tolist()
-    ptc=data["PTC"].values.tolist()
-    context={
-     'val1':pn,
-     'val2':pd,
-     'val3':qt,
-     'val4':ep,
-     'val5':rm,
-     'val6':drg,
-     'count':dt_length,
-     'l1':len(pn),
-     'l2':len(pd),
-     'l3':len(qt),
-     'l4':len(ep),
-     'l6':len(rm),
-     'd':partno,
-     'd1':desc,
-     'd2':qty,
-     'd3':ptc,
-     'count1':len(desc),
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
     }
-    return render(request,'report1.html',context)
+    if request.method=="POST":
+        batch = request.POST.get('batchno')
+        bval=request.POST.get('cardbutton')
+        asmno=request.POST.get('asslyno')
+        card = request.POST.get('cardno')
+        bno1 = request.POST.get('brn_no')
+        if bval=="Generate Cards" and card=="M2":
+            ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
 
-def m9getmw(request):
-    if request.method == "GET" and request.is_ajax():
-        mwno = request.GET.get('mw')
-        mw_no=list(MG9Initial.objects.filter(id=mwno).values('mw_no').distinct())
-        return JsonResponse(mw_no, safe = False)
-    return JsonResponse({"success":False}, status=400)
+            m2=list(M2Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).all())
+            if len(m2)==0:
+                messages.error(request,'Card is Not Generated Yet!')
+                return render(request,"CardGenerationreport.html",context)
 
-def m9getsbc(request):
-    if request.method == "GET" and request.is_ajax():
-        sbc = request.GET.get('sbc')
-        sbc_no=list(M5DOCnew.objects.filter(m5glsn=sbc).values('m5glsn').distinct())
-        if len(sbc_no)!=0:
-            return JsonResponse(sbc_no, safe = False)
-        else:
-            i=[]
-            return JsonResponse(i, safe = False)
-    return JsonResponse({"success":False}, status=400)
+            ades=ades[0]['des']
+            data ={
+                'asl':asmno,
+                'ades':ades,
+                'batch':batch,
+                'brn':bno1,
+                'm2':m2,
+            }
+            pdf = render_to_pdf('cardpdf.html', data)
+            return HttpResponse(pdf, content_type='application/pdf')
+        elif bval=="Generate Cards" and card=="M4":
+            ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+            m4=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1).all())
+            if len(m4)==0:
+                messages.error(request,'Card is Not Generated Yet!')
+                return render(request,"CardGenerationreport.html",context)
+            ades=ades[0]['des']
+            data ={
+                'asl':asmno,
+                'ades':ades,
+                'batch':batch,
+                'brn':bno1,
+                'm4':m4,
+            }
+            pdf = render_to_pdf('m4cardpdf.html', data)
+            return HttpResponse(pdf, content_type='application/pdf')
 
-def m9getrjc(request):
-    if request.method == "GET" and request.is_ajax():
-        rjc = request.GET.get('rjc')
-        rjc_no=list(M5DOCnew.objects.filter(m5glsn=rjc).values('m5glsn').distinct())
-        if len(rjc_no)!=0:
-            return JsonResponse(rjc_no, safe = False)
-        else:
-            i=[]
-            return JsonResponse(i, safe = False)
-    return JsonResponse({"success":False}, status=400)
+        elif bval=="Generate Cards" and card=="M14":
+            messages.error(request,'This Module is under Development')
+            return render(request,"CardGenerationreport.html",context)
+              
+        elif bval=="Generate Cards" and card=="M5":
+            ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+            m5=list(M5Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).all())
+            if len(m5)==0:
+                messages.error(request,'Card is Not Generated Yet!')
+                return render(request,"CardGenerationreport.html",context)
+            ades=ades[0]['des']
+            data ={
+                'asl':asmno,
+                'ades':ades,
+                'batch':batch,
+                'brn':bno1,
+                'm5':m5,
+                
+            }
+            return render(request,"m5cardpdf.html",data)
+            #pdf = render_to_pdf('m5cardpdf.html', data)
+            #return HttpResponse(pdf, content_type='application/pdf') 
+    return render(request,"CardGenerationreport.html",context)
+            
 
-def m9getshop_name(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        shop_name = list(shop_section.objects.filter(section_code=shop_sec).values('section_desc').distinct())
-        return JsonResponse(shop_name , safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-
-    
-def save_sm9(request):
-    context={}
-    if request.method == "GET" and request.is_ajax():
-            date=request.GET.get('val1')
-            idle_time_man_mac=request.GET.get('val2')
-            wo_no=request.GET.get('val')
-            part_no=request.GET.get('val3')
-            sus_jbno=request.GET.get('val4')
-            res_jno=request.GET.get('val5')
-            mw_no=request.GET.get('val6')
-            mg9_no=request.GET.get('val7')
-            aff_opn=request.GET.get('val8')
-            empno=request.GET.get('val9')
-            empname=request.GET.get('val10')
-            prev_empno=request.GET.get('val11')
-            cat=request.GET.get('val12')
-            remark=request.GET.get('val13')
-            shop=request.GET.get('val15')
-            on_off=request.GET.get('val14')
-
-            m9obj=m9.objects.create()
-            m9obj.empname=empname
-            m9obj.sus_jbno=sus_jbno
-            m9obj.res_jno=res_jno
-            m9obj.cat=cat
-            m9obj.mw_no=mw_no
-            m9obj.mg9_no=mg9_no
-            m9obj.empno=empno
-            m9obj.prev_empno=prev_empno
-            m9obj.remark=remark
-            m9obj.idle_time_man_mac=idle_time_man_mac
-            m9obj.date=date
-            m9obj.shop_sec=shop
-            m9obj.part_no=part_no
-            m9obj.wo_no=wo_no
-            m9obj.aff_opn=aff_opn
-            m9obj.on_off=on_off
-            m9obj.save()
-            return JsonResponse(context,safe=False)
-    return JsonResponse({"success":False}, status=400)
-def get_value(request):
-    if request.method == "GET" and request.is_ajax():
-        date=request.GET.get('val1')
-        idle_time_man_mac=request.GET.get('val2')
-        wo_no=request.GET.get('val')
-        part_no=request.GET.get('val3')
-        sus_jbno=request.GET.get('val4')
-        res_jno=request.GET.get('val5')
-        mw_no=request.GET.get('val6')
-        mg9_no=request.GET.get('val7')
-        aff_opn=request.GET.get('val8')
-        empno=request.GET.get('val9')
-        empname=request.GET.get('val10')
-        prev_empno=request.GET.get('val11')
-        cat=request.GET.get('val12')
-        remark=request.GET.get('val13')
-        shop=request.GET.get('val15')
-        lst=[]
-        lst=list(m9.objects.filter(shop_sec=shop,wo_no=wo_no,part_no=part_no,aff_opn=aff_opn).values('date','idle_time_man_mac','wo_no','part_no','sus_jbno','res_jno','mw_no','mg9_no','aff_opn','empno','empname','prev_empno','cat','remark',).distinct())
-        a={'date':date,'idle_time_man_mac':idle_time_man_mac,'wo_no':wo_no,'part_no':part_no,'sus_jbno':sus_jbno,'res_jno':res_jno,'mw_no':mw_no,'mg9_no':mg9_no,'aff_opn':aff_opn,'empno':empno,'empname':empname,'prev_empno':prev_empno,'cat':cat,'remark':remark}
-        for key,value in a.items():
-            if key in lst:
-                print(ab)
-                lst.append(a)
-        return JsonResponse(lst, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
+            
 
 @login_required
 @role_required(urlpass='/tool_reportedit/')
