@@ -8881,6 +8881,7 @@ def CardGeneration(request):
 #         return JsonResponse(bo_no_temp, safe = False)
 #     return JsonResponse({"success": False}, status=400) 
 
+
 def m27getBatchNo(request):
     if request.method == "GET" and request.is_ajax():
         mAsslyno = request.GET.get('mAsslyno')
