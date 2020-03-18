@@ -6335,7 +6335,6 @@ def m7getpart_no(request):
 
 
 
-
 @login_required
 @role_required(urlpass='/PinionPress/')
 def pinionpressing_section(request):
@@ -6351,6 +6350,7 @@ def pinionpressing_section(request):
     obj2=PinionPressing.objects.all().order_by('sno')
     mybo=Batch.objects.all().values('bo_no')
     mysno=PinionPressing.objects.all().values('sno')
+    axleno=AxleMachining.objects.filter(axlefitting_status=True).values('axle_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -6359,6 +6359,7 @@ def pinionpressing_section(request):
        'mybo':mybo,
        'mysno':mysno,
        'subnav':subnav,
+       'axleno':axleno,
         }
     
     
@@ -6378,7 +6379,8 @@ def pinionpressing_section(request):
             bo_qty=request.POST.get('bo_qty')
             indate=request.POST.get('in_qty')
             outdate=request.POST.get('out_qty')
-            if first and second and third and fourth and fifth and sixth and pt_no and bo_qty and indate and outdate:
+            axle_no=request.POST.get('axle_no')
+            if first and second and third and fourth and fifth and sixth and pt_no and bo_qty and indate and outdate and axle_no:
                 obj=PinionPressing.objects.create()
                 obj.bo_no=first
                 obj.bo_date=second
@@ -6391,6 +6393,7 @@ def pinionpressing_section(request):
                 obj.inspection_status=False
                 obj.in_qty=indate
                 obj.out_qty=outdate
+                obj.axle_no=axle_no
                 obj.save()
                 messages.success(request,'Successfully Added!')
             else:
@@ -6433,9 +6436,10 @@ def pinionpressing_section(request):
             pinion_travel=request.POST.get('pinion_travel')
             pinion_pressure=request.POST.get('pinion_pressure')
             blue_match=request.POST.get('blue_match')
+            inspect_date=request.POST.get('inspect_date')
             # loco_type=request.POST.get('locos')
-            if pinion_no and pinion_make and pinion_travel and pinion_pressure and blue_match :
-                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match,inspection_status=True,dispatch_to="Inspected") 
+            if pinion_no and pinion_make and pinion_travel and pinion_pressure and blue_match and inspect_date :
+                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match,inspect_date=inspect_date,inspection_status=True,dispatch_to="Inspected") 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
@@ -6462,7 +6466,6 @@ def pinionpressing_section(request):
                 messages.error(request,"Please Enter S.No.!")
 
         return HttpResponseRedirect("/PinionPress/")
-    
     return render(request,"PinionPress.html",my_context)
 
 def pinion_addbo(request):
@@ -10274,6 +10277,8 @@ def wogen(request):
 
 
 
+
+
 @login_required
 @role_required(urlpass='/axlewheelpressing_section/')
 def axlewheelpressing_section(request):
@@ -10327,7 +10332,16 @@ def axlewheelpressing_section(request):
             wheelno_nde=request.POST.get('wheelno_nde')
             bullgear_no=request.POST.get('bullgear_no')
             bullgear_make=request.POST.get('bullgear_make')
-            
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
             if bo_no and bo_date and date and loco_type and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and pt_no and bo_qty and indate and outdate:
                obj=AxleWheelPressing.objects.create()
                obj.bo_no=bo_no
@@ -10335,8 +10349,8 @@ def axlewheelpressing_section(request):
                obj.date=date
                obj.pt_no=pt_no
                obj.bo_qty=bo_qty
-               obj.in_qty=indate
-               obj.out_qty=outdate
+               obj.in_qty=newindate
+               obj.out_qty=newoutdate
                obj.loco_type=loco_type
                obj.axle_no=axle_no
                obj.wheelno_de=wheelno_de
@@ -10505,7 +10519,6 @@ def axlewheelpressing_section(request):
         return HttpResponseRedirect("/axlewheelpressing_section/")
 
     return render(request,"axlewheelpressing_section.html",my_context)
-
 
 def axlepress_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -12646,7 +12659,6 @@ def mg36getempno(request):
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
-
 @login_required
 @role_required(urlpass='/m9view/')
 def m9view(request):
@@ -12705,11 +12717,12 @@ def m9view(request):
     return render(request,"m9view.html",context)
 
 
+
 def m9getpart_no(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         
-        part_no = list(Oprn.objects.filter(shop_sec = shop_sec).values('part_no').distinct())
+        part_no = list(Oprn.objects.filter(shop_sec = shop_sec,part_no__isnull=False).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -12720,23 +12733,17 @@ def m9getopno(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         part_no = request.GET.get('part_nop')
-        print(shop_sec)
-        print(part_no)
         op_no = list(Oprn.objects.filter(shop_sec = shop_sec,part_no=part_no).values('opn').distinct())
-        print(op_no)
         return JsonResponse(op_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
 
 def m9getwono(request):
     if request.method == "GET" and request.is_ajax():
+        wo_no = list(Batch.objects.filter(bo_no__isnull=False).values('bo_no').distinct())
         
-        wo_no = list(Batch.objects.values('bo_no').distinct())
-        print(wo_no)
         return JsonResponse(wo_no, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
 
 
 
@@ -13045,7 +13052,6 @@ def performaA(request):
     return render(request,"performaA.html")
 
 
-
 @login_required
 @role_required(urlpass='/axlemachining_section/')
 def axlemachining_section(request):
@@ -13058,7 +13064,43 @@ def axlemachining_section(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    obj2=AxleMachining.objects.all().filter(dispatch_status=False).order_by('sno')
+    dd3=[]
+    obj2=list(AxleMachining.objects.all().filter(dispatch_status=False).values('sno','bo_no','pt_no','axle_no','dateaxle','bo_qty','bo_date','loco_type','date','axle_no','axlep_no','axle_make','axle_heatcaseno','in_qty','out_qty','dispatch_to').order_by('sno'))
+    obj3=list(AxleMachining.objects.all().filter(dispatch_status=False).values('dateaxle','in_qty','out_qty').order_by('sno'))
+    ll=len(obj3)
+    for i in range(0,ll):
+        dd=obj3[i]['dateaxle']
+        indate=obj3[i]['in_qty']
+        outdate=obj3[i]['out_qty']
+        if dd!=None :
+            s = dd.split('-')
+            month1 = s[1]
+            day1 = s[2]
+            year1 = s[0]
+            dd2 =  day1 + "-" + month1 + "-" + year1
+            obj2[i].update({'dateaxle':dd2})
+        else :
+            obj2[i].update({'dateaxle':None})
+        if indate!=None :
+            s1 = indate.split('-')
+            newmonth1 = s1[1]
+            newday1 = s1[2]
+            newyear1 = s1[0]
+            newindate =  newday1 + "-" + newmonth1 + "-" + newyear1
+            obj2[i].update({'in_qty':newindate})
+        else :
+            obj2[i].update({'in_qty':None}) 
+
+        if outdate!=None :
+            s2 = outdate.split('-')
+            newmonth2 = s2[1]
+            newday2 = s2[2]
+            newyear2 = s2[0]
+            newoutdate =  newday2 + "-" + newmonth2 + "-" + newyear2
+            obj2[i].update({'out_qty':newoutdate})
+        else :
+            obj2[i].update({'out_qty':None})     
+
     mybo=Batch.objects.all().values('bo_no')
     mysno=AxleMachining.objects.filter(dispatch_status=False).values('axle_no')
     my_context={
@@ -13069,6 +13111,7 @@ def axlemachining_section(request):
        'ip':get_client_ip(request),
        'mybo':mybo,
        'mysno':mysno,
+       'obj3':obj3,
        }
     if request.method=="POST":
         once=request.POST.get('once')
@@ -13088,6 +13131,16 @@ def axlemachining_section(request):
             twelve=request.POST.get('bo_qty')
             indate=request.POST.get('in_qty')
             outdate=request.POST.get('out_qty')
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
             if first and second and third and fourth and sixth and eighth and ninth and tenth and eleven and twelve and indate and outdate:
                 obj=AxleMachining.objects.create()
                 obj.bo_no=first
@@ -13101,8 +13154,8 @@ def axlemachining_section(request):
                 obj.axleinspection_status=False
                 obj.pt_no=eleven
                 obj.bo_qty=twelve
-                obj.in_qty=indate
-                obj.out_qty=outdate
+                obj.in_qty=newindate
+                obj.out_qty=newoutdate
                 obj.save()
                 messages.success(request, 'Successfully Added!')
             else:
@@ -13128,8 +13181,18 @@ def axlemachining_section(request):
             axle_heatcaseno=request.POST.get('editaxle_heatcaseno')
             indate=request.POST.get('editin_qty')
             outdate=request.POST.get('editout_qty')
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
             if bo_no and bo_date and date and loco_type and axlep_no and axle_no and axle_make and axle_heatcaseno and pt_no and bo_qty and indate and outdate:
-                AxleMachining.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=indate,out_qty=outdate,date=date,axlep_no=axlep_no,loco_type=loco_type,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
+                AxleMachining.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=newindate,out_qty=newoutdate,date=date,axlep_no=axlep_no,loco_type=loco_type,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
                 messages.success(request, 'Successfully Edited!')
             else:
                 messages.error(request,"Please Enter S.No.!")
@@ -13190,8 +13253,14 @@ def axlemachining_section(request):
             journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
             wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
             gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
+            s = dateaxle.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newdateaxle =  year1 + "-" + month1 + "-" + day1
+            # print("newdate.....   ",newdateaxle)
             if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE and journalaxlende and throweraxlende and wheelseataxlende and collaraxlende:
-                AxleMachining.objects.filter(axle_no=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=dateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,journalaxlende=journalaxlende,throweraxlende=throweraxlende,wheelseataxlende=wheelseataxlende,collaraxlende=collaraxlende,axleinspection_status=True,dispatch_to="Inspected")
+                AxleMachining.objects.filter(axle_no=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=newdateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,journalaxlende=journalaxlende,throweraxlende=throweraxlende,wheelseataxlende=wheelseataxlende,collaraxlende=collaraxlende,axleinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Axle Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all records!")
@@ -13200,6 +13269,7 @@ def axlemachining_section(request):
         return HttpResponseRedirect("/axlemachining_section/")
 
     return render(request,"axlemachining_section.html",my_context)
+
 
 def axle_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -14778,8 +14848,13 @@ def axlereport(request):
             c1=0
             c2=0
             dt=request.POST.get('datew')
-            ob1=list(AxleMachining.objects.filter(in_qty=dt).values('pt_no','loco_type','axle_no'))
-            ob2=list(AxleMachining.objects.filter(out_qty=dt).values('pt_no','loco_type','axle_no'))   
+            s = dt.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(AxleMachining.objects.filter(in_qty=date).values('pt_no','loco_type','axle_no'))
+            ob2=list(AxleMachining.objects.filter(out_qty=date).values('pt_no','loco_type','axle_no'))   
             len2=len(ob2)
             len1=len(ob1)
             for i in range(0,len(ob1)):
@@ -14852,8 +14927,21 @@ def axlereport(request):
         if bval=='Proceed2':
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=AxleMachining.objects.filter(in_qty__range=(dt1,dt2)).values('pt_no','loco_type')
-            ob2=AxleMachining.objects.filter(out_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            date1 =  year1 + "-" + month1 + "-" + day1
+            # print("d1....... ",datell1)
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            date2 =  year2 + "-" + month2 + "-" + day2
+            ob1=AxleMachining.objects.filter(in_qty__range=(date1,date2)).values('pt_no','loco_type')
+            # print("ob1......  ",ob1)
+            ob2=AxleMachining.objects.filter(out_qty__range=(date1,date2)).values('pt_no','loco_type')
+            # print("ob2......  ",ob2)
             pt=[] 
             lt=[] 
             pto=[]
@@ -14952,8 +15040,13 @@ def axlereport(request):
             }
         if bval=='Proceed6':
             datel=request.POST.get('datea')
+            s = datel.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
             #ob1=list(AxleMachining.objects.filter(dateaxle=datel).values('axle_no','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle'))
-            ob1=list(AxleMachining.objects.filter(dateaxle=datel).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            ob1=list(AxleMachining.objects.filter(dateaxle=date).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
             l=len(ob1)
             #ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('wheelno_de','wheelno_nde','inspect_date','inspector_name'))
             context={
@@ -14966,11 +15059,41 @@ def axlereport(request):
             'datel':datel,
             }
         if bval=='Proceed7':
-            datell1=request.POST.get('datea1')
-            datell2=request.POST.get('datea2')
+            datea1=request.POST.get('datea1')
+            datea2=request.POST.get('datea2')
+            s1 = datea1.split('-')
+            s2 = datea2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            datell1 =  year1 + "-" + month1 + "-" + day1
+            # print("d1....... ",datell1)
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            datell2 =  year2 + "-" + month2 + "-" + day2
+            # print("d2....... ",datell2)
+            # print("date1..        ",datell1)
+            # print("date2..        ",datell2)
             #ob1=list(AxleMachining.objects.filter(dateaxle__range=(datell1,datell2)).values('axle_no','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle'))
             ob1=list(AxleMachining.objects.filter(dateaxle__range=(datell1,datell2)).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            # ob2=list(AxleMachining.objects.filter(dateaxle__range=(datell1,datell2)).values('dateaxle'))
+            ll=len(ob1)
+            if ll>0:
+                for i in range(0,ll):
+                    dd=ob1[i]['dateaxle']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'dateaxle':dd2})
+                    else:
+                        ob1[i].update({'dateaxle':None})
+            # print("ob1.....  ",ob1)
             l=len(ob1)
+            # print("ob1    ......    ",ob1)
             #ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('wheelno_de','wheelno_nde','inspect_date','inspector_name'))
             context={
             'nav':nav,
@@ -14980,16 +15103,40 @@ def axlereport(request):
             'sub':9,
             'ob1':ob1,
             #'ob2':ob2,
-            'datell1':datell1, 
-            'datell2':datell2,
+            'datea1':datea1, 
+            'datea2':datea2,
             }
         if bval=='Proceed':
             axle_no=request.POST.get('axle_no')
             ob1=list(AxleMachining.objects.filter(axle_no=axle_no).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
             ax=ob1[0]['axle_no']
             l=len(ob1)
+            if l>0:
+                for i in range(0,l):
+                    dd=ob1[i]['dateaxle']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'dateaxle':dd2})
+                    else:
+                        ob1[i].update({'dateaxle':None})
             ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('wheelno_de','wheelno_nde','inspect_date','inspector_name'))
-            
+            l1=len(ob2)
+            if l1>0:
+                for i in range(0,l1):
+                    dd3=ob2[i]['inspect_date']
+                    if dd3!=None:
+                        s1=dd3.split('-')
+                        month1=s1[1]
+                        day1=s1[2]
+                        year1=s1[0]
+                        dd4=day1 + '-' + month1 + '-' + year1
+                        ob2[i].update({'inspect_date':dd4})
+                    else:
+                        ob2[i].update({'inspect_date':None})
             context={
                 'nav':nav,
                 'subnav':subnav,
@@ -15000,6 +15147,7 @@ def axlereport(request):
                 'ob2':ob2,
                 'l':l,
                 'ax':ax,
+                'l1':l1
             }
 
     return render(request,'axlereport.html',context)
@@ -15485,7 +15633,7 @@ def pinionreport(request):
             'ip':get_client_ip(request),
             'sub':2,
             }
-        if bval=="Traction Motor Detail":
+        if bval=="Record of Loco Type (date wise)":
             context={
             'nav':nav,
             'subnav':subnav,
@@ -15493,7 +15641,7 @@ def pinionreport(request):
             'ip':get_client_ip(request),
             'sub':4,
             }
-        if bval=='Month Wise Detail':
+        if bval=='Record of Loco Type (date range)':
             context={
             'nav':nav,
             'subnav':subnav,
@@ -15501,38 +15649,174 @@ def pinionreport(request):
             'ip':get_client_ip(request),
             'sub':10,
             }
+        if bval=='Pinion Pressing Detail':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':12,
+            }
         if bval=='Proceed1':
+            pt=[]
+            pto=[]
+            lt=[]
+            lto=[]
+            count=[]
+            count1=[]
+            myval=[]
+            myval1=[]
+            unique_myval=[]
+            unique_myval1=[]
+            c1=0
+            c2=0
             dt=request.POST.get('datew')
-            ob1=PinionPressing.objects.filter(in_qty=dt).values('sno','pt_no')
-            ob2=PinionPressing.objects.filter(out_qty=dt).values('sno','pt_no')
+            ob1=list(PinionPressing.objects.filter(in_qty=dt).values('loco_type'))
+            ob2=list(PinionPressing.objects.filter(out_qty=dt).values('loco_type'))   
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(lt)):
+                for j in range(0,len(lt)):
+                    if(lt[i]==lt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(lt)):
+                myval.append({'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(lto)):
+                for j in range(0,len(lto)):
+                    if(lto[i]==lto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+            
+            for i in range (0,len(lto)):
+                 myval1.append({'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['loco_type']==myval[j]['loco_type']:
+                        final.append({'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['loco_type'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['loco_type'] not in id:
+                    final.append({'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
+
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':1,
-            'ob1':ob1,
-            'ob2':ob2,
             'dt':dt,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
         if bval=='Proceed2':
+            pt=[]
+            pto=[]
+            lt=[]
+            lto=[]
+            count=[]
+            count1=[]
+            myval=[]
+            myval1=[]
+            unique_myval=[]
+            unique_myval1=[]
+            c1=0
+            c2=0
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=PinionPressing.objects.filter(in_qty__range=(dt1,dt2)).values('sno','pt_no','in_qty').order_by('in_qty')
-            ob2=PinionPressing.objects.filter(out_qty__range=(dt1,dt2)).values('sno','pt_no','out_qty').order_by('out_qty')
+            ob1=list(PinionPressing.objects.filter(in_qty__range=(dt1,dt2)).values('loco_type'))
+            ob2=list(PinionPressing.objects.filter(out_qty__range=(dt1,dt2)).values('loco_type'))
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(lt)):
+                for j in range(0,len(lt)):
+                    if(lt[i]==lt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(lt)):
+                myval.append({'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(lto)):
+                for j in range(0,len(lto)):
+                    if(lto[i]==lto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+            
+            for i in range (0,len(lto)):
+                 myval1.append({'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['loco_type']==myval[j]['loco_type']:
+                        final.append({'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['loco_type'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['loco_type'] not in id:
+                    final.append({'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
+
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
-            'sub':3,
-            'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,'dt2':dt2,
+            'sub':1,
+            'dt1':dt1,
+            'dt2':dt2,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
         if bval=='Proceed3':
-            dt1=request.POST.get('tmno')
-            ob1=PinionPressing.objects.filter(tm_no=dt1).all()
+            dt=request.POST.get('datea')
+            ob1=PinionPressing.objects.filter(inspect_date=dt).all()
+            l=len(ob1)
             context={
             'nav':nav,
             'subnav':subnav,
@@ -15540,11 +15824,14 @@ def pinionreport(request):
             'ip':get_client_ip(request),
             'sub':5,
             'ob1':ob1,
-            'dt1':dt1,'tmno':dt1,
+            'dt':dt,
+            'l':l
             }
         if bval=='Proceed10':
-            mon=request.POST.get('month')
-            ob1=PinionPressing.objects.filter(date__contains=mon).values('sno','tm_no','in_qty','out_qty','pt_no','date').order_by('date')
+            dt1=request.POST.get('datell1')
+            dt2=request.POST.get('datell2')
+            ob1=PinionPressing.objects.filter(inspect_date__range=(dt1,dt2)).all()
+            l=len(ob1)
             context={
             'nav':nav,
             'subnav':subnav,
@@ -15552,10 +15839,32 @@ def pinionreport(request):
             'ip':get_client_ip(request),
             'sub':11,
             'ob1':ob1,
-            'mon':mon,
+            'dt1':dt1,
+            'dt2':dt2,
+            'l':l,
+            }
+        if bval=='Proceed':
+            axle_no=request.POST.get('axle_no')
+            ob1=PinionPressing.objects.filter(axle_no=axle_no,inspection_status=True).all()
+            l1=len(ob1)
+            ob2=PinionPressing.objects.filter(axle_no=axle_no,inspection_status=False).all()
+            l2=len(ob2)
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':13,
+            'ob1':ob1,
+            'ob2':ob2,
+            'axle_no':axle_no,
+            'l1':l1,
+            'l2':l2
             }
 
     return render(request,'pinionreport.html',context)
+
+
 
 
 
@@ -15596,7 +15905,7 @@ def axlepressreport(request):
             'ip':get_client_ip(request),
             'sub':2,
             }
-        if bval=="Axle No. Detail":
+        if bval=="Axle Report":
             context={
             'nav':nav,
             'subnav':subnav,
@@ -15604,7 +15913,7 @@ def axlepressreport(request):
             'ip':get_client_ip(request),
             'sub':4,
             }
-        if bval=='Month Wise Detail':
+        if bval=='Record of Loco Type (date wise)':
             context={
             'nav':nav,
             'subnav':subnav,
@@ -15612,38 +15921,219 @@ def axlepressreport(request):
             'ip':get_client_ip(request),
             'sub':10,
             }
+        if bval=='Record of Loco Type (date range)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':12,
+            }
         if bval=='Proceed1':
+            pt=[]
+            pto=[]
+            lt=[]
+            lto=[]
+            count=[]
+            count1=[]
+            myval=[]
+            myval1=[]
+            unique_myval=[]
+            unique_myval1=[]
+            c1=0
+            c2=0
             dt=request.POST.get('datew')
-            ob1=AxleWheelPressing.objects.filter(in_qty=dt).values('sno','pt_no')
-            ob2=AxleWheelPressing.objects.filter(out_qty=dt).values('sno','pt_no')
+            ob1=list(AxleWheelPressing.objects.filter(in_qty=dt).values('pt_no','loco_type','axle_no'))
+            ob2=list(AxleWheelPressing.objects.filter(out_qty=dt).values('pt_no','loco_type','axle_no'))   
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+
+
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
+            
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':1,
-            'ob1':ob1,
-            'ob2':ob2,
             'dt':dt,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
         if bval=='Proceed2':
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=AxleWheelPressing.objects.filter(in_qty__range=(dt1,dt2)).values('sno','pt_no','in_qty').order_by('in_qty')
-            ob2=AxleWheelPressing.objects.filter(out_qty__range=(dt1,dt2)).values('sno','pt_no','out_qty').order_by('out_qty')
+            ob1=AxleWheelPressing.objects.filter(in_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            ob2=AxleWheelPressing.objects.filter(out_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            pt=[] 
+            lt=[] 
+            pto=[]
+            lto=[]
+            myval=[]
+            myval1=[]
+            final=[]
+            unique_final=[]
+            count=[]
+            count1=[]
+            c1=0
+            c2=0
+
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':3,
-            'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,'dt2':dt2,
+            'dt1':dt1,
+            'dt2':dt2,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
+            }
+        if bval=='Proceed':
+            axle_no=request.POST.get('axle_no')
+            ob1=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('dispatch_to'))
+            l=len(ob1)
+            ob3=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('date','loco_type','axle_no','wheelno_de','wheelno_nde','axle_no','bo_no','inspect_date','inspector_name'))
+            c=ob1[0]['dispatch_to']
+            # print(c)
+            ob2=[]
+            ll1=0
+            ll2=0
+            if l>0 and c=="Inspected" :
+                ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','inspector_name'))
+                ll1=len(ob2)
+                ll2=0
+                # l=len(ob2)
+            elif l>0 and c=="HHP_Inspected" :
+                ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name'))
+                ll2=len(ob2)
+                ll1=0
+            context={
+                'nav':nav,
+                'subnav':subnav,
+                'usermaster':usermaster,
+                'ip':get_client_ip(request),
+                'sub':11,
+                'ob1':ob1,
+                'ob2':ob2,
+                'ob3':ob3,
+                'l':l,
+                'll1':ll1,
+                'll2':ll2,
             }
         if bval=='Proceed3':
-            dt1=request.POST.get('tmno')
-            ob1=AxleWheelPressing.objects.filter(axle_no=dt1).all()
+            dt1=request.POST.get('datel1')
+            dt2=request.POST.get('datel2')
+            ob1=AxleWheelPressing.objects.filter(inspect_date__range=(dt1,dt2)).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name')
+            l=len(ob1)
             context={
             'nav':nav,
             'subnav':subnav,
@@ -15651,22 +16141,24 @@ def axlepressreport(request):
             'ip':get_client_ip(request),
             'sub':5,
             'ob1':ob1,
-            'dt1':dt1,'tmno':dt1,
+            'dt1':dt1,
+            'dt2':dt2,
+            'l':l,
             }
         if bval=='Proceed10':
-            mon=request.POST.get('month')
-            ob1=AxleWheelPressing.objects.filter(date__contains=mon).values('sno','axle_no','wheel_no','in_qty','out_qty','pt_no','date').order_by('date')
+            dt1=request.POST.get('datea')
+            ob1=list(AxleWheelPressing.objects.filter(inspect_date=dt1).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name'))
+            l=len(ob1)
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
-            'sub':11,
+            'sub':8,
             'ob1':ob1,
-            'mon':mon,
+            'dt1':dt1,
+            'l':l,
             }
-
- 
     return render(request,'axlepress.html',context)
 
 
@@ -20167,7 +20659,7 @@ def m14hwsave(request):
         loco_no = request.GET.get('loco_no')
         m14_date=datetime.datetime.now().strftime ("%d-%m-%Y")
         
-        response_data=m14_no
+        response_data=m14_no                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         M14HW11.objects.create(doc_code='89',m14_no=str(m14_no),m14_date=str(m14_date),m13_no=str(m13_no),m13_date=str(m13_date),char_wo=str(char_wo),sl_no=str(sl_no),batch_no=str(batch_no),brn_no=brn_no,epc=str(epc),l_fr=str(loco_from),l_to=str(loco_to),pm_no=str(pm_no),part_no=str(part_no),part_desc=str(part_desc),qty=quantity,reason=str(rforhw),assly_no=str(assly_no),assly_desc=str(assly_desc),unit=unit,epc_old=str(''),loco_no=str(loco_no))
         Code.objects.filter(cd_type='21',code = 'M14' ).update(num_1=int(m14_no))
         return JsonResponse(response_data, safe = False)
@@ -20681,11 +21173,6 @@ def IDcertificate(request):
             #table2_id.objects.create(accdient=ad,part=pb,nature=n,disability=dc,medicalcno=a)
     
     return render(request,"IDcertificate.html",context)        
-
-    
-
-
-
 
 def certificate(request):
     if request.method == "GET" and request.is_ajax():
@@ -24704,3 +25191,233 @@ def tool_reportedit(request):
             }
             return render(request,'tool_report.html',context)
     return render(request,'tool_reportedit.html',context)
+
+
+def axlepressreport_validate(request):
+    if request.method=="GET" and request.is_ajax():
+        axle_no = request.GET.get('axle_no')
+        ob1=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('axle_no'))
+        l=len(ob1)
+        if l>0 :
+            msg=ob1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def pinionaxle_validate(request):
+    if request.method=="GET" and request.is_ajax():
+        axle_no = request.GET.get('axle_no')
+        ob1=list(PinionPressing.objects.filter(axle_no=axle_no).values('axle_no'))
+        l=len(ob1)
+        if l>0 :
+            msg=ob1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+def m9getmw(request):
+    if request.method == "GET" and request.is_ajax():
+        mwno = request.GET.get('mw')
+        mw_no=list(MG9Initial.objects.filter(id=mwno).values('mw_no').distinct())
+        return JsonResponse(mw_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m9getsbc(request):
+    if request.method == "GET" and request.is_ajax():
+        sbc = request.GET.get('sbc')
+        sbc_no=list(M5DOCnew.objects.filter(m5glsn=sbc).values('m5glsn').distinct())
+        if len(sbc_no)!=0:
+            return JsonResponse(sbc_no, safe = False)
+        else:
+            i=[]
+            return JsonResponse(i, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m9getrjc(request):
+    if request.method == "GET" and request.is_ajax():
+        rjc = request.GET.get('rjc')
+        rjc_no=list(M5DOCnew.objects.filter(m5glsn=rjc).values('m5glsn').distinct())
+        if len(rjc_no)!=0:
+            return JsonResponse(rjc_no, safe = False)
+        else:
+            i=[]
+            return JsonResponse(i, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m9getshop_name(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        shop_name = list(shop_section.objects.filter(section_code=shop_sec).values('section_desc').distinct())
+        return JsonResponse(shop_name , safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+    
+def save_sm9(request):
+    context={}
+    if request.method == "GET" and request.is_ajax():
+            date=request.GET.get('val1')
+            idle_time_man_mac=request.GET.get('val2')
+            wo_no=request.GET.get('val')
+            part_no=request.GET.get('val3')
+            sus_jbno=request.GET.get('val4')
+            res_jno=request.GET.get('val5')
+            mw_no=request.GET.get('val6')
+            mg9_no=request.GET.get('val7')
+            aff_opn=request.GET.get('val8')
+            empno=request.GET.get('val9')
+            empname=request.GET.get('val10')
+            prev_empno=request.GET.get('val11')
+            cat=request.GET.get('val12')
+            remark=request.GET.get('val13')
+            shop=request.GET.get('val15')
+            on_off=request.GET.get('val14')
+
+            m9obj=m9.objects.create()
+            m9obj.empname=empname
+            m9obj.sus_jbno=sus_jbno
+            m9obj.res_jno=res_jno
+            m9obj.cat=cat
+            m9obj.mw_no=mw_no
+            m9obj.mg9_no=mg9_no
+            m9obj.empno=empno
+            m9obj.prev_empno=prev_empno
+            m9obj.remark=remark
+            m9obj.idle_time_man_mac=idle_time_man_mac
+            m9obj.date=date
+            m9obj.shop_sec=shop
+            m9obj.part_no=part_no
+            m9obj.wo_no=wo_no
+            m9obj.aff_opn=aff_opn
+            m9obj.on_off=on_off
+            m9obj.save()
+            return JsonResponse(context,safe=False)
+    return JsonResponse({"success":False}, status=400)
+def get_value(request):
+    if request.method == "GET" and request.is_ajax():
+        date=request.GET.get('val1')
+        idle_time_man_mac=request.GET.get('val2')
+        wo_no=request.GET.get('val')
+        part_no=request.GET.get('val3')
+        sus_jbno=request.GET.get('val4')
+        res_jno=request.GET.get('val5')
+        mw_no=request.GET.get('val6')
+        mg9_no=request.GET.get('val7')
+        aff_opn=request.GET.get('val8')
+        empno=request.GET.get('val9')
+        empname=request.GET.get('val10')
+        prev_empno=request.GET.get('val11')
+        cat=request.GET.get('val12')
+        remark=request.GET.get('val13')
+        shop=request.GET.get('val15')
+        lst=[]
+        lst=list(m9.objects.filter(shop_sec=shop,wo_no=wo_no,part_no=part_no,aff_opn=aff_opn).values('date','idle_time_man_mac','wo_no','part_no','sus_jbno','res_jno','mw_no','mg9_no','aff_opn','empno','empname','prev_empno','cat','remark',).distinct())
+        a={'date':date,'idle_time_man_mac':idle_time_man_mac,'wo_no':wo_no,'part_no':part_no,'sus_jbno':sus_jbno,'res_jno':res_jno,'mw_no':mw_no,'mg9_no':mg9_no,'aff_opn':aff_opn,'empno':empno,'empname':empname,'prev_empno':prev_empno,'cat':cat,'remark':remark}
+        for key,value in a.items():
+            if key in lst:
+                print(ab)
+                lst.append(a)
+        return JsonResponse(lst, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(urlpass='/qtysum/')
+
+def qtysum(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    Ptld.objects.all().delete()   
+    return render(request,"qtysum.html",context)
+
+    
+def qtysum1(request):
+    if request.method == 'GET' and request.is_ajax():  
+        part= request.GET.get('asslyno')
+        data_list=list(Part.objects.filter(partno=part).values('des').distinct())       
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                                  
+    return JsonResponse({"success":False},status=400)           
+
+def qtysum2(request):
+    if request.method == 'GET' and request.is_ajax():  
+        part = request.GET.get('asslyno')
+        part1 = request.GET.get('Txtpartno')
+        val = request.GET.get('qty')
+        drg_no=list(Part.objects.filter(partno=part).values('drgno').distinct())
+        drg=drg_no[0].get('drgno')
+
+        Ptld.objects.create(part_no=part, p_desc=part1,qty=val  ,epc='',ptc='',rem='',drgno=drg)
+        data_list2=list(Ptld.objects.values('part_no','p_desc','qty','epc','ptc','rem').distinct())
+        #if(len(data_list2)>0):
+        return JsonResponse(data_list2,safe = False)                                               
+    return JsonResponse({"success":False},status=400)
+
+  
+def report1(request): 
+    data_list4=list(Ptld.objects.values('part_no','ptc','p_desc','qty','epc','rem','drgno'))
+    df=pandas.DataFrame(data_list4)
+    pn=[]
+    pd=[]
+    qt=[]
+    ep=[]
+    rm=[]
+    drg=[]
+    dt_length=len(data_list4)    
+    for i in range(len(data_list4)):
+        pn.append(data_list4[i].get('part_no'))
+        pd.append(data_list4[i].get('p_desc'))
+        qt1=str(data_list4[i].get('qty'))
+        qt.append(qt1)
+        ep.append(data_list4[i].get('epc')) 
+        rm.append(data_list4[i].get('rem'))
+        drg.append(data_list4[i].get('drgno'))
+    data=process()
+    a=data['DESC']
+    partno=list(a.keys())
+    desc=data["DESC"].values.tolist()
+    qty=data["QTY"].values.tolist()
+    ptc=data["PTC"].values.tolist()
+    context={
+     'val1':pn,
+     'val2':pd,
+     'val3':qt,
+     'val4':ep,
+     'val5':rm,
+     'val6':drg,
+     'count':dt_length,
+     'l1':len(pn),
+     'l2':len(pd),
+     'l3':len(qt),
+     'l4':len(ep),
+     'l6':len(rm),
+     'd':partno,
+     'd1':desc,
+     'd2':qty,
+     'd3':ptc,
+     'count1':len(desc),
+    }
+    return render(request,'report1.html',context)

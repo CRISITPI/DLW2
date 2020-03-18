@@ -16,6 +16,13 @@
                          });
                      });
                  </script>
+                 <script>
+                    $(document).ready(function () {
+                         $('#inspect_date').datepicker({
+                             dateFormat: 'dd-mm-yy'
+                         });
+                     });
+                 </script>
 <script>
             $(document).ready(function () {
                 $('#dispatch_date').datepicker({
@@ -164,8 +171,9 @@ footer, .page-content::after{
                 <th>Out Quantity &nbsp;</th>
                 <th>Traction Motor No. </th>
                 <th>Traction Motor Make </th>
-                <th>Dispatch To</th>
-                <th>Dispatch Date &nbsp; </th>
+                <th>Axle No.</th>
+                <th>Inspection Status</th>
+                <th>Inspection Date &nbsp; </th>
             </tr>
         {% for objec in object %}
         <tr>
@@ -180,8 +188,9 @@ footer, .page-content::after{
                 <td>{{objec.out_qty}} <br><br></td>
                 <td>{{objec.tm_no}} <br></td>
                 <td>{{objec.tm_make}} <br></td>
+                <td>{{objec.axle_no}} <br></td>
                 <td>{{objec.dispatch_to}} <br><br></td>
-                <td>{{objec.dispatch_date}} <br><br></td>
+                <td>{{objec.inspect_date}} <br><br></td>
         </tr>
         {% endfor %}
         </tbody>
@@ -257,6 +266,17 @@ footer, .page-content::after{
                                             <input type="text" class="form-control" name="tm_make" id="tm_make" placeholder="TM make" maxlength="20" required>
                                         </div> 
                                 </div>
+                                <div class="row">  
+                                    <div class="col-6">
+                                    <label for="">Axle No.</label>
+                                    <select name="axle_no" id="axle_no" class="form-control ll" required>
+                                            <option value="" hidden selected>Select BO No.</option>  
+                                            {% for x in axleno %}
+                                            <option>{{x.axle_no}}</option>
+                                            {% endfor %}
+                                    </select> 
+                                </div> 
+                            </div>
                             </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -435,6 +455,10 @@ footer, .page-content::after{
                                   <div class="col-6">
                                         <label for="">Blue matching status</label>
                                         <input type="text" class="form-control" name="blue_match" id="blue_match" placeholder="" maxlength="20" required>
+                                      </div>
+                                      <div class="col-6">
+                                        <label for="">Date(Manually)</label>
+                                        <input type="text" name="inspect_date" id="inspect_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                       </div>
                                 <!-- <div class="col-6">
                                 <label>Loco Type</label>

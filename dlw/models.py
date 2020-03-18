@@ -3441,6 +3441,7 @@ class M5DOCnew(models.Model):
     class Meta:
         db_table = 'M5DOCnew'
 
+
 class PinionPressing(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)
@@ -3462,8 +3463,10 @@ class PinionPressing(models.Model):
     dispatch_status=models.BooleanField(default=False)
     dispatch_date=models.CharField(max_length=20,null=True)
     inspection_status=models.NullBooleanField()
+    axle_no=models.CharField(max_length=20,null=True)
+    inspect_date=models.CharField(max_length=20,null=True)
 
-
+    
 class dpo(models.Model):
     procedureno=models.CharField(max_length=50,null=True,default='0')
     locotype=models.CharField(max_length=50,null=True)

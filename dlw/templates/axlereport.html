@@ -1,29 +1,26 @@
 {% extends 'base.html' %} {% block content %} {% load static %}
 <style>
 
-#customers {
+/* #customers {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
     
-}
+} */
 
 #customers td, #customers th {
     border: 1px solid #ddd;
-    padding: 2px;
 }
 
-#customers tr:nth-child(even){background-color: #f2f2f2;}
+/* #customers tr:nth-child(even){background-color: #f2f2f2;}
 
 #customers tr:hover {background-color: #ddd;}
 
 #customers th {
-    padding-top: 4px;
-    padding-bottom: 4px;
     text-align: left;
     background-color: #808080;
     color: white;
-}
+} */
 </style>
 <br>
 <br>
@@ -80,6 +77,11 @@
 <!-- <center><h3>Month:</h3><input type="text" class="form-control ll" id="month" name="month" onchange ="monthc()" style="width:250px;" required autocomplete="off"/>
 <input type="submit" value="Proceed10" name="btn" id="monthdata" hidden/>
 <br> -->
+<center>                
+    <label for="batch no"><b>
+    Enter Axle No. :
+    </b></label><br><br>
+</center>
 <center><input type="text" name="axle_no" id="axle_no"  class="form-control ll" required style="width:250px;" placeholder="" required/></center>
 <br><br>
 <center><input type="submit" value="Proceed" name="btn" id="Proceed"></center>
@@ -93,7 +95,7 @@
 <h2 align="left">Shop Section : Axle Machining</h2>
 <br><br>
 <br><br>
-<table id="customers" align="left">
+<table id="customers" align="center">
 <tr>
     <th style="width:250px;text-align:center;">Part No.</th>
     <th style="width:250px;text-align:center;">Loco Type</th>
@@ -110,8 +112,8 @@
 {% endfor %}
 </table>
 
-<br><br><br><br><br><br><br><br><br><br>
-<table id="customers" align="right">
+<br><br><br><br>
+<table id="customers" align="center">
     <tr>
         <th style="width:250px;text-align:center;">Total In Quantity</th>
         <th style="width:250px;text-align:center;">Total Out Quantity</th>
@@ -121,7 +123,7 @@
         <td style="width:250px;text-align:center;">{{len2}}</td>
     </tr>
 </table>
-<br><br><br><br><br><br>
+<br><br><br><br>
 <br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
 
 {% endif %}
@@ -130,7 +132,8 @@
 <h2 align="left">Shop : TMS</h2>
 <h2 align="right">Date : {{dt1}} to {{dt2}}</h2>
 <h2 align="left">Shop Section : Axle Machining</h2>
-<table id="customers" align="left">
+<br><br>
+<table id="customers" align="center">
 <tr>
     <th style="width:250px;text-align:center;">Part No.</th>
     <th style="width:250px;text-align:center;">Loco Type</th>
@@ -146,8 +149,8 @@
 </tr>
 {% endfor %}
 </table>
-<br><br><br><br><br><br><br><br><br><br>
-<table id="customers" align="right">
+<br><br><br><br>
+<table id="customers" align="center">
     <tr>
         <th style="width:250px;text-align:center;">Total In Quantity</th>
         <th style="width:250px;text-align:center;">Total Out Quantity</th>
@@ -157,7 +160,7 @@
         <td style="width:250px;text-align:center;">{{len2}}</td>
     </tr>
 </table>
-<br><br><br><br><br><br>
+<br><br><br><br>
 <br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
 {% if sub == 4 %}
@@ -173,24 +176,34 @@
             <h3 align="left">Axle No. : {{i.axle_no}}</h3>
             <tr>  
                 <td>
-                    <label for="loco_type"><b>Loco Type 
-                         </b></label><br><br>
+                    <label for="loco_type"><b>Loco Type : &nbsp;&nbsp;
+                         </b></label>
                 </td> 
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="loco_type" id="loco_type" value="{{i.loco_type}}"readonly></td><br><br>
+                <!-- <td><input type="text" style="border-style : hidden;font-size:20px" name="loco_type" id="loco_type" value="{{i.loco_type}}"readonly></td><br><br> -->
+                <td>
+                    <label for="loco_type">{{i.loco_type}} 
+                         </label>
+                </td>
             
             
                 <td>
                     <label for="batch no"><b>
-                        Batch No.
-                         </b></label><br><br>
+                        &nbsp;&nbsp; &nbsp;&nbsp; Batch No : &nbsp;&nbsp;
+                         </b></label>
                 </td> 
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="batch no" id="batch no" value="{{i.bo_no}}"readonly></td><br><br>
+                <td>
+                    <label for="loco_type">{{i.bo_no}} 
+                         </label>
+                </td>
                 <td>
                     <label for="machine date"><b>
-                        Machining Date
-                         </b></label></br></br>
+                        &nbsp;&nbsp; &nbsp;&nbsp; Machining Date : &nbsp;&nbsp;
+                         </b></label>
                 </td>
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="staffName" id="staffName" value="{{i.date}}"readonly></td>
+                <td>
+                    <label for="loco_type">{{i.date}} 
+                         </label>
+                </td>
             </tr>
         </table> 
             <br><br>
@@ -256,10 +269,11 @@
                 </tr>
                 {% endfor %}
                 </table>
-                <br><br><br><br><br><br>
-
-            <h3 align="left">Axle Pressing Details :</h3>
+            <!-- <h3 align="left">Axle Pressing Details :</h3> -->
+            <table align="left" id = "table2">
+                <tr><td><h3 align="left">Axle Pressing Details :</h3></td></tr></table>
             <table align="center" id = "table1">
+                <!-- <tr><td><h3 align="left">Axle Pressing Details :</h3></td></tr> -->
             {% for i in ob2 %}
             <tr>  
                 <td>
@@ -304,40 +318,62 @@
 <br><br>
 <br><br>
 <table id="customers" align="left">
+    
+    <tr>
+        <th style="text-align:center;">AXLE NO.</th>
+        <th style="text-align:center;">HEAT CAST NO.</th>
+        <th style="text-align:center;">UST</th>
+        <th style="text-align:center;">AXLE LENGTH</th>
+        <th style="text-align:center;">JOURNAL(DE)</th>
+        <th style="text-align:center;">THROWER(DE)</th>
+        <th style="text-align:center;">WHEEL SEAT(DE)</th>
+        <th style="text-align:center;">GEAR SEAT</th>
+        <th style="text-align:center;">COLLAR(DE)</th>
+        <th style="text-align:center;">COLLAR(NDE)</th>
+        <th style="text-align:center;">BEARING</th>
+        <th style="text-align:center;">ABUTMENT</th>
+        <th style="text-align:center;">JOURNAL(GE)</th>
+        <th style="text-align:center;">WHEEL SEAT(GE)</th>
+        <th style="text-align:center;">GEAR SEAT(GE)</th>
+        <th style="text-align:center;">BEARING(FE)</th>
+        <th style="text-align:center;">WHEEL(FE)</th>
+        <th style="text-align:center;">JOURNAL(FE)</th>
+        <th style="text-align:center;">WHEEL SEAT(NDE)</th>
+        <th style="text-align:center;">THROWER(NDE)</th>
+        <th style="text-align:center;">JOURNAL(NDE)</th>
+        <th style="text-align:center;">INSPECTION DATE</th>
+        <th style="text-align:center;">INSPECTOR NAME</th>
+        
+    </tr>
     {% for i in ob1 %}
     <tr>
-        <th style="width:250px;text-align:center;">AXLE NO.</th>
-        <th style="width:250px;text-align:center;">HEAT CAST NO.</th>
-        <th style="width:250px;text-align:center;">UST</th>
-        <th style="width:250px;text-align:center;">AXLE LENGTH</th>
-        <th style="width:250px;text-align:center;">JOURNAL(DE)</th>
-        <th style="width:250px;text-align:center;">THROWER(DE)</th>
-        <th style="width:250px;text-align:center;">WHEEL SEAT(DE)</th>
-        <th style="width:250px;text-align:center;">GEAR SEAT</th>
-        <th style="width:250px;text-align:center;">COLLAR(DE)</th>
-        <th style="width:250px;text-align:center;">COLLAR(NDE)</th>
-        <th style="width:250px;text-align:center;">BEARING</th>
-        <th style="width:250px;text-align:center;">ABUTMENT</th>
+        <td style="text-align:center;">{{i.axle_no}}</td>
+        <td style="text-align:center;">{{i.axle_heatcaseno}}</td>
+        <td style="text-align:center;">{{i.ustaxle}}</td>
+        <td style="text-align:center;">{{i.axlelength}}</td>
+        <td style="text-align:center;">{{i.journalaxle}}</td>
+        <td style="text-align:center;">{{i.throweraxle}}</td>
+        <td style="text-align:center;">{{i.wheelseataxle}}</td>
+        <td style="text-align:center;">{{i.gearseataxle}}</td>
+        <td style="text-align:center;">{{i.collaraxle}}</td>
+        <td style="text-align:center;">{{i.collaraxlende}}</td>
+        <td style="text-align:center;">{{i.bearingaxle}}</td>
+        <td style="text-align:center;">{{i.abutmentaxle}}</td>
+        <td style="text-align:center;">{{i.journal_surfacefinishGE}}</td>
+        <td style="text-align:center;">{{i.wheelseat_surfacefinishGE}}</td>
+        <td style="text-align:center;">{{i.gearseat_surfacefinishGE}}</td>
+        <td style="text-align:center;">{{i.gearseat_surfacefinishFE}}</td>
+        <td style="text-align:center;">{{i.wheelseat_surfacefinishFE}}</td>
+        <td style="text-align:center;">{{i.journal_surfacefinishFE}}</td>
+        <td style="text-align:center;">{{i.wheelseataxlende}}</td>
+        <td style="text-align:center;">{{i.throweraxlende}}</td>
+        <td style="text-align:center;">{{i.journalaxle}}</td>
+        <td style="text-align:center;">{{datel}}</td>
+        <td style="text-align:center;">{{i.inspector_nameaxle}}</td>
     </tr>
-    <tr>
-        <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_heatcaseno}}</td>
-        <td style="width:250px;text-align:center;">{{i.ustaxle}}</td>
-        <td style="width:250px;text-align:center;">{{i.axlelength}}</td>
-        <td style="width:250px;text-align:center;">{{i.journalaxle}}</td>
-        <td style="width:250px;text-align:center;">{{i.throweraxle}}</td>
-        <td style="width:250px;text-align:center;">{{i.wheelseataxle}}</td>
-        <td style="width:250px;text-align:center;">{{i.gearseataxle}}</td>
-        <td style="width:250px;text-align:center;">{{i.collaraxle}}</td>
-        <td style="width:250px;text-align:center;">{{i.collaraxlende}}</td>
-        <td style="width:250px;text-align:center;">{{i.bearingaxle}}</td>
-        <td style="width:250px;text-align:center;">{{i.abutmentaxle}}</td>
-    </tr>
+    {% endfor %}
     </table>
-    
-    
-                {% endfor %}
-                <br><br><br><br>
+                <!-- <br><br><br><br>
                 <br><br><br>
                 <table id="customers" align="left">
                     <tr>
@@ -368,7 +404,7 @@
                         <td style="width:250px;text-align:center;">{{i.inspector_nameaxle}}</td>
                     </tr>
                     {% endfor %}
-                    </table>
+                    </table> -->
 <br><br><br><br><br><br>
 <br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
 <br><br><br><br><br><br>
@@ -376,7 +412,7 @@
 {% if sub == 9 %}
 <center><h2>DLW Varanasi</h2></center>
 <h2 align="left">Shop : TMS</h2>
-<h2 align="right">Date : {{datell1}} to {{datell2}}</h2>
+<h2 align="right">Date : {{datea1}} to {{datea2}}</h2>
 <h2 align="left">Shop Section : Axle Machining</h2>
 <br><br>
 <br><br>
@@ -394,6 +430,17 @@
         <th style="width:250px;text-align:center;">COLLAR(NDE)</th>
         <th style="width:250px;text-align:center;">BEARING</th>
         <th style="width:250px;text-align:center;">ABUTMENT</th>
+        <th style="width:250px;text-align:center;">JOURNAL(GE)</th>
+        <th style="width:250px;text-align:center;">WHEEL SEAT(GE)</th>
+        <th style="width:250px;text-align:center;">GEAR SEAT(GE)</th>
+        <th style="width:250px;text-align:center;">BEARING(FE)</th>
+        <th style="width:250px;text-align:center;">WHEEL(FE)</th>
+        <th style="width:250px;text-align:center;">JOURNAL(FE)</th>
+        <th style="width:250px;text-align:center;">WHEEL SEAT(NDE)</th>
+        <th style="width:250px;text-align:center;">THROWER(NDE)</th>
+        <th style="width:250px;text-align:center;">JOURNAL(NDE)</th>
+        <th style="width:250px;text-align:center;">INSPECTION DATE</th>
+        <th style="width:250px;text-align:center;">INSPECTOR NAME</th>
     </tr>
     {% for i in ob1 %}
     <tr>
@@ -409,11 +456,22 @@
         <td style="width:250px;text-align:center;">{{i.collaraxlende}}</td>
         <td style="width:250px;text-align:center;">{{i.bearingaxle}}</td>
         <td style="width:250px;text-align:center;">{{i.abutmentaxle}}</td>
+        <td style="width:250px;text-align:center;">{{i.journal_surfacefinishGE}}</td>
+        <td style="width:250px;text-align:center;">{{i.wheelseat_surfacefinishGE}}</td>
+        <td style="width:250px;text-align:center;">{{i.gearseat_surfacefinishGE}}</td>
+        <td style="width:250px;text-align:center;">{{i.gearseat_surfacefinishFE}}</td>
+        <td style="width:250px;text-align:center;">{{i.wheelseat_surfacefinishFE}}</td>
+        <td style="width:250px;text-align:center;">{{i.journal_surfacefinishFE}}</td>
+        <td style="width:250px;text-align:center;">{{i.wheelseataxlende}}</td>
+        <td style="width:250px;text-align:center;">{{i.throweraxlende}}</td>
+        <td style="width:250px;text-align:center;">{{i.journalaxle}}</td>
+        <td style="width:250px;text-align:center;">{{i.dateaxle}}</td>
+        <td style="width:250px;text-align:center;">{{i.inspector_nameaxle}}</td>
     </tr>
     {% endfor %}
     </table>
                 <br><br><br><br><br><br><br><br>
-                <table id="customers" align="left">
+                <!-- <table id="customers" align="left">
                     <tr>
                         <th style="width:250px;text-align:center;">JOURNAL(GE)</th>
                         <th style="width:250px;text-align:center;">WHEEL SEAT(GE)</th>
@@ -443,7 +501,7 @@
                     </tr>
                     {% endfor %}
                     </table>
-                    <br><br><br><br><br><br>
+                    <br><br><br><br><br><br> -->
 <br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
 <br><br><br><br><br><br>
 {% endif %}
