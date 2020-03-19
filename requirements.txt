@@ -9,3 +9,4 @@ django-crispy-forms
 djangorestframework_simplejwt
 psycopg2==2.7.7
 --pre xhtml2pdf
+pandas

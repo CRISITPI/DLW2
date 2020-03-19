@@ -35,7 +35,9 @@ import math,random
 from random import randint
 import datetime
 import smtplib 
+import pandas
 import requests
+from .rp_file import *
 # Create your views here.
 #
 #
@@ -25421,3 +25423,8 @@ def report1(request):
      'count1':len(desc),
     }
     return render(request,'report1.html',context)
+
+# def cardexpl(request,pn,wt dt):
+#     lfr='0'
+#     lto='0'
+#     srchqry=list(Nstr.objects.filter(pp_part=pn).values('ptc','ref_ind','ref_no',))
