@@ -2266,17 +2266,17 @@ class Progpart(models.Model):
         db_table = 'PROGPART'
 
 
-class Ptld(models.Model):
-    part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
-    p_desc = models.CharField(db_column='P_DESC', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    qty = models.DecimalField(db_column='QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
-    epc = models.CharField(db_column='EPC', max_length=2, blank=True, null=True)  # Field name made lowercase.
-    ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    rem = models.CharField(db_column='REM', max_length=50, blank=True, null=True)  # Field name made lowercase.
+# class Ptld(models.Model):
+#     part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+#     p_desc = models.CharField(db_column='P_DESC', max_length=30, blank=True, null=True)  # Field name made lowercase.
+#     qty = models.DecimalField(db_column='QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+#     epc = models.CharField(db_column='EPC', max_length=2, blank=True, null=True)  # Field name made lowercase.
+#     ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+#     rem = models.CharField(db_column='REM', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
-    class Meta:
-        managed = False
-        db_table = 'PTLD'
+#     class Meta:
+#         managed = False
+#         db_table = 'PTLD'
 
 
 class Qppextra(models.Model):
@@ -5198,3 +5198,13 @@ class Wrap_table(models.Model):
     rm_lt = models.CharField(db_column='RM_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rem = models.CharField(db_column='REM',max_length=10, blank=True, null=True)  # Field name made lowercase.
     v_qty = models.CharField(db_column='V_QTY', max_length=40, blank=True, null=True)  # Field name made lowercase.
+
+class Ptld(models.Model):
+    
+    part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    p_desc = models.CharField(db_column='P_DESC', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    drgno = models.CharField(db_column='DRGNO', max_length=18, blank=True, null=True)  # Field name made lowercase.
+    epc = models.CharField(db_column='EPC', max_length=2, blank=True, null=True)  # Field name made lowercase.
+    ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    rem = models.CharField(db_column='REM', max_length=50, blank=True, null=True)  # Field name made lowercase.
