@@ -1,0 +1,181 @@
+{% extends 'base.html' %} {% block content %}
+
+
+<script>
+    
+   
+     var holidays=[];
+    {% for v in hd%}
+        //alert("{{v.holiday_date|escapejs}}");
+        holidays.push("{{v.holiday_date|escapejs}}")
+    {% endfor %} 
+
+    function disableDates(date) {
+        var dt = $.datepicker.formatDate('dd-mm-yy', date);
+        var day = date.getDay();
+        return day>0 ?(!($.inArray(dt, holidays) < 0) ? [true] : [false]):[true];    
+    }
+
+    $(document).ready(function () { $('#lv_date').datepicker({
+                    dateFormat: 'dd-mm-yy', 
+                    minDate: 0,
+                    beforeShowDay: disableDates                  
+  }); });
+
+
+
+
+</script>
+
+<div class="container">
+    <table class="table">
+    <tr>
+        <center>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <font size="3">
+                    <li>
+                        <div class="alert alert-success"> <b> {{ message }} </b></div>
+                    </li>
+                </font>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </center>
+    </table>
+
+    <div>
+        <h3 align="center">कर्मशाला कर्मचारियों की रविवार/छुट्टी की बुकिंग रिपोर्ट </h3>
+        <h4 align="center">SUNDAY/HOLIDAY BOOKING OF WORKSHOP STAFF REPORT</h4>
+    </div>
+    
+    <h4 align="right" style="margin-right: 100px;">एम-20/M.-20 </h4>
+    <form action="{% url 'M20report' %}" method="POST"> {% csrf_token %}
+    <table class="table table-condensed"><tr>
+        <td>
+            <label for="sno"><b>Sunday/holiday Working Date/ दिनांक.:</b></label>
+            </td><td>
+            <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="" required readonly/>
+            </td> 
+            
+            <td>
+            <label for="sno"><b>Shop Code/शॉप अधी.:</b></label></td><td>
+            <select class="form-control ll" id="shop_sec" name="shop_sec" style="width: 150px;" required>   
+            <option id="op_shop" value="Select" selected disabled hidden>Shop Code</option>  
+            
+            {% if lenm == 1 %}
+                {% for role in roles %}
+                    <option selected readonly>{{role}}</option>
+                {% endfor %}
+            {% endif %}
+                    
+            {% if lenm > 1 %}
+                {% for role in roles %}
+                    <option>{{role}}</option>
+                {% endfor %}
+            {% endif %}
+
+            </select>
+            <input type="submit" name="proceed" value="mydata" id="proceed" style="display: none" />
+        </td>   
+        </tr>
+    </table>
+    <div align="right">
+        <input type="submit" id="pdfprint" value="Print Report" class="btn btn-info btn-lg">
+    </div>
+    </form>
+    <table id="mydatatab" class="table table-hover">
+        
+    </table>
+    
+</div>
+
+<script>
+/*
+    document.querySelector("#pdfprint").addEventListener('click',(e)=>{
+
+    //var shop_sec=document.getElementById('shop_sec').value;
+    //var sundate= document.getElementById('lv_date').value;
+    //shop_sec=shop_sec.slice(-2);
+
+    //alert("dfasf");
+    var shop_sec_temp = $("#shop_sec").val();
+    var lv_date_temp = $("#lv_date").val();
+    if(lv_date_temp == "" || lv_date_temp == "dd-mm-yyyy")
+    {
+        alert("Please First select Sunday/Holiday Date then Shop Section No. ");    
+        $("#lv_date").focus();
+        return false;    
+    }
+    else
+    {
+        return true;
+    }
+    
+});
+
+
+*/
+
+$(document).ready(function(){
+    $("#pdfprint").hide();
+});
+
+
+    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //alert("sdfsfds");
+    var shop_sec_temp = $("#shop_sec").val();
+    var lv_date_temp = $("#lv_date").val();
+        if(lv_date_temp == "" || lv_date_temp == "dd-mm-yyyy"){
+                alert("Please First select Sunday Date then Shop Section No. ");
+                $("#lv_date").focus();
+                $("#pdfprint").hide();
+                return false;    
+        }
+        else
+        {
+            $("#pdfprint").show();
+            var shop_sec=document.getElementById('shop_sec').value;
+            var sundate= document.getElementById('lv_date').value;
+            shop_sec=shop_sec.slice(-2);
+            // alert(shop_sec + sundate);
+            var data = {shop_sec,sundate};
+                            $.ajax({
+                                type : 'GET',
+                                url : "{% url 'm20rep' %}",
+                                dataType : 'json',
+                                data : data,
+                                success : function(response){   
+                                        
+                                        $("#mydatatab").empty();
+                                        mydata="<thead><tr><th>S.No.</th><th>Name</th><th>Ticket No.</th><th>Shift</th><th>Shop Section No.</th><th>Date for Leave</th></tr></thead>";
+                                        $("#mydatatab").append(mydata);
+
+                                        for(i=0;i<response.length;i++)
+                                        {
+                                            mydata  =   "<tr><td>"+ (i+1) +"</td><td>"+response[i].name+"</td><td>" + 
+                                                            response[i].ticketno+"</td><td>"+
+                                                            response[i].shift+"</td><td>"+
+                                                            response[i].shop_sec+"</td><td>"+
+                                                            response[i].alt_date+"</td></tr>";
+
+                                            $("#mydatatab").append(mydata);  
+                                        }
+                                    
+                                }
+                                
+                        })
+    
+
+        }
+        
+    });
+
+
+
+
+</script>
+{% endblock %}
+
+

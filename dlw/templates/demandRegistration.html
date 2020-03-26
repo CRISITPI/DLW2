@@ -1,0 +1,1177 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    .container{
+        background-color: #f2f2f2;
+        padding: 20px;   
+    }
+    
+    .autocomplete {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      top: 100%;
+      left: 0;
+      right: 0;
+    }
+    
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff; 
+      border-bottom: 1px solid #d4d4d4; 
+    }
+    
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9; 
+    }
+    
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+      background-color: DodgerBlue !important; 
+      color: #ffffff; 
+    }
+    </style>
+<br>
+<form action="{% url 'demandRegistrationview' %}" method="POST" onkeydown="return event.key != 'Enter';"> 
+{% csrf_token %}
+<div id="divlayout" align="center">
+    <h3 align="center" style="color:black;"><b>DEMAND REGISTRATION SCREEN<b></h3>
+    <br>
+    <div id="div1" class="container">
+        <table border="0">
+            <tr>
+                 <td>
+                     <label ><b>Staff No:</b></label>
+                     <input type="text" id="staff_no" name="staff_no" value="{{staff_no}}" maxlength="5" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"required/>        
+                 </td>
+                 <td>
+                     <label><b>Name:</b></label>
+                     <input type="text" id="name" name="name" value="{{name}}" maxlength="20" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/>       
+                 </td>
+                  <td>
+                     <label><b>Department:</b></label>
+                     <input type="text" id="dep" name="dep" value="{{dep}}" maxlength="10" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/> 
+                 </td>
+             </tr>
+         </table>
+      </div>
+      <br>
+      <div id="div2" class="container">
+      <h4 align="center" style="color:blue;"><b>DEMAND DETAILS<b></h4>
+      <table border="0" style="width: 1050px;">
+            <tr>
+                 <td >
+                     <label style="margin-left: 15px;"><b>Dem_RegNo:</b></label>
+                     <input type="text" id="dem_RegNo" name="dem_RegNo" value="{{dem_RegNo}}" maxlength="5" style=" padding: 6px 5px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled />        
+                 </td>
+                 <td>
+                     <label style="margin-left: 55px;"><b>Dated:&nbsp;&nbsp;</b></label>
+                     <input type="text" id="dem_date" name="dem_date" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/>       
+                 </td>
+                  <td>
+                     <label style="margin-left: 15px;"><b>Doc-Type:</b></label>
+                     <input type="text" id="doc_type" name="doc_type" value="GEN" maxlength="3" style=" padding: 6px 3px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled /> 
+                 </td>
+             </tr>
+              <tr>
+                 <td>
+                     <label style="margin-left: 50px;"><b>Sl No:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                     <input type="text" id="sl_no" name="sl_no" maxlength="4" value="{{sl_no}}" style=" padding: 6px 5px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled />        
+                 </td>
+                 <td>
+                     <label  style="margin-left: 55px;"><b>Part No:</b></label>
+                     <input type="text" id="part_no" name="part_no" value="{{part_no}}" maxlength="8" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc;  border-radius: 4px;box-sizing: border-box;"/>       
+                 </td>
+                   <td>
+                     <label  style="margin-left: 45px;"><b>EPC:&nbsp;&nbsp;</b></label>
+                     <input type="text" id="epc" name="epc" value="{{epc}}" maxlength="2" style=" padding: 6px 3px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/> 
+                 </td>
+             </tr>
+              <tr>
+                 <td>
+                    <label  style="margin-left: 65px;"><b>WO:&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                   <div class="autocomplete" style="width:190px;">
+                   <input type="text" id="wo_no" name="wo_no" value="{{wo_no}}" onclick="formfun4()" maxlength="7" style=" padding: 6px 5px; margin: 8px 0;
+                   border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
+                   </div> 
+                 </td>
+                 <td>
+                     <label style="margin-left: 45px;"><b>WO Type:</b></label>
+                     <input type="text" id="wo_type" name="wo_type" value="{{wo_type}}" maxlength="1" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                 </td>
+                   <td>
+                     <label style="margin-left: 8px;"><b>Loco From:</b></label>
+                     <input type="text" id="loco_from" name="loco_from" value="{{l_fr}}" maxlength="4"  style=" padding: 6px 1px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" /> 
+                 </td>
+             </tr>
+             <tr>
+                 <td>
+                     <label style="margin-left: 35px;"><b>Loco To:&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                     <input type="text" id="loco_to" name="loco_to" value="{{l_to}}"  maxlength="4" style=" padding: 6px 5px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
+                 </td>
+                 <td>
+                     <label style="margin-left: 50px;"><b>Quantity:</b></label>
+                     <input type="text" id="Qty" name="Qty" value="{{Qty}}" maxlength="5" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                 </td>
+                   <td>
+                     <label style="margin-left: 55px;"><b>Seq:&nbsp;</b></label>
+                     <input type="text" id="Seq" name="Seq" value="{{Seq}}" maxlength="3" value="0" style=" padding: 6px 1px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/> 
+                 </td>
+             </tr>
+             <tr>
+                 <td>
+                     <label style="margin-left: 40px;"><b>Week No:&nbsp;</b></label>
+                     <input type="text" id="week_no" name="week_no" value="0" maxlength="4" style=" padding: 6px 5px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
+                 </td>
+                 <td>
+                     <label><b>RouteCard(M2):</b></label>
+                     <input type="text" id="m2" name="m2" maxlength="1" value="Y" style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                 </td>
+                   <td>
+                     <label><b>Mat Slip(M4):</b></label>
+                     <input type="text" id="m4" name="m4" maxlength="1" value="Y"  style=" padding: 6px 0px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/> 
+                 </td>
+             </tr>
+             <tr>
+                 <td>
+                     <label><b>Job Card(M5):</b></label>
+                     <input type="text" id="m5" name="m5" maxlength="1" value="Y" style=" padding: 6px 9px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
+                 </td>
+                 <td>
+                     <label><b>Pur Slip(M14):&nbsp;&nbsp;&nbsp;</b></label>
+                     <input type="text" id="m14" name="m14" maxlength="1" value="N"  style=" padding: 6px 15px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                 </td>
+             </tr>
+              <tr>
+                   <td>
+                     <label><b>Dem Others:&nbsp;&nbsp;</b></label>
+                     <input type="text" id="dem_others" name="dem_others" maxlength="30"  style=" padding: 6px 10px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                 </td>
+             </tr>
+         </table>
+      </div>
+      <br>
+      <div id="div3" class="container">
+      <h4 align="center" style="color:blue;"><b>STATUS DETAILS<b></h4>
+      <table border="0">
+            <tr>
+                 <td>
+                     <label><b>Process Date:</b></label>
+                     <input type="text" id="process_date" name="process_date"  style=" padding: 6px 15px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled />        
+                 </td>
+                 <td>
+                     <label><b>Loading Date:</b></label>
+                     <input type="text" id="loading_date" name="loading_date"  style=" padding: 6px 15px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"  disabled/>       
+                 </td>
+                  <td>
+                     <label><b>Print Date:</b></label>
+                     <input type="text" id="print_date" name="print_date" style=" padding: 6px 15px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/> 
+                 </td>
+             </tr>
+              <tr>
+                 <td>
+                     <label style="margin-left: 20px;"><b>Issue Date:</b></label>
+                     <input type="text" id="issue_date" name="issue_date" style=" padding: 6px 15px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/>        
+                 </td>
+                 <td>
+                     <label style="margin-left: 35px;"><b>Remark:</b></label>
+                     <input type="text" id="remark" name="remark" maxlength="30" style=" padding: 6px 15px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/>       
+                 </td>
+                   <td>
+                     <label style="margin-left: 25px;"><b>Status:</b></label>
+                     <input type="text" id="status" value="{{status}}" name="status" maxlength="1" style=" padding: 6px 15px; margin: 8px 0;
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled /> 
+                 </td>
+             </tr>
+             </table>
+         </div>
+         <br>
+         <br>
+         <div id="div4">
+             <table border="0" align="center">
+                <tr id="btn_row1">
+                   <td><input type="button" value="Save" id="Save" name="Save" onclick="DemandRegissaveInfo()" class="btn btn-primary"></td>
+                   <td>&nbsp;&nbsp;&nbsp;<input type="button" value="View" id="View" name="View" onclick="ViewInfo()" class="btn btn-primary"></td>
+                   <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Delete" id="Delete" name="Delete" onclick="DeleteClick()" class="btn btn-primary"></td>
+                   <td>&nbsp;&nbsp;&nbsp;<input type="submit" value="Edit" id="Edit" name="Edit" class="btn btn-primary"></td>
+                   <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Send To EDP" id="Send_to" name="Send_to" class="btn btn-primary"></td>
+                   <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Generate Report" id="report" name="report" class="btn btn-primary" onclick="GenerateReport()"></td>
+                   <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Clear" id="clear" name="clear" onclick="DemandRegisClear()" class="btn btn-primary"></td>
+                   <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Back" id="Back" name="Back" onclick="backToHomePage()" class="btn btn-primary"></td>
+                </tr>
+                <tr id="btn_row2" style="display:none;">
+                  <td colspan="6">
+                      <center>
+                          <font color="red">WANT TO ADD NEW DEMAND</font>
+                          <input type="radio" name="RbtnaddYN" value="y" onclick="RbtnaddYN_SelectedIndexChanged()">YES
+                          <input type="radio" name="RbtnaddYN" value="n" onclick="RbtnaddYN_SelectedIndexChanged()">NO
+                      </center>
+                  </td>
+              </tr>
+              <tr id="btn_row3" style="display:none;">
+                  <td colspan="6">
+                          <center>
+                              <font color="red">WANT TO MODIFY DEMAND</font>
+                              <input type="radio" name="RbtnaddMODI" id="RbtnaddMODI" onclick="RbtnaddMODI_SelectedIndexChanged()">YES
+                              <input type="radio" name="RbtnaddMODI" id="RbtnaddMODI" onclick="RbtnaddMODI_SelectedIndexChanged()">NO
+                          </center>
+                  </td>
+              </tr>
+             </table>
+         </div>
+</div>
+    <input type="hidden" id="lblAlt" name="lblAlt" value="N">
+    <input type="hidden" id="lblPTC" name="lblPTC">
+    <input type="hidden" id="lblAlt_Link" name="lblAlt_Link">
+    <input type="hidden" id="lblEp_Part" name="lblEp_Part">
+    <input type="hidden" id="lblEp" name="lblEp">
+    <input type="hidden" id="lblEpn" name="lblEpn">	
+    <input type="hidden" id="tbnum" name="tbnum">
+    <input type="hidden" id="LBLROWID" name="LBLROWID">
+    <input type="hidden" id="doc" name="doc">
+    <input type="hidden" id="ondate" name="ondate">
+    </form>
+    <script>
+    var docno;
+    countries=[''];
+    window.onload=function()
+    {
+        var num_1=0;
+                var data={num_1};
+                $.ajax({
+                    type : 'GET',
+                    url : "{% url 'PpncDemGetNewDemno' %}",
+                    dataType : 'json',
+                    data : data,  
+                    success : function(response){
+                    if(response[0].length > 0){ 
+                    docno=parseInt(response[0][0].num_1)+1;
+                    
+                    document.getElementById('doc').value=docno;
+                    }
+                 }
+                })
+                var today = new Date();
+                var date = today.getFullYear()+'/'+(today.getMonth()+1)+'/'+today.getDate(); 
+                document.getElementById('ondate').value=date   
+    }
+    function DemandRegissaveInfo()
+    {
+        var staff_no=$("#staff_no").val();
+        var dem_RegNo=$("#dem_RegNo").val();
+        var part_no=$("#part_no").val();
+        var epc=$("#epc").val();
+        var wo_no=$("#wo_no").val();
+        var wo_type=$("#wo_type").val();
+        var loco_from=$("#loco_from").val();
+        var loco_to=$("#loco_to").val();
+        var Qty=$("#Qty").val();
+        var m2=$("#m2").val();
+        var m4=$("#m4").val();
+        var m5=$("#m5").val();
+        var m14=$("#m14").val();
+        var dem_others=$("#dem_others").val();
+        var status=$("#status").val();
+        
+        if(staff_no !="")
+        {
+            if((m2=="N") && (m4=="N") && (m5=="N") && (m14=="N") && (dem_others==""))
+            {
+                    alert("Please Choose your Demand");
+                    m2.focus();
+            }
+            if(part_no=="")
+            {
+                alert("Enter Part No.");
+                part_no.focus();
+            }
+            if(epc=="")
+            {
+                alert("Enter Epc")
+                epc.focus();
+            }
+            if(wo_no=="")
+            {
+                alert("Enter Work Order No.");
+                wo_no.focus();
+            }
+            if(wo_type=="")
+            {
+                alert("Enter Work Order Type");
+                wo_type.focus();
+            }
+            if(loco_from=="")
+            {
+                alert("Enter Loco From")
+                loco_from.focus();
+            }
+            if(loco_to=="")
+            {
+                alert("Enter Loco To")
+                loco_to.focus();
+            }
+            if(Qty=="" || Qty=="0")
+            {
+                alert("Quantity cannot be 0 or blank");
+                Qty.focus();
+            }
+            if(dem_RegNo=="")
+            {  
+                document.getElementById('dem_RegNo').value=document.getElementById('doc').value;
+                document.getElementById('sl_no').value='001';
+                document.getElementById('dem_date').value=document.getElementById('ondate').value
+                alert("Are you sure to Save?")
+                var temp={staff_no:$('#staff_no').val(),name:$('#name').val(),dep:$('#dep').val(),dem_RegNo:$('#doc').val(),dem_date:$('#dem_date').val(),doc_type:$('#doc_type').val(),
+                sl_no:$('#sl_no').val(),part_no:$('#part_no').val(),epc:$('#epc').val(),wo_no:$('#wo_no').val(),
+                wo_type:$('#wo_type').val(),loco_from:$('#loco_from').val(),loco_to:$('#loco_to').val(),
+                Qty:$('#Qty').val(),Seq:$('#Seq').val(),week_no:$('#week_no').val(),m2:$('#m2').val(),
+                m4:$('#m4').val(),m5:$('#m5').val(),m14:$('#m14').val(),dem_others:$('#dem_others').val(), process_date:$('#process_date').val(),loading_date:$('#loading_date').val(),
+                print_date:$('#print_date').val(),issue_date:$('#issue_date').val(),remark:$('#remark').val(),
+                status:$('#status').val()};
+                var data=temp;
+                $.ajax({
+                    type : 'GET',
+                    url : "{% url 'DemandRegisSave' %}",
+                    dataType : 'json',
+                    data : data,
+                    success:function(response){
+                        alert("Data saved successfuly");
+                    }
+                })
+            }
+            else
+            {
+                var status="";
+                var dem_RegNo=$("#dem_RegNo").val();
+                var data={dem_RegNo};
+                $.ajax({
+                    type : 'GET',
+                    url : "{% url 'DemandRegisStatus' %}",
+                    dataType : 'json',
+                    data : data,
+                    success:function(response){
+                        if(response[0].length > 0){ 
+                        document.getElementById('LBLROWID').value=response[0][0].id;
+                        status=response[0][0].status;
+                        lblrowid=document.getElementById('LBLROWID').value;
+                        if(status=="E")
+                        {
+                            alert("Demand has been processed cannot be MODIFIED");
+                        }
+                        if(status=="C")
+                        {
+                            alert("Demand is Sent to EDP Centre for Processing Create New");
+                        }
+                        if(lblrowid!="")
+                        {
+                            document.getElementById("btn_row2").style.display="block";
+                            document.getElementById("btn_row1").style.display="none";
+                            document.getElementById("RbtnaddYN").checked=false;
+                            document.getElementById("RbtnaddMODI").checked=false;
+                        }
+                      }
+                    }
+                })
+            }
+        }
+        else
+        {
+            alert("Enter Staff No.")
+            staff_no.focus();
+        }
+    }
+
+    function formfun1()
+    {      
+        document.getElementById('name').value= "";
+        document.getElementById('dep').value="";
+        document.getElementById('dem_RegNo').value= "";
+        document.getElementById('dem_date').value="";
+        document.getElementById('doc_type').value="GEN";
+        document.getElementById('sl_no').value="";
+        document.getElementById('part_no').value="";
+        document.getElementById('epc').value="";
+        document.getElementById('wo_no').value="";
+        document.getElementById('wo_type').value="";
+        document.getElementById('loco_from').value="";
+        document.getElementById('loco_to').value="";
+        document.getElementById('Qty').value="";
+        document.getElementById('Seq').value="0";
+        document.getElementById('week_no').value="0";
+        document.getElementById('m2').value="Y";
+        document.getElementById('m4').value="Y";
+        document.getElementById('m5').value="Y";
+        document.getElementById('m14').value="N";
+        document.getElementById('dem_others').value="";
+        document.getElementById('process_date').value="";
+        document.getElementById('loading_date').value="";
+        document.getElementById('print_date').value="";
+        document.getElementById('issue_date').value="";
+        document.getElementById('remark').value="";
+        document.getElementById('status').value="";
+        document.getElementById("name").disabled = false;
+        document.getElementById("dep").disabled = false;  
+        var staff_no = $("#staff_no").val();
+        var data = {staff_no};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemStaffNoDetails' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){
+            if(response[0].length > 0){             
+            document.getElementById('name').value=response[0][0].name; 
+            document.getElementById('dep').value=response[0][0].dep;
+            document.getElementById("name").disabled = true;
+            document.getElementById("dep").disabled = true; 
+            document.getElementById('part_no').focus();
+            }
+            else
+            {
+            document.getElementById("name").disabled = false;
+            document.getElementById("dep").disabled = false;
+            document.getElementById('name').focus();
+            }
+        }
+    })
+    }
+    document.querySelector("#staff_no").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun1();                                  
+    }); 
+
+    document.querySelector("#part_no").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun2();                                  
+        }); 
+
+    function formfun2(){
+        var part_no = $("#part_no").val();
+        var data = {part_no};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemPartNoDetails' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){   
+            if(response[0].length > 0){            
+                document.getElementById('lblPTC').value=response[0][0].ptc; 
+                document.getElementById('lblAlt_Link').value=response[0][0].alt_link;
+                if(response[0][0].alt_link!="0")
+                {
+                   document.getElementById('lblAlt').value="Y"
+                }
+                else{
+                document.getElementById('lblAlt').value="N"
+                }
+            }
+            else{
+                alert("Part not found in Master");
+                document.getElementById('part_no').value=""
+                document.getElementById('part_no').focus();
+            } 
+        }
+     })
+    }   
+    document.querySelector("#epc").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun3();                                  
+        }); 
+
+    function formfun3(){
+        var epc= $("#epc").val();
+        var part_no=$("#part_no").val();
+        var data = {epc,part_no};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemEPCDetails' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){   
+            if(response[0].length > 0){         
+                document.getElementById('lblEp_Part').value=response[0][0].num_1; 
+            } 
+            else{
+                alert("No Such End Product");
+                document.getElementById('epc').value=""
+                document.getElementById('epc').focus();
+            }
+            if(response[1].length < 0){
+                alert("Part has no child");
+                document.getElementById('epc').value=""
+                document.getElementById('epc').focus();
+            }
+            if(response[2].length < 0){
+                alert("Part not in this End Product");
+                document.getElementById('epc').value=""
+                document.getElementById('epc').focus();
+            }
+        }
+     })
+    }      
+    document.querySelector("#wo_no").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun4II();                              
+        }); 
+
+    function formfun4(){
+        var wo_no= $("#wo_no").val();
+        var data = {wo_no};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemWODetails1' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){   
+            for(i=0;i<response.length;i++)
+            {
+               countries.push((response[i].orderno).toString()); 
+            }
+            
+           
+        }
+     });
+    }             
+
+    function formfun4II(){
+        var wo_no= $("#wo_no").val();
+        var data = {wo_no};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemWODetails' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){   
+            lblAlt=document.getElementById('lblAlt').value;
+            if((response[0].length > 0) && (lblAlt=="Y")){            
+                document.getElementById('doc_type').value="ALT"
+            }
+            else{
+                document.getElementById('doc_type').value="GEN"
+            }
+        
+        }
+     });
+    }                                 
+                    
+
+    document.querySelector("#wo_type").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun5();                                  
+        }); 
+
+    function formfun5(){
+        var t1=document.getElementById('wo_no').value;
+        fb=t1.substring(0,2);
+        sb=t1.substring(2,5);
+        tb=t1.substring(5,7);
+        document.getElementById('tbnum').value=tb;
+        var batch_type=document.getElementById('wo_type').value;
+        if(batch_type=="O" || batch_type=="S" || batch_type=="R" || batch_type=="M" || batch_type=="B" || batch_type=="N")
+        {
+            document.getElementById('loco_from').focus();
+        }
+        else{ 
+            alert("Enter O,S,R,M,B,N");
+            document.getElementById('wo_type').value="";
+            document.getElementById('wo_type').focus();  
+        }
+        part_no=document.getElementById('part_no').value;
+        lblEp_Part=document.getElementById('lblEp_Part').value;
+        lblAlt=document.getElementById('lblAlt').value;
+        // check for ordinary batch
+        if(batch_type=="O" && part_no!=lblEp_Part)
+        {
+            if(lblAlt=="N")
+            {
+               alert("Ordinary Batch can be loaded only for End Product=" +lblEp_Part);
+               document.getElementById('part_no').value=""
+               document.getElementById('part_no').focus();
+            }
+        }
+        if(batch_type=="O")
+        {
+            if(fb=="04" || fb=="05" || fb=="13" || fb=="12" || fb=="33")
+            {
+                document.getElementById('loco_from').focus();
+
+            }
+            else{
+                alert("Ordinary Batch should start with 04/05/13/33");
+                document.getElementById('wo_no').value=""
+                document.getElementById('wo_no').focus()
+            }    
+            //batch starting with '04'
+            epc=document.getElementById('epc').value;
+            if(fb=="04" && (epc=="01" || epc=="02" || epc=="05" || epc=="1A" || epc=="1C" || epc=="1F" || epc=="1U" || epc=="26" || epc=="1Y" || epc=="21"))
+            {
+                 document.getElementById('loco_from').focus()
+            }
+            else{
+                 alert("EPC should be 01/02/05/1A/1C/1F/1U/26/1Y/21 for batch starting with [04]");
+                 document.getElementById('wo_no').focus();
+            }
+            //batch starting with '05'
+            if(fb=="05" && (epc=="03" || epc=="04" || epc=="06" || epc=="07" || epc=="08" || epc=="09" || epc=="1B" || epc=="1G" || epc=="1H" || epc=="1J" || epc=="1K" || epc=="1L" || epc=="1D" || epc=="1M" || epc=="1P" || epc=="1E" || epc=="1N" || epc=="1R" || epc=="1Q" || epc=="12" || epc=="28" || epc=="14" || epc=="18" || epc=="22" || epc=="42"))
+            {
+                document.getElementById('loco_from').focus()
+            }
+            else{
+                alert("EPC should be 03/04/06/07/08/09/1B/1G/1H/1J/1K/1L/1D/1M/1Q/12/28/14/18/22/42 for batch starting with [05]");
+                document.getElementById('wo_no').focus();
+            }
+        }
+        //Checks for batches other than ordinary
+        if((batch_type=="O" || batch_type=="M" || batch_type=="N") && (part_no==lblEp_Part))
+        {
+            document.getElementById('loco_from').focus();
+        }
+        else{
+            alert("End-Product can be loaded only against Ordinary/Misc Batches");
+            document.getElementById('part_no').focus();
+        }
+
+        //Check for Special Type Batch 'S'
+        if(batch_type=="S")
+        {
+            if(fb!="07")
+            {
+                alert("Stock suspense work order should start with '07'");
+                document.getElementById('bo_no').focus();
+            }
+            lblPTC=document.getElementById('lblPTC').value;
+            if(lblPTC!="L")
+            {
+                alert("Not a stock suspense item[L]");
+                document.getElementById('wo_no').focus();
+            }
+        }
+        //check for work order for spares to NRC's [N]
+        if(batch_type=="N")
+        {
+            if(fb=="13" || fb=="12")
+            {
+                document.getElementById('loco_from').focus();
+            }
+            else
+            {
+              alert("WO for Spares to NRC's should start with 13 or 12");
+              document.getElementById('wo_no').focus();
+            }
+        }
+        //Check for Balance input items
+        if(batch_type=="B")
+        {
+            if(fb!="25")
+            {
+                alert("WO for balance input items should start with 25");
+                document.getElementById('wo_no').focus();
+            }
+        }
+        //Check for Misc Work Order
+        if(batch_type=="M")
+        {
+            if(fb=="01" || fb=="02" || fb=="08" || fb=="10" || fb=="18"  || fb=="21"  || fb=="24"  || fb=="69")
+            {
+               document.getElementById('loco_from').focus(); 
+            }
+            else{
+                alert("Misc WO should start with 10/18/21/24/69");
+                document.getElementById('wo_no').focus();
+            }
+            if((fb=="01" || fb=="02") && (sb=="117" || sb=="118" || sb=="119"))
+            {
+                alert("MISC WORK ORDER CAN NOT HAVE SECOND BARREL AS 117/118/119");
+                document.getElementById('wo_no').focus();
+            }
+        }
+        //check for replacement work orders
+        if(batch_type=="R")
+        {
+            if(fb=="01" || fb=="02")
+            {
+               document.getElementById('loco_from').focus(); 
+            }
+            else{
+                alert("REPLACEMENT WORK ORDER WITH SHOULD START WITH 01/02");
+                document.getElementById('wo_no').focus();
+            }
+            if(fb=="01")
+            {
+                if(sb=="117" || sb=="118")
+                {
+                   document.getElementById('loco_from').focus();
+                }
+                else{
+                    alert("WORK ORDER STARTING WITH [01] SHOULD HAVE 117/118 IN SECOND BARREL");
+                    document.getElementById('wo_no').focus();
+                }
+                
+                if(sb=="117" || sb=="118")
+                {
+                    var tb= $("#tbnum").val();
+                    var data={tb};
+                    $.ajax({
+                    type : 'GET',
+                    url : "{% url 'PpncDemshopdetails' %}",
+                    dataType : 'json',
+                    data : data,  
+                    success : function(response){  
+                        if(response[0].length<0)
+                        {
+                            alert("WORK ORDER STARTING WITH [01] SHOULD HAVE VALID SHOP AS THIRD BARREL")
+                            document.getElementById('wo_no').focus();
+                        } 
+                    }
+                })
+            }
+        }               
+            bo_no=document.getElementById('wo_no').value;
+            if((fb=="02") && (bo_no!="0211966"))
+            {
+                alert("REPLACEMENT WO STARTING WITH 02 SHOULD BE 0211966");
+                document.getElementById('wo_no').focus();
+            }
+        }
+    }
+    document.querySelector("#loco_to").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun6();                            
+        }); 
+
+    function formfun6()
+    {
+        loco_to=document.getElementById('loco_to').value;
+        loco_from=document.getElementById('loco_from').value;
+        if(loco_to!="" && loco_from!="")
+        {
+            if(loco_to<loco_from)
+            {
+                alert("Proper Loco-To Must be Entered");
+                document.getElementById('loco_from').value="";
+                document.getElementById('loco_to').value="";
+                document.getElementById('loco_from').focus();
+            }
+        }
+    }
+    document.querySelector("#week_no").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun7();                                  
+    }); 
+
+    function formfun7()
+    {
+        weekno=document.getElementById('week_no').value;
+        if(weekno!="")
+        {
+            if(weekno>=0)
+            {
+                document.getElementById('m2').focus();
+            }
+            else{
+                alert("Not a valid Week");
+                document.getElementById('week_no').value="";
+                document.getElementById('week_no').focus();
+            }
+        }
+    }
+
+    document.querySelector("#m2").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun8();                                  
+    }); 
+
+    function formfun8()
+    {
+        m2=document.getElementById('m2').value;
+        if(m2=="Y" || m2=="N")
+        {
+            document.getElementById('m4').focus();
+        }
+        else{
+            alert("Value should be Y or N");
+            m2="";
+            document.getElementById("m2").focus();
+        }
+    }
+    document.querySelector("#m4").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun9();                                  
+    }); 
+
+    function formfun9()
+    {
+        m4=document.getElementById('m4').value;
+        if(m4=="Y" || m4=="N")
+        {
+            document.getElementById('m5').focus();
+        }
+        else{
+            alert("Value should be Y or N");
+            m4="";
+            document.getElementById("m4").focus();
+        }
+    }
+    document.querySelector("#m5").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun10();                                  
+    }); 
+
+    function formfun10()
+    {
+        m5=document.getElementById('m5').value;
+        if(m5=="Y" || m5=="N")
+        {
+            document.getElementById('m14').focus();
+        }
+        else{
+            alert("Value should be Y or N");
+            m5="";
+            document.getElementById("m5").focus();
+        }
+    }
+    document.querySelector("#m14").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        formfun11();                                  
+    }); 
+
+    function formfun11()
+    {
+        m14=document.getElementById('m14').value;
+        if(m14=="Y" || m14=="N")
+        {
+            document.getElementById('dem_others').focus();
+        }
+        else{
+            alert("Value should be Y or N");
+            m14="";
+            document.getElementById("m14").focus();
+        }        
+    }
+
+    function RbtnaddYN_SelectedIndexChanged(){
+        var ele = document.getElementsByName('RbtnaddYN'); 
+        for(i = 0; i < ele.length-1; i++) { 
+                if(ele[0].checked)
+                {
+                    if(Key_f1_addnew())
+                    {
+                        document.getElementById('btn_row1').style.display="block";
+                        document.getElementById('btn_row2').style.display="none";
+                    }
+                    else
+                    {
+                        document.getElementById('btn_row1').style.display="block";
+                        document.getElementById('btn_row2').style.display="none";
+                        document.getElementById('btn_row3').style.display="none";
+                    }
+
+                } 
+                if(ele[1].checked)
+                {
+                    document.getElementById('btn_row1').style.display="none";
+                    document.getElementById('btn_row2').style.display="none";
+                    document.getElementById('btn_row3').style.display="block";
+
+                } 
+                
+            }   
+    }
+    function Key_f1_addnew()
+    {
+        var slno="";
+        var staff_no=$("#staff_no").val();
+        var dem_RegNo=$("#dem_RegNo").val();
+        var data={staff_no,dem_RegNo};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'DemandRegisGetSINo' %}",
+            dataType : 'json',
+            data : data,
+            success:function(response){
+            if(response.length > 0){  
+                var dr=parseInt(response)+1;             
+                var ty="00"+dr;               
+                document.getElementById('sl_no').value=ty;
+                func2();
+            }
+        }   
+     });
+    }
+    function func2(){
+        var temp={staff_no:$('#staff_no').val(),name:$('#name').val(),dep:$('#dep').val(),dem_RegNo:$('#dem_RegNo').val(),dem_date:$('#dem_date').val(),doc_type:$('#doc_type').val(),
+        sl_no:$('#sl_no').val(),part_no:$('#part_no').val(),epc:$('#epc').val(),wo_no:$('#wo_no').val(),
+        wo_type:$('#wo_type').val(),loco_from:$('#loco_from').val(),loco_to:$('#loco_to').val(),
+        Qty:$('#Qty').val(),Seq:$('#Seq').val(),week_no:$('#week_no').val(),m2:$('#m2').val(),
+        m4:$('#m4').val(),m5:$('#m5').val(),m14:$('#m14').val(),dem_others:$('#dem_others').val(), process_date:$('#process_date').val(),loading_date:$('#loading_date').val(),
+        print_date:$('#print_date').val(),issue_date:$('#issue_date').val(),remark:$('#remark').val(),
+        status:$('#status').val()};
+        var data=temp;
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'DemandRegisAddNewDemand' %}",
+            dataType : 'json',
+            data : data,
+            success:function(response){
+                alert("New Demand Added");
+            }
+        });
+
+    }    
+    function RbtnaddMODI_SelectedIndexChanged(){
+        var ele = document.getElementsByName('RbtnaddMODI'); 
+        for(i = 0; i < ele.length-1; i++) { 
+                if(ele[0].checked)
+                {
+                    if(Key_f_MODI())
+                    {
+                        document.getElementById('btn_row1').style.display="block";
+                        document.getElementById('btn_row2').style.display="none";
+                        document.getElementById('btn_row3').style.display="none";
+                    }
+                    else
+                    {
+                        document.getElementById('btn_row1').style.display="block";
+                        document.getElementById('btn_row2').style.display="none";
+                        document.getElementById('btn_row3').style.display="none";
+                    }
+
+                } 
+                if(ele[1].checked)
+                {
+                    document.getElementById('btn_row1').style.display="block";
+                    document.getElementById('btn_row2').style.display="none";
+                    document.getElementById('btn_row3').style.display="none";
+
+                }                 
+            } 
+    }
+    function Key_f_MODI()
+    {           
+                alert("Are you sure to Modify Demand?")
+                var temp={staff_no:$('#staff_no').val(),name:$('#name').val(),dep:$('#dep').val(),dem_RegNo:$('#dem_RegNo').val(),dem_date:$('#dem_date').val(),doc_type:$('#doc_type').val(),
+                sl_no:$('#sl_no').val(),part_no:$('#part_no').val(),epc:$('#epc').val(),wo_no:$('#wo_no').val(),
+                wo_type:$('#wo_type').val(),loco_from:$('#loco_from').val(),loco_to:$('#loco_to').val(),
+                Qty:$('#Qty').val(),Seq:$('#Seq').val(),week_no:$('#week_no').val(),m2:$('#m2').val(),
+                m4:$('#m4').val(),m5:$('#m5').val(),m14:$('#m14').val(),dem_others:$('#dem_others').val(), process_date:$('#process_date').val(),loading_date:$('#loading_date').val(),
+                print_date:$('#print_date').val(),issue_date:$('#issue_date').val(),remark:$('#remark').val(),
+                status:$('#status').val()};
+                var data=temp;
+                $.ajax({
+                    type : 'GET',
+                    url : "{% url 'DemandRegisModifyDemand' %}",
+                    dataType : 'json',
+                    data : data,
+                    success:function(response){
+                        alert("Record Modified");
+                    }
+                });
+    }
+        function DemandRegisClear(){
+        document.getElementById('dem_date').value="";
+        document.getElementById('doc_type').value="GEN";
+        document.getElementById('sl_no').value="";
+        document.getElementById('part_no').value="";
+        document.getElementById('epc').value="";
+        document.getElementById('wo_no').value="";
+        document.getElementById('wo_type').value="";
+        document.getElementById('loco_from').value="";
+        document.getElementById('loco_to').value="";
+        document.getElementById('Qty').value="";
+        document.getElementById('Seq').value="0";
+        document.getElementById('week_no').value="0";
+        document.getElementById('m2').value="Y";
+        document.getElementById('m4').value="Y";
+        document.getElementById('m5').value="Y";
+        document.getElementById('m14').value="N";
+        document.getElementById('dem_others').value="";
+        document.getElementById('process_date').value="";
+        document.getElementById('loading_date').value="";
+        document.getElementById('print_date').value="";
+        document.getElementById('issue_date').value="";
+        document.getElementById('remark').value="";
+        document.getElementById('status').value="";
+        document.getElementById("name").disabled = true;
+        document.getElementById("dep").disabled = true;
+        document.getElementById("part_no").focus();
+    }
+    function DeleteClick()
+    {
+        key_f3();
+        DemandRegisClear();
+    }
+    function key_f3()
+    {
+       part_no=document.getElementById('part_no').value;
+       status=document.getElementById('status').value;
+       if(part_no=="")
+       {
+           alert("Nothing To be deleted");
+       }
+       if(status=="E")
+       {
+           alert("Demand has been processed Can not be deleted");
+       }
+       var staff_no=$("#staff_no").val();
+       var dem_RegNo=$("#dem_RegNo").val();
+       var data={staff_no,dem_RegNo};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'DemandRegisDelete' %}",
+            dataType : 'json',
+            data : data,
+            success:function(response){
+                alert("Demand Deleted");
+            }
+        })
+    }
+    function ViewInfo(){
+        window.location.href="{% url 'PpncdemViewInfo' %}"
+    }
+    function backToHomePage()
+    {
+        window.location.href="{% url 'PpncdemBackClick' %}"
+    }
+
+    function GenerateReport()
+    {
+        window.location.href="{% url 'PpncdemGenerateReport' %}"+"?staff_no="+$("#staff_no").val();
+    }
+
+    function autocomplete(inp, arr) {
+      /*the autocomplete function takes two arguments,
+      the text field element and an array of possible autocompleted values:*/
+      var currentFocus;
+      /*execute a function when someone writes in the text field:*/
+      inp.addEventListener("input", function(e) {
+          var a, b, i, val = this.value;
+          /*close any already open lists of autocompleted values*/
+          closeAllLists();
+          if (!val) { return false;}
+          currentFocus = -1;
+          /*create a DIV element that will contain the items (values):*/
+          a = document.createElement("DIV");
+          a.setAttribute("id", this.id + "autocomplete-list");
+          a.setAttribute("class", "autocomplete-items");
+          /*append the DIV element as a child of the autocomplete container:*/
+          this.parentNode.appendChild(a);
+          /*for each item in the array...*/
+          for (i = 0; i < arr.length; i++) {
+            /*check if the item starts with the same letters as the text field value:*/
+            if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+              /*create a DIV element for each matching element:*/
+              b = document.createElement("DIV");
+              /*make the matching letters bold:*/
+              b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+              b.innerHTML += arr[i].substr(val.length);
+              /*insert a input field that will hold the current array item's value:*/
+              b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+              /*execute a function when someone clicks on the item value (DIV element):*/
+              b.addEventListener("click", function(e) {
+                  /*insert the value for the autocomplete text field:*/
+                  inp.value = this.getElementsByTagName("input")[0].value;
+                  /*close the list of autocompleted values,
+                  (or any other open lists of autocompleted values:*/
+                  closeAllLists();
+              });
+              a.appendChild(b);
+            }
+          }
+      });
+      /*execute a function presses a key on the keyboard:*/
+      inp.addEventListener("keydown", function(e) {
+          var x = document.getElementById(this.id + "autocomplete-list");
+          if (x) x = x.getElementsByTagName("div");
+          if (e.keyCode == 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode == 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+              /*and simulate a click on the "active" item:*/
+              if (x) x[currentFocus].click();
+            }
+          }
+      });
+      function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+      function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+            x[i].parentNode.removeChild(x[i]);
+          }
+        }
+      }
+      /*execute a function when someone clicks in the document:*/
+      document.addEventListener("click", function (e) {
+          closeAllLists(e.target);
+      });
+    }   
+    /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+    //////
+      autocomplete(document.getElementById("wo_no"), countries); 
+    </script>
+{% endblock content %}

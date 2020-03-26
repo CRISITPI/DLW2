@@ -3508,16 +3508,7 @@ class M7(models.Model):
     class Meta:
         db_table = 'M7'
 
-class M20new(models.Model):
-    shop_sec = models.CharField(max_length=10, blank=True, null= True)
-    staff_no = models.CharField(max_length=10, blank=True, null = True)
-    lv_date = models.DateField(blank= True, null= True)
-    name = models.CharField(max_length=50, blank=True, null= True)
-    ticketno = models.CharField(max_length=10, blank = True, null= True)
-    alt_date = models.CharField(blank = True, null=True,max_length=10)
 
-    class Meta:
-        db_table = 'M20new'
 
 class AxleWheelPressing(models.Model):
     sno=models.AutoField(primary_key=True)
@@ -5208,3 +5199,36 @@ class Ptld(models.Model):
     epc = models.CharField(db_column='EPC', max_length=2, blank=True, null=True)  # Field name made lowercase.
     ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
     rem = models.CharField(db_column='REM', max_length=50, blank=True, null=True)  # Field name made lowercase.
+
+class Tempm14expl(models.Model):
+    part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=9, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    rm_partno = models.CharField(db_column='RM_PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
+
+
+
+class holidaylist(models.Model):
+    holiday_year=models.CharField(db_column='holiday_year',max_length=4, blank=True, null=True)
+    holiday_name=models.CharField(db_column='holiday_name',max_length=30, blank=True, null=True)
+    holiday_date=models.CharField(db_column='holiday_date',max_length=10, blank=True, null=True)
+    holiday_type=models.CharField(db_column='holiday_type', max_length=2, blank=True, null=True )
+    remark=models.CharField(db_column='remark', max_length=100, blank=True, null=True)
+
+    class Meta:
+        db_table='holidaylist'
+
+
+class M20new(models.Model):
+    shop_sec = models.CharField(max_length=10, blank=True, null= True)
+    staff_no = models.CharField(max_length=10, blank=True, null = True)
+    lv_date = models.DateField(blank= True, null= True)
+    name = models.CharField(max_length=50, blank=True, null= True)
+    ticketno = models.CharField(max_length=10, blank = True, null= True)
+    alt_date = models.CharField(blank = True, null=True,max_length=10)
+    shift = models.CharField(blank = True, null=True, max_length=2)
+    
+    class Meta:
+        db_table = 'M20new'

@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<h5>Date:{{today}}</h5><center><h5><u>INDIAN RAILWAYS</u></h5><h5><u>DIESEL LOCOMOTIVE WORKS</u></h5><h5><u>VARANASI</u></h5>
+<h5><u>DEMAND LIST OF PRODUCTION DOCUMENTS FORM </u>&nbsp;&nbsp;&nbsp;&nbsp;<u>PCO</u></h5></center>
+    <hr>
+<table border="0">
+    {% for i in tmpstr %}
+    {% for j in i%}
+    {%if j.c == 0%}
+    <tr>
+        <td colspan="8" style="margin-left:10px;"><b>DEMAND_DATE:</b> {{j.dem_date}}</td>
+        <td colspan="8"style="margin-left:100px;"><b>DEMAND_NO:</b> {{j.dem_regno}}</td>
+        <td colspan="8" style="margin-left:100px;"><b>STAFF_NO:</b> {{j.staff_no}}</td>
+        <td colspan="5" style="margin-left:50px;"><b>{{j.name}}</b></td>
+
+    </tr>
+    <tr>
+        <td colspan="1"><b>SINo</b></td>
+        <td colspan="2"><b>Part_No</b></td>
+        <td colspan="2"><b>L_fr</b></td>
+        <td colspan="2"><b>L_to</b></td>
+        <td colspan="2"><b>Batch_No</b></td>
+        <td colspan="2"><b>Qty</b></td>
+        <td colspan="2"><b>Epc</b></td>
+        <td colspan="2"><b>B_Type</b></td>
+        <td colspan="2"><b>Seq</b></td>
+        <td colspan="2"><b>Week_No</b></td>
+        <td><b>D</b></td>
+        <td><b>E</b></td>
+        <td><b>M</b></td>
+        <td><b>A</b></td>
+        <td><b>N</b></td>
+        <td><b>D</b></td>
+        <td colspan="2"><b>Doc_Type</b></td>
+        <td colspan="2"><b>Demand_Others</b></td>
+    </tr>
+    {%endif%}
+    <tr>
+        <td colspan="1">{{j.slno}}</td>
+        <td colspan="2">{{j.part_no}}</td>
+        <td colspan="2">{{j.l_fr}}</td>
+        <td colspan="2">{{j.l_to}}</td>
+        <td colspan="2">{{j.bo_no}}</td>
+        <td colspan="2">{{j.qty}}</td>
+        <td colspan="2">{{j.epc}}</td>
+        <td colspan="2">{{j.batch_type}}</td>
+        <td colspan="2">{{j.seq}}</td>
+        <td colspan="2">{{j.week_no}}</td>
+        <td>M2</td>
+        <td>M4</td>
+        <td>M</td>
+        <td>5</td>
+        <td>M</td>
+        <td>15</td>
+        <td colspan="2">{{j.ddoc_type}}</td>
+        <td colspan="2">{{j.dem_others}}</td>
+    </tr> 
+    {% endfor %}
+    {% endfor %}
+    
+</table>

@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>card generation</title>
+    </head>
+    <body> 
+        <style>
+             input[type=button] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+
+     
+    text-align: center;
+    
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+}
+    }
+        </style>
+           
+        <p style="font-size: 40px;" ALIGN="CENTER">M14 CARD GENERATION</p>
+        <hr>
+        <table border="0px">
+            <tr >
+                <td ><p style="font-size: 20px;margin-left: 10px;">ASSEMBLY NO :  </p></td >
+                <td ><p style="font-size: 20px;">{{asl}} </p></td>
+                <td ><p style="font-size: 20px; margin-left:200px">DESCRIPTION : </p></td>
+                <td colspan="2"><p style="font-size: 20px;">{{ades}}</p></td>
+                <td><input type="button" name="btncg" id="btncg" value="PRINT" onclick="funcbtncg()" style="margin-left:160px;"></button></td>
+            </tr>
+            <tr>
+                <td ><p style="font-size: 20px;margin-left: 10px;" >BATCH NO : </p></td>
+                <td ><p style="font-size: 20px;">{{batch}}</p></td>
+            </tr>
+            
+        </table>
+        <hr>
+        <hr>
+        <table  cellspacing="30">
+            <tr>    
+                <td style="font-size: 15px;" ALIGN="CENTER">PM NO</td>              
+            <td style="font-size: 15px;" ALIGN="CENTER">PART NO</td>
+            <td style="font-size: 15px;" ALIGN="CENTER">QUANTITY</td>
+            <td style="font-size: 15px;" ALIGN="CENTER">LOCO FROM</td>
+            <td style="font-size: 15px;" ALIGN="CENTER">LOCO TO</td>
+            <td style="font-size: 15px;" ALIGN="CENTER">DOC NO</td>
+            <td style="font-size: 15px;" ALIGN="CENTER">UNIT</td>
+            
+            <hr>
+            
+           </tr>
+           <hr>
+           {%for i in m14%}
+           <tr>    
+               <td style="font-size: 20px;" ALIGN="CENTER">{{i.pm_no}}</td>
+               <td style="font-size: 20px;" ALIGN="CENTER">{{i.part_no}}</td>
+               <td style="font-size: 20px;" ALIGN="CENTER">{{i.qty}}</td>
+               <td style="font-size: 20px;" ALIGN="CENTER">{{i.l_fr}}</td>
+               <td style="font-size: 20px;" ALIGN="CENTER">{{i.l_to}}</td>
+               <td style="font-size: 20px;" ALIGN="CENTER">{{i.doc_ind}}</td>
+               <td style="font-size: 20px;" ALIGN="CENTER">{{i.unit}}</td>
+
+           </tr>
+           {% endfor %}
+       
+            
+        
+            
+        </table>
+       
+       
+
+    </body>
+    <script>
+        function funcbtncg()
+        {
+            document.getElementById('btncg').style.display = "none";        
+        window.print();
+        }
+    </script>
+</html>
+
+
+
+
+
+
+<table>
+
+</table>

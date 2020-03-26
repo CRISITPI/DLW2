@@ -1,0 +1,124 @@
+{% extends 'base.html' %} {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<style>
+    .container{
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+</style>
+<br>
+<form action="{% url 'PpncdemViewInfo' %}" method="POST"> 
+{% csrf_token %}
+<div id="divlayout" align="center">
+    <h3 align="center" style="color:red;" ><b>SELECT OPTION TO PRINT/VIEW<b></h3>
+    <br>
+<div id="view1" class="container">
+<table>
+    <tr>
+        <td>
+            <input type="radio" name="queryon" class="queryon" id="Demand_no" value="1" >1-Demand list of Demand No.<br>
+            <input type="radio" name="queryon"  class="queryon" id="dateFromTo" value="2" >2-Demand List of Date From-To<br>
+            <input type="radio" name="queryon"  class="queryon" id="staff_no" value="3" >3-Demand List of Staff No.<br>
+            <input type="radio" name="queryon"  class="queryon" id="epd_NotSent" value="4" >4-Demand list Not sent to EDP<br>
+        </td>
+    </tr>
+</table><br>
+<table align="left">
+    <tr id="DemandNo" style="display:none;">
+        <td>Demand Reg No.</td>
+        <td><input type="text" id="dem_reg"></td>
+    </tr>
+</table>
+<table align="left">
+    <tr id="date" style="display:none;">
+        <td>Date From</td>
+        <td><input type="date" id="date_from"></td>
+        <td>Date To</td>
+        <td><input type="date" id="date_to"></td>
+    </tr>
+</table>
+<table align="left">
+    <tr id="Staff_No" style="display:none;">
+        <td>Staff No.</td>
+        <td><input type="text" id="staffNo"></td>
+    </tr>
+</table>
+<table align="left">
+    <tr id="edp" style="display:none;">
+        <td>Enter demand Reg No.</td>
+        <td><input type="text" id="demReg"></td>
+    </tr>
+</table>
+</div>
+<div id="view2" class="container" align="left">
+<input type="button" id="create" name="create" value="Create" class="btn btn-primary" onclick="Create()">
+<input type="button" id="back" name="back" value="Back" onclick="DemandRegistrationRedirect()" class="btn btn-primary">
+</div>
+</div>
+<script>
+var val4;
+var val5;  
+var val3;
+var val2;
+var val1;
+var val;
+$("input[type='radio']").on('change',function(){
+    val1=($(this).val());
+    if($(this).val()=="1"){
+     $("#DemandNo").show();
+     $("#DemandNo").focus();
+     $("#date").hide();
+     $("#Staff_No").hide();
+     $("#edp").hide();
+    }
+    else if($(this).val()=="2"){
+    $("#DemandNo").hide();
+     $("#date").focus();
+     $("#date").show();
+     $("#Staff_No").hide();
+     $("#edp").hide();
+    }
+    else if($(this).val()=="3"){
+    $("#DemandNo").hide();
+     $("#Staff_No").focus();
+     $("#date").hide();
+     $("#Staff_No").show();
+     $("#edp").hide();
+    }
+    else{
+     $("#DemandNo").hide();
+     $("#edp").focus();
+     $("#date").hide();
+     $("#Staff_No").hide();
+     $("#edp").show();
+    }
+});
+
+
+$("#staffNo").on("change",function(){
+var val=$('#staffNo').val();
+});
+
+$("#dem_reg").on("change",function(){
+var val2=$('#dem_reg').val();
+});
+$("#demReg").on("change",function(){
+var val3=$('#demReg').val();
+});
+$("#date_from").on("change",function(){
+var val4=$('#date_from').val();
+});
+$("#date_to").on("change",function(){
+var val5 = $('#date_to').val();
+});
+function DemandRegistrationRedirect(){
+        window.location.href="{% url 'demandRegistrationview' %}"
+    }
+function Create()
+{
+    window.location.href="{% url 'demandRegistrationReportview' %}"+"?staffno="+$("#staffNo").val()+"&rbtnquery="+val1+"&dem_reg="+$("#dem_reg").val()+"&demReg="+$("#demReg").val()+"&date_from="+$("#date_from").val()+"&date_to="+$("#date_to").val();
+      
+}
+</script>
+{% endblock content %}

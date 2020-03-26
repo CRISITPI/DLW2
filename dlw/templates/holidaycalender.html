@@ -1,0 +1,173 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container">
+    <br>
+    <div>
+        <h3 align="center">छुट्टी का कैलेंडर </h3>
+        <h4 align="center">Holiday calendar</h4>
+    </div>
+    <div class="row">
+    <div class="col-lg-4">
+      <select class="btn btn-secondary dropdown-toggle" name="btnyear" id="btnyear">
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+        </select>
+    </div>
+     <div class="col-lg-4">&nbsp; </div>
+     <div class="col-lg-4" align="right">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+            <span class="glyphicon glyphicon-plus"></span> Add New Holiday in calendar</button>
+        </div>
+      
+    </div>
+    <br>
+    <table class="table" id="holiday-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Year</th>
+        <th>Holiday Name</th>
+        <th>Holiday Date</th>
+        <th>Holiday Type</th>
+        <th>Remark</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      {% for holiday in holiday_list %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ holiday.holiday_year }}</td>
+          <td>{{ holiday.holiday_name }}</td>
+          <td>{{ holiday.holiday_date }}</td>
+          <td>{{ holiday.holiday_type }}</td>
+          <td>{{ holiday.remark }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="text-center bg-warning">No Holiday in List</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:15px 50px;">
+            <h4><span class="glyphicon glyphicon-lock"></span> Add Holiday</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          
+        </div>
+        <div class="modal-body" style="padding:20px 25px;">
+          <form role="form" action="." method="post"> {% csrf_token %}
+           
+            <div class="form-group">
+              <label><span class="glyphicon glyphicon-eye-open"></span> Holiday Date</label>
+              <input type="text" class="form-control" id="datepicker" name="h_date" placeholder="Holiday Date" readonly>
+            </div>
+             <div class="form-group">
+              <label><span class="glyphicon glyphicon-eye-open"></span> Holiday Name</label>
+              <input type="text" class="form-control" id="h_name" name="h_name" placeholder="Holiday Name">
+            </div>
+            
+             <div class="form-group">
+              <label><span class="glyphicon glyphicon-eye-open"></span> Remark</label>
+              <input type="text" class="form-control" id="remark" name="remark" placeholder="Remark">
+            </div>
+              <button type="submit" class="btn btn-success btn-block js-create-holiday" name="btn_save" value="save"><span class="glyphicon glyphicon-off"></span> Save</button>
+          </form>
+        </div>
+      
+      </div>
+      
+    </div>
+  </div> 
+  </div>
+
+<script>
+
+     $(function () {
+        $("#btnyear").change(function () {
+           var btnyear=document.getElementById('btnyear').value;
+           //alert(btnyear);
+           data={btnyear};
+           $.ajax({
+                        type : 'GET',
+                        url : "{% url 'caldata' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){   
+                                //alert(response)
+                                $("#holiday-table").empty();
+                                mydata="<thead>"+
+                                            "<tr>"+
+                                            "<th>#</th>"+
+                                            "<th>Year</th>"+
+                                            "<th>Holiday Name</th>"+
+                                            "<th>Holiday Date</th>"+
+                                            "<th>Holiday Type</th>"+
+                                            "<th>Remark</th>"+
+                                            "</tr>"+
+                                        "</thead>";
+                                $("#holiday-table").append(mydata);
+                                if(response.length<=0)
+                                {
+                                     mydata="<tr><td colspan='6' class='text-center bg-warning'>No Holiday in List</td></tr>";
+                                     $("#holiday-table").append(mydata); 
+                                }
+                                for(i=0;i<response.length;i++)
+                                {
+                                    mydata  =   "<tr><td>"+ (i+1) +"</td><td>"+response[i].holiday_year+"</td><td>" + 
+                                                                    response[i].holiday_name+"</td><td>"+
+                                                                    response[i].holiday_date+"</td><td>"+
+                                                                    response[i].holiday_type+"</td><td>"+
+                                                                    response[i].remark+"</td></tr>";
+
+                                    $("#holiday-table").append(mydata);  
+                                }
+                               
+                        }
+            });             
+                       
+     });
+
+ });
+
+
+
+
+    $(function () {
+        $(".js-create-holiday").click(function () {
+            alert("hello");
+            //return false;
+     });
+
+    });
+
+
+    $(function() {$("#datepicker" ).datepicker({
+                dateFormat:'dd-mm-yy',
+                yearRange:"2009:2099",
+              });
+});
+
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,56 @@
+<html>
+<head>
+
+<style>
+th{
+    padding: 5px;
+}
+td{
+
+    padding-top: 5px;
+    padding-left: 5px;
+}
+</style>
+</head>
+<body>
+
+<div align="center">
+    <table width="100%">
+    <tr>
+        <td align="left">I.S.O.-9002 <br>D.L.W. (Varanasi)</td>
+        <td align="right"> M-20</td>
+    </tr>
+    </table>
+    <h1 align="center">SUNDAY/HOLIDAY BOOKING OF WORKSHOP STAFF</h4>
+    <h1> Shop No : {{shop_sec}}</h1>
+    <h1 align="center">Particulars of Staff booked to work on Sunday/Holiday ({{lvdate}})</h4>
+
+    <table border="1">
+    <tr>
+        <th width="10%">S.No.</th>
+        <th width="40%">Name </th>
+        <th width="20%">Ticket No.  </th>
+        <th width="10%">Shift  </th>
+        <th width="20%">Date of leave to be given </th>
+    </tr>
+    {% for i in m2 %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td align="left"> {{i.name}}</td>
+            <td>{{i.ticketno}}</td>
+            <td>{{i.shift}}</td>
+            <td>{{i.alt_date}}</td>
+        </tr>
+    {% endfor %}
+    </table> 
+    <br>
+    <table width="100%">
+    <tr>
+        <td align="left">Date : ...................</td>
+        <td align="right">...................................<br>Shop Supdt.</td>
+    </tr>
+    </table>
+</div>
+
+</body>
+</html>
