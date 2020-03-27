@@ -1,5 +1,6 @@
 {% extends 'base.html' %} 
 {% block content %}
+{% load static %}
 <style>
     input[type=text],
     select {
@@ -53,44 +54,47 @@
 </style>
 <!-- <h1 align="center" style="background-color: darkslategrey;color:white;padding: 12px;">M1 - MASTER PROCESS SHEET</h1> -->
 <form action="{% url 'm1genrept1' %}" method="POST"> {% csrf_token %}
-  <div class="container">
+    <div class="container">
             <input type="hidden"  id="h1" name="h1" value="{{part}}">
-            <input type="hidden"  id="h2" name="h2" value="{{part}}">
-                        
-  
-                    
-                    <center><input type="submit" value="Proceed" name="proceed" id="proceed" style="display: none"/></center>
-</div>
+            <input type="hidden"  id="h2" name="h2" value="{{part}}">   
+            <input type="submit" value="Proceed" name="proceed" id="proceed" style="display: none"/>
+    </div>
 <br><br> 
-{% if sub == 1 %}
+
  <div class="container" style="width: 100%">
+    <div id="div4">
+        <center><img src="{% static 'dlw/images/loading.gif' %}" style="width:20%;height:20%;"></center>
+    </div>
     <div id="print"  style="align:center" >
   
 <br>
 <h5 style="float: left"><b>Date: </b>{{dt}}</h5>
-<center><h4><u><b>DIESEL LOCOMOTIVE WORKS, VARANASI</b></u></h4></center>
+<br>
+<center><h4><u><b style="margin-right: 100px;">DIESEL LOCOMOTIVE WORKS, VARANASI</b></u></h4></center>
 <center><h4><u><b>M1 CARD</b></u></h4></center>
 <center><h4><u><b>PROCESS-SHEET</b></u></h4></center>
 <br>
+
+{% if sub == 1 %}
 {% for i in obj1 %}
+<input type="hidden" id="hide1" name="hide1" value="{{prtno}}"> 
+<center>
 <table>
 <tr>
 <td><h5><b>PART NO:  </b>{{prtno}} </h5></td>
 <td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;DRG-NO.:  </b> {{i.drgno}}</h5></td>
 <td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;RM PART NO:  </b>{{rmpart}}</h5></td>
-</tr><tr></tr>
+</tr>
+<tr></tr>
 <tr>
-
 <td><h5><b>RM PART DES:  </b>{{rdes}}</h5></td>
 <td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;EPC: </b>{{epcv}}</h5></td>
 <td><h5><b>&nbsp;&nbsp;&nbsp;&nbsp;PTC: </b>{{ptcv}}</h5></td>
 </tr>
 </table>
-<table class="table table-stripped">
-<tr></tr>
+</center>
+<br><br>
 {% endfor %}
-</table>
-<table>
 <div class="table-responsive">
 <table class="table table-stripped">
 <tr><th rowspan="2">SHOP/SEC</th>
@@ -132,92 +136,38 @@
             <td><b>{{pttl}}</b></td><td><b>{{attl}}</b></td><td><b>{{attl}}(p/pc)</b></td>
         </tr>
     </table>
-
-<br><br>
-
-
-
 </div>
 
-<br>
-
-
-</div></table>
+<center>
+    <input type="submit" value="Back" name="backbutton" />
+    <input type="submit" value="Print" id="print1" name="print" hidden />
+    <input type="button" value="Print" onclick="printDiv()">
+</center>
 {% endif %}
 
-<center>
-    <input type="button" onclick="printDiv()" value="print">
-    <input type="submit" value="Back" name="backbutton"/>
-</center>
+
+{% if sub == '' %}
+<div id="div3">
+    <center><img src="{% static 'dlw/images/loading.gif' %}" style="width:20%;height:20%;"></center>
+</div>
+{% endif %}
+</div>
+</div>
 </form>
 <script type="text/javaScript">
 
 window.onload=function()
 {
-   if(document.getElementById('h2').value.length!='')
-        document.querySelector("#proceed").click();
-  
-    
+    $('#div4').hide();
+    if(document.getElementById('h2').value.length!='')
+        { 
+           document.querySelector("#proceed").click();
+        }
 }
-// function clickpr()
-// {
-//     console.log(document.getElementById('part_nop'));
-//     document.getElementById('proceed').click();    
-// }
-    // document.querySelector("#shop_sec").addEventListener('change',(e)=>{
-    //                   e.preventDefault();
-    //                   var shop_sec = $("#shop_sec").val()
-    //                   var data = {shop_sec};
-    //                     $.ajax({
-    //                       type : 'GET',
-    //                       url : "{% url 'm1getpano' %}",
-    //                       dataType : 'json',
-    //                       data : data,
-    //                       success : function(response){
-    //                         var elementsadded = document.querySelectorAll(".newelewono");
-    //                             if(elementsadded.length>0){
-    //                                 var elementsaddedarr = Array.from(elementsadded);
-    //                                 elementsaddedarr.forEach((el)=> el.remove());                                    
-    //                                 document.querySelector("#op_part").selected = true;                                   
-    //                              }
-    //                             var brarr,mystr,html;
-    //                             brarr = response.map((el)=>el.part_no);
-    //                             mystr = "";
-    //                             brarr.forEach((el,index)=>{
-    //                               html = `<option class="newelewono">${brarr[index]}</option>`
-    //                               mystr = html.concat(mystr);
-    //                             });
-    //                             html = "";
-    //                             document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
-    //                             mystr=""; 
-    //                       }
-    //                         })
-    //               })
-
 function printDiv() {
-    var printContents = document.getElementById("print").innerHTML;
-
-      var style = "<style>";
-       style = style + "table {width: 100%;font: 17px Calibri;}";
-       style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
-       style = style + "padding: 2px 3px;text-align: left;}";
-       style = style + "</style>";
-     var win = window.open('', '', 'height=500,width=500');
-
-       win.document.write('<html><head>');
-
-       win.document.write('<title>M1(INSPECION NOTE) Card</title>');
-       win.document.write(style);
-       win.document.write('</head>');
-       win.document.write('<body>');
-       win.document.write(printContents);
-       win.document.write('</body></html>');
-
-       win.print();
-       win.close();
-
-
-
+$('#print').hide();
+$('#div4').show();
+document.querySelector("#print1").click();
 }
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

@@ -1,0 +1,73 @@
+
+<style>
+    .tab {
+        text-align: center;
+        padding-top:2px;
+      }
+</style>
+
+<h5 style="float: left">Date: <i>{{dt}}</i></h5>
+<br>
+<center><h4><u><b style="margin-right: 100px; font-size: 15px;">DIESEL LOCOMOTIVE WORKS, VARANASI</b></u></h4></center>
+<center><h4><u><b style="font-size: 10px;">M1 CARD</b></u></h4></center>
+<center><h4><u><b style="font-size: 10px;">PROCESS-SHEET</b></u></h4></center>
+<br>
+{% if sub == 1 %}
+{% for i in obj1 %}
+
+<table >
+<tr valign="middle">
+<td ><h5><b>PART NO:  </b><td colspan="2">{{prtno}}</td> </h5></td>
+<td><h5><b>DRG-NO.:  </b><td> {{i.drgno}}</td></h5></td>
+<td><h5><b>RM PART NO:  </b><td>{{rmpart}}</td></h5></td>
+</tr>
+<tr>
+<td ><h5><b>RM PART DES:  </b><td colspan="2">{{rdes}}</td></h5></td>
+<td><h5><b>EPC: </b><td>{{epcv}}</td></h5></td>
+<td><h5><b>PTC: </b><td>{{ptcv}}</td></h5></td>
+</tr>
+</table>
+
+{% endfor %}
+
+<table border="1" class="tab">
+<tr><th colspan="2">SHOP/SEC</th>
+<th >OPR. NO.</th><th >L.C.</th><th  colspan="5">OPERATION DESCRIPTION</th>
+        <th colspan="2" >PA</th><th colspan="2">AT</th><th colspan="2">AT(p/pc)</th><th>LOT</th><th>NCP JBS </th><th>M5 CD</th><th>UPDT -DT</th></tr>
+        {% for i in dtl %}
+        <tr>
+            <td colspan="2">
+                {{i.shop_sec}}
+            </td>
+            <td>
+                {{i.opn}}
+            </td>
+            <input type="hidden" name="opn{{ forloop.counter }}" value="{{i.opn}}">
+            <td>
+                {{i.lc_no}}
+            </td>
+            <td colspan="5">
+                {{i.des}}
+            </td>
+            <td colspan="2">
+                {{i.pa}}
+            </td>
+            <td colspan="2">
+                {{i.at}}
+            </td>
+            <td colspan="2">{{i.at}}</td>
+            <td>{{i.lot}}</td>
+            <td>
+                {{i.ncp_jbs}}
+            </td>
+            <td>{{i.m5_cd}}</td>
+            <td>{{i.updt_dt}}</td>
+        </tr>
+        {% endfor %}
+        <tr rowspan="2">
+            
+            <td style="text-align: right" colspan="9"><b>TOTAL TIME(Hrs/Min):</b></td>
+            <td colspan="2">{{pttl}}</td><td colspan="2">{{attl}}</td><td colspan="2">{{attl}}(p/pc)</td>
+        </tr>
+    </table>
+{% endif %}

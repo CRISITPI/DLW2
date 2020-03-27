@@ -4896,16 +4896,13 @@ def m1genrept1(request):
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
         part_no = part_no
-        print("prtno",part_no)
         if submitvalue=='Proceed':
-            print("in report proceed")
             today = date.today()
             d1 = today.strftime("%d/%m/%Y")
             epcv=0
             ptcv=0
             rmpart=0
             obj=Part.objects.filter(partno=part_no).values('des','drgno','drg_alt','size_m','spec','weight','des').distinct()
-            print(obj)
             obj3=Nstr.objects.filter(pp_part=part_no).values('epc','ptc','cp_part').distinct()
             # print(obj3[0])
             if len(obj3):
@@ -4915,14 +4912,13 @@ def m1genrept1(request):
                 obj11=Part.objects.filter(partno=rmpart).values('des').distinct()
                 if len(obj11):
                     rdes=obj11[0]['des']
-            obj2 = Oprn.objects.filter(part_no=part_no).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('shop_sec','opn')
+            obj2 = Oprn.objects.filter(part_no=part_no).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('opn')
             patotal=0
             attotal=0
             if len(obj2):
                 for op in obj2:
                     patotal=patotal+op['pa']
                     attotal=attotal+op['at']
-            print("attotal",attotal)
             lst=str(patotal).split('.',1)
             h=int(lst[0])*100
             patotal=int(lst[1])+h
@@ -4932,9 +4928,7 @@ def m1genrept1(request):
             h=int(lst[0])*100
             attotal=int(lst[1])+h
             m=str(attotal % 60).zfill(2)
-            attotal=(str(int(attotal/60))+":"+m)
-            print(lst)
-          
+            attotal=(str(int(attotal/60))+":"+m)          
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -4959,7 +4953,6 @@ def m1genrept1(request):
                     'prtno':part_no,
                 }
             elif(len(rolelist)==1):
-                # print("in else")
                 for i in range(0,len(rolelist)):
                     req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
                     pa_no =pa_no | req
@@ -5001,17 +4994,113 @@ def m1genrept1(request):
                     'rdes':rdes,
                     'prtno':part_no,
                 }
-
+        printpdf = request.POST.get('print')
+        part_no = request.POST.get('hide1')
+        print("print:" , part_no)
+        if printpdf=='Print':
+            today = date.today()
+            d1 = today.strftime("%d/%m/%Y")
+            epcv=0
+            ptcv=0
+            rmpart=0
+            obj=Part.objects.filter(partno=part_no).values('des','drgno','drg_alt','size_m','spec','weight','des').distinct()
+            obj3=Nstr.objects.filter(pp_part=part_no).values('epc','ptc','cp_part').distinct()
+            rdes=''
+            if len(obj3):
+                epcv=obj3[0]['epc']
+                ptcv=obj3[0]['ptc']
+                rmpart=obj3[0]['cp_part']
+                obj11=Part.objects.filter(partno=rmpart).values('des').distinct()
+                if len(obj11):
+                    rdes=obj11[0]['des']
+            obj2 = Oprn.objects.filter(part_no=part_no).values('opn','shop_sec','lc_no','des','pa','at','ncp_jbs','lot','m5_cd','updt_dt').order_by('opn')
+            patotal=0
+            attotal=0
+            if len(obj2):
+                for op in obj2:
+                    patotal=patotal+op['pa']
+                    attotal=attotal+op['at']
+            lst=str(patotal).split('.',1)
+            h=int(lst[0])*100
+            patotal=int(lst[1])+h
+            m=str(patotal % 60).zfill(2)
+            patotal=(str(int(patotal/60))+":"+m)
+            lst=str(attotal).split('.',1)
+            h=int(lst[0])*100
+            attotal=int(lst[1])+h
+            m=str(attotal % 60).zfill(2)
+            attotal=(str(int(attotal/60))+":"+m)          
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'sub':1,
+                    'lenm' :2,
+                    'nav':nav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'subnav':subnav,
+                    'part_no': part_no,
+                    'obj1':obj,
+                    'dtl':obj2,
+                    'obj3':obj3,
+                    'pttl':patotal,
+                    'attl':attotal,
+                    'dt':d1,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'rdes':rdes,
+                    'prtno':part_no,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    req = Oprn.objects.all().filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    pa_no =pa_no | req
+                context = {
+                    'lenm' :len(rolelist),
+                    'pa_no':pa_no,
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'part_no': part_no,
+                    'obj1':obj,
+                    'dtl':obj2,
+                    'obj3':obj3,
+                    'pttl':patotal,
+                    'attl':attotal,
+                    'dt':d1,'sub': 1,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'rdes':rdes,
+                    'prtno':part_no,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'lenm' :len(rolelist),
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'sub': 1,
+                    'part_no': part_no,
+                    'obj1':obj,
+                    'dtl':obj2,
+                    'obj3':obj3,
+                    'pttl':patotal,
+                    'attl':attotal,
+                    'dt':d1,
+                    'epcv':epcv,'ptcv':ptcv,'rmpart':rmpart,
+                    'rdes':rdes,
+                    'prtno':part_no,
+                }
+            pdf = render_to_pdf('m1pdf.html', context)
+            return HttpResponse(pdf, content_type='application/pdf')
         bckbtn=request.POST.get('backbutton')
         if bckbtn=='Back':
             return render(request,"m1view.html",{})
     return render(request,"M1report.html",context)
-
-
-
-
-
-
 
 @login_required
 @role_required(urlpass='/m5newview/')
@@ -25712,15 +25801,15 @@ def implm14( _pn,  wt, _ep, dt, _epn, _lt):
 
 def makesetm14(tepc):
     date=datetime.datetime.now()
-    ds=list(Setmast.objects.filter((Q(valid_upto__isnull=True)|Q(valid_upto>=date)),epc=tepc,rec_ind__isnull=True).values('part_no','qty','set_part').order_by('epc','set_part','part_no'))
+    ds=list(Setmast.objects.filter((Q(valid_upto__isnull=True)|Q(valid_upto__gte=date)),epc=tepc,rec_ind__isnull=True).values('part_no','qty','set_part').order_by('epc','set_part','part_no'))
     dst=[]
     for i in range(len(ds)):
             setpart1 = ds[i]["set_part"]
             setqty1 = float(ds[i]["qty"])
-            dst = list(Setmast.objects.filter((Q(valid_upto__isnull=True)|Q(valid_upto>=date)),epc=tepc,rec_ind__isnull=True,set_part=setpart1).values('part_no','qty').order_by('epc','set_part','part_no'))
-            if (makesetonem14("check", dst, setpart1, setqty1) == true):
+            dst = list(Setmast.objects.filter((Q(valid_upto__isnull=True)|Q(valid_upto__gte=date)),epc=tepc,rec_ind__isnull=True,set_part=setpart1).values('part_no','qty').order_by('epc','set_part','part_no'))
+            if (print(makesetonem14("check", dst, setpart1, setqty1)) == True):
                 makesetonem14("update", dst, setpart1, setqty1)
-    return true
+    return True
 from django.db.models import F
 def makesetonem14( act, DTF, msetpart1, msetqty1):
     ret = True
@@ -25745,10 +25834,11 @@ def updtcodem14( nm, cdt, cd, fname):
     num1=int(num1[0]['num_1'])
     new_num = num1
     new_num = new_num + nm
+    print(num1,nm)
     if (new_num + nm > 899000):
-        Code.objects.filter(cd_type=cdt,code=cd).update(num_1=100001)         
+        Code.objects.filter(cd_type=cdt,code=cd).update(num_1=100001) 
+    old_num = list(Code.objects.filter(cd_type=cdt,code=cd).values('num_1').order_by('cd_type','code'))   
     Code.objects.filter(cd_type=cdt,code=cd).update(num_1=new_num)         
-    old_num = list(Code.objects.filter(cd_type=cdt,code=cd).values('num_1').order_by('cd_type','code'))
     if len(old_num)!=0:
         old_num=old_num[0]['num_1']
     else:
@@ -25759,7 +25849,8 @@ def updtcodem14( nm, cdt, cd, fname):
             m14to = new_num
         return  num1
     else:
-        updtcode(nm, cdt, cd,fname)
+        updtcodem14(nm, cdt, cd,fname)
+    print('num : ', num1)
     return num1
 ####################  end card gen function #####################
 

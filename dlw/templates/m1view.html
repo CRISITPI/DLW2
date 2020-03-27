@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% load static %}{% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 
@@ -45,6 +45,9 @@
       top: 100%;
       left: 0;
       right: 0;
+      max-height: 200px;
+      overflow-y: scroll; 
+      overflow-x: hidden;
     }
     
     .autocomplete-items div {
@@ -117,41 +120,28 @@
 <form action="{% url 'm1view' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <div  id="id1">
-                    <div class="form-row" >
-                        <div class="form-group col-md-4">
-                            <label for="shop_sec"><b>Shop Section NO/शॉप अधी.:</b></label>
-                          <div class="autocomplete" style="width:300px;">
-                          <input type="text" autocomplete="off" class="form-control" id="shop_sec" name="shop_sec" placeholder="shop_sec"  maxlength="4" onkeypress="return isNumberKeya(event)">
-                          
-                          <br><span id="lblErrora" style="color: red"></span> 
-                          
-                        </div></div>
-                        <div class="form-group col-md-4">
-                          <label  id="lblpart" style="color: cornflowerblue; margin-top: 50px;margin-left: -55px;"></label>
-                         
-                         
-                            
-                        </div>
-                        <div class="form-group col-md-4">
+                    <div class="form-row d-flex justify-content-center" style="margin-left: 20px;">
+                         <div class="form-group col-md-4">
                             <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
                           <div class="autocomplete" style="width:300px;">
-                          <input type="text" autocomplete="off" class="form-control" id="part_nop" name="part_nop" placeholder="part_nop"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
+                          <input type="text" autocomplete="off" class="form-control" id="part_nop" name="part_nop" placeholder="Enter Part Number"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
                           <br><span id="lblErrorb" style="color: red"></span> 
                         </div></div>
                       </div>
-                      <center><input type="button" value="Submit" name="proceed" id="btn" onclick="funb();"/></center>
-                    <center><input type="submit" value="Proceed" name="proceed" id="proceed" hidden/></center>
-                </div>
-
+                      <div class="d-flex justify-content-center" >
+                        <input type="button" value="Submit" name="proceed" id="btn" onclick="funb();"/>
+                  </div>
+                  <input type="submit" value="Proceed" name="proceed" id="proceed" hidden/>
+                  </div>
                 <input type="hidden"  id="h1" name="h1" value="{{part}}">
-            
-            
 </div>
+<input type="hidden" id="hide1" value="{{sub}}">
+<div id="id2">
 <br><br> {% if sub == 1 %}
     <input type="hidden" name="len" value="{{len}}">
     <table border="2" align="center">
         <tr>
-            <th>SHOP SECTION</th>
+            <!-- <th>SHOP SECTION</th> -->
             <th>Part NO</th>
             <th>RM PART NO</th>
             <th>EPC </th>
@@ -160,9 +150,9 @@
         </tr>
         <tr>
            
-            <td>{{shop_sec}}</td>
+            <!-- <td>{{shop_sec}}</td>
             <input type="hidden" name="shopsec" value="{{shop_sec}}">
-            
+             -->
             <td>{{part_no}}</td>
             <input type="hidden" name="partno" value="{{part_no}}">
             <td>{{rmpart}}</td>
@@ -212,158 +202,84 @@
     {% endfor %}
 </table>
 <br><br>
+
 <center>
+    <input type="submit" name="back" value="Back">
     <input type="submit" name="proceed" value="Generate Report">
 </center>
 <br><br> {% endif %}
-
+</div>
+<div id="id3">
+  <center><img src="{% static 'dlw/images/loading.gif' %}" style="width:20%;height:20%;"></center>
+</div>
 </form>
-
-
-
 <script type="text/javaScript">
-
-      var p_no1=[' ']  
-      var s_sec=[' ']   
-
-
-    document.querySelector("#part_nop").addEventListener('focus',(e)=>{
-    e.preventDefault();
-    var shop_sec=$('#shop_sec').val();
-    
-    var data={shop_sec};
-    $.ajax({
-    type : 'GET',
-    url : "{% url 'm5getshop_name' %}",
-    dataType : 'json',
-    data : data,
-
-    success : function(response)
-    {    
-     document.getElementById('lblpart').innerHTML=response[0].section_desc;
-      
-    }
-    
-    }); 
-                
- })
-
-
-
+var p_no1=[' ']  
 function funb()
 {
-
-  
-    var shop = $("#shop_sec").val();
     var part = $("#part_nop").val();
-    if ($("#shop_sec").val()=='')
-    { 
-        
-        
-        alert('Enter shop_sec');
-        $("#shop_sec").focus();
-    }
-    else
-    if(shop.length < '4'){
-        //document.getElementById('brn_no').focus();
-        $("#shop_sec").focus();
-        alert("shop_sec must be 4 character.");
-    }
-    else
+    
     if ($("#part_nop").val()=='')
-    { 
-        
-        
+    {  
         alert('Enter part no');
         $("#part_nop").focus();
     }
     else
     if(part.length < '8'){
-        //document.getElementById('brn_no').focus();
-        $("#part_nop").focus();
         alert("part_nop must be  8 character.");
+        $("#part_nop").focus();
     }
     else
     {
         $('#id1').hide();
+        $('#id3').show();
         document.querySelector("#proceed").click();
     }
-}
-
-
-function isNumberKeya(evt) {
-    var lblErrora = document.getElementById("lblErrora");
-        lblErrora.innerHTML = "";
-
-var charCode = (evt.which) ? evt.which : evt.keyCode;
-if (charCode > 31 && (charCode < 48 || charCode > 57))
-{
-    lblErrora.innerHTML = "Only Numbers allowed.";
-    return false;
-} 
-
-return true;
-
-
 }
 function isNumberKeyb(evt) {
     var lblErrorb = document.getElementById("lblErrorb");
         lblErrorb.innerHTML = "";
-
 var charCode = (evt.which) ? evt.which : evt.keyCode;
 if (charCode > 31 && (charCode < 48 || charCode > 57))
 {
     lblErrorb.innerHTML = "Only Numbers allowed.";
     return false;
 } 
-
 return true;
-
-}
-
-function clickpr()
-{
-    document.getElementById('proceed').click();    
 }
 window.onload=function()
 {
+  if (document.getElementById('hide1').value==0)
+  {
     var data = {};
-                        $.ajax({
-                          type : 'GET',
-                          url : "{% url 'm1getshopsec' %}",
-                          dataType : 'json',
-                          data : data,
-                          success : function(response){
-                            
-                            for(i=0;i<response.length;i++)
-                           {
-                             s_sec.push((response[i].section_code).toString());
-                           }
-                            
-                          }
-                            })
-
-                            
+    $('#id3').hide();
+    $('#part_nop').focus();
                         $.ajax({
                           type : 'GET',
                           url : "{% url 'm1getpano' %}",
                           dataType : 'json',
                           data : data,
                           success : function(response){
-                            
                             for(i=0;i<response.length;i++)
                            {
                              p_no1.push((response[i].part_no).toString());
-                             
                            }
-                            
                           }
                             })
-                            
+                          }
+                          else{
+                            $('#id1').hide();
+                            $('#id3').hide();
+                          }
  }
-                 
-      
-                 
+var abc=[]
+part_nop.addEventListener("keyup", (e) => {
+  // If input value is longer or equal than 2 chars, adding "users" on ID attribute.
+  if (e.target.value.length == 2) {
+      abc=p_no1;
+      autocomplete(document.getElementById("part_nop"), abc);
+  } 
+});               
      function autocomplete(inp, arr) {
       /*the autocomplete function takes two arguments,
       the text field element and an array of possible autocompleted values:*/
@@ -460,17 +376,6 @@ window.onload=function()
           closeAllLists(e.target);
       });
     }
-    
-    
-   
-    
     /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
-    autocomplete(document.getElementById("shop_sec"), s_sec);
-    autocomplete(document.getElementById("part_nop"), p_no1);
-    
-   
-      
-      
       </script>
-      
 {% endblock content %}
