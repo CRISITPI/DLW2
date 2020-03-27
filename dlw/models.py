@@ -3466,8 +3466,7 @@ class PinionPressing(models.Model):
     axle_no=models.CharField(max_length=20,null=True)
     inspect_date=models.CharField(max_length=20,null=True)
 
-    
-class dpo(models.Model):
+class Dpo(models.Model):
     procedureno=models.CharField(max_length=50,null=True,default='0')
     locotype=models.CharField(max_length=50,null=True)
     orderno=models.CharField(max_length=10,null=True)
@@ -3476,6 +3475,7 @@ class dpo(models.Model):
     copyto=models.TextField(null=True)
     summary=models.TextField(null=True)
     date=models.CharField(null=True,max_length=20)
+
 
 class dpoloco(models.Model):
     procedureno=models.CharField(max_length=50,null=True,default='0')
