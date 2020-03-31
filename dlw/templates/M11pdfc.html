@@ -1,0 +1,102 @@
+<html>
+<head>
+
+<style>
+th{
+    padding: 5px;
+}
+td{
+
+    padding-top: 5px;
+    padding-left: 5px;
+}
+</style>
+</head>
+<body>
+
+<div align="center">
+    <table width="100%">
+    <!-- <tr>
+        <td align="left">I.S.O.-9002 <br>D.L.W. (Varanasi)</td>
+        <td align="right"> M-11</td>
+    </tr> -->
+    <br><br>
+    <br><br>
+    <h1 align="center"><b>  M11 CARD</b></h1>
+    <h1 align="center" ><b>MAN IDLE TIME CARD</b></h1>
+    <br><br>
+    <table align="center">  
+        <tr>
+            <th><b>SHOP SECTION :</b></th> 
+            <td><u>{{shop_sec}}</u></td>
+            <input type="hidden" name="shopsec" value="{{shop_sec}}">
+            <th><b>MONTH :</b></th> 
+            <td><u>{{month}}</u></td>
+        </tr>
+        
+        <tr>
+            <th><b>WORK ORDER NO :</b></th> 
+            <td><u>{{wo_no}}</u></td>
+            <th><b>STAFF NO :</b></th> 
+            <td><u>{{staff_no}}</u></td>
+       </tr>
+        
+        <tr>
+            <th><b>EMPLOYEE NAME :</b></th> 
+            <td><u>{{empname}}</u></td>
+            <th><b>CATEGORY NUMBER :</b></th>
+            <td><u>{{tcat}}<u></td>
+    
+        </tr>
+        <tr>
+            <th><b>TOTAL NO OF HOURS :</b></th> 
+            <td><u>{{r1}}</u></td>
+            <th><b>AMOUNT :</b></th>
+            <td><u>{{amt1}}</u></td>
+        </tr> 
+        </div>
+    </table> 
+<br><br>
+    <div class="container" align="center">          
+<table border="1"  id="customers" >
+    <tr> 
+    <th> S.NO </th>
+    <!-- <th>MONTH</th> -->
+    <th>SHIFT</th>
+    <th>IN DATE</th>
+    <th>IN TIME</th>
+    <th>OUT DATE</th> 
+    <th>OUT TIME</th>
+    <th>TOTAL TIME</th>
+    <th width="17%">DETAILS</th>
+    <th>IDLE TIME</th>
+    </tr>
+            {% for i in obj1 %}
+            <tr>
+            <td>{{i.id}}</td>
+            <!-- <td>{{i.month}}</td> -->
+            <td>{{i.shift}}</td>
+            <td>{{i.in_date}}</td>
+			<td>{{i.in1}}</td>
+            <td>{{i.out_date}}</td>
+            <td>{{i.out}}</td>
+			<td>{{i.total_time}}</td> 
+			<td>{{i.detail_no}}</td>
+			<td>{{i.idle_time}}</td> 
+            </tr>
+            {% endfor %}
+          
+        
+</table></div> 
+</div>
+    <br>
+    <table width="100%">
+    <tr>
+        <td align="left">Date : ...................</td>
+        <td align="right">...................................<br>Shop Supdt.</td>
+    </tr>
+    </table>
+</div>
+
+</body>
+</html>

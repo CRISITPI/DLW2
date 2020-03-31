@@ -1,0 +1,458 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+<style>
+  #formbody{
+padding: 10px;
+  }
+  @media (min-width: 576px){ 
+.modal-dialog {
+    max-width: 700px;
+    margin: 1.75rem auto;
+}}
+.modal-header {
+  padding:5px 10px ;}
+  
+  
+  .table td, .table th {
+    padding: .5rem;
+  }
+</style>
+<div class="container">
+  <br>
+      <div class="row">       
+        <div class="col-md-4 text-center">    
+          
+        </div>
+         <div class="col-md-4 text-center"> 
+          <h2>Sick Certificate</h2>
+        </div>
+
+        <div class="col-md-4 text-center"> 
+         
+           {% if messages %}       
+          {% for message in messages %}
+          
+              <div class="alert alert-success" role="alert">
+              
+                  <strong>Successfully done!,</strong> Enter new record
+                </div> 
+                {% endfor %}
+ 
+                {% endif %}
+                <a href="/sickcetificate/" class="btn btn-primary"> Back </a>   
+                &nbsp; &nbsp;<a href="#" class="btn btn-primary" onclick="show()"> View Data</a>
+        
+          
+        </div>
+        
+       </div> 
+     
+    <form id="formbody" action=" {% url 'sickcetificate' %}" method="POST" >
+      {% csrf_token %} 
+        <div class="row">
+         
+        <div class="form-group col-md-4">
+          <label for="update">Date:</label>
+          <input type="text" class="form-control" name="update"   id="update" readonly>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="pwd">Record No:</label>
+          <input type="text" class="form-control" name="recordno"  value="{{rno}}" id="recordno" readonly>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="Name"> Employee id:</label>
+          <select  name="employeeno" class="form-control" id="employeeno"    required>
+            <option  value="" selected disabled hidden>Select Employee id </option>
+            {% for role in roles %}          
+            <option dept_desc="{{role.dept_desc}}" name="{{role.empname}}" des="{{role.desig_longdesc}}">{{role.empno}}</option>
+      
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="Name"> Employee Name:</label>
+          <input type="text"  name="employeename" class="form-control" id="employeename"     readonly />
+            
+        </div>
+
+       
+      <div class="form-group col-md-4">
+        <label for="Name"> Employee Designation :</label>
+        <input type="text"  name="empdesignation" class="form-control"      id="empdesignation" readonly >
+      </div>
+      <div class="form-group col-md-4">
+        <label for="Name">Employee  Department:</label>
+        <input type="text"  name="empdepartment" class="form-control"     id="empdepartment" readonly>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label for="Name"> Station Employed :</label>
+        <select  name="stationempno" class="form-control"   id="stationempno" required>
+          <option> DLW  </option>
+          <option> Patna  </option>
+          <option> Delhi  </option>
+          <option> Mumbai  </option> 
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label for="Name">Suffing from (disease):</label>
+        <input type="text"  name="suffingfrom" class="form-control"     id="suffingfrom" required>
+      </div>
+
+
+      
+      
+      
+      <div class="form-group col-md-4">
+        <label for="Name">Unfit to perform duties no of days:</label>
+        <input type="number"  name="dutyfordays" class="form-control"    id="dutyfordays" required>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="Name"> With effect from date:</label>
+        <input type="text" name="effectdate" class="form-control date"     id="effectdate" required>
+      </div>
+      
+       <div class="form-group col-md-4">
+        <label for="email">  Doctor Employee id:</label>         
+        <select  name="doctorid" class="form-control"     id="doctorid" required>
+          <option  value="" selected disabled hidden>Select Doctor id </option>
+          {% for role in doctor %}          
+          <option dept_desc="{{role.dept_desc}}" name="{{role.empname}}" des="{{role.desig_longdesc}}">{{role.empno}}</option>
+     
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label for="Name"> Doctor Name:</label>
+        <input type="text"  name="doctorname" class="form-control"    id="doctorname"   readonly />
+          
+      </div>
+
+     
+    <div class="form-group col-md-4">
+      <label for="Name"> Doctor Designation :</label>
+      <input type="text"  name="doctordesignation" class="form-control"    id="doctordesignation" readonly >
+    </div>
+
+     
+
+      <!-- <div class="form-group col-md-4">
+        <label for="certify">I hereby  certify that:</label>
+        <input type="text" name="certifythat" class="form-control"    id="certifythat" required>
+      </div> -->
+
+       
+      <div class="form-group col-md-12 text-center">
+        
+
+      <input  type="submit"  name="proceed" id="submit" class="btn btn-primary" value="Submit"/>
+    </div>
+
+    </div>
+    
+  </form>
+    
+    
+    
+  <div class="row" id="datatable"> 
+      
+  <div class="col-md-12">
+    <br>
+      <table class="table table-responsive text-center">
+         <thead>
+           <tr> 
+             <th>Update </th>
+              <th>Record No</th>
+              <th>Employee No</th> 
+              <th>Doctor id</th>
+              <th>Station Employed </th>
+              <th>Suffing from </th> 
+              <th>Effect date</th>
+              <th>Duty days </th>
+              <th>Action</th>
+              
+            </tr>
+         </thead>
+         <tbody>
+         {% for i in obj %}
+          <tr>
+          <td>{{i.update}}</td>
+          <td>{{i.recordno}}</td>
+          <td>{{i.empno}} </td> 
+          <td>{{i.doctorid}}</td>
+          <td>{{i.stationempno}}</td>
+          <td>{{i.suffingfrom}} </td> 
+          <td>{{i.effectdate}}</td>
+          <td>{{i.dutyfordays}} </td>
+  
+          <td> 
+          <a href="#"  class="btn btn-primary" onclick="recono('{{i.recordno}}')"> Edit </a> 
+          &nbsp;  <a href="#"  class="btn btn-primary"  onclick="show_data('{{i.recordno}}')" > View</a> </td> 
+          
+          </tr>
+          {% endfor %}
+         </tbody> 
+      </table>
+  
+  </div>
+  </div> 
+   
+  
+<!-- Modal --> 
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">     
+        <button type="button" class="btn btn-primary" onclick="createPDF()">Print</button>
+         <button type="button" class="close" onclick="popclose()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id='printdata'>
+          <div class="row">  
+            <div class="col-md-4 text-left"> D.L.W/N.E.Rly</div>
+            <div class="col-md-4 text-center"><h5> <strong> Sick Cetificate </strong> </h5> </div>
+             <div class="col-md-4 text-right">Med.1 </div>
+          </div>
+
+        <div class="row"> 
+        <div class="col-md-12">
+          <br>
+          <h6>Signature of applicante --------------------------------------------------</h6>
+        </div>
+        <div class="col-md-6">
+          <h6>Hospital</h6>
+          <h6>Dispensary</h6>
+        </div>
+        <div class="col-md-6 text-right">
+          <h6>No: &nbsp;<strong id="recordno1"> </strong></h6>
+          
+        </div> 
+
+        </div>
+
+        <div class="row"> 
+
+         <div class="col-md-12">   
+           <h6>I hereby certify that<br>    
+             
+            <h6>Name : &nbsp; &nbsp;<strong id="empname1"> </strong></h6> 
+          </div>  
+          <div class="col-md-12">   
+            <h6>Designation: &nbsp; &nbsp; <strong id="empdesignation1"> </strong></h6> 
+          </div> 
+          <div class="col-md-12">   
+            <h6>Brach of Department: &nbsp; &nbsp; <strong id="empdepartment1"> </strong></h6> 
+          </div> 
+          <div class="col-md-12">   
+            <h6>Station where Employed<br>is sick and unfit for duty : &nbsp; &nbsp; <strong id="stationempno1"> </strong>  </h6> 
+          </div>
+          <div class="col-md-12">   
+            <h6>He is suffing from (disease) : &nbsp; &nbsp; <strong id="suffingfrom1"> </strong></h6> 
+          </div>
+          <div class="col-md-12">   
+            <h6>He is likely to be Unfit to perform his duties for <strong id="dutyfordays1"> </strong> days with effect from date <strong id="effectdate1"> </strong> </h6> 
+          </div>
+           
+        </div>
+          
+        <div class="row">
+          <div class="col-md-6"><br>
+            <h6> Date <strong id="update1"> </strong>
+                </h6>
+          </div>
+          <div class="col-md-6 text-right">
+            <br>
+            <h6> Name <strong id="doctorname1">-----------------</strong> </h6>
+            <h6> Designation <strong id="doctordesignation1"> </strong></h6>
+            <br>
+             <h6>  Signature of railway Doctor </h6>
+            
+            </div> 
+        
+      <div class="col-md-12">        
+        <p> * Strike out if inapplicable <br>
+          <strong>Note</strong> No recommendation Contained in this Certificate shall be evidence of a claim to any leave not admissible to the railway servant under the terms of his contact or to the rules to which he is subject. </p>
+      </div>
+ 
+      </div>
+       
+    </div>
+  </div>
+
+
+
+  </div>
+  
+
+</div>
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script> 
+
+  <script>
+    $(document).ready(function () {
+      let current_datetime = new Date()
+      let formatted_date = current_datetime.getDate() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getFullYear()
+      
+      $('#update').val(formatted_date)
+       $('.date').datepicker({dateFormat: 'dd-mm-yy',maxDate: 0});
+ 
+      //alert('{{sub}}')
+      if ('{{sub}}'== 0){
+        $('#formbody').show();
+        $('#datatable').hide();
+      }else{
+        $('#formbody').hide();
+        $('#datatable').show();
+      }
+    });
+
+    setTimeout(function(){ $(".alert").hide(); }, 3000); 
+    
+    
+
+
+  function  show(){
+    $('#formbody').hide();
+        $('#datatable').show();
+  }
+function popclose(){
+  $('.modal').css("display", "none");
+}
+
+function show_data(recno){
+  $('#formbody').hide();
+  $('#datatable').show();
+   
+   //  alert(recno)
+    var data = {recno};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'sickcetificate_edit' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+      console.log(response);      
+      $("#update1").text(response.data.update) 
+      $("#recordno1").text(response.data.recordno) 
+      $("#employeeno1").text(response.data.empno) 
+      $("#doctorid1").text(response.data.doctorid)
+      $("#doctorname1").text(response.data.doctorname)
+      $("#doctordesignation1").text(response.data.doctordesignation)
+      $("#empname1").text(response.data.empname) 
+      $("#empdesignation1").text(response.data.empdesignation) 
+      $("#empdepartment1").text(response.data.empdepartment) 
+      $("#stationempno1").text(response.data.stationempno) 
+      $("#suffingfrom1").text(response.data.suffingfrom) 
+      $("#dutyfordays1").text(response.data.dutyfordays) 
+      $("#effectdate1").text(response.data.effectdate) 
+      
+      }   
+  })
+  
+ 
+  $('.modal').css("display", "block");
+}
+
+   function recono(recno){
+    $('#datatable').hide();
+    $('#formbody').show();
+    var data = {recno};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'sickcetificate_edit' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+      console.log(response);      
+      $("#update").val(response.data.update) 
+      $("#recordno").val(response.data.recordno) 
+      $("#employeeno").val(response.data.empno) 
+      $("#doctorid").val(response.data.doctorid)
+      $("#doctorname").val(response.data.doctorname)
+      $("#doctordesignation").val(response.data.doctordesignation)
+      $("#employeename").val(response.data.empname) 
+      $("#empdesignation").val(response.data.empdesignation) 
+      $("#empdepartment").val(response.data.empdepartment) 
+      $("#stationempno").val(response.data.stationempno) 
+      $("#suffingfrom").val(response.data.suffingfrom) 
+      $("#dutyfordays").val(response.data.dutyfordays) 
+      $("#effectdate").val(response.data.effectdate) 
+      
+      //$("#submit").val('Update')  
+      
+           }
+        
+      })
+                        
+
+
+
+     
+  } 
+
+ 
+
+
+
+$("#employeeno").change(function() {  
+ 
+ var name = $('#employeeno option:selected').attr('name');    
+ var des = $('#employeeno option:selected').attr('des'); 
+ var dept_desc = $('#employeeno option:selected').attr('dept_desc');  
+   $("#employeename").val(name);
+   $("#empdesignation").val(des);
+   $("#empdepartment").val(dept_desc);
+   
+ })
+  
+$("#doctorid").change(function() {  
+ 
+ var name = $('#doctorid option:selected').attr('name');    
+ var des = $('#doctorid option:selected').attr('des');   
+ 
+   $("#doctorname").val(name);
+   $("#doctordesignation").val(des);
+   
+   
+ })
+ 
+
+ 
+ var form = $('#printdata'),  
+         cache_width = form.width(), 
+         a4 = [595.28, 841.89]; 
+  //create pdf  
+  function createPDF() {  
+    $('modal-body').scrollTop(0)
+          // for a4 size paper width and height   
+            getCanvas().then(function (canvas) {  
+                var  
+                 img = canvas.toDataURL("image/png"),  
+                 doc = new jsPDF({  
+                     unit: 'px',  
+                     format: 'a4'  
+                 });  
+                doc.addImage(img, 'JPEG', 20, 20);  
+                doc.save('Sickcertificate.pdf');  
+                //form.width(cache_width);  
+            });  
+        }  
+  
+        // create canvas object  
+        function getCanvas() {  
+            //form.width((a4[0] * 1.33333) - 80).css('max-width', 'none');  
+            return html2canvas(form, {  
+                imageTimeout: 2000,  
+                removeContainer: true  
+            });  
+        } 
+ 
+ 
+
+  </script>
+<br>
+{% endblock content %}

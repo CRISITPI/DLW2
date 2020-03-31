@@ -72,11 +72,12 @@
         text-align: center;
     }
 </style>
-<br>
-<br>
-<h1 align="center" >कर्मचारी निष्कर्य समय कार्ड</h1>
-<h1 align="center" >MAN IDLE TIME CARD</h1>
-<br><br>
+    <br>
+    <h4 align="center">  M11 CARD</h4>
+    <h4 align="center" >कर्मचारी निष्कर्य समय कार्ड</h4>
+    <h4 align="center" >MAN IDLE TIME CARD</h4>
+    <br><br>
+ 
 <form action="{% url 'm11report' %}" method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
@@ -99,20 +100,20 @@
                 <tr>
                         <td>
                             <label for="month"><b>Month/माह :</b></label>
-                            <select id="month" name="monthdrop" class="from-control ll" required>
+                            <select id="month" name="monthdrop" class="from-control ll" >
                                     <option value="">SELECT MONTH</option>
-                                    <option value="JAN">JAN</option>
-                                    <option value="FEB">FEB</option>
-                                    <option value="MAR">MAR</option>
-                                    <option value="APR">APR</option>
-                                    <option value="MAY">MAY</option>
-                                    <option value="JUN">JUN</option>
-                                    <option value="JUL">JUL</option>
-                                    <option value="AUG">AUG</option>
-                                    <option value="SEPT">SEPT</option>
-                                    <option value="OCT">OCT</option>
-                                    <option value="NOV">NOV</option>
-                                    <option value="DEC">DEC</option>
+                                    <option value="JAN-2020">JAN-2020</option>
+                                    <option value="FEB-2020">FEB-2020</option>
+                                    <option value="MAR-2020">MAR-2020</option>
+                                    <option value="APR-2020">APR-2020</option>
+                                    <option value="MAY-2020">MAY-2020</option>
+                                    <option value="JUN-2020">JUN-2020</option>
+                                    <option value="JUL-2020">JUL-2020</option>
+                                    <option value="AUG-2020">AUG-2020</option>
+                                    <option value="SEPT-2020">SEPT-2020</option>
+                                    <option value="OCT-2020">OCT-2020</option>
+                                    <option value="NOV-2020">NOV-2020</option>
+                                    <option value="DEC-2020">DEC-2020</option>
                             </select>
                         </td>
                         <td>
@@ -156,109 +157,121 @@
     </div>
 <br><br> 
 {% if sub == 1 %}
+
 <div id="print" style="align:center" >
-<table align="center">  
-    <tr>
-        <th>SHOP SECTION/शाप विभाग:</th> 
-        <td><u>{{shop_sec}}</u></td>
-        <input type="hidden" name="shopsec" value="{{shop_sec}}">
-        <th>MONTH/माह:</th> 
-        <td><u>{{month}}</u></td>
-        <input type="hidden" name="month" id="fmonth" value="{{month}}">
-    </tr>
-    
-    <tr>
-        <th>WORK ORDER NO/का.सं.:</th> 
-        <td><u>{{wo_no}}</u></td>
-        <input type="hidden" name="wo_no" value="{{wo_no}}">
-
-    </tr>
-    <tr>
-        <th>STAFF NO/क्रम सं.:</th> 
-        <td><u>{{staff_no}}</u></td>
-        <input type="hidden" name="staff_no" value="{{staff_no}}">
-    </tr>
-    <tr>
-        <th>Employee Name/कर्मचारी नाम</th> 
-        <td><u>{{empname}}</u></td>
-        <input type="hidden" name="empname" value="{{empname}}">
-
-    </tr>
-    <tr>
-        <th>CAT/कोटि सं:</th>
-        <td>{{tcat}}</td>
-        <input type="hidden" name="tcat" value="{{tcat}}">
-    </tr>
-
-    <tr>
-        <th>TOTAL NO OF HOURS /कुल घंटे:</th> 
-        <td><u>{{r1}}</u></td>
-    </tr>
-    <tr>
-        <th>AMT/धनराशि :</th>
-        <td><u>{{amt1}}</u></td>
+    <table align="center">  
+        <tr>
+            <th>SHOP SECTION/शाप विभाग:</th> 
+            <td><u>{{shop_sec}}</u></td>
+            <input type="hidden" name="shopsec" value="{{shop_sec}}">
+            <th>MONTH/माह:</th> 
+            <td><u>{{month}}</u></td>
+            <input type="hidden" name="month" id="fmonth" value="{{month}}">
+        </tr>
         
-        <input type="hidden" name="amt" value="{{amt1}}">
-    </tr>  
-       
-    </div>
-</table>
+        <tr>
+            <th>WORK ORDER NO/का.सं.:</th> 
+            <td><u>{{wo_no}}</u></td>
+            <input type="hidden" name="wo_no" value="{{wo_no}}">
+            <th>STAFF NO/क्रम सं.:</th> 
+            <td><u>{{staff_no}}</u></td>
+            <input type="hidden" name="staff_no" value="{{staff_no}}">
+    
+        </tr>
+        
+        <tr>
+            <th>Employee Name/कर्मचारी नाम</th> 
+            <td><u>{{empname}}</u></td>
+            <input type="hidden" name="empname" value="{{empname}}">
+            <th>CAT/कोटि सं:</th>
+            <td>{{tcat}}</td>
+            <input type="hidden" name="tcat" value="{{tcat}}">
+    
+        </tr>
+        <tr>
+            <th>TOTAL NO OF HOURS /कुल घंटे:</th> 
+            <td><u>{{r1}}</u></td>
+            <th>AMT/धनराशि :</th>
+            <td><u>{{amt1}}</u></td>
+            <input type="hidden" name="amt" value="{{amt1}}">
+        </tr> 
+        </div>
+    </table> 
 <br><br>
 <div class="container" align="center">          
-<table border="4" align="center" id="customers">
-    <tr>
-        
-        <th>DATE</th>
-        <th>MONTH</th>
-        <th>IN</th>
-        <th>OUT</th>
-        <th>TOTAL TIME</th>
-        <th>DETAIL NO.</th>
-        <th>IDLE TIME</th>
+<table border="1"  id="customers" style="width: 100%" >
+    <tr> 
+    <th style="width: 10%;"> S.NO </th>
+    <!-- <th style="width: 12%;">MONTH</th> -->
+    <th style="width: 10%;">SHIFT</th>
+    <th style="width: 14%;">IN  DATE</th>
+    <th style="width: 10%;">IN TIME</th>
+    <th style="width: 14%;" >OUT DATE</th> 
+    <th style="width: 10%;">OUT TIME</th>
+    <th style="width: 10%;">TOTAL TIME</th>
+    <th style="width: 13%;">DETAILS</th>
+    <th>IDLE TIME</th>
     </tr>
             {% for i in obj1 %}
             <tr>
             <td>
-                {% if i.date %}
-                <input type="text" id="date"  class="myinp2" value="{{i.date}}" name="date{{ forloop.counter }}" readonly/>         <!-- value="date" name="date"  -->
+                {% if i.id %}
+                <input type="text" id="id"  class="myinp2" value="{{i.id}}"  readonly/>         <!-- value="date" name="date"  -->
+                {% endif %}
+            </td>
+            <!-- <td>
+                {% if i.month %}
+                <input type="text" value="{{i.month}}" name="month{{ forloop.counter }}" readonly/>
+                {% endif %}  
+            </td> -->
+            <td>
+                {% if i.shift %}
+                <input type="text" value="{{i.shift}}" name="shift{{ forloop.counter }}" readonly/>
+                {% endif %}  
+            </td>
+            <td>
+                {% if i.in_date %}
+                <input type="text" id="in_date"  class="myinp2" value="{{i.in_date}}" name="in_date{{ forloop.counter }}" readonly/>         <!-- value="date" name="date"  -->
                 {% endif %}
             </td>
 
-             <td>
-                {% if i.month %}
-                <input type="text" value="{{i.month}}" name="month{{ forloop.counter }}"/>
-                {% endif %}  
-            </td>
+             
             
             <td>
                 {% if i.in1 %}
-                <input type="text" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}"/>
+                <input type="text" id="in1{{ forloop.counter }}"  class="myinps1" value="{{i.in1}}" name="in1{{ forloop.counter }}" readonly/>
                 {% endif %}  
              </td>
+             <td>
+                {% if i.out_date %}
+                <input type="text" id="out_date"  class="myinp2" value="{{i.out_date}}" name="out_date{{ forloop.counter }}" readonly/>         <!-- value="date" name="date"  -->
+                {% endif %}
+            </td>
              
             <td>
                 {% if i.out %}
-                <input type="text" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}" onchange=tottime('out{{ forloop.counter }}') >
+                <input type="text" id="out{{ forloop.counter }}"  class="myinps1" value="{{i.out}}" name="out{{ forloop.counter }}"  readonly>
                {% endif %}
             </td>
 
             <td>
                 {% if i.total_time %}
-                <input type="text" id="total_time{{ forloop.counter }}"   value="{{i.total_time}}" name="total_time{{ forloop.counter }}"  >
+                <input type="text" id="total_time{{ forloop.counter }}"   value="{{i.total_time}}" name="total_time{{ forloop.counter }}"  readonly>
                 {% endif %}  
             </td> 
 
             <td>
             {% if i.detail_no %}
-            <textarea class="form-control" rows="1" wrap="soft" style="overflow:hidden; resize:none;width:200px;">{{i.detail_no}}</textarea>
+            <textarea class="form-control" rows="1" wrap="soft" style="overflow:hidden; resize:none;" readonly>{{i.detail_no}}</textarea>
                 
             {% endif %}
             </td>
 
             <td>
                 {% if i.idle_time %}
-                <input type="text" class="myinps1" value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}" style="width:100px;"/>
+                <input type="text" class="myinps1" value="{{i.idle_time}}" name="idle_time{{ forloop.counter }}" style="width:100px;" readonly/>
                 {% endif %}  
+                <tr></tr>
             {% endfor %}
           
         
@@ -267,6 +280,7 @@
 
 <center>
     <input type="button" onclick="printDiv()" value="Print">
+    <input type="submit" value="PrintPDF" name="proceed" id="printPDF" />
 </center>
 {% endif %} 
 <div id="items">

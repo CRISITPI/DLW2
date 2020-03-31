@@ -7607,24 +7607,26 @@ def m22view(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
+
     if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
+        tm=shop_section.objects.all().order_by('section_code')
         tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
+        # for on in tm:
+            # tmp.append(on.section_code)
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
             'subnav':subnav,
             'ip':get_client_ip(request),
-            'roles':tmp
+            'roles':tm
         }
+        print(1)
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
             # wo_nop =wo_nop | req
-
+            print(2)
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
             wo_nop = wo_nop | req
@@ -7649,6 +7651,7 @@ def m22view(request):
             'usermaster':usermaster,
             'roles' :rolelist
         }
+        print(3)
     if request.method == "POST":
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
@@ -7731,7 +7734,7 @@ def m22view(request):
                   for i in range(0,len(rolelist)):
                         # req = M2Doc.objects.all().filter(f_shopsec=rolelist[i]).values('batch_no').distinct()
                         # wo_nop =wo_nop | req
-
+                        
                         w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
                         req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
                         wo_nop = wo_nop | req
@@ -7760,6 +7763,7 @@ def m22view(request):
                         'datel': datel,
                         'subnav':subnav
                   }
+                  print(4)
             elif(len(rolelist)>1):
                   context = {
                         'lenm' :len(rolelist),
@@ -7785,32 +7789,19 @@ def m22view(request):
                         'month': month,
                         'subnav':subnav
                   }
-        if submitvalue=='Save':
-            leng=request.POST.get('mt1')
-            # leng1=request.POST.get('mt2')
-            # print('hd1 = ',request.POST.get('hd1'))
-            # print(leng1)
-            # datelw = request.POST.get('datelw')
-            # datecc = request.POST.get('datecc')
-            # daterw = request.POST.get('daterw')
-            # briefdd = request.POST.get('briefdd')
-            
-            # print(month)
-            # print(shop_sec)
-            # print(wo_no)
-            # print(wo_no1)
-            # print(staff_no)
-            # print(datelw)
-            # print(datecc)
-            # print(daterw)
-            # print(briefdd)
-            # print(staff_no)
+                  print(5)
+        if submitvalue=='Save':             
+            print('date ---',request.POST.get('datelw'))
+            print('h1---',request.POST.get('hd1'))
             obj = M22(
-             shop_sec=request.POST.get('shop__sec'),
-             staff_no= request.POST.get('staff__no'), 
-             month=request.POST.get('month'), 
-             wo_no=request.POST.get('wo__no'),
-             wo_no1=request.POST.get('wo__no1'),
+             update=request.POST.get('update_date'),
+             letter_no=request.POST.get('letterno'),
+             subject=request.POST.get('subject'),
+             shop_sec=request.POST.get('shop_sec'),
+             staff_no= request.POST.get('staff_no'), 
+             month=request.POST.get('mon'), 
+             wo_no=request.POST.get('wo_no'),
+             wo_no1=request.POST.get('wo_no1'),
              datelw = request.POST.get('datelw'),
              datecc = request.POST.get('datecc'),
              daterw = request.POST.get('daterw'),
@@ -7853,14 +7844,13 @@ def m22view(request):
     return render(request, "m22view.html", context)
 
 
-
 def m22getwono(request):
     if request.method == "GET" and request.is_ajax():
         from.models import Batch
 
         shop_sec = request.GET.get('shop_sec')
-        w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2=Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+        w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
+        w2 = Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).order_by('bo_no').distinct('bo_no')
         wono = list(w2)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -7869,13 +7859,94 @@ def m22getstaff(request):
     if request.method == "GET" and request.is_ajax():
         # wo_no = request.GET.get('wo_no')
         shop_sec = request.GET.get('shop_sec')
-        staff_no = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
-        return JsonResponse(staff_no, safe = False)
+        staff_no = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no','name', 'desgn').order_by('staff_no').distinct())
+
+        return JsonResponse({'data':staff_no}, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+def m22getdata(request):
+    if request.method == "GET" and request.is_ajax():
+        # wo_no = request.GET.get('wo_no')
+        id = request.GET.get('id')
+        print('id----',id)
+        m22list = M22.objects.filter(id=id).all()
+        staff_no=m22list[0].staff_no
+        print(staff_no)
+        staff_details = list(Shemp.objects.filter(staff_no=staff_no).values('staff_no','name', 'desgn').distinct())
+        
+        data={
+        "update":m22list[0].update,
+        "letter_no":m22list[0].letter_no,
+        "subject":m22list[0].subject,
+        "datelw":m22list[0].datelw,
+        "datecc":m22list[0].datecc,
+        "daterw":m22list[0].daterw,
+        "briefdd":m22list[0].briefdd,
+        "no_hrs":m22list[0].no_hrs,
+        "wo_no":m22list[0].wo_no,
+        "wo_no1":m22list[0].wo_no1,
+        "shop_sec":m22list[0].shop_sec,
+        "staff_no":m22list[0].staff_no,
+        "month":m22list[0].month,
+        "name":staff_details[0]['name'],
+        "design":staff_details[0]['desgn'],
+        "hd1":m22list[0].hd1,
+        "hd2":m22list[0].hd2,
+        "hd3":m22list[0].hd3,
+        "hd4":m22list[0].hd4,
+        "hd5":m22list[0].hd5,
+        "hd6":m22list[0].hd6,
+        "hd7":m22list[0].hd7,
+        "hd8":m22list[0].hd8,
+        "hd9":m22list[0].hd9,
+        "hd10":m22list[0].hd10,
+        "hd11":m22list[0].hd11,
+        "hd12":m22list[0].hd12,
+        "hd13":m22list[0].hd13,
+        "hd14":m22list[0].hd14,
+        "hd15":m22list[0].hd15,
+        "hd16":m22list[0].hd16,
+        "hd17":m22list[0].hd17,
+        "hd18":m22list[0].hd18,
+        "hd19":m22list[0].hd19,
+        "hd20":m22list[0].hd20,
+        "hd21":m22list[0].hd21,
+        "hd22":m22list[0].hd22,
+        "hd23":m22list[0].hd23,
+        "hd24":m22list[0].hd24,
+        "hd25":m22list[0].hd25,
+        "hd26":m22list[0].hd26,
+        "hd27":m22list[0].hd27,
+        "hd28":m22list[0].hd28,
+        "hd29":m22list[0].hd29,
+        "hd30":m22list[0].hd30,
+        "hd31":m22list[0].hd31,
+        }
+        return JsonResponse({'data':data}, safe = False)
+    return JsonResponse({"success":False},status=400)
 
-
-
+@login_required
+@role_required(urlpass='/m22view/')
+def m22viewlist(request):
+    cuser=request.user
+    usermaster=user_master.objects.filter(emp_id=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    ex=M22.objects.all().order_by('-id')
+    context={
+            'totindb':0,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
+            'obj':ex,
+        }
+         
+    return render(request,"m22viewlist.html",context)
 
 
 
@@ -8437,6 +8508,7 @@ def CardGeneration(request):
         bty=request.POST.get('b_qty')
         wkf1 = request.POST.get('wkf')
         alt = request.POST.get('ralt')
+        print(alt)
         bno1 = request.POST.get('brn_no')
         prtdt=datetime.datetime.now().strftime ("%Y-%m-%d")
         Batch1=Batch.objects.filter(part_no=asmno,bo_no=batch).values('bo_no')
@@ -8445,8 +8517,112 @@ def CardGeneration(request):
         ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
         if len(ades)!=0:
             ades=ades[0]['des']
-
+        bat=Batch.objects.filter(part_no=asmno,bo_no=batch,brn_no=bno1).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq','uot_wk_f')
+        if len(bat)!=0:
+            epc=bat[0]['ep_type']
+            brn=bno1
+            l_to=bat[0]['loco_to']
+            l_fr=bat[0]['loco_fr']
+            seq=bat[0]['seq']
+            bqty=bat[0]['batch_qty']
+            btype=bat[0]['batch_type']
+            DUE_WK=bat[0]['uot_wk_f']
+        else:
+            epc=''
+            brn=bno1
+            l_to=''
+            l_fr=''
+            seq=''
+            bqty=''
+            btype=''
+            DUE_WK=''
+        u=0
+        if DUE_WK != '':
+            u=DUE_WK
+        if u>3000:
+            OUT_WK=(int(u/100)*52)+(u%100)
+        else:
+            OUT_WK=(int((u/100) + 100)*52)+(u%100)
+        dt=[]
+        DTS=batchExplode(request,asmno,'1',dt,epc,l_fr,l_to,'')
+        #DTS=list(Tempm14expl.objects.all().order_by('part_no'))
         if batch and bval and asmno:
+            DTM2=DTS
+            SCH='M'
+            sch=''
+            n=[]
+            if (btype == "O" and alt == "F" and sch == "M"):
+                return true
+            if btype=="O":
+                for i in range(len(DTM2)):
+                    if DTM2[i]['ptc']  not in ['M','Z','C']:
+                        n.append(i)
+                    else:
+                        DTM2[i].update({'del_fl':'','f_shopsec':'','rc_st_wk':'','scl_cl':'','cut_sher':'','m2sln':'','brn_no':'','m4_no':'',})                
+            else:
+                for i in range(len(DTM2)):
+                    if DTM2[i]['ptc']  not in ['M','Z']:
+                        n.append(i)
+                    else:
+                        DTM2[i].update({'del_fl':'','f_shopsec':'','rc_st_wk':'','scl_cl':'','cut_sher':'','m2sln':'','brn_no':'','m4_no':'',})                
+            n.sort(reverse=True)
+            for j in n:
+                del DTM2[j]
+            count = 1
+            a=''
+            b=''
+            st=''
+            for i in range(len(DTM2)):
+                if alt == "F":
+                    tm=list(M2Docnew1.objects.filter(~Q(scl_cl='T'),part_no=DTM2[i]["part_no"],brn_no=brn).values('scl_cl'))
+                    if len(tm) > 0 :
+                        print("asd")
+                        DTM2[i]["del_fl"] = "Y"
+                tm=list(Oprn.objects.filter(part_no=DTM2[i]["part_no"],del_fl__isnull=True).values('shop_sec').order_by('part_no','opn'))
+                if len(tm)!=0:
+                    tm=tm[0]['shop_sec']
+                else:
+                    tm=''
+                if DTM2[i]["del_fl"] =="":
+                    DTM2[i]["f_shopsec"] = tm
+                if DTM2[i]["f_shopsec"] == "":
+                    DTM2[i]["del_fl"] = "Y"
+                r = 0
+                o = 0
+                s = 0
+                if OUT_WK != '':
+                    o = int(OUT_WK)
+                sh=list(Shop.objects.filter(shop=DTM2[i]["f_shopsec"]).values('shop_ldt').order_by('shop'))
+                if len(sh) != 0:
+                    s=int(sh[0]['shop_ldt'])
+                if DTM2[i]["del_fl"] == "":
+                    d=int((o-s)/52)
+                    r=((d % 100) * 100 + ((o - s) % 52))
+                    DTM2[i]["rc_st_wk"] =r
+                    DTM2[i]["scl_cl"] = scl_cl(s,alt,epc)
+                if btype == "O" and alt == "F":
+                    if (DTM2[i]["scl_cl"]!= ""):
+                        if len(SCH) > 1:
+                            st = SCH
+                        else:
+                            st = SCH
+                        a= DTM2[i]["scl_cl"]
+                        b= st
+                        if a > b:
+                            if DTM2[i]["del_fl"] == "":
+                                DTM2[i]["del_fl"]="Y"
+                        if DTM2[i]["scl_cl"] == "" and DTM2[i]["del_fl"] != "":
+                            DTM2[i]["del_fl"] = "Y"
+                        if DTM2[i]["rm_ptc"] == "R" and DTM2[i]["del_fl"] == "":
+                            cuts=Cutpart.objects.filter(partno=DTM2[i]["part_no"],epc=epc).values('cut_dia').order_by('cut_dia','partno')
+                            if len(cuts)>0:
+                                DTM2[i]["cut_sher"] ==cuts[0]['cut_dia']
+                            else:
+                                DTM2[i]["cut_sher"] =''
+                if DTM2[i]["del_fl"] == "":
+                    DTM2[i]["m2sln"] = i+1
+                    DTM2[i]["del_fl"] = "B"
+            print(DTM2,len(DTM2))
             # if bval=="Generate Cards":
             #     res = []
             #     res = Childnode(request,asmno,res,'M')
@@ -8805,180 +8981,162 @@ def CardGeneration(request):
                 #         continue
                 #  a=Batch.objects.filter(part_no=asmno,bo_no=batch).values('uot_wk_f').order_by('-bo_no','part_no')
 
-                bat=Batch.objects.filter(part_no=asmno,bo_no=batch,brn_no=bno1).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq','uot_wk_f')
-                if len(bat)!=0:
-                    epc=bat[0]['ep_type']
-                    brn=bno1
-                    l_to=bat[0]['loco_to']
-                    l_fr=bat[0]['loco_fr']
-                    seq=bat[0]['seq']
-                    bqty=bat[0]['batch_qty']
-                    btype=bat[0]['batch_type']
-                    DUE_WK=bat[0]['uot_wk_f']
-                else:
-                    epc=''
-                    brn=bno1
-                    l_to=''
-                    l_fr=''
-                    seq=''
-                    bqty=''
-                    btype=''
-                    DUE_WK=''
-                ep=''
-                for i in Code.objects.raw('select id,substr("NUM_1" :: text, 1,8) as num_1 from public."CODE" where "CD_TYPE"=%s and "CODE"=%s order by "CD_TYPE","CODE";',['11',epc]):
-                    ep=i.num_1
-                    break
-                if ep=='':
-                    msg="No Such End Product"
-                EP_PART= ep
-                if ep ==asmno:
-                    NASSLY='1'
-                else:
-                    NASSLY = str(CPQm14(asmno, epc, ep, l_to))
-                batchExplode(request,asmno,'1',dt,epc,l_fr,l_to,'')
-                makesetm14(epc)
-                cursor = connection.cursor()
-                cursor.execute('select t.*,p."M14SPLT_CD",COALESCE(p."ALLOW_PERC",0) as allow_perc,COALESCE(p."SHOP_UT", %s) as shop_ut from public.dlw_tempm14expl t,public."PART" p where (t."PTC"= %s or t."PTC"= %s or t."PTC"= %s) and t."PART_NO"= p."PARTNO" and t."QTY" >0;',['0','P','L','B'])
-                row = cursor.fetchall()
-                dts = pd.DataFrame(list(row))
-                ###########
-                sch = card[:1]
-                if alt=='F' and sch=='M' and btype=='O':
-                    messages.error(request,'M14 is not generated as alternate is "False" and batch type is "O"')
-                    return render(request,'CardGeneration.html')
-                for i in range(len(dts)):
-                    allowqty=0
-                    if alt=='F' and len(M14M4new1.objects.filter(~Q(pm_no='XXALT'),part_no=dts[1][i],brn_no=brn,l_fr=l_fr).values('pm_no'))!=0:
-                        continue
-                    pn = dts[1][i]
-                    totqty = float(dts[2][i]) * float(bqty)
-                    locoqty = float(dts[2][i]) * float(NASSLY)
-                    ptsplt = ""
-                    ptsp_ut = ""
-                    pt_alp = 0
-                    ptsplt = dts[7][i]
-                    ptsp_ut = dts[9][i]
-                    pt_alp = dts[8][i]
-                    if ptsplt == "5":
-                        tosplit = True
-                    else:
-                        tosplit = False
-                    docind = dts[3][i]
-                    cursor = connection.cursor()
-                    cursor.execute('select coalesce("AUTH_QTY",0),"PM_NO" from public."PROGPART" where "PARTNO"=%s and "EPC"=%s and coalesce("DEL_FL",%s) !=%s order by "PARTNO", "EPC", "PM_NO";',[pn,epc,'@','Y'])
-                    row = cursor.fetchall()
-                    ds= pd.DataFrame(list(row))
-                    j = 0
-                    while totqty > 0 and j < len(ds) and alt == "F":
-                        pmno = ""
-                        if btype== "O":
-                            if ds[0][j] <= totqty:
-                                pmqty = ds[0][j] 
-                            else:
-                                pmqty = totqty
-                            pmno = ds[1][j]
-                        else:
-                            pmqty = totqty
-                            pmno = m14btdesc(btype)
-                        import numpy as np
-                        if float(ptsp_ut) < 10:
-                            allowqty = round(float(pmqty) * float(pt_alp) / 100, 0)
-                        else:
-                            allowqty =round(float(pmqty) * float(pt_alp) / 100, 3)
-                        if tosplit is False:
-                            if btype=='O':
-                                l=l_fr.zfill(4)
-                                t=l_to.zfill(4)
-                            else:
-                                l=''
-                                t=''
-                            dtm=write_row_expl_m14(pmno, pn, (float(pmqty) + float(allowqty)), l, t, docind, ptsp_ut, dtm)
-                            totqty = float(totqty) - float(pmqty)
-                        else:
-                            ii = 0
-                            lfri=''
-                            vLfri = l_fr.zfill(4)
-                            if btype=='O':
-                                lfri=l_fr.zfill(4)
-                            while float(pmqty) > float(locoqty):
-                                dtm=write_row_expl_m14(pmno, pn, locoqty, lfri, lfri, docind, ptsp_ut, dtm)
-                                pmqty = float(pmqty) - float(locoqty)
-                                totqty = float(totqty) - float(locoqty)
-                                ii = ii + 1
-                                if btype=='O' and ii < 5:
-                                    lfri=(str(int(vLfri)+1)).zfill(4)
-                                    lfri=lfri.zfill(4)
-                                else:
-                                    lfri=''
-                                vLfri = lfri.zfill(4)
-                            vLfri = l_fr.zfill(4)
-                            if float(pmqty) > 0:
-                                dtm=write_row_expl_m14(pmno, pn, float(pmqty) + float(allowqty), lfri, lfri, docind, ptsp_ut, dtm)
-                                totqty = float(totqty) - float(pmqty)
-                        j = j + 1
-                    if float(totqty) > 0:
-                        lfri = ""
-                        if alt=='F':
-                            if int(ptsp_ut) < 10:
-                                allowqty = round(float(totqty) *float(pt_alp) / 100, 0)
-                            else:
-                                allowqty = round(float(totqty) * float(pt_alp) / 100, 3)
-                            abc=float(totqty) + float(allowqty)
-                            abc="{0:.4f}".format(abc)
-                            dtm=write_row_expl_m14("XX999", pn, abc, l_fr, l_to, docind, ptsp_ut, dtm)
-                        else:
-                            lfri = l_fr.zfill(4)
-                            while tosplit is True and float(totqty) > float(locoqty) and int(lfri) <= int(l_to.zfill(4)):
-                                if float(ptsp_ut) < 10:
-                                    allowqty = round(float(locoqty) * float(pt_alp) / 100, 0)
-                                else:
-                                    allowqty = round(float(locoqty) * float(pt_alp) / 100, 3)
-                                dtm=write_row_expl_m14("XXALT", pn, float(locoqty) + float(allowqty), lfri, lfri, docind, ptsp_ut, dtm)
-                                totqty = float(totqty) - float(locoqty)
-                                lfri = (str(int(lfri) + 1)).zfill(4)
-                            if (float(totqty) > 0 and int(lfri) <= int(l_to.zfill(4))):
-                                if float(ptsp_ut) < 10:
-                                    allowqty = round(float(totqty) * float(pt_alp )/ 100, 0)
-                                else:
-                                    allowqty = round(float(totqty) * float(pt_alp )/ 100, 3)
-                                dtm=write_row_expl_m14("XXALT", pn, float(totqty) + float(allowqty), lfri, l_to.zfill(4), docind, ptsp_ut, dtm)
-
-                # for i in range(len(row)):
-                #     res.append({'part_no':row[i][1],'qty':row[i][2],'ptc':row[i][3],'rm_partno':row[i][4],'rm_qty':row[i][5],'rm_ptc':row[i][6],'m14splt_cd':row[i][7],'allow_perc':row[i][8],'shop_ut':row[i][9]})
-
-                # for i in Tempm14expl.objects.raw('select t.id,t.*,p.id,p."M14SPLT_CD",COALESCE(p."ALLOW_PERC",0) as allow_perc,COALESCE(p."SHOP_UT", %s) as shop_ut from public.dlw_tempm14expl t,public."PART" p where (t."PTC"= %s or t."PTC"= %s or t."PTC"= %s) and t."PART_NO"= p."PARTNO" and t."QTY" >0;',['0','P','L','B']):
-                #     res.append({'part_no':i.part_no,'qty':i.qty,'ptc':i.ptc,'rm_partno':i.rm_partno,'rm_qty':i.rm_qty,'rm_ptc':i.rm_qty,'m14splt_cd':i.Part.m14splt_cd,'allow_perc':i.Part.allow_perc,'shop_ut':i.Part.shop_ut})
-                # print(dtm,len(dtm))
-                # sl=M14M4new1.objects.values('doc_no').order_by('-doc_no')
-                # if len(sl)!=0:
-                #     no=int(sl[0]['doc_no'])+1
-                # else:
-                #     no=1
-                dtm=sorted(dtm, key = lambda i: i['part_no'])
-                nm14 = len(dtm)
-                nom14 = nm14
-                _sn=updtcodem14(nm14,"21","M14","m14")
-                if _sn != 0:
-                    sn = _sn
-                    for q in range(len(dtm)):
-                            sn = sn + 1
-                            if alt=='T':
-                                ash=EP_PART
-                            else:
-                                ash=asmno
-                            M14M4new1.objects.create(doc_code='89',doc_no=sn,pm_no=dtm[q]['pm_no'],part_no=dtm[q]['part_no'],qty=dtm[q]['qty'],l_fr=dtm[q]['l_fr'],l_to=dtm[q]['l_to'],bo_no=batch,assly_no=ash,seq=seq,due_wk=DUE_WK,brn_no=brn,doc_ind=dtm[q]['doc_ind'],unit=dtm[q]['unit'],epc=epc,prtdt=datetime.datetime.now().strftime ("%d-%m-%Y"))
-
-                # for i in range(len(dtm)):
-                #     M14M4new1.objects.create(doc_code='88',doc_no=no,pm_no=dat1[k]['pm_no'],part_no=i[4:],qty=format(quantity,'.3f'),l_fr=l_fr,l_to=l_to,bo_no=batch,assly_no=asmno,seq=seq,due_wk=dat1[k]['rm'],prtdt=prtdt,brn_no=brn,doc_ind=di,unit=unit['shop_ut'],epc=epc)
-
-                data={
-                    'm14':dtm,
-                    'asl':asmno,
-                    'ades':ades,
-                    'batch':batch,
-                }
                 
-                return render(request,"m14cardpdf.html",data)  
+                # ep=''
+                # for i in Code.objects.raw('select id,substr("NUM_1" :: text, 1,8) as num_1 from public."CODE" where "CD_TYPE"=%s and "CODE"=%s order by "CD_TYPE","CODE";',['11',epc]):
+                #     ep=i.num_1
+                #     break
+                # if ep=='':
+                #     msg="No Such End Product"
+                # EP_PART= ep
+                # if ep ==asmno:
+                #     NASSLY='1'
+                # else:
+                #     NASSLY = str(CPQm14(asmno, epc, ep, l_to))
+                # batchExplode(request,asmno,'1',dt,epc,l_fr,l_to,'')
+                # makesetm14(epc)
+                # cursor = connection.cursor()
+                # cursor.execute('select t.*,p."M14SPLT_CD",COALESCE(p."ALLOW_PERC",0) as allow_perc,COALESCE(p."SHOP_UT", %s) as shop_ut from public.dlw_tempm14expl t,public."PART" p where (t."PTC"= %s or t."PTC"= %s or t."PTC"= %s) and t."PART_NO"= p."PARTNO" and t."QTY" >0;',['0','P','L','B'])
+                # row = cursor.fetchall()
+                # dts = pd.DataFrame(list(row))
+                # ###########
+                # sch = card[:1]
+                # if alt=='F' and sch=='M' and btype=='O':
+                #     messages.error(request,'M14 is not generated as alternate is "False" and batch type is "O"')
+                #     return render(request,'CardGeneration.html')
+                # for i in range(len(dts)):
+                #     allowqty=0
+                #     if alt=='F' and len(M14M4new1.objects.filter(~Q(pm_no='XXALT'),part_no=dts[1][i],brn_no=brn,l_fr=l_fr).values('pm_no'))!=0:
+                #         continue
+                #     pn = dts[1][i]
+                #     totqty = float(dts[2][i]) * float(bqty)
+                #     locoqty = float(dts[2][i]) * float(NASSLY)
+                #     ptsplt = ""
+                #     ptsp_ut = ""
+                #     pt_alp = 0
+                #     ptsplt = dts[7][i]
+                #     ptsp_ut = dts[9][i]
+                #     pt_alp = dts[8][i]
+                #     if ptsplt == "5":
+                #         tosplit = True
+                #     else:
+                #         tosplit = False
+                #     docind = dts[3][i]
+                #     cursor = connection.cursor()
+                #     cursor.execute('select coalesce("AUTH_QTY",0),"PM_NO" from public."PROGPART" where "PARTNO"=%s and "EPC"=%s and coalesce("DEL_FL",%s) !=%s order by "PARTNO", "EPC", "PM_NO";',[pn,epc,'@','Y'])
+                #     row = cursor.fetchall()
+                #     ds= pd.DataFrame(list(row))
+                #     j = 0
+                #     while totqty > 0 and j < len(ds) and alt == "F":
+                #         pmno = ""
+                #         if btype== "O":
+                #             if ds[0][j] <= totqty:
+                #                 pmqty = ds[0][j] 
+                #             else:
+                #                 pmqty = totqty
+                #             pmno = ds[1][j]
+                #         else:
+                #             pmqty = totqty
+                #             pmno = m14btdesc(btype)
+                #         import numpy as np
+                #         if float(ptsp_ut) < 10:
+                #             allowqty = round(float(pmqty) * float(pt_alp) / 100, 0)
+                #         else:
+                #             allowqty =round(float(pmqty) * float(pt_alp) / 100, 3)
+                #         if tosplit is False:
+                #             if btype=='O':
+                #                 l=l_fr.zfill(4)
+                #                 t=l_to.zfill(4)
+                #             else:
+                #                 l=''
+                #                 t=''
+                #             dtm=write_row_expl_m14(pmno, pn, (float(pmqty) + float(allowqty)), l, t, docind, ptsp_ut, dtm)
+                #             totqty = float(totqty) - float(pmqty)
+                #         else:
+                #             ii = 0
+                #             lfri=''
+                #             vLfri = l_fr.zfill(4)
+                #             if btype=='O':
+                #                 lfri=l_fr.zfill(4)
+                #             while float(pmqty) > float(locoqty):
+                #                 dtm=write_row_expl_m14(pmno, pn, locoqty, lfri, lfri, docind, ptsp_ut, dtm)
+                #                 pmqty = float(pmqty) - float(locoqty)
+                #                 totqty = float(totqty) - float(locoqty)
+                #                 ii = ii + 1
+                #                 if btype=='O' and ii < 5:
+                #                     lfri=(str(int(vLfri)+1)).zfill(4)
+                #                     lfri=lfri.zfill(4)
+                #                 else:
+                #                     lfri=''
+                #                 vLfri = lfri.zfill(4)
+                #             vLfri = l_fr.zfill(4)
+                #             if float(pmqty) > 0:
+                #                 dtm=write_row_expl_m14(pmno, pn, float(pmqty) + float(allowqty), lfri, lfri, docind, ptsp_ut, dtm)
+                #                 totqty = float(totqty) - float(pmqty)
+                #         j = j + 1
+                #     if float(totqty) > 0:
+                #         lfri = ""
+                #         if alt=='F':
+                #             if int(ptsp_ut) < 10:
+                #                 allowqty = round(float(totqty) *float(pt_alp) / 100, 0)
+                #             else:
+                #                 allowqty = round(float(totqty) * float(pt_alp) / 100, 3)
+                #             abc=float(totqty) + float(allowqty)
+                #             abc="{0:.4f}".format(abc)
+                #             dtm=write_row_expl_m14("XX999", pn, abc, l_fr, l_to, docind, ptsp_ut, dtm)
+                #         else:
+                #             lfri = l_fr.zfill(4)
+                #             while tosplit is True and float(totqty) > float(locoqty) and int(lfri) <= int(l_to.zfill(4)):
+                #                 if float(ptsp_ut) < 10:
+                #                     allowqty = round(float(locoqty) * float(pt_alp) / 100, 0)
+                #                 else:
+                #                     allowqty = round(float(locoqty) * float(pt_alp) / 100, 3)
+                #                 dtm=write_row_expl_m14("XXALT", pn, float(locoqty) + float(allowqty), lfri, lfri, docind, ptsp_ut, dtm)
+                #                 totqty = float(totqty) - float(locoqty)
+                #                 lfri = (str(int(lfri) + 1)).zfill(4)
+                #             if (float(totqty) > 0 and int(lfri) <= int(l_to.zfill(4))):
+                #                 if float(ptsp_ut) < 10:
+                #                     allowqty = round(float(totqty) * float(pt_alp )/ 100, 0)
+                #                 else:
+                #                     allowqty = round(float(totqty) * float(pt_alp )/ 100, 3)
+                #                 dtm=write_row_expl_m14("XXALT", pn, float(totqty) + float(allowqty), lfri, l_to.zfill(4), docind, ptsp_ut, dtm)
+
+                # # for i in range(len(row)):
+                # #     res.append({'part_no':row[i][1],'qty':row[i][2],'ptc':row[i][3],'rm_partno':row[i][4],'rm_qty':row[i][5],'rm_ptc':row[i][6],'m14splt_cd':row[i][7],'allow_perc':row[i][8],'shop_ut':row[i][9]})
+
+                # # for i in Tempm14expl.objects.raw('select t.id,t.*,p.id,p."M14SPLT_CD",COALESCE(p."ALLOW_PERC",0) as allow_perc,COALESCE(p."SHOP_UT", %s) as shop_ut from public.dlw_tempm14expl t,public."PART" p where (t."PTC"= %s or t."PTC"= %s or t."PTC"= %s) and t."PART_NO"= p."PARTNO" and t."QTY" >0;',['0','P','L','B']):
+                # #     res.append({'part_no':i.part_no,'qty':i.qty,'ptc':i.ptc,'rm_partno':i.rm_partno,'rm_qty':i.rm_qty,'rm_ptc':i.rm_qty,'m14splt_cd':i.Part.m14splt_cd,'allow_perc':i.Part.allow_perc,'shop_ut':i.Part.shop_ut})
+                # # print(dtm,len(dtm))
+                # # sl=M14M4new1.objects.values('doc_no').order_by('-doc_no')
+                # # if len(sl)!=0:
+                # #     no=int(sl[0]['doc_no'])+1
+                # # else:
+                # #     no=1
+                # dtm=sorted(dtm, key = lambda i: i['part_no'])
+                # nm14 = len(dtm)
+                # nom14 = nm14
+                # _sn=updtcodem14(nm14,"21","M14","m14")
+                # if _sn != 0:
+                #     sn = _sn
+                #     for q in range(len(dtm)):
+                #             sn = sn + 1
+                #             if alt=='T':
+                #                 ash=EP_PART
+                #             else:
+                #                 ash=asmno
+                #             M14M4new1.objects.create(doc_code='89',doc_no=sn,pm_no=dtm[q]['pm_no'],part_no=dtm[q]['part_no'],qty=dtm[q]['qty'],l_fr=dtm[q]['l_fr'],l_to=dtm[q]['l_to'],bo_no=batch,assly_no=ash,seq=seq,due_wk=DUE_WK,brn_no=brn,doc_ind=dtm[q]['doc_ind'],unit=dtm[q]['unit'],epc=epc,prtdt=datetime.datetime.now().strftime ("%d-%m-%Y"))
+
+                # # for i in range(len(dtm)):
+                # #     M14M4new1.objects.create(doc_code='88',doc_no=no,pm_no=dat1[k]['pm_no'],part_no=i[4:],qty=format(quantity,'.3f'),l_fr=l_fr,l_to=l_to,bo_no=batch,assly_no=asmno,seq=seq,due_wk=dat1[k]['rm'],prtdt=prtdt,brn_no=brn,doc_ind=di,unit=unit['shop_ut'],epc=epc)
+
+                # data={
+                #     'm14':dtm,
+                #     'asl':asmno,
+                #     'ades':ades,
+                #     'batch':batch,
+                # }
+                
+                # return render(request,"m14cardpdf.html",data)  
 
             #     code='M'
             #     r_qty=0
@@ -12226,7 +12384,7 @@ def m11view(request):
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-            req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+            req = Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).distinct()
             wo_no =wo_no | req
         context = {
             'sub':0,
@@ -12262,7 +12420,7 @@ def m11view(request):
             tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
             empname=tempcat[0]['name']
             tcat=tempcat[0]['cat']
-            obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('cat','in1','out','date','total_time','detail_no','idle_time').distinct()
+            obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('id','month','cat','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').distinct()
             print(obj1)
             obj2='None'
             obj3='None'
@@ -12362,7 +12520,7 @@ def m11view(request):
             elif(len(rolelist)==1):
                 for i in range(0,len(rolelist)):
                     w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+                    req = Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).distinct()
                     wo_no =wo_no | req
                 context = {
                     'sub':1,
@@ -12411,10 +12569,11 @@ def m11view(request):
 
 
         if submitvalue=='Submit':
-            # print("in submit")                               #!!!!!!!1!!!!!!!!!!!!capital S
+            # print("in submit")                               #!!!!!!!1!!!!!!!!!!!!capital S   Submit
             leng=request.POST.get('len')
-            print("leng=",leng)
+            print("leng=....................................",leng)
             shopsec= request.POST.get('shopsec')
+            print("shopsec=....................................",shopsec)
             staff_no = request.POST.get('staff_no')
             inoutnum = request.POST.get("inoutnum")
             ename= request.POST.get('empname')
@@ -12423,7 +12582,11 @@ def m11view(request):
             print("dadd",inoutnum)
             
             for i in range(1, int(leng)+1):
-                date = request.POST.get('date'+str(i))
+                print('hg')
+                in_date = request.POST.get('in_date'+str(i))
+                print("in_date",in_date)
+                out_date = request.POST.get('out_date'+str(i))
+                shift = request.POST.get('shift'+str(i))
                 month = request.POST.get('month')
                 in1 = request.POST.get('in1'+str(i))
                 out = request.POST.get('out'+str(i))
@@ -12431,31 +12594,112 @@ def m11view(request):
                 idle_time = request.POST.get('idle_time'+str(i))
                 detail_no = request.POST.get('detail_no'+str(i))
                 amt = request.POST.get('amt1'+str(i))
-                M11.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
+                # M11.objects.filter(shopsec=shopsec,staff_no=staff_no,in_date=in_date,out_date=out_date,shift=shift,month=month).update(in_date=str(in_date),out_date=str(out_date),shift=str(shift),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
                 print("data saved")
-            for i in range(1,int(inoutnum)+1):
-                date = request.POST.get('dateadd'+str(i))
-                month = request.POST.get('month_add'+str(i))
-                in1 = request.POST.get('in1add'+str(i))
-                out = request.POST.get('outadd'+str(i))
-                total_time = request.POST.get('total_time_add'+str(i))
-                idle_time = request.POST.get('idle_time_add'+str(i))
-                detail_no = request.POST.get('detail_noadd'+str(i))    
-                if date and month and in1 and out and idle_time and detail_no and total_time:
-                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),detail_no=str(detail_no))
+            # for i in range(1,int(inoutnum)+1):
+            #     in_date = request.POST.get('in_date'+str(i))
+            #     out_date = request.POST.get('out_Date'+str(i))
+            #     shift = request.POST.get('shiftadd'+str(i))
+            #     month = request.POST.get('month_add'+str(i))
+            #     in1 = request.POST.get('in1add'+str(i))
+            #     out = request.POST.get('outadd'+str(i))
+            #     total_time = request.POST.get('total_time_takenadd'+str(i))
+            #     idle_time = request.POST.get('idle_time_add'+str(i))
+            #     detail_no = request.POST.get('detail_noadd'+str(i)) 
+
+               
+                sender_email_id = 'crisdlwproject@gmail.com'
+                sender_email_id_password = 'cris@1234'
+
+                if  month and in1 and out and idle_time and detail_no and total_time:
+                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),in_date=str(in_date),out_date=str(out_date),shift=str(shift),idle_time=str(idle_time),detail_no=str(detail_no))
+                    print ("shopsec === " +shopsec)
+                    print(staff_no)
+                    
+                    emp_det=list(emp_details.objects.filter(shopsec=str(shopsec),card_details='M11').values('mobileno','email_id'))
+                    print(emp_det)
+                    for x in range(len(emp_det)):
+
+                        sms(emp_det[x]['mobileno'],"Man idle card for Emp number "+ staff_no +" Name "+ ename +" Soap "+ shopsec +" has been generated for the Date "+ in_date +" Total idle time "+idle_time+" ")
+
+                        email1(sender_email_id,sender_email_id_password,emp_det[x]['email_id'],'Subject: MAN IDLE TIME CARD \n\n   Dear Sir,   Man idle card for Emp number '+ staff_no +' Name '+ ename +' Soap '+ shopsec +' has been generated for the Date '+ in_date +' Total idle time '+idle_time+' ')
+                
                     messages.success(request, 'Data Saved Successfully!!')
                 else:
-                    messages.success(request, 'Please enter all values!!')
-                wo_no=Batch.objects.all().values('bo_no').distinct()
+                    messages.success(r598+equest, 'Please enter all values!!')
+                    wo_no=Batch.objects.all().values('bo_no').distinct()
 
-    return render(request,"m11views.html",context)                        
+    return render(request,"m11views.html",context)
 
+def m11save(request):
+    if request.method == 'GET' and request.is_ajax():
+             
+        leng=request.GET.get('leng')
+        print("leng=",leng)
+        shopsec= request.GET.get('shopsec')
+        staff_no = request.GET.get('staff_no')
+        inoutnum = request.GET.get("inoutnum")
+        ename= request.GET.get('empname')
+        scat=request.GET.get('tcat')
+        print(scat)
+        print("dadd",inoutnum)            
+        
+        in_date = request.GET.get('in_date')   
+        print("in_date.",in_date)              
+        out_date = request.GET.get('out_date')
+        shift = request.GET.get('shift')
+        month = request.GET.get('month')
+        in1 = request.GET.get('in1')
+        out = request.GET.get('out')
+        total_time = request.GET.get('total_time')
+        idle_time = request.GET.get('idle_time')
+        detail_no = request.GET.get('detail_no')
+        amt = request.GET.get('amt1')
+        M11.objects.filter(shopsec=shopsec,staff_no=staff_no,in_date=in_date,out_date=out_date,shift=shift,month=month).update(in_date=str(in_date),out_date=str(out_date),shift=str(shift),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
+        print("data saved")
+            
 
+            
+        sender_email_id = 'crisdlwproject@gmail.com'
+        sender_email_id_password = 'cris@1234'
+
+        if  month and in1 and out and idle_time and detail_no and total_time:
+            M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),in_date=str(in_date),out_date=str(out_date),shift=str(shift),idle_time=str(idle_time),detail_no=str(detail_no))
+            print ("shopsec === " +shopsec)
+            print(staff_no)
+            
+            emp_det=list(emp_details.objects.filter(shopsec=str(shopsec),card_details='M11').values('mobileno','email_id'))
+            print(emp_det)
+            for x in range(len(emp_det)):
+
+                sms(emp_det[x]['mobileno'],"Man idle card for Emp number "+ staff_no +" Name "+ ename +" Soap "+ shopsec +" has been generated for the Date "+ in_date +" Total idle time "+idle_time+" ")
+
+                email1(sender_email_id,sender_email_id_password,emp_det[x]['email_id'],'Subject: MAN IDLE TIME CARD \n\n   Dear Sir,   Man idle card for Emp number '+ staff_no +' Name '+ ename +' Soap '+ shopsec +' has been generated for the Date '+ in_date +' Total idle time '+idle_time+' ')
+            obj1=list(M11.objects.filter(staff_no=staff_no,shopsec=shopsec,month=month).values('id','month','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').order_by('in_date'))
+
+            print('Save record', obj1)
+            context={
+            'obj1':obj1,
+                }   
+            # obj=[]
+            # return JsonResponse(obj,safe = False)
+            return JsonResponse({'data':context}, safe = False)
+        
+    return JsonResponse({"success":False}, status = 400)
+def email1(sender_email_id,sender_email_id_password,receiver_email_id,message):
+    print(sender_email_id)
+    s = smtplib.SMTP('smtp.gmail.com', 587) 
+    s.ehlo()
+    s.starttls()
+    s.login(sender_email_id,sender_email_id_password)  
+    s.sendmail(sender_email_id,receiver_email_id, message) 
+    s.quit()
+                   
 def m11getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2=Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+        w2=Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).distinct()
         # print(w2)
         wo_no = list(w2)                                             
         return JsonResponse(wo_no, safe = False)                    
@@ -12465,7 +12709,6 @@ def m11getwono(request):
 def m11getstaff_no(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
-        # staff_no = list(M11.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
         return JsonResponse(staff_no, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -12478,6 +12721,90 @@ def m11getpart_no(request):
         
         part_no = list(Batch.objects.filter(bo_no=wo_no).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
+    return JsonResponse({"success":False}, status=400)
+def indateqry1(request):
+    print("heeuu")
+    if request.method == 'GET' and request.is_ajax():  
+        print("byebye")
+        date= request.GET.get('in_date')
+        staff_no= request.GET.get('staff_no')
+        shop_sec= request.GET.get('shop_sec')
+        print(date)
+        print(staff_no)
+        print(shop_sec)
+        data_list =list(M21DOCNEW1.objects.filter(shop_sec=shop_sec,staff_no=staff_no,date=date).values('in1','date','out','outdate','total_time').distinct())
+        print("data_list",data_list)
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                         
+    return JsonResponse({"success":False},status=400)
+
+def indateCheck(request):
+    print("In_date")
+    if request.method == 'GET' and request.is_ajax():  
+        print("byebye")
+        in_date= request.GET.get('in_date')
+        staff_no= request.GET.get('staff_no')
+        shop_sec= request.GET.get('shop_sec')
+        print(date)
+        print(staff_no)
+        print(shop_sec)
+        data_list =list(M11.objects.filter(shopsec=shop_sec,staff_no=staff_no,in_date=in_date).values('in1','in_date','out','out_date','total_time').distinct())
+        print("data_list_date",data_list)
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                         
+    return JsonResponse({"success":False},status=400)
+
+def m11repor(request):
+    print("d==============>")
+    if request.method=="GET" and request.is_ajax():
+        month = request.GET.get('month')
+        staff = request.GET.get('staff')
+        shop = request.GET.get('shop')
+        print(month, staff)
+        myval=list(M11.objects.filter(staff_no=staff,shopsec=shop,month=month).values('month','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').order_by('in_date'))
+        # print(myval)
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
+def m11editdata(request):
+    if request.method == "GET" and request.is_ajax():
+        sno = request.GET.get('id')
+        obj1=list(M11.objects.filter(id=sno).values('id','month','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').distinct())
+        
+        print('Save record', obj1)
+        context={
+            'obj1':obj1,             
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+def m11updatedata(request):
+    if request.method == "GET" and request.is_ajax():
+        id = request.GET.get('id') 
+        shopsec = request.GET.get('shopsec')
+        scat=request.GET.get('scat')
+        ename= request.GET.get('empname')
+        staff_no = request.GET.get('staff_no')
+        month = request.GET.get('month')
+        shift = request.GET.get('shift')
+        in_date = request.GET.get('in_date')         
+        in1 = request.GET.get('in1')                      
+        out_date = request.GET.get('out_date')               
+        out = request.GET.get('out')
+        total_time = request.GET.get('total_time')
+        detail_no = request.GET.get('detail_no') 
+        idle_time = request.GET.get('idle_time')
+        M11.objects.filter(id=id).update(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),in_date=str(in_date),out_date=str(out_date),shift=str(shift),detail_no=str(detail_no),idle_time=str(idle_time))
+         
+        obj1=list(M11.objects.filter(staff_no=staff_no,shopsec=shopsec,month=month).values('id','month','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').order_by('in_date'))
+
+              
+        print('Save record', obj1)
+        context={
+            'obj1':obj1,
+            
+        }    
+        # obj=[]
+        # return JsonResponse(obj,safe = False)     
+        return JsonResponse({'data':context}, safe = False)
     return JsonResponse({"success":False}, status=400)
 
 
@@ -12546,7 +12873,7 @@ def m11report(request):
             tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
             empname=tempcat[0]['name']
             tcat=tempcat[0]['cat']
-            obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('month','cat','in1','out','date','total_time','detail_no','idle_time').distinct()
+            obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('id','month','cat','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').distinct()
             print(obj1)
             obj2='None'
             obj3='None'
@@ -12690,8 +13017,87 @@ def m11report(request):
                     'r1':rr,
                     'month': month,'tcat':tcat,'empname':empname,
                 }
+        if submitvalue=='PrintPDF':
+            print("Print pdf")
+            from decimal import Decimal
+            obj2='None'
+            leng=0
+            leng1=0
+            rr='None'
+            amt=0
+            patotal=0
+            a=0 
+            b=0
+            t=0
+            month = request.POST.get('month')
+            shop_sec = request.POST.get('shopsec')
+            wo_no = request.POST.get('wo_no')
+            staff_no = request.POST.get('staff_no')
+            part_no = request.POST.get('part_no')
+            tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
+            empname=tempcat[0]['name']
+            tcat=tempcat[0]['cat']
+            obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('id','month','cat','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').distinct()   
+            obj2 = Rates.objects.filter(staff_no=staff_no).values('avg_rate').distinct()
+            print(obj2)
 
-    return render(request,"m11report.html",context)  
+
+            for op in range(len(obj1)):
+                patotal=obj1[op]['total_time']
+                print("patotal",patotal)
+                if patotal is not None and len(str(patotal)):
+                    p=patotal.split(':')
+                    a=a+Decimal(p[0])
+                    b=b+Decimal(p[1])
+                    if (b>=60):
+                        a=a+1
+                        b=b%60
+
+                rr=str(a)+':'+str(b)    
+                print(rr)
+            
+        
+                print("a",a)
+                print("b",b)
+
+            #if len(obj1):
+            print(obj1)
+            tmhr=rr
+            print("1",tmhr)
+            if len(obj2):    
+                avgrt=obj2[0]['avg_rate']
+                print("2")
+                if tmhr == 'None': 
+                    tmhr=0
+                    avgrt=0
+                    print("3")
+                else:
+                    tmhr1=tmhr.split(':')
+                    tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                    print("4")
+                    
+            
+                amt=tmhr*avgrt
+            leng = obj1.count()
+            leng1 = obj2.count()
+            leng=obj1.count()
+            amt=round(amt,2)
+            print("amt1",amt)
+            context = {
+                    
+                    'obj1': obj1,
+                    'shop_sec': shop_sec,
+                    'staff_no':staff_no,
+                    'wo_no': wo_no,
+                    'r1':rr,
+                    'amt1': amt,
+                    'month': month,'tcat':tcat,'empname':empname,
+            }  
+                
+            pdf = render_to_pdf('M11pdfc.html',context)
+            return HttpResponse(pdf, content_type='application/pdf')
+
+    return render(request,"m11report.html",context)   
 
 @login_required
 @role_required(urlpass='/mg36view/')
@@ -19911,8 +20317,6 @@ def mg5report(request):
             
     return render(request, "mg5report.html", context)
 
-
-
 @login_required
 @role_required(urlpass='/mg10views/')
 def mg10views(request):
@@ -20034,8 +20438,7 @@ def mg10views(request):
             shop_sec = request.POST.get('shop_sec')
             month = request.POST.get('month')
             ticket = request.POST.get('ticket')
-
-            obj1 = mg10.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','payrate','cat','remarks').distinct()
+            obj1 = mg10.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','payrate','cat','eiwdate','remarks').distinct()
             print(date)
             print(shop_sec)
             print(month)
@@ -20048,11 +20451,9 @@ def mg10views(request):
             # d1 = M21.objects.filter(shop_sec=shop_sec).values('date').distinct()
             # print("d1 date m21",d1)
             # #mydate = d1[0]['date']
-            # dtdate = mg10.objects.filter(eiwdate__contains=d1).values('ticket_no')
-
-
+            # dtdate = mg10.objects.filter(eiwdate__contains=d1).values('ticket_no')    
             w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
-            print("w1",w1)
+            # print("w1",w1)
             print("jgjuj")
             prtticket=[]
             for i in w1:
@@ -20066,11 +20467,14 @@ def mg10views(request):
             print(ticket)
 
             context = {
-            #'obj1': obj1,
+            'obj1': obj1,
             'mytry':"rimjhim",
             #'lent': leng,
             # 'lent2': leng1,
             #'leng':leng,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
             'shop_sec': shop_sec,
             'month':month,
             'date':date,
@@ -20086,48 +20490,63 @@ def mg10views(request):
             # 'fr_date':fr_date,
             'sub': 1, 
                     
-        }
+            }
 
         print("ghjkl;'",submitvalue)
         if submitvalue=='submit':
             # print("in submit")                               
             leng=request.POST.get('len')
             print("leng=",leng)
+
             #shop_sec= request.POST.get('shop_sec')
             #staff_no = request.POST.get('staff_no')
             #name = request.Post.get('name')
-            tot= request.POST.get('total')
+            tot= request.POST.get('total')            
             tot = int(tot)+1
-
+            print("tatal=",tot)
             for i in range(1,int(tot)):
                 print("aaya1")
                 date = request.POST.get('date')
                 shop_sec = request.POST.get('shop_sec')
                 month = request.POST.get('month')
-                sno = request.POST.get('sno'+str(i))
-                ticket = request.POST.get('ticket'+str(i))
+                ticket = request.POST.get('ticket'+str(i))                
+                sno = request.POST.get('sno'+str(i))               
                 name = request.POST.get('name'+str(i))
-                payrate = request.POST.get('payrate')
+                payrate = request.POST.get('payrate'+str(i))
                 category = request.POST.get('category'+str(i)) 
                 eiwdate = request.POST.get('eiwdate'+str(i))
                 remark = request.POST.get('remark'+str(i))
-
                 
                 print("print here")
                 print(date)
                 print(month)
                 print(shop_sec)
-                print(ticket)
-                print(name)
-                print(payrate)
-                print(category)
-                print(eiwdate)
-                print(remark)
+                print('ticket1' ,ticket)
+                print('name' ,name)
+                print('sno' ,sno)
+                print('payrate',payrate)
+                print('category',category)
+                print("eiwdate",eiwdate)
+                print('remark',remark)
                 print("over n out !!!!!")
-                mg10.objects.create(shop_sec=str(shop_sec),month=str(month),date=str(date),sno=str(sno),ticket_no=str(ticket),name=str(name),payrate=str(payrate),cat=str(category),eiwdate=str(eiwdate),remarks=str(remark))
+                mg10.objects.create(
+                    shop_sec=str(shop_sec),
+                    month=str(month),
+                    date=str(date),
+                    sno=str(sno),
+                    ticket_no=str(ticket),
+                    name=str(name),
+                    payrate=str(payrate),
+                    cat=str(category),
+                    eiwdate=str(eiwdate),
+                    remarks=str(remark),                     
+                    )
 
-
+            messages.success(request, 'Successfully Done!, Select new values to proceed')
     return render(request,"mg10views.html",context)
+
+
+
 
 # def mg10checkdate(request):
 #    if request.method == "GET" and request.is_ajax():
@@ -20137,7 +20556,93 @@ def mg10views(request):
 #        print("d1 date m21",d1)
 #        # #mydate = d1[0]['date']
 #        dtdate = mg10.objects.filter(eiwdate__contains=d1).values('ticket_no')
+def mg10Submitdata(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        ticket = request.GET.get('ticket1')
+        date = request.GET.get('date')         
+        month = request.GET.get('month')                      
+        sno = request.GET.get('sno1')               
+        name = request.GET.get('name1')
+        payrate = request.GET.get('payrate1')
+        category = request.GET.get('category1') 
+        eiwdate = request.GET.get('eiwdate1')
+        remark = request.GET.get('remark1')
+        mg10.objects.create(
+            shop_sec=str(shop_sec),
+            month=str(month),
+            date=str(date),
+            sno=str(sno),
+            ticket_no=str(ticket),
+            name=str(name),
+            payrate=str(payrate),
+            cat=str(category),
+            eiwdate=str(eiwdate),
+            remarks=str(remark),             
+            login_id=str(request.user)                
+        )
+        obj3=mg10.objects.all().count()
+        #print(obj3)
+        wer=obj3+1
 
+        obj1 =list(mg10.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','payrate','cat','eiwdate','remarks').distinct())
+        
+        #print('Save record', obj1)
+        context={
+            'obj1':obj1,
+            'wer':wer
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg10updatedata(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec2')
+        ticket = request.GET.get('ticket2')
+        date = request.GET.get('date2')         
+        month = request.GET.get('month2')                      
+        sno = request.GET.get('sno2')               
+        name = request.GET.get('name2')
+        payrate = request.GET.get('payrate2')
+        category = request.GET.get('category2') 
+        eiwdate = request.GET.get('eiwdate2')
+        remark = request.GET.get('remark2')
+        mg10.objects.filter(sno=sno).update(
+            shop_sec=str(shop_sec),
+            month=str(month),
+            date=str(date),
+            sno=str(sno),
+            ticket_no=str(ticket),
+            name=str(name),
+            payrate=str(payrate),
+            cat=str(category),
+            eiwdate=str(eiwdate),
+            remarks=str(remark),                     
+        ) 
+        obj3=mg10.objects.all().count()
+        #print(obj3)
+        wer=obj3+1
+        obj1 =list(mg10.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','payrate','cat','eiwdate','remarks').distinct())
+        
+        #print('Save record', obj1)
+        context={
+            'obj1':obj1,
+            'wer':wer
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg10editdata(request):
+    if request.method == "GET" and request.is_ajax():
+        sno = request.GET.get('sno')
+        obj1=list(mg10.objects.filter(sno=sno).values('month', 'date','sno','date','ticket_no','name','payrate','cat','eiwdate','remarks').distinct())
+        
+        print('Save record', obj1)
+        context={
+            'obj1':obj1,             
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 def mg10checkdate(request):
     if request.method == "GET" and request.is_ajax():
@@ -20153,6 +20658,10 @@ def mg10checkdate(request):
                 print("good")
         return JsonResponse(d1, safe = False)
     return JsonResponse({"success":False}, status=400)
+    
+           
+    
+
     
         
 
@@ -20192,6 +20701,16 @@ def mg10checkdate(request):
 #     return JsonResponse({"success":False}, status=400)
 
 
+
+def mg10getpayrate(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        ticket = request.GET.get('ticket')
+        ticket = list(empmast.objects.filter(ticket_no=ticket).values('payrate').distinct())
+        #staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
+        return JsonResponse(ticket, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
 def mg10getname(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
@@ -20208,24 +20727,15 @@ def mg10getname(request):
     return JsonResponse({"success":False}, status=400)
 
 
-def mg10getpayrate(request):
-    if request.method == "GET" and request.is_ajax():
-        shop_sec = request.GET.get('shop_sec')
-        ticket = request.GET.get('ticket')
-        ticket = list(empmast.objects.filter(ticket_no=ticket).values('payrate').distinct())
-        #staff_no=list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').distinct())
-        return JsonResponse(ticket, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-
 def mg10getcat(request):
     if request.method == "GET" and request.is_ajax():
         # shop_sec = request.GET.get('shop_sec')
         ticket = request.GET.get('two')
         print(ticket)
-        w1 = list(empmast.objects.filter(ticket_no=ticket).values('empno').exclude(empno__isnull=True).distinct())
+        w1 = list(empmast.objects.filter(ticket_no=ticket).values('empno','payrate').exclude(empno__isnull=True).distinct())
         print("w1***********",w1)
         t=w1[0]['empno']
+        payrate=w1[0]['payrate']
         print("t",t)
         w2=str(t)
         print("w2---",w2)
@@ -20235,6 +20745,7 @@ def mg10getcat(request):
         print("w3",w3)
         context={
             'prt':w3['cat'],
+            'payrate':payrate,
         }
         print("prtcat----------------------",context)
         return JsonResponse({'cont':context}, safe = False)
@@ -20363,13 +20874,19 @@ def mg10report(request):
             month = request.POST.get('month')
             ticket = request.POST.get('ticket')
 
-            obj1 = mg10.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','payrate','cat','eiwdate','remarks').distinct()
+            obj1 = mg10.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','payrate','cat','eiwdate','remarks').distinct()
             print("obj 1 ---",obj1)
             print(date)
             print(shop_sec)
-            print(month)
-            
-
+            print(month)        
+            tms=shop_section.objects.all()
+        # print(tm)
+            tmp=[]        
+            for on in tms:
+                tmp.append(on.section_code)
+            # print(tmp)
+            tm=shop_section.objects.filter(section_code=shop_sec).all()
+            shop_code=tm[0].shop_code
 
             w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
             print("w1",w1)
@@ -20399,11 +20916,14 @@ def mg10report(request):
             'prt':prtticket,
             'prtticket':prtticket,
             'ticket':ticket,
-            # 'prtemp':prtemp,
+            'roles':tmp,
             # 'timekeep':timekeep,
             # 'workshop':workshop,
             # 'fr_date':fr_date,
             'sub': 1, 
+            'nav':nav,
+            'subnav':subnav,
+            'shop_code': shop_code[0:3], 
                     
         }
 
@@ -20512,7 +21032,7 @@ def mg11views(request):
             month = request.POST.get('month')
             #ticket = request.POST.get('ticket')
 
-            obj1 = mg11.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','remarks').distinct()
+            obj1 = mg11.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','remarks').distinct()
             print(date)
             print(shop_sec)
             print(month)
@@ -20538,7 +21058,7 @@ def mg11views(request):
             print(ticket)
 
             context = {
-            #'obj1': obj1,
+            'obj1': obj1,
             'mytry':"rimjhim",
             #'lent': leng,
             # 'lent2': leng1,
@@ -20557,6 +21077,10 @@ def mg11views(request):
             # 'workshop':workshop,
             # 'fr_date':fr_date,
             'sub': 1, 
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
                     
         }
 
@@ -20595,6 +21119,86 @@ def mg11views(request):
 
     return render(request,"mg11views.html",context)
 
+def mg11Submitdata(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec')
+        ticket = request.GET.get('ticket')
+        date = request.GET.get('date')         
+        month = request.GET.get('month')                      
+        sno = request.GET.get('sno')               
+        name = request.GET.get('name')        
+        remark = request.GET.get('remark')
+        mg11.objects.create(
+            shop_sec=str(shop_sec),
+            month=str(month),
+            date=str(date),
+            sno=str(sno),
+            ticket_no=str(ticket),
+            name=str(name),           
+            remarks=str(remark),             
+            login_id=str(request.user)                
+        )
+        obj3=mg11.objects.all().count()
+        #print(obj3)
+        wer=obj3+1
+
+        obj1 =list(mg11.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','remarks').distinct())
+        
+        #print('Save record', obj1)
+        context={
+            'obj1':obj1,
+            'wer':wer,
+            
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+    
+def mg11updatedata(request):
+    if request.method == "GET" and request.is_ajax():
+        shop_sec = request.GET.get('shop_sec2')
+        ticket = request.GET.get('ticket2')
+        date = request.GET.get('date2')         
+        month = request.GET.get('month2')                      
+        sno = request.GET.get('sno2')               
+        name = request.GET.get('name2')        
+        remark = request.GET.get('remark2')
+        mg11.objects.filter(sno=sno).update(
+            shop_sec=str(shop_sec),
+            month=str(month),
+            date=str(date),
+            sno=str(sno),
+            ticket_no=str(ticket),
+            name=str(name),            
+            remarks=str(remark),                     
+        ) 
+        obj3=mg11.objects.all().count()
+        #print(obj3)
+        wer=obj3+1
+        obj1 =list(mg11.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','remarks').distinct())
+        
+        #print('Save record', obj1)
+        context={
+            'obj1':obj1,
+            'wer':wer
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+    
+ 
+def mg11editdata(request):
+    if request.method == "GET" and request.is_ajax():
+        sno = request.GET.get('sno')
+        obj1=list(mg11.objects.filter(sno=sno).values('month', 'date','sno','date','ticket_no','name','remarks').distinct())
+        
+        print('Save record', obj1)
+        context={
+            'obj1':obj1,             
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+       
+
 def mg11getname(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
@@ -20609,8 +21213,6 @@ def mg11getname(request):
         print("prtname******--",myname)
         return JsonResponse({'cont':context}, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
 
 @login_required
 @role_required(urlpass='/mg11report/')
@@ -20718,7 +21320,7 @@ def mg11report(request):
             month = request.POST.get('month')
             ticket = request.POST.get('ticket')
 
-            obj1 = mg11.objects.filter(shop_sec=shop_sec).values('sno','date','ticket_no','name','remarks').distinct()
+            obj1 = mg11.objects.filter(shop_sec=shop_sec,month=month).values('sno','date','ticket_no','name','remarks').distinct()
             # print(date)
             # print(shop_sec)
             # print(month)
@@ -20728,7 +21330,8 @@ def mg11report(request):
             wer=obj3+1
             print("wer------>",wer)
 
-
+            tm=shop_section.objects.filter(section_code=shop_sec).all()
+            shop_code=tm[0].shop_code
             w1 = list(Shemp.objects.filter(shopsec=shop_sec).values('staff_no').exclude(staff_no__isnull=True).distinct()) 
             print("w1++++",w1)
             #print("jgjuj")
@@ -20757,11 +21360,17 @@ def mg11report(request):
             'prt':prtticket,
             'prtticket':prtticket,
             #'ticket':ticket,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
             'sub': 1, 
+            'shop_code': shop_code[0:3], 
                     
         }
 
     return render(request,"mg11report.html",context)
+
+
 
 
 @login_required
@@ -20819,6 +21428,7 @@ def m14hwpart(request):
                 partnew.insert(0,'Z')
             elif len(partnew)>0:
                 partnew.insert(0,'ZR')
+        print(partnew,partnew[0])
         return JsonResponse(partnew, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -25718,6 +26328,7 @@ def batchExplode(request,pn,wt, dt,tepc,tlr,tlt,tver):
     dt=write_row_expl(pn, 1.0, "M", "", 0.0, "", dt)
     dt=cardexpl(request,pn,wt, dt,tepc,tlr,tlt,tver)
     a=[]
+    lst=[]
     Tempm14expl.objects.all().delete()
     for i in range(len(dt)):
         if dt[i]['part_no'] not in a:
@@ -25736,12 +26347,12 @@ def batchExplode(request,pn,wt, dt,tepc,tlr,tlt,tver):
                 rqt=max(ls4)
                 rqt="{0:.3f}".format(rqt)
                 Tempm14expl.objects.create(part_no=dt[i]['part_no'], qty=qty, ptc=ptc, rm_partno=rpa, rm_qty=rqt, rm_ptc=rpt)
-                #lst.append({'part_no':dt[i]['part_no'],'qty':qty,'ptc':ptc,'rm_partno':rpa,'rm_qty':rqt,'rm_ptc':rpt})
+                lst.append({'part_no':dt[i]['part_no'],'qty':qty,'ptc':ptc,'rm_partno':rpa,'rm_qty':rqt,'rm_ptc':rpt})
             else:
                 Tempm14expl.objects.create(part_no=dt[i]['part_no'], qty="{0:.3f}".format(dt[i]['qty']), ptc=dt[i]['ptc'], rm_partno=dt[i]['rm_partno'], rm_qty="{0:.3f}".format(dt[i]['rm_qty']), rm_ptc=dt[i]['rm_ptc'])
-                #lst.append({'part_no':dt[i]['part_no'],'qty':"{0:.3f}".format(dt[i]['qty']),'ptc':dt[i]['ptc'],'rm_partno':dt[i]['rm_partno'],'rm_qty':"{0:.3f}".format(dt[i]['rm_qty']),'rm_ptc':dt[i]['rm_ptc']})
-    #lst=sorted(lst, key = lambda i: i['part_no'])
-    return 
+                lst.append({'part_no':dt[i]['part_no'],'qty':"{0:.3f}".format(dt[i]['qty']),'ptc':dt[i]['ptc'],'rm_partno':dt[i]['rm_partno'],'rm_qty':"{0:.3f}".format(dt[i]['rm_qty']),'rm_ptc':dt[i]['rm_ptc']})
+    lst=sorted(lst, key = lambda i: i['part_no'])
+    return lst
 def m14btdesc(bt):
     if bt=='S':
         return 'ORD'
@@ -25852,6 +26463,23 @@ def updtcodem14( nm, cdt, cd, fname):
         updtcodem14(nm, cdt, cd,fname)
     print('num : ', num1)
     return num1
+def scl_cl(ltd,alt,epc):
+        if alt == "T":
+            return "T"
+        ls=["01","02","05","1A","1C","1F"]
+        if epc in ls:
+            if ltd>35:
+                return "A"
+            if ltd>25:
+                return "B"
+            return "C"
+        else:
+            if ltd>25:
+                return "A"
+            if ltd>15:
+                return "B"
+            return "C"
+        return "C"
 ####################  end card gen function #####################
 
 @login_required
@@ -26398,3 +27026,122 @@ def M20report(request):
             pdf = render_to_pdf('M20pdfc.html',data)
             return HttpResponse(pdf, content_type='application/pdf')
     return render(request, "M20report.html", context)
+
+@login_required
+@role_required(urlpass='/sickcetificate/')
+def sickcetificate(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    
+    if "Superuser" in rolelist:
+        emp =empmast.objects.all() 
+        ob=Med1.objects.all().count()
+        rno= datetime.datetime.now().strftime ("%Y%m")+"/HOD/"+ str(ob+1)
+        d_id=empmast.objects.filter(~Q(desig_longdesc__startswith='CONTRACT'),dept_desc="MEDICAL",decode_paycategory='GAZ').all()
+        ex=Med1.objects.all().order_by('-recordno')
+        # print(rno)          
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':emp,
+            'rno':rno,
+            'doctor':d_id,
+            'obj':ex,
+            'sub':0
+        }
+
+        if request.method == "POST":
+           submitvalue = request.POST.get('proceed')
+           if submitvalue=='Submit':
+                print("kamlesh data saved")                                 
+                update = request.POST.get('update')
+                # print(update)
+                recordno = request.POST.get('recordno')
+                empno = request.POST.get('employeeno')
+                doctorid = request.POST.get('doctorid')
+                doctorname = request.POST.get('doctorname')
+                doctordesignation = request.POST.get('doctordesignation')
+                empname= request.POST.get('employeename')
+                empdesignation = request.POST.get('empdesignation')
+                empdepartment = request.POST.get('empdepartment')
+                stationempno = request.POST.get('stationempno')
+                suffingfrom = request.POST.get('suffingfrom')
+                dutyfordays = request.POST.get('dutyfordays')
+                effectdate = request.POST.get('effectdate')
+                
+                
+                newdoc= Med1(
+                    update=str(update),
+                    recordno=str(recordno),
+                    empno = str(empno),
+                    doctorname =str(doctorname),
+                    doctorid=str(doctorid),
+                    doctordesignation =str(doctordesignation),
+                    empname=str(empname),
+                    empdesignation=str(empdesignation),
+                    empdepartment = str(empdepartment),
+                    stationempno=str(stationempno), 
+                    suffingfrom=str(suffingfrom),
+                    dutyfordays=str(dutyfordays),                 
+                    effectdate= str(effectdate),                    
+                     )
+
+                newdoc.save()
+                ob=Med1.objects.all().count()
+                rno= datetime.datetime.now().strftime ("%Y%m")+"/HOD/"+ str(ob+1)  
+                ex=Med1.objects.all().order_by('-recordno')    
+                context={
+                    'sub':0,
+                    'lenm' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':emp,
+                    'rno':rno,
+                    'doctor':d_id,
+                    'obj':ex,
+                    'sub':1
+                }
+                messages.success(request, 'Successfully Done!, Select new values to proceed')   
+       
+    return render(request,'sickcetificate.html',context)
+
+def sickcetificate_edit(request):
+    if request.method == "GET" and request.is_ajax():
+        recno = request.GET.get('recno')
+        print('daasas',recno)
+        obj = Med1.objects.filter(recordno=recno).all()        
+        print('get record', obj[0].update)
+
+        context={            
+            'update':obj[0].update,
+            'recordno':obj[0].recordno,
+            'empno' :obj[0].empno,
+            'doctorid':obj[0].doctorid,
+            'doctorname':obj[0].doctorname,
+            'doctordesignation':obj[0].doctordesignation,
+            'empname':obj[0].empname,
+            'empdesignation':obj[0].empdesignation,
+            'empdepartment' :obj[0].empdepartment,
+            'stationempno':obj[0].stationempno, 
+            'suffingfrom':obj[0].suffingfrom,
+            'dutyfordays':obj[0].dutyfordays,                 
+            'effectdate':obj[0].effectdate,
+                       
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+           

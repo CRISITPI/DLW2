@@ -528,6 +528,27 @@ urlpatterns = [
     path('caldata/',caldata,name='caldata'),
     path('m20reppdf/',m20reppdf,name='m20reppdf'),
     path('m20getroster/',m20getroster,name='m20getroster'),
+    path('m22viewlist/', m22viewlist, name='m22viewlist'),
+    path('ajax/m22getdata/',m22getdata,name='m22getdata'), 
+    path('ajax/mg10Submitdata/',mg10Submitdata,name='mg10Submitdata'),
+    path('ajax/mg10editdata/',mg10editdata,name='mg10editdata'),
+    path('ajax/mg10updatedata/',mg10updatedata,name='mg10updatedata'), 
+    path('ajax/mg11Submitdata/',mg11Submitdata,name='mg11Submitdata'),
+    path('ajax/mg11editdata/',mg11editdata,name='mg11editdata'),
+    path('ajax/mg11updatedata/',mg11updatedata,name='mg11updatedata'),
+    path('sickcetificate/',sickcetificate,name='sickcetificate'),
+    path('ajax/sickcetificate_edit/',sickcetificate_edit,name='sickcetificate_edit'),
+    path('ajax/indateqry1/',indateqry1,name='indateqry1'),
+    path('ajax/indateCheck/',indateCheck,name='indateCheck'),
+    path('ajax/m11repor/',m11repor,name='m11repor'),
+    path('ajax/m11save/',m11save,name='m11save'),
+    path('ajax/m11editdata/',m11editdata,name='m11editdata'),
+    path('ajax/m11updatedata/',m11updatedata,name='m11updatedata'),
+	
+	
+	
+     
+
 
 ]
 

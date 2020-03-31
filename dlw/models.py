@@ -3561,8 +3561,10 @@ class AxleWheelPressing(models.Model):
     edit_date=models.CharField(max_length=20,null=True)
     inspect_date=models.CharField(max_length=20,null=True)
 
-
 class M22(models.Model):
+    update = models.CharField(db_column='UPDATE', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    letter_no = models.CharField(db_column='LETTET_NO', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
+    subject = models.CharField(db_column='SUBJECT', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     datelw = models.CharField(db_column='DATELW', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     datecc = models.CharField(db_column='DATECC', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
     daterw = models.CharField(db_column='DATERW', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
@@ -3608,6 +3610,7 @@ class M22(models.Model):
 
     class Meta:
         db_table = 'M22'
+
 
 
 class m18(models.Model):
@@ -4022,9 +4025,6 @@ class Rates(models.Model):
         db_table = 'RATES'  
 
 
-
-
-
 class M11(models.Model):
     yymm = models.CharField(db_column='YYMM', max_length=4, blank=True, null=True)  # Field name made lowercase.
     shopsec = models.CharField(db_column='SHOPSEC', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -4040,12 +4040,15 @@ class M11(models.Model):
     rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
     in1 = models.CharField(db_column='IN1', max_length=10, blank=True, null=True)  # Field name made lowercase.
     out = models.CharField(db_column='OUT', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    # date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
     month = models.CharField(db_column='MONTH', max_length=15, blank=True, null=True)  # Field name made lowercase.
     total_time = models.CharField(db_column='TOTAL_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
     idle_time = models.CharField(db_column='IDLE_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
     amt = models.CharField(db_column='AMOUNT', max_length=7, blank=True, null=True)
     detail_no=models.CharField(db_column='IT_reasons',null=True,max_length=70)
+    in_date = models.CharField(db_column='IN_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+    out_date = models.CharField(db_column='OUT_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+    shift= models.CharField(db_column='SHIFT_TYPE',max_length=20, blank=True, null=True)
 
     class Meta:
         db_table = 'M11'
@@ -4706,7 +4709,7 @@ class M4HW(models.Model):
 
 class mg10(models.Model):
     sno=models.AutoField(db_column='SL.No',primary_key=True)
-    formid=models.CharField(db_column='FORM_ID',max_length=30,null=True)
+    # formid=models.CharField(db_column='FORM_ID',max_length=30,null=True)
     date=models.CharField(db_column='DATE',max_length=30,null=True)
     month=models.CharField(db_column='MONTH',max_length=30,null=True)
     shop_sec=models.CharField(db_column='SHOPSEC',max_length=20,null=True)
@@ -4732,10 +4735,9 @@ class mg11doc(models.Model):
     last_modified = models.DateTimeField(db_column='LAST_MODIFIED', blank=True, null=True)  # Field name made lowercase.
     login_id = models.CharField(db_column='LOGIN_ID', max_length=15, blank=True, null=True)
 
-
 class mg11(models.Model):
     sno=models.AutoField(db_column='SL.No',primary_key=True)
-    formid=models.CharField(db_column='FORM_ID',max_length=30,null=True)
+    #formid=models.CharField(db_column='FORM_ID',max_length=30,null=True)
     date=models.CharField(db_column='DATE',max_length=30,null=True)
     month=models.CharField(db_column='MONTH',max_length=30,null=True)
     shop_sec=models.CharField(db_column='SHOPSEC',max_length=20,null=True)
@@ -5232,3 +5234,18 @@ class M20new(models.Model):
     
     class Meta:
         db_table = 'M20new'
+
+class Med1(models.Model):
+    recordno=models.CharField(max_length=20,primary_key=True)
+    empno = models.CharField(max_length=50,null=True)
+    empname=models.CharField(max_length=20,null=True)
+    empdesignation=models.CharField(max_length=50,null=True)
+    empdepartment=models.CharField(max_length=50,null=True)
+    doctorid=models.CharField(max_length=50,null=True)
+    doctorname=models.CharField(max_length=50,null=True)
+    doctordesignation=models.CharField(max_length=50,null=True)
+    stationempno=models.CharField(max_length=50,null=True)
+    suffingfrom=models.CharField(max_length=50,null=True)
+    effectdate=models.CharField(max_length=50,null=True)
+    update=models.CharField(max_length=50,null=True)
+    dutyfordays=models.CharField(max_length=50,null=True)

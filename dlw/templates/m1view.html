@@ -214,11 +214,12 @@
 </div>
 </form>
 <script type="text/javaScript">
-var p_no1=[' ']  
+var p_no1=[' '] 
+var check='' 
 function funb()
 {
     var part = $("#part_nop").val();
-    
+   
     if ($("#part_nop").val()=='')
     {  
         alert('Enter part no');
@@ -229,6 +230,7 @@ function funb()
         alert("part_nop must be  8 character.");
         $("#part_nop").focus();
     }
+
     else
     {
         $('#id1').hide();
@@ -247,6 +249,7 @@ if (charCode > 31 && (charCode < 48 || charCode > 57))
 } 
 return true;
 }
+
 window.onload=function()
 {
   if (document.getElementById('hide1').value==0)
