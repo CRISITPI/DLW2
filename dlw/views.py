@@ -12639,7 +12639,7 @@ def m11save(request):
         shopsec= request.GET.get('shopsec')
         staff_no = request.GET.get('staff_no')
         inoutnum = request.GET.get("inoutnum")
-        ename= request.GET.get('empname')
+        ename= request.GET.get('ename')
         scat=request.GET.get('tcat')
         print(scat)
         print("dadd",inoutnum)            
@@ -26936,7 +26936,7 @@ def m20getroster(request):
         ldate=request.GET.get('myd')
         ticket=request.GET.get('myt')
         # print("ths is",shop_sec)
-        w1=roster2.objects.filter(shop_sec=shop_sec,staffNo=ticket,date=ldate).values('shift')
+        w1=roster1.objects.filter(shop_sec=shop_sec,staffNo=ticket,date=ldate).values('shift')
         wono = w1[0]['shift']
         print("testing print------wono> ",wono)
         cont ={
