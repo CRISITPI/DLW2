@@ -502,6 +502,7 @@ urlpatterns = [
     path('tool_reportedit/',tool_reportedit,name='tool_reportedit'),
     path('ajax/axlepressreport_validate',axlepressreport_validate,name='axlepressreport_validate'),
     path('ajax/pinionaxle_validate',pinionaxle_validate,name='pinionaxle_validate'),
+    
     path('demandRegistrationview/',demandRegistrationview,name='demandRegistrationview'),
     path('ajax/DemandRegisSave/',DemandRegisSave,name='DemandRegisSave'),
     path('ajax/PpncDemStaffNoDetails/',PpncDemStaffNoDetails,name='PpncDemStaffNoDetails'),
