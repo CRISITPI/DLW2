@@ -3986,14 +3986,16 @@ class M12DOC(models.Model):
     rec_ind = models.CharField(db_column='REC_IND', max_length=1, blank=True, null=True)  # Field name made lowercase.
     in1 = models.CharField(db_column='IN1', max_length=10, blank=True, null=True)  # Field name made lowercase.
     out = models.CharField(db_column='OUT', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    # date = models.CharField(db_column='DATE', max_length=10, blank=True, null=True)  # Field name made lowercase.
     month = models.CharField(db_column='MONTH', max_length=15, blank=True, null=True)  # Field name made lowercase.
     total_time = models.CharField(db_column='TOTAL_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
     idle_time = models.CharField(db_column='IDLE_TIME', max_length=10, blank=True, null=True)  # Field name made lowercase.
     reasons_for_idle_time = models.CharField(db_column='REASONS_FOR_IDLE_TIME', max_length=30, blank=True, null=True)  # Field name made lowercase.
     time_hrs = models.CharField(db_column='TIME_HRS', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    amt = models.DecimalField(db_column='AMT', max_digits=6, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-
+    amt = models.DecimalField(db_column='AMT', max_digits=8, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    in_date = models.CharField(db_column='IN_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+    out_date = models.CharField(db_column='OUT_DATE', max_length=10, blank=True,null=True) # Field name made lowercase.
+    shift= models.CharField(db_column='SHIFT_TYPE',max_length=20, blank=True, null=True)
     class Meta:
         db_table = 'M12DOC'
     
@@ -5249,3 +5251,31 @@ class Med1(models.Model):
     effectdate=models.CharField(max_length=50,null=True)
     update=models.CharField(max_length=50,null=True)
     dutyfordays=models.CharField(max_length=50,null=True)
+
+class workdemandbyshopmain(models.Model):
+    recordno=models.CharField(max_length=10,primary_key=True)
+    doccode=models.CharField(max_length=2,null=True,blank=True)
+    workorder = models.CharField(max_length=8,null=True,blank=True)
+    locono=models.CharField(max_length=8,null=True,blank=True)
+    flag=models.CharField(max_length=1,null=False,blank=True)
+    status=models.CharField(max_length=10,null=True,blank=True)
+    remarks=models.CharField(max_length=50,null=True,blank=True)
+    sseid=models.CharField(max_length=20,null=True,blank=True)
+    wmmid=models.CharField(max_length=20,null=True,blank=True)
+    pmid=models.CharField(max_length=20,null=True,blank=True)
+    date=models.CharField(max_length=10,null=True,blank=True)
+    dreleasedate=models.CharField(max_length=10,null=True,blank=True)
+    dcompletedate=models.CharField(max_length=10,null=True,blank=True)
+
+class workdemandbyshopsecondary(models.Model):
+    recordno=models.CharField(max_length=10,null=False)
+    partno = models.CharField(max_length=8,null=True,blank=True)
+    desc=models.CharField(max_length=30,null=True,blank=True)
+    quantity = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)  
+    locofrom = models.CharField(max_length=4, blank=True, null=True) 
+    locoto = models.CharField(max_length=4, blank=True, null=True) 
+    unit = models.CharField(max_length=20, blank=True, null=True)  
+    shopno = models.CharField( max_length=4, blank=True, null=True)
+
+
+    

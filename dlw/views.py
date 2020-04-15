@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import date,timedelta,time
 import time
+import re
 import datetime,calendar
 from calendar import monthrange
 from array import array
@@ -38,7 +39,7 @@ import smtplib
 import pandas
 import requests
 from .rp_file import *
-from django.db import connection
+
 import pandas as pd
 # Create your views here.
 #
@@ -4822,6 +4823,7 @@ def m1view(request):
                     'rmpart':'',
                     'part':part11,
                 }
+            
             return render(request,"M1report.html",context)
     return render(request,"m1view.html",context)
 
@@ -5095,6 +5097,7 @@ def m1genrept1(request):
                     'rdes':rdes,
                     'prtno':part_no,
                 }
+            
             pdf = render_to_pdf('m1pdf.html', context)
             return HttpResponse(pdf, content_type='application/pdf')
         bckbtn=request.POST.get('backbutton')
@@ -5585,14 +5588,456 @@ def m12view(request):
                 
 
                 wo_no=Batch.objects.all().values('bo_no').distinct()
+    return render(request,"m12view.html",context)@login_required
+@role_required(urlpass='/m12view/')
+def m12view(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_no = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'len' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+            wo_no =wo_no | req
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'wo_no':wo_no,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'lent':0,
+        }
+        # return render(request,"m2view.html",context)
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'lent':0,
+        }
+    if request.method == "POST":
+        #print("hi")
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            from decimal import Decimal
+            #print("ii")
+            shop_sec = request.POST.get('shop_sec')
+            staff_no = request.POST.get('staff_no')
+            month = request.POST.get('month')
+            wo_no = request.POST.get('wo_no')
+            print(month)
+            #obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month')[0]
+            tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
+            empname=tempcat[0]['name']
+            tcat=tempcat[0]['cat']
+            obj1 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('id','cat','time_hrs','in_date','out_date','shift','in1','out','reasons_for_idle_time','total_time','idle_time','month').distinct() 
+            print(obj1)
+           # print(obj1[0]['total_time'])
+            obj2='None'
+            obj3='None'
+            leng=0
+            leng1=0
+            rr='None'
+            amt=0
+            patotal=0
+            a=0
+            b=0
+            if len(obj1):
+                t=obj1[0]['cat']
+                print(t)
+                print(obj1[0]['total_time'])
+                if t != 'None':
+                    obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
+                    obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
+                   
+           
+                for op in range(len(obj1)):
+                    patotal=obj1[op]['total_time']
+                    print('ssssssssssssssssssssssssssssssss',patotal)
+                    p=patotal.split(':')
+                    print('p0...................',p[0])
+                    print('p1...................',p[1])
+                    a=a+Decimal(p[0])
+                    b=b+Decimal(p[1])
+                    if (b>=60):
+                        a=a+1
+                        b=b%60
+                          
+                    rr=str(a)+':'+str(b)   
+                    print(rr)
+                
+           
+                    print("a",a)
+                    print("b",b)
+                print("object1",obj1)
+                tmhr=rr
+                if len(obj2):    
+                    avgrt=obj2[0]['avg_rate']
+                    if tmhr == 'None': 
+                        tmhr=0
+                        avgrt=0
+                    else:
+                        tmhr1=tmhr.split(':')
+                        tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                                
+                        
+                    amt=tmhr*avgrt
+                    amt=Decimal(amt).quantize(Decimal('1.00'))
+                leng = obj1.count()
+                leng1 = obj2.count()
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'len' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                    'tcat':tcat,'empname':empname,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+                    wo_no =wo_no | req
+                context = {
+                    'len' :len(rolelist),
+                    'wo_no':wo_no,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                    'tcat':tcat,'empname':empname,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'len' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                    'tcat':tcat,'empname':empname,
+                }
+        submitvalue = request.POST.get('PrintPDF')
+        if submitvalue=='PrintPDF':
+            print("Print pdf")
+            from decimal import Decimal
+            shop_sec = request.POST.get('shopsec')
+            staff_no = request.POST.get('staff_no')
+            month = request.POST.get('month')
+            wo_no = request.POST.get('wo_no')
+            print(shop_sec)
+            print(staff_no)
+            print(wo_no)
+            print(month)
+            #obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month')[0]
+            tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
+            empname=tempcat[0]['name']
+            tcat=tempcat[0]['cat']
+            print(empname)
+            print(tcat)
+            obj1 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('id','cat','time_hrs','in_date','out_date','shift','in1','out','reasons_for_idle_time','total_time','idle_time','month').distinct() 
+            print(obj1)
+           # print(obj1[0]['total_time'])
+            rr='None'
+            amt=0
+            patotal=0
+            a=0
+            b=0
+            if len(obj1):
+                t=obj1[0]['cat']
+                print(t)
+                print(obj1[0]['total_time'])
+                if t != 'None':
+                    obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
+                    obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
+                   
+           
+                for op in range(len(obj1)):
+                    patotal=obj1[op]['total_time']
+                    p=patotal.split(':')
+                    a=a+Decimal(p[0])
+                    b=b+Decimal(p[1])
+                    if (b>=60):
+                        a=a+1
+                        b=b%60
+                          
+                    rr=str(a)+':'+str(b)     
+                    print(rr)
+                
+           
+                    print("a",a)
+                    print("b",b)
+                print("object1",obj1)
+                tmhr=rr
+                if len(obj2):    
+                    avgrt=obj2[0]['avg_rate']
+                    if tmhr == 'None': 
+                        tmhr=0
+                        avgrt=0
+                    else:
+                        tmhr1=tmhr.split(':')
+                        tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                                
+                        
+                    amt=tmhr*avgrt
+                    # amt=Decimal(amt).quantize(Decimal('1.00'))
+                    amt=round(amt,2)
+                    print("amt1",amt)
+                    context = {
+                        
+                        'obj1': obj1,
+                        'shop_sec': shop_sec,
+                        'staff_no':staff_no,
+                        'wo_no': wo_no,
+                        'r1':rr,
+                        'amt1': amt,
+                        'month': month,'tcat':tcat,'empname':empname,
+                }  
+                
+            pdf = render_to_pdf('M12pdfc.html',context)
+            return HttpResponse(pdf, content_type='application/pdf')
+
+        if submitvalue=='submit':
+            leng=request.POST.get('len')
+            shopsec= request.POST.get('shopsec')
+            staff_no = request.POST.get('staff_no')
+            month = request.POST.get('month')
+            inoutnum=request.POST.get("inoutnum")
+            amt = request.POST.get('amt')
+            for i in range(1, int(leng)+1):
+                in1 = request.POST.get('in1'+str(i))
+                out = request.POST.get('out'+str(i))
+                date = request.POST.get('date'+str(i))
+                month = request.POST.get('month'+str(i))
+               
+                total_time = request.POST.get('total_time'+str(i))
+                time_hrs = request.POST.get('total_time'+str(i))
+                idle_time = request.POST.get('idle_time'+str(i))
+                reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
+                M12DOC.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),time_hrs=str(time_hrs),amt=str(amt))
+               
+
+            for i in range(1, int(inoutnum)+1):
+                in1 = request.POST.get('in1add'+str(i))
+                out = request.POST.get('outadd'+str(i))
+                month = request.POST.get('month_add'+str(i))
+                total_time = request.POST.get('total_time_add'+str(i))
+                date = request.POST.get('dateadd'+str(i))
+                cat = request.POST.get('catadd'+str(i))
+                time_hrs = request.POST.get('total_time_add'+str(i))
+                idle_time = request.POST.get('idle_time_add'+str(i))
+                reasons_for_idle_time = request.POST.get('reasons_for_idle_timeadd'+str(i))
+            
+                M12DOC.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),cat=str(cat),time_hrs=str(time_hrs))
+              
+                wo_no=Batch.objects.all().values('bo_no').distinct()
     return render(request,"m12view.html",context)
+
+def m12save(request):
+    if request.method == 'GET' and request.is_ajax():
+        shopsec= request.GET.get('shopsec')
+        staff_no = request.GET.get('staff_no')
+        print(shopsec)
+        ename= request.GET.get('ename')
+        scat=request.GET.get('scat')
+        print(scat)
+        print("ename",ename)            
+        
+        in_date = request.GET.get('in_date')   
+        print("in_date.",in_date)              
+        out_date = request.GET.get('out_date')
+        shift = request.GET.get('shift')
+        month = request.GET.get('month')
+        in1 = request.GET.get('in1')
+        out = request.GET.get('out')
+        total_time = request.GET.get('total_time')
+        idle_time = request.GET.get('idle_time')
+        detail_no = request.GET.get('detail_no')
+        amt = request.GET.get('amt')
+        print("amt :",amt)
+        print("detail_no :",detail_no)
+        print("idle_time :",idle_time)
+        print("total_time :",total_time)
+        print("in1 :",in1)
+        print("shift :",shift)
+        print("out_date :",out_date)
+        print("staff_no :",staff_no)
+        print("data saved", month)
+        
+        sender_email_id = 'crisdlwproject@gmail.com'
+        sender_email_id_password = 'cris@1234'
+
+        if  month and in1 and out and idle_time and detail_no and total_time:
+            M12DOC.objects.create(shopsec=shopsec,staff_no=staff_no,name=str(ename),in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),in_date=str(in_date),out_date=str(out_date),idle_time=str(idle_time),reasons_for_idle_time=str(detail_no),cat=str(scat),amt=str(amt),shift=str(shift))
+            
+            
+            print ("shopsec === " +shopsec)
+            print(staff_no)
+            
+            emp_det=list(emp_details.objects.filter(shopsec=str(shopsec),card_details='M12').values('mobileno','email_id'))
+            print(emp_det)
+            for x in range(len(emp_det)):
+
+                sms(emp_det[x]['mobileno'],"Machine idle card for Emp number "+ staff_no +" Name "+ ename +" Soap "+ shopsec +" has been generated for the Date "+ in_date +" Total idle time "+idle_time+" ")
+
+                email1(sender_email_id,sender_email_id_password,emp_det[x]['email_id'],'Subject: MACHINE IDLE TIME CARD \n\n   Dear Sir,   Machine idle card for Emp number '+ staff_no +' Name '+ ename +' Soap '+ shopsec +' has been generated for the Date '+ in_date +' Total idle time '+idle_time+' ')
+            obj1=list(M12DOC.objects.filter(staff_no=staff_no,shopsec=shopsec,month=month).values('id','month','in1','out','in_date','out_date','shift','total_time','reasons_for_idle_time','idle_time').order_by('in_date'))
+
+            # print('Save record', obj1)
+            context={
+            'obj1':obj1,
+                }   
+            # obj=[]
+            # return JsonResponse(obj,safe = False)
+            return JsonResponse({'data':context}, safe = False)
+        
+    return JsonResponse({"success":False}, status = 400)
+def m12indateCheck(request):
+    print("In_date")
+    if request.method == 'GET' and request.is_ajax():  
+        print("byebye")
+        in_date= request.GET.get('in_date')
+        staff_no= request.GET.get('staff_no')
+        shop_sec= request.GET.get('shop_sec')
+        print(date)
+        print(staff_no)
+        print(shop_sec)
+        data_list =list(M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,in_date=in_date).values('in1','in_date','out','out_date','total_time').distinct())
+        print("data_list_date",data_list)
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                         
+    return JsonResponse({"success":False},status=400)
+
+def m12editdata(request):
+    if request.method == "GET" and request.is_ajax():
+        sno = request.GET.get('id')
+        obj1=list(M12DOC.objects.filter(id=sno).values('id','month','in1','out','in_date','out_date','shift','total_time','reasons_for_idle_time','idle_time').distinct())
+        
+        print('Save record', obj1)
+        context={
+            'obj1':obj1,             
+        }         
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def m12updatedata(request):
+    if request.method == "GET" and request.is_ajax():
+        id = request.GET.get('id') 
+        shopsec = request.GET.get('shopsec')
+        scat=request.GET.get('scat')
+        ename= request.GET.get('ename')
+        staff_no = request.GET.get('staff_no')
+        month = request.GET.get('month')
+        shift = request.GET.get('shift')
+        in_date = request.GET.get('in_date')         
+        in1 = request.GET.get('in1')                      
+        out_date = request.GET.get('out_date')               
+        out = request.GET.get('out')
+        total_time = request.GET.get('total_time')
+        detail_no = request.GET.get('detail_no') 
+        idle_time = request.GET.get('idle_time')
+        M12DOC.objects.filter(id=id).update(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),in_date=str(in_date),out_date=str(out_date),shift=str(shift),reasons_for_idle_time=str(detail_no),idle_time=str(idle_time))
+         
+        obj1=list(M12DOC.objects.filter(staff_no=staff_no,shopsec=shopsec,month=month).values('id','month','in1','out','in_date','out_date','shift','total_time','reasons_for_idle_time','idle_time').order_by('in_date'))
+
+              
+        print('Save record', obj1)
+        context={
+            'obj1':obj1,
+            
+        }    
+        # obj=[]
+        # return JsonResponse(obj,safe = False)     
+        return JsonResponse({'data':context}, safe = False)
+    return JsonResponse({"success":False}, status=400)
+def m12indatelink(request):
+    print("heeuu")
+    if request.method == 'GET' and request.is_ajax():  
+        print("byebye")
+        date= request.GET.get('in_date')
+        staff_no= request.GET.get('staff_no')
+        shop_sec= request.GET.get('shop_sec')
+        print(date)
+        print(staff_no)
+        print(shop_sec)
+        data_list =list(M21DOCNEW1.objects.filter(shop_sec=shop_sec,staff_no=staff_no,date=date).values('in1','date','out','outdate','total_time').distinct())
+        print("data_list",data_list)
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                         
+    return JsonResponse({"success":False},status=400)
                    
 def m12getwono(request):
     if request.method == "GET" and request.is_ajax():
         #from.models import Batch
         shop_sec = request.GET.get('shop_sec')
         w1=Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2=Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+        w2=Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).distinct()
+
         wono = list(w2)
         
         return JsonResponse(wono, safe = False)
@@ -5620,20 +6065,318 @@ def m12getempname(request):
         return JsonResponse({"exam":exam}, safe = False)
         return JsonResponse({"success":False}, status=400)
 
+@login_required
+@role_required(urlpass='/m12report/')
+def m12report(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_no = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'len' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+            req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+            wo_no =wo_no | req
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'wo_no':wo_no,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'lent':0,
+        }
+        # return render(request,"m2view.html",context)
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'len' :len(rolelist),
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles' :rolelist,
+            'lent':0,
+        }
+    if request.method == "POST":
+        #print("hi")
+        submitvalue = request.POST.get('proceed')
+        if submitvalue=='Proceed':
+            from decimal import Decimal
+            #print("ii")
+            shop_sec = request.POST.get('shop_sec')
+            staff_no = request.POST.get('staff_no')
+            month = request.POST.get('month')
+            wo_no = request.POST.get('wo_no')
+            print(month)
+            #obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month')[0]
+            tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
+            empname=tempcat[0]['name']
+            tcat=tempcat[0]['cat']
+            obj1 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('id','cat','time_hrs','in_date','out_date','shift','in1','out','reasons_for_idle_time','total_time','idle_time','month').distinct() 
+            print(obj1)
+           # print(obj1[0]['total_time'])
+            obj2='None'
+            obj3='None'
+            leng=0
+            leng1=0
+            rr='None'
+            amt=0
+            patotal=0
+            a=0
+            b=0
+            if len(obj1):
+                t=obj1[0]['cat']
+                print(t)
+                print(obj1[0]['total_time'])
+                if t != 'None':
+                    obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
+                    obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
+                   
+           
+                for op in range(len(obj1)):
+                    patotal=obj1[op]['total_time']
+                    p=patotal.split(':')
+                    a=a+Decimal(p[0])
+                    b=b+Decimal(p[1])
+                    if (b>=60):
+                        a=a+1
+                        b=b%60
+                          
+                    rr=str(a)+':'+str(b)     
+                    print(rr)
+                
+           
+                    print("a",a)
+                    print("b",b)
+                print("object1",obj1)
+                tmhr=rr
+                if len(obj2):    
+                    avgrt=obj2[0]['avg_rate']
+                    if tmhr == 'None': 
+                        tmhr=0
+                        avgrt=0
+                    else:
+                        tmhr1=tmhr.split(':')
+                        tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                                
+                        
+                    amt=tmhr*avgrt
+                    amt=Decimal(amt).quantize(Decimal('1.00'))
+                leng = obj1.count()
+                leng1 = obj2.count()
+            if "Superuser" in rolelist:
+                tm=shop_section.objects.all()
+                tmp=[]
+                for on in tm:
+                    tmp.append(on.section_code)
+                context={
+                    'len' :2,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles':tmp,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                    'tcat':tcat,'empname':empname,
+                }
+            elif(len(rolelist)==1):
+                for i in range(0,len(rolelist)):
+                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
+                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
+                    wo_no =wo_no | req
+                context = {
+                    'len' :len(rolelist),
+                    'wo_no':wo_no,
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                    'tcat':tcat,'empname':empname,
+                }
+            elif(len(rolelist)>1):
+                context = {
+                    'len' :len(rolelist),
+                    'nav':nav,
+                    'subnav':subnav,
+                    'ip':get_client_ip(request),
+                    'roles' :rolelist,
+                    'obj1': obj1,
+                    'obj2':obj2,
+                    'obj3':obj3,
+                    'lent': leng,
+                    'lent2': leng1,
+                    'amt1': amt,
+                    'shop_sec': shop_sec,
+                    'wo_no': wo_no,
+                    'staff_no':staff_no, 
+                    'r1':rr,
+                    'month': month,
+                    'sub':1,
+                    'tcat':tcat,'empname':empname,
+                }
 
+        if submitvalue=='submit':
+            leng=request.POST.get('len')
+            shopsec= request.POST.get('shopsec')
+            staff_no = request.POST.get('staff_no')
+            month = request.POST.get('month')
+            inoutnum=request.POST.get("inoutnum")
+            amt = request.POST.get('amt')
+            for i in range(1, int(leng)+1):
+                in1 = request.POST.get('in1'+str(i))
+                out = request.POST.get('out'+str(i))
+                date = request.POST.get('date'+str(i))
+                month = request.POST.get('month'+str(i))
+               
+                total_time = request.POST.get('total_time'+str(i))
+                time_hrs = request.POST.get('total_time'+str(i))
+                idle_time = request.POST.get('idle_time'+str(i))
+                reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
+                M12DOC.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),time_hrs=str(time_hrs),amt=str(amt))
+               
 
+            for i in range(1, int(inoutnum)+1):
+                in1 = request.POST.get('in1add'+str(i))
+                out = request.POST.get('outadd'+str(i))
+                month = request.POST.get('month_add'+str(i))
+                total_time = request.POST.get('total_time_add'+str(i))
+                date = request.POST.get('dateadd'+str(i))
+                cat = request.POST.get('catadd'+str(i))
+                time_hrs = request.POST.get('total_time_add'+str(i))
+                idle_time = request.POST.get('idle_time_add'+str(i))
+                reasons_for_idle_time = request.POST.get('reasons_for_idle_timeadd'+str(i))
+               
+              
+                M12DOC.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),cat=str(cat),time_hrs=str(time_hrs))
+             
+                
+                
 
+                wo_no=Batch.objects.all().values('bo_no').distinct()
 
+        if submitvalue=='PrintPDF':
+            print("Print pdf")
+            from decimal import Decimal
+            shop_sec = request.POST.get('shopsec')
+            staff_no = request.POST.get('staff_no')
+            month = request.POST.get('month')
+            wo_no = request.POST.get('wo_no')
+            print(shop_sec)
+            print(staff_no)
+            print(wo_no)
+            print(month)
+            #obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month')[0]
+            tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
+            empname=tempcat[0]['name']
+            tcat=tempcat[0]['cat']
+            print(empname)
+            print(tcat)
+            obj1 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('id','cat','time_hrs','in_date','out_date','shift','in1','out','reasons_for_idle_time','total_time','idle_time','month').distinct() 
+            print(obj1)
+           # print(obj1[0]['total_time'])
+            rr='None'
+            amt=0
+            patotal=0
+            a=0
+            b=0
+            if len(obj1):
+                t=obj1[0]['cat']
+                print(t)
+                print(obj1[0]['total_time'])
+                if t != 'None':
+                    obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
+                    obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
+                   
+           
+                for op in range(len(obj1)):
+                    patotal=obj1[op]['total_time']
+                    p=patotal.split(':')
+                    a=a+Decimal(p[0])
+                    b=b+Decimal(p[1])
+                    if (b>=60):
+                        a=a+1
+                        b=b%60
+                          
+                    rr=str(a)+':'+str(b)     
+                    print(rr)
+                
+           
+                    print("a",a)
+                    print("b",b)
+                print("object1",obj1)
+                tmhr=rr
+                if len(obj2):    
+                    avgrt=obj2[0]['avg_rate']
+                    if tmhr == 'None': 
+                        tmhr=0
+                        avgrt=0
+                    else:
+                        tmhr1=tmhr.split(':')
+                        tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                                
+                        
+                    amt=tmhr*avgrt
+                    # amt=Decimal(amt).quantize(Decimal('1.00'))
+                    amt=round(amt,2)
+                    print("amt1",amt)
+                    context = {
+                        
+                        'obj1': obj1,
+                        'shop_sec': shop_sec,
+                        'staff_no':staff_no,
+                        'wo_no': wo_no,
+                        'r1':rr,
+                        'amt1': amt,
+                        'month': month,'tcat':tcat,'empname':empname,
+                }  
+                
+            pdf = render_to_pdf('M12pdfc.html',context)
+            return HttpResponse(pdf, content_type='application/pdf')
 
-
-
-
-
-
-
-
-
-
+    return render(request,"m12report.html",context)
+    
 @login_required
 @role_required(urlpass='/machining_of_air_box/')
 def insert_machining_of_air_box(request):
@@ -12566,8 +13309,90 @@ def m11view(request):
                     'r1':rr,
                     'month': month,'tcat':tcat,'empname':empname,
                 }
+            # pdf = render_to_pdf('M11pdfc.html',context)
+            # return HttpResponse(pdf, content_type='application/pdf')    
+        submitvalue = request.POST.get('PrintPDF')
+        print("Print pdf")
+        if submitvalue=='PrintPDF':
+            print("Print pdf")
+            from decimal import Decimal
+            obj2='None'
+            leng=0
+            leng1=0
+            rr='None'
+            amt=0
+            patotal=0
+            a=0 
+            b=0
+            t=0
+            month = request.POST.get('month')
+            shop_sec = request.POST.get('shopsec')
+            wo_no = request.POST.get('wo_no')
+            staff_no = request.POST.get('staff_no')
+            part_no = request.POST.get('part_no')
+            tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
+            empname=tempcat[0]['name']
+            tcat=tempcat[0]['cat']
+            obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('id','month','cat','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').distinct()   
+            obj2 = Rates.objects.filter(staff_no=staff_no).values('avg_rate').distinct()
+            print(obj2)
 
 
+            for op in range(len(obj1)):
+                patotal=obj1[op]['total_time']
+                print("patotal",patotal)
+                if patotal is not None and len(str(patotal)):
+                    p=patotal.split(':')
+                    a=a+Decimal(p[0])
+                    b=b+Decimal(p[1])
+                    if (b>=60):
+                        a=a+1
+                        b=b%60
+
+                rr=str(a)+':'+str(b)    
+                print(rr)
+            
+        
+                print("a",a)
+                print("b",b)
+
+            #if len(obj1):
+            print(obj1)
+            tmhr=rr
+            print("1",tmhr)
+            if len(obj2):    
+                avgrt=obj2[0]['avg_rate']
+                print("2")
+                if tmhr == 'None': 
+                    tmhr=0
+                    avgrt=0
+                    print("3")
+                else:
+                    tmhr1=tmhr.split(':')
+                    tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                    print("4")
+                    
+            
+                amt=tmhr*avgrt
+            leng = obj1.count()
+            leng1 = obj2.count()
+            leng=obj1.count()
+            amt=round(amt,2)
+            print("amt1",amt)
+            context = {
+                    
+                    'obj1': obj1,
+                    'shop_sec': shop_sec,
+                    'staff_no':staff_no,
+                    'wo_no': wo_no,
+                    'r1':rr,
+                    'amt1': amt,
+                    'month': month,'tcat':tcat,'empname':empname,
+            }  
+                
+            pdf = render_to_pdf('M11pdfc.html',context)
+            return HttpResponse(pdf, content_type='application/pdf')
+            
         if submitvalue=='Submit':
             # print("in submit")                               #!!!!!!!1!!!!!!!!!!!!capital S   Submit
             leng=request.POST.get('len')
@@ -12616,33 +13441,30 @@ def m11view(request):
                     print ("shopsec === " +shopsec)
                     print(staff_no)
                     
-                    emp_det=list(emp_details.objects.filter(shopsec=str(shopsec),card_details='M11').values('mobileno','email_id'))
-                    print(emp_det)
-                    for x in range(len(emp_det)):
+                    # emp_det=list(emp_details.objects.filter(shopsec=str(shopsec),card_details='M11').values('mobileno','email_id'))
+                    # print(emp_det)
+                    # for x in range(len(emp_det)):
 
-                        sms(emp_det[x]['mobileno'],"Man idle card for Emp number "+ staff_no +" Name "+ ename +" Soap "+ shopsec +" has been generated for the Date "+ in_date +" Total idle time "+idle_time+" ")
+                    #     sms(emp_det[x]['mobileno'],"Man idle card for Emp number "+ staff_no +" Name "+ ename +" Soap "+ shopsec +" has been generated for the Date "+ in_date +" Total idle time "+idle_time+" ")
 
-                        email1(sender_email_id,sender_email_id_password,emp_det[x]['email_id'],'Subject: MAN IDLE TIME CARD \n\n   Dear Sir,   Man idle card for Emp number '+ staff_no +' Name '+ ename +' Soap '+ shopsec +' has been generated for the Date '+ in_date +' Total idle time '+idle_time+' ')
+                    #     email1(sender_email_id,sender_email_id_password,emp_det[x]['email_id'],'Subject: MAN IDLE TIME CARD \n\n   Dear Sir,   Man idle card for Emp number '+ staff_no +' Name '+ ename +' Soap '+ shopsec +' has been generated for the Date '+ in_date +' Total idle time '+idle_time+' ')
                 
                     messages.success(request, 'Data Saved Successfully!!')
                 else:
                     messages.success(r598+equest, 'Please enter all values!!')
                     wo_no=Batch.objects.all().values('bo_no').distinct()
+                    
 
     return render(request,"m11views.html",context)
 
 def m11save(request):
     if request.method == 'GET' and request.is_ajax():
-             
-        leng=request.GET.get('leng')
-        print("leng=",leng)
         shopsec= request.GET.get('shopsec')
         staff_no = request.GET.get('staff_no')
-        inoutnum = request.GET.get("inoutnum")
-        ename= request.GET.get('ename')
+        # ename= request.GET.get('empname')
+        ename= request.GET.get('ename')   
         scat=request.GET.get('tcat')
-        print(scat)
-        print("dadd",inoutnum)            
+        print(scat)           
         
         in_date = request.GET.get('in_date')   
         print("in_date.",in_date)              
@@ -12655,21 +13477,22 @@ def m11save(request):
         idle_time = request.GET.get('idle_time')
         detail_no = request.GET.get('detail_no')
         amt = request.GET.get('amt1')
-        M11.objects.filter(shopsec=shopsec,staff_no=staff_no,in_date=in_date,out_date=out_date,shift=shift,month=month).update(in_date=str(in_date),out_date=str(out_date),shift=str(shift),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
+        # M11.objects.filter(shopsec=shopsec,staff_no=staff_no,in_date=in_date,out_date=out_date,shift=shift,month=month).update(in_date=str(in_date),out_date=str(out_date),shift=str(shift),name=str(ename),cat=scat,in1=str(in1),out=str(out),total_time=str(total_time),detail_no=str(detail_no),idle_time=str(idle_time), amt=str(amt))
         print("data saved")
-            
-
-            
+        
         sender_email_id = 'crisdlwproject@gmail.com'
         sender_email_id_password = 'cris@1234'
 
         if  month and in1 and out and idle_time and detail_no and total_time:
             M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),in_date=str(in_date),out_date=str(out_date),shift=str(shift),idle_time=str(idle_time),detail_no=str(detail_no))
-            print ("shopsec === " +shopsec)
-            print(staff_no)
+            # print ("shopsec === " +shopsec)
+            # print(staff_no)
+            # print(ename)
+            # print(in_date)
+            # print(idle_time)
             
             emp_det=list(emp_details.objects.filter(shopsec=str(shopsec),card_details='M11').values('mobileno','email_id'))
-            print(emp_det)
+            # print(emp_det)
             for x in range(len(emp_det)):
 
                 sms(emp_det[x]['mobileno'],"Man idle card for Emp number "+ staff_no +" Name "+ ename +" Soap "+ shopsec +" has been generated for the Date "+ in_date +" Total idle time "+idle_time+" ")
@@ -12677,7 +13500,7 @@ def m11save(request):
                 email1(sender_email_id,sender_email_id_password,emp_det[x]['email_id'],'Subject: MAN IDLE TIME CARD \n\n   Dear Sir,   Man idle card for Emp number '+ staff_no +' Name '+ ename +' Soap '+ shopsec +' has been generated for the Date '+ in_date +' Total idle time '+idle_time+' ')
             obj1=list(M11.objects.filter(staff_no=staff_no,shopsec=shopsec,month=month).values('id','month','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').order_by('in_date'))
 
-            print('Save record', obj1)
+            # print('Save record', obj1)
             context={
             'obj1':obj1,
                 }   
@@ -12694,7 +13517,8 @@ def email1(sender_email_id,sender_email_id_password,receiver_email_id,message):
     s.login(sender_email_id,sender_email_id_password)  
     s.sendmail(sender_email_id,receiver_email_id, message) 
     s.quit()
-                   
+
+
 def m11getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
@@ -12704,7 +13528,6 @@ def m11getwono(request):
         wo_no = list(w2)                                             
         return JsonResponse(wo_no, safe = False)                    
     return JsonResponse({"success":False}, status=400)
-
 
 def m11getstaff_no(request):
     if request.method == "GET" and request.is_ajax():
@@ -12722,6 +13545,39 @@ def m11getpart_no(request):
         part_no = list(Batch.objects.filter(bo_no=wo_no).values('part_no').distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+def m11indateLink(request):
+    print("heeuu")
+    if request.method == 'GET' and request.is_ajax():  
+        # print("byebye")
+        in_date= request.GET.get('in_date')
+        staff_no= request.GET.get('staff_no')
+        shop_sec= request.GET.get('shop_sec')
+        # print(in_date)
+        # print(staff_no)
+        # print(shop_sec)
+        data_list =list(M21DOCNEW1.objects.filter(shop_sec=shop_sec,staff_no=staff_no,date=in_date).values('in1','date','out','outdate','total_time').distinct())
+        print("data_list",data_list)
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                         
+    return JsonResponse({"success":False},status=400)
+
+def m11indateCheck(request):
+    print("In_date")
+    if request.method == 'GET' and request.is_ajax():  
+        print("byebye")
+        in_date= request.GET.get('in_date')
+        staff_no= request.GET.get('staff_no')
+        shop_sec= request.GET.get('shop_sec')
+        print(date)
+        print(staff_no)
+        print(shop_sec)
+        data_list =list(M11.objects.filter(shopsec=shop_sec,staff_no=staff_no,in_date=in_date).values('in1','in_date','out','out_date','total_time').distinct())
+        print("data_list_date",data_list)
+        if(len(data_list)>0):
+            return JsonResponse(data_list,safe = False)                         
+    return JsonResponse({"success":False},status=400)
+
 def indateqry1(request):
     print("heeuu")
     if request.method == 'GET' and request.is_ajax():  
@@ -12776,6 +13632,7 @@ def m11editdata(request):
         }         
         return JsonResponse({'data':context}, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 def m11updatedata(request):
     if request.method == "GET" and request.is_ajax():
         id = request.GET.get('id') 
@@ -12806,7 +13663,6 @@ def m11updatedata(request):
         # return JsonResponse(obj,safe = False)     
         return JsonResponse({'data':context}, safe = False)
     return JsonResponse({"success":False}, status=400)
-
 
 @login_required
 @role_required(urlpass='/m11report/')
@@ -13097,8 +13953,10 @@ def m11report(request):
             pdf = render_to_pdf('M11pdfc.html',context)
             return HttpResponse(pdf, content_type='application/pdf')
 
-    return render(request,"m11report.html",context)   
 
+    #             pdf = render_to_pdf('M11pdfc.html',context)
+    # return HttpResponse(pdf, content_type='application/pdf')
+    return render(request,"m11report.html",context)  
 @login_required
 @role_required(urlpass='/mg36view/')
 def mg36view(request):
@@ -27143,5 +28001,350 @@ def sickcetificate_edit(request):
         return JsonResponse({'data':context}, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+@login_required
+@role_required(urlpass='/workdemandbyshop/')
+def workdemandbyshop(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    desg=empmast.objects.filter(empno=cuser).values('desig_longdesc')[0]
+    ch='ne'
+    match = re.search(r'SENIOR SECTION ENGINEER', desg['desig_longdesc'])
+    if match:
+         ch='sse'
+    match = re.search(r'WORKSHOP  MANAGER', desg['desig_longdesc'])
+    if match:
+         ch='wmm'
+    match = re.search(r'PROGRESS MAN', desg['desig_longdesc'])
+    if match:
+         ch='prm'
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    lst=list(workdemandbyshopmain.objects.filter(~Q(flag=4)).all().order_by('flag','recordno'))
+    context = {
+        'ip':get_client_ip(request),
+        'nav':nav,
+        'subnav':subnav,
+        'desg':ch,
+        'lst':lst,
+    }
+    if request.method == "POST":
+           submitvalue = request.POST.get('Add Demand')
+           submitvalue1 = request.POST.get('Search')
+           submitvalue2 = request.POST.get('Details')
+           locono=request.POST.get('locono')
+           workorder=request.POST.get('workorder')
+           date=request.POST.get('date')
+           detailsdocno=request.POST.get('detailsdocno')
+           code=request.POST.get('code')
+           if(code=='m4' or code=='M4'):
+               code=88
+           else:
+               code=89
+           if submitvalue=='Add Demand':
+               cdate=str(datetime.datetime.now().strftime ("%d-%m-%Y"))
+               check=cdate[3:5]+cdate[6:10]
+               date=str(date)
+               docno=workdemandbyshopmain.objects.annotate(e=Substr('recordno',1,6)).filter(e=check).values('recordno').order_by('-recordno')
+               print(check,docno)
+               if docno.count()>0:
+                    docno=str(docno[0]['recordno'])[6:10]
+                    docno=cdate[3:5]+cdate[6:10]+str(int(docno)+1).zfill(4)
+               else:
+                   docno= cdate[3:5]+cdate[6:10]+'0001'
+               workdemandbyshopmain.objects.create(recordno=docno,workorder =workorder,locono=locono,flag='0',status='Inbox',remarks='Not Yet Forwarded',sseid=str(cuser),dreleasedate=date,date=cdate,doccode=code) 
+               context = {
+                        'ip':get_client_ip(request),
+                        'nav':nav,
+                        'subnav':subnav,
+                        'desg':ch,
+                        'demandno':docno,
+                        'locono':locono,
+                        'workorder':workorder,
+                        'date':date,
+                        'code':code,
+                        'd':'A',
+                        
+                }
+               return render(request,'workdemandbyshopadd.html',context)
+           if submitvalue1=='Search':
+                return render(request,'workdemandbyshopadd.html',context)
+           if submitvalue2=='Details':
+                doc=list(workdemandbyshopmain.objects.filter(recordno=detailsdocno).values('recordno','workorder','locono','dreleasedate','status','doccode'))
+                lst=list(workdemandbyshopsecondary.objects.filter(recordno=detailsdocno).values('id','partno','desc','unit','quantity','locofrom','locoto','shopno').order_by('id'))
+                print(doc)
+                print(lst)
+                context = {
+                        'ip':get_client_ip(request),
+                        'nav':nav,
+                        'subnav':subnav,
+                        'desg':ch,
+                        'demandno':doc[0]['recordno'],
+                        'locono':doc[0]['locono'],
+                        'workorder':doc[0]['workorder'],
+                        'date':doc[0]['dreleasedate'],
+                        'status':doc[0]['status'],
+                        'code':doc[0]['doccode'],
+                        'lst':lst,
+                        'd':'B',
+                }
+                return render(request,'workdemandbyshopadd.html',context)
+    return render(request,'workdemandbyshop.html',context)
 
-           
+def getworkorderno(request):
+    if request.method == "GET" and request.is_ajax():
+        bono=list(Batch.objects.values('bo_no').distinct())       
+        return JsonResponse(bono, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def addworkorderdetails(request):
+    if request.method=="GET" and request.is_ajax():
+        partno=request.GET.get('partno')
+        desc=request.GET.get('desc')
+        quantity=request.GET.get('quantity')
+        unit=request.GET.get('unit')
+        locofrom=request.GET.get('locofrom')
+        locoto=request.GET.get('locoto')
+        docno=request.GET.get('docno')
+        shopsec=request.GET.get('shopsec')
+        a=request.GET.get('a')
+        if a=='0':
+            print(a)
+            workdemandbyshopsecondary.objects.create(recordno=docno,partno=partno,quantity=quantity,desc=desc,unit=unit,locofrom=locofrom,locoto=locoto,shopno=shopsec)
+        else:
+            workdemandbyshopsecondary.objects.filter(id=a).update(recordno=docno,partno=partno,quantity=quantity,desc=desc,unit=unit,locofrom=locofrom,locoto=locoto,shopno=shopsec)
+        return JsonResponse(partno, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def getworkdemandpart(request):
+    if request.method=='GET' and request.is_ajax():
+        docno=request.GET.get('docno')
+        lst=list(workdemandbyshopsecondary.objects.filter(recordno=docno).values('id','partno','desc','unit','quantity','locofrom','locoto','shopno').order_by('id'))
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:false"},status=400)
+def getpartno(request):
+    if request.method=='GET' and request.is_ajax():
+        lst=[]
+        part=list(Part.objects.filter(partno__isnull=False).values('partno').distinct())
+        shop=list(Shop.objects.filter(shop__isnull=False).values('shop').distinct())
+        lst.append(list(part))
+        lst.append(list(shop))
+        print(lst)
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:false"},status=400)
+
+def changestatus(request):
+    if request.method=='GET' and request.is_ajax():
+        docno=request.GET.get('docno')
+        workdemandbyshopmain.objects.filter(recordno=docno).update(flag='1',status='Progress',remarks='Forwarded To WMM')
+        a=[]
+        return JsonResponse(a,safe=False)
+    return JsonResponse({"success:false"},status=400)
+
+
+@login_required
+@role_required(urlpass='/mnp_entr/')
+def mnp_entr(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'mnp_entr.html',context)
+
+def mwnochanged(request):
+    if request.method == 'GET' and request.is_ajax():
+        txtmwno = request.GET.get('Txt_mw')    
+        print("mwno number is...",txtmwno)
+        if not txtmwno == "":
+            data_list=list(Mnp.objects.filter(mwno=txtmwno).values('mwno','descr','maint_area','location','bay','mw_cat','shopsec','sh_name','lc_no','no_shift','category','dt_of_comm','make','eqp_type','mc_type_gr','used_for','unit','cost','available','condition','replace_by','date_tr_c','capacity','required','yr_scrap','load_cente','status','cat_code','updt_dt'))
+            if(len(data_list)>0):
+                print(len(data_list))
+                return JsonResponse(data_list,safe = False)
+        
+    return JsonResponse({"success":False}, status = 400)
+
+def mwsave(request):
+    if request.method == 'GET' and request.is_ajax():
+         txtMwNo=request.GET.get('txtMwNo')
+         txtDescr=request.GET.get('txtDescr')
+         txtShopSec=request.GET.get('txtShopSec')
+         txtSh_name=request.GET.get('txtSh_name')
+         txtLc_no=request.GET.get('txtLc_no')
+         txtBay=request.GET.get('txtBay')
+         ddMaintArea=request.GET.get('ddMaintArea')
+         txtNo_shift=request.GET.get('txtNo_shift')
+         if(txtNo_shift==""):
+             txtNo_shift=None
+         ddCategory=request.GET.get('ddCategory')
+         txtDt_of_comm=request.GET.get('txtDt_of_comm')
+         if txtDt_of_comm != "":
+            ts=txtDt_of_comm.split('-')
+            print(ts)
+            txtDt_of_comm=ts[2]+"-"+ts[1]+"-"+ts[0]
+            print(txtDt_of_comm)
+         txtLocation=request.GET.get('txtLocation')
+         txtEqp_type=request.GET.get('txtEqp_type')
+         txtMC_Type_GR=request.GET.get('txtMC_Type_GR')
+         txtCost=request.GET.get('txtCost')
+         if(txtCost==""):
+             txtCost=None
+         txtUnit=request.GET.get('txtUnit')
+         txtAvailable=request.GET.get('txtAvailable')
+         txtReplace_by=request.GET.get('txtReplace_by')
+         if(txtReplace_by==""):
+             txtReplace_by=None
+         txtDate_TR_C=request.GET.get('txtDate_TR_C')
+         if txtDate_TR_C != "":
+             ps=txtDate_TR_C.split('-')
+             txtDate_TR_C=ps[2]+"-"+ps[1]+"-"+ps[0]
+             print("txtDate_TR_C is...",txtDate_TR_C)
+         txtCapacity=request.GET.get('txtCapacity')
+         txtReq=request.GET.get('txtReq')
+         txtYR_Scrap=request.GET.get('txtYR_Scrap')
+         if txtYR_Scrap != "":
+             ls=txtYR_Scrap.split('-')
+             txtYR_Scrap=ls[2]+"-"+ls[1]+"-"+ls[0]
+             print("txtYR_Scrap is...",txtYR_Scrap)
+         txtCondition=request.GET.get('txtCondition')
+         txtMake=request.GET.get('txtMake')
+         txtUsed_for=request.GET.get('txtUsed_for')
+         data_list1=list(Mnp.objects.filter(mwno=txtMwNo).values('mwno','descr','maint_area','location','bay','mw_cat','shopsec','sh_name','lc_no','no_shift','category','dt_of_comm','make','eqp_type','mc_type_gr','used_for','unit','cost','available','condition','replace_by','date_tr_c','capacity','required','yr_scrap','load_cente','status','cat_code','updt_dt'))
+         dt=datetime.date.today()
+         if len(data_list1) == 0  :
+            
+            if txtDescr == "" :
+                
+                return JsonResponse({"success":False}, status = 400)  
+            if txtLocation == "" :
+                
+                return JsonResponse({"success":False}, status = 400)
+            if ddCategory == "" :
+                
+                return JsonResponse({"success":False}, status = 400)
+            if ddMaintArea == "":
+                
+                return JsonResponse({"success":False}, status = 400)
+             
+            if txtDt_of_comm =="" and txtDate_TR_C == "" and txtYR_Scrap == "":
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),
+                available=str(txtAvailable),replace_by=txtReplace_by,capacity=str(txtCapacity),required=str(txtReq),
+                condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+            elif txtDt_of_comm =="" and txtDate_TR_C != "" and txtYR_Scrap != "":
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),date_tr_c=txtDate_TR_C,yr_scrap=txtYR_Scrap,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+            elif txtDate_TR_C == "" and txtDt_of_comm !="" and txtYR_Scrap != "":
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),dt_of_comm=txtDt_of_comm,yr_scrap=txtYR_Scrap,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+            elif txtYR_Scrap == "" and txtDt_of_comm !="" and txtDate_TR_C != "":
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),dt_of_comm=txtDt_of_comm,date_tr_c=txtDate_TR_C,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+            elif txtDt_of_comm =="" and txtDate_TR_C == "" and txtYR_Scrap != "":
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),yr_scrap=txtYR_Scrap,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+            
+            elif txtDt_of_comm =="" and txtDate_TR_C != "" and txtYR_Scrap == "":
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),date_tr_c=txtDate_TR_C,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+             
+            elif txtDt_of_comm !="" and txtDate_TR_C == "" and txtYR_Scrap == "":
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),dt_of_comm=txtDt_of_comm,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+            
+            else:
+                
+                Mnp.objects.create(mwno=str(txtMwNo),descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),dt_of_comm=txtDt_of_comm,date_tr_c=txtDate_TR_C,yr_scrap=txtYR_Scrap,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),updt_dt=dt)
+            
+            
+            obj=[]
+            return JsonResponse(obj,safe = False)
+         else:
+            
+            Mnp.objects.filter(mwno=txtMwNo).update(descr=str(txtDescr),location=str(txtLocation),category=str(ddCategory),
+                maint_area=str(ddMaintArea),bay=str(txtBay),shopsec=str(txtShopSec),sh_name=str(txtSh_name),lc_no=str(txtLc_no),
+                no_shift=txtNo_shift,eqp_type=str(txtEqp_type),dt_of_comm=txtDt_of_comm,date_tr_c=txtDate_TR_C,yr_scrap=txtYR_Scrap,
+                mc_type_gr=str(txtMC_Type_GR),cost=txtCost,unit=str(txtUnit),available=str(txtAvailable),replace_by=txtReplace_by,
+                capacity=str(txtCapacity),required=str(txtReq),condition=str(txtCondition),make=str(txtMake),used_for=str(txtUsed_for),
+                load_cente=str(txtLc_no),updt_dt=dt)
+            
+            obj=[]
+            return JsonResponse(obj,safe = False)
+    return JsonResponse({"success":False}, status = 400)

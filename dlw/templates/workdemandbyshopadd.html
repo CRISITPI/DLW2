@@ -1,0 +1,608 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> 
+<style>
+
+    * {
+      box-sizing: border-box;
+    } 
+    .a {
+        display: flex;
+        align-items: center;
+      }
+    body {
+      font: 16px Arial;  
+    }
+    
+    /*the container must be positioned relative:*/
+    .autocomplete {
+      position: relative;
+      display: inline-block;
+    }
+    
+    input {
+      border: 1px solid transparent;    
+      background-color: #f1f1f1;
+      padding: 10px;
+      font-size: 16px;
+    }
+    
+    input[type=text] {
+      background-color: #f1f1f1;
+      width: 100%;
+    }
+    
+    input[type=submit] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+      width: 15%;
+        text-align: center;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    input[type=button] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+      width: 15%;
+        text-align: center;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 100%;
+        left: 0;
+        right: 0;
+        max-height: 400px;
+        overflow-y: scroll; 
+        overflow-x: hidden;
+      }
+    
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff; 
+      border-bottom: 1px solid #d4d4d4; 
+    }
+    
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9; 
+    }
+    
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+      background-color: DodgerBlue !important; 
+      color: #ffffff; 
+    }
+    
+        .tab {
+            text-align: center;
+            width: 100%;
+          }
+   
+    </style>
+<br>
+<h3><center>Work Demand By Shop</center></h3>
+<center>
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO%}
+    <div class="alert alert-primary" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+    <div class="alert alert-success" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+    <div class="alert alert-danger" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING%}
+    <div class="alert alert-warning" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% endfor %}
+    {% endif %}
+</center>
+<br>
+<br>
+<center>
+    <form method="POST">{%csrf_token%}
+        <div class="container"> 
+          <input id="docno" hidden name="docno" value={{demandno}}>
+          <input id="d" hidden name="d" value={{d}}>
+       <input id="desig" value="{{desg}}" hidden >
+       <table class="tab"  border= "1px";>
+        <thead>  
+        <tr>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">Demand No</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">Loco No</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">Work Order No</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">DOC NO</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">Date</p></td>
+           </tr>
+           <tr>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">{{demandno}}</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">{{locono}}</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">{{workorder}}</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">{{code}}</p></td>
+               <td><p style="font-size: 20px;" ALIGN="CENTER">{{date}}</p></td>
+           </tr>
+          </thead> 
+         </table>
+         <br>
+         <br>
+         <div class="form-row" >
+            <div class="form-group col-md-4"></div>
+            <input type="button" name="Add Parts" id="AddParts" value="Add Parts" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1"></button>
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" name="Submit"  value="Forward " class="btn btn-primary" onclick="funforward()" ></button>
+         </div>
+         <br><br>
+         <table id="adddemand" class="table table-striped table-bordered" >
+          <thead style="background-color:ghostwhite; font-size:12px;">
+              <tr>
+               
+                <th style="display:none;">Id</th>
+                
+                  <th>Part No.</th>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Unit</th>
+                  
+                  <th>Loco From</th>
+                  <th>Loco To</th>
+                  <th>Shop Sec</th>
+                  
+              </tr>
+          </thead>
+          <tbody style="font-size:11px; font-weight: 610;">
+          {% if d == 'B' %}
+          {% for i in lst %}
+          <tr>
+           
+            <td style="display:none">{{i.id}}</td>
+            <td>{{i.partno}}</td>
+                  <td>{{i.desc}}</td>
+                  <td>{{i.quantity}}</td>
+                  <td>{{i.unit}}</td>
+                  <td>{{i.locofrom}}</td>
+                  <td>{{i.locoto}}</td>
+                  <td>{{i.shopno}}</td>
+                  
+          </tr>
+          {% endfor%}
+          </tbody>
+          {% endif %}
+        </table>
+        </div>
+        <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel1">Work Demand By Shop</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                    <form method="POST" class="needs-validation" > {% csrf_token %}
+                    <div class="modal-body">
+                                    <div class="form-group row">
+                                        <label for="partno" class="col-3 col-form-label">Part No</label>
+                                        <div class="col-6" >
+                                                <div class="autocomplete" style="width:200px;">
+                                                <input type="text" class="form-control" name="partno" id="partno" maxlength="8" required>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                      <label for="desc" class="col-3 col-form-label">Description</label>
+                                      <div class="col-6  " >
+                                                    <div class="autocomplete" style="width:200px;">
+                                                    <input type="text" class="form-control" name="desc" id="desc" onclick="fundesc()" required readonly>
+                                            </div>
+                                        </div>
+                                      </div>
+                                    
+                                    <div class="form-group row">
+                                      <div for="quantity" class="col-3 col-form-label"><label>Quantity</label></div>
+                                      <div class="col-6  " >
+                                                    
+                                                    <div class="autocomplete" style="width:200px;">
+                                                    <input type="text" class="form-control" name="quantity" id="quantity" required>
+                                            </div>
+                                        </div>
+                                      </div>
+                                      <div class="form-group row">
+                                        <div for="unit" class="col-3 col-form-label"><label>Unit</label></div>
+                                        <div class="col-6  " >
+                                                      
+                                                      <div class="autocomplete" style="width:200px;">
+                                                      <input type="text" class="form-control" name="unit" id="unit" required>
+                                              </div>
+                                          </div>
+                                        </div><div class="form-group row">
+                                          <div for="shopsec" class="col-3 col-form-label"><label>Shop Sec</label></div>
+                                          <div class="col-6  " >
+                                                       
+                                                        <div class="autocomplete" style="width:200px;">
+                                                        <input type="text" class="form-control" name="shopsec" maxlength="4" id="shopsec" required>
+                                                </div>
+                                            </div>
+                                          </div>
+                                        <div class="form-group row">
+                                          <div for="locofrom" class="col-3 col-form-label"><label>Loco From</label></div>
+                                          <div class="col-6  " >
+                                                       
+                                                        <div class="autocomplete" style="width:200px;">
+                                                        <input type="text" class="form-control" maxlength="4" name="locofrom" id="locofrom" required>
+                                                </div>
+                                            </div>
+                                          </div>
+                                          <div class="form-group row">
+                                            <div for="locoto" class="col-3 col-form-label"><label>Loco To</label></div>
+                                            <div class="col-6  " >
+                                                          
+                                                          <div class="autocomplete" style="width:200px;">
+                                                          <input type="text" class="form-control" maxlength="4" name="locoto" id="locoto" required>
+                                                  <br><span id="lblErrora" style="color: red"></span>
+                                                        </div>
+                                              </div>
+                                            </div>
+                                            
+                                              
+                                    
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="abc();" id="Clear" value="Clear">Clear</button>
+
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" id="Close" value="Close">Close</button>
+                            <button type="button" class="btn btn-primary"  onclick="funadd();"> Add Next </button>
+                            <button type="button" class="btn btn-primary" onclick="funadd();" id="Submit1" value="Submit1">Submit</button>
+                        </div>
+                        </form>
+    </form>
+</center>
+
+<script>
+  var w_order=[' ']
+  var shop=[' ']
+  var a='0';
+    setTimeout(function(){
+        if ($('#msg').length > 0){
+            $('#msg').remove(); 
+        }
+    },5000)
+
+$(document).ready(function() { 
+ // alert("hiiiiiiiiii");
+           var data = {};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'getpartno' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          alert(response[0].length)
+                            for(i=0;i<response[0].length;i++)
+                           {
+                             w_order.push((response[0][i].partno).toString());
+                           }
+                           for(i=0;i<response[1].length;i++)
+                           {
+                             shop.push((response[1][i].shop).toString());
+                           }
+                           }
+                       });
+                     if(document.getElementById("d").value == "A")
+                     {
+                      table=$('#adddemand').DataTable({
+                        "language": {
+                        "emptyTable": "No Record Found"}
+                        
+                      });
+                        $('#adddemand tbody').on( 'click', 'tr', function () {
+                        if ( $(this).hasClass('selected') ) {
+                        $(this).removeClass('selected');
+                        // var data = table.row( this ).data();
+                        }
+                        else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        var data1 = String(table.row( this ).data());
+                        alert(data1);
+                        docno=data1.split(",");
+                        a=docno[0];
+                        $('#partno').val(docno[1]);
+                        $('#desc').val(docno[2]);
+                        $('#quantity').val(docno[3]);
+                        $('#unit').val(docno[4]);
+                        $('#locofrom').val(docno[5]);
+                        $('#locoto').val(docno[6]);
+                        $('#shopsec').val(docno[7]);
+                        document.querySelector("#AddParts").click();
+                        }
+                      });
+                     document.querySelector("#AddParts").click();
+                     }
+                     if(document.getElementById("d").value == "B")
+                     {
+                       table=$('#adddemand').DataTable({
+                        "language": {
+                        "emptyTable": "No Record Found"}
+                        
+                      });
+                        $('#adddemand tbody').on( 'click', 'tr', function () {
+                        if ( $(this).hasClass('selected') ) {
+                        $(this).removeClass('selected');
+                        // var data = table.row( this ).data();
+                        }
+                        else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        var data1 = String(table.row( this ).data());
+                        alert(data1);
+                        docno=data1.split(",");
+                        a=docno[0];
+                        $('#partno').val(docno[1]);
+                        $('#desc').val(docno[2]);
+                        $('#quantity').val(docno[3]);
+                        $('#unit').val(docno[4]);
+                        $('#locofrom').val(docno[5]);
+                        $('#locoto').val(docno[6]);
+                        $('#shopsec').val(docno[7]);
+                        document.querySelector("#AddParts").click();
+                        }
+                      });
+                     }
+  });
+  var table;
+ 
+  function funadd()
+  {
+    partno=$('#partno').val();
+    desc=$('#desc').val();
+    quantity=$('#quantity').val();
+    unit=$('#unit').val();
+    locofrom=$('#locofrom').val();
+    locoto=$('#locoto').val();
+    docno=$('#docno').val();
+    shopsec=$('#shopsec').val();
+  if(partno=='')
+    alert('Enter Part No!');
+  else
+  if(partno.length<8)
+    alert('Part No Must Be 8 Character!');
+  else
+  if(quantity=='')
+    alert('Quantity Must Be Entered!');
+  else
+  if(shopsec=='')
+    alert('Shop Sec Must Be Entered!');
+  else
+  if(shopsec.length<4)
+    alert('Shop Sec Must Be 4 Character');
+  
+  else
+  {
+    var data={a,docno,partno,desc,quantity,unit,locofrom,locoto,shopsec};
+    alert(data)
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'addworkorderdetails' %}",
+      dataType : 'json',
+      data : data,
+      success : function(response)
+      {
+        $('#partno').val('');
+        $('#desc').val('');
+        $('#quantity').val('');
+        $('#unit').val('');
+        $('#locofrom').val('');
+        $('#locoto').val('');
+        $('#shopsec').val('');
+        
+        lblErrora.innerHTML = "Data Saved!  Add Next..";
+        $('#partno').focus();
+        a='0';
+        adddemand();
+        }
+    });
+  }
+  }
+  function funforward()
+  {
+    docno=$('#docno').val();
+    data={docno};
+    $.ajax({
+      type:'GET',
+      url: "{% url 'changestatus' %}",
+      dataType: 'Json',
+      data: data,
+      success: function(response)
+      {
+        alert('Forwarded to Wmm');
+      }
+    });
+
+  }
+  function adddemand()
+  {
+    docno=$('#docno').val();
+    var data={docno};
+    table.destroy();
+    $('#adddemand tbody').empty();
+    $.ajax({
+      type:'GET',
+      url: "{% url 'getworkdemandpart' %}",
+      dataType: 'Json',
+      data: data,
+      success: function(response)
+      {
+        var trHTML = '';
+        $.each(response, function (i, item) {
+            trHTML += '<tr><td style="display:none;">' + item.id + '</td><td>' + item.partno + '</td><td>' + item.desc + '</td><td>' + item.quantity + '</td><td>' + item.unit + '</td><td>' + item.locofrom + '</td><td>' + item.locoto +'</td><td>' + item.shopno +'</td></tr>';
+        });
+        trHTML+='</tbody>'
+        $('#adddemand').append(trHTML);
+        table=$('#adddemand').DataTable();
+    }
+    });
+  }
+  function fundesc()
+  {
+    val=$('#partno').val();
+    var data={val};
+    $.ajax({
+      type:'GET',
+      url: "{% url 'qrycstr1' %}",
+      dataType: 'Json',
+      data: data,
+      success: function(response)
+      {
+        $('#desc').val(response[0].des);
+      }
+      });
+  }
+  function abc()
+  {
+    $('#partno').val('');
+        $('#desc').val('');
+        $('#quantity').val('');
+        $('#unit').val('');
+        $('#locofrom').val('');
+        $('#locoto').val('');
+        $('#shopsec').val('');
+        lblErrora.innerHTML = "";
+        $('#partno').focus();
+        a='0';
+  }
+
+  var abcd=[]
+partno.addEventListener("keyup", (e) => {
+  // If input value is longer or equal than 2 chars, adding "users" on ID attribute.
+  if (e.target.value.length == 3) {
+      abcd=w_order;
+      autocomplete(document.getElementById("partno"), abcd);
+    } 
+});
+  
+  function autocomplete(inp, arr) {
+    /*the autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values:*/
+    var currentFocus;
+    /*execute a function when someone writes in the text field:*/
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+    });
+    /*execute a function presses a key on the keyboard:*/
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          /*If the arrow DOWN key is pressed,
+          increase the currentFocus variable:*/
+          currentFocus++;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          /*If the arrow UP key is pressed,
+          decrease the currentFocus variable:*/
+          currentFocus--;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          e.preventDefault();
+          if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+          }
+        }
+    });
+    function addActive(x) {
+      /*a function to classify an item as "active":*/
+      if (!x) return false;
+      /*start by removing the "active" class on all items:*/
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      /*add class "autocomplete-active":*/
+      x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+      /*a function to remove the "active" class from all autocomplete items:*/
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+    function closeAllLists(elmnt) {
+      /*close all autocomplete lists in the document,
+      except the one passed as an argument:*/
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+  }
+  /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+  autocomplete(document.getElementById("shopsec"), shop);
+  </script>
+
+
+{% endblock content %}

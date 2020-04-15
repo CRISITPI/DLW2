@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
@@ -12,9 +14,10 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+<script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
+<link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
 
-
-
+<link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
 
 <style>
   .ui-timepicker-wrapper {
@@ -89,7 +92,10 @@
   .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
     background: #f2f2f2;
   }
-  
+  .ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
+    width: 45%;
+    padding: 5px;
+}
   </style>
 <style>
 #customers {
@@ -160,16 +166,42 @@
     input[type=button]:hover {
         background-color: #45a049;
         text-align: center;
-    }
+    }    
 </style>
-<br>
+
+<script type="text/javascript">
+  $(document).ready(function()
+{   
+    $(".monthPicker").datepicker({
+        dateFormat: 'MM yy',
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+
+        onClose: function(dateText, inst) {
+            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).val($.datepicker.formatDate('MM yy', new Date(year, month, 1)));
+        }
+    });
+
+    $(".monthPicker").focus(function () {
+        $(".ui-datepicker-calendar").hide();
+        $("#ui-datepicker-div").position({
+            my: "center top",
+            at: "center bottom",
+            of: $(this)
+        });
+    });
+});
+</script>
+
 <br>
 <h6 align="center"><b>M11</b></h6>
-<br>
 <h6 align="center" ><b>कर्मचारी निष्कर्य समय कार्ड</b></h6>
 <h6 align="center" ><b>MAN IDLE TIME CARD</b></h6>
-<br><br>
-<form action="{% url 'm11view' %}" onsubmit="return validateSD();" method="POST"> {% csrf_token %}
+<br><br><br><br>
+<form action="{% url 'm11view' %}"  method="POST"> {% csrf_token %}
     <div class="container">
         <table class="table">
 <tr>
@@ -190,24 +222,26 @@
   <br> {% if sub == 0 %} 
                 <tr>
                         <td>
-                            <label for="month"><b>Month/माह :</b></label>
-                            <select id="month" name="monthdrop" class="from-control ll" required>
-                                    <option value="">SELECT MONTH</option>
-                                    <option value="JAN-2020">JAN-2020</option>
-                                    <option value="FEB-2020">FEB-2020</option>
-                                    <option value="MAR-2020">MAR-2020</option>
-                                    <option value="APR-2020">APR-2020</option>
-                                    <option value="MAY-2020">MAY-2020</option>
-                                    <option value="JUN-2020">JUN-2020</option>
-                                    <option value="JUL-2020">JUL-2020</option>
-                                    <option value="AUG-2020">AUG-2020</option>
-                                    <option value="SEPT-2020">SEPT-2020</option>
-                                    <option value="OCT-2020">OCT-2020</option>
-                                    <option value="NOV-2020">NOV-2020</option>
-                                    <option value="DEC-2020">DEC-2020</option>
-                            </select>
-                        </td>
-                        <td>
+                          <label for="month"><b>Month/माह :</b></label>
+                          <input name="monthdrop" id="month" class="monthPicker" autocomplete="off" />
+                            <!-- <label for="month"><b>Month/माह :</b></label>
+                            <select id="month" name="monthdrop" class="form-control" required>
+                                    <option value="">Select Month</option>
+                                    <option value="01-2020">JAN-2020</option>
+                                    <option value="02-2020">FEB-2020</option>
+                                    <option value="03-2020">MAR-2020</option>
+                                    <option value="04-2020">APR-2020</option>
+                                    <option value="05-2020">MAY-2020</option>
+                                    <option value="06-2020">JUNE-2020</option>
+                                    <option value="07-2020">JULY-2020</option>
+                                    <option value="08-2020">AUG-2020</option>
+                                    <option value="09-2020">SEPT-2020</option>
+                                    <option value="10-2020">OCT-2020</option>
+                                    <option value="11-2020">NOV-2020</option>
+                                    <option value="12-2020">DEC-2020</option>
+                                    </select> -->
+                                </td>
+                                <td>
                             <label for="sno"><b>Shop Section/शॉप अनुभाग :</b></label>
                             <select class="form-control" id="shop_sec" name="shop_sec" required>
                 <option id="op_shop" selected disabled hidden>Select Shop Section</option>
@@ -253,9 +287,10 @@
 <input type="hidden" name="subb" id="subb" value="{{sub}}">
 
     </div>
-<br><br> 
+<br> 
   {% if sub == 1 %}  
-<div id="print" align="center">
+  <div id="print" style="align:center" >
+    <div class="container" style="width: 100%">
 <table align="center">  
     <tr>
         <th>SHOP SECTION/शाप विभाग:</th> 
@@ -269,7 +304,7 @@
     <tr>
         <th>WORK ORDER NO/का.सं.:</th> 
         <td><u>{{wo_no}}</u></td>
-        <input type="hidden" name="wo_no" value="{{wo_no}}">
+        <input type="hidden" name="wo_no" id="wo_no1" value="{{wo_no}}">
 
     </tr>
     <tr>
@@ -300,49 +335,23 @@
         <input type="hidden" name="amt" value="{{amt1}}">
     </tr>  
     
-    </div>
+    
 </table>
- 
-<br><br>
-<div  id="divadd"  >          
-<table id="id1" align="center" border="1" class="table table-striped" style="width:99%; text-align: center; ">
-    <thead class="thead-dark">
-        <tr>
-            <th>MONTH</th>
-            <th style="width: 9%;">SHIFT</th>
-            <th>IN  DATE</th>
-            <th>IN TIME</th>
-            <th>OUT DATE</th> 
-            <th>OUT TIME</th>
-            <th>TOTAL TIME</th>
-            <th>DETAILS</th>
-            <th>IDLE TIME</th>
-        </tr>
-</thead>
-        
-          
-<tbody  id="items"></tbody>
-</table>
-
-<center>
-  <input  type="button" id="add" value="Add Operations" style="width: 150px;" height="50px;"/>
-  <input type="button" name="proceed" id="proceed" value="Submit" style="width: 150px;" onclick="myfunc();"  height="50px;" />
-  <!-- <input type="button" onclick="printDiv()" value="Print" style="width: 150px;" height="50px;"/> -->
-   <!-- <input type="button" name="view" id="view" value="View" style="width: 150px;"   height="50px;" />  -->
-</center> 
 </div> 
 </div>
-<center>
+<br><br>
+<table border="1"  style="width:100%">
+            
+  <div class="col-md-2" style="text-align: center;">
+    <input  type="button" id="add" value="Add New Row" style="width: 150px;" onclick="getdata()" />
 
-<input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/>
-</center>
-<!-- <div id="inouttab"></div> -->
-
+</div>
+</table>  
  
 <div class="container"></div>
 <div class="row"> <div class="col-md-12">   
-  <table  align="center" border="1" class="table table-striped" style="width:75%; text-align: center;" ">
-    <thead> 
+  <table  align="center" border="1" class="table table-striped" style="width:90%; text-align: center;" ">
+    <thead class="thead-dark"> 
     <tr>
     <th>S.NO </th>
     <!-- <th>MONTH</th> -->
@@ -354,16 +363,13 @@
     <th>TOTAL TIME</th>
     <th>DETAILS</th>
     <th>IDLE TIME</th>
-
+      
     </tr>
   </thead>
-
-  
-    
   <tbody id="inouttab"> 
     {% for obj in obj1 %}
   <tr>
-  <td>{{obj.id}}</td>
+  <td>{{forloop.counter}}</td>
   <!-- <td>{{obj.month}}</td> -->
   <td>{{obj.shift}}</td>
   <td>{{obj.in_date}}</td>
@@ -373,21 +379,128 @@
   <td>{{obj.total_time}}</td>
   <td>{{obj.detail_no}}</td>
   <td>{{obj.idle_time}}</td>
-<!-- <td  ><a href="#" onclick="editModal('{{i.sno}}')">EDIT</a></td> -->
-             {% endfor %} 
-
-        </tr>
+  <td><a href="#" onclick="editModal('{{obj.id}}')">EDIT</a></td>
+      {% endfor %} 
+</tr>
 </tbody>
-    </table> 
-  </div>  </div>
-</div>
-    <!-- <table id="mydatatab"  align="center" border="1" class="table table-striped" style="width:80%; text-align: center;"></table>  -->
-    
-    
-   
-    {% endif %}  
-</form>
+</table> 
+  </div>  
+  </div>
 
+<center>
+  <input type="submit" value="PrintPDF" name="PrintPDF" id="printPDF" style="height:50px; width:100px"/>
+</center>
+    <!-- <table id="mydatatab"  align="center" border="1" class="table table-striped" style="width:80%; text-align: center;"></table>  -->
+
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" >     
+        
+          <button type="button" class="close" onclick="popclose()"  >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+  
+      <div class="modal-body" id='printdata' >  
+          <div class="row"> 
+  
+            <div class="col-md-4  "> 
+              <input type="hidden" name="id" id="id" > 
+              <label for="formGroupExampleInput2"><b>MONTH</b></label>
+              <input type="text"  name="month2"  id="month2" value="{{month}}" readonly>
+              
+            </div>
+                
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>SHIFT</b></label>
+            <select name="shift" id="shift"  onblur="myFunction(this.id);" >
+            <option value="">SELECT SHIFT TYPE</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="GD">GD</option>
+            <option value="GN">GN</option>
+            </select>
+          </div>
+        
+  
+                        
+            <div class="col-md-4  "> 
+              
+              <label for="formGroupExampleInput2"><b>IN  DATE</b></label>
+              <input type="text" id="in_date"  class="myinp2"  name="in_date" onchange="mycheckDate(); linking(this.id); checkDate(this.id);" autocomplete="off"/>         
+              
+  
+            </div>
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>IN TIME</b></label>
+              <input type="text" id="in1"  name="in1" min="06:27"  max="06:45" onblur="myfunAdd();" style="width:100px"  class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  />
+  
+              
+            </div>
+                            
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>OUT DATE</b></label>
+            <input type="text" id="out_date"  class="myinp2" class="edatec" name="out_date"  style="width:150px" onchange="myfunDateAdd();" autocomplete="off"/>       
+            
+  
+          </div>
+                        
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>OUT TIME</b></label>
+              <input type="text" id="out"   name="out" min="14:30" max="14:45" onblur="myfunAdd();" class="form-control edatec123" 
+              onchange="myfunTimeAdd();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);" 
+              maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" />
+              
+            </div>
+                        
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>TOTAL TIME</b></label>
+              <input type="text" id="total_time"   name="total_time"  readonly>
+              
+            </div>
+                        
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>DETAILS</b></label>
+              <select name="detail_no" id="detail_no" >
+                  <option value="">SELECT REASON</option>
+                  <option value="machine_repair">MACHINE REPAIR</option>
+                  <option value="no_power">NO POWER</option>
+                  <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>
+                  <option value="lack_of_tools">LACK OF TOOLS</option>
+                  <option value="waiting_for_work">WAITING FOR WORK</option>
+                  <option value="failure_of_crane">FAILURE OF CRANE</option>
+                  <option value="waiting_for_crane">WAITING FOR CRANE</option>
+                  <option value="operator_absent">OPERATOR ABSENT</option>
+                  <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>
+                  <option value="lack_of_gas">LACK OF GAS OXY</option>
+                  <option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>
+                  <option value="lack_of_electrodes">LACK OF ELECTRODES</option>
+                  <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
+                  <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
+              </select>
+            </div>       
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2" ><b>IDLE TIME</b></label>
+              
+                  <input type="text"  name="idle_time" id="idle_time" onchange="myfunITAdd()" style="width:100px" min="06:27"  max="06:45"   class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" >
+                  
+              </div> 
+          </div>
+                      
+                 
+              
+                <div class="modal-footer d-flex justify-content-center">
+                    <a class="btn btn-primary" onclick="submitform();">Submit</a>
+                  </div>
+              </div>
+            </div>
+        </div>
+      </div>
+        
+      <br><br>
+  <br><br>
 <div class="modal" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true" >
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -401,9 +514,9 @@
           <div class="row">                
                       
             <div class="col-md-4  "> 
-              <input type="hidden" name="id" id="id" > 
+              <input type="hidden" name="id1" id="id1" > 
               <label for="formGroupExampleInput2"><b>MONTH</b></label>
-              <input type="text" value="{{i.month}}" name="month2"  id="month2" readonly>
+              <input type="text"  name="month3"  id="month3" readonly>
               
             </div>
           
@@ -411,7 +524,7 @@
                         
             <div class="col-md-4  "> 
               <label for="formGroupExampleInput2"><b>SHIFT</b></label>
-            <select name="shift" id="shift" value="{{i.shift}}" onblur="myFunctionEdit(this.id);">
+            <select name="shift1" id="shift1"  onblur="myFunctionEdit(this.id);">
             <option value="select">SELECT SHIFT TYPE</option>
             <option value="A">A</option>
             <option value="B">B</option>
@@ -426,7 +539,7 @@
             <div class="col-md-4  "> 
              
               <label for="formGroupExampleInput2"><b>IN  DATE</b></label>
-              <input type="text" id="in_date"  class="myinp2" value="{{i.in_date}}" name="in_date"   readonly/>         
+              <input type="text" id="in_date1"  class="myinp2"  name="in_date1"   readonly/>         
               
 
             </div>
@@ -436,21 +549,21 @@
                         
             <div class="col-md-4  "> 
               <label for="formGroupExampleInput2"><b>IN TIME</b></label>
-              <input type="text" id="in1"   value="{{i.in1}}" name="in1" min="06:27"  max="06:45" style="width:100px"  class="form-control edatec123" onblur="myfunEdit();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  />
+              <input type="text" id="in11"    name="in11" min="06:27"  max="06:45" style="width:100px"  class="form-control edatec123" onblur="myfunEdit();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  />
 
              
             </div>
                            
             <div class="col-md-4  "> 
               <label for="formGroupExampleInput2"><b>OUT DATE</b></label>
-            <input type="text" id="out_date"  class="myinp2" value="{{i.out_date}}" name="out_date"  style="width:150px" onchange="myfunDateEdit();"/>       
+            <input type="text" id="out_date1"  class="myinp2"  name="out_date1"  style="width:150px" onchange="myfunDateEdit();" autocomplete="off"/>       
             
 
           </div>
                         
             <div class="col-md-4  "> 
               <label for="formGroupExampleInput2"><b>OUT TIME</b></label>
-              <input type="text" id="out"   value="{{i.out}}" name="out" min="14:30" max="14:45"  class="form-control edatec123"  onblur="myfunEdit(); " 
+              <input type="text" id="out1"    name="out1" min="14:30" max="14:45"  class="form-control edatec123"  onblur="myfunEdit(); " 
               onchange="myfunTimeEdit();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);" 
               maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" >
               
@@ -458,13 +571,13 @@
                        
             <div class="col-md-4  "> 
               <label for="formGroupExampleInput2"><b>TOTAL TIME</b></label>
-              <input type="text" id="total_time"   value="{{i.total_time}}" name="total_time" onblur="myfun1()" readonly>
+              <input type="text" id="total_time1"    name="total_time1" placeholder="00:00" readonly>
               
             </div>
                        
             <div class="col-md-4  "> 
               <label for="formGroupExampleInput2"><b>DETAIL NO.</b></label>
-              <select name="detail_no" id="detail_no" value="{{i.detail_no}}">
+              <select name="detail_no1" id="detail_no1" >
                   <option value="select">SELECT REASON</option>
                   <option value="machine_repair">MACHINE REPAIR</option>
                   <option value="no_power">NO POWER</option>
@@ -485,7 +598,7 @@
             <div class="col-md-4  "> 
               <label for="formGroupExampleInput2"><b>IDLE TIME</b></label>
               
-                  <input type="text" value="{{i.idle_time}}" name="idle_time" id="idle_time" style="width:100px" min="06:27"  max="06:45"  onchange="myfunITEdit()" class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
+                  <input type="text"  name="idle_time1" id="idle_time1" style="width:100px" min="06:27"  max="06:45"  onchange="myfunITEdit()" class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
                   
              
           
@@ -502,62 +615,390 @@
 </div>
 
 </div>
+<center>
+    
+</center>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+
+<!-- <input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/> -->
+       
+    
+
+</form>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- <div id="items">
+
+
+    </div> -->
+    {% endif %}
+
+<br>
+    <br><br><br>
+<br>
+</form>
+
+
+</body>
+</html>
 
 
 <script type="text/javaScript">
 
-// $(document).ready(function () { $('#in_date').datepicker({dateFormat: 'dd-mm-yy'}); });
+function myfunITAdd(){
+      document.getElementById('total_time').value;
+      document.getElementById('idle_time').value;
+      if (document.getElementById('idle_time').value > document.getElementById('total_time').value) 
+            {
+                      alert("Idel time should be less or equal to in total time");
+                      document.getElementById("idle_time").value="00:00";
+                      $(this).val('');
+                    return false;
+            }
+       }
+
+
+function myfunTimeAdd()
+	      {
+        var t1=$('#in1').val().toString();
+        var t2=$('#out').val().toString();
+        var sf=$('#shift').val().toString();
+        if(sf=="A" || sf=="B" || sf=="GD"){
+          if (t1 > t2) 
+                {
+                      alert("In time should be less or equal to in Out time");
+                      document.getElementById("out").value="00:00";
+                      document.getElementById("in1").value="00:00";
+                      $(this).val('');
+                      return false;
+                }
+        }
+        if(sf=="C" || sf=="GN"){
+          if (t1 < t2) 
+                {
+                      alert("In time should be greater or equal to in Out time");
+                      document.getElementById("out").value="00:00";
+                      document.getElementById("in1").value="00:00";
+                      $(this).val('');
+                      return false;
+                }
+        } 
+          
+      }
+
+
+function myfunDateAdd()
+          {
+          sf=document.getElementById("shift").value;
+          var t2=document.getElementById("in_date").value;
+          var t3=document.getElementById("out_date").value;
+          if(sf=="A" || sf=="B" || sf=="GD"){
+            if (t3 > t2) 
+                  {
+                        alert("Out date should be equal to In date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+                  if (t3 < t2) 
+                  {
+                        alert("Out date should be equal to In date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+          }
+          if(sf=="C" || sf=="GN"){
+            if (t3 == t2) 
+                  {
+                        alert("Out date should be greater to In Date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+            if (t3 < t2) 
+            {
+                  alert("Out date should be greater to In Date");
+                  document.getElementById("out_date").value=" ";
+                  return false;
+            }
+            }
+          }
+
+
+function myfunAdd(){
+    
+    var t1=$('#in1').val().toString();
+    var t2=$('#out').val().toString();
+    m1=parseInt(t1.substring(3,5));
+    m2=parseInt(t2.substring(3,5));
+    h1=parseInt(t1.substring(0,2));
+    h2=parseInt(t2.substring(0,2));
+    if(h1>h2)
+       {
+           h2=h2+24;
+       }
   
-  $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+  
+    tm1=((h2*60)+m2)-((h1*60)+m1);
+    hrs=parseInt((tm1)/60);
+    min=(tm1)%60;
+    if (hrs < 10) {hrs = "0"+hrs;}
+    if (min < 10) {min = "0"+min;}
+    document.getElementById('total_time').value=hrs.toString()+":"+min.toString();
+    //document.getElementById('idle_time_add1').value=hrs.toString()+":"+min.toString();
+    
+       }
 
-
-function popclose(){
-  $('#exampleModal').css("display", "none");
-  $('#editModal').css("display", "none"); 
-}
-
-function popclose(){
-  $('#exampleModal').css("display", "none");
-  $('#editModal').css("display", "none"); 
-}
-
-function myfunc()
+function linking(th)
   {
-    var leng = $("#len").val();
-    // alert(leng);
+        
+        var id = th;
+        var in_date = document.getElementById(id).value;
+        var staff_no = $("#staff1").val();
+        var shop_sec = $("#shop1").val();
+        // alert(in_date);
+        // alert(staff_no);
+        // alert(shop_sec);
+        var data = {in_date,staff_no,shop_sec};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm11indateLink' %}", 
+            dataType : 'json',
+            data : data,
+            success : function(response){   
+              alert("Get data M21 card");
+            
+
+              $("#in1").val(response[0].in1);
+              $("#in_date").val(response[0].date);
+              $("#out_date").val(response[0].outdate);
+              $("#out").val(response[0].out);
+              $("#total_time").val(response[0].total_time);
+
+            // document.getElementById("in1").value=response[0].in1; 
+            // document.getElementById("in_date").value=response[0].date; 
+            // document.getElementById("out_Date").value=response[0].outdate; 
+            // document.getElementById("out").value=response[0].out; 
+            // document.getElementById("total_time").value=response[0].total_time; 
+
+            // document.getElementById("in1").readOnly = true;  
+            // document.getElementById("out_date").readOnly = true; 
+            // document.getElementById("out").readOnly = true; 
+            // document.getElementById("total_time").readOnly = true;
+            }
+            
+                
+              });
+
+  }
+
+function mycheckDate() {
+
+var id = document.getElementById("in_date").value;
+var month = document.getElementById("fmonth").value;
+
+var mon=month.split(' ');
+
+var marr={January:"01",February:"02",March:"03",April:"04",May:"05",June:"06",July:"07",August:"08",September:"09",October:"10",November:"11",December:"12"};
+// alert("marr  :"+marr[mon[0]]+'-'+mon[1]);
+var res = id.split('-');
+//  alert("in date :  "+res[1]+'-'+res[2]);
+//  alert("Full date :  "+id);
+//  alert(month);
+if(res[1]+'-'+res[2]==marr[mon[0]]+'-'+mon[1])
+{
+$( "#in_date" ).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+}
+else
+{
+  alert("This month not valid?");
+  document.getElementById("in_date").value=" ";
+}
+}
+
+
+function myFunction(th) {
+var id = document.getElementById(th).value;
+console.log("kkk",id);
+if ( id=="A") {
+     
+      var in1="in1";
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+     $('#in1').timepicker('option','minTime','06:27');
+     $('#in1').timepicker('option','maxTime','14:45');
+     var out="out";
+     $('#out').timepicker('option','minTime','06:27');
+     $('#out').timepicker('option','maxTime','14:45');
+
+  }
+  if(id=="B")  {
+    var in1="in1";
+    $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+    $('#in1').timepicker('option','minTime','14:27');
+    $('#in1').timepicker('option','maxTime','22:45');   //14:45
+     var out="out";
+    $('#out').timepicker('option','minTime','14:27');
+    $('#out').timepicker('option','maxTime','22:45');
+
+
+  }
+  if(id=="GN")  {
+     
+
+      var in1="in1";
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+
+    $('#in1').timepicker('option','minTime','22:27');
+    $('#in1').timepicker('option','maxTime','06:45');  //22:45
+     var out="out";
+    $('#out').timepicker('option','minTime','22:27');
+    $('#out').timepicker('option','maxTime','06:45');
+
+
+  }
+  if(id=="GD")  {
+
+      var in1="in1";
+
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+     $('#in1').timepicker('option','minTime','06:27');   
+     $('#in1').timepicker('option','maxTime','16:45');    
+      var out="out";
+     $('#out').timepicker('option','minTime','06:27');
+     $('#out').timepicker('option','maxTime','16:45');
+  }
+  if(id=="C")  {
+
+      var in1="in1";
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+    
+
+     $('#in1').timepicker('option','minTime','15:57');
+     $('#in1').timepicker('option','maxTime','01:45');
+      var out="out";//+String(k[1]);
+     $('#out').timepicker('option','minTime','15:57');
+     $('#out').timepicker('option','maxTime','01:45');
+
+  }
+  
+
+}
+
+  $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+  $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+
+function popclose(){
+  $('#exampleModal').css("display", "none");
+  $('#editModal').css("display", "none"); 
+}
+
+
+
+function getdata()
+  { 
+  $("#in_date").val("");
+  $('#out_date').val("");
+  $('#shift').val("");
+  $('#in1').val("");
+  $('#out').val("");
+  $('#total_time').val("");
+  $('#idle_time').val("");
+  $('#detail_no').val("");
+  
+  $('#exampleModal').css("display", "block");
+
+  }
+
+
+function validateSD(){
+        var t1=document.getElementById("shift").value;
+        var t2=document.getElementById("in_date").value;
+        var t3=document.getElementById("out_date").value;
+        var t4=document.getElementById("detail_no").value;
+        var t5=document.getElementById("in1").value;
+        var t6=document.getElementById("out").value;
+        var t7=document.getElementById("idle_time").value;
+        if(t1=="") {
+                alert("Please select shift type");
+                document.getElementById("shift").focus();
+                  return false;
+            }
+            if(t2==""){
+                alert("Please  in date must be fill out");
+                document.getElementById("in_date").focus();
+                  return false;
+            }
+            if(t3==""){
+                alert("Please  out date must be fill out");
+                document.getElementById("out_date").focus();
+                  return false;
+            }
+            if(t4==""){
+                alert("Please select details");
+                document.getElementById("detail_no").focus();
+                  return false;
+            }
+            if(t5=="00:00"){
+                alert("Please select In time");
+                document.getElementById("in1").focus();
+                  return false;
+            }
+            if(t6=="00:00"){
+                alert("Please select Out time");
+                document.getElementById("out").focus();
+                  return false;
+            }
+            if(t7==""){
+                alert("Please select Idle time");
+                document.getElementById("idle_time").focus();
+                  return false;
+            }
+           return true;
+    }
+
+function submitform()
+  {
+    var vi=validateSD();
+    if(vi){
     var shopsec = $("#shop1").val();
     var staff_no = $("#staff1").val();
-    var inoutnum = $("#inoutnum").val();
     var ename = '{{empname}}';
     var scat = '{{tcat}}';
     var amt = '{{amt1}}';
-  
-    for(i=1;i<=j;i++) 
-     { 
-      var in_date="in_date"+String(i);
-      var out_date="out_Date"+String(i);
-      var shift="shiftadd"+String(i);
-      var month="month_add"+String(i);
-      var in1="in1add"+String(i);
-      var out="outadd"+String(i);
-      var total_time="total_time_takenadd"+String(i);
-      var idle_time="idle_time_add"+String(i);
-      var detail_no="detail_noadd"+String(i);
+    var month=$('#month2').val();
+    var in_date=$('#in_date').val();
+    var out_date=$('#out_date').val();
+    var shift=$('#shift').val();
+    var in1=$('#in1').val();
+    var out=$('#out').val();
+    var total_time=$('#total_time').val();
+    var idle_time=$('#idle_time').val();
+    var detail_no=$('#detail_no').val();
 
-        month = $('#'+month).val();
-        in_date=$('#'+in_date).val().toString();
-        out_date=$('#'+out_date).val().toString();
-        shift=$('#'+shift).val().toString();
-        in1=$('#'+in1).val().toString();
-        out=$('#'+out).val().toString();
-        total_time=$('#'+total_time).val().toString();
-        idle_time=$('#'+idle_time).val().toString();
-        detail_no=$('#'+detail_no).val().toString();
-       
-        
     $("#inouttab").empty()
-    var data = {leng,shopsec,staff_no,inoutnum,ename,scat,in_date,out_date,shift,month,in1,out,total_time,idle_time,detail_no,amt};
+    var data = {shopsec,staff_no,ename,scat,in_date,out_date,shift,month,in1,out,total_time,idle_time,detail_no,amt};
     $.ajax({
         type : 'GET',
         url : "{% url 'm11save' %}",
@@ -569,11 +1010,12 @@ function myfunc()
           // window.location.reload();
           $("#divadd").empty();
           var html="";
-          $("#sno1").val(response.data.wer)
+          // $("#sno1").val(response.data.wer)
+          var sno=1;
           for (var i = 0; i < response.data.obj1.length; i++) {                          
                   //alert(response.data.obj1[i].sno)
             // html=html+" <tr> <td> "+response.data.obj1[i].id+"</td> <td> "+response.data.obj1[i].month+"</td> <td>"+response.data.obj1[i].shift+" </td> <td>"+response.data.obj1[i].in_date+"  </td>  <td>"+response.data.obj1[i].in1+" </td>  <td>"+response.data.obj1[i].out_date+" </td>  <td>"+response.data.obj1[i].out+" </td>  <td> "+response.data.obj1[i].total_time+" </td> <td> "+response.data.obj1[i].detail_no+" </td> <td> "+response.data.obj1[i].idle_time+" </td> <td><a href='#' onclick=editModal('"+response.data.obj1[i].id+"')>EDIT</a></td> </tr>";
-            html=html+" <tr> <td> "+response.data.obj1[i].id+"</td> <td>"+response.data.obj1[i].shift+" </td> <td>"+response.data.obj1[i].in_date+"  </td>  <td>"+response.data.obj1[i].in1+" </td>  <td>"+response.data.obj1[i].out_date+" </td>  <td>"+response.data.obj1[i].out+" </td>  <td> "+response.data.obj1[i].total_time+" </td> <td> "+response.data.obj1[i].detail_no+" </td> <td> "+response.data.obj1[i].idle_time+" </td> <td><a href='#' onclick=editModal('"+response.data.obj1[i].id+"')>EDIT</a></td> </tr>";
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response.data.obj1[i].shift+" </td> <td>"+response.data.obj1[i].in_date+"  </td>  <td>"+response.data.obj1[i].in1+" </td>  <td>"+response.data.obj1[i].out_date+" </td>  <td>"+response.data.obj1[i].out+" </td>  <td> "+response.data.obj1[i].total_time+" </td> <td> "+response.data.obj1[i].detail_no+" </td> <td> "+response.data.obj1[i].idle_time+" </td> <td><a href='#' onclick=editModal('"+response.data.obj1[i].id+"')>EDIT</a></td> </tr>";
               }
             $('#exampleModal').css("display", "none");
                 $("#inouttab").html(html)
@@ -588,8 +1030,9 @@ function myfunc()
         },
         
         });
-}
-}
+      }
+    }
+
 function editModal(id){ 
   //  alert(id);
  var data = {id};
@@ -602,16 +1045,16 @@ success : function(response){
 console.log(response);
 var html="";
 
-$("#id").val(response.data.obj1[0].id);
-$("#month2").val(response.data.obj1[0].month);
-$("#shift").val(response.data.obj1[0].shift);
-$("#in_date").val(response.data.obj1[0].in_date);
-$("#in1").val(response.data.obj1[0].in1);
-$("#out_date").val(response.data.obj1[0].out_date);
-$("#out").val(response.data.obj1[0].out);
-$("#total_time").val(response.data.obj1[0].total_time);
-$("#detail_no").val(response.data.obj1[0].detail_no);
-$("#idle_time").val(response.data.obj1[0].idle_time);
+$("#id1").val(response.data.obj1[0].id);
+$("#month3").val(response.data.obj1[0].month);
+$("#shift1").val(response.data.obj1[0].shift);
+$("#in_date1").val(response.data.obj1[0].in_date);
+$("#in11").val(response.data.obj1[0].in1);
+$("#out_date1").val(response.data.obj1[0].out_date);
+$("#out1").val(response.data.obj1[0].out);
+$("#total_time1").val(response.data.obj1[0].total_time);
+$("#detail_no1").val(response.data.obj1[0].detail_no);
+$("#idle_time1").val(response.data.obj1[0].idle_time);
 
 html=""; 
     }
@@ -633,16 +1076,16 @@ function updateform(){
   // var inoutnum = $("#inoutnum").val();
   var ename = '{{empname}}';
   var scat = '{{tcat}}';
-  var  id=$("#id").val();
-  var  month=$("#month2").val();
-  var  shift=$("#shift").val();
-  var  in_date=$("#in_date").val();
-  var  in1=$("#in1").val(); 
-  var  out_date=$("#out_date").val();
-  var  out=$("#out").val();
-  var  total_time=$("#total_time").val();
-  var  detail_no=$("#detail_no").val();
-  var  idle_time=$("#idle_time").val();
+  var  id=$("#id1").val();
+  var  month=$("#month3").val();
+  var  shift=$("#shift1").val();
+  var  in_date=$("#in_date1").val();
+  var  in1=$("#in11").val(); 
+  var  out_date=$("#out_date1").val();
+  var  out=$("#out1").val();
+  var  total_time=$("#total_time1").val();
+  var  detail_no=$("#detail_no1").val();
+  var  idle_time=$("#idle_time1").val();
     
     $("#inouttab").empty()
       var data = {id,shopsec,staff_no,scat,ename,month,shift,in_date,in1,out_date,out,total_time,detail_no,idle_time};
@@ -653,14 +1096,15 @@ function updateform(){
           data : data,
           success : function(response){
             console.log(response);
-            alert("successfully changed the record");
+            // alert("successfully changed the record");
 
             // window.location.reload();
           var html="";
           // $("#sno1").val(response.data.wer)
+          var sno=1;
           for (var i = 0; i < response.data.obj1.length; i++) {                          
       
-            html=html+" <tr> <td> "+response.data.obj1[i].id+"</td> <td>"+response.data.obj1[i].shift+" </td> <td>"+response.data.obj1[i].in_date+"  </td>  <td>"+response.data.obj1[i].in1+" </td>  <td>"+response.data.obj1[i].out_date+" </td>  <td>"+response.data.obj1[i].out+" </td>  <td> "+response.data.obj1[i].total_time+" </td> <td> "+response.data.obj1[i].detail_no+" </td> <td> "+response.data.obj1[i].idle_time+" </td> <td><a href='#' onclick=editModal('"+response.data.obj1[i].id+"')>EDIT</a></td> </tr>";
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response.data.obj1[i].shift+" </td> <td>"+response.data.obj1[i].in_date+"  </td>  <td>"+response.data.obj1[i].in1+" </td>  <td>"+response.data.obj1[i].out_date+" </td>  <td>"+response.data.obj1[i].out+" </td>  <td> "+response.data.obj1[i].total_time+" </td> <td> "+response.data.obj1[i].detail_no+" </td> <td> "+response.data.obj1[i].idle_time+" </td> <td><a href='#' onclick=editModal('"+response.data.obj1[i].id+"')>EDIT</a></td> </tr>";
           
               }
             
@@ -682,118 +1126,6 @@ function updateform(){
 
 <script type="text/javaScript">
   
-var j=0;
-var out_date="out_date";
-var in_date="in_date";
-var month="month_add";
-var shiftadd="shiftadd";
-var in1="in1add";
-var out="outadd";
-var outid="'"+out+"'";
-var in1id="'"+out+"'";
-var total_time="total_time_add";
-var idle_time="idle_time_add";
-var detail_no = "detail_noadd";
-
-$(document).ready(function(){
-    var sub =document.getElementById('subb').value;
-    if(sub==1)
-    {
-        var leng=document.getElementById('len').value;
-        for (i=1;i<=leng;i++)
-        {
-        //var detail_no=document.getElementById('detail_no'+String(i)).value;
-        $('#detail_noid'+String(i)).val(detail_no);
-        }
-        
-    }
-    $("#add").click(function(e){
-        event.preventDefault()
-        j++;
-        console.log(j);
-        assign();
-    var fmon=document.getElementById('fmonth').value;
-    in_date="in_date"+String(j);
-    month="month_add"+String(j);
-    shift="shiftadd"+String(j);
-    in1="in1add"+String(j);
-    out_date="out_Date"+String(j);
-    out="outadd"+String(j);
-    outid="'"+out+"'";
-    in1id="'"+out+"'";
-    total_time_taken="total_time_takenadd"+String(j);
-    idle_time="idle_time_add"+String(j);
-    detail_no = "detail_noadd"+String(j);
-    var del="delete"+String(j);
-    var del1="delete1"+String(j);
-    $("#len").val(j);
-      
-       var sno=j;
-        if(j==1)
-        {
-
-
-            var happ='<div><table id="customers" align="center">'+'<tr ><th>Month</th>'+'<tr><th>Shift</th>'+'<tr><th>Date</th>'+'<tr ><th>In</th>'+
-'<tr><th>Out_Date</th>'+'<th>Out</th>'+'<th>Total Time</th>'+'<th>Detail No.</th>'+'<th>Idle Time</th>';
-
-     happ=happ+'</tr></table></div>';
-        // $('#items').append(happ);
-        }
-var htAppend='<tr>'+'<td ><input type="text" id='+month+' name='+month+'  readonly/></td >'+'<td> <select class="form-control" style="width:100%" id='+shift+' name='+shift+' onblur="myFunction(this.id)" required><option value="select">SELECT SHIFT TYPE</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="GD">GD</option><option value="GN">GN</option></select></td>'+'<td><input type="text" id='+in_date+' name='+in_date+' style="width:150px" onchange="abc(this.id); checkDate(this.id);"  /></td>'+'<td><input type="text" id='+in1+' name='+in1+' min="06:27"  max="06:45" value="00:00" class="form-control edatec123" onblur="myfun();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td><input type="text" style="width:150px" class="edatec" id='+out_date+' name='+out_date+' onchange="myfunDate();"  /></td >'+'<td><input type="text" id='+out+' name='+out+' min="14:30" max="14:45" value="00:00" class="form-control edatec123"  onblur="myfun(); " onchange="myfunTime();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td><input type="text" id='+total_time_taken+' name='+total_time_taken+' onblur="myfun1()"  readonly></td>'+'<td><select id='+detail_no+' name='+detail_no+' style="width:200px" required><option value="select">SELECT REASON</option>'+
-                    '<option value="machine_repair">MACHINE REPAIR</option>'+
-                    '<option value="no_power">NO POWER</option>'+
-                    '<option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>'+
-                    '<option value="lack_of_tools">LACK OF TOOLS</option>'+
-                    '<option value="waiting_for_work">WAITING FOR WORK</option>'+
-                    '<option value="failure_of_crane">FAILURE OF CRANE</option>'+
-                    '<option value="waiting_for_crane">WAITING FOR CRANE</option>'+
-                    '<option value="operator_absent">OPERATOR ABSENT</option>'+
-                    '<option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>'+
-                    '<option value="lack_of_gas">LACK OF GAS OXY</option>'+
-                    '<option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>'+
-                    '<option value="lack_of_electrodes">LACK OF ELECTRODES</option>'+
-                    '<option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>'+
-                    '<option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>'+
-                    '</select></td><td><input type="text" id='+idle_time+' name='+idle_time+' style="width:100px" min="06:27"  max="06:45" value="00:00" onchange="myfunIT(this.id)" class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>';
-        // htAppend=htAppend+'</tr>'; 
-        htAppend=htAppend+'<td id='+del+'><a class="delete"  title="Delete" >Delete Row</a></td></tr>';  
-        $('#items').append(htAppend);
-        document.getElementById("inoutnum").value=j;
-        var del="delete"+String(j-1);
-        document.getElementById(month).value=fmon;
-        
-        
-             $(function(){
-              $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-              $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0,
-                onblur:function(){
-                
-                    var out_date=$(this).datepicker('getDate');
-                    var ab=this.id;
-                    in1=('in_date'+ab[8]).toString();
-                    var in_date=$('#'+in1).datepicker('getDate');
-                    if (in_date > out_date) {
-                    alert("out date should be greater or equal to in date");
-                    document.getElementById(''+out_date).value="";
-                    $(this).val('');
-                    return false;
-                    }
-                    myfun2();
-                    myfun3();
-                }
-                
-               });
-                 });
-      $(document).on("click", ".delete", function(){
-  
-          $(this).parents("tr").remove();
-          j--;
-          var del="delete"+String(j);
-          var del1="delete1"+String(j);
-          
-          $('#'+del1).append('<td id='+del+'><a class="delete"  title="Delete">Delete row</a></td>')
-          document.getElementById("inoutnum").value=j;
-          });
 
         $('.edatec123').each(function(){
   
@@ -805,165 +1137,11 @@ var htAppend='<tr>'+'<td ><input type="text" id='+month+' name='+month+'  readon
             $(this).datepicker({ dateFormat: 'dd/mm/yy' });
             $(this).addClass("form-control ll");
             
-            });  
-
-
-        $('body').on('click','#del',function(e){
-            $(this).parent('div').remove();
-        });
-        
-        });
-});
-            function myfun2(){
-  for(i=1;i<=j;i++) 
-  { 
-  var ss=[];
-  var staff_noadd="staff_noadd"+String(i);
-  var in_date="in_date"+String(i);               
-  var out_date="out_date"+String(i); 
-  var in1add="in1add"+String(i); 
-  var shiftadd="shiftadd"+String(i); 
-  var staff_nameadd="staff_nameadd"+String(i); 
-  var ticket_noadd="ticket_noadd"+String(i); 
-  var catadd="catadd"+String(i); 
-  var total_time_takenadd="total_time_takenadd"+String(i);    
-  var idle_time_add="idle_time_add"+String(i); 
-  var p1=$('#'+staff_noadd).val().toString();
-  var p2=$('#'+in_date).val().toString(); 
-  var p3=$('#'+out_date).val().toString(); 
-  var p4=$('#'+in1add).val().toString();
-  var p5=$('#'+shiftadd).val().toString();
-  if('p1' in ss)
-  {
-    continue;
-  }
-    for(k=i+1;k<=j;k++)
-      {
-        var staff_noadd="staff_noadd"+String(k);
-        var in_date="in_date"+String(k);               
-        var out_date="out_date"+String(k); 
-        var in1add="in1add"+String(k); 
-        var shiftadd="shiftadd"+String(k);
-        var staff_nameadd="staff_nameadd"+String(k);
-        var ticket_noadd="ticket_noadd"+String(k); 
-        var catadd="catadd"+String(k);
-        var total_time_takenadd="total_time_takenadd"+String(k);  
-        var idle_time_add="idle_time_add"+String(k);       
-        var q1=$('#'+staff_noadd).val().toString();
-        var q2=$('#'+in_date).val().toString(); 
-        var q3=$('#'+out_date).val().toString(); 
-        var q4=$('#'+in1add).val().toString();
-        var q5=$('#'+shiftadd).val().toString();
-        //alert("hii");
-        if((p1==q1) && (p2==q2) && (p3==q3) && (p4==q4) && (p5==q5))
-        {
-          alert("wrong data entry,fill another one");
-          //alert("hlo");
-          document.getElementById(''+staff_noadd).value="";
-          document.getElementById(''+staff_nameadd).value="";
-          //alert("hlo");
-          document.getElementById(''+in_date).value="";
-          document.getElementById(''+out_date).value="";
-          document.getElementById(''+in1add).value="";
-          document.getElementById(''+shiftadd).value="";
-          document.getElementById(''+ticket_noadd).value="";
-          document.getElementById(''+catadd).value="";
-          document.getElementById(''+total_time_takenadd).value="";
-          document.getElementById(''+idle_time_add).value="";
-    
-        }
-        }
-         
-    
-         }
-         
-    
-        }
-
-        function myfun3(){
-          for(i=1;i<=j;i++) 
-          { 
-          var ss=[];
-          var staff_noadd="staff_noadd"+String(i);
-          var in_date="in_date"+String(i);               
-          var out_date="out_date"+String(i); 
-          var in1add="in1add"+String(i); 
-          var shiftadd="shiftadd"+String(i); 
-          var staff_nameadd="staff_nameadd"+String(i); 
-          var ticket_noadd="ticket_noadd"+String(i); 
-          var catadd="catadd"+String(i); 
-          var total_time_takenadd="total_time_takenadd"+String(i);
-          var idle_time_add="idle_time_add"+String(i);
-          var outadd="outadd"+String(i);     
-          var p1=$('#'+staff_noadd).val().toString();
-          var p2=$('#'+in_date).val().toString(); 
-          //var p3=$('#'+out_date).val().toString(); 
-          var p4=$('#'+in1add).val().toString();
-          var p5=$('#'+shiftadd).val().toString();
-          var p5=$('#'+outadd).val().toString();
-          if('p1' in ss)
-          {
-            continue;
-          }
-            for(k=i+1;k<=j;k++)
-              {
-                var staff_noadd="staff_noadd"+String(k);
-                var in_date="in_date"+String(k);               
-                var out_date="out_date"+String(k); 
-                var in1add="in1add"+String(k); 
-                var outadd="outadd"+String(k);   
-                var shiftadd="shiftadd"+String(k);
-                var staff_nameadd="staff_nameadd"+String(k);
-                var ticket_noadd="ticket_noadd"+String(k); 
-                var catadd="catadd"+String(k);
-                var total_time_takenadd="total_time_takenadd"+String(k);  
-                var idle_time_add="idle_time_add"+String(k);      
-                var q1=$('#'+staff_noadd).val().toString();
-                var q2=$('#'+in_date).val().toString(); 
-                var q3=$('#'+out_date).val().toString(); 
-                var q4=$('#'+in1add).val().toString();
-                var q5=$('#'+shiftadd).val().toString();
-                var q6=$('#'+outadd).val().toString();
-                if((p1==q1) && (p2==q2) && (q4<p5) || (p5==q5))
-                {
-                  alert("wrong data entry for in time,fill another one");
-                  document.getElementById(''+staff_noadd).value="";
-                  document.getElementById(''+staff_nameadd).value="";
-                  document.getElementById(''+in_date).value="";
-                  document.getElementById(''+out_date).value="";
-                  document.getElementById(''+in1add).value="";
-                  document.getElementById(''+shiftadd).value="";
-                  document.getElementById(''+ticket_noadd).value="";
-                  document.getElementById(''+catadd).value="";
-                  document.getElementById(''+total_time_takenadd).value="";
-                  document.getElementById(''+idle_time_add).value="";
-                 
+            }); 
             
-                }
-                }
-                 
-            
-                 }
-            
-                }
-
-function assign(){
-        function operation()
-        {
-        console.log(j);
-        return j;
-        }
-       document.getElementById('myvalue').value =operation();
-    }
   </script>
-
-
-
- 
-    
+  
 <script type="text/javaScript">
-    
-
 
   document.querySelector("#shop_sec").addEventListener('change',(e)=>{
     //console.log("hi");
@@ -1059,7 +1237,7 @@ function printDiv() {
 
         win.document.write('<html><head>');
 
-        win.document.write('<title>M14 Card</title>');
+        win.document.write('<title>M11 Card</title>');
         win.document.write(style);
         win.document.write('</head>');
         win.document.write('<body>');
@@ -1073,88 +1251,6 @@ function printDiv() {
 
 }
  
-function myFunction(th) {
-  
-  var id = th;
-  var x = document.getElementById(id).value;
-  console.log("x",id);
-  k=id.split("shiftadd");
-  console.log("kkk",k);
-
-  if ( document.getElementById(id).value=="A") {
-       console.log(document.getElementById(id).value) ;
-       
-       var in1add="in1add"+String(k[1]);
-       $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-       $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-
-       $('#'+in1add).timepicker('option','minTime','06:27');
-       $('#'+in1add).timepicker('option','maxTime','14:45');
-       var outadd="outadd"+String(k[1]);
-       $('#'+outadd).timepicker('option','minTime','06:27');
-       $('#'+outadd).timepicker('option','maxTime','14:45');
-
-    }
-    if(document.getElementById(id).value=="B")  {
-      var in1add="in1add"+String(k[1]);
-      $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-       $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-
-      $('#'+in1add).timepicker('option','minTime','14:27');
-      $('#'+in1add).timepicker('option','maxTime','22:45');   //14:45
-      var outadd="outadd"+String(k[1]);
-      $('#'+outadd).timepicker('option','minTime','14:27');
-      $('#'+outadd).timepicker('option','maxTime','22:45');
-
-
-    }
-    if(document.getElementById(id).value=="GN")  {
-       console.log(document.getElementById(id).value) ;
-
-       var in1add="in1add"+String(k[1]);
-       $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-       $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
-
-      $('#'+in1add).timepicker('option','minTime','22:27');
-      $('#'+in1add).timepicker('option','maxTime','06:45');  //22:45
-      var outadd="outadd"+String(k[1]);
-      $('#'+outadd).timepicker('option','minTime','22:27');
-      $('#'+outadd).timepicker('option','maxTime','06:45');
-
-
-    }
-    if(document.getElementById(id).value=="GD")  {
-       console.log(document.getElementById(id).value) ;
-
-       var in1add="in1add"+String(k[1]);
-
-       $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-       $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-
-       $('#'+in1add).timepicker('option','minTime','06:27');   //6:27
-       $('#'+in1add).timepicker('option','maxTime','16:45');    //06:45
-       var outadd="outadd"+String(k[1]);
-       $('#'+outadd).timepicker('option','minTime','06:27');
-       $('#'+outadd).timepicker('option','maxTime','16:45');
-    }
-    if(document.getElementById(id).value=="C")  {
-       console.log(document.getElementById(id).value) ;
-       var in1add="in1add"+String(k[1]);
-
-       $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-       $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
-
-
-       $('#'+in1add).timepicker('option','minTime','15:57');
-       $('#'+in1add).timepicker('option','maxTime','01:45');
-       var outadd="outadd"+String(k[1]);
-       $('#'+outadd).timepicker('option','minTime','15:57');
-       $('#'+outadd).timepicker('option','maxTime','01:45');
-
-    }
-    
-
-}
 
 
 function myFunctionEdit(th) {
@@ -1164,72 +1260,71 @@ var id = document.getElementById(th).value;
 console.log("kkk",id);
 
 if ( id=="A") {
-     
-      var in1="in1";//String(k[1]);
-     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+      var in11="in11";//String(k[1]);
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
 
-     $('#in1').timepicker('option','minTime','06:27');
-     $('#in1').timepicker('option','maxTime','14:45');
-     var out="out";//+String(k[1]);
-     $('#out').timepicker('option','minTime','06:27');
-     $('#out').timepicker('option','maxTime','14:45');
+     $('#in11').timepicker('option','minTime','06:27');
+     $('#in11').timepicker('option','maxTime','14:45');
+     var out1="out1";//+String(k[1]);
+     $('#out1').timepicker('option','minTime','06:27');
+     $('#out1').timepicker('option','maxTime','14:45');
 
   }
   if(id=="B")  {
-    var in1="in1";//+String(k[1]);
-    $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+    var in11="in11";//+String(k[1]);
+    $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
 
-    $('#in1').timepicker('option','minTime','14:27');
-    $('#in1').timepicker('option','maxTime','22:45');   //14:45
-     var out="out";//+String(k[1]);
-    $('#out').timepicker('option','minTime','14:27');
-    $('#out').timepicker('option','maxTime','22:45');
+    $('#in11').timepicker('option','minTime','14:27');
+    $('#in11').timepicker('option','maxTime','22:45');   //14:45
+     var out1="out1";//+String(k[1]);
+    $('#out1').timepicker('option','minTime','14:27');
+    $('#out1').timepicker('option','maxTime','22:45');
 
 
   }
   if(id=="GN")  {
      
 
-      var in1="in1";//+String(k[1]);
-     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+      var in11="in11";//+String(k[1]);
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
 
-    $('#in1').timepicker('option','minTime','22:27');
-    $('#in1').timepicker('option','maxTime','06:45');  //22:45
-     var out="out";//+String(k[1]);
-    $('#out').timepicker('option','minTime','22:27');
-    $('#out').timepicker('option','maxTime','06:45');
+    $('#in11').timepicker('option','minTime','22:27');
+    $('#in11').timepicker('option','maxTime','06:45');  //22:45
+     var out1="out1";//+String(k[1]);
+    $('#out1').timepicker('option','minTime','22:27');
+    $('#out1').timepicker('option','maxTime','06:45');
 
 
   }
   if(id=="GD")  {
 
-      var in1="in1";//+String(k[1]);
+      var in11="in11";//+String(k[1]);
 
-     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
 
-     $('#in1').timepicker('option','minTime','06:27');   //6:27
-     $('#in1').timepicker('option','maxTime','16:45');    //06:45
-      var out="out";//+String(k[1]);
-     $('#out').timepicker('option','minTime','06:27');
-     $('#out').timepicker('option','maxTime','16:45');
+     $('#in11').timepicker('option','minTime','06:27');   //6:27
+     $('#in11').timepicker('option','maxTime','16:45');    //06:45
+      var out1="out1";//+String(k[1]);
+     $('#out1').timepicker('option','minTime','06:27');
+     $('#out1').timepicker('option','maxTime','16:45');
   }
   if(id=="C")  {
 
-      var in1="in1";//+String(k[1]);
-     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
-     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+      var in11="in11";//+String(k[1]);
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
     //  $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
     //  $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: 0, maxDate: "+1D"});
 
-     $('#in1').timepicker('option','minTime','15:57');
-     $('#in1').timepicker('option','maxTime','01:45');
-      var out="out";//+String(k[1]);
-     $('#out').timepicker('option','minTime','15:57');
-     $('#out').timepicker('option','maxTime','01:45');
+     $('#in11').timepicker('option','minTime','15:57');
+     $('#in11').timepicker('option','maxTime','01:45');
+      var out1="out1";//+String(k[1]);
+     $('#out1').timepicker('option','minTime','15:57');
+     $('#out1').timepicker('option','maxTime','01:45');
 
   }
   
@@ -1238,7 +1333,7 @@ if ( id=="A") {
 
 ////////////////////
 $(document).ready(function() {	
-  $('#in1add1').timepicker(); 
+  $('#in1').timepicker(); 
 }); 
 
 function myfun(){
@@ -1298,8 +1393,8 @@ function myfun(){
 
        function myfunEdit(){
     
-    var t1=$('#in1').val().toString();
-    var t2=$('#out').val().toString();
+    var t1=$('#in11').val().toString();
+    var t2=$('#out1').val().toString();
     m1=parseInt(t1.substring(3,5));
     m2=parseInt(t2.substring(3,5));
     h1=parseInt(t1.substring(0,2));
@@ -1315,23 +1410,22 @@ function myfun(){
     min=(tm1)%60;
     if (hrs < 10) {hrs = "0"+hrs;}
     if (min < 10) {min = "0"+min;}
-    document.getElementById('total_time').value=hrs.toString()+":"+min.toString();
+    document.getElementById('total_time1').value=hrs.toString()+":"+min.toString();
     //document.getElementById('idle_time_add1').value=hrs.toString()+":"+min.toString();
     
        }
 
        function myfunITEdit(){
-      document.getElementById('total_time').value;
-      document.getElementById('idle_time').value;
-      if (document.getElementById('idle_time').value > document.getElementById('total_time').value) 
+      document.getElementById('total_time1').value;
+      document.getElementById('idle_time1').value;
+      if (document.getElementById('idle_time1').value > document.getElementById('total_time1').value) 
             {
                       alert("Idel time should be less or equal to in total time");
-                      document.getElementById("idle_time").value="00:00";
+                      document.getElementById("idle_time1").value="00:00";
                       $(this).val('');
                     return false;
             }
        }
-
        function myfunIT(th){
     document.getElementById('total_time_takenadd1').value;
     document.getElementById('idle_time_add1').value;
@@ -1359,34 +1453,34 @@ function myfun(){
 
        function myfunDateEdit()
           {
-          sf=document.getElementById("shift").value;
-          var t2=document.getElementById("in_date").value;
-          var t3=document.getElementById("out_date").value;
+          sf=document.getElementById("shift1").value;
+          var t2=document.getElementById("in_date1").value;
+          var t3=document.getElementById("out_date1").value;
           if(sf=="A" || sf=="B" || sf=="GD"){
             if (t3 > t2) 
                   {
                         alert("Out date should be equal to In date");
-                        document.getElementById("out_date").value=" ";
+                        document.getElementById("out_date1").value=" ";
                         return false;
                   }
                   if (t3 < t2) 
                   {
                         alert("Out date should be equal to In date");
-                        document.getElementById("out_date").value=" ";
+                        document.getElementById("out_date1").value=" ";
                         return false;
                   }
           }
           if(sf=="C" || sf=="GN"){
             if (t3 == t2) 
                   {
-                        alert("Out date should be greater to In Date");
-                        document.getElementById("out_date").value=" ";
+                        alert("Out date should be greater to In date");
+                        document.getElementById("out_date1").value=" ";
                         return false;
                   }
             if (t3 < t2) 
             {
-                  alert("Out date should be greater to In Date");
-                  document.getElementById("out_date").value=" ";
+                  alert("Out date should be greater to In date");
+                  document.getElementById("out_date1").value=" ";
                   return false;
             }
             }
@@ -1430,64 +1524,18 @@ function myfun(){
         }
         
         }
-       function validateSD(){
-        //  alert("validation");
-        for (var i=1;i<=j;i++)
-        {
-        var t1=document.getElementById("shiftadd"+i).value;
-        var t2=document.getElementById("in_date"+i).value;
-        var t3=document.getElementById("out_Date"+i).value;
-        var t4=document.getElementById("detail_noadd"+i).value;
-        var t5=document.getElementById("in1add"+i).value;
-        var t6=document.getElementById("outadd"+i).value;
-        if(t1=="select") {
-                alert("Please select shift type");
-                document.getElementById("shiftadd"+i).focus();
-                  return false;
-            }
-            if(t2==" "){
-                alert("Please  in date must be fill out");
-                document.getElementById("in_date"+i).focus();
-                  return false;
-            }
-            if(t3==" "){
-                alert("Please  out date must be fill out");
-                document.getElementById("out_date"+i).focus();
-                  return false;
-            }
-            if(t4=="select"){
-                alert("Please select details");
-                document.getElementById("detail_noadd"+i).focus();
-                  return false;
-            }
-            if(t5=="00:00"){
-                alert("Please select In time");
-                document.getElementById("in1add"+i).focus();
-                  return false;
-            }
-            if(t6=="00:00"){
-                alert("Please select Out time");
-                document.getElementById("outadd"+i).focus();
-                  return false;
-            }
-          // window.location.href="{% url 'm11view' %}";
-          // return true;
-        }
-        
-
-       }
-
-      function myfunTimeEdit()
+       
+        function myfunTimeEdit()
 	      {
-        var t1=$('#in1').val().toString();
-        var t2=$('#out').val().toString();
-        var sf=$('#shift').val().toString();
+        var t1=$('#in11').val().toString();
+        var t2=$('#out1').val().toString();
+        var sf=$('#shift1').val().toString();
         if(sf=="A" || sf=="B" || sf=="GD"){
           if (t1 > t2) 
                 {
                       alert("In time should be less or equal to in Out time");
-                      document.getElementById("out").value="00:00";
-                      document.getElementById("in1").value="00:00";
+                      document.getElementById("out1").value="00:00";
+                      document.getElementById("in11").value="00:00";
                       $(this).val('');
                       return false;
                 }
@@ -1496,8 +1544,8 @@ function myfun(){
           if (t1 < t2) 
                 {
                       alert("In time should be greater or equal to in Out time");
-                      document.getElementById("out").value="00:00";
-                      document.getElementById("in1").value="00:00";
+                      document.getElementById("out1").value="00:00";
+                      document.getElementById("in11").value="00:00";
                       $(this).val('');
                       return false;
                 }
@@ -1566,58 +1614,7 @@ function myfun(){
           
     }
 
-     function myfun1(){
-    for(i=1;i<=j;i++) 
-     { 
-       var ss=[];
-       var staff_noadd="staff_noadd"+String(i);
-       var in_date="in_date"+String(i);               
-       var out_date="out_date"+String(i); 
-       var total_time_takenadd="total_time_takenadd"+String(i); 
-       var final_time_takenadd="final_time_takenadd"+String(i);       
-       var p1=$('#'+staff_noadd).val().toString();
-       var p2=$('#'+in_date).val().toString(); 
-       var p3=$('#'+out_date).val().toString(); 
-       var p4=$('#'+total_time_takenadd).val().toString();
-       h1=parseInt(p4.substring(0,1));
-       m1=parseInt(p4.substring(2,4));
-       if('p1' in ss)
-       {
-         continue;
-       }
-      for(k=i+1;k<=j;k++)
-      {
-        var staff_noadd="staff_noadd"+String(k);
-        var in_date="in_date"+String(k);               
-        var out_date="out_date"+String(k); 
-        var total_time_takenadd="total_time_takenadd"+String(k);        
-        var q1=$('#'+staff_noadd).val().toString();
-        var q2=$('#'+in_date).val().toString(); 
-        var q3=$('#'+out_date).val().toString(); 
-        var q4=$('#'+total_time_takenadd).val().toString();
-        h2=parseInt(q4.substring(0,1));
-        m2=parseInt(q4.substring(2,4));
-     if((p1==q1) && (p2==q2) && (p3==q3))
-     {
-      document.getElementById(final_time_takenadd).style.display="block";
-      if(h1>h2)
-      {
-          h2=h2+24;
-      }
- 
-      tm1=((h2*60)+m2)+((h1*60)+m1);
-      hrs=parseInt((tm1)/60);
-      min=(tm1)%60;
-      ss.push('p1');
-      document.getElementById(final_time_takenadd).value=hrs.toString()+":"+min.toString();
-
-     }
-    }
      
-
-     }
-
-    }
 
     function validateHhMm(inputField) {
         var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(inputField.value);		
@@ -3031,82 +3028,28 @@ function myfun(){
     };
   });
 
-  
-  function abc(th)
-  {
-        
-        var id = th;
-        var in_date = document.getElementById(id).value;
-        console.log("in_date",id);
-        k=id.split("in_date");
-        console.log("kkk",k);
-      
-        var staff_no = $("#staff1").val();
-        var shop_sec = $("#shop1").val();
-        var data = {in_date,staff_no,shop_sec};
-          $.ajax({
-            type : 'GET',
-            url : "{% url 'indateqry1' %}", 
-            dataType : 'json',
-            data : data,
-            success : function(response){   
-              alert("Get data M21 card");
-            var in1add="in1add"+String(k[1]);
-            var in_date="in_date"+String(k[1]);
-            var out_Date="out_Date"+String(k[1]);
-            var outadd="outadd"+String(k[1]);
-            var total_time_takenadd="total_time_takenadd"+String(k[1]);
-            var shiftadd="shiftadd"+String(k[1]);
-            
-            document.getElementById(in1add).value=response[0].in1; 
-            document.getElementById(in_date).value=response[0].date; 
-            document.getElementById(out_Date).value=response[0].outdate; 
-            document.getElementById(outadd).value=response[0].out; 
-            document.getElementById(total_time_takenadd).value=response[0].total_time; 
-
-            document.getElementById(in1add).readOnly = true;  
-            document.getElementById(out_Date).readOnly = true; 
-            document.getElementById(outadd).readOnly = true; 
-            document.getElementById(total_time_takenadd).readOnly = true;
-            }
-            
-                
-              });
-
-  }
-
-
-
   function checkDate(th)
   {
+    // alert("hello");
         
         var id = th;
         var in_date = document.getElementById(id).value;
-        console.log("in_date",id);
-        k=id.split("in_date");
-        console.log("kkk",k);
         var staff_no = $("#staff1").val();
         var shop_sec = $("#shop1").val();
         var data = {in_date,staff_no,shop_sec};
           $.ajax({
             type : 'GET',
-            url : "{% url 'indateCheck' %}", 
+            url : "{% url 'm11indateCheck' %}", 
             dataType : 'json',
             data : data,
             success : function(response){   
               alert("In date already exists M11 database Try again ?");
-            var in1add="in1add"+String(k[1]);
-            var in_date="in_date"+String(k[1]);
-            var out_Date="out_Date"+String(k[1]);
-            var outadd="outadd"+String(k[1]);
-            var total_time_takenadd="total_time_takenadd"+String(k[1]);
-            var shiftadd="shiftadd"+String(k[1]);
             
-            document.getElementById(in1add).value="00:00"; 
-            document.getElementById(in_date).value=" "; 
-            document.getElementById(out_Date).value=" "; 
-            document.getElementById(outadd).value="00:00";
-            document.getElementById(total_time_takenadd).value="00:00"; 
+            document.getElementById("in1").value="00:00"; 
+            document.getElementById("in_date").value=" "; 
+            document.getElementById("out_date").value=" "; 
+            document.getElementById("out").value="00:00";
+            document.getElementById("total_time").value="00:00"; 
 
             // document.getElementById(in1add).readOnly = true;  
             // document.getElementById(out_Date).readOnly = true; 

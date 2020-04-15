@@ -86,7 +86,6 @@ urlpatterns = [
     path('ajax/m1getpano/',m1getpano,name='m1getpano'),
     path('m5newview/',m5newview,name='m5newview'),
     path('ajax/m5getcat/',m5getcat,name='m5getcat'),
-    path('m12view/',m12view,name='m12view'),
     path('m3view/',m3view,name='m3view'),
     path('ajax/m5getbr/',m5getbr,name='m5getbr'),
     path('ajax/submitprod/',bprodplan,name="submitprod"),
@@ -94,7 +93,6 @@ urlpatterns = [
     path('ajax/m5getdoc_no/',m5getdoc_no,name='m5getdoc_no'),
     path('ajax/m5getwono',m5getwono,name='m5getwono'),
     path('ajax/m5getempname/',m5getempname,name='m5getempname'),
-    path('ajax/m12getwono',m12getwono,name='m12getwono'),
     path('ajax/airbox_addbo',airbox_addbo,name='airbox_addbo'),
     path('ajax/miscell_addbo',miscell_addbo,name='miscell_addbo'),
     path('ajax/miscell_editsno',miscell_editsno,name='miscell_editsno'),
@@ -287,7 +285,6 @@ urlpatterns = [
     path('ajax/machinegetcause/',machinegetcause,name='machinegetcause'),
     path('m12view/',m12view,name='m12view'),
     path('ajax/m12getwono',m12getwono,name='m12getwono'),
-    path('ajax/m12getstaff_no/',m12getstaff_no,name='m12getstaff_no'),
     path('ajax/m12getempname/',m12getempname,name='m12getempname'),
     path('m4hwview/', m4hwview, name='m4hwview'),
     path('ajax/m4getbrhw/',m4getbrhw,name='m4getbrhw'),
@@ -545,12 +542,27 @@ urlpatterns = [
     path('ajax/m11save/',m11save,name='m11save'),
     path('ajax/m11editdata/',m11editdata,name='m11editdata'),
     path('ajax/m11updatedata/',m11updatedata,name='m11updatedata'),
-	
-	
-	
-     
+    path('workdemandbyshop/',workdemandbyshop,name='workdemandbyshop'),
+    path('ajax/getworkorderno/',getworkorderno,name='getworkorderno'),
+    path('ajax/addworkorderdetails/',addworkorderdetails,name='addworkorderdetails'),
+    path('ajax/getworkdemandpart/',getworkdemandpart,name='getworkdemandpart'),
+    path('ajax/getpartno/',getpartno,name='getpartno'),
+    path('ajax/changestatus/',changestatus,name='changestatus'),
+    path('ajax/m11indateLink/',m11indateLink,name='m11indateLink'),
+    path('ajax/m11indateCheck/',m11indateCheck,name='m11indateCheck'),
+    path('mnp_entr/',mnp_entr,name='mnp_entr'),
+    path('mwnochanged/',mwnochanged,name='mwnochanged'),
+    path('mwsave/',mwsave,name='mwsave'),
 
 
+    	
+    path('ajax/m12indatelink',m12indatelink,name='m12indatelink'),
+    path('ajax/m12indateCheck',m12indateCheck,name='m12indateCheck'),
+    path('ajax/m12updatedata',m12updatedata,name='m12updatedata'),
+    path('ajax/m12editdata',m12editdata,name='m12editdata'),
+    path('ajax/m12save/',m12save,name='m12save'),
+    path('m12report/',m12report,name='m12report'),
+    	
 ]
 
 

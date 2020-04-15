@@ -9,18 +9,21 @@ td{
 
     padding-top: 5px;
     padding-left: 5px;
-    
 }
 </style>
 </head>
 <body>
 
 <div align="center">
+    <!-- <tr>
+        <td align="left">I.S.O.-9002 <br>D.L.W. (Varanasi)</td>
+        <td align="right"> M-11</td>
+    </tr> -->
     <br><br>
-    <h1 align="center"><b>  M11 CARD</b></h1>
-    <h1 align="center" ><b>MAN IDLE TIME CARD</b></h1>
+    <h1 align="center"><b>  M12 CARD</b></h1>
+    <h1 align="center" ><b>MACHINE IDLE TIME CARD</b></h1>
     <br>
-    <table align="center">  
+    <table>  
         <tr> 
             <td style="padding-right: 53px;">SHOP SECTION :<u>{{shop_sec}}</u></td>
             <td>MONTH :<u>{{month}}</u></td>
@@ -31,16 +34,15 @@ td{
             <td style="width: 32%;">EMPLOYEE NAME :<u> {{empname}} </u></td>
             <td style="padding-right: 11px;">CATEGORY: <u> {{tcat}} </u></td>
             <td style="padding-right: 1px;">TOTAL NO OF HOURS : <u> {{r1}} </u></td>
-            <td style="padding-right: 14px;">AMOUNT :<u> {{amt1}} </u></td>
+            <td >AMOUNT :<u> {{amt1}} </u></td>
         
 
         </tr> 
-        
     </table> 
 
 <br>
     <div class="container" align="center">          
-<table border="1"  id="customers" >
+    <table border="1"  id="customers" >
     <tr> 
     <th> S.NO </th>
     <!-- <th>MONTH</th> -->
@@ -63,7 +65,7 @@ td{
             <td>{{i.out_date}}</td>
             <td>{{i.out}}</td>
 			<td>{{i.total_time}}</td> 
-			<td>{{i.detail_no}}</td>
+			<td>{{i.reasons_for_idle_time}}</td>
 			<td>{{i.idle_time}}</td> 
             </tr>
             {% endfor %}
