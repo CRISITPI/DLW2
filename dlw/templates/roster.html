@@ -1,21 +1,9 @@
 {% extends 'base.html' %}
        
-{% block content %}
-<link href= 
-'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ 
-ui-lightness/jquery-ui.css'   
-    rel='stylesheet'> 
+{% block content %} 
+
 <style>
-    input[type=text],input[type=number],
-    select {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: block;
-        border: 0.5px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
+     
     
     input[type=submit] {
         width: 20%;
@@ -67,14 +55,13 @@ ui-lightness/jquery-ui.css'
                     <label for="sno"><b>Shop Section NO/शॉप न०</b></label>
                     <select class="form-control" id="shop_sec" name="shop_sec">
                                 <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-                            {% if lenm == 1 %}
-                                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
-                            {% endif %}
-                            {% if lenm > 1 %}
+                            
+                                
+                           
                             {% for role in roles %}
-                            <option>{{role}}</option>
+                            <option id="{{role.shop_id}}" value="{{role.section_code}}"  >{{role.section_code}}</option>
                             {% endfor %}
-                            {% endif %}                         
+                                                  
                     </select>
                     </th>
                     <th>
@@ -90,15 +77,13 @@ ui-lightness/jquery-ui.css'
                 <label for="wk_ord_no"><b>Staff NO:/क्रम सं०</b></label>
                 <select class="form-control" id="staffNo" name="staffNo" >
                           <option id="op_staffNo" selected disabled hidden>Select Staff NO</option>
-                          {% if lenm == 1 %}
-                          {% for i in wo_nop %}
-                            <option>{{i.staff_no}}</option>
-                          {% endfor %}  
-                          {% endif %}
+                          
                  </select>
                 </th>
                 <th>            
-                    <label for="br_no"><b>नाम/Name</b></label>                   
+                    <label for="br_no"><b>नाम/Name</b></label>  
+                    <input type="hidden" class="form-control" id="stafftype" name="stafftype" readonly>
+                                     
                     <input type="text" class="form-control" id="staffName" name="staffName" readonly>
               </th>
               <th>
@@ -151,6 +136,7 @@ ui-lightness/jquery-ui.css'
           <td>Staff Number</td>
           <td>Employee Name</td>
           <td>Shift</td>
+          <td>Action</td>
       </tr>
     </thead>
   </table>
@@ -208,7 +194,9 @@ ui-lightness/jquery-ui.css'
     <script type="text/javaScript">
         document.querySelector("#shop_sec").addEventListener('change',(e)=>{
                     e.preventDefault();
-                    var shop_sec = $("#shop_sec").val();  
+                    var shop_sec = $('#shop_sec option:selected').attr('id');
+ 
+
                     var data = {shop_sec};
                       $.ajax({
                         type : 'GET',
@@ -216,40 +204,33 @@ ui-lightness/jquery-ui.css'
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                          var elementsadded = document.querySelectorAll(".newelepart1");
-                              if(elementsadded.length>0){
-                                  var elementsaddedarr = Array.from(elementsadded);
-                                  elementsaddedarr.forEach((el)=> el.remove());         
-                               }
-                              var brarr,mystr,html;
-                              brarr = response.map((el)=>el.staff_no);
-                              mystr = "";
-                              brarr.forEach((el,index)=>{
-                                html = `<option class="newelepart1">${brarr[index]}</option>`
-                                mystr = html.concat(mystr);
-                              });
-                              html = "";
-                              document.querySelector("#staffNo").insertAdjacentHTML('beforeend',mystr);
-                              mystr="";
+                          console.log(response)
+
+
+                          var brarr,mystr,html;
+                          html=html+'<option  selected disabled hidden>Select Staff NO</option>';
+                          
+                          for (var i = 0; i < response.length; i++) { 
+                            var empno= (response[i].empno).substr((response[i].empno).length - 5)               
+                            html = html+'<option type="'+response[i].emp_inctype+'"  id="'+response[i].empname+'" value="'+empno+'" >'+empno+' </option>';
+                           
+                            }
+                            $("#staffNo").html(html)
+
+                         
                         }
                    })
                 })
-                    document.querySelector("#staffNo").addEventListener('change',(e)=>{
-                    e.preventDefault();
-                    var shop_sec = $("#shop_sec").val();
-                    var staffNo = $("#staffNo").val();
-                    var data = {shop_sec,staffNo};
-                      $.ajax({
-                        type : 'GET',
-                        url : "{% url 'rosterempname' %}",
-                        dataType : 'json',
-                        data : data,
-                        success : function(response){
-                          document.getElementById('staffName').value=response[0].name;
-                                          
-                                       
-                        }
-                   });
+                   
+                  document.querySelector("#staffNo").addEventListener('change',(e)=>{
+                    e.preventDefault();                                      
+               var name = $('#staffNo option:selected').attr('id');
+               var stafftype = $('#staffNo option:selected').attr('type');
+              // alert(name)  
+               $("#staffName").val(name);
+               $("#stafftype").val(stafftype);
+
+                    
                 })
     
 
@@ -282,6 +263,8 @@ ui-lightness/jquery-ui.css'
         //var staff=document.forms["form1"]["staff_no"].value;
         var staffNo=document.getElementById('staffNo').value 
         var staffName=document.getElementById('staffName').value;
+        var stafftype=document.getElementById('stafftype').value;
+        
         //var staffDesg=document.getElementById('staffDesg').value;
         var shift=document.getElementById('shift').value;
         document.getElementById('staffNo').value="";
@@ -303,7 +286,7 @@ ui-lightness/jquery-ui.css'
       for(var k=0;k<=j-1;k++){
       if(staffNo!=tmparr[k-1])
       {
-        var htAppend='<tr><td>'+j+'</td><td><input type="text" name="'+staff_no1+'" id="'+staff_no1+'" value="'+staffNo+'" readonly></td><td><input type="text" name="staffname'+j+'" id="'+j+'" value="'+staffName+'" readonly></td><td>'+shift+'</td>';
+        var htAppend='<tr><td>'+j+'</td><td><input type="text" name="'+staff_no1+'" id="'+staff_no1+'" value="'+staffNo+'" readonly></td><td> <input type="hidden" name="stafftype'+j+'" id="stafftype'+j+'" value="'+stafftype+'" readonly>  <input type="text" name="staffname'+j+'" id="'+j+'" value="'+staffName+'" readonly></td><td>'+shift+'</td>';
 
         //var htAppend='<tabel id='+id+'  align="center" border="1"><tr><td width=10%><label>'+staffNo+'</label></td><td><label>'+staffName+'</label></td><td><label>'+staffDesg+'</label></td><td><label>'+shift+'</label></td><td><label>'+fromdate+'</td></label><td><label>'+todate+'</td></label>"';
         htAppend=htAppend+'<td><label><a class="delete" Deletedata-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></label></td></tr>';
@@ -419,42 +402,51 @@ ui-lightness/jquery-ui.css'
   </script> 
  
  <script>
+   $(document).ready(function(){
+        $('#from').datepicker({dateFormat: 'dd-mm-yy',minDate: 0}); 
+        $('#to').datepicker({dateFormat: 'dd-mm-yy',minDate: 0}); 
+       
+    })
 
-  $( function() {
-    var dateFormat = "mm/dd/yy",
-      from = $( "#from" )
-        .datepicker({
-          changeMonth: true,
-          numberOfMonths: 1,
-          dateFormat: 'dd-mm-yy', 
-        })
-        .on( "change", function() {
-          to.datepicker( "option", "minDate", getDate( this ) );
-        }),
-      to = $( "#to" ).datepicker({ 
-        changeMonth: true,
-        numberOfMonths: 1,
-        dateFormat: 'dd-mm-yy', 
+  // $( function() {
+  //   var dateFormat = "mm/dd/yy",
+  //     from = $( "#from" )
+  //       .datepicker({
+  //         changeMonth: true,
+  //         numberOfMonths: 1,
+  //         dateFormat: 'dd-mm-yy', 
+  //         minDate: 0
+  //       })
+  //       .on( "change", function() {
+  //         to.datepicker( "option", "minDate", getDate( this ) );
+  //       }),
+  //     to = $("#to" ).datepicker({ 
+  //       changeMonth: true,
+  //       numberOfMonths: 1,
+  //       dateFormat: 'dd-mm-yy', 
+  //       minDate: 0
+  //     })
+  //     .on( "change", function() {
+  //       from.datepicker( "option", "minDate", getDate( this ) );
+  //     });
+ 
+  //   function getDate( element ) {
+  //     var date;
+  //     try {
+  //       date = $.datepicker.parseDate( dateFormat, element.value );
+  //     } catch( error ) {
+  //       date = null;
+  //     }
+ 
+  //     return date;
+  //   }
+  // } );
+  
 
-      })
-      .on( "change", function() {
-        from.datepicker( "option", "maxDate", getDate( this ) );
-      });
- 
-    function getDate( element ) {
-      var date;
-      try {
-        date = $.datepicker.parseDate( dateFormat, element.value );
-      } catch( error ) {
-        date = null;
-      }
- 
-      return date;
-    }
-  } );
-  $("#to").click(function() {
-  alert("dont select the same date or back date");
-});
+  // $("#to").click(function() {
+  // alert("dont select the same date or back date");
+  // });
+
 
    function printDiv(divId) {
        var printContents = document.getElementById(divId).innerHTML;

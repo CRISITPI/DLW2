@@ -1,0 +1,110 @@
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    /*width: 100%;*/
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 5px;
+  }
+</style>
+<h1><center><u>Work Demand By Shop</u></center></h1>
+
+<br>
+<br>
+
+       <table class="tab"  border= "1">
+        <thead>  
+        <tr>
+               <th><p style="font-size: 15px;" ALIGN="CENTER">Document No</p></th>
+               <th><p style="font-size: 15px;" ALIGN="CENTER">Loco No</p></th>
+               <th><p style="font-size: 15px;" ALIGN="CENTER">Work Order No</p></th>
+               <th><p style="font-size: 15px;" ALIGN="CENTER">DOC NO</p></th>
+               <th><p style="font-size: 15px;" ALIGN="CENTER">Date</p></th>
+           </tr>
+        </thead>
+        <tbody>
+           <tr>
+             {% for i in main %}
+               <td><p style="font-size: 15px;" ALIGN="CENTER">{{i.recordno}}</p></td>
+               <td><p style="font-size: 15px;" ALIGN="CENTER">{{i.locono}}</p></td>
+               <td><p style="font-size: 15px;" ALIGN="CENTER">{{i.workorder}}</p></td>
+               <td><p style="font-size: 15px;" ALIGN="CENTER">{{i.doccode}}</p></td>
+               <td><p style="font-size: 15px;" ALIGN="CENTER">{{i.dreleasedate}}</p></td>
+               {% endfor %}
+           </tr>
+          </tbody> 
+         </table>
+         <br>
+         <table >
+          <thead >
+              <tr>
+                <th>Sl No.</th>
+                  <th>Part No.</th>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Unit</th>
+                  <th>Loco From</th>
+                  <th>Loco To</th>
+                  <th>Shop Sec</th>
+              </tr>
+          </thead>
+          <tbody >
+            {% for i in sec %}
+          <tr>
+            
+            <td><p ALIGN="CENTER">{{i.sl}}</p></td>
+            <td><p ALIGN="CENTER">{{i.partno}}</p></td>
+                  <td><p ALIGN="CENTER">{{i.desc}}</p></td>
+                  <td><p ALIGN="CENTER">{{i.quantity}}</p></td>
+                  <td><p ALIGN="CENTER">{{i.unit}}</p></td>
+                  <td><p ALIGN="CENTER">{{i.locofrom}}</p></td>
+                  <td><p ALIGN="CENTER">{{i.locoto}}</p></td>
+                  <td><p ALIGN="CENTER">{{i.shopno}}</p></td>
+            
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>    
+        
+        
+        {% for i in abc %}
+        {% for d in i %}
+        {% if d.s != '' %}
+        <table >
+          <thead >
+              <tr>
+                <th>Sl No.</th><td>{{d.s}}</td>
+                  
+              </tr>
+          </thead>
+          </table>
+{% endif %}
+{% endfor %}
+      
+        <table >
+          <thead >
+              <tr>
+                <th>Sl No.</th>
+                  <th>Part No.</th>
+              </tr>
+          </thead>
+          <tbody >
+            
+            {% for j in i %}
+          <tr>
+            <td><p ALIGN="CENTER">{{j.a}}</p></td>
+            <td><p ALIGN="CENTER">{{j.b}}</p></td>
+          </tr>
+          {% endfor %}
+          
+          </tbody>
+        </table> 
+        {% endfor %} 
+         
+
+
+

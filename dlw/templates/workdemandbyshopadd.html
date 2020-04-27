@@ -129,6 +129,7 @@
           <input id="docno" hidden name="docno" value={{demandno}}>
           <input id="d" hidden name="d" value={{d}}>
        <input id="desig" value="{{desg}}" hidden >
+       <input id="flag" value="{{flag}}" hidden >
        <table class="tab"  border= "1px";>
         <thead>  
         <tr>
@@ -150,18 +151,37 @@
          <br>
          <br>
          <div class="form-row" >
-            <div class="form-group col-md-4"></div>
+            <div class="form-group col-md-3"></div>
+            {%if flag == '0' %}
             <input type="button" name="Add Parts" id="AddParts" value="Add Parts" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1"></button>
             &nbsp;&nbsp;&nbsp;
             <input type="button" name="Submit"  value="Forward " class="btn btn-primary" onclick="funforward()" ></button>
-         </div>
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" name="Back" id="Back" value="Back" class="btn btn-primary" onclick="back();"></button>
+            {% endif %}
+            {%if flag == '1' %}
+            <input type="button" name="Rejects" id="reject" value="Rejects" class="btn btn-primary" onclick="funrejects();"></button>
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" name="Submit"  value="Forward " class="btn btn-primary" onclick="funforward1()" ></button>
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" name="Back" id="Back" value="Back" class="btn btn-primary" onclick="back();"></button>
+            {% endif %}
+            {%if flag == '3' %}
+            <input type="button" name="Submit"  value="Forward " class="btn btn-primary" onclick="funforward2()" ></button>
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" name="Back" id="Back" value="Back" class="btn btn-primary" onclick="back();"></button>
+            {% endif %}
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" name="print" id="print" value="Print" class="btn btn-primary" onclick="printpdf();"></button>
+
+          </div>
          <br><br>
          <table id="adddemand" class="table table-striped table-bordered" >
           <thead style="background-color:ghostwhite; font-size:12px;">
               <tr>
                
                 <th style="display:none;">Id</th>
-                
+                <th>Sl No.</th>
                   <th>Part No.</th>
                   <th>Description</th>
                   <th>Quantity</th>
@@ -179,6 +199,7 @@
           <tr>
            
             <td style="display:none">{{i.id}}</td>
+            <td>{{i.sl}}</td>
             <td>{{i.partno}}</td>
                   <td>{{i.desc}}</td>
                   <td>{{i.quantity}}</td>
@@ -272,7 +293,6 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" onclick="abc();" id="Clear" value="Clear">Clear</button>
-
                             <button type="button" class="btn btn-primary" data-dismiss="modal" id="Close" value="Close">Close</button>
                             <button type="button" class="btn btn-primary"  onclick="funadd();"> Add Next </button>
                             <button type="button" class="btn btn-primary" onclick="funadd();" id="Submit1" value="Submit1">Submit</button>
@@ -290,9 +310,13 @@
             $('#msg').remove(); 
         }
     },5000)
-
+function back()
+{
+  location.href ="{% url 'workdemandbyshop' %}";
+}
+var flag;
 $(document).ready(function() { 
- // alert("hiiiiiiiiii");
+            flag=$('#flag').val();
            var data = {};
                       $.ajax({
                         type : 'GET',
@@ -300,7 +324,7 @@ $(document).ready(function() {
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                          alert(response[0].length)
+                          
                             for(i=0;i<response[0].length;i++)
                            {
                              w_order.push((response[0][i].partno).toString());
@@ -311,6 +335,24 @@ $(document).ready(function() {
                            }
                            }
                        });
+                       var data = {};
+                       $.ajax({
+                         type : 'GET',
+                         url : "{% url 'getcode' %}",
+                         dataType : 'json',
+                         data : data,
+                         success : function(response){
+                           
+                             for(i=0;i<response.length;i++)
+                            {
+                              code.push((response[i].alpha_1).toString());
+                            }
+                            
+                            }
+                        });
+if (flag == '0')
+    {
+
                      if(document.getElementById("d").value == "A")
                      {
                       table=$('#adddemand').DataTable({
@@ -327,16 +369,15 @@ $(document).ready(function() {
                         table.$('tr.selected').removeClass('selected');
                         $(this).addClass('selected');
                         var data1 = String(table.row( this ).data());
-                        alert(data1);
                         docno=data1.split(",");
                         a=docno[0];
-                        $('#partno').val(docno[1]);
-                        $('#desc').val(docno[2]);
-                        $('#quantity').val(docno[3]);
-                        $('#unit').val(docno[4]);
-                        $('#locofrom').val(docno[5]);
-                        $('#locoto').val(docno[6]);
-                        $('#shopsec').val(docno[7]);
+                        $('#partno').val(docno[2]);
+                        $('#desc').val(docno[3]);
+                        $('#quantity').val(docno[4]);
+                        $('#unit').val(docno[5]);
+                        $('#locofrom').val(docno[6]);
+                        $('#locoto').val(docno[7]);
+                        $('#shopsec').val(docno[8]);
                         document.querySelector("#AddParts").click();
                         }
                       });
@@ -358,20 +399,41 @@ $(document).ready(function() {
                         table.$('tr.selected').removeClass('selected');
                         $(this).addClass('selected');
                         var data1 = String(table.row( this ).data());
-                        alert(data1);
                         docno=data1.split(",");
                         a=docno[0];
-                        $('#partno').val(docno[1]);
-                        $('#desc').val(docno[2]);
-                        $('#quantity').val(docno[3]);
-                        $('#unit').val(docno[4]);
-                        $('#locofrom').val(docno[5]);
-                        $('#locoto').val(docno[6]);
-                        $('#shopsec').val(docno[7]);
+                        $('#partno').val(docno[2]);
+                        $('#desc').val(docno[3]);
+                        $('#quantity').val(docno[4]);
+                        $('#unit').val(docno[5]);
+                        $('#locofrom').val(docno[6]);
+                        $('#locoto').val(docno[7]);
+                        $('#shopsec').val(docno[8]);
                         document.querySelector("#AddParts").click();
                         }
                       });
-                     }
+                   }
+     }
+     else
+     {
+      table=$('#adddemand').DataTable({
+        "language": {
+        "emptyTable": "No Record Found"}
+        
+      });
+        $('#adddemand tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+        // var data = table.row( this ).data();
+        }
+        else {
+        table.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        
+        alert("Not Editable !!!");
+        
+        }
+      });
+     }
   });
   var table;
  
@@ -403,7 +465,6 @@ $(document).ready(function() {
   else
   {
     var data={a,docno,partno,desc,quantity,unit,locofrom,locoto,shopsec};
-    alert(data)
     $.ajax({
       type : 'GET',
       url : "{% url 'addworkorderdetails' %}",
@@ -420,6 +481,7 @@ $(document).ready(function() {
         $('#shopsec').val('');
         
         lblErrora.innerHTML = "Data Saved!  Add Next..";
+        abcd=[];
         $('#partno').focus();
         a='0';
         adddemand();
@@ -430,7 +492,7 @@ $(document).ready(function() {
   function funforward()
   {
     docno=$('#docno').val();
-    data={docno};
+    data={docno,flag};
     $.ajax({
       type:'GET',
       url: "{% url 'changestatus' %}",
@@ -438,7 +500,60 @@ $(document).ready(function() {
       data: data,
       success: function(response)
       {
-        alert('Forwarded to Wmm');
+        alert('Forwarded to WMM !!!');
+        location.href ="{% url 'workdemandbyshop' %}";
+      }
+    });
+
+  }
+  function funforward1()
+  {
+    docno=$('#docno').val();
+    data={docno,flag};
+    $.ajax({
+      type:'GET',
+      url: "{% url 'changestatus' %}",
+      dataType: 'Json',
+      data: data,
+      success: function(response)
+      {
+        alert('Forwarded to PRM !!!');
+        location.href ="{% url 'workdemandbyshop' %}";
+      }
+    });
+
+  }
+  function funrejects()
+  { 
+    var flag=2;
+    docno=$('#docno').val();
+    data={docno,flag};
+    $.ajax({
+      type:'GET',
+      url: "{% url 'changestatus' %}",
+      dataType: 'Json',
+      data: data,
+      success: function(response)
+      {
+        alert('Returned To SSE !!!');
+        location.href ="{% url 'workdemandbyshop' %}";
+      }
+    });
+
+  }
+  function funforward2()
+  {
+    docno=$('#docno').val();
+    data={docno,flag};
+    $.ajax({
+      type:'GET',
+      url: "{% url 'changestatus' %}",
+      dataType: 'Json',
+      data: data,
+      success: function(response)
+      {
+        alert('Completed !!!');
+        location.href ="{% url 'workdemandbyshop' %}";
       }
     });
 
@@ -458,7 +573,7 @@ $(document).ready(function() {
       {
         var trHTML = '';
         $.each(response, function (i, item) {
-            trHTML += '<tr><td style="display:none;">' + item.id + '</td><td>' + item.partno + '</td><td>' + item.desc + '</td><td>' + item.quantity + '</td><td>' + item.unit + '</td><td>' + item.locofrom + '</td><td>' + item.locoto +'</td><td>' + item.shopno +'</td></tr>';
+            trHTML += '<tr><td style="display:none;">' + item.id + '</td><td>' + item.sl + '</td><td>' + item.partno + '</td><td>' + item.desc + '</td><td>' + item.quantity + '</td><td>' + item.unit + '</td><td>' + item.locofrom + '</td><td>' + item.locoto +'</td><td>' + item.shopno +'</td></tr>';
         });
         trHTML+='</tbody>'
         $('#adddemand').append(trHTML);
@@ -477,7 +592,15 @@ $(document).ready(function() {
       data: data,
       success: function(response)
       {
-        $('#desc').val(response[0].des);
+        if(response.length > 0)
+            $('#desc').val(response[0].des);
+        else
+        {
+          alert(" Part Does Not Exist in Master !!!");
+          $('#partno').val('');
+          $('#partno').focus();
+        }
+          
       }
       });
   }
@@ -495,9 +618,15 @@ $(document).ready(function() {
         a='0';
   }
 
-  var abcd=[]
+function printpdf()
+{
+  window.location.href = "{% url 'workdemandbyshoppdf' %}"+"?docno="+$('#docno').val();
+}
+
+var code=[' '];
+var abcd=[];
 partno.addEventListener("keyup", (e) => {
-  // If input value is longer or equal than 2 chars, adding "users" on ID attribute.
+  // If input value is longer or equal than 3 chars, adding "users" on ID attribute.
   if (e.target.value.length == 3) {
       abcd=w_order;
       autocomplete(document.getElementById("partno"), abcd);
@@ -602,6 +731,7 @@ partno.addEventListener("keyup", (e) => {
   }
   /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
   autocomplete(document.getElementById("shopsec"), shop);
+  autocomplete(document.getElementById("unit"), code);
   </script>
 
 

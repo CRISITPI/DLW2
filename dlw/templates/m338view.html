@@ -55,34 +55,50 @@
   }
 
 </style>
-
 <br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+
+          <h6    >आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6>  
+        <h6    >डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> 
+        <h6   >एम. -338/ M 338 </h6> 
+      
+  </div>
+  <div class="col-md-5">
+      
 <h3 align="center">Inter-shop Transfers (M 338)</h3>
 
-<div id="div1"> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
-<div id="div2"> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम. -338/ M 338 </h6></div><br>
+  </div>
+  <div class="col-md-3">
+      
+ <button type="button" style="text-align: right;"  class="btn btn-primary" onclick="m338getdraft()" > View Draft </button>
+ 
+ <button type="button"   id="report" class="rg btn btn-primary"> Report</button>
 
-<br><br>
+  </div>
+
+
+</div>
+</div>
+<br>
+ 
 <form action="{% url 'm338view' %}" method="POST"> 
     {% csrf_token %}
-    <div class="container">
-        <table  class="table" width = 100%>
+    <div class="container"> 
+      <div id="section1">  
+        <table  class="table" width = 100% >
          <tr>
             <td>
               <td>
                 <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>
                 <select class="form-control" id="shop_sec" name="shop_sec" required>
                 <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-                {% if lenm == 1 %}
-                <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
-                {{role}}
-                {% endif %}
-                {% if lenm > 1 %}
-                {% for role in roles %}
-                {{role}}
-                <option>{{role}}</option>
+                   
+                {% for i in shopsec %}                 
+                <option id="{{i.section_code}}" value="{{i.shop_id}}">{{i.section_code}}</option>
                 {% endfor %}
-                {% endif %}
+                
                 </select>
             </td>
              <td colspan="3">
@@ -139,7 +155,7 @@
                       <input type = "text" id = "staffDesg" name = "staffDesg" value = "staffDesg">
                     </td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <td>
                         <label for="staff_no"><b>Rate of Pay/
                             वेतन की दर:</b></label></br></br>
@@ -148,14 +164,14 @@
                       <td>
                       <input type = "text" id = "staffRate" name = "staffRate" value = "staffRate">
                      </td>
-                    </tr>
+                    </tr> -->
           <tr>
             <td>
                 <label for="sno"><b>Date of Transfer/ 
                     स्थानांतरण की तारीख:</b></label>
                 </td>
                 <td>
-                <input type="text" name="date1" id="date1" readonly class="form-control" required>
+                <input type="text" name="date1" id="date1"   class="form-control" required>
             </td>
           <tr>
         <td>
@@ -172,103 +188,62 @@
             </td>
             <td>
                 <select class="form-control" id="toshop_sec" name="toshop_sec" required>
-                    <option id="op_shop" selected disabled hidden>Select Shop Section</option>
-                {% if lenm == 1 %}
-                    <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
-                {% endif %}
-                {% if lenm > 1 %}
-                {% for role in roles %}
-                <option>{{role}}</option>
+                    <option   value="" selected disabled hidden>Select Shop Section</option>
+                
+                {% for i in shopsec %}
+                <option value="{{i.shop_id}}">{{i.section_code}}</option>
                 {% endfor %}
-                {% endif %}                         
+                                      
         </select>
         </td>
     </tr>   
   </table>
-  <input type="Submit" value="draft" name="draft" id="draft" />
-  <input type="Submit" value="final" name="final" id="final" />
+
+  <input type="Submit" value="Save Draft" name="draft" id="draft" />
+
+  <!-- <input type="Submit" value="final" name="final" id="final" /> -->
 </center>
 </div>
-
+</div>
     <br>   
-    <center>
-    <input type="Submit" value="viewdraft" name="viewdraft" id="viewdraft"/>
-  </center>
-    </div>
-    <div>
-      <table border="1" align="center" id = "rtable">
-          <thead>
-            <th>Shop_sec</th>
-            <th>Emp No</th>
-            <th>Emp Name</th>
-            <th>Designation</th>
-            <th>Reference authority</th>
-            <th>Staff rate</th>
-            <th>Toshop_sec</th>
-            <th>Transfer_date</th>
-            <th>Select_status</th>
-              
-          </thead>
-          <tbody>
-              {% for i in obj %}
-              <tr>
-                
-                <td><input type="text" name="shop_sec" id="shop_sec" value="{{i.shop_sec}}" readonly></td>
-                <td><input type="text" name="staffNo" id="staffNo" value="{{i.staffNo}}"readonly></td>
-                <td><input type="text" name="staffName" id="staffName" value="{{i.staffName}}"readonly></td>
-                <td><input type="text" name="staffDesg" id="staffDesg" value="{{i.staffDesg}}"readonly></td>
-                <td><input type="text" name="reference_authority" id="reference_authority" value="{{i.reference_authority}}"readonly></td>
-                <td><input type="text" name="staffRate" id="staffRate" value="{{i.staffRate}}"readonly></td>
-                <td><input type="text" name="toshop_sec" id="toshop_sec" value="{{i.toshop_sec}}"readonly></td>
-                <td><input type="text" name="date1" id="date1" value="{{i.date1}}"readonly></td>
-                <td><input  type = "submit" class = "sub" value = "{{i.staffNo}}"  name = "{{i.staffNo}}"  id = "{{i.staffNo}}" onclick="refresh()"></td>
-              </tr>
-              {% endfor %}
-          </tbody>
-          
-      </table> 
+    
+  
+    <div id="draftdata" style="align:center; display:none" >
+     
   </div>
-<center>
-  <input type="Submit" value="report" name="report" id="report" class="rg" />
-</center>
+
   <div id="reportgeneration" style="align:center; display:none">
-    <center>
-      <table class="table" width = "50%" id="tb">
-          <tr><td>
+    
+     
+      <div  class="row"   id="tb">
+         <div class="col-md-4"> 
             <label for="sno"><b>From Date/ दिनांक. से:</b></label>            
             <input type="text" name="fromdate" id="fromdate" readonly class="form-control" required>
-        </td>
-                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <td>
+            </div>
+                  <div class="col-md-4"> 
                   <label for="sno"><b>Date/ दिनांक. तक:</b></label>            
                   <input type="text" name="todate" id="todate" onclick="fun1()" readonly class="form-control" required>
-              </td>
-              
-          </tr>
-          <tr>
-            <td colspan=" 2">
-              <center>
-              <input type="button" value="next" name="next" id="next" class="rn" onclick="clickbutton()"/>
-            </center>
-            </td>
-          </tr>
+              </div>
+              <div class="col-md-4" style="padding-top:16px" class="text-center"> 
+                <br> 
+                   
+                <button type="button"   id="next" class="rn btn btn-primary" >Go Process</button>
+               
+              </div>
+           
          
-        </table>
-      </center>
-    </div>
-
-
-
+        </div>
+       <br>
 <div id = "table" style="align:center; display:none">
-    <table border="1" align="center" id = "table" class = 'tab' >
-     
-        <thead>
-          <th>Shop_sec</th>
-          <th>Emp No</th>
-          <th>Emp Name</th>
-          <th>Designation</th>
-          <th>Reference authority</th>
-          <th>Staff rate</th>
+
+    <table   border="1" align="center" id = "table" class = 'tab table table-responsive' >
+      <thead>
+      <th>Shop_sec</th>
+      <th>Emp No</th>
+      <th>Emp Name</th>
+       <th>Designation</th>
+        <th>Reference authority</th>
+           
           <th>Toshop_sec</th>
           <th>Transfer_date</th>
           
@@ -278,37 +253,152 @@
         </tbody>
         
     </table> 
-    <input type="hidden" id="i" name="i" value="{{a}}" />
-    <input type="button" align="right" id="generatePDF" value="generatePDF" onclick="Export()" />    
+ 
+</div>
+<center><input type="hidden" id="i" name="i" value="{{a}}" />
+  <input type="button" align="center" id="generatePDF" value="generatePDF" onclick="Export()" />    
+</center>
 </div>
 
-
-  </center>
-</div>
-<br>
-</div>  
-<input type= hidden id = "d1" />
+  
+  <input type= hidden id = "d1" />
 <input type=hidden id = "d2" />
 </form>
+</div>
+  
+
 
 <script> 
-function refresh(){
-  location.reload();
+
+function tranfer(id1,shopno){
+   
+  // alert(id1)
+  // alert(shopno)
+
+   var data = {id1,shopno};
+   
+   $.ajax({
+         type : 'GET',
+         url : "{% url 'edit_status' %}",
+         data : data,
+         dataType : 'json',
+         success : function(response){
+        console.log(response)
+        var html="";
+        
+
+          html=html+'<table border="1" class="table  " align="center" id = "rtable" >'
+             +' <thead>'
+              +' <th>Shop_sec</th>'
+              +'<th>Emp No</th>'
+              +'<th>Emp Name</th>'
+              +'<th>Designation</th>'
+              +' <th>Reference authority</th>'
+              
+              +'<th>Toshop_sec</th>'
+              +'<th>Transfer_date</th>'
+              +'<th>Action</th>'              
+              +'</thead>'
+              +'<tbody>';
+               
+               
+
+          for(var i=0;i<response.length;i++) {           
+            
+            html=html+'<tr>'
+               +'<td>'+response[i].shop_sec+' </td>' 
+               +'<td>'+response[i].staffNo+' </td>' 
+               +'<td>'+response[i].staffName+' </td>' 
+               +'<td>'+response[i].staffDesg+' </td>' 
+               +'<td>'+response[i].reference_authority+' </td>'                
+               +'<td>'+response[i].toshop_sec+' </td>' 
+               +'<td>'+response[i].date1+' </td>' 
+               +'<td> <label  class = "btn btn-primary"  onclick="tranfer('+response[i].staffNo+','+response[i].toshop_sec+')"> Transfer</label></td>' 
+               +' </tr>';
+          }
+          html=html +'</tbody></table>';           
+         
+      $("#draftdata").html(html);
+      $("#draftdata").show();
+     
+  }    
+   })
+
+  //location.reload();
+
 }
-$('.sub').click(function(e){
-  e.preventDefault();
-  var id1 = document.getElementById(this.id).value;
+
+function m338getdraft(){
+
+       $("#reportgeneration").hide();
+       $("#section1").hide();
+       
+         $.ajax({
+         type : 'GET',
+         url : "{% url 'm338getdraftview' %}",        
+         dataType : 'json',
+         success : function(response){
+        console.log(response)
+        var html="";
+        if(response == ''){
+          alert("No Record Found.....")
+        }
+        else{
+
+          html=html+'<table class="table  " border="1" align="center" id = "rtable" >'
+             +' <thead>'
+              +' <th>Shop_sec</th>'
+              +'<th>Emp No</th>'
+              +'<th>Emp Name</th>'
+              +'<th>Designation</th>'
+              +' <th>Reference authority</th>'
+               
+              +'<th>Toshop_sec</th>'
+              +'<th>Transfer_date</th>'
+              +'<th>Action</th>'              
+              +'</thead>'
+              +'<tbody>';
+               
+               
+
+          for(var i=0;i<response.length;i++) {           
+            
+            html=html+'<tr>'
+               +'<td>'+response[i].shop_sec+' </td>' 
+               +'<td>'+response[i].staffNo+' </td>' 
+               +'<td>'+response[i].staffName+' </td>' 
+               +'<td>'+response[i].staffDesg+' </td>' 
+               +'<td>'+response[i].reference_authority+' </td>' 
+               
+               +'<td>'+response[i].toshop_sec+' </td>' 
+               +'<td>'+response[i].date1+' </td>' 
+               +'<td> <label  class = "btn btn-primary"  onclick=tranfer("'+response[i].staffNo+'",'+response[i].toshop_sec+')> Transfer</label></td>' 
+               +' </tr>';
+          }
+          html=html +'</tbody></table>';           
+         
+      $("#draftdata").html(html);
+      $("#draftdata").show();
+     
+  }  } 
+
+   })
+}
+
+// $('.sub').click(function(e){
+//   e.preventDefault();
+//   var id1 = document.getElementById(this.id).value;
+   
+//   var data = {id1};
   
-  var data = {id1};
-  
-  $.ajax({
-        type : 'GET',
-        url : "{% url 'edit_status' %}",
-        data : data,
-        dataType : 'json',
-  })
-  $('.sub').focus();
- });
+//   $.ajax({
+//         type : 'GET',
+//         url : "{% url 'edit_status' %}",
+//         data : data,
+//         dataType : 'json',
+//   })
+//   $('.sub').focus();
+//  });
 document.querySelector("#todate").addEventListener('click',(e)=>{
   e.preventDefault();
   $('#todate').focus();
@@ -326,6 +416,8 @@ function fun1()
 
 $('.rg').click(function(e){
   $('#reportgeneration').show();
+   $("#draftdata").hide();
+   $("#section1").hide();
     e.preventDefault();
 });
 
@@ -359,10 +451,10 @@ $('.rn').click(function(e){
           alert("No Record Found.....please referesh")
         }
         else{
-          
+          $("#projectData").empty();
           for(var i=0;i<response.length;i++) {
             t[i]  = response[i].staffDesg;
-            $("#projectData").append("<tr><td>"+response[i].shop_sec+"</td><td>"+response[i].staffNo+"</td><td>"+response[i].staffName+"</td><td>"+t[i]+"</td><td>"+response[i].staffRate+"</td><td>"+response[i].reference_authority+"</td><td>"+response[i].toshop_sec+"</td><td>"+response[i].date+"</td></tr>");
+            $("#projectData").append("<tr><td>"+response[i].shop_sec+"</td><td>"+response[i].staffNo+"</td><td>"+response[i].staffName+"</td><td>"+t[i]+"</td> <td>"+response[i].reference_authority+"</td><td>"+response[i].toshop_sec+"</td><td>"+response[i].date1+"</td></tr>");
       }
     }
   }
@@ -371,9 +463,9 @@ $('.rn').click(function(e){
 
 function Export() {
   var p = document.getElementById('generatePDF')
-  p.style.display = "none";
-  var d1 = document.getElementById('div1').innerHTML;
-  var d2 = document.getElementById('div2').innerHTML;
+  //p.style.display = "none";
+  // var d1 = document.getElementById('div1').innerHTML;
+  // var d2 = document.getElementById('div2').innerHTML;
   var printContents = document.getElementById('table').innerHTML;
    
    var style = "<style>";
@@ -402,33 +494,24 @@ function Export() {
 document.querySelector("#shop_sec").addEventListener('change',(e)=>{
     e.preventDefault();
     var shop_sec = $("#shop_sec").val()
+    //alert(shop_sec)
     var data = {shop_sec};
       $.ajax({
         type : 'GET',
         url : "{% url 'm338getempno' %}",
         dataType : 'json',
         data : data,
-        success : function(response){
-          var elementsadded = document.querySelectorAll(".neweleempno");
-              if(elementsadded.length>0){
-                  var elementsaddedarr = Array.from(elementsadded);
-                  elementsaddedarr.forEach((el)=> el.remove());
-          
-                  document.querySelector("#op_emp").selected=true;
-                  
-
-                  
-                }
-              var brarr,mystr,html;
-              brarr = response.map((el)=>el.staff_no);
-              mystr = "";
-              brarr.forEach((el,index)=>{
-                html = `<option class="neweleempno">${brarr[index]}</option>`
-                mystr = html.concat(mystr);
-              });
+        success : function(response){ 
+          console.log(response)
+             var html="";
+             html = html+'<option id="op_staff_no" selected="" disabled="" hidden="">Select EMPLOYEE No.</option>';
+            for (var i = 0; i < response.length; i++) {  
+              var empno=response[i].empno.substr(response[i].empno.length - 5)           
+              html = html+'<option class="neweleempno">'+empno+'</option>';
+              
+            }  
+             $("#staff_no").html(html);
               html = "";
-              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
-              mystr=""; 
         }
           })
 });
@@ -438,21 +521,23 @@ document.querySelector("#staff_no").addEventListener('change',(e)=>{
 
     e.preventDefault();                        
     var staff_no = $("#staff_no").val()
-    var shop_sec = $("#shop_sec").val()
-   
+    var shop_sec = $("#shop_sec").val() 
+    var shop_sec1 = $('#shop_sec option:selected').attr('id') 
+    $("#shop_sec1").val(shop_sec1);
+
+     
     var data = {staff_no, shop_sec};
       $.ajax({
         type : 'GET',
         url : "{% url 'm338get_details' %}",
         dataType : 'json',
         data : data,
-        success : function(response){
-                                      
+        success : function(response){                                      
         document.getElementById('staffNo').value = response[0].empno;
         document.getElementById('staffName').value=response[0].empname; 
         document.getElementById('staffDesg').value=response[0].desig_longdesc; 
-        document.getElementById('staffRate').value=response[0].payrate; shop_sec
-        document.getElementById('shop_sec1').value=$('#shop_sec').val();
+        document.getElementById('staffRate').value=response[0].payrate;
+    
         
         }
       })
@@ -529,9 +614,9 @@ document.querySelector("#staff_no").addEventListener('change',(e)=>{
          $('#date2').datepicker({ dateFormat: 'yy-mm-dd', }); 
     });
      
-     $( document ).ready(function() {    
-     var totindb=document.getElementById('totindb').value; 
-     });
+    //  $( document ).ready(function() {    
+    //  var totindb=document.getElementById('totindb').value; 
+    //  });
  
    var j=0;
   

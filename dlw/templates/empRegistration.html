@@ -1,0 +1,332 @@
+{% extends 'base.html' %} 
+{% block content %} 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<style>
+    
+.select2-container--default .select2-selection--single {
+     
+     border: 1px solid #ced4da;
+     
+ }
+  
+ .select2-container .select2-selection--single
+ {
+     height: 40px;
+     
+     padding-top: 4px;
+ } 
+ form{
+     width: 100%;
+     margin: auto;
+     border: 1px solid #ced4da;
+     padding: 15px 10px;
+ }
+ .alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 0rem;  
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    top: -50px;
+    width: 25%;
+}
+</style>
+<div class="container">
+    <br>
+    <h3 class="well text-center"> Employee Registration</h3>
+    {% if messages %}       
+    {% for message in messages %}
+    
+        <div class="alert alert-success" role="alert">
+            <strong>{{message}}</strong> 
+          </div> 
+    
+    {% endfor %}
+ 
+{% endif %}
+
+   
+     
+	<div class="col-lg-12 well">
+          
+            <div class="row">
+              <form action="{% url 'empregist' %}" method="POST"> 
+                {% csrf_token %}  			
+					<div class="col-sm-12">
+						<div class="row">
+							<div class="col-sm-3 form-group">
+								<label>Employee No</label>
+								<input type="text" name="empno" id="empno" placeholder="Enter Emp No " onblur="get_empno(this)" class="form-control" required>
+                                
+                            </div>
+							<div class="col-sm-3 form-group">
+								<label>Employee  Name</label>
+								<input type="text" name="empname" id="empname"  placeholder="Enter full Name " class="form-control" required>
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label>Shop Section </label>
+                                  <select  class="form-control" name='shop_sec' id="shop_sec" required>
+                                    <option selected disabled hidden value=""> Select Shop Section</option>
+                                  {% for i in shop%}
+                                  <option value="{{i.shop_id}}"> {{i.section_code}} </option>
+                                  {% endfor %}
+                                   </select>
+                                  
+                                </div>
+
+                            <div class="col-sm-3 form-group">
+						      <label>Sub Shop Section </label>
+								<select  class="form-control" name='sub_shop_sec' id="sub_shop_sec" required>
+                                  <option selected disabled hidden value=""> Select Shop Section</option>
+                                {% for i in shop%}
+                                <option value="{{i.shop_id}}" > {{i.section_code}} </option>
+                                {% endfor %}
+                                 </select>
+                             
+                              </div>
+                              
+						</div>					
+						 	
+						<div class="row">
+                            <div class="col-sm-3 form-group">
+								<label> Date of Birth</label>
+								<input type="text" id="dobdate" name="dobdate" placeholder="dd-mm-yyyy" class="form-control calendardate" required>
+                            </div>
+                            <div class="col-sm-3 form-group">
+								<label>Date Appointment </label>
+								<input type="text" id="dateapp" name="dateapp" placeholder="dd-mm-yyyy" class="form-control calendardate" required >
+                            </div>
+
+                            <div class="col-sm-3 form-group">
+								<label>Marital status</label>
+                                <br>
+								<!-- Default inline 1-->
+<div class="custom-control custom-radio custom-control-inline">
+    <input type="radio" class="custom-control-input" id="marital1" name="empmarital" value="M" required>
+    <label class="custom-control-label" for="marital1">Married </label>
+  </div>
+  
+  <!-- Default inline 2-->
+  <div class="custom-control custom-radio custom-control-inline">
+    <input type="radio" class="custom-control-input" id="marital2" name="empmarital" value="B" required>
+    <label class="custom-control-label" for="marital2">Unmarried</label>
+  </div>
+							  </div>
+							<div class="col-sm-3 form-group">
+                                <label>Sex</label>
+                                <br>
+								<!-- Default inline 1-->
+<div class="custom-control custom-radio custom-control-inline">
+    <input type="radio" class="custom-control-input" id="sex1" name="empsex" value="M" required>
+    <label class="custom-control-label" for="sex1">Male </label>
+  </div>
+  
+  <!-- Default inline 2-->
+  <div class="custom-control custom-radio custom-control-inline">
+    <input type="radio" class="custom-control-input" id="sex2" name="empsex" value="F" required>
+    <label class="custom-control-label" for="sex2">Female</label>
+  </div>
+			
+
+								 
+                            </div>
+                        </div>	
+                            <div class="row">
+                            <div class="col-sm-3 form-group">
+                                <label>Office Order No </label>
+                                <input type="text" id="officeor" name="officeor" placeholder="Enter office  order no" class="form-control" required >
+                                 
+							</div>
+							<div class="col-sm-3 form-group">
+                                <label>Employee Type</label>
+								<select  class="form-control" name="emptype" id="emptype" required>
+                               <option disabled selected  value=""> Select Employee Type</option>
+                               <option value="D"> Direct</option>
+                               <option value="I">Indirect</option>
+                               <option value="E">Essential indirect</option>
+                                 </select>
+                                 
+                            </div>	
+                            
+                            <div class=" col-sm-3 form-group">
+                                <label>Phone Number</label>
+                                <input type="text" name="empphone"  maxlength="10" id="empphone" placeholder="Enter Phone Number Here.." class="form-control" required>
+                            </div>		
+                            <div class="col-sm-3 form-group">
+                                <label>Email Address</label>
+                                <input type="text" name="empemail" id="empemail" placeholder="Enter Email Address Here.." class="form-control" required>
+                            </div>	
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 form-group">
+								<label>Designation</label>
+								<select  class="form-control" name="empdesignation" id="empdesignation" required>
+                                    <option disabled selected  value=""> Select Designation </option>
+                                      {% for i in empdes %}
+                                    <option > {{i.desig_longdesc}} </option>
+                                    {% endfor %}
+                                      </select>
+                            </div>	
+                            <div class="col-sm-3 form-group">
+								<label>Department</label>
+								<select  class="form-control" name="emptdepartment" id="emptdepartment" required>
+                                    <option disabled selected  value=""> Select Department </option>
+                                    {% for i in empdep %}
+                                    <option > {{i.dept_desc}} </option>
+                                    {% endfor %}
+                                      </select>
+                            </div>	
+                            <div class="col-sm-3 form-group">
+								<label>Status</label>
+								<select  class="form-control" name="empstatus" id="empstatus" required>
+                                    <option disabled selected  value=""> Select Status </option>
+                                    
+                                    {% for i in empst %}
+                                    <option> {{i.emp_status}} </option>
+                                    {% endfor %}
+                                      </select>
+                            </div>	
+						</div>
+						 
+				 <div class="row"> <div class="col-sm-12 text-center"> 
+                     <br>
+                        <input type="submit" class="btn btn-md btn-primary text-center" id='save'  name="Submit" value="Submit" />
+                    </div> </div>				
+					</div>
+                </form>  
+                </div>
+            
+				
+	</div>
+	</div>
+<script>
+    
+ $(document).ready(function () {
+
+    $('.calendardate').datepicker({ dateFormat: 'dd-mm-yy', }); 
+    
+    
+                                    
+});
+ setTimeout(function(){  $(".alert").hide()  }, 3000); 
+    //$("#shop_sec").select2({         
+    //   tags: true          
+    //    });
+    //    $("#sub_shop_sec").select2({         
+    //      tags: true          
+    //    });
+
+
+
+
+   function get_empno() {
+       var empno=$("#empno").val();
+   // alert(empno)
+    var data = {empno};
+       $.ajax({
+           type:'GET',
+           data:data,
+           url : "{% url 'get_emp_det' %}",
+            dataType : 'json',
+            success : function(response){
+                console.log(response)
+                if (response.rno==0) {
+                   // alert(response.rno)                   
+           $("#save").val("Submit");
+           $("#empname").val("");
+           $("#empname").attr('readonly', false); 
+             
+           $("#officeor").val("");
+           $("#officeor").attr('readonly', false);
+           $("#dobdate").val(""); 
+           $("#dobdate").attr('readonly', false);
+           $("#dateapp").val(""); 
+           $("#dateapp").attr('readonly', false);
+           $("#empsex").val(""); 
+           $("#empsex").attr('readonly', false);
+           $("#emptype").val("");  
+           $("#emptype").attr('disabled', false);
+           $("#empmarital").val("");  
+           $("#empmarital").attr('readonly', false);
+           $("#empemail").val(""); 
+           $("#empemail").attr('readonly', false);
+           $("#empphone").val(""); 
+           $("#empphone").attr('readonly', false);
+           $("#sub_shop_sec").val(""); 
+           $("#sub_shop_sec").attr('disabled', false);
+           $("#shop_sec").val("");
+           $("#shop_sec").attr('disabled', false);
+           $("#empdesignation").val("");
+           $("#empdesignation").attr('disabled', false);
+           $("#empstatus").val(""); 
+            
+           $("#emptdepartment").val(""); 
+           $("#emptdepartment").attr('disabled', false);
+           $("#sex2").attr('disabled', false);
+           $("#marital2").attr('disabled', false);
+           
+           $(".calendardate").attr('disabled', false);
+
+              } else {
+
+                   // alert(response.rno)
+           $("#save").val("Update");
+           $("#empname").attr('readonly', true);
+           $("#empname").val(response.empname);
+           $("#empno").val(response.empno);     
+           
+           $("#dobdate").val(response.birthdate); 
+           $("#dobdate").attr('readonly', true);          
+           
+           $("#dateapp").val(response.dateapp); 
+           $("#dateapp").attr('readonly', true);
+           $(".calendardate").attr('disabled', true);
+           $("#officeor").val(response.office_or);
+           $("#officeor").attr('readonly', true);
+
+           $("#empsex").val(response.sex); 
+if (response.sex=='M') {
+    $("#sex1").attr('checked', true);
+    $("#sex2").attr('disabled', true);
+    
+} else {
+    $("#sex1").attr('disabled', true);
+    $("#sex2").attr('checked', true);
+}if (response.marital_status=='M') {
+    $("#marital1").attr('checked', true);
+    $("#marital2").attr('disabled', true);
+} else {
+    $("#marital1").attr('disabled', true);
+    $("#marital2").attr('checked', true);
+}
+         
+
+           $("#emptype").val(response.emp_inctype); 
+        //    $("#emptype").attr('disabled', true); 
+           
+           $("#empemail").val(response.email); 
+           //$("#empemail").attr('readonly', true);
+           $("#empphone").val(response.contactno);
+           //$("#empphone").attr('readonly', true);
+           $("#sub_shop_sec").val(response.shopno);
+           $("#sub_shop_sec").attr('disabled', true); 
+           $("#shop_sec").val(response.parentshop);
+           $("#shop_sec").attr('disabled', true);
+           $("#empdesignation").val(response.desig);
+           $("#empdesignation").attr('disabled', true);
+           $("#empstatus").val(response.status);           
+           $("#emptdepartment").val(response.dept); 
+           $("#emptdepartment").attr('disabled', true);
+             
+
+
+
+                }
+
+            }
+       }) 
+   }   
+</script>
+ 
+{% endblock content %}

@@ -56,7 +56,7 @@
         <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> 
         <br>
         <br>
-        <form action="{% url 'roster' %}" method="POST" id="form1"> 
+        <form action="{% url 'rosterreport' %}" method="POST" id="form1"> 
           {% csrf_token %}
         <input type="text" id="hide2" name="hide2" readonly class="form-control"  hidden>
           <table class="table"  >
@@ -85,7 +85,7 @@
                            
               </tr>
               </table>
-           <center><input type="button" name="Get" class="btn btn-primary" value="Get" onclick="generatetable();show2();show1();"></center> 
+           <center><input type="button" name="Get" class="btn btn-primary" value="Get" onclick="generatetable();"></center> 
       </div>
         <div id="hide1" class="container" style="display: none;">
             <br><h3 align="center">Roster Table</h3></br>
@@ -99,7 +99,7 @@
             <center><b><h4>Varanasi/वाराणसी</h4></b></center>
             <center><b><h4> ROSTER </h4></b></center>
             <center><h3 id="para"></h3></center>
-            <table border="2" id="table"  style="border: solid black; padding:20px;">
+            <table border="2" id="table"  class="table" style="border: solid black; padding:20px;">
               <thead class="active">
                 <tr id="days">
                   <th>#</th>
@@ -113,18 +113,14 @@
 </form>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
       <script>
-        
-         function show2(){
-    document.getElementById('hide1').style.display="block";
-         }
-    function show1(){
-    document.getElementById('hide3').style.display="none";
-    }
-          function generatetable(){
+         
+    
+    function generatetable(){
+        document.getElementById('hide1').style.display="block";
+        document.getElementById('hide3').style.display="none";
             var sdate=document.getElementById('date1').value;
             var edate=document.getElementById('date2').value; 
             var listDate = [];
-            
             var ssdate=sdate.split("-").reverse().join("-");
             var eedate=edate.split("-").reverse().join("-");
             console.log(ssdate);
@@ -151,7 +147,6 @@
                     var edate=$("#date2").val();
                     var leng=$("#hide2").val();
                     console.log(leng);
-                
                     data={shop_sec,sdate,edate,leng};
                       $.ajax({
                         type : 'GET',
@@ -159,17 +154,15 @@
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                          
                           var count=(response.length)
                           console.log(response.length)
                           for(var i=0;i<count;i++){
-
                             console.log(response);
-                            
+                          
       
                           var add=0;
                                
-                          var htAppend='<tr><td>'+(i+1)+'</td><td><input type="text" name="staffNo" value="'+response[i].staffNo+'"></td><td>'+response[i].staffName+'</td>'
+                          var htAppend='<tr><td>'+(i+1)+'</td><td> '+response[i].staffNo+' </td><td>'+response[i].staffName+'</td>'
                           for(var j=0;j<leng;j++){
                           add+='<td>'+response[i].shift[j]+'</td>'}
                         '</tr>'

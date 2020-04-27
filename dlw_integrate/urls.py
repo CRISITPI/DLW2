@@ -553,6 +553,9 @@ urlpatterns = [
     path('mnp_entr/',mnp_entr,name='mnp_entr'),
     path('mwnochanged/',mwnochanged,name='mwnochanged'),
     path('mwsave/',mwsave,name='mwsave'),
+    path('ajax/getcode/',getcode,name='getcode'),
+    path('ajax/getdocumentno/',getdocumentno,name='getdocumentno'),
+    path('ajax/workdemandbyshoppdf/',workdemandbyshoppdf,name='workdemandbyshoppdf'),
 
 
     	
@@ -562,6 +565,25 @@ urlpatterns = [
     path('ajax/m12editdata',m12editdata,name='m12editdata'),
     path('ajax/m12save/',m12save,name='m12save'),
     path('m12report/',m12report,name='m12report'),
+
+    path('ajax/get_emp_det/',get_emp_det,name='get_emp_det'),
+    path('empregist/',empregist,name='empregist'),
+    path('ajax/m338getdraftview/',m338getdraftview,name='m338getdraftview'),
+    path('logbook_assign/',logbook_assign,name='logbook_assign'),
+    path('logbook_attendence/',logbook_attendence,name='logbook_attendence'),
+    path('ajax/logbook_editdata/',logbook_editdata,name='logbook_editdata'),
+    path('ajax/logbook_submitf/',logbook_submitf,name='logbook_submitf'),
+    path('ajax/logbook_getstaff/',logbook_getstaff,name='logbook_getstaff'),
+    path('ajax/logbook_getatten/',logbook_getatten,name='logbook_getatten'),
+    path('ajax/logbook_getm5doc/',logbook_getm5doc,name='logbook_getm5doc'),
+    path('ajax/logbook_getworkdetail/',logbook_getworkdetail,name='logbook_getworkdetail'),
+    path('ajax/logbook_getm5glno/',logbook_getm5glno,name='logbook_getm5glno'),
+    path('ajax/logbook_desc/',logbook_desc,name='logbook_desc'),
+
+
+
+
+
     	
 ]
 
