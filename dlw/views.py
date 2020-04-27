@@ -1521,7 +1521,6 @@ def m14getdoc_no1(request):
 @role_required(urlpass='/aprodplan/')
 def bprodplan(request):
     from .models import annual_production,jpo,namedgn,loconame,materialname
-    from datetime import date
     existlen=0
     context={}
     dictemper={}
@@ -3874,7 +3873,6 @@ def dpo(request):
 @login_required
 @role_required(urlpass='/dpoinput/')
 def dpoinput(request):
-    from datetime import date
     
     from .models import annual_production,barrelfirst,dpo,dpoloco,jpo
     cuser=request.user
@@ -10669,7 +10667,6 @@ def m23view(request):
         
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
-            from datetime import date
             shop_sec = request.POST.get('shop_sec')
             staff_no = request.POST.get('staff_no')
             ddate = request.POST.get('ddate')
@@ -14493,7 +14490,6 @@ def m9view(request):
         
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
-            from datetime import date
             shop_sec = request.POST.get('shop_sec')
             wo_no = request.POST.get('wo_no')
             print(wo_no)
@@ -21473,7 +21469,6 @@ def mg5view(request):
             id_no = request.POST.get('id_no')
             instrument_number= request.POST.get('t_id')
             print(id_no)
-            from datetime import date
             today = date.today()
             obj = empmast.objects.filter( idcard_no=id_no,ticket_no=ti_no).values('empname','emptype','shopno','empno').distinct()
             obj1 = MG5.objects.filter(id_no=id_no,t_no=ti_no).values('optr','chkr').distinct()
@@ -21559,8 +21554,7 @@ def mg5view(request):
                 chkr=request.POST.get('chkr')
                 # to_no=request.POST.get('to_no')
 
-                from datetime import datetime
-                now = datetime.now()
+                now = datetime.datetime.now()
                 dt_string = now.strftime("%H:%M:%S")
                 # print(to_no)
                 # obj3 = MG5.objects.filter( id_no=id_no).distinct()
@@ -21663,7 +21657,6 @@ def mg5report(request):
             id_no = request.POST.get('id_no')
             instrument_number= request.POST.get('t_id')
             print(id_no)
-            from datetime import date
             today = date.today()
             #obj = empmast.objects.filter( idcard_no=id_no,ticket_no=ti_no).values('empname','emptype','shopno','empno').distinct()
             obj = MG5.objects.filter( id_no=id_no,t_no=ti_no).values('shop_sec','staff_no', 'name', 'date', 'super_in', 'optr', 'chkr', 'id_no', 't_no', 't_id', 'last_modified', 'to_no', 't_desc').distinct()
@@ -21762,8 +21755,7 @@ def mg5report(request):
 
 
 
-                from datetime import datetime
-                now = datetime.now()
+                now = datetime.datetime.now()
                 dt_string = now.strftime("%H:%M:%S")
                 tot = request.POST.get('totaltools')
                 
@@ -23039,7 +23031,6 @@ def m338view(request):
         
         submitvalue = request.POST.get('proceed')
         if submitvalue=='proceed':
-            from datetime import date
             shop_sec = request.GET.get('shop_sec')
             staff_no = request.GET.get('staff_no')
             obj1 = list(empmast.objects.filter(empno = staff_no).values('empname','desig_longdesc','payrate').distinct())
@@ -23878,7 +23869,6 @@ def mg21views(request):
         
         submitvalue = request.POST.get('save')
         if submitvalue=='proceed':
-            from datetime import date
             shop_sec = request.GET.get('shop_sec')
             staff_no = request.GET.get('staff_no')
             obj1 = list(empmast.objects.filter(empno = staff_no).values('empname','desig_longdesc','payrate').distinct())
@@ -25053,7 +25043,7 @@ def oprn_shop_validate(request):
 def oprn_audit_save(request):
     if request.method == "GET" and request.is_ajax():
         by = str(request.user)
-        time = datetime.now().time()
+        time = datetime.datetime.now().time()
         val = dict(request.GET)
         k = list(val.keys())
         Oprn_audit.objects.create(updt_by = by, updt_time = time, updt_col = k)
@@ -27257,7 +27247,6 @@ def rosterreport(request):
         }
     return render(request, 'rosterreport.html',context)
 
-from datetime import * 
 def getrosterreport(request):
     if request.method=="GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
