@@ -107,7 +107,7 @@ def process():
                     if(mcpq=="0"):
                         print("Part Not in Structure for this End Product")
                         Ptld.objects.create(rem="Part Not in Structure for this End Product")
-                        #save the rem in the ptld table later
+                        #save the rem in the ptld table later   
                         continue
                     else:
                         if session_ptc in ls1:
@@ -290,14 +290,14 @@ def expl(parent, wt, ep):
     alt_ind=[]
     
 
-    for i in Nstr.objects.raw('select n."id", n."CP_PART",n."ALT_IND",p."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO" from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and  n."PP_PART"=%s and  n."EPC"=%s order by n."PP_PART",n."CP_PART",n."EPC",n."L_TO";',[parent,ep]):
+    for i in Nstr.objects.raw('select n."id_pk", n."CP_PART",n."ALT_IND",p."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO" from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and  n."PP_PART"=%s and  n."EPC"=%s order by n."PP_PART",n."CP_PART",n."EPC",n."L_TO";',[parent,ep]):
         cp_part.append(i.cp_part)
         qty.append(i.qty)     
         l_fr1.append(i.l_fr)
         l_to1.append(i.l_to)
         alt_ind.append(i.alt_ind)
     
-    for i in Part.objects.raw('select n."id", n."CP_PART",p."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO" from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and  n."PP_PART"=%s and  n."EPC"=%s order by n."PP_PART",n."CP_PART",n."EPC",n."L_TO";',[parent,ep]):
+    for i in Part.objects.raw('select p.id, n."CP_PART",p."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO" from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and  n."PP_PART"=%s and  n."EPC"=%s order by n."PP_PART",n."CP_PART",n."EPC",n."L_TO";',[parent,ep]):
         ptc.append(i.ptc)
         shop_ut.append(i.shop_ut)  
 
@@ -363,8 +363,10 @@ def summarizeQtySum_Temp(ep,mep_part):
         # but here we are fetching the values without using the functions 
   
     ds3=list(Wrap_table.objects.values('partno','rem','v_qty').annotate(Max('ptc'),Sum("qty"),Max("shop_ut"),Max("pt_lf"),Max("pt_lt"),Max("rm_part"),Max("rm_ptc"),Sum("rm_qty"),Max("rm_ut"),Max("rm_lf"),Max("rm_lt")))
-
-    Wrap_table.objects.all().delete()
+    
+    
+    ti=Wrap_table.objects.all().delete()
+    print("heellooooooo",ti)
     for i in range(len(ds3)):
         # QtysumTemp.objects.create(partno=str(ds3[i].get('partno')),ptc=str(ds3[i].get('ptc')),qty=str(ds3[i].get('qty')),shop_ut=str(ds3[i].get('shop_ut')),ptlf=str(ds3[i].get('pt_lf')),ptlt=str(ds3[i].get('pt_lt')),rm_part=str(ds3[i].get('rm_part')),rm_ptc=str(ds3[i].get('rm_ptc')),rm_qty=ds3[i].get('rm_qty'),rm_ut=str(ds3[i].get('rm_ut')),rmlf=str(ds3[i].get('rm_lf')),rmlt=str(ds3[i].get('rm_lt')),remark=str(ds3[i].get('rem')),qty_loco=ds3[i].get('v_qty'),dt_run=system_date,cur_time=session_curTime) 
         QtysumTemp.objects.create(partno=str(ds3[i].get('partno')),ptc=str(ds3[i].get('ptc__max')),qty=str(ds3[i].get('qty__sum')),shop_ut=str(ds3[i].get('shop_ut__max')),ptlf=str(ds3[i].get('pt_lf__max')),ptlt=str(ds3[i].get('pt_lt__max')),rm_part=str(ds3[i].get('rm_part__max')),rm_ptc=str(ds3[i].get('rm_ptc__max')),rm_qty=ds3[i].get('rm_qty__sum'),rm_ut=str(ds3[i].get('rm_ut__max')),rmlf=str(ds3[i].get('rm_lf__max')),rmlt=str(ds3[i].get('rm_lt__max')),remark=str(ds3[i].get('rem')),qty_loco=ds3[i].get('v_qty'),dt_run=system_date,cur_time=session_curTime) 
@@ -411,15 +413,15 @@ def delQtySum_Temp2():
 
 
 def appendQtySum_Temp2():
-    try:
+    # try:
         tmpstr=list(TempQtysum.objects.filter(cur_time=session_curTime).values("partno" ,"ptc" ,"qty" ,"shop_ut","l_fr","l_to","rm_part","rm_ptc","rm_qty","rm_ut","rm_lf","rm_lt","dt_run","cur_time"))
         for i in range(len(tmpstr)):
             QtysumTemp2.objects.create(partno=tmpstr[i].get('partno') ,ptc=tmpstr[i].get('ptc') ,qty=tmpstr[i].get('qty') ,shop_ut=tmpstr[i].get('shop_ut'),pt_lf=tmpstr[i].get('l_fr'),pt_lt=tmpstr[i].get('l_to'),rm_part=tmpstr[i].get('rm_part'),rm_ptc=tmpstr[i].get('rm_ptc'),rm_qty=tmpstr[i].get('rm_qty'),rm_ut=tmpstr[i].get('rm_ut'),rm_lf=tmpstr[i].get('rm_lf'),rm_lt=tmpstr[i].get('rm_lt'),dt_run=tmpstr[i].get('dt_run'),cur_time=tmpstr[i].get('cur_time'))
         return
    
-    except:
-        print("Insertion not successful : QTYSUM_TEMP2")
-        return         
+    # except:
+    #     print("Insertion not successful : QTYSUM_TEMP2")
+    #     return         
 
 
 
@@ -475,4 +477,4 @@ def AddDataToTableFn(a,b,c,d,e,f,g,h,i,j,k,l):
 
 def CreateDataTableFn():
     dfObj = pandas.DataFrame(columns=['PART_NO', 'EPC', 'DESC','QTY','OPN','LCNO','SHOP','PA','AT','QTY_LOCO','LOT','PTC'])
-    return dfObj   
+    return dfObj    

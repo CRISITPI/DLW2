@@ -2440,13 +2440,13 @@ class QppTempqpp(models.Model):
 class QtysumTemp(models.Model):
     partno = models.CharField(db_column='PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    qty = models.DecimalField(db_column='QTY', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     shop_ut = models.CharField(db_column='SHOP_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     ptlf = models.CharField(db_column='PTLF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     ptlt = models.CharField(db_column='PTLT', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_part = models.CharField(db_column='RM_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
     rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     rmlf = models.CharField(db_column='RMLF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rmlt = models.CharField(db_column='RMLT', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -2480,17 +2480,16 @@ class QtysumTemp1(models.Model):
         managed = False
         db_table = 'QTYSUM_TEMP1'
 
-
 class QtysumTemp2(models.Model):
     partno = models.CharField(db_column='PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    qty = models.DecimalField(db_column='QTY', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     shop_ut = models.CharField(db_column='SHOP_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     pt_lf = models.CharField(db_column='PT_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     pt_lt = models.CharField(db_column='PT_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_part = models.CharField(db_column='RM_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
     rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     rm_lf = models.CharField(db_column='RM_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_lt = models.CharField(db_column='RM_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -2500,6 +2499,7 @@ class QtysumTemp2(models.Model):
     class Meta:
         managed = False
         db_table = 'QTYSUM_TEMP2'
+
 
 
 class Rate(models.Model):
@@ -5245,7 +5245,7 @@ class Med1(models.Model):
     dutyfordays=models.CharField(max_length=50,null=True)
 
 class workdemandbyshopmain(models.Model):
-    recordno=models.CharField(max_length=10,primary_key=True)
+    recordno=models.CharField(max_length=6,primary_key=True)
     doccode=models.CharField(max_length=2,null=True,blank=True)
     workorder = models.CharField(max_length=8,null=True,blank=True)
     locono=models.CharField(max_length=8,null=True,blank=True)
@@ -5258,9 +5258,11 @@ class workdemandbyshopmain(models.Model):
     date=models.CharField(max_length=10,null=True,blank=True)
     dreleasedate=models.CharField(max_length=10,null=True,blank=True)
     dcompletedate=models.CharField(max_length=10,null=True,blank=True)
+    wmmdate=models.CharField(max_length=10,null=True,blank=True)
+    prmdate=models.CharField(max_length=10,null=True,blank=True)
 
 class workdemandbyshopsecondary(models.Model):
-    recordno=models.CharField(max_length=10,null=False)
+    recordno=models.CharField(max_length=6,null=False)
     partno = models.CharField(max_length=8,null=True,blank=True)
     desc=models.CharField(max_length=30,null=True,blank=True)
     quantity = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)  

@@ -69,42 +69,37 @@
           {% endfor %}
           </tbody>
         </table>    
-        
-        
-        {% for i in abc %}
-        {% for d in i %}
-        {% if d.s != '' %}
+
+
+
         <table >
           <thead >
               <tr>
-                <th>Sl No.</th><td>{{d.s}}</td>
-                  
-              </tr>
-          </thead>
-          </table>
-{% endif %}
-{% endfor %}
-      
-        <table >
-          <thead >
-              <tr>
-                <th>Sl No.</th>
-                  <th>Part No.</th>
+                <th><u>Seniour Section Engineer:</u></th>
+                <th>Workshop Manager:</th>
+                <th>Progress Man:</th>
               </tr>
           </thead>
           <tbody >
-            
-            {% for j in i %}
+            <br>
+            <br>
+          {% for i in main %}
           <tr>
-            <td><p ALIGN="CENTER">{{j.a}}</p></td>
-            <td><p ALIGN="CENTER">{{j.b}}</p></td>
+                  <td><p ALIGN="left">{{i.sseid}}</p></td>
+                  <td><p ALIGN="left">{{i.wmmid}}</p></td>
+                  <td><p ALIGN="left">{{i.pmid}}</p></td>
+          </tr>
+          <tr>
+                  <td><p ALIGN="left">{{i.date}}</p></td>
+                  <td><p ALIGN="left">{{i.wmmdate}}</p></td>
+                  <td><p ALIGN="left">{{i.prmdate}}</p></td>
           </tr>
           {% endfor %}
-          
           </tbody>
-        </table> 
-        {% endfor %} 
-         
+        </table>    
+        
+        
+        
 
 
 

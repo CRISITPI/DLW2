@@ -450,11 +450,12 @@
      autocomplete(document.getElementById("searchdoc"), searchkey);
   }
   function funsearch()
-  {var search=document.getElementById('searchdoc').value;
+  {
+    var search=document.getElementById('searchdoc').value;
      if(search=='')
       alert('Enter Document No !!!');
     else
-    if(search.length<10)
+    if(search.length<6)
       alert(' Document Number Must Be 10 Character !!!');
     else
       document.querySelector('#Search2').click();
