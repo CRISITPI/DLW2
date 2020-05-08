@@ -12,8 +12,6 @@ import datetime,calendar
 from calendar import monthrange
 from array import array
 from django.contrib.sessions.models import Session
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
 from django.views.generic import View
 from dlw.models import *
 from dlw.serializers import testSerializer
@@ -25,7 +23,6 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from dlw.forms import UserRegisterForm
 from django.contrib import auth
-# from authy.api import AuthyApiClient
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from dlw.decorators import role_required
@@ -35,7 +32,6 @@ import math,random
 from random import randint
 import datetime
 import smtplib 
-# import requests
 from django.apps import apps
 import json
 import pandas
@@ -45,7 +41,6 @@ from django.db.models import Sum
 from django.db.models import Max
 import numpy as np
 
-#All of these are global variables which is being used in the functions later 
 session_ep1=''
 session_meppart=0
 session_ptc=''
@@ -65,7 +60,6 @@ aimpl=pandas.DataFrame()
 def process():
     data_list4=list(Ptld.objects.values('part_no','ptc','p_desc','qty','epc','rem','drgno'))
     df=pandas.DataFrame(data_list4)    
-    # We will gonna use these variables later in the code
     global Ldbk
     if(Ldbk.empty):
         Ldbk=CreateDataTableLdBk()
@@ -82,32 +76,24 @@ def process():
     if(len(data_list4)>0):
         for i in range(len(data_list4)):
             assly=data_list4[i].get('part_no')
-            # Do this list according to order by method
             ds1=list(Nstr.objects.filter(cp_part=assly,l_to='9999').values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by('cp_part','epc','pp_part'))
             if(len(ds1)>0):
                 ep=data_list4[i].get('epc')
-                #Make it a sessions variable later 
                 global session_ep1
                 session_ep1=ep
                 tmpstr=list(Code.objects.filter(cd_type='11',code=ep).values('num_1'))
                 if(len(tmpstr)>0):
                     mep_part=tmpstr[0].get('num_1')
-                #Make it a session variable later
                 global session_meppart
                 session_meppart=mep_part
                    
             qtya =str(data_list4[i].get('qty'))
-            # print("qtya..",qtya)
-            # print("qtya..",int(qtya))    
             if (assly != mep_part):    
                 mcpq = cpq(assly, ep, mep_part)
-                #mcpq=0
                 ds5=list(Nstr.objects.filter(cp_part=assly,l_to='9999').values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by('cp_part','epc','pp_part'))
                 if(len(ds5)<=0):
                     if(mcpq=="0"):
-                        print("Part Not in Structure for this End Product")
                         Ptld.objects.create(rem="Part Not in Structure for this End Product")
-                        #save the rem in the ptld table later   
                         continue
                     else:
                         if session_ptc in ls1:
@@ -140,15 +126,9 @@ def process():
         mPtc=df['ptc']
         AddDataToTableFn(mPartNo[i], mEpc[i],mDesc[i], mQty[i], "", "", "", "", "", "", "", mPtc[i])
     
-    #why the session_outfile is empty at this point 
     
-    #Problem is in this groupby command we have to check wheather outfile dataframe supports the grouby command
     Ldbk=outfile.groupby("PART_NO").agg({'DESC':'max','QTY':'sum','PTC':'max'})
-    # print("shape...",Ldbk.shape[0])
     return Ldbk
-    # for i in range(len(data)):
-    #     AddDataToTableLdBk(data.get(['PART_NO']),data.get(['DESC']),data.get(['QTY']),data.get(['PTC']))   
-     
 
 def club_assly_qty(qtya):
     partno=''
@@ -164,10 +144,8 @@ def club_assly_qty(qtya):
         if(len(ds2)>0):
             desc=str(ds2[0].get('des'))
         qty=str(ds1[i].get('qty'))
-        # qtya is returning an integer so that we have to make it a integer
         qty=str(float(qty)*float(qtya))
         ptc=str(ds1[i].get('ptc'))
-        #check this outfile when integrating because the outfile variable is a global one and here we have used it as a string
         global outfile
         if(outfile.empty):
             outfile = CreateDataTableFn()
@@ -180,11 +158,9 @@ def cpq(pn,ep,epn):
     q=0
     if(aimpl.empty==False):
         aimpl.drop(aimpl.index, inplace=True)
-    # Make it order_by  
     ds=list(Nstr.objects.filter(cp_part=pn,epc=ep,l_to='9999').values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("cp_part","epc","pp_part"))
     if(len(ds)<=0):
         return "0"
-    #Make them a session variable later
     global session_ep
     global session_epn
     session_ep = ep
@@ -194,27 +170,23 @@ def cpq(pn,ep,epn):
         a=aimpl[i].get('0')
         b=aimpl[i].get('1')
         if(a==epn):
-            #make int(b) into double
             q=q+int(b)       
     return str(q)
 
 
 
 def impl(pn,wt):
-    #All these four variables will be used later in the code 
     pp_part=''
     mpp_part=''
     ptc =''
     _epn=''
     qty=0
-    #dss and dss1 will be data tables but in python we are making the lists
     dss=list(Nstr.objects.filter(cp_part=pn,epc=session_ep,l_to='9999').values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("cp_part","epc","pp_part"))
     global session_aimpl
     global aimpl
     aimpl=session_aimpl
     if(aimpl==None):
         aimpl=CreateDataTableaImpl(2)
-        #Make it as sessions variable later
         session_aimpl=aimpl   
     _epn=str(session_epn) 
     for i in range(len(dss)):
@@ -247,7 +219,6 @@ def sumexpl(assly, lf, lt):
     global session_curTime
     cur_time=datetime.datetime.now().strftime("%H%M%S")
     session_curTime=cur_time
-    # df.drop(columns="epc")
     delQtySum_Temp1()
     global session_lt
     session_lt = "9999"
@@ -263,7 +234,6 @@ def sumexpl(assly, lf, lt):
 def qloco(partno):
     try:
         mcpq="0"
-        print(session_ep)
         ds3=list(Nstr.objects.filter(cp_part=partno,epc=str(session_ep),l_to='9999').values('pp_part','cp_part','l_fr','l_to','ptc','epc','qty','updt_dt','ref_ind','ref_no','alt_ind','alt_link','lead_time','reg_no','slno','del_fl','epc_old').order_by('cp_part','epc','pp_part'))
         if(len(ds3)>0):
             for i in range(len(ds3)):
@@ -301,10 +271,8 @@ def expl(parent, wt, ep):
         ptc.append(i.ptc)
         shop_ut.append(i.shop_ut)  
 
-    # cp_part=Nstr.objects.values()
     
     df=pandas.DataFrame({'cp_part':cp_part,'ptc':ptc,'qty':qty,'shop_ut':shop_ut,'l_fr':l_fr1,'l_to':l_to1})
-    # print("df_qty....",df["qty"])
     if(df.shape[0]>0):
         for i in range(df.shape[0]) :
             l_fr=''
@@ -315,13 +283,9 @@ def expl(parent, wt, ep):
             lto=0
             lfr=0
             valtind=0
-            # Add padleft to l_fr later
             l_fr=str(l_fr1[i])
             l_to=str(l_to1[i])
-            # alt_ind is null we have to make it a zero later 
-            #v_alt_ind = str(alt_ind[i])
             v_alt_ind = str(0)
-            # convert it into string variable
             lt=int(str(session_lt))
             lfr=int(l_fr)
             lto=int(l_to)
@@ -353,26 +317,17 @@ def summarizeQtySum_Temp(ep,mep_part):
     if(len(ds2)>0):
         for i in range(len(ds2)): 
             v_partno=str(ds2[i].get('partno'))
-            print(v_partno)
             v_qty=qloco(v_partno)
             AddDataToTable(v_partno,str(ds2[i].get('ptc__max')),ds2[i].get('qty__sum'),str(ds2[i].get('shop_ut__max')),str(ds2[i].get('pt_lf__max')),str(ds2[i].get('pt_lt_max')),str(ds2[i].get('rm_part__max')),str(ds2[i].get('rm_ptc__max')),ds2[i].get('rm_qty__max'),str(ds2[i].get('rm_ut__max')),str(ds2[i].get('rm_lf__max')),str(ds2[i].get('rm_lt__max')),'0',v_qty)
                
-        #Change the variables names in the selected query 
-        # ds3=list(Wrap_table.objects.values('partno','ptc','qty','shop_ut','pt_lf','pt_lt','rm_part','rm_ptc','rm_qty','rm_ut','rm_lf','rm_lt','rm','v_qty'))                                                                                                                                     
-        # check this query in detail for the result because the annotate function always contains the functions (like max or min)
-        # but here we are fetching the values without using the functions 
-  
+       
     ds3=list(Wrap_table.objects.values('partno','rem','v_qty').annotate(Max('ptc'),Sum("qty"),Max("shop_ut"),Max("pt_lf"),Max("pt_lt"),Max("rm_part"),Max("rm_ptc"),Sum("rm_qty"),Max("rm_ut"),Max("rm_lf"),Max("rm_lt")))
     
     
     ti=Wrap_table.objects.all().delete()
-    print("heellooooooo",ti)
     for i in range(len(ds3)):
-        # QtysumTemp.objects.create(partno=str(ds3[i].get('partno')),ptc=str(ds3[i].get('ptc')),qty=str(ds3[i].get('qty')),shop_ut=str(ds3[i].get('shop_ut')),ptlf=str(ds3[i].get('pt_lf')),ptlt=str(ds3[i].get('pt_lt')),rm_part=str(ds3[i].get('rm_part')),rm_ptc=str(ds3[i].get('rm_ptc')),rm_qty=ds3[i].get('rm_qty'),rm_ut=str(ds3[i].get('rm_ut')),rmlf=str(ds3[i].get('rm_lf')),rmlt=str(ds3[i].get('rm_lt')),remark=str(ds3[i].get('rem')),qty_loco=ds3[i].get('v_qty'),dt_run=system_date,cur_time=session_curTime) 
         QtysumTemp.objects.create(partno=str(ds3[i].get('partno')),ptc=str(ds3[i].get('ptc__max')),qty=str(ds3[i].get('qty__sum')),shop_ut=str(ds3[i].get('shop_ut__max')),ptlf=str(ds3[i].get('pt_lf__max')),ptlt=str(ds3[i].get('pt_lt__max')),rm_part=str(ds3[i].get('rm_part__max')),rm_ptc=str(ds3[i].get('rm_ptc__max')),rm_qty=ds3[i].get('rm_qty__sum'),rm_ut=str(ds3[i].get('rm_ut__max')),rmlf=str(ds3[i].get('rm_lf__max')),rmlt=str(ds3[i].get('rm_lt__max')),remark=str(ds3[i].get('rem')),qty_loco=ds3[i].get('v_qty'),dt_run=system_date,cur_time=session_curTime) 
         
-    # print("Insertion not successful : QTYSUM_TEMP")   
-     
 
 
 def CreateDataTableaImpl(cols):
@@ -398,7 +353,6 @@ def delQtySum_Temp():
         QtysumTemp.objects.filter(dt_run__lt=system_date).delete()
         return
     except:
-        print("Data not deleted : QTYSUM_TEMP")   
         return 
 
 
@@ -407,22 +361,16 @@ def delQtySum_Temp2():
         QtysumTemp2.objects.filter(dt_run__lt=system_date).delete()
         return
     except:
-        print("Data not deleted : QTYSUM_TEMP2")  
         return  
     
 
 
 def appendQtySum_Temp2():
-    # try:
         tmpstr=list(TempQtysum.objects.filter(cur_time=session_curTime).values("partno" ,"ptc" ,"qty" ,"shop_ut","l_fr","l_to","rm_part","rm_ptc","rm_qty","rm_ut","rm_lf","rm_lt","dt_run","cur_time"))
         for i in range(len(tmpstr)):
             QtysumTemp2.objects.create(partno=tmpstr[i].get('partno') ,ptc=tmpstr[i].get('ptc') ,qty=tmpstr[i].get('qty') ,shop_ut=tmpstr[i].get('shop_ut'),pt_lf=tmpstr[i].get('l_fr'),pt_lt=tmpstr[i].get('l_to'),rm_part=tmpstr[i].get('rm_part'),rm_ptc=tmpstr[i].get('rm_ptc'),rm_qty=tmpstr[i].get('rm_qty'),rm_ut=tmpstr[i].get('rm_ut'),rm_lf=tmpstr[i].get('rm_lf'),rm_lt=tmpstr[i].get('rm_lt'),dt_run=tmpstr[i].get('dt_run'),cur_time=tmpstr[i].get('cur_time'))
         return
    
-    # except:
-    #     print("Insertion not successful : QTYSUM_TEMP2")
-    #     return         
-
 
 
 
@@ -433,7 +381,6 @@ def delQtySum_Temp1():
         TempQtysum.objects.filter(dt_run__lt= system_date).delete()
         return
     except:
-        print("Data not deleted : QTYSUM_TEMP1") 
         return 
 
 
@@ -446,7 +393,6 @@ def insertQtySum_temp1(part_n,pt,qt,shop_u,l_f,l_t):
             
             return   
         except:
-            print("Insertion not successful : QTYSUM_TEMP1")
             return
        
 
