@@ -27175,9 +27175,9 @@ def roster(request):
                     for i in range(int(noofdays)):
                         fromdate=request.POST.get('from')
                         fromdate1=fromdate[6:] + "/" + fromdate[3:5] + "/" + fromdate[:2]
-                        date = datetime.strptime(fromdate1, "%Y/%m/%d")
+                        date = datetime.datetime.strptime(fromdate1, "%Y/%m/%d")
                         modified_date = date + timedelta(days=i)
-                        datee=datetime.strftime(modified_date, "%d-%m-%Y")
+                        datee=datetime.datetime.strftime(modified_date, "%d-%m-%Y")
                         print(datee)
                         d1.append(datee)
                         shift=request.POST.get(str(j+1)+str(i))
@@ -27290,14 +27290,14 @@ def genrosterpdf(request, *args, **kwargs):
     datew=date1[6:] + "/" + date1[3:5] + "/" + date1[:2]
     lst=[]
     ls=[]
-    tdate = datetime.strptime(date1, "%d-%m-%Y")
+    tdate = datetime.datetime.strptime(date1, "%d-%m-%Y")
     x=int(noofday)
     d1=[]
     d2=[]
     for i in range(0,x):
         modified_date = tdate + timedelta(days=i)
-        fdate=datetime.strftime(modified_date,"%d-%m-%Y")
-        fdate1=datetime.strftime(modified_date,"%d-%m-%Y")
+        fdate=datetime.datetime.strftime(modified_date,"%d-%m-%Y")
+        fdate1=datetime.datetime.strftime(modified_date,"%d-%m-%Y")
         d1.append(fdate)
         d2.append(fdate1)
     tmpstr1=list(roster1.objects.filter(shop_sec=shop_sec, date__in=d2).values('staffNo','staffName','shift'))
@@ -27612,6 +27612,9 @@ def get_value(request):
                 lst.append(a)
         return JsonResponse(lst, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+@login_required
+@role_required(urlpass='/qtysum/')
 
 def qtysum(request):
     cuser=request.user
@@ -28645,13 +28648,15 @@ def workdemandbyshop(request):
                code=89
            if submitvalue=='Add Demand':
                cdate=str(datetime.datetime.now().strftime ("%d-%m-%Y"))
+               check=cdate[3:5]+cdate[6:10]
                date=str(date)
-               docno=workdemandbyshopmain.objects.values('recordno').order_by('-recordno')
+               docno=workdemandbyshopmain.objects.annotate(e=Substr('recordno',1,6)).filter(e=check).values('recordno').order_by('-recordno')
+               print(check,docno)
                if docno.count()>0:
-                    docno=str(int(docno[0]['recordno'])+1)
-                    
+                    docno=str(docno[0]['recordno'])[6:10]
+                    docno=cdate[3:5]+cdate[6:10]+str(int(docno)+1).zfill(4)
                else:
-                   docno= '100001'
+                   docno= cdate[3:5]+cdate[6:10]+'0001'
                workdemandbyshopmain.objects.create(recordno=docno,workorder =workorder,locono=locono,flag='0',status='Inbox',remarks='Not Yet Forwarded',sseid=str(cuser),dreleasedate=date,date=cdate,doccode=code) 
                context = {
                         'ip':get_client_ip(request),
@@ -28684,10 +28689,7 @@ def workdemandbyshop(request):
                 detailsdocno=request.POST.get('searchdoc')
                 doc=list(workdemandbyshopmain.objects.filter(recordno=detailsdocno).values('recordno','workorder','locono','dreleasedate','status','doccode','flag'))
                 lst=list(workdemandbyshopsecondary.objects.filter(recordno=detailsdocno).values('id','partno','desc','unit','quantity','locofrom','locoto','shopno').order_by('id'))
-                j=1
-                for i in range(len(lst)):
-                    lst[i].update({'sl':j})
-                    j+=1
+                
                 context = {
                         'ip':get_client_ip(request),
                         'nav':nav,
@@ -28730,13 +28732,17 @@ def workdemandbyshop(request):
     return render(request,'workdemandbyshop.html',context)
 def workdemandbyshoppdf(request, *args, **kwargs):
     docno = request.GET.get('docno')
-    main=list(workdemandbyshopmain.objects.filter(recordno=docno).values('recordno','workorder','locono','dreleasedate','doccode','sseid','wmmid','pmid','date','wmmdate','prmdate'))
+    main=list(workdemandbyshopmain.objects.filter(recordno=docno).values('recordno','workorder','locono','dreleasedate','doccode'))
     sec=list(workdemandbyshopsecondary.objects.filter(recordno=docno).values('id','partno','desc','unit','quantity','locofrom','locoto','shopno').order_by('id'))
     for i in range(len(sec)):
         sec[i].update({'sl':i+1})
+    xyz=[{'s':0},{'s':1}]
+    abc=[[{'s':0,'a':'abc','b':1},{'s':'','a':'bcd','b':2},{'s':'','a':'cde','b':3}],[{'s':1,'a':'ab','b':1},{'s':'','a':'bc','b':2},{'s':'','a':'cd','b':3}]]
     data={
         'main':main,
         'sec':sec,
+        'abc':abc,
+        'xyz':xyz,
     }
     pdf = render_to_pdf('workdemandbyshoppdf.html', data)
     return HttpResponse(pdf, content_type='application/pdf')
@@ -28798,18 +28804,16 @@ def changestatus(request):
     if request.method=='GET' and request.is_ajax():
         docno=request.GET.get('docno')
         status=request.GET.get('flag')
-        cdate=str(datetime.datetime.now().strftime ("%d-%m-%Y"))
-
         if status == '0':
             workdemandbyshopmain.objects.filter(recordno=docno).update(flag='1',status='Progress',remarks='Forwarded To WMM')
         if status == '1':
-            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='3',status='Progress',remarks='Forwarded To PRM',wmmid=str(cuser),wmmdate=cdate)
+            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='3',status='Progress',remarks='Forwarded To PRM',wmmid=str(cuser))
         
         if status == '2':
             workdemandbyshopmain.objects.filter(recordno=docno).update(flag='0',status='Progress',remarks='Returned By Wmm',wmmid=str(cuser))
         
         if status == '3':
-            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='4',status='Completed',remarks='Work Order Generated',pmid=str(cuser),prmdate=cdate)
+            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='4',status='Completed',remarks='Work Order Generated',pmid=str(cuser))
         a=[]
         return JsonResponse(a,safe=False)
     return JsonResponse({"success":False},status=400)
