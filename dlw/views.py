@@ -25027,9 +25027,9 @@ def roster(request):
                     for i in range(int(noofdays)):
                         fromdate=request.POST.get('from')
                         fromdate1=fromdate[6:] + "/" + fromdate[3:5] + "/" + fromdate[:2]
-                        date = datetime.strptime(fromdate1, "%Y/%m/%d")
+                        date = datetime.datetime.strptime(fromdate1, "%Y/%m/%d")
                         modified_date = date + timedelta(days=i)
-                        datee=datetime.strftime(modified_date, "%d-%m-%Y")
+                        datee=datetime.datetime.strftime(modified_date, "%d-%m-%Y")
                         d1.append(datee)
                         shift=request.POST.get(str(j+1)+str(i))
                         roster1.objects.filter(shop_sec=shop_sec,staffNo=staffNo,date=datee).delete()
@@ -25104,13 +25104,13 @@ def getrosterreport(request):
         datew=datee[6:] + "-" + datee[3:5] + "-" + datee[:2]
         lst=[]
         ls=[]
-        tdate = datetime.strptime(datee, "%d-%m-%Y")
+        tdate = datetime.datetime.strptime(datee, "%d-%m-%Y")
         x=int(noofday)
         d1=[]
 
         for i in range(0,x):
             modified_date = tdate + timedelta(days=i)
-            fdate=datetime.strftime(modified_date, "%d-%m-%Y")
+            fdate=datetime.datetime.strftime(modified_date, "%d-%m-%Y")
             d1.append(fdate)
         tmpstr1=list(roster1.objects.filter(shop_sec=shop_sec,date__in=d1).values('staffNo','staffName','shift'))
         c=-1
@@ -25136,14 +25136,14 @@ def genrosterpdf(request, *args, **kwargs):
     datew=date1[6:] + "/" + date1[3:5] + "/" + date1[:2]
     lst=[]
     ls=[]
-    tdate = datetime.strptime(date1, "%d-%m-%Y")
+    tdate = datetime.datetime.strptime(date1, "%d-%m-%Y")
     x=int(noofday)
     d1=[]
     d2=[]
     for i in range(0,x):
         modified_date = tdate + timedelta(days=i)
-        fdate=datetime.strftime(modified_date,"%d-%m-%Y")
-        fdate1=datetime.strftime(modified_date,"%d-%m-%Y")
+        fdate=datetime.datetime.strftime(modified_date,"%d-%m-%Y")
+        fdate1=datetime.datetime.strftime(modified_date,"%d-%m-%Y")
         d1.append(fdate)
         d2.append(fdate1)
     tmpstr1=list(roster1.objects.filter(shop_sec=shop_sec, date__in=d2).values('staffNo','staffName','shift'))
