@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
         <title>card generation</title>
@@ -93,4 +93,78 @@
 
 <table>
 
-</table>
+</table> -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>card generation</title>
+    </head>
+    <body> 
+           
+        <p style="font-size: 30px;" ALIGN="CENTER">M14 CARD GENERATION</p>
+        <hr>
+        <table border="0px">
+            <tr >
+                <td ><p style="font-size: 15px;" >ASSEMBLY NO :  </p></td >
+                <td ><p style="font-size: 15px;">{{asl}} </p></td>
+                <td ><p style="font-size: 15px;" >DESCRIPTION : </p></td>
+                <td colspan="2"><p style="font-size: 15px;">{{ades}}</p></td>
+            </tr>
+            <tr>
+                <td ><p style="font-size: 15px;" >BATCH NO : </p></td>
+                <td ><p style="font-size: 15px;">{{batch}}</p></td>
+            </tr>
+
+        </table>
+        <hr>
+        <hr>
+        <table >
+            <tr>    
+                           
+                
+            <td>DOC NO</td>
+            <td>PM NO</td>
+            <td>PART NO</td>
+            <td>QTY</td>
+            <td>LOCO FROM</td>
+            <td>LOCO TO</td>
+            <td>DUE WK</td>
+            <td>DOC IND</td>
+            <td>EPC</td>
+            <td>BRN NO</td>
+            
+            
+           </tr>
+           <hr>
+              {% for i in m4 %}
+            <tr>
+                 
+             
+             <td>{{i.doc_no}}</td> 
+             <td>{{i.pm_no}}</td>
+             <td>{{i.part_no}}</td>
+             <td>{{i.qty}}</td>
+             <td>{{i.l_fr}}</td>
+             <td>{{i.l_to}}</td> 
+             <td>{{i.due_wk}}</td> 
+             <td>{{i.doc_ind}}</td>
+             <td>{{i.epc}}</td>
+             <td>{{i.brn_no}}</td> 
+            </tr>
+            {% endfor %}
+       
+            
+        
+            
+        </table>
+       
+
+
+    </body>
+</html>
+
+
+
+
+

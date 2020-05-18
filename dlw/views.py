@@ -4757,6 +4757,7 @@ def m1genrept1(request):
                     'prtno':part_no,
                 }
         part_no = request.POST.get('hide1')
+        printpdf = request.POST.get('print')
         if printpdf=='Print':
             today = date.today()
             d1 = today.strftime("%d/%m/%Y")
@@ -5132,7 +5133,6 @@ def m12view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_no = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -5150,7 +5150,7 @@ def m12view(request):
         for i in range(0,len(rolelist)):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
-            wo_no =wo_no | req
+            wo_no = req
         context = {
             'sub':0,
             'len' :len(rolelist),
@@ -5172,6 +5172,7 @@ def m12view(request):
             'lent':0,
         }
     if request.method == "POST":
+        
         submitvalue = request.POST.get('proceed')
         if submitvalue=='Proceed':
             from decimal import Decimal
@@ -5179,218 +5180,12 @@ def m12view(request):
             staff_no = request.POST.get('staff_no')
             month = request.POST.get('month')
             wo_no = request.POST.get('wo_no')
-            obj1 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('cat','time_hrs','date','in1','out','reasons_for_idle_time','total_time','idle_time','month').distinct() 
-            obj2='None'
-            obj3='None'
-            leng=0
-            leng1=0
-            rr='None'
-            amt=0
-            patotal=0
-            a=0
-            b=0
-            if len(obj1):
-                t=obj1[0]['cat']
-                if t != 'None':
-                    obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
-                    obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
-                   
-           
-                for op in range(len(obj1)):
-                    patotal=obj1[op]['total_time']
-                    p=patotal.split(':')
-                    a=a+Decimal(p[0])
-                    b=b+Decimal(p[1])
-                    if (b>=60):
-                        a=a+1
-                        b=b%60
-                          
-                    rr=str(a)+':'+str(b)  
-                tmhr=rr
-                if len(obj2):    
-                    avgrt=obj2[0]['avg_rate']
-                    if tmhr == 'None': 
-                        tmhr=0
-                        avgrt=0
-                    else:
-                        tmhr1=tmhr.split(':')
-                        tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
-                                
-                        
-                    amt=tmhr*avgrt
-                leng = obj1.count()
-                leng1 = obj2.count()
-            if "Superuser" in rolelist:
-                tm=shop_section.objects.all()
-                tmp=[]
-                for on in tm:
-                    tmp.append(on.section_code)
-                context={
-                    'len' :2,
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'roles':tmp,
-                    'obj1': obj1,
-                    'obj2':obj2,
-                    'obj3':obj3,
-                    'lent': leng,
-                    'lent2': leng1,
-                    'amt1': amt,
-                    'shop_sec': shop_sec,
-                    'wo_no': wo_no,
-                    'staff_no':staff_no, 
-                    'r1':rr,
-                    'month': month,
-                    'sub':1,
-                }
-            elif(len(rolelist)==1):
-                for i in range(0,len(rolelist)):
-                    w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-                    req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
-                    wo_no =wo_no | req
-                context = {
-                    'len' :len(rolelist),
-                    'wo_no':wo_no,
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'roles' :rolelist,
-                    'obj1': obj1,
-                    'obj2':obj2,
-                    'obj3':obj3,
-                    'lent': leng,
-                    'lent2': leng1,
-                    'amt1': amt,
-                    'shop_sec': shop_sec,
-                    'wo_no': wo_no,
-                    'staff_no':staff_no, 
-                    'r1':rr,
-                    'month': month,
-                    'sub':1,
-                }
-            elif(len(rolelist)>1):
-                context = {
-                    'len' :len(rolelist),
-                    'nav':nav,
-                    'subnav':subnav,
-                    'ip':get_client_ip(request),
-                    'roles' :rolelist,
-                    'obj1': obj1,
-                    'obj2':obj2,
-                    'obj3':obj3,
-                    'lent': leng,
-                    'lent2': leng1,
-                    'amt1': amt,
-                    'shop_sec': shop_sec,
-                    'wo_no': wo_no,
-                    'staff_no':staff_no, 
-                    'r1':rr,
-                    'month': month,
-                    'sub':1,
-                }
-
-        if submitvalue=='submit':
-            leng=request.POST.get('len')
-            shopsec= request.POST.get('shopsec')
-            staff_no = request.POST.get('staff_no')
-            month = request.POST.get('month')
-            inoutnum=request.POST.get("inoutnum")
-            amt = request.POST.get('amt')
-            for i in range(1, int(leng)+1):
-                in1 = request.POST.get('in1'+str(i))
-                out = request.POST.get('out'+str(i))
-                date = request.POST.get('date'+str(i))
-                month = request.POST.get('month'+str(i))
-               
-                total_time = request.POST.get('total_time'+str(i))
-                time_hrs = request.POST.get('total_time'+str(i))
-                idle_time = request.POST.get('idle_time'+str(i))
-                reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
-                M12DOC.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),time_hrs=str(time_hrs),amt=str(amt))
-               
-
-            for i in range(1, int(inoutnum)+1):
-                in1 = request.POST.get('in1add'+str(i))
-                out = request.POST.get('outadd'+str(i))
-                month = request.POST.get('month_add'+str(i))
-                total_time = request.POST.get('total_time_add'+str(i))
-                date = request.POST.get('dateadd'+str(i))
-                cat = request.POST.get('catadd'+str(i))
-                time_hrs = request.POST.get('total_time_add'+str(i))
-                idle_time = request.POST.get('idle_time_add'+str(i))
-                reasons_for_idle_time = request.POST.get('reasons_for_idle_timeadd'+str(i))
-               
-              
-                M12DOC.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),cat=str(cat),time_hrs=str(time_hrs))
-               
-                
-                
-
-                wo_no=Batch.objects.all().values('bo_no').distinct()
-    return render(request,"m12view.html",context)@login_required
-@role_required(urlpass='/m12view/')
-def m12view(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_no = empmast.objects.none()
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
-        context={
-            'sub':0,
-            'len' :2,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles':tmp
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
-            req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
-            wo_no =wo_no | req
-        context = {
-            'sub':0,
-            'len' :len(rolelist),
-            'wo_no':wo_no,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles' :rolelist,
-            'lent':0,
-        }
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'len' :len(rolelist),
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles' :rolelist,
-            'lent':0,
-        }
-    if request.method == "POST":
-        submitvalue = request.POST.get('proceed')
-        if submitvalue=='Proceed':
-            from decimal import Decimal
-            shop_sec = request.POST.get('shop_sec')
-            staff_no = request.POST.get('staff_no')
-            month = request.POST.get('month')
-            wo_no = request.POST.get('wo_no')
+            print(month)
             tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
             empname=tempcat[0]['name']
             tcat=tempcat[0]['cat']
             obj1 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('id','cat','time_hrs','in_date','out_date','shift','in1','out','reasons_for_idle_time','total_time','idle_time','month').distinct() 
+            print(obj1)
             obj2='None'
             obj3='None'
             leng=0
@@ -5402,6 +5197,8 @@ def m12view(request):
             b=0
             if len(obj1):
                 t=obj1[0]['cat']
+                print(t)
+                print(obj1[0]['total_time'])
                 if t != 'None':
                     obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
                     obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
@@ -5416,7 +5213,8 @@ def m12view(request):
                         a=a+1
                         b=b%60
                           
-                    rr=str(a)+':'+str(b) 
+                    rr=str(a)+':'+str(b)   
+                    
                 tmhr=rr
                 if len(obj2):    
                     avgrt=obj2[0]['avg_rate']
@@ -5461,7 +5259,7 @@ def m12view(request):
                 for i in range(0,len(rolelist)):
                     w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
                     req = Batch.objects.filter(part_no__in=w1).values('bo_no').distinct()
-                    wo_no =wo_no | req
+                    wo_no = req
                 context = {
                     'len' :len(rolelist),
                     'wo_no':wo_no,
@@ -5514,9 +5312,8 @@ def m12view(request):
             tempcat=Shemp.objects.filter(staff_no=staff_no).values('cat','name').distinct()
             empname=tempcat[0]['name']
             tcat=tempcat[0]['cat']
-            
+        
             obj1 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('id','cat','time_hrs','in_date','out_date','shift','in1','out','reasons_for_idle_time','total_time','idle_time','month').distinct() 
-            
             rr='None'
             amt=0
             patotal=0
@@ -5524,6 +5321,7 @@ def m12view(request):
             b=0
             if len(obj1):
                 t=obj1[0]['cat']
+                print(obj1[0]['total_time'])
                 if t != 'None':
                     obj2 = Rates.objects.filter(cat=t).values('avg_rate').distinct()
                     obj3 = M12DOC.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
@@ -5539,6 +5337,7 @@ def m12view(request):
                         b=b%60
                           
                     rr=str(a)+':'+str(b)     
+                    
                 tmhr=rr
                 if len(obj2):    
                     avgrt=obj2[0]['avg_rate']
@@ -5552,6 +5351,7 @@ def m12view(request):
                         
                     amt=tmhr*avgrt
                     amt=round(amt,2)
+                    print("amt1",amt)
                     context = {
                         
                         'obj1': obj1,
@@ -5566,41 +5366,8 @@ def m12view(request):
             pdf = render_to_pdf('M12pdfc.html',context)
             return HttpResponse(pdf, content_type='application/pdf')
 
-        if submitvalue=='submit':
-            leng=request.POST.get('len')
-            shopsec= request.POST.get('shopsec')
-            staff_no = request.POST.get('staff_no')
-            month = request.POST.get('month')
-            inoutnum=request.POST.get("inoutnum")
-            amt = request.POST.get('amt')
-            for i in range(1, int(leng)+1):
-                in1 = request.POST.get('in1'+str(i))
-                out = request.POST.get('out'+str(i))
-                date = request.POST.get('date'+str(i))
-                month = request.POST.get('month'+str(i))
-               
-                total_time = request.POST.get('total_time'+str(i))
-                time_hrs = request.POST.get('total_time'+str(i))
-                idle_time = request.POST.get('idle_time'+str(i))
-                reasons_for_idle_time = request.POST.get('reasons_for_idle_time'+str(i))
-                M12DOC.objects.filter(shopsec=shopsec,staff_no=staff_no,date=date,month=month).update(date=str(date),in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),time_hrs=str(time_hrs),amt=str(amt))
-               
-
-            for i in range(1, int(inoutnum)+1):
-                in1 = request.POST.get('in1add'+str(i))
-                out = request.POST.get('outadd'+str(i))
-                month = request.POST.get('month_add'+str(i))
-                total_time = request.POST.get('total_time_add'+str(i))
-                date = request.POST.get('dateadd'+str(i))
-                cat = request.POST.get('catadd'+str(i))
-                time_hrs = request.POST.get('total_time_add'+str(i))
-                idle_time = request.POST.get('idle_time_add'+str(i))
-                reasons_for_idle_time = request.POST.get('reasons_for_idle_timeadd'+str(i))
-            
-                M12DOC.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),month=str(month),total_time=str(total_time),date=str(date),idle_time=str(idle_time),reasons_for_idle_time=str(reasons_for_idle_time),cat=str(cat),time_hrs=str(time_hrs))
-              
-                wo_no=Batch.objects.all().values('bo_no').distinct()
     return render(request,"m12view.html",context)
+
 
 def m12save(request):
     if request.method == 'GET' and request.is_ajax():
@@ -12960,7 +12727,6 @@ def m11view(request):
         menulist.add(ob.navitem)
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -12978,7 +12744,7 @@ def m11view(request):
         for i in range(0,len(rolelist)):
             w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
             req = Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).distinct()
-            wo_no =wo_no | req
+            wo_no = req
         context = {
             'sub':0,
             'len' :len(rolelist),
@@ -13025,19 +12791,21 @@ def m11view(request):
             t=0
             if len(obj1):
                 if obj1[0]['cat'] is not None:
+                    print("in if cat none")
                     t=obj1[0]['cat']
                 else:
+                    print("in else cat")
                     t=tempcat[0]['cat']
             else:
                 t=tempcat[0]['cat']
+            print("t",t)
             if t != 'None':
                 obj2 = Rates.objects.filter(staff_no=staff_no).values('avg_rate').distinct()
-                obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat').distinct()
-                if len(obj3):
-                    obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no).values('month','cat')[0]
+                obj3 = M11.objects.filter(shopsec=shop_sec,staff_no=staff_no,month=month).values('month','cat')[0]
 
             for op in range(len(obj1)):
                 patotal=obj1[op]['total_time']
+                print("patotal",patotal)
                 if patotal is not None and len(str(patotal)):
                     p=patotal.split(':')
                     a=a+Decimal(p[0])
@@ -13045,22 +12813,30 @@ def m11view(request):
                     if (b>=60):
                         a=a+1
                         b=b%60
+
                 rr=str(a)+':'+str(b)    
-            
+
             tmhr=rr
+            print("1",tmhr)
             if len(obj2):    
                 avgrt=obj2[0]['avg_rate']
+                print("2")
                 if tmhr == 'None': 
                     tmhr=0
                     avgrt=0
+                    print("3")
                 else:
                     tmhr1=tmhr.split(':')
-                    tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)                    
+                    tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                    print("4")
+                    
+            
                 amt=tmhr*avgrt
             leng = obj1.count()
             leng1 = obj2.count()
             leng=obj1.count()
             amt=round(amt,2)
+            print("amt1",amt)
             if "Superuser" in rolelist:
                 tm=shop_section.objects.all()
                 tmp=[]
@@ -13090,7 +12866,7 @@ def m11view(request):
                 for i in range(0,len(rolelist)):
                     w1 = Oprn.objects.filter(shop_sec=rolelist[i]).values('part_no').distinct()
                     req = Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).distinct()
-                    wo_no =wo_no | req
+                    wo_no = req
                 context = {
                     'sub':1,
                     'len' :len(rolelist),
@@ -13134,7 +12910,7 @@ def m11view(request):
                     'staff_no':staff_no, 
                     'r1':rr,
                     'month': month,'tcat':tcat,'empname':empname,
-                }   
+                }
         submitvalue = request.POST.get('PrintPDF')
         if submitvalue=='PrintPDF':
             from decimal import Decimal
@@ -13157,10 +12933,9 @@ def m11view(request):
             tcat=tempcat[0]['cat']
             obj1 = M11.objects.filter(staff_no=staff_no,shopsec=shop_sec,month=month).values('id','month','cat','in1','out','in_date','out_date','shift','total_time','detail_no','idle_time').distinct()   
             obj2 = Rates.objects.filter(staff_no=staff_no).values('avg_rate').distinct()
-
-
             for op in range(len(obj1)):
                 patotal=obj1[op]['total_time']
+                print("patotal",patotal)
                 if patotal is not None and len(str(patotal)):
                     p=patotal.split(':')
                     a=a+Decimal(p[0])
@@ -13169,21 +12944,27 @@ def m11view(request):
                         a=a+1
                         b=b%60
 
-                rr=str(a)+':'+str(b)   
+                rr=str(a)+':'+str(b)    
             tmhr=rr
+            print("1",tmhr)
             if len(obj2):    
                 avgrt=obj2[0]['avg_rate']
                 if tmhr == 'None': 
                     tmhr=0
                     avgrt=0
+                    print("3")
                 else:
                     tmhr1=tmhr.split(':')
                     tmhr=Decimal(tmhr1[0])+(Decimal(tmhr1[1])/60)
+                    print("4")
+                    
+            
                 amt=tmhr*avgrt
             leng = obj1.count()
             leng1 = obj2.count()
             leng=obj1.count()
             amt=round(amt,2)
+            print("amt1",amt)
             context = {
                     
                     'obj1': obj1,
@@ -13196,43 +12977,9 @@ def m11view(request):
             }  
                 
             pdf = render_to_pdf('M11pdfc.html',context)
-            return HttpResponse(pdf, content_type='application/pdf')
-            
-        if submitvalue=='Submit':
-            leng=request.POST.get('len')
-            shopsec= request.POST.get('shopsec')
-            staff_no = request.POST.get('staff_no')
-            inoutnum = request.POST.get("inoutnum")
-            ename= request.POST.get('empname')
-            scat=request.POST.get('tcat')
-            
-            for i in range(1, int(leng)+1):
-                in_date = request.POST.get('in_date'+str(i))
-                out_date = request.POST.get('out_date'+str(i))
-                shift = request.POST.get('shift'+str(i))
-                month = request.POST.get('month')
-                in1 = request.POST.get('in1'+str(i))
-                out = request.POST.get('out'+str(i))
-                total_time = request.POST.get('total_time'+str(i))
-                idle_time = request.POST.get('idle_time'+str(i))
-                detail_no = request.POST.get('detail_no'+str(i))
-                amt = request.POST.get('amt1'+str(i))
-
-               
-                sender_email_id = 'crisdlwproject@gmail.com'
-                sender_email_id_password = 'cris@1234'
-
-                if  month and in1 and out and idle_time and detail_no and total_time:
-                    M11.objects.create(shopsec=shopsec,staff_no=staff_no,in1=str(in1),out=str(out),name=str(ename),cat=scat,month=str(month),total_time=str(total_time),in_date=str(in_date),out_date=str(out_date),shift=str(shift),idle_time=str(idle_time),detail_no=str(detail_no))
-                   
-                    messages.success(request, 'Data Saved Successfully!!')
-                else:
-                    messages.success(r598+equest, 'Please enter all values!!')
-                    wo_no=Batch.objects.all().values('bo_no').distinct()
-                    
+            return HttpResponse(pdf, content_type='application/pdf') 
 
     return render(request,"m11views.html",context)
-
 def m11save(request):
     if request.method == 'GET' and request.is_ajax():
         shopsec= request.GET.get('shopsec')
@@ -25218,7 +24965,7 @@ def CardGenerationreport(request):
             return HttpResponse(pdf, content_type='application/pdf')
         elif bval=="Generate Cards" and card=="M4":
             ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
-            m4=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1).all())
+            m4=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1,doc_code='88').all())
             if len(m4)==0:
                 messages.error(request,'Card is Not Generated Yet!')
                 return render(request,"CardGenerationreport.html",context)
@@ -25234,9 +24981,21 @@ def CardGenerationreport(request):
             return HttpResponse(pdf, content_type='application/pdf')
 
         elif bval=="Generate Cards" and card=="M14":
-            messages.error(request,'This Module is under Development')
-            return render(request,"CardGenerationreport.html",context)
-              
+            ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
+            m14=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1,doc_code='89').all())
+            if len(m14)==0:
+                messages.error(request,'Card is Not Generated Yet!')
+                return render(request,"CardGenerationreport.html",context)
+            ades=ades[0]['des']
+            data ={
+                'asl':asmno,
+                'ades':ades,
+                'batch':batch,
+                'brn':bno1,
+                'm4':m14,
+            }
+            pdf = render_to_pdf('m14cardpdf.html', data)
+            return HttpResponse(pdf, content_type='application/pdf')
         elif bval=="Generate Cards" and card=="M5":
             ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
             m5=list(M5Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).all())
@@ -26234,13 +25993,15 @@ def workdemandbyshop(request):
                cdate=str(datetime.datetime.now().strftime ("%d-%m-%Y"))
                check=cdate[3:5]+cdate[6:10]
                date=str(date)
-               docno=workdemandbyshopmain.objects.annotate(e=Substr('recordno',1,6)).filter(e=check).values('recordno').order_by('-recordno')
+               docno=workdemandbyshopmain.objects.values('recordno').order_by('-recordno')
                print(check,docno)
                if docno.count()>0:
-                    docno=str(docno[0]['recordno'])[6:10]
-                    docno=cdate[3:5]+cdate[6:10]+str(int(docno)+1).zfill(4)
+                   if(docno[0]['recordno']=='999999'):
+                        docno= '100001'
+                   else:
+                        docno=str(int(docno[0]['recordno'])+1)
                else:
-                   docno= cdate[3:5]+cdate[6:10]+'0001'
+                    docno= '100001'
                workdemandbyshopmain.objects.create(recordno=docno,workorder =workorder,locono=locono,flag='0',status='Inbox',remarks='Not Yet Forwarded',sseid=str(cuser),dreleasedate=date,date=cdate,doccode=code) 
                context = {
                         'ip':get_client_ip(request),
@@ -26273,7 +26034,10 @@ def workdemandbyshop(request):
                 detailsdocno=request.POST.get('searchdoc')
                 doc=list(workdemandbyshopmain.objects.filter(recordno=detailsdocno).values('recordno','workorder','locono','dreleasedate','status','doccode','flag'))
                 lst=list(workdemandbyshopsecondary.objects.filter(recordno=detailsdocno).values('id','partno','desc','unit','quantity','locofrom','locoto','shopno').order_by('id'))
-                
+                j=1
+                for i in range(len(lst)):
+                    lst[i].update({'sl':j})
+                    j+=1
                 context = {
                         'ip':get_client_ip(request),
                         'nav':nav,
@@ -26316,17 +26080,13 @@ def workdemandbyshop(request):
     return render(request,'workdemandbyshop.html',context)
 def workdemandbyshoppdf(request, *args, **kwargs):
     docno = request.GET.get('docno')
-    main=list(workdemandbyshopmain.objects.filter(recordno=docno).values('recordno','workorder','locono','dreleasedate','doccode'))
+    main=list(workdemandbyshopmain.objects.filter(recordno=docno).values('recordno','workorder','locono','dreleasedate','doccode','sseid','wmmid','pmid','date','wmmdate','prmdate'))
     sec=list(workdemandbyshopsecondary.objects.filter(recordno=docno).values('id','partno','desc','unit','quantity','locofrom','locoto','shopno').order_by('id'))
     for i in range(len(sec)):
         sec[i].update({'sl':i+1})
-    xyz=[{'s':0},{'s':1}]
-    abc=[[{'s':0,'a':'abc','b':1},{'s':'','a':'bcd','b':2},{'s':'','a':'cde','b':3}],[{'s':1,'a':'ab','b':1},{'s':'','a':'bc','b':2},{'s':'','a':'cd','b':3}]]
     data={
         'main':main,
         'sec':sec,
-        'abc':abc,
-        'xyz':xyz,
     }
     pdf = render_to_pdf('workdemandbyshoppdf.html', data)
     return HttpResponse(pdf, content_type='application/pdf')
@@ -26387,16 +26147,17 @@ def changestatus(request):
     if request.method=='GET' and request.is_ajax():
         docno=request.GET.get('docno')
         status=request.GET.get('flag')
+        cdate=str(datetime.datetime.now().strftime ("%d-%m-%Y"))
         if status == '0':
             workdemandbyshopmain.objects.filter(recordno=docno).update(flag='1',status='Progress',remarks='Forwarded To WMM')
         if status == '1':
-            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='3',status='Progress',remarks='Forwarded To PRM',wmmid=str(cuser))
+            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='3',status='Progress',remarks='Forwarded To PRM',wmmid=str(cuser),wmmdate=cdate)
         
         if status == '2':
-            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='0',status='Progress',remarks='Returned By Wmm',wmmid=str(cuser))
+            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='0',status='Progress',remarks='Returned By Wmm',wmmid=str(cuser),wmmdate=cdate)
         
         if status == '3':
-            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='4',status='Completed',remarks='Work Order Generated',pmid=str(cuser))
+            workdemandbyshopmain.objects.filter(recordno=docno).update(flag='4',status='Completed',remarks='Work Order Generated',pmid=str(cuser),prmdate=cdate)
         a=[]
         return JsonResponse(a,safe=False)
     return JsonResponse({"success":False},status=400)

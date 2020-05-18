@@ -25,10 +25,11 @@
         <table >
             <tr>    
                            
-            <td>DOC CODE</td>    
+            
             <td>DOC NO</td>
             <td>PM NO</td>
             <td>PART NO</td>
+            <td>QTY</td>
             <td>LOCO FROM</td>
             <td>LOCO TO</td>
             <td>DUE WK</td>
@@ -42,10 +43,11 @@
               {% for i in m4 %}
             <tr>
                  
-             <td>{{i.doc_code}}</td> 
+             
              <td>{{i.doc_no}}</td> 
              <td>{{i.pm_no}}</td>
              <td>{{i.part_no}}</td>
+             <td>{{i.qty}}</td>
              <td>{{i.l_fr}}</td>
              <td>{{i.l_to}}</td> 
              <td>{{i.due_wk}}</td> 

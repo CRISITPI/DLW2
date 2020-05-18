@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-       
-{% block content %} 
+{% block content %}
+{% load static %}
 
 <style>
      
@@ -235,9 +235,12 @@
     
 
       </script>
-      
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.29.0/date_fns.min.js"></script>
+      <script src="{% static '/js/materialize.min.js' %}"></script>
+      <script src="{% static '/js/date_fns.min.js' %}"></script>
+
+
+      <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
+      <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.29.0/date_fns.min.js"></script> -->
       <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet"/> -->
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
       <script>
@@ -387,19 +390,20 @@
 
 
 </script>
+<script src="{% static '/js/moment.min.js' %}"></script>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script> -->
 
 
   
-<script src= 
+<!-- <script src= 
 "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" > 
   </script> 
   
   <script src= 
 "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" > 
-  </script> 
+  </script>  -->
  
  <script>
    $(document).ready(function(){
