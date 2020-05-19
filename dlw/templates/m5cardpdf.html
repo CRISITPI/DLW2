@@ -37,6 +37,8 @@
             <tr>
                 <td ><p style="font-size: 20px;margin-left: 10px;" >BATCH NO : </p></td>
                 <td ><p style="font-size: 20px;">{{batch}}</p></td>
+                <td ><p style="font-size: 20px; margin-left: 200px;" >BRN NO : </p></td>
+                <td ><p style="font-size: 20px;">{{brn}}</p></td>
             </tr>
             
         </table>
@@ -49,10 +51,11 @@
             <td style="font-size: 20px;" ALIGN="CENTER">P SHOP</td>
             <td style="font-size: 20px;" ALIGN="CENTER">M2 SL NO</td>
             <td style="font-size: 20px;" ALIGN="CENTER">PART NO</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">DESCRIPTION</td>
             <td style="font-size: 20px;" ALIGN="CENTER">SHOP</td>
             <td style="font-size: 20px;" ALIGN="CENTER">M5_CD</td>
             <td style="font-size: 20px;" ALIGN="CENTER">OPN</td>
-            <td style="font-size: 20px;" ALIGN="CENTER">DES</td>
+            <td style="font-size: 20px;" ALIGN="CENTER">OPN_DES</td>
             <td style="font-size: 20px;" ALIGN="CENTER">loco fr</td>
             <td style="font-size: 20px;" ALIGN="CENTER">loco to</td>
            
@@ -63,12 +66,11 @@
               {% for i in m5 %}
             <tr>
                
-                     
              <td style="font-size: 20px;" ALIGN="CENTER">{{i.scl_cl}}</td>
              <td style="font-size: 20px;" ALIGN="CENTER">{{i.pr_shopsec}}</td>
              <td style="font-size: 20px;" ALIGN="CENTER">{{i.m2slno}}</td> 
              <td style="font-size: 20px;" ALIGN="CENTER">{{i.part_no}}</td>
-              
+             <td style="font-size: 20px;" ALIGN="CENTER">{{i.des}}</td>
              <td style="font-size: 20px;" ALIGN="CENTER" >{{i.shop_sec}}</td>
              <td style="font-size: 20px;" ALIGN="CENTER">{{i.m5_cd}}</td>
              <td style="font-size: 20px;" ALIGN="CENTER">{{i.opn}}</td>

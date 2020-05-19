@@ -18,9 +18,9 @@
                 <td ><p style="font-size: 15px;" >BATCH NO : </p></td>
                 <td ><p style="font-size: 15px;">{{batch}}</p></td>
                 <td ><p style="font-size: 15px;" id="p1">EPC : </p></td>
-                <td><p style="font-size: 15px;">M</p></td>
-                <td ><p style="font-size: 15px;"> LOCO TO :   </p></td>
-                <td ><p style="font-size: 15px;">9999 </p></td>
+                <td><p style="font-size: 15px;">{{epc}}</p></td>
+                <td ><p style="font-size: 15px;"> BRN NO :   </p></td>
+                <td ><p style="font-size: 15px;">{{brn}} </p></td>
             </tr>
 
         </table>
@@ -31,12 +31,13 @@
             <td>M2 SL NO.</td>
             <td>SCL_CL</td>    
             <td>PART NO</td>
+            <td>DESCRIPTION</td>
+            <td>QTY</td>
             <td>SHOP SEC</td>
-            <td>BRN NO</td>
             <td>RC_ST_WK</td>
             <td>R_PART</td>
-            <td>R_PTC</td>
-            <td>QTY</td>
+            <td>R_QTY</td>
+            
             
            </tr>
            <hr>
@@ -44,13 +45,14 @@
             <tr>
             <td>{{i.m2sln}}</td>
              <td>{{i.scl_cl}}</td> 
-             <td>{{i.part_no}}</td> 
+             <td>{{i.part_no}}</td>
+             <td>{{i.des}}</td> 
+             <td>{{i.qty}}</td>
              <td>{{i.f_shopsec}}</td>
-             <td>{{brn}}</td>
              <td>{{i.rc_st_wk}}</td>
              <td>{{i.rm_partno}}</td> 
-             <td>{{i.rm_ptc}}</td> 
-             <td>{{i.qty}}</td>
+             <td>{{i.rm_qty}}</td> 
+             
              
             </tr>
             {% endfor %}

@@ -24948,13 +24948,18 @@ def CardGenerationreport(request):
         if bval=="Generate Cards" and card=="M2":
             ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
 
-            m2=list(M2Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).all())
+            m2=list(M2Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).values('m2sln','scl_cl','part_no','qty','f_shopsec','rc_st_wk','rm_partno','rm_qty','epc'))
             if len(m2)==0:
                 messages.error(request,'Card is Not Generated Yet!')
                 return render(request,"CardGenerationreport.html",context)
 
+            for i in range(len(m2)):
+                part=Part.objects.filter(partno=m2[i]['part_no']).values('des')
+                m2[i].update({'des':part[0]['des']})
             ades=ades[0]['des']
+            epc=m2[0]['epc']
             data ={
+                'epc':epc,
                 'asl':asmno,
                 'ades':ades,
                 'batch':batch,
@@ -24965,12 +24970,18 @@ def CardGenerationreport(request):
             return HttpResponse(pdf, content_type='application/pdf')
         elif bval=="Generate Cards" and card=="M4":
             ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
-            m4=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1,doc_code='88').all())
+            m4=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1,doc_code='88').values('doc_no','pm_no','part_no','qty','l_fr','l_to','due_wk','doc_ind','epc'))
             if len(m4)==0:
                 messages.error(request,'Card is Not Generated Yet!')
                 return render(request,"CardGenerationreport.html",context)
+            for i in range(len(m4)):
+                part=Part.objects.filter(partno=m4[i]['part_no']).values('des')
+                m4[i].update({'des':part[0]['des']})
             ades=ades[0]['des']
+            epc=m4[0]['epc']
             data ={
+                'epc':epc,
+                'brn':bno1,
                 'asl':asmno,
                 'ades':ades,
                 'batch':batch,
@@ -24982,12 +24993,18 @@ def CardGenerationreport(request):
 
         elif bval=="Generate Cards" and card=="M14":
             ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
-            m14=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1,doc_code='89').all())
+            m14=list(M14M4new1.objects.filter(assly_no=asmno,bo_no=batch,brn_no=bno1,doc_code='89').values('doc_no','pm_no','part_no','qty','l_fr','l_to','due_wk','doc_ind','epc'))
             if len(m14)==0:
                 messages.error(request,'Card is Not Generated Yet!')
                 return render(request,"CardGenerationreport.html",context)
+            for i in range(len(m14)):
+                part=Part.objects.filter(partno=m14[i]['part_no']).values('des')
+                m14[i].update({'des':part[0]['des']})
             ades=ades[0]['des']
+            epc=m14[0]['epc']
             data ={
+                'epc':epc,
+                'brn':bno1,
                 'asl':asmno,
                 'ades':ades,
                 'batch':batch,
@@ -24998,10 +25015,13 @@ def CardGenerationreport(request):
             return HttpResponse(pdf, content_type='application/pdf')
         elif bval=="Generate Cards" and card=="M5":
             ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
-            m5=list(M5Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).all())
+            m5=list(M5Docnew1.objects.filter(assly_no=asmno,batch_no=batch,brn_no=bno1).values('scl_cl','pr_shopsec','m2slno','part_no','shop_sec','m5_cd','opn','opn_desc','l_fr','l_to'))
             if len(m5)==0:
                 messages.error(request,'Card is Not Generated Yet!')
                 return render(request,"CardGenerationreport.html",context)
+            for i in range(len(m5)):
+                part=Part.objects.filter(partno=m5[i]['part_no']).values('des')
+                m5[i].update({'des':part[0]['des']})
             ades=ades[0]['des']
             data ={
                 'asl':asmno,

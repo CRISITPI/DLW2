@@ -17,6 +17,10 @@
             <tr>
                 <td ><p style="font-size: 15px;" >BATCH NO : </p></td>
                 <td ><p style="font-size: 15px;">{{batch}}</p></td>
+                <td ><p style="font-size: 15px;" >EPC : </p></td>
+                <td ><p style="font-size: 15px;">{{epc}}</p></td>
+                <td ><p style="font-size: 15px;" >BRN NO : </p></td>
+                <td ><p style="font-size: 15px;">{{brn}}</p></td>
             </tr>
 
         </table>
@@ -29,13 +33,13 @@
             <td>DOC NO</td>
             <td>PM NO</td>
             <td>PART NO</td>
+            <td>DESCRIPTION</td>
             <td>QTY</td>
             <td>LOCO FROM</td>
             <td>LOCO TO</td>
             <td>DUE WK</td>
             <td>DOC IND</td>
-            <td>EPC</td>
-            <td>BRN NO</td>
+           
             
             
            </tr>
@@ -47,13 +51,13 @@
              <td>{{i.doc_no}}</td> 
              <td>{{i.pm_no}}</td>
              <td>{{i.part_no}}</td>
+             <td>{{i.des}}</td>
              <td>{{i.qty}}</td>
              <td>{{i.l_fr}}</td>
              <td>{{i.l_to}}</td> 
              <td>{{i.due_wk}}</td> 
              <td>{{i.doc_ind}}</td>
-             <td>{{i.epc}}</td>
-             <td>{{i.brn_no}}</td> 
+            
             </tr>
             {% endfor %}
        

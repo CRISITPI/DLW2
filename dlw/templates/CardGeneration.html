@@ -476,17 +476,13 @@ function myFunc8(){
 function isNumberKeya(evt) {
     var lblErrora = document.getElementById("lblErrora");
         lblErrora.innerHTML = "";
-
 var charCode = (evt.which) ? evt.which : evt.keyCode;
 if (charCode > 31 && (charCode < 48 || charCode > 57))
 {
     lblErrora.innerHTML = "Only Numbers allowed.";
     return false;
 } 
-
 return true;
-
-
 }
 function isNumberKeyb(evt) {
     var lblErrorb = document.getElementById("lblErrorb");
