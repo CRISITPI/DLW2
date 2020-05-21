@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <style>
+        td{
+            font-size: 11px;
+        }
+        th{
+            font-size: 12px;
+        }
+        @page {
+        size: A4;
+        margin: 1cm;
+        thead {display: table-header-group;}
+        @frame footer {
+        -pdf-frame-content: footerContent;
+        bottom: 0cm;
+        margin-left: 9cm;
+        margin-right: 9cm;
+        height: 1cm;
+        }
+        }
+    </style>
+
+</head>
+<body>
+<table border="0" align="center">
+    <tr>
+        <td style="width:200px;text-align:center;"><b>D.L.W</b></td>
+        <td style="width:600px;text-align:center;"><b>REQUISITION FOR INTER-SHOP</b></td>
+        <td style="width:200px;text-align:center;"><b>Form M.G.-47</b></td>
+    </tr>
+    <tr>
+        <td style="width:200px;text-align:center;"><b>VARANASI<b></td>
+        <td style="width:600px;text-align:center;"><b>TRANSFER FOR MATERIAL/STATIONERY</b></td>
+    </tr>
+</table>
+<br>
+<br>
+<table border="0" cellpadding="5px" align="center">
+    <tr>
+        <td style="width:1200px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;<b>S.S.E:&nbsp;&nbsp;</b>{{to_sse}}</td>
+        <td style="width:150px;"><b>No.:&nbsp;&nbsp;</b>{{num}}</td>
+    </tr>
+    <tr>
+        <td style="width:1200px"></td>
+        <td style="width:150px;"><b>Dated:&nbsp;&nbsp;</b>{{date}}</td>
+    </tr>
+</table>
+<br>
+<table border="0" cellpadding="5px" align="center" width="70%">
+    <thead>
+    <tr>
+        <th style="width:50px;text-align:center;">Sr. No.</th>
+        <th style="width:150px;text-align:center;"><b>Description</b> </th>
+        <th style="width:150px;text-align:center;"><b>Qty. Demanded</b></th>
+        <th style="width:150px;text-align:center;"><b>Qty. Issued</b></th>
+       
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in arr %}
+    <tr>
+        <td style="width:50px;text-align:center;"> {{i.sl}}.</td>
+        <td style="width:150px;text-align:center;"> {{i.des}}</td>
+        <td style="width:150px;text-align:center;">{{i.dem}}</td>
+        <td style="width:150px;text-align:center;">{{i.iss}}</b></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<br>
+<br>
+<br>
+<table cellpadding="10px" border="0">
+    <tr>
+        <td style="width:1000px"></td>
+        <td style="width:400px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>S.S.E:&nbsp;&nbsp;</b>{{from_sse}}</td>
+    </tr>
+    <tr>
+         <td style="width:1300px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;<b>The Materials are allocable to:&nbsp;&nbsp;</b>{{allocable_to}}</td>
+    </tr>
+    <tr>
+        <td style="width:300px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;<b>S.S.E:&nbsp;&nbsp;</b>{{to_sse}}</td>
+    </tr>
+    <tr>
+        <td style="width:1300px;text-align: center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;<b>The Materials asked for above have been issued on:&nbsp;&nbsp;</b>{{issued_on}}</td>
+    </tr>
+    <tr>
+       <td style="width:1000px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;<b>Please acknowledge receipt.</b></td>
+    </tr>
+    <tr>
+        <td style="width:1000px"></td>
+        <td style="width:400px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>S.S.E:&nbsp;&nbsp;</b>{{from_sse}}</td>
+    </tr>
+</table>
+<hr>
+<table border="0" cellpadding="5px">
+    <tr>
+       <td style="width:300px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;<b>S.S.E:&nbsp;&nbsp;</b>{{from_sse}}</td>
+    </tr>
+    <tr>
+       <td style="width:1300px;text-align:center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>The receipt of quantity shown as issued is acknowledged.</b></td>
+    </tr>
+    <tr>
+        <td style="width:1000px"></td>
+        <td style="width:400px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>S.S.E:&nbsp;&nbsp;</b>{{to_sse}}</td>
+    </tr>
+</table>
+<div id="footerContent">
+    {%block page_foot%}
+    Page <pdf:pagenumber>
+    {%endblock%}
+</div>
+</body>
+</html>
+
+   

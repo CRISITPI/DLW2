@@ -579,8 +579,18 @@ urlpatterns = [
     path('ajax/logbook_getworkdetail/',logbook_getworkdetail,name='logbook_getworkdetail'),
     path('ajax/logbook_getm5glno/',logbook_getm5glno,name='logbook_getm5glno'),
     path('ajax/logbook_desc/',logbook_desc,name='logbook_desc'),
+    path('capacityplanningandloadbook/',capacityplanningandloadbook,name='capacityplanningandloadbook'),
+    path('ajax/CapacityPlanLoadBookGetPartDes/',CapacityPlanLoadBookGetPartDes,name='CapacityPlanLoadBookGetPartDes'),
+    path('ajax/CapacityPlanLoadBookGetEpc/',CapacityPlanLoadBookGetEpc,name='CapacityPlanLoadBookGetEpc'),
+    path('ajax/CapacityPlanLoadBookGetQty/',CapacityPlanLoadBookGetQty,name='CapacityPlanLoadBookGetQty'),
+    path('CapacityPlanLoadBookexplode/',CapacityPlanLoadBookexplode,name='CapacityPlanLoadBookexplode'),
 
 
+    
+    path('ajax/mg47SaveDetails',mg47SaveDetails,name='mg47SaveDetails'),
+    path('ajax/mg47to_SseDetails/',mg47to_SseDetails,name='mg47to_SseDetails'),
+    path('ajax/mg47DescDetails/',mg47DescDetails,name='mg47DescDetails'),
+    path('ajax/mg47EmpnoDetails/',mg47EmpnoDetails,name='mg47EmpnoDetails')
 
 
 

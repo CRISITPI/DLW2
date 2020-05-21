@@ -21753,97 +21753,156 @@ def mg47view(request):
     menulist=list(menulist)
     subnav=subnavbar.objects.filter(parentmenu__in=menulist)
     wo_nop = empmast.objects.none()
-    des=list(empmast.objects.filter(desig_longdesc__startswith="SENIOR SECTION").values('desig_longdesc','empno').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr.SECTION").values('desig_longdesc','empno').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr. SECTION ENGINEER").values('desig_longdesc','empno').distinct() | empmast.objects.filter(desig_longdesc__startswith="SECTION").values('desig_longdesc','empno').distinct())
+    
+    shopno = list(empmast.objects.filter(empno=cuser).values('shopno').distinct())  
+    tmp2=''
+    for on in shopno:
+        tmp2=on['shopno']
+
+    shop =list(shop_section.objects.filter(shop_id=tmp2).values('shop_code').distinct()) 
+    
+    tm = ''
+    
+    for on in shop:
+        tm= on['shop_code']
+    tm1=tm[:-2]
+    cursor=connection.cursor()
+    cursor.execute('''select "Sr.No."::int from "MG47_table1" order by "Sr.No."::int desc''')
+    form=cursor.fetchall()
+    
+    if(len(form)==0):
+        formid=1
+    else:
+        formid=form[0][0]
+        formid=int(formid)+1
+
     if "Superuser" in rolelist:
-        tm=empmast.objects.all().values('empno').distinct()
-        tmp=[]     
-        for on in tm:
-             tmp.append(on['empno'])
         context={
             'sub':0,
             'lenm' :2,
             'nav':nav,
             'ip':get_client_ip(request),
-            'roles':des,
-            'subnav':subnav,
+            'subnav':subnav,        
+            'sno' : formid,
+            'shopno' : tm1,
         }   
-    if request.method == "POST":
-        submitvalue = request.POST.get('Submit')
-        if submitvalue=='Submit':
-            to_sse = request.POST.get('to_sse')
-            num= request.POST.get('num')
-            date = request.POST.get('date')
-            allocable_to = request.POST.get('allocable_to')
-            issued_on = request.POST.get('issued_on')
-            empno = request.POST.get('empno')
-            from_sse = request.POST.get('from_sse')
-            now = datetime.datetime.now()
-            user=request.user
+    return render(request,'mg47view.html',context)
+def mg47SaveDetails(request):
+    if request.method == "GET" and request.is_ajax():
+            shop = request.GET.get('shop')
+            num = request.GET.get('num')
+            to_sse= request.GET.get('to_sse')
+            date = request.GET.get('date')
+            allocable_to = request.GET.get('allocable_to')
+            issued_on = request.GET.get('issued_on')
+            empno = request.GET.get('empno')
+            from_sse = request.GET.get('from_sse')
+            empname = request.GET.get('empname')
+            hidtext=request.GET.get('hidtext')
+            arr=request.GET.get('arr')
+            arr=arr.split(",")
+            l=[]
             obj =MG47_table1.objects.filter(num=num).distinct()
             b=num
-            if len(obj) == 0:      
-                b=MG47_table1.objects.create(to_sse=str(to_sse), num=str(num), date=str(date), allocable_to=str(allocable_to), issued_on=str(issued_on), empno=str(empno), from_sse=str(from_sse), login_id=str(user), current_date=str(now))
+            if len(obj) == 0:
+                try:
+                   b=MG47_table1.objects.create(shop=str(shop), num=str(num), to_sse=str(to_sse), date=str(date), allocable_to=str(allocable_to), issued_on=str(issued_on), empno=str(empno), from_sse=str(from_sse), empname=str(empname))
+                except:
+                    print("Insertion not Successful : MG47_table1")
             else:
-                MG47_table1.objects.filter(num=num).update(to_sse=str(to_sse), num=str(num), date=str(date), allocable_to=str(allocable_to), issued_on=str(issued_on), empno=str(empno), from_sse=str(from_sse), login_id=str(user), current_date=str(now))  
-            hidtext=request.POST.get('hidtext')
+                try:
+                    MG47_table1.objects.filter(num=num).update(shop=str(shop), num=str(num), to_sse=str(to_sse), date=str(date), allocable_to=str(allocable_to), issued_on=str(issued_on), empno=str(empno), from_sse=str(from_sse), empname=str(empname))  
+                except:
+                    print("Updation not Successful : MG47_table1")
             obj1 =list(MG47_table2.objects.values('id').filter(num=num).distinct())
-            if len(obj1) == 0:    
-                for i in range(1,int(hidtext)+1):
-                    desc=request.POST.get('desc'+str(i))
-                    demand=request.POST.get('demand'+str(i))
-                    issued=request.POST.get('issued'+str(i))  
-                    c=MG47_table2.objects.create(num=b,desc=str(desc), demand=str(demand), issued=str(issued))
+            a=1
+            if len(obj1) == 0:
+                try:    
+                    for i in range(1,int(hidtext)+1):
+                        c=MG47_table2.objects.create(num=b,desc=str(arr[a]), demand=str(arr[a+1]), issued=str(arr[a+2]))
+                        a=a+3
+                except:
+                    print("Insertion not Successful : MG47_table2")
             else:
-                for i in range(1,int(hidtext)):
-                    desc=request.POST.get('desc'+str(i))
-                    demand=request.POST.get('demand'+str(i))
-                    issued=request.POST.get('issued'+str(i))  
-                    MG47_table2.objects.filter(id=obj1[i-1]['id']).update(num=b, desc=str(desc), demand=str(demand), issued=str(issued))  
-    return render(request,'mg47view.html',context)
-def mg47getfrom_sse(request):
-    if request.method == "GET" and request.is_ajax():   
-        empno = request.GET.get('empno')
-        from_sse=list(empmast.objects.filter(empno= empno,desig_longdesc__startswith="SENIOR SECTION").values('desig_longdesc').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr.SECTION",empno= empno).values('desig_longdesc').distinct() | empmast.objects.filter(desig_longdesc__startswith="Sr. SECTION ENGINEER",empno= empno).values('desig_longdesc').distinct() | empmast.objects.filter(desig_longdesc__startswith="SECTION",empno= empno).values('desig_longdesc').distinct())
-        return JsonResponse(from_sse,safe = False)
+                try:
+                    for i in range(1,int(hidtext)+1):
+                        MG47_table2.objects.filter(id=obj1[i-1]['id']).update(num=b, desc=str(arr[a]), demand=str(arr[a+1]), issued=str(arr[a+2]))   
+                        a=a+3
+                except:
+                    print("Updation not Successful : MG47_table2")
+            return JsonResponse(l,safe = False)
     return JsonResponse({"success":False}, status=400)
-    
+def mg47getfrom_sse(request):
+    if request.method == "GET" and request.is_ajax():          
+        empno = request.GET.get('empno')
+        obj1=list(emp_details.objects.filter(empno= empno).values('desgn','shop_code','empname').distinct()) 
+        lst=[]
+        for i in range(len(obj1)):
+            for j in range(len(obj1)):
+                lst.append(obj1[i]['desgn']+'/'+obj1[j]['shop_code']) 
+        lst.append(obj1) 
+        return JsonResponse(lst,safe = False)
+    return JsonResponse({"success":False}, status=400)
 def mg47reportview(request, *args, **kwargs):
     to_sse = request.GET.get('to_sse')
     num = request.GET.get('num')
     date = request.GET.get('date')
     allocable_to = request.GET.get('allocable_to')
     issued_on = request.GET.get('issued_on')
-    empno = request.GET.get('empno')
     from_sse = request.GET.get('from_sse')
-    hidtext=request.GET.get('hidtext')
-    for i in range(1,int(hidtext)+1):
-        desc=request.GET.get('desc'+str(i))
-        demand=request.GET.get('demand'+str(i))
-        issued=request.GET.get('issued'+str(i))
-        data = {
+    arr=request.GET.get('arr')
+    arr=arr.split(",")
+    lst=[]
+    i=1
+    a=1
+    while(i<len(arr)):
+        lst.append({'sl':a,'des':arr[i],'dem':arr[i+1],'iss':arr[i+2]})
+        a=a+1
+        i=i+3
+    context = {
         'to_sse':to_sse,
         'num':num,
         'date':date,
-        'desc':desc,
-        'demand':demand,
-        'issued':issued,
         'allocable_to':allocable_to,
         'issued_on':issued_on,
-        'empno':empno,
-        'from_sse':from_sse, 
+        'from_sse':from_sse,
+        'arr':lst,
         }
-    pdf = render_to_pdf('mg47reportview.html', data)
+    pdf = render_to_pdf('mg47reportview.html', context)
     return HttpResponse(pdf, content_type='application/pdf')
 
 def ExistingNumDetails(request):
     l=[]
     if request.method=="GET" and request.is_ajax():
         num=request.GET.get('num')
-        obj=list(MG47_table1.objects.filter(num=num).values('to_sse','date','allocable_to','issued_on','empno','from_sse').distinct())
+        obj=list(MG47_table1.objects.filter(num=num).values('shop','to_sse','date','allocable_to','issued_on','empno','from_sse','empname').distinct())
         obj1=list(MG47_table2.objects.filter(num=num).values('desc','demand','issued').distinct())
         l.append(obj)
         l.append(obj1)
         return JsonResponse(l,safe=False)
+    return JsonResponse({"success":False}, status=400)
+    
+def mg47to_SseDetails(request):
+    if request.method=="GET" and request.is_ajax():
+        obj1=list(emp_details.objects.values('desgn','shop_code').distinct())
+        print(obj1) 
+        lst=[]
+        for i in range(len(obj1)):
+            for j in range(len(obj1)):
+                lst.append(str(obj1[i]['desgn'])+'/'+str(obj1[j]['shop_code'])) 
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg47DescDetails(request):
+    if request.method=="GET" and request.is_ajax():
+        obj1=list(MG47_table2.objects.values('desc').distinct())  
+        return JsonResponse(obj1,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+def mg47EmpnoDetails(request):
+    if request.method=="GET" and request.is_ajax():
+        obj=list(emp_details.objects.values('empno').distinct())  
+        return JsonResponse(obj,safe=False)
     return JsonResponse({"success":False}, status=400)
 
 @login_required
@@ -26480,3 +26539,418 @@ def  get_emp_det(request):
         return JsonResponse(context, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+@login_required
+@role_required(urlpass='/capacityplanningandloadbook/')
+def capacityplanningandloadbook(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        context={
+            'nav' : nav,
+            'ip' : get_client_ip(request),
+            'subnav' : subnav,
+        }
+    return render(request, "capacityplanningandloadbook.html",context) 
+
+def CapacityPlanLoadBookGetPartDes(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        partno=request.GET.get('partno')
+        obj=list(Part.objects.filter(partno=partno).values('des').distinct())
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def CapacityPlanLoadBookGetEpc(request):
+    if request.method == "GET" and request.is_ajax():
+        partno=request.GET.get('partno')
+        epc=request.GET.get('epc')
+        obj=list(Nstr.objects.filter(cp_part=partno,epc=epc,l_to = '9999').values('epc').distinct())
+        if len(obj) == 0:
+            return JsonResponse(obj,safe=False)
+        obj1=list(Code.objects.filter(cd_type='11',code=epc).values('num_1').distinct())
+        return JsonResponse(obj1,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def CapacityPlanLoadBookGetQty(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        partno=request.GET.get('partno')
+        epc=request.GET.get('epc')
+        eppartno=request.GET.get('eppartno')
+        p = cpq(partno,epc,eppartno)
+        return JsonResponse(p,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+aimpl=pandas.DataFrame()
+g_ep=''
+g_epn = ''
+session_aimpl=None
+Ldbk=pandas.DataFrame()
+def cpq(pn,ep,epn):
+    q=0
+    if pn == epn:
+        return 1
+    if(aimpl.empty==False):
+        aimpl.drop(aimpl.index, inplace=True)
+    ds=list(Nstr.objects.filter(cp_part=pn,epc=ep).values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt",
+    "ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old"))
+    if len(ds) == 0:
+        return 0
+    global g_ep
+    global g_epn
+    g_ep=ep
+    g_epn=epn
+    impl(pn,1)
+    for i in range(len(aimpl)): 
+        a=aimpl['0'].iloc[i]
+        b=aimpl['1'].iloc[i]
+        if(a==epn):
+            q=q+int(b)   
+    return str(q)
+
+def impl(pn,wt):
+    pp_part=''
+    mpp_part=''
+    ptc =''
+    _epn=''
+    qty=''
+    try:
+        dss=list(Nstr.objects.filter(cp_part=pn,epc=g_ep,).values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt",
+        "ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("cp_part","epc").distinct())
+        global session_aimpl
+        global aimpl
+
+        if(aimpl.empty==True):
+            aimpl=CreateDataTableaImpl(2)
+            session_aimpl=aimpl   
+        _epn=str(g_epn) 
+        for i in range(len(dss)):
+            pp_part = ""
+            qty = 0
+            
+            l_fr = str(dss[i].get('l_fr'))
+            l_to = str(dss[i].get('l_to'))
+            lt = 9999
+            lfr = int(l_fr)
+            lto = int(l_to)
+
+            if (not((lfr <= lt) and (lt <= lto))):
+                continue
+            
+            pp_part=str(dss[i].get('pp_part'))
+            qty=float(dss[i].get('qty'))
+            ptc=str(dss[i].get('ptc'))
+            
+            if(pp_part==_epn):
+                AddDataToTable1(pp_part,(qty*wt)) 
+            mpp_part=pp_part
+
+            dss1=list(Nstr.objects.filter(cp_part=mpp_part,epc=g_ep,).values("pp_part","cp_part","l_fr","l_to","ptc","epc",
+            "qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("cp_part",
+            "epc"))
+            ln=["M","Z","L","B"]
+            if((len(dss1)>0) and (ptc in ln)):
+                impl(mpp_part,qty*wt) 
+        return
+    except:
+        print("Implosion not done")
+        return
+
+
+
+def CreateDataTableaImpl(cols):
+    data_table=pandas.DataFrame(columns=["0","1"])
+    return data_table
+
+def AddDataToTable1(a,b):
+    global aimpl
+    aimpl=aimpl.append({"0":a,"1":b},ignore_index=True)
+        
+
+def CapacityPlanLoadBookexplode(request, *args, **kwargs):
+    
+    yes=request.GET.get('r1')
+    no=request.GET.get('r2')
+    lfr=request.GET.get('lfr')
+    pn=request.GET.get('partno')
+    epc=request.GET.get('epc')
+    epc=epc.upper()
+    qtyloco=request.GET.get('qtyloco')
+    partdes =request.GET.get('partdes')
+    today = date.today()
+    fdate = date.today().strftime('%d/%m/%Y')
+    if yes == "true":
+        if lfr != "":
+            locofrom=lfr
+        else:
+            locofrom=0000
+        locoto=9999
+        if sumexpl(pn,epc,locofrom,locoto,qtyloco):
+            delLOADBK()
+            insertLOADBK()
+            UpdateLOADBK()
+            dss1=list(Loadbk.objects.filter(cur_time=g_curTime).values("part_no","ptdes","qty", "sh_sec","lc_no","m5_cd","lc_des","pa",
+            "at_hrs", "loco_load_hrs", "no_mc", "cap_mnth_hrs","prod_cap_mnth").order_by("sh_sec","lc_no","part_no"))
+            
+            lst1=[]
+            i=0
+            total=0
+            l=0
+            while(i<len(dss1)):
+                sum=dss1[i]['loco_load_hrs']
+                k=0
+                for j in range(i+1,len(dss1)):
+                    if dss1[i]['sh_sec']==dss1[j]['sh_sec'] and dss1[i]['lc_no']==dss1[j]['lc_no']:
+                        sum = sum + dss1[j]['loco_load_hrs']
+                        k=k+1
+                        l+=1
+                l+=1
+                lst1.append({'shopsec':dss1[i]['sh_sec'],'lcno': dss1[i]['lc_no'],'sum':sum,'k':k,'l':l})
+                i=i+k+1
+                total=total + sum
+            
+            v=0
+            for i in range(len(dss1)):
+                dss1[i].update({'sl':i+1})
+            
+
+        data={
+            'obj':dss1,
+            'pn' : pn,
+            'epc' :epc,
+            'date' :fdate,
+            'partdes':partdes,
+            'a':"Y",
+            'total':total,
+            'lst1':lst1
+            }
+        pdf = render_to_pdf('CapacityPLanLoadBookreport.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+        
+    else:
+        cursor = connection.cursor()
+        cursor.execute('''select "OPRN"."PART_NO",(select "DES" from public."PART" where "OPRN"."PART_NO"= "PART"."PARTNO") ptdes,%s qty, "OPRN"."SHOP_SEC", "LC_NO","M5_CD", mp1.lc_des lc_desc, 
+                (case when (coalesce(trim("OPRN"."M5_CD"),'9')='1') then (sum("OPRN"."PA_HRS")/5) else sum("OPRN"."PA_HRS") end) pa,
+                sum("OPRN"."AT_HRS" / "OPRN"."LOT") at1, 
+                round(((case when (coalesce(trim("M5_CD"),'9')='1') then (sum("PA_HRS")/5) else sum( "PA_HRS") end)+ (%s::int) * sum("AT_HRS"/"LOT")),2) loco_load, 
+                sum(mp1.no_mc), sum(mp1.no_mc)*480 cap_month,
+                round(mp1.no_mc*480/round(((case when (coalesce(trim("OPRN"."M5_CD"),'9')='1') then (sum("OPRN"."PA_HRS")/5)
+                else sum("OPRN"."PA_HRS") end) + (1::int)*sum("OPRN"."AT_HRS"/"OPRN"."LOT")),2),2) prod_cap_month
+                from (select "SHOP_SEC", "LCNO",(select "DES" from public."LC1" where "LC1"."SHOP_SEC"= "MP"."SHOP_SEC" and "LC1"."LCNO"= "MP"."LCNO" 
+                and coalesce(trim("LC1"."DEL_FL"),'#')!='Y' limit 1) lc_des,count(1) no_mc from public."MP" group by "SHOP_SEC", "LCNO", "DES") 
+                mp1  full OUTER JOIN public."OPRN" on
+				mp1."SHOP_SEC"="OPRN"."SHOP_SEC" and mp1."LCNO"="OPRN"."LC_NO" WHERE 
+                trim("PART_NO")=%s and coalesce(trim("NCP_JBS"),'#')<>'1'     
+                group by "OPRN"."PART_NO",1,"OPRN"."SHOP_SEC", "LC_NO","M5_CD", mp1.no_mc, mp1.lc_des
+                order by "OPRN"."SHOP_SEC", "OPRN"."LC_NO";''',[qtyloco,qtyloco,pn])
+        row = cursor.fetchall()
+        dts = list(row)
+        lst=[]
+        for i in range(len(dts)):
+                lst.append({"sl":i+1,"part_no":dts[i][0],"ptdes":dts[i][1],"qty":dts[i][2], "sh_sec":dts[i][3],"lc_no":dts[i][4],"m5_cd":dts[i][5],"lc_des":dts[i][6],"pa":dts[i][7],
+                "at_hrs":dts[i][8], "loco_load_hrs":dts[i][9], "no_mc":dts[i][10], "cap_mnth_hrs":dts[i][11],"prod_cap_mnth":dts[i][12]})
+        
+
+        lst1=[]
+        i=0
+        total=0
+        l=0
+        while(i<len(lst)):
+            sum=lst[i]['loco_load_hrs']
+            k=0
+            for j in range(i+1,len(lst)):
+                if lst[i]['sh_sec']==lst[j]['sh_sec'] and lst[i]['lc_no']==lst[j]['lc_no']:
+                    sum = sum + lst[j]['loco_load_hrs']
+                    k=k+1
+                    l+=1
+            l+=1
+            lst1.append({'shopsec':lst[i]['sh_sec'],'lcno': lst[i]['lc_no'],'sum':sum,'k':k,'l':l})
+            i=i+k+1
+            total=total + sum
+        
+
+        v=0
+        for i in range(len(lst)):
+            v= v+lst[0]['loco_load_hrs']
+        
+        data={
+            'pagesize':'A4',
+            'obj':lst,
+            'pn' : pn,
+            'epc' :epc,
+            'date' :fdate,
+            'partdes':partdes,
+            'a':"N",
+            'total':total,
+            'lst1':lst1
+            }
+        pdf = render_to_pdf('CapacityPLanLoadBookreport.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+        
+g_curTime=''
+system_date=datetime.date.today()
+
+def sumexpl(assly,ep,lf,lt,qtyloco):
+    global system_date
+    system_date=datetime.date.today()
+    global g_curTime
+    cur_time=datetime.datetime.now().strftime("%H%M%S")
+    
+    g_curTime=cur_time
+    delQtySum_Temp1()
+    qty=1.000
+    insertQtySum_temp1(assly, "M",qty, "01", lf, lt)
+    expl(assly, 1, ep)
+    delQtySum_Temp2()
+    appendQtySum_Temp2()
+    delQtySum_Temp()
+    summarizeQtySum_Temp(qtyloco)
+    return True
+
+def expl(parent, wt, ep):
+    mcp_part=''
+    mqty=''
+    shop_ut1=''
+    v_ptc=''
+    wt1=0
+    mqty1=0
+        
+    cursor = connection.cursor()
+    cursor.execute('select distinct n."PP_PART", n."CP_PART",n."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO",COALESCE("ALT_IND",%s) from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and n."L_TO"=%s and n."PP_PART"=%s and  n."EPC"=%s order by n."PP_PART",n."CP_PART";',['0','9999',parent,ep])
+    row = cursor.fetchall()
+    dts = pandas.DataFrame(list(row))
+        
+    if(dts.shape[0]>0):
+        for i in range(dts.shape[0]):
+            l_fr=dts[5][i]
+            l_to=dts[6][i]
+            v_ptc=dts[2][i]
+            mcp_part=dts[1][i]
+            shop_ut=dts[4][i]
+            mqty=dts[3][i]
+            
+            mqt=wt*mqty
+            if v_ptc in ["Q","R"]:
+                UpdateQtySum_temp1(mcp_part, v_ptc,mqty, shop_ut, l_fr, l_to, parent)
+            else:
+                insertQtySum_temp1(mcp_part, v_ptc, mqt, shop_ut, l_fr, l_to)
+            ds1=list(Nstr.objects.filter(pp_part=mcp_part,epc=ep,l_to='9999').values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty",
+            "updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("pp_part",
+            "epc","cp_part"))        
+            if v_ptc in ["M","Z","L","B"] and len(ds1)>0:
+                expl(mcp_part, mqt, ep) 
+    return        
+
+def delQtySum_Temp():
+    try:
+        QtysumTemp.objects.filter(dt_run__lt=system_date).delete()
+        return
+    except:
+        print("Data not deleted : QTYSUM_TEMP")   
+        return 
+
+
+def delQtySum_Temp2():
+    try:
+        QtysumTemp2.objects.filter(dt_run__lt=system_date).delete()
+        return
+    except:
+        print("Data not deleted : QTYSUM_TEMP2")  
+        return  
+    
+def appendQtySum_Temp2():
+    try:
+        tmpstr=list(QtysumTemp1.objects.filter(cur_time=g_curTime).values("partno" ,"ptc" ,"qty" ,"shop_ut","l_fr","l_to","rm_part","rm_ptc","rm_qty","rm_ut","rm_lf","rm_lt","dt_run","cur_time"))
+        for i in range(len(tmpstr)):
+            QtysumTemp2.objects.create(partno=tmpstr[i].get('partno') ,ptc=tmpstr[i].get('ptc') ,qty=tmpstr[i].get('qty') ,shop_ut=tmpstr[i].get('shop_ut'),pt_lf=tmpstr[i].get('l_fr'),pt_lt=tmpstr[i].get('l_to'),rm_part=tmpstr[i].get('rm_part'),rm_ptc=tmpstr[i].get('rm_ptc'),rm_qty=tmpstr[i].get('rm_qty'),rm_ut=tmpstr[i].get('rm_ut'),rm_lf=tmpstr[i].get('rm_lf'),rm_lt=tmpstr[i].get('rm_lt'),dt_run=tmpstr[i].get('dt_run'),cur_time=tmpstr[i].get('cur_time'))
+        return
+    except:
+        print("Insertion not successful : QTYSUM_TEMP2") 
+        return 
+
+   
+def insertQtySum_temp1(part_n,pt,qt,shop_u,l_f,l_t): 
+    try: 
+        QtysumTemp1.objects.create(partno=str(part_n),ptc=str(pt),qty=qt,shop_ut=str(shop_u),l_fr=str(l_f),l_to=str(l_t),
+        rm_part='',rm_ptc='',rm_qty=0.00,rm_ut='',rm_lf='',rm_lt='',dt_run=system_date,cur_time=str(g_curTime))         
+        return 
+    except:
+        print("Insertion not successful : QTYSUM_TEMP1") 
+        return 
+
+        
+
+def summarizeQtySum_Temp(qtyloco):
+    cursor = connection.cursor()
+    cursor.execute('select "PARTNO" ,max(coalesce("PTC"::text,%s)) ptc ,sum(coalesce("QTY" :: float,%s)) * (%s::int) qty ,max(coalesce("SHOP_UT"::text,%s)) shop_ut,max(coalesce("PT_LF"::text,%s)) pt_lf,max(coalesce("PT_LT"::text,%s)) pt_lt,max(coalesce("RM_PART"::text,%s)) rm_part ,max(coalesce("RM_PTC",%s)) rm_ptc ,max(coalesce("RM_QTY"::float,%s)) rm_qty ,max(coalesce("RM_UT"::text,%s)) rm_ut from public."QTYSUM_TEMP2" where "CUR_TIME"=%s and  "PTC" IN (%s,%s,%s,%s)  group by "PARTNO" order by "PARTNO";',['0','0',qtyloco,'0','0','0','0','0','0','0',g_curTime,'M','Z','L','B'])
+    row = cursor.fetchall()
+    dts = pandas.DataFrame(list(row))
+    if(dts.shape[0]>0):
+        for i in range(dts.shape[0]):
+            partno=dts[0][i]
+            ptc=dts[1][i]
+            qty=dts[2][i]
+            shop_ut=dts[3][i]
+            pt_lf=dts[4][i]
+            pt_lt=dts[5][i]
+            rm_part=dts[6][i]
+            rm_ptc=dts[7][i]
+            rm_qty=dts[8][i]
+            rm_ut=dts[9][i]
+        
+            QtysumTemp.objects.create(partno=str(partno),ptc=str(ptc),qty=qty,shop_ut=str(shop_ut),ptlf=str(pt_lf),ptlt=str(pt_lt),
+            rm_part=str(rm_part),rm_ptc=str(rm_ptc),rm_qty=rm_qty,rm_ut=str(rm_ut),rmlf='',rmlt='',remark = '',qty_loco='',dt_run=system_date,cur_time=str(g_curTime)) 
+                
+    return
+
+def delQtySum_Temp1():
+    try:
+        QtysumTemp1.objects.filter(dt_run__lt= system_date).delete()
+        return
+    except:
+        print("Data not deleted : QTYSUM_TEMP1") 
+        return 
+
+def delLOADBK():
+    try:
+        Loadbk.objects.filter(dt_run__lt=system_date).delete()
+        return
+    except:
+        print("Data not deleted : Loadbk")  
+        return  
+
+def insertLOADBK():
+    try:
+        cursor = connection.cursor()
+        cursor.execute('''insert into public."LOADBK"("SH_SEC","LC_NO", "PART_NO", "QTY", "NO_MC","PTDES", "M5_CD","LC_DES","PA", "AT_HRS", "LOT","DT_RUN","CUR_TIME") (select x."SHOP_SEC", x."LC_NO", x."PART_NO",y."QTY", mp1.no_mc, (select "DES" from public."PART" where x."PART_NO"= "PART"."PARTNO") ptdes, x."M5_CD", mp1.lc_des,(case when (coalesce(trim(x."M5_CD"),'9')='1') then (sum(x."PA_HRS")/5) else sum(x."PA_HRS") end) pa,sum(x."AT_HRS") at_hrs,x."LOT",CURRENT_DATE, %s from public."QTYSUM_TEMP" y,(select "SHOP_SEC", "LCNO",(select "DES" from public."LC1" where public."LC1"."SHOP_SEC"= public."MP"."SHOP_SEC" and public."LC1"."LCNO"= public."MP"."LCNO" and coalesce(trim(public."LC1"."DEL_FL"),'#')<>'Y' limit 1) lc_des, (count(1)/2) no_mc from public."MP" group by "SHOP_SEC", "LCNO") mp1 FULL OUTER JOIN public."OPRN" x on mp1."SHOP_SEC"=x."SHOP_SEC" and mp1."LCNO"=x."LC_NO" where trim(x."PART_NO")= trim(y."PARTNO") and coalesce(trim(x."NCP_JBS"),'#') !='1' and y."CUR_TIME"=%s group by x."PART_NO",y."QTY",x."SHOP_SEC", x."LC_NO",x."M5_CD", x."LOT",mp1.no_mc,lc_des,CURRENT_DATE);''',[g_curTime,g_curTime])
+        return
+    except:
+        print("Insertion not successful : loadbk")
+        return
+
+def UpdateLOADBK():
+    try:
+        cursor = connection.cursor()
+        cursor.execute('update  "LOADBK" set "LOCO_LOAD_HRS"= round(("PA"+"AT_HRS"/"LOT"*"QTY"),2), "CAP_MNTH_HRS"=  "NO_MC"*480')
+        cursor.execute('update "LOADBK" set "PROD_CAP_MNTH"= round("CAP_MNTH_HRS"/ "LOCO_LOAD_HRS",0) where "LOCO_LOAD_HRS">0')
+        return
+    except:
+        print("Updation not successful : Loadbk")
+        return
+       
+def UpdateQtySum_temp1(partno,ptc,qty,shop_ut,l_fr,l_to,parent):
+    try:
+        QtysumTemp1.objects.filter(partno=parent,cur_time=g_curTime).update(rm_part=str(partno),rm_ptc=str(ptc),rm_qty=qty,
+        rm_ut=str(shop_ut),rm_lf=str(l_fr),rm_lt=str(l_to)) 
+        return  
+    except:
+        print("Updation not successful : QtysumTemp1")
+        return 

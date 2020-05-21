@@ -2438,15 +2438,16 @@ class QppTempqpp(models.Model):
 
 
 class QtysumTemp(models.Model):
+    id=models.AutoField(primary_key=True)
     partno = models.CharField(db_column='PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    qty = models.DecimalField(db_column='QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     shop_ut = models.CharField(db_column='SHOP_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     ptlf = models.CharField(db_column='PTLF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     ptlt = models.CharField(db_column='PTLT', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_part = models.CharField(db_column='RM_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
     rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     rmlf = models.CharField(db_column='RMLF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rmlt = models.CharField(db_column='RMLT', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -2456,20 +2457,21 @@ class QtysumTemp(models.Model):
     cur_time = models.CharField(db_column='CUR_TIME', max_length=40, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+      
         db_table = 'QTYSUM_TEMP'
 
 
 class QtysumTemp1(models.Model):
+    id=models.AutoField(primary_key=True)
     partno = models.CharField(db_column='PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    qty = models.DecimalField(db_column='QTY', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     shop_ut = models.CharField(db_column='SHOP_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     l_fr = models.CharField(db_column='L_FR', max_length=4, blank=True, null=True)  # Field name made lowercase.
     l_to = models.CharField(db_column='L_TO', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_part = models.CharField(db_column='RM_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
     rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=65535, decimal_places=65535, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     rm_lf = models.CharField(db_column='RM_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_lt = models.CharField(db_column='RM_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -2477,19 +2479,20 @@ class QtysumTemp1(models.Model):
     cur_time = models.CharField(db_column='CUR_TIME', max_length=40, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        
         db_table = 'QTYSUM_TEMP1'
 
 class QtysumTemp2(models.Model):
+    id=models.AutoField(primary_key=True)
     partno = models.CharField(db_column='PARTNO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     ptc = models.CharField(db_column='PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    qty = models.DecimalField(db_column='QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    qty = models.DecimalField(db_column='QTY', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     shop_ut = models.CharField(db_column='SHOP_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     pt_lf = models.CharField(db_column='PT_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     pt_lt = models.CharField(db_column='PT_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_part = models.CharField(db_column='RM_PART', max_length=8, blank=True, null=True)  # Field name made lowercase.
     rm_ptc = models.CharField(db_column='RM_PTC', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=8, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    rm_qty = models.DecimalField(db_column='RM_QTY', max_digits=10, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
     rm_ut = models.CharField(db_column='RM_UT', max_length=2, blank=True, null=True)  # Field name made lowercase.
     rm_lf = models.CharField(db_column='RM_LF', max_length=4, blank=True, null=True)  # Field name made lowercase.
     rm_lt = models.CharField(db_column='RM_LT', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -2497,10 +2500,8 @@ class QtysumTemp2(models.Model):
     cur_time = models.CharField(db_column='CUR_TIME', max_length=40, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        
         db_table = 'QTYSUM_TEMP2'
-
-
 
 class Rate(models.Model):
     aoh_rate = models.DecimalField(db_column='AOH_RATE', max_digits=6, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
@@ -4838,15 +4839,15 @@ class Intershop338(models.Model):
     
 
 class MG47_table1(models.Model):
-    to_sse=models.CharField(db_column='ToSSE', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
-    num=models.CharField(db_column='No.',max_length=20,primary_key=True)
+    num=models.CharField(db_column='Sr.No.',max_length=50,primary_key=True)
+    shop=models.CharField(db_column='Shop',max_length=50, null=True) 
+    to_sse=models.CharField(db_column='ToSSE', max_length=50, null=True)  # Field name made lowercase.
     date=models.CharField(db_column='Date',max_length=50,null=True)
-    allocable_to=models.CharField(db_column='allocable_to', max_length=50, blank=True, null=True,default=0) 
-    issued_on=models.CharField(db_column='Issued_on',max_length=20,null=True,blank=True)
-    empno=models.CharField(db_column='EmployeeID', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
-    from_sse=models.CharField(db_column='FromSSE', max_length=50, blank=True, null=True,default=0)  # Field name made lowercase.
-    login_id = models.CharField(db_column='LOGINID',max_length=10, blank=True, null=True)
-    current_date= models.DateTimeField(db_column='CURRENTDATE', blank=True, null=True)  # Field name made lowercase.
+    allocable_to=models.CharField(db_column='allocable_to', max_length=50, null=True) 
+    issued_on=models.CharField(db_column='Issued_on',max_length=20,null=True)
+    empno=models.CharField(db_column='EmployeeID', max_length=50, null=True)  # Field name made lowercase.
+    from_sse=models.CharField(db_column='FromSSE', max_length=50, null=True)  # Field name made lowercase.
+    empname=models.CharField(db_column='Empname',max_length=100,null=True)
 
     class Meta:
         db_table = 'MG47_table1'
