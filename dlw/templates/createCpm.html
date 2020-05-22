@@ -1,0 +1,424 @@
+{% extends 'base.html' %} 
+{% block content %}
+{% load static %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>  -->
+
+<style>
+div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    input[type=submit] {
+        width: 10%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    input[type=button] {
+        /* width: 10%; */
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 6px 6px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+
+
+<form action="{% url 'createCpm' %}" method="POST"> 
+    {% csrf_token %}
+<center>
+<div class="container" id="main_view">
+    <div id="dvCnote">
+        <div class="gridTitle">
+            <b>CREATION OF CONSOLIDATED PART MASTER</b>
+        </div></br>
+        <div id="myPan">
+            <table>
+                <tr>
+                    <td class="td_cntrl" colspan="2">
+                        <center>
+                            PROCESS = EXPLODE+UPDATE CPM+UPDATE QPP(MMIS)
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td_cntrl" colspan="2" style="border: 1px #6da6b1 solid; padding: 2px; line-height: 1.5;">
+                        {% if msg == "btnUpdCPM" %}
+                        <center>
+                            <input type="Button" id="btnProcess" value="Explode" onclick="btn_explode()" disabled autofocus />
+                            <input type="Button" id="btnUpdCPM" value="Update CPM" onclick="btnUpdCPM1()" />
+                            <input type="Button" id="btnUpdQPP" value="Update QPP(MMIS)" disabled onclick="btnUpdQPP1()" />
+                                            <!-- <cc1:ConfirmButtonExtender ID="btnProcess_ConfirmButtonExtender" runat="server" ConfirmText="Are you sure to Process ?"
+                                                Enabled="True" TargetControlID="btnProcess">
+                                            </cc1:ConfirmButtonExtender> -->
+                            <label id="curTime" text="" visible="false"></label>
+                        </center>
+                        {% endif %}
+                        {% if msg == "btnUpdQPP" %}
+                        <center>
+                            <input type="Button" id="btnProcess" value="Explode" onclick="btn_explode()" disabled autofocus />
+                            <input type="Button" id="btnUpdCPM" value="Update CPM" onclick="btnUpdCPM1()" disabled />
+                            <input type="Button" id="btnUpdQPP" value="Update QPP(MMIS)" onclick="btnUpdQPP1()" />
+                                            <!-- <cc1:ConfirmButtonExtender ID="btnProcess_ConfirmButtonExtender" runat="server" ConfirmText="Are you sure to Process ?"
+                                                Enabled="True" TargetControlID="btnProcess">
+                                            </cc1:ConfirmButtonExtender> -->
+                            <label id="curTime" text="" visible="false"></label>
+                        </center>
+                        {% endif %}
+                        {% if msg == "btnProcess" %}
+                        <center>
+                            <input type="Button" id="btnProcess" value="Explode" onclick="btn_explode()" autofocus />
+                            <input type="Button" id="btnUpdCPM" value="Update CPM" disabled onclick="btnUpdCPM1()" />
+                            <input type="Button" id="btnUpdQPP" value="Update QPP(MMIS)" disabled onclick="btnUpdQPP1()" />
+                                            <!-- <cc1:ConfirmButtonExtender ID="btnProcess_ConfirmButtonExtender" runat="server" ConfirmText="Are you sure to Process ?"
+                                                Enabled="True" TargetControlID="btnProcess">
+                                            </cc1:ConfirmButtonExtender> -->
+                            <label id="curTime" text="" visible="false"></label>
+                        </center>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border: 1px #6da6b1 solid; padding: 2px; line-height: 1.5;">Note: 1. Backup copy created as QPPX(of MMIS Area) will be available in PPNC Area.
+                        <input type="Button" id="btnResetProcess" value="Reset" onclick="Reset()" Visible="false" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border: 1px #6da6b1 solid; padding: 2px; line-height: 1.5;">2. Since this process is time taking. User may do other PPNC activities.
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border: 1px #6da6b1 solid; padding: 2px; line-height: 1.5;">3. 'EXPLODE' is completed when 'END_DATE' & 'END_TIME' is updated.
+                    <br />
+                        'UPDATE CPM' is completed when 'Updt_CPM' is turned 'Y'
+                    <br />
+                        'UPDATE QPP(MMIS)' is completed when 'Updt_qpp' is turned 'Y'.
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" style="border: 1px #6da6b1 solid; padding: 2px; line-height: 1.5;">4. User has to logout after every Step i.e., 'EXPLODE/UPDATE CPM/UPDATE QPP(MMIS)',<br />
+                        So that Timer is not expired.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <center>
+                        <input type="Button" id="btnRefresh" value="Last / Current Job Status" onclick="btnRefresh1()" />
+                    </center>
+                </td>
+                <td>
+                    <center>
+                        <input type="Button" id="btnAllJobs" value="All Jobs Logs" onclick="btnAllJobs1()" />
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- <div style="border: 1px #6da6b1 solid; padding: 3px; line-height: 1.5;"> -->
+                        <!-- <asp:Panel ID="Panel1" runat="server" Height="190px" ScrollBars="Horizontal" >
+                            <asp:GridView ID="gvPrgs" runat="server">
+                            </asp:GridView>
+                        </asp:Panel> -->
+    <!-- </div> -->
+    <table id="gvPrgs" align="center" class="table table-striped table-bordered" > 
+        <thead style="background-color:ghostwhite; font-size:12px;">
+            <tr>
+                <th>START_DT</th>
+                <th>START_TIME</th>
+                <th>END_DT</th>
+                <th>END_TIME</th>
+                <th>ASSLY_OVER</th>
+                <th>CPM_START_TIME</th>
+                <th>CPM_END_TIME</th>
+                <th>UPDT_CPM</th>
+                <th>QPP_START_TIME</th>
+                <th>QPP_END_TIME</th>
+                <th>QPP_ASSLY_OVER</th>
+                <th>UPDT_QPP</th>
+            </tr>
+        </thead>
+        <tbody style="font-size:11px; font-weight: 610;">
+            {% for i in prcs1 %}
+                <tr>                
+                    <td>{{i.START_DT}}</td>
+                    <td>{{i.START_TIME}}</td>
+                    <td>{{i.END_DT}}</td>
+                    <td>{{i.END_TIME}}</td>
+                    <td>{{i.ASSLY_OVER}}</td>
+                    <td>{{i.CPM_START_TIME}}</td>
+                    <td>{{i.CPM_END_TIME}}</td>
+                    <td>{{i.UPDT_CPM}}</td>
+                    <td>{{i.QPP_START_TIME}}</td>
+                    <td>{{i.QPP_END_TIME}}</td>
+                    <td>{{i.QPP_ASSLY_OVER}}</td>
+                    <td>{{i.UPDT_QPP}}</td>                
+                </tr>  
+            {% endfor %}  
+        </tbody>            
+    </table>
+
+
+    <table id="test" align="center" class="table table-striped table-bordered" style="display: none;"> 
+        <thead style="background-color:ghostwhite; font-size:12px;">
+            <tr>
+                <th>START_DT</th>
+                <th>START_TIME</th>
+                <th>END_DT</th>
+                <th>END_TIME</th>
+                <th>ASSLY_OVER</th>
+                <th>CPM_START_TIME</th>
+                <th>CPM_END_TIME</th>
+                <th>UPDT_CPM</th>
+                <th>QPP_START_TIME</th>
+                <th>QPP_END_TIME</th>
+                <th>QPP_ASSLY_OVER</th>
+                <th>UPDT_QPP</th>
+            </tr>
+        </thead>
+        <tbody style="font-size:11px; font-weight: 610;">
+    </table>
+
+
+    <table id="test1" align="center" class="table table-striped table-bordered" style="display: none;"> 
+        <thead style="background-color:ghostwhite; font-size:12px;">
+            <tr>
+                <th>START_DT</th>
+                <th>START_TIME</th>
+                <th>END_DT</th>
+                <th>END_TIME</th>
+                <th>ASSLY_OVER</th>
+                <th>CPM_START_TIME</th>
+                <th>CPM_END_TIME</th>
+                <th>UPDT_CPM</th>
+                <th>QPP_START_TIME</th>
+                <th>QPP_END_TIME</th>
+                <th>QPP_ASSLY_OVER</th>
+                <th>UPDT_QPP</th>
+            </tr>
+        </thead>
+        <tbody style="font-size:11px; font-weight: 610;">
+    </table>
+    
+</div>
+</center>
+<div id="lblview">
+    <label id="DT_RUN"></label>
+    <label id="lblUserId"></label>
+    <label id="CURRTIME"></label>
+    <label id="delFl" Text="T"></asp:Label>
+    <asp:Label ID="TotAsslyKnt" runat="server"></label>
+</div>
+<input type="text" id="vAssly_over" value="{{vAssly_over}}" hidden>
+<input type="text" id="vUpdt_cpm" value="{{vUpdt_cpm}}" hidden>
+<input type="text" id="vUpdt_qpp" value="{{vUpdt_qpp}}" hidden>
+<input type="text" id="vEnd_dt" value="{{vEnd_dt}}" hidden>
+<input type="text" id="vEnd_time" value="{{vEnd_time}}" hidden>
+<input type="text" id="vCPM_START_TIME" value="{{vCPM_START_TIME}}" hidden>
+<input type="text" id="vCPM_END_TIME" value="{{vCPM_END_TIME}}" hidden>
+<input type="text" id="vQPP_START_TIME" value="{{vQPP_START_TIME}}" hidden>
+<input type="text" id="vQPP_END_TIME" value="{{vQPP_END_TIME}}" hidden>
+
+
+</form>
+
+
+
+<script>
+
+// $(document).ready(function() {
+    table1=$("#gvPrgs").DataTable({
+        "scrollX": true
+});
+// });
+function btnUpdCPM1()
+{
+    alert('hhh');
+         
+         $.ajax({
+                        type : 'GET',
+                        url : "{% url 'btnUpdCPM_Click' %}",
+                        dataType : 'json',
+                        success : function(response)
+                            {   
+                                if (response[0].status==0)
+                                {
+                                    alert(response[0].msg);
+                                }
+                                else
+                                {
+                                    alert(" Updated Successfully, Now update QPP(MMIS)!!!")
+                                    document.getElementById('btnUpdQPP').disabled=false;
+                                } 
+                                
+                                
+                            }
+                        });
+    
+}
+
+function btnUpdQPP1()
+{
+    alert('hhh');
+    $.ajax({
+                type : 'GET',
+                url : "{% url 'btnUpdQPP_Click' %}",
+                dataType : 'json',
+                success : function(response)
+                    {   if (response[0].status==0)
+                                {
+                                    alert(response[0].msg);
+                                }
+                                else
+                                {
+                                    alert(response[0].msg)
+                                    alert(" Updated Successfully!!!")
+                                   
+                                } 
+                    }
+                });
+
+}
+
+function Reset()
+{
+    $.ajax({
+                type : 'GET',
+                url : "{% url 'Reset_Click' %}",
+                dataType : 'json',
+                success : function(response)
+                    {   
+                        
+                            alert(response);
+                            window.location.reload();
+                        
+                    }
+                });
+
+    
+
+}
+
+var table1;
+
+function btnRefresh1()
+{
+    table1.destroy();
+    $.ajax({
+                type : 'GET',
+                url : "{% url 'btnRefresh_Click' %}",
+                dataType : 'json',
+                success : function(response)
+                    { 
+                        $('#gvPrgs').hide(); 
+                        var trHTML = '';
+                    $.each(response, function (i, item) {
+                        trHTML += '<tr><td>' + item[0] + '</td><td>' + item[1] + '</td><td>' + item[2] + '</td><td>' + item[3] + '</td><td>' + item[4] + '</td><td>' + item[5] + '</td><td>' + item[6] + '</td><td>' + item[7] + '</td><td>' + item[8] + '</td><td>' + item[9] + '</td><td>' + item[10] + '</td><td>' + item[11] +  '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $("#test1").append(trHTML); 
+                    $('#test1').show();
+                    table1=$('#test1').DataTable({"scrollX": true});
+                   
+                    $('#test').hide(); 
+                    alert("success");
+                    }
+                });
+}
+function btn_explode()
+{
+    alert("hhhhhh");
+    $.ajax({
+                type : 'GET',
+                url : "{% url 'btnProcess_Click' %}",
+                dataType : 'json',
+                success : function(response)
+                    {   
+                        if(response.status==0)
+                        {
+                            alert(response.msg);
+                        }
+                        else
+                        {
+                            alert("Successfully Exploded , Now Update CPM !!!");
+                            document.getElementById('btnUpdCPM').disabled=false;
+                        }
+                    }
+                });
+}
+
+function btnAllJobs1()
+{
+    table1.clear().destroy();
+    $.ajax({
+                type : 'GET',
+                url : "{% url 'btnAllJobs_Click' %}",
+                dataType : 'json',
+                success : function(response)
+                    {   
+
+                       $('#gvPrgs').hide(); 
+                        var trHTML = '';
+                    $.each(response, function (i, item) {
+                        trHTML += '<tr><td>' + item[0] + '</td><td>' + item[1] + '</td><td>' + item[2] + '</td><td>' + item[3] + '</td><td>' + item[4] + '</td><td>' + item[5] + '</td><td>' + item[6] + '</td><td>' + item[7] + '</td><td>' + item[8] + '</td><td>' + item[9] + '</td><td>' + item[10] + '</td><td>' + item[11] +  '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $("#test").append(trHTML); 
+                    $('#test').show();
+                    table1=$("#test").DataTable({"scrollX": true});
+                   
+                    $('#test1').hide();
+                    alert("success");
+                    }
+                });
+}
+
+
+function btnBack_Click()
+{
+    window.location.href('url "homeadmin.html"');
+}
+
+
+
+</script>
+
+{% endblock content %}

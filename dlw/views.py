@@ -26954,3 +26954,1266 @@ def UpdateQtySum_temp1(partno,ptc,qty,shop_ut,l_fr,l_to,parent):
     except:
         print("Updation not successful : QtysumTemp1")
         return 
+@login_required
+@role_required(urlpass='/sectionJobListingview/')
+def sectionJobListingview(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:    
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
+        }       
+        if request.method == "POST":       
+            SubmitMultipleRowData = request.POST.get('SubmitMultipleRowData')
+            dataForm = request.POST.get('dataForm')
+            if SubmitMultipleRowData=="Submit":
+                dataFormTemp  = request.POST.get('dataForm')
+                context={
+                    'nav':nav,
+                    'ip':get_client_ip(request),           
+                    'subnav':subnav,
+                    'epc':dataFormTemp.split(',')[0],
+                    'bo_no':dataFormTemp.split(',')[1],
+                    'loco_fr':dataFormTemp.split(',')[2],
+                    'loco_to':dataFormTemp.split(',')[3],
+                    'batch_qty' : dataFormTemp.split(',')[4],
+                    'asslypart1' : dataFormTemp.split(',')[5],
+                    'reldate' : dataFormTemp.split(',')[6], 
+                    'a':'P',   
+                    }         
+    return render(request,'sectionJobListingview.html',context)
+def secJobEpcDesc(request):
+    l=[]
+    if request.method=="GET" and request.is_ajax():
+        epc=request.GET.get('epc')
+        obj=list(Code.objects.filter(code=epc,cd_type='11').values('alpha_1').distinct())
+        obj1=Batch.objects.filter(~Q(bo_no__startswith='13'),ep_type=epc,batch_type='O').values('ep_type','bo_no','loco_fr','loco_to','batch_qty','part_no','rel_date').distinct()
+        obj2=Batch.objects.filter(bo_no__startswith='13',ep_type=epc,batch_type='O',status='R').values('ep_type','bo_no','loco_fr','loco_to','batch_qty','part_no','rel_date').distinct()
+        obj3=obj1.union(obj2)
+        obj4=list(obj3)
+        l.append(obj)
+        l.append(obj4)
+        return JsonResponse(l,safe=False)
+    return JsonResponse({"success":False}, status=400)
+def secJobBackClick(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:    
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'subnav':subnav,
+        }  
+    return render(request,'homeadmin.html',context)
+
+def secJobPartNoDesc(request):
+    l=[]
+    if request.method=="GET" and request.is_ajax():
+        part_no=request.GET.get('part_no')
+        obj=list(Part.objects.filter(partno=part_no).values('des').distinct())
+        l.append(obj)
+        return JsonResponse(l,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+def secJobViewCode(request):
+    if request.method == "GET" and request.is_ajax():  
+        part_no=request.GET.get('part_no')
+        epc=request.GET.get('epc')
+        loco_from=request.GET.get('loco_from')
+        loco_to=request.GET.get('loco_to')
+        p=explodem(part_no,epc,loco_from,loco_to)
+        return JsonResponse(p,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+assly_ptc=None
+
+def explodem(assly,ep,lf,lt):
+    global assly_ptc
+    assly_ptc=''
+    assly_des=''
+    obj=list(Part.objects.filter(partno=assly).values('ptc','des').distinct())
+    for i in range(len(obj)):
+        assly_ptc = str(obj[i].get('ptc'))
+        assly_des = str(obj[i].get('des'))
+    return obj
+
+def secJobViewCodeII(request):
+    if request.method == "GET" and request.is_ajax():  
+        part_no=request.GET.get('part_no')
+        cur_time=datetime.datetime.now().strftime("%H%M%S")
+        epc=request.GET.get('epc')
+        loco_from=request.GET.get('loco_from')
+        loco_to=request.GET.get('loco_to')
+        global assly_ptc
+        q=explodemII(part_no,epc,loco_from,loco_to,assly_ptc,cur_time)
+        lst=[]
+        lst.append(cur_time)
+        lst.append(q)
+        return JsonResponse(lst,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def explodemII(assly,ep,lf,lt,assly_ptc,cur_time): 
+    global g_curTime
+    cur_time=cur_time
+    g_curTime=cur_time 
+    global system_date
+    system_date=datetime.date.today()
+    if (assly!="" and ep!="" and lf!="" and lt !=""):
+        obj1=list(Nstr.objects.filter(pp_part=assly,epc=ep,l_fr__lte=lf,l_to__gte=lt).values('pp_part','cp_part','l_fr','l_to','ptc','epc','qty','updt_dt','ref_ind','ref_no','alt_ind','alt_link','lead_time','reg_no','slno','del_fl','epc_old','id').order_by('pp_part','cp_part','epc','l_to').distinct())
+    elif(assly != "" and ep != "" and lf != ""):
+        obj1=list(Nstr.objects.filter(pp_part=assly,epc=ep,l_fr__lte=lf,l_to__gte=lt,l_to='9999').values('pp_part','cp_part','l_fr','l_to','ptc','epc','qty','updt_dt','ref_ind','ref_no','alt_ind','alt_link','lead_time','reg_no','slno','del_fl','epc_old','id').order_by('pp_part','cp_part','epc','l_to').distinct())
+    elif (assly != "" and ep != ""):
+        obj1=list(Nstr.objects.filter(pp_part=assly,epc=ep,l_fr='0000',l_to='9999').values('pp_part','cp_part','l_fr','l_to','ptc','epc','qty','updt_dt','ref_ind','ref_no','alt_ind','alt_link','lead_time','reg_no','slno','del_fl','epc_old','id').order_by('pp_part','cp_part','epc','l_to').distinct())
+
+    qty=1.000
+    delQtySum_Temp1()
+    insertQtySum_temp1(assly,assly_ptc,qty, "01", lf, lt)
+    explm(assly,1,ep,lf,lt)
+    delQtySum_Temp2()
+    appendQtySum_Temp2()
+    return obj1
+
+def explm(parent,wt,ep,lf,lt):
+    mcp_part=''
+    mqty=''
+    shop_ut=''
+    v_ptc=''
+    wt1=0
+    mqty1=0
+    cursor = connection.cursor()
+    if (parent!="" and ep!="" and lf!="" and lt !=""):
+        cursor.execute('select distinct n."PP_PART", n."CP_PART",n."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO", COALESCE("ALT_IND",%s) from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and n."PP_PART"=%s and "EPC"=%s and "L_FR"<=%s and "L_TO">=%s  order by n."PP_PART",n."CP_PART";',['0',parent,ep,lf,lt])
+    elif(parent != "" and ep != "" and lf != ""):
+        cursor.execute('select distinct n."PP_PART", n."CP_PART",n."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO", COALESCE("ALT_IND",%s) from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and n."PP_PART"=%s and "EPC"=%s and "L_FR"<=%s and "L_TO">=%s and "L_TO"=%s order by n."PP_PART",n."CP_PART";',['0',parent,ep,lf,lt,'9999'])
+    elif (parent != "" and ep != ""):
+        cursor.execute('select distinct n."PP_PART", n."CP_PART",n."PTC",n."QTY",p."SHOP_UT",n."L_FR",n."L_TO", COALESCE("ALT_IND",%s) from "NSTR" as n,"PART" as p where p."PARTNO" = n."CP_PART" and n."PP_PART"=%s and "EPC"=%s and "L_FR"=%s and "L_TO"=%s   order by n."PP_PART",n."CP_PART";',['0',parent,ep,'0000','9999'])
+   
+    row = cursor.fetchall()
+    dts = pandas.DataFrame(list(row))
+    
+    if(dts.shape[0]>0):
+        for i in range(dts.shape[0]):
+            l_fr=dts[5][i]
+            l_to=dts[6][i]
+            v_ptc=dts[2][i]
+            mcp_part=dts[1][i]
+            shop_ut=dts[4][i]
+            mqty=dts[3][i]
+            mqt=wt*mqty
+
+            if v_ptc in ["Q","R"]:
+                UpdateQtySum_temp1(mcp_part, v_ptc,mqty, shop_ut, l_fr, l_to, parent)
+            else:
+                insertQtySum_temp1(mcp_part, v_ptc, mqt, shop_ut, l_fr, l_to)
+            if (parent!="" and ep!="" and lf!="" and lt !=""):
+                ds1=list(Nstr.objects.filter(pp_part=mcp_part,epc=ep,l_fr__lte=lf,l_to__gte=lt).values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("pp_part","epc","cp_part","l_to"))        
+            elif(parent != "" and ep != "" and lf != ""):
+                ds1=list(Nstr.objects.filter(pp_part=mcp_part,epc=ep,l_fr__lte=lf,l_to__gte=lt,l_to='9999').values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("pp_part","epc","cp_part","l_to"))        
+            elif (parent != "" and ep != ""):
+                ds1=list(Nstr.objects.filter(pp_part=mcp_part,epc=ep,l_fr='0000',l_to='9999').values("pp_part","cp_part","l_fr","l_to","ptc","epc","qty","updt_dt","ref_ind","ref_no","alt_ind","alt_link","lead_time","reg_no","slno","del_fl","epc_old").order_by("pp_part","epc","cp_part","l_to"))
+                       
+            if v_ptc in ["M","Z","L","B"] and len(ds1)>0:
+                explm(mcp_part,mqt,ep,lf,lt) 
+    return        
+        
+def UpdateQtySum_temp1(partno,ptc,qty,shop_ut,l_fr,l_to,parent):  
+    print("UPDATE") 
+    try:
+        QtysumTemp1.objects.filter(partno=parent,cur_time=g_curTime).update(rm_part=str(partno),rm_ptc=str(ptc),rm_qty=qty,
+        rm_ut=str(shop_ut),rm_lf=str(l_fr),rm_lt=str(l_to)) 
+        return  
+    except:
+        print("Updation not successful : QtysumTemp1")
+        return 
+def insertQtySum_temp1(part_n,pt,qt,shop_u,l_f,l_t): 
+    try:
+        print("INSERTION")
+        QtysumTemp1.objects.create(partno=str(part_n),ptc=str(pt),qty=qt,shop_ut=str(shop_u),l_fr=str(l_f),l_to=str(l_t),
+        rm_part='',rm_ptc='',rm_qty=0.00,rm_ut='',rm_lf='',rm_lt='',dt_run=system_date,cur_time=str(g_curTime))                
+        return 
+    except:
+        print("Insertion not successful : QTYSUM_TEMP1") 
+        return 
+        
+def delQtySum_Temp1():
+    print("Delete qtysum_temp1")
+    try:
+        QtysumTemp1.objects.filter(dt_run__lt= system_date).delete()
+        return
+    except:
+        print("Data not deleted : QTYSUM_TEMP1") 
+        return 
+
+def delQtySum_Temp2():
+    print("delete qtysum_temp2")
+    try:
+        QtysumTemp2.objects.filter(dt_run__lt=system_date).delete()
+        return
+    except:
+        print("Data not deleted : QTYSUM_TEMP2")  
+        return  
+
+def appendQtySum_Temp2():
+    tmpstr=list(QtysumTemp1.objects.filter(cur_time=g_curTime).values("partno" ,"ptc" ,"qty" ,"shop_ut","l_fr","l_to","rm_part","rm_ptc","rm_qty","rm_ut","rm_lf","rm_lt","dt_run","cur_time"))
+    for i in range(len(tmpstr)):
+        QtysumTemp2.objects.create(partno=tmpstr[i].get('partno') ,ptc=tmpstr[i].get('ptc') ,qty=tmpstr[i].get('qty') ,shop_ut=tmpstr[i].get('shop_ut'),pt_lf=tmpstr[i].get('l_fr'),pt_lt=tmpstr[i].get('l_to'),rm_part=tmpstr[i].get('rm_part'),rm_ptc=tmpstr[i].get('rm_ptc'),rm_qty=tmpstr[i].get('rm_qty'),rm_ut=tmpstr[i].get('rm_ut'),rm_lf=tmpstr[i].get('rm_lf'),rm_lt=tmpstr[i].get('rm_lt'),dt_run=tmpstr[i].get('dt_run'),cur_time=tmpstr[i].get('cur_time'))
+    return
+
+def delQtySum_Temp():
+    print("delete qtysum_temp")
+    try:
+        QtysumTemp.objects.filter(dt_run__lt=system_date).delete()
+        return
+    except:
+        print("Data not deleted : QTYSUM_TEMP")   
+        return 
+
+def secJobViewData(request):
+    loco_from=request.GET.get('loco_from')
+    loco_to=request.GET.get('loco_to')
+    batch_qty=request.GET.get('batch_qty')
+    part_no=request.GET.get('assly_part1')
+    des=request.GET.get('assly_part2')
+    cur_time1=request.GET.get('ctime')
+    today=date.today().strftime('%d/%m/%Y')
+    date1=str(today)
+    date1=date1[0:2]+date1[3:5]+'rrrr'
+    cursor = connection.cursor()
+    cursor.execute('''select j.*,  CASE trim(o."NCP_JBS") WHEN '1' THEN 1 ELSE 0 END as ncp_ctr, CASE trim(o."NCP_JBS") WHEN '2' THEN 1 ELSE 0 END as jbs_ctr, 
+                    (select "DES" from "LC1" where "SHOP_SEC"=j."SHOP_SEC" and "LCNO"=j."LC_NO" limit 1) lcdes, (select "DES" from "PART" 
+                    where "PARTNO"=j.part_no limit 1) ptdes, (select "DRGNO" from "PART" where "PARTNO"=j.part_no limit 1) 
+                    ptdrgno, o."DES" opdes, o."NCP_JBS", o."M5_CD",replace(to_char(o."PA",'9900.90'),'.','-') pa,  
+                    replace(to_char(o."AT",'9900.90'),'.','-') as at, o."LOT" no_off, (case when (o."LOT" > 0) then 
+                    TOT_TIME("AT","PA",qty,"LOT") else 0 end) tot_time,  (case when (o."LOT" > 0) then gt_hrs("AT","PA",qty,"LOT") else 0 end)
+                    gt_hrs, (case when (o."LOT" > 0) then gt_min("AT","PA",qty,"LOT") else 0 end) gt_min from (select a.part_no part_no,a.ptc,
+                    round(a.qty,2) as qty, b."SHOP_SEC", b."LC_NO", b."OPN" opn  from (select "PARTNO" part_no, max("PTC") ptc, CASE max("PTC") WHEN 'C' THEN sum("QTY") ELSE sum("QTY")*('1'::int) END as  qty  from "QTYSUM_TEMP2" where "CUR_TIME"=%s and to_char("DT_RUN",'ddmmrrrr')=
+                    %s group by "PARTNO") a,"OPRN" b  where trim(a.part_no)=trim(b."PART_NO") and trim(a.ptc) in 
+                    ('M','Z','L','B','C')) j, "OPRN" o where trim(j.part_no)=trim(o."PART_NO") and trim(j.opn)=trim(o."OPN") order by 
+                    j."SHOP_SEC", j."LC_NO";''',[str(cur_time1),date1])
+    row = cursor.fetchall()
+    dts = list(row)
+    lst=[]
+    k=1
+    for i in range(len(dts)):
+        lst.append({'sl':k,"part_no":dts[i][0],"ptc":dts[i][1],"qty":dts[i][2],"shop_sec":dts[i][3], "lc_no":dts[i][4],"opn":dts[i][5],"ncp_ctr":dts[i][6],"jbs_ctr":dts[i][7],"lcdes":dts[i][8],
+                   "ptdes":dts[i][9], "ptdrgno":dts[i][10], "opdes":dts[i][11],"ncp_jbs":dts[i][12],"m5_cd":dts[i][13],"pa":dts[i][14],"at":dts[i][15],"no_off":dts[i][16],"tot_time":dts[i][17],"gt_hrs":dts[i][18],"gt_min":dts[i][19]})
+        k+=1
+
+    i=0
+    c=1
+    total=0
+    lst1=[]
+    lst2=[]
+    while(i<len(lst)):
+        total=lst[i]['no_off']
+        nj=0
+        k=0
+        if (lst[i]['m5_cd']) is not None:
+                    nj=int(lst[i]['m5_cd'])
+        lst2.append({'sl':c,'shopsec':lst[i]['shop_sec'],'lcno':lst[i]['lc_no'],'lcdes':lst[i]['lcdes'],})
+        for j in range(i+1,len(lst)):
+            if (lst[i]['shop_sec']==lst[j]['shop_sec'] and lst[i]['lc_no']==lst[j]['lc_no']):
+                k+=1
+                if (lst[j]['m5_cd']) is not None:
+                    nj=int(lst[j]['m5_cd']) + nj
+                total=total+lst[j]['no_off']
+                c+=1
+        c+=1
+        lst1.append({'sl':c-1,'noo':k+1,'total':total,'nj':nj})
+        i=i+k+1
+   
+    context={
+        'loco_from':loco_from,
+        'loco_to':loco_to,
+        'batch_qty':batch_qty,
+        'part_no':part_no,
+        'des':des,
+        'obj':lst,
+        'today':today,
+        'lst2':lst2,
+        'lst1':lst1,
+        'cur_time1':cur_time1
+    }
+    return render(request,'SectionJobListingViewReport.html',context)
+
+def secJobPrintPDF(request, *args, **kwargs):
+    loco_from=request.GET.get('loco_from')
+    loco_to=request.GET.get('loco_to')
+    batch_qty=request.GET.get('batch_qty')
+    part_no=request.GET.get('assly_part1')
+    des=request.GET.get('assly_part2')
+    cur_time1=request.GET.get('ctime')
+    today=date.today().strftime('%d/%m/%Y')
+    date1=str(today)
+    date1=date1[0:2]+date1[3:5]+'rrrr'
+    cursor = connection.cursor()
+    cursor.execute('''select j.*,  CASE trim(o."NCP_JBS") WHEN '1' THEN 1 ELSE 0 END as ncp_ctr, CASE trim(o."NCP_JBS") WHEN '2' THEN 1 ELSE 0 END as jbs_ctr, 
+                    (select "DES" from "LC1" where "SHOP_SEC"=j."SHOP_SEC" and "LCNO"=j."LC_NO" limit 1) lcdes, (select "DES" from "PART" 
+                    where "PARTNO"=j.part_no limit 1) ptdes, (select "DRGNO" from "PART" where "PARTNO"=j.part_no limit 1) 
+                    ptdrgno, o."DES" opdes, o."NCP_JBS", o."M5_CD",replace(to_char(o."PA",'9900.90'),'.','-') pa,  
+                    replace(to_char(o."AT",'9900.90'),'.','-') as at, o."LOT" no_off, (case when (o."LOT" > 0) then 
+                    TOT_TIME("AT","PA",qty,"LOT") else 0 end) tot_time,  (case when (o."LOT" > 0) then gt_hrs("AT","PA",qty,"LOT") else 0 end)
+                    gt_hrs, (case when (o."LOT" > 0) then gt_min("AT","PA",qty,"LOT") else 0 end) gt_min from (select a.part_no part_no,a.ptc,
+                    round(a.qty,2) as qty, b."SHOP_SEC", b."LC_NO", b."OPN" opn  from (select "PARTNO" part_no, max("PTC") ptc, CASE max("PTC") WHEN 'C' THEN sum("QTY") ELSE sum("QTY")*('1'::int) END as  qty  from "QTYSUM_TEMP2" where "CUR_TIME"=%s and to_char("DT_RUN",'ddmmrrrr')=
+                    %s group by "PARTNO") a,"OPRN" b  where trim(a.part_no)=trim(b."PART_NO") and trim(a.ptc) in 
+                    ('M','Z','L','B','C')) j, "OPRN" o where trim(j.part_no)=trim(o."PART_NO") and trim(j.opn)=trim(o."OPN") order by 
+                    j."SHOP_SEC", j."LC_NO";''',[str(cur_time1),date1])
+    row = cursor.fetchall()
+    dts = list(row)
+    lst=[]
+    k=1
+    for i in range(len(dts)):
+        lst.append({'sl':k,"part_no":dts[i][0],"ptc":dts[i][1],"qty":dts[i][2],"shop_sec":dts[i][3], "lc_no":dts[i][4],"opn":dts[i][5],"ncp_ctr":dts[i][6],"jbs_ctr":dts[i][7],"lcdes":dts[i][8],
+                   "ptdes":dts[i][9], "ptdrgno":dts[i][10], "opdes":dts[i][11],"ncp_jbs":dts[i][12],"m5_cd":dts[i][13],"pa":dts[i][14],"at":dts[i][15],"no_off":dts[i][16],"tot_time":dts[i][17],"gt_hrs":dts[i][18],"gt_min":dts[i][19]})
+        k+=1
+
+    for i in range(len(lst)):
+        opdes=lst[i]['opdes']
+        opdes1=opdes[0:1500]
+        lst[i].update({'opdes':opdes1})
+
+    i=0
+    c=1
+    total=0
+    lst1=[]
+    lst2=[]
+    while(i<len(lst)):
+        total=lst[i]['no_off']
+        nj=0
+        k=0
+        if (lst[i]['m5_cd']) is not None:
+                    nj=int(lst[i]['m5_cd'])
+        lst2.append({'sl':c,'shopsec':lst[i]['shop_sec'],'lcno':lst[i]['lc_no'],'lcdes':lst[i]['lcdes'],})
+        for j in range(i+1,len(lst)):
+            if (lst[i]['shop_sec']==lst[j]['shop_sec'] and lst[i]['lc_no']==lst[j]['lc_no']):
+                k+=1
+                if (lst[j]['m5_cd']) is not None:
+                    nj=int(lst[j]['m5_cd']) + nj
+                total=total+lst[j]['no_off']
+                c+=1
+        c+=1
+        lst1.append({'sl':c-1,'noo':k+1,'total':total,'nj':nj})
+        i=i+k+1
+   
+    context={
+        'loco_from':loco_from,
+        'loco_to':loco_to,
+        'batch_qty':batch_qty,
+        'part_no':part_no,
+        'des':des,
+        'obj':lst,
+        'today':today,
+        'lst2':lst2,
+        'lst1':lst1,       
+    }
+    pdf = render_to_pdf('SecJobListPDFReport.html',context)
+    return HttpResponse(pdf, content_type='application/pdf')
+
+
+
+
+@login_required
+@role_required(urlpass='/spptalot/')
+def spptalot(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'spptalot.html',context)
+
+Viewstate_slno=0
+def txtPart_No_TextChanged(request):
+    if request.method == "GET" and request.is_ajax():
+        txtpart_no = request.GET.get('txtPart_No')
+        if txtpart_no == "":
+            l1=[0]
+            return JsonResponse(l1,safe = False)
+        else:
+            part = list(Sppart.objects.filter(part_no=txtpart_no).values('part_no','name','descr','dimension','used_mc1','used_mc2','used_mc3','used_mc4','used_ge_mc','reord_qty','shop_ut'))
+            if len(part) > 0:
+                return JsonResponse(part,safe = False)
+            else:
+                l1=[1]
+                return JsonResponse(l1,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def txtShop_ut_TextChanged(request):
+    if request.method == "GET" and request.is_ajax():
+        txtShop_ut = request.GET.get('txtShop_ut')
+        code = list(Code.objects.filter(cd_type='51',code=txtShop_ut).values('cd_type','code','alpha_1','alpha_2','num_1','num_2','num_3','txt','flag','gen_info','lupd_date','rec_ind','gm_ptno','epc_old'))
+        if len(code) == 0:
+            l1=[0]
+            return JsonResponse(l1,safe = False)
+        obj=[]
+        return JsonResponse(obj,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def groupvalues(request):
+    if request.method == "GET" and request.is_ajax():
+        cursor = connection.cursor()
+        cursor.execute('SELECT DISTINCT "MAJ_GRP","MAJ_DESCR" FROM public."SPPTGRP" ORDER BY %s',[1])
+        row = cursor.fetchall()
+        dt=list(row)
+        return JsonResponse(dt,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def usedmachine(request):
+    if request.method == "GET" and request.is_ajax():
+        cursor = connection.cursor()
+        cursor.execute('SELECT DISTINCT "MWNO","DES" FROM public."MP" WHERE "MWNO" IS NOT NULL ORDER BY %s',[1])
+        row = cursor.fetchall()
+        dt=list(row)
+        return JsonResponse(dt,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def txtMaj_grp_TextChanged(request):
+    if request.method == "GET" and request.is_ajax():
+        groupval = request.GET.get('group')
+        grp = list(Spptgrp.objects.filter(maj_grp=groupval).values('slno'))
+        return JsonResponse(grp,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def Unit_List(request):
+    if request.method == "GET" and request.is_ajax():
+        codes=list(Code.objects.filter(cd_type='51').values('code','alpha_1'))
+        if len(codes) > 0 :
+            print("codes are",codes)
+            return JsonResponse(codes,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def BtnSave_Click(request):
+    if request.method == "GET" and request.is_ajax():
+        txtPart_No = request.GET.get('txtPart_No')
+        txtName = request.GET.get('txtName')
+        txtMaj_grp = request.GET.get('txtMaj_grp')
+        txtSlNo = request.GET.get('txtSlNo')
+        txtDescr = request.GET.get('txtDescr')
+        txtDimension = request.GET.get('txtDimension')
+        txtShop_ut = request.GET.get('txtShop_ut')
+        txtUsed_mc1 = request.GET.get('txtUsed_mc1')
+        txtUsed_mc2 = request.GET.get('txtUsed_mc2')
+        txtUsed_mc3 = request.GET.get('txtUsed_mc3')
+        txtUsed_mc4 = request.GET.get('txtUsed_mc4')
+        txtUsed_ge_mc = request.GET.get('txtUsed_ge_mc')
+        txtReOrd_qty = request.GET.get('txtReOrd_qty')
+        print("values received are",txtPart_No,txtName,txtMaj_grp,txtSlNo,txtDescr,txtDimension,txtShop_ut,txtUsed_mc1,txtUsed_mc2,txtUsed_mc3,txtUsed_mc4,txtUsed_ge_mc,txtReOrd_qty)
+        global Viewstate_slno
+        Viewstate_slno=txtSlNo
+        dte=datetime.datetime.today().strftime("%Y-%m-%d")
+        if txtName == "":
+            a=[0]
+            return JsonResponse(a,safe = False)
+        if txtDescr == "":
+            print("desc")
+            a=[1]
+            return JsonResponse(a,safe = False)
+        if txtMaj_grp == "":
+            a=[2]
+            return JsonResponse(a,safe = False)
+        if txtMaj_grp != "":
+            grp = list(Spptgrp.objects.filter(maj_grp=txtMaj_grp).values('slno'))
+            if len(grp) > 0:
+                slno=grp[0]['slno']+1
+                if Decimal(txtSlNo) > slno:
+                    txtSlNo=slno
+                    Viewstate_slno=txtSlNo
+            else:
+                a=[3,txtMaj_grp]
+                return JsonResponse(a,safe = False)
+        if txtPart_No != "":
+            part = list(Sppart.objects.filter(part_no=txtPart_No).values('part_no','name','descr','dimension'))
+            if len(part) ==0:
+                a=[4]
+                return JsonResponse(a,safe = False)
+            else:
+                a=[5]
+                print("update statement")
+                dt2=Sppart.objects.filter(part_no=txtPart_No).update(name=txtName,descr=txtDescr,dimension=txtDimension,used_mc1=txtUsed_mc1,used_mc2=txtUsed_mc2,used_mc3=txtUsed_mc3,used_mc4=txtUsed_mc4,used_ge_mc=txtUsed_ge_mc,reord_qty=txtReOrd_qty,shop_ut=txtShop_ut,open_date=dte,updt_dt=dte)
+                if dt2 != 0:
+                    print("data updated")
+                return JsonResponse(a,safe = False)
+        else:
+            print("insert here")
+            if Viewstate_slno == 0:
+                grp1 = list(Spptgrp.objects.filter(maj_grp=txtMaj_grp).values('slno'))
+                if len(grp1) > 0 and Decimal(txtSlNo) > slno:
+                    txtSlNo=slno
+                    Viewstate_slno=txtSlNo
+            n=Viewstate_slno.zfill(3)
+            print("padded value is",n)
+            Viewstate_partno="S"+txtMaj_grp+n+"0"
+            if txtReOrd_qty != "":
+                dt1=Sppart.objects.create(part_no=Viewstate_partno,name=txtName,descr=txtDescr,dimension=txtDimension,used_mc1=txtUsed_mc1,used_mc2=txtUsed_mc2,used_mc3=txtUsed_mc3,used_mc4=txtUsed_mc4,used_ge_mc=txtUsed_ge_mc,reord_qty=txtReOrd_qty,shop_ut=txtShop_ut,open_date=dte,updt_dt=dte)
+                if dt1 != 0:
+                    print("insertion successfull")
+                    obj=[6,n]
+                    return JsonResponse(obj,safe = False)
+            else:
+                dt1=Sppart.objects.create(part_no=Viewstate_partno,name=txtName,descr=txtDescr,dimension=txtDimension,used_mc1=txtUsed_mc1,used_mc2=txtUsed_mc2,used_mc3=txtUsed_mc3,used_mc4=txtUsed_mc4,used_ge_mc=txtUsed_ge_mc,shop_ut=txtShop_ut,open_date=dte,updt_dt=dte)
+                if dt1 != 0:
+                    print("insertion successfull")
+                    obj=[6,n]
+                    return JsonResponse(obj,safe = False)
+    return JsonResponse({"success":False}, status = 400) 
+
+@login_required
+@role_required(urlpass='/createCpm/')
+def createCpm(request):
+    prcs=[{}]
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+
+    t = time.localtime()
+    curTime = time.strftime("%H%M%S", t)
+    tmpStr = Code.objects.filter(cd_type='11',num_1='10010014').values('code','num_1').order_by('1')
+    aEpc = tmpStr
+    
+    
+
+    TotAsslyKnt = aEpc.count()
+    cursor=connection.cursor()
+    cursor.execute('''select to_char("START_DT",'dd/mm/yyyy') "START_DT","START_TIME",to_char("END_DT",'dd/mm/yyyy')"END_DT","END_TIME","ASSLY_OVER", "CPM_START_TIME","CPM_END_TIME","UPDT_CPM"
+                        ,"QPP_START_TIME","QPP_END_TIME","QPP_ASSLY_OVER","UPDT_QPP" from public."CPM_PROCESS" 
+                        where "START_DT"=(select max("START_DT") from public."CPM_PROCESS") and 
+                        "START_TIME"=(select max("START_TIME") from public."CPM_PROCESS" where 
+                        "START_DT"=(select max("START_DT") from public."CPM_PROCESS" ) ) order by "START_DT";''')
+    prcs=cursor.fetchall()
+    print('prcs',prcs)
+
+    for i in range(len(prcs)):
+        prcs1=[{'START_DT':prcs[i][0],'START_TIME':prcs[i][1],'END_DT':prcs[i][2],'END_TIME':prcs[i][3],'ASSLY_OVER':prcs[i][4],'CPM_START_TIME':prcs[i][5],'CPM_END_TIME':prcs[i][6],'UPDT_CPM':prcs[i][7],'QPP_START_TIME':prcs[i][8],'QPP_END_TIME':prcs[i][9],'QPP_ASSLY_OVER':prcs[i][10],'UPDT_QPP':prcs[i][11]}]
+    print(prcs1)
+    if (len(prcs) > 0):
+        if prcs[0][6] is None:
+           vCPM_END_TIME = ''
+           createcpm['vCPM_END_TIME'] =''
+        else:
+            vCPM_END_TIME = prcs[0][6]
+            createcpm['vCPM_END_TIME'] = prcs[0][6]
+
+        if prcs[0][7] is None:
+           vUpdt_cpm = ''
+           createcpm['vUpdt_cpm'] =''
+        else:
+            vUpdt_cpm = prcs[0][7]
+            createcpm['vUpdt_cpm'] = prcs[0][7]
+
+        if prcs[0][11] is None:
+            vUpdt_qpp = ''
+            createcpm['vUpdt_qpp'] =''
+        else:
+            vUpdt_qpp = prcs[0][11]
+            createcpm['vUpdt_qpp'] = prcs[0][11]
+
+        if prcs[0][2] is None:
+           vEnd_dt = ''
+           createcpm['vEnd_dt'] =''
+        else:
+            vEnd_dt = prcs[0][2]
+            createcpm['vEnd_dt'] = prcs[0][2]
+
+        if prcs[0][3] is None:
+           vEnd_time = ''
+           createcpm['vEnd_time'] =''
+        else:
+            vEnd_time = prcs[0][3]
+            createcpm['vEnd_time'] = prcs[0][3]
+
+        if prcs[0][9] is None:
+           vQPP_END_TIME = ''
+           createcpm['vQPP_END_TIME'] =''
+        else:
+            vQPP_END_TIME = prcs[0][9]
+            createcpm['vQPP_END_TIME'] = prcs[0][9]
+
+        if prcs[0][5] is None:
+           vCPM_START_TIME = ''
+           createcpm['vCPM_START_TIME'] =''
+        else:
+            vCPM_START_TIME = prcs[0][5]
+            createcpm['vCPM_START_TIME'] = prcs[0][5]
+
+        if prcs[0][8] is None:
+           vQPP_START_TIME = ''
+           createcpm['vQPP_START_TIME'] =''
+        else:
+            vQPP_START_TIME = prcs[0][8]
+            createcpm['vQPP_START_TIME'] = prcs[0][8]
+
+
+        vAssly_over = prcs[0][4]   
+        createcpm['vAssly_over'] = prcs[0][4]   
+        createcpm['curTime']=curTime
+        msg=''
+        
+        if ((vEnd_dt!= "" and vEnd_time!="")  and (vUpdt_cpm == "N" and vCPM_END_TIME=="") and (vUpdt_qpp == "N")):
+            msg="btnUpdCPM"
+         
+        elif ((vEnd_dt != "" and vEnd_time != "") and (vUpdt_cpm == "Y") and (vUpdt_qpp == "N" and vQPP_END_TIME=="")):
+            msg="btnUpdQPP"
+        
+        elif ((vEnd_dt != "" and vEnd_time != "") and (vUpdt_cpm == "Y") and (vUpdt_qpp == "Y")):
+            msg="btnProcess"
+          
+        
+        else:
+            cursor.execute('''DELETE  FROM public."CPM_PROCESS" WHERE "START_DT"=(select max("START_DT") from public."CPM_PROCESS") and 
+                            "START_TIME"=(select max("START_TIME") from public."CPM_PROCESS" where "START_DT"=(select max("START_DT") from public."CPM_PROCESS" ) )''')
+            msg="btnUpdCPM"
+        
+
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'vAssly_over':vAssly_over,
+            'vUpdt_cpm':vUpdt_cpm,
+            'vUpdt_qpp':vUpdt_qpp,
+            'vEnd_dt':vEnd_dt,
+            'vEnd_time':vEnd_time,
+            'vCPM_START_TIME':vCPM_START_TIME,
+            'vCPM_END_TIME':vCPM_END_TIME,
+            'vQPP_START_TIME':vQPP_START_TIME,
+            'vQPP_END_TIME':vQPP_END_TIME,
+            'msg':msg,
+            'prcs':prcs,
+            'prcs1':prcs1
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+            'vAssly_over':vAssly_over,
+            'vUpdt_cpm':vUpdt_cpm,
+            'vUpdt_qpp':vUpdt_qpp,
+            'vEnd_dt':vEnd_dt,
+            'vEnd_time':vEnd_time,
+            'vCPM_START_TIME':vCPM_START_TIME,
+            'vCPM_END_TIME':vCPM_END_TIME,
+            'vQPP_START_TIME':vQPP_START_TIME,
+            'vQPP_END_TIME':vQPP_END_TIME,
+            'msg':msg,
+            'prcs':prcs,
+            'prcs1':prcs1
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+            'vAssly_over':vAssly_over,
+            'vUpdt_cpm':vUpdt_cpm,
+            'vUpdt_qpp':vUpdt_qpp,
+            'vEnd_dt':vEnd_dt,
+            'vEnd_time':vEnd_time,
+            'vCPM_START_TIME':vCPM_START_TIME,
+            'vCPM_END_TIME':vCPM_END_TIME,
+            'vQPP_START_TIME':vQPP_START_TIME,
+            'vQPP_END_TIME':vQPP_END_TIME,
+            'msg':msg,
+            'prcs':prcs,
+            'prcs1':prcs1
+        }
+
+    return render(request,'createCpm.html',context)
+createcpm={'tmpStr':"", 'mAssly':"", 'ep': "", 'vStart_dt':"",'vStart_time':"",
+            'vAssly_over':"", 'vUpdt_cpm':"", 'vUpdt_qpp':"", 'vEnd_dt':"", 'vEnd_time':"", 
+            'vCPM_START_TIME':"", 'vCPM_END_TIME':"", 'vQPP_START_TIME':"", 'vQPP_END_TIME':"",'curTime':"",'DT_RUN':'','CURRTIME':''}
+
+def expolde():     
+        ds=[]
+        cursor=connection.cursor()
+        cursor.execute('''select exists(select * from public."CPM1")''')
+        exists = cursor.fetchone()[0]
+        
+        if (exists):
+            delCPM1()
+        else:
+            createCPM1()
+        cursor=connection.cursor()
+        cursor.execute('''select distinct substr("CODE",1,2), "NUM_1" from public."CODE" where "CD_TYPE"='11' order by 1;''')
+        aEpc=list(cursor.fetchall())
+        t = time.localtime()
+        current_time = time.strftime("%H%M%S", t)
+        if (len(aEpc) > 0):
+            for i in range(len(aEpc)):
+                ep=createcpm['ep'] = aEpc[i][0]
+                mAssly=createcpm['mAssly'] = aEpc[i][1]
+                print(ep,mAssly)
+                ret=sumexpl(mAssly,ep)
+                print(ret)
+                msg=ret[0]['msg']
+                status=ret[0]['status']
+                if ( status==0):
+                    continue
+                tmpStr = CpmProcess.objects.filter(start_dt=createcpm['DT_RUN'],start_time=createcpm['CURRTIME']).update(assly_over=i+1)
+                
+            t = time.localtime()
+            current_time = time.strftime("%H%M%S", t)
+            edate=datetime.datetime.today().strftime('%Y-%m-%d')
+            tmpStr = CpmProcess.objects.filter(start_dt=createcpm['DT_RUN'],start_time=createcpm['CURRTIME']).update(end_dt=edate,end_time=current_time)
+        status=1
+        msg = "Explode successfully. Now Update CPM."
+        btnUpdCPM=1
+        msg = "Unable to Explode successfully. Process not over!!"
+        status=0
+        lst=[{'status':status,'msg':msg,'btn':btnUpdCPM}]
+        return lst
+
+Session={'mAltind':'','mAltlink':'','assly':''}
+def sumexpl(assly,EP):   
+        ep=""
+        ep_ptc = ""
+        mAltind=""
+        mAltlink = 0
+        
+        Session["mAltind"] = mAltind
+        Session["mAltlink"] = mAltlink
+        Session["assly"] = assly
+        ep = EP
+        r=1
+        msg=''
+        tmpStr = Part.objects.filter(partno=assly).values('ptc').order_by('ptc')
+        if len(tmpStr)>0:
+            ep_ptc = tmpStr[0]['ptc']
+        if ep_ptc=='':
+            msg = assly + "(" + ep + "):Assembly not in PART MASTER!"
+            r=0
+        if r!=0:
+            cursor=connection.cursor()
+            cursor.execute('''select p."PARTNO" from public."NSTR" n,PUBLIC."PART" p where trim("L_TO")='9999' and coalesce(trim(n."DEL_FL"),'*')='*' and trim("PP_PART")=%s::text and trim("EPC")=%s::text and trim(n."CP_PART")=trim(p."PARTNO") order by "PP_PART","EPC","CP_PART";''',[assly,ep])
+            tmpStr=cursor.fetchall()
+            if len(tmpStr)==0:
+                msg = str(assly)+ "(" + str(ep) + "):Assembly not in STRUCTURE!"
+                r=0
+            if r!=0:
+                cp1 = []
+                cp1=expl(assly, "1", ep,cp1)
+                print('expl',cp1)
+                cnt = len(cp1)
+                cp2 = []
+                cp3=[]
+                cp2=AddDataToTable1(assly, ep_ptc, "1.000", "01", ep, None, None, createcpm['DT_RUN'], cp2)
+                for k in range(len(cp1)):
+                    cp2.append(cp1[k])
+                cnt = len(cp2)
+                cp3=appendConsPart2(cp2)
+                cnt = len(cp3)
+                summarizeConsPart(cp3,cp2)
+                r= 1
+                msg='Successfully Exploded , Now Update CPM !!!'    
+        lst=[{'status':r,'msg':msg}]
+        return lst
+
+
+def expl(parent, wt,ep, cp1): 
+        #try:
+        ds=[]
+        ds1=[]
+        mcp_part=''
+        mqty =''
+        shop_ut=''
+        ptc=''
+        mAltind=None
+        mAltlink=''
+        assly=''
+        wt1=0.0
+        mqty1=0.0
+        mAltind = Session["mAltind"]
+        mAltlink = Session["mAltlink"]
+        assly = Session["assly"]
+        r=1
+        msg=''
+        cursor=connection.cursor()
+        cursor.execute('''select distinct "CP_PART",nstr."PTC" ptc,coalesce("QTY",0) qty,"SHOP_UT",nstr."ALT_LINK" alt_link,
+            COALESCE("ALT_IND",'0') alt_ind from public."NSTR" nstr,public."PART" part where trim(nstr."CP_PART")=trim(part."PARTNO") and  
+            trim("PP_PART")= %s ::text and trim("EPC")= %s  and trim("L_TO")='9999'  order by "CP_PART"''',[parent,ep])
+        tmpStr=list(cursor.fetchall())
+        ds=tmpStr
+        if len(ds) > 0:
+            for i in range(len(ds)):
+                alt_ind=''
+                alt_link=''
+                mqt=''
+                alt_ind = ds[i][5]
+                alt_link = ds[i][4]
+                if (parent == assly):
+                    if ((alt_link != mAltlink) or (alt_ind != mAltind)):
+                        mAltlink = alt_link
+                        mAltind = alt_ind
+                        Session["mAltind"] = mAltind
+                        Session["mAltlink"] = mAltlink
+                mcp_part = ds[i][0]
+                PTC = ds[i][1]
+                shop_ut = ds[i][3]
+                mqty = ds[i][2]
+                wt1 = float(wt)
+                mqty1 = float(mqty)
+                mqt = str(wt1 * mqty1)
+                cp1=AddDataToTable1(mcp_part, PTC, mqt, shop_ut, ep, mAltlink, mAltind,createcpm['DT_RUN'], cp1)
+                lst=["M", "Z", "L", "B"]
+                cursor.execute('''select "PARTNO" from public."NSTR" nstr,public."PART" part where trim(nstr."CP_PART")=trim(part."PARTNO") and  
+                trim("PP_PART")= %s  and trim("EPC")= %s  and trim("L_TO")='9999' limit 1''',[mcp_part,ep])
+                obj=list(cursor.fetchall())
+                if (PTC in lst and len(obj)>0):
+                    cp1=expl(mcp_part, mqt, ep,cp1)
+        return cp1
+from functools import reduce
+def appendConsPart2(cp2):
+    fnames1 = []
+    fnames2=[]
+    part=[{'partno':'','alt_link':'','alt_ind':''}]
+    altlink=[]
+    altind=[]
+    r =1 
+    for i in range(len(cp2)):
+        if [{'partno':cp2[i]['partno'],'alt_link':cp2[i]["alt_link"],'alt_ind':cp2[i]["alt_ind"]}] not in part:
+            part.append({'partno':cp2[i]['partno'],'alt_link':cp2[i]["alt_link"],'alt_ind':cp2[i]["alt_ind"]})
+            ls=list(filter(lambda x:str(x['partno']) in str(cp2[i]['partno']) and str(x['alt_link']) in str(cp2[i]['alt_link']) and str(x['alt_ind']) in str(cp2[i]['alt_ind']),cp2))
+            if len(ls) > 1:
+                ls1=list(map(itemgetter('qty'),ls))
+                ls2=list(map(itemgetter('ptc'),ls))
+                ls3=list(map(itemgetter('shop_ut'),ls))
+                ls4=list(map(itemgetter('ep'),ls))
+                ls5=list(map(itemgetter('dt_run'),ls))
+                qty_alt="{0:.3f}".format(reduce(lambda x,y:float(x) + float(y),ls1))
+                ptc=max(ls2)
+                shop_ut=max(ls3)
+                dt_run=max(ls5)
+                epc=max(ls4)
+                fnames2.append({'partno':cp2[i]['partno'],'alt_link':cp2[i]['alt_link'],'alt_ind':cp2[i]['alt_ind'],'qty_alt':qty_alt,'ptc':ptc,'shop_ut':shop_ut,'dt_run':dt_run,'epc':epc})
+            else:
+                fnames2.append({'partno':cp2[i]['partno'],'alt_link':cp2[i]['alt_link'],'alt_ind':cp2[i]['alt_ind'],'qty_alt':cp2[i]['qty'],'ptc':cp2[i]['ptc'],'shop_ut':cp2[i]['shop_ut'],'dt_run':cp2[i]['dt_run'],'epc':cp2[i]['ep']})
+    part=[{'partno':'','altlink':''}]
+    altlink=[]
+    altind=[]
+    for i in range(len(fnames2)):
+        if [{'partno':fnames2[i]['partno'],'altlink':fnames2[i]["alt_link"]}] not in part:
+            part.append({'partno':fnames2[i]['partno'],'altlink':fnames2[i]["alt_link"]})
+            ls=list(filter(lambda x:str(x['partno']) in str(fnames2[i]['partno']) and str(x['alt_link']) in str(fnames2[i]['alt_link']) ,fnames2))
+            if len(ls) > 1:
+                ls1=list(map(itemgetter('qty_alt'),ls))
+                ls2=list(map(itemgetter('ptc'),ls))
+                ls3=list(map(itemgetter('shop_ut'),ls))
+                ls4=list(map(itemgetter('epc'),ls))
+                ls6=list(map(itemgetter('alt_ind'),ls))
+                ls5=list(map(itemgetter('dt_run'),ls))
+                qty_alt="{0:.3f}".format(reduce(lambda x,y:float(x) + float(y),ls1))
+                ptc=max(ls2)
+                shop_ut=max(ls3)
+                dt_run=max(ls5)
+                epc=max(ls4)
+                alt_ind=max(ls6)
+                fnames1.append({'part_no':fnames2[i]['partno'],'alt_link':fnames2[i]['alt_link'],'alt_ind':alt_ind,'qty_alt':qty_alt,'ptc':ptc,'shop_ut':shop_ut,'dt_run':dt_run,'epc':epc})
+            else:
+                fnames1.append({'part_no':fnames2[i]['partno'],'alt_link':fnames2[i]['alt_link'],'alt_ind':fnames2[i]['alt_ind'],'qty_alt':fnames2[i]['qty_alt'],'ptc':fnames2[i]['ptc'],'shop_ut':fnames2[i]['shop_ut'],'dt_run':fnames2[i]['dt_run'],'epc':fnames2[i]['epc']})
+    r= 1
+    return fnames1
+   
+def createCPM1():
+    cursor=connection.cursor()
+    try:
+            cursor.execute('''CREATE TABLE "CPM1"( "PART_NO" character(8), "EPC" character(2),"QTY" numeric(4), "SHOP_UT"   varchar(2),"PTC"   varchar(1),
+                    "ALT_LINK" numeric(4) , "ALT_IND" varchar(1),     "QTY_ALT" numeric(9,3),  "UPDT_DT" date, "CUR_TIME" varchar(40))''')
+            r = 1
+            msg=''
+    except:
+            msg = "Table not created : CPM1"
+            r = 0
+    lst=[{'status':r,'msg':msg}]
+    return msg
+
+def delCPM1():
+        try:
+            cursor=connection.cursor()
+            cursor.execute('''truncate table public."CPM1";''')
+            msg=''
+            r=1
+
+        except:
+            msg= "Data not deleted : CPM1"
+            r=0
+        lst=[{'status':r,'msg':msg}]
+        return lst
+
+from operator import itemgetter
+def summarizeConsPart(fnames1,fname2):         
+    fnames = []
+    part=[{'partno':'','alt_ind':''}]
+
+    cursor=connection.cursor()
+    for i in range(len(fnames1)):
+       if [{'partno':fnames1[i]['part_no'],'alt_link':fnames1[i]["alt_link"]}] not in part:
+            part.append({'partno':fnames1[i]['part_no'],'alt_link':fnames1[i]["alt_link"]})
+            if fnames1[i]['part_no']!='':    
+                ls=list(filter(lambda x:str(x['part_no']) in str(fnames1[i]['part_no']),fnames1))
+                if len(ls) > 1:
+                    ls2=list(map(itemgetter('ptc'),ls))
+                    ls7=list(map(itemgetter('qty_alt'),ls))
+                    ls3=list(map(itemgetter('shop_ut'),ls))
+                    ls4=list(map(itemgetter('epc'),ls))
+                    ls5=list(map(itemgetter('dt_run'),ls))
+                    qty_alt=0
+                    qty=max(ls7)
+                    ptc=max(ls2)
+                    shop_ut=max(ls3)
+                    dt_run=max(ls5)
+                    epc=max(ls4)
+                    alt_ind=None
+                    alt_link=0
+                    fnames.append({'part_no':fnames1[i]['part_no'],'qty':qty,'alt_link':alt_link,'alt_ind':alt_ind,'qty_alt':qty_alt,'ptc':ptc,'shop_ut':shop_ut,'dt_run':dt_run,'epc':epc})
+                else:
+                    fnames.append({'part_no':fnames1[i]['part_no'],'qty':fnames1[i]['qty_alt'],'alt_link':0,'alt_ind':None,'qty_alt':0,'ptc':fnames1[i]['ptc'],'shop_ut':fnames1[i]['shop_ut'],'dt_run':fnames1[i]['dt_run'],'epc':fnames1[i]['epc']})
+    part=[{'partno':'','alt_link':'','alt_ind':''}]
+    altlink=[]
+    altind=[]
+    for i in range(len(fname2)):
+         if [{'partno':fname2[i]['partno'],'alt_link':fname2[i]["alt_link"],'alt_ind':fname2[i]["alt_ind"]}] not in part:
+            part.append({'partno':fname2[i]['partno'],'alt_link':fname2[i]["alt_link"],'alt_ind':fname2[i]["alt_ind"]})
+            if fname2[i]['partno']!='':
+                ls=list(filter(lambda x:str(x['partno']) in str(fname2[i]['partno']) and str(x['alt_link']) in str(fname2[i]['alt_link']) and str(x['alt_ind']) in str(fname2[i]['alt_ind']),fname2))
+                if len(ls) > 1:
+                    ls1=list(map(itemgetter('qty'),ls))
+                    ls2=list(map(itemgetter('ptc'),ls))
+                    ls3=list(map(itemgetter('shop_ut'),ls))
+                    ls4=list(map(itemgetter('ep'),ls))
+                    ls5=list(map(itemgetter('dt_run'),ls))
+                    qty_alt="{0:.3f}".format(reduce(lambda x,y:float(x) + float(y),ls1))
+                    qty=0
+                    ptc=max(ls2)
+                    shop_ut=max(ls3)
+                    dt_run=max(ls5)
+                    epc=max(ls4)
+                    fnames.append({'part_no':fname2[i]['partno'],'qty':qty,'alt_link':fname2[i]['alt_link'],'alt_ind':fname2[i]['alt_ind'],'qty_alt':qty_alt,'ptc':ptc,'shop_ut':shop_ut,'dt_run':dt_run,'epc':epc})
+                else:
+                    fnames.append({'part_no':fname2[i]['partno'],'qty':0,'alt_link':fname2[i]['alt_link'],'alt_ind':fname2[i]['alt_ind'],'qty_alt':fname2[i]['qty'],'ptc':fname2[i]['ptc'],'shop_ut':fname2[i]['shop_ut'],'dt_run':fname2[i]['dt_run'],'epc':fname2[i]['ep']})
+    fname = fnames
+    if len(fname)> 0:
+        for i in range(len(fname)):
+            cursor.execute('''INSERT INTO public."CPM1"("PART_NO", "EPC", "QTY", "SHOP_UT", "PTC", "ALT_LINK", "ALT_IND", "QTY_ALT", "UPDT_DT", "CUR_TIME")
+                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);''',[fname[i]["part_no"],fname[i]["epc"],fname[i]["qty"],fname[i]["shop_ut"], 
+                            fname[i]["ptc"], fname[i]["alt_link"],fname[i]["alt_ind"],fname[i]["qty_alt"],
+                            datetime.datetime.strptime(fname[i]["dt_run"],"%Y-%m-%d").date(), createcpm['CURRTIME']])
+                
+   
+       
+
+
+
+def AddDataToTable1(a,b,c,d,e,f,g,h,myTable):
+        num = len(myTable) + 1
+        myTable.append({"partno":a, "ptc":b, "qty":c, "shop_ut":d, "ep":e, "alt_link":f, "alt_ind":g,"dt_run":h})
+        return myTable
+     
+def AddDataToTable( a,  b,  c,  d,  e,  f,  g,  h, i, myTable):
+        num = len(myTable)+ 1
+        myTable.append({"partno":a, "ptc":b, "qty":c, "shop_ut":d, "ep":e, "alt_link":f, "alt_ind":g,"dt_run":h})
+        return myTable
+
+def MyLongRunningTask1():
+    ret=expolde()
+    status=ret[0]['status']
+    msg=ret[0]['msg']
+    btn=ret[0]['btn']
+    
+import time
+def MyLongRunningTask2():
+    # try:
+    t = time.localtime()
+    print(t)
+    current_time = time.strftime("%H%M%S", t)
+    cursor=connection.cursor()
+    r=1
+    msg=''
+    btn=''
+    cursor.execute('''select "START_DT","CPM_START_TIME" cpm_start_time,"CPM_END_TIME" cpm_end_time from public."CPM_PROCESS" where ("START_DT", "START_TIME") in (select "START_DT",max("START_TIME") from public."CPM_PROCESS" where "START_DT"=(select max("START_DT") from public."CPM_PROCESS") group by "START_DT");''')
+    ds=list(cursor.fetchall())
+    if len(ds) > 0:
+        CURRTIME = ds[0][1]
+        createcpm['vEnd_time'] = ds[0][2]
+        t = time.localtime()
+        current_time = time.strftime("%H%M%S", t)
+        if (CURRTIME is not None and createcpm['vEnd_time'] is None):
+            msg="CPM UPDATION IS IN PROGRESS, SO WAIT TILL IT GETS OVER.."
+            r = 0
+   
+        elif (CURRTIME is None and createcpm['vEnd_time'] is None):
+            cursor.execute('''update public."CPM_PROCESS" set "CPM_START_TIME"=%s where ("START_DT", "START_TIME") in 
+                (select "START_DT",max("START_TIME") from public."CPM_PROCESS" where "START_DT"= 
+                (select max("START_DT") from public."CPM_PROCESS") group by "START_DT")''',[current_time])
+    if r != 0:
+        
+        cursor.execute('''delete from public."CPM1" where coalesce("QTY"::text,'0')='0' and coalesce("ALT_LINK"::text,'0')='0';''')
+        cursor.execute('''delete from public."CPM" where (trim("PART_NO"),trim("EPC"),coalesce("ALT_LINK"::text,'0'),coalesce(trim("ALT_IND"),'#')) in (
+                        select trim("PART_NO"),trim( "EPC"),coalesce("ALT_LINK"::text,'0'),coalesce(trim("ALT_IND"),'#') from public."CPM" 
+                        except select trim("PART_NO"),trim( "EPC"),coalesce("ALT_LINK"::text,'0'),coalesce(trim("ALT_IND"),'#') from public."CPM1");''')
+        cursor.execute('''select "PART_NO", "EPC", "QTY", "SHOP_UT", "PTC", "ALT_LINK", "ALT_IND","QTY_ALT", "UPDT_DT", "CUR_TIME" from public."CPM1";''')
+        ds=(cursor.fetchall())
+        for i in range(len(ds)):
+            cursor.execute('''update public."CPM" set "PTC"=%s,"QTY_OLD" = (SELECT "QTY" FROM public."CPM" where trim("PART_NO") = trim(%s) and trim("EPC")= trim(%s) and COALESCE("ALT_LINK"::TEXT,'0')=COALESCE(%s::text,'0') and COALESCE("ALT_IND",'#')=COALESCE(%s,'#') limit 1), "SHOP_UT" =%s, "QTY"=%s, "UPDT_DT"= %s  
+                where trim("PART_NO") = trim(%s) and trim("EPC")= trim(%s) and COALESCE("ALT_LINK"::TEXT,'0')=COALESCE(%s::text,'0') and COALESCE("ALT_IND",'#')=COALESCE(%s,'#');
+		        ''',[ds[i][4],ds[i][0],ds[i][1],ds[i][5],ds[i][6],ds[i][3],ds[i][2],ds[i][8],ds[i][0],ds[i][1],ds[i][5],ds[i][6]])
+        
+        cursor.execute('''insert into public."CPM" ( select b."PART_NO",b."EPC",b."QTY",b."SHOP_UT",b."PTC",b."QTY",coalesce(b."ALT_LINK",0),b."ALT_IND",b."QTY_ALT", b."UPDT_DT",null from 
+        (select trim("PART_NO") part_no,trim("EPC") epc,coalesce("ALT_LINK",0) alt_link,coalesce(trim("ALT_IND"),'#') alt_ind from public."CPM1"
+        except select trim("PART_NO") part_no,trim("EPC") epc,coalesce("ALT_LINK",0) alt_link,coalesce(trim("ALT_IND"),'#') alt_ind from public."CPM") a, public."CPM1" b 
+        where trim(a.part_no)=trim(b."PART_NO") and trim(a.epc)=trim(b."EPC") and 
+        coalesce(a.alt_link,0)=coalesce(b."ALT_LINK",0) and coalesce(trim(a.alt_ind),'#')=coalesce(trim(b."ALT_IND"),'#'));''')
+        t = time.localtime()
+        current_time = time.strftime("%H%M%S", t)
+        cursor.execute('''update public."CPM_PROCESS" set "CPM_END_TIME"=%s, "UPDT_CPM"='Y' where ("START_DT", "START_TIME") in
+        (select "START_DT",max("START_TIME") from public."CPM_PROCESS" where "START_DT"= 
+        (select max("START_DT") from public."CPM_PROCESS") group by "START_DT")''',[current_time])
+            
+        
+        msg= "CPM Updated successfully. Now update QPP"
+        r=2
+    if r!=0 and r!=2:
+        r=0
+        msg="Unable to Update CPM successfully. Process not over yet!!"
+    lst=[{'status':r,'msg':msg,'CURRTIME':createcpm['CURRTIME']}]
+   
+
+import threading
+def btnUpdCPM_Click(request):
+    if request.method=='GET' and request.is_ajax():
+        t=threading.Thread(target=MyLongRunningTask2)
+        #try:
+        t.start()
+        t.join()
+        r=1
+        msg=''
+        lst=[{'status':r,'msg':msg}]
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:False"},status=400)
+
+def btnUpdQPP_Click(request):
+    if request.method=='GET' and request.is_ajax():
+        #try:
+        cursor=connection.cursor()
+        
+        r=1
+        msg=''
+        cursor.execute('''select "START_DT","QPP_START_TIME" qpp_start_time, "QPP_END_TIME" qpp_end_time from public."CPM_PROCESS" where ("START_DT", "START_TIME") in 
+        (select "START_DT",max("START_TIME") from public."CPM_PROCESS" where "START_DT"= 
+        (select max("START_DT") from public."CPM_PROCESS") group by "START_DT")''')
+        ds=list(cursor.fetchall())
+            
+        if len(ds) > 0:
+            vQPP_START_TIME = createcpm['vQPP_START_TIME'] = ds[0][1]
+            vQPP_END_TIME = createcpm['vQPP_END_TIME'] = ds[0][2]
+
+            if (vQPP_START_TIME is not None and vQPP_END_TIME is None):
+                msg= "QPP UPDATION IS IN PROGRESS, SO WAIT TILL IT GETS OVER.."
+                r= 0
+            elif (vQPP_START_TIME is None and vQPP_END_TIME is None):
+                t = time.localtime()
+                current_time = time.strftime("%H%M%S", t)
+                cursor.execute('''update public."CPM_PROCESS" set "QPP_START_TIME"=%s where ("START_DT", "START_TIME") in 
+                (select "START_DT",max("START_TIME") from public."CPM_PROCESS" where "START_DT"= 
+                (select max("START_DT") from public."CPM_PROCESS") group by "START_DT");''',[current_time])
+                r = 1 
+                msg='QPP Updated Successfully!!!'  
+
+                t = time.localtime()
+                current_time = time.strftime("%H%M%S", t)
+                cursor.execute('''update public."CPM_PROCESS" set "QPP_END_TIME"=%s ,"UPDT_QPP"='Y' where ("START_DT", "START_TIME") in 
+                (select "START_DT",max("START_TIME") from public."CPM_PROCESS" where "START_DT"= 
+                (select max("START_DT") from public."CPM_PROCESS") group by "START_DT");''',[current_time])
+        else: 
+            r = 0           
+            msg="Unable to Update QPP successfully. Process Not over yet!!"
+        lst=[{'status':r,'msg':msg}]
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:False"},status=400)
+
+def Reset_Click(request):
+    if request.method=='GET' and request.is_ajax():
+        cursor=connection.cursor()
+        cursor.execute('''select "START_DT" ::text, "START_TIME", "ASSLY_OVER","UPDT_CPM", "CPM_START_TIME", "CPM_END_TIME", "UPDT_QPP", 
+            "QPP_START_TIME","QPP_END_TIME","END_DT" ::text, "END_TIME" from public."CPM_PROCESS" where "START_DT"=(select
+            max("START_DT") from public."CPM_PROCESS") and "START_TIME"=(select max("START_TIME") from public."CPM_PROCESS"
+            where "START_DT"=(select max("START_DT") from public."CPM_PROCESS"))''')
+        ds=list(cursor.fetchall())
+        if len(ds) > 0:
+            t = time.localtime()
+            current_time = time.strftime("%H%M%S", t)
+            CURRENT_DATE=datetime.datetime.today().strftime('%Y-%m-%d')
+            dtTime = str(ds[0][0]).split(' ')
+            createcpm['vStart_dt'] = dtTime[0]
+            createcpm['vStart_time'] = ds[0][1]
+            da=datetime.datetime.strptime(createcpm['vStart_dt'],'%Y-%m-%d')
+            cursor.execute('''update  public."CPM_PROCESS" set "END_DT"=%s, "END_TIME"=
+            %s,"UPDT_CPM"='Y',"UPDT_QPP"='Y',"CPM_START_TIME"= %s, "CPM_END_TIME"=%s,"QPP_START_TIME"= %s,"QPP_END_TIME"=%s,
+            "QPP_ASSLY_OVER"=0  where  "START_TIME"=%s;''',[CURRENT_DATE,current_time,current_time,current_time,current_time,current_time,createcpm['vStart_time']])
+            msg= "Reset Successful. Now Open Again"
+        return JsonResponse(msg,safe=False)
+    return JsonResponse({"success:False"},status=400)       
+       
+def btnRefresh_Click(request):
+    if request.method=='GET' and request.is_ajax():
+        cursor=connection.cursor()
+        cursor.execute('''select to_char("START_DT",'dd/mm/yyyy'),"START_TIME",to_char("END_DT",'dd/mm/yyyy'),
+        "END_TIME","ASSLY_OVER", "CPM_START_TIME","CPM_END_TIME","UPDT_CPM","QPP_START_TIME","QPP_END_TIME",
+        "QPP_ASSLY_OVER","UPDT_QPP" from public."CPM_PROCESS" where "START_DT"=(select max("START_DT") 
+        from public."CPM_PROCESS") and "START_TIME"=(select max("START_TIME") from public."CPM_PROCESS" 
+        where "START_DT"=(select max("START_DT") from public."CPM_PROCESS" ) ) order by "START_DT";''')
+        prcs=list(cursor.fetchall())
+        return JsonResponse(prcs,safe=False)
+    return JsonResponse({"success:False"},status=400) 
+        
+def btnAllJobs_Click(request):
+    if request.method=="GET" and request.is_ajax():
+        cursor=connection.cursor()
+        cursor.execute('''select to_char("START_DT",'dd/mm/yyyy'),"START_TIME",to_char("END_DT",'dd/mm/yyyy'),
+        "END_TIME","ASSLY_OVER", "CPM_START_TIME","CPM_END_TIME","UPDT_CPM","QPP_START_TIME","QPP_END_TIME",
+        "QPP_ASSLY_OVER","UPDT_QPP" from public."CPM_PROCESS" order by "START_DT";''')
+        prcs=list(cursor.fetchall())
+        return JsonResponse(prcs,safe=False)
+    return JsonResponse({"success:False"},status=400)
+
+def btnProcess_Click(request):
+    if request.method=="GET" and request.is_ajax():
+        
+        t = threading.Thread(target=MyLongRunningTask1)
+        cursor=connection.cursor()
+        msg=''
+        r=1
+        cursor.execute('''select "ASSLY_OVER","UPDT_CPM","UPDT_QPP","END_DT"::text, "END_TIME" from public."CPM_PROCESS" where "START_DT"=(select max("START_DT") 
+            from public."CPM_PROCESS") and "START_TIME"=(select max("START_TIME") from public."CPM_PROCESS" where "START_DT"=
+            (select max("START_DT") from public."CPM_PROCESS"))''')
+        ds=cursor.fetchall()
+        if len(ds) > 0:
+            createcpm['vAssly_over'] = ds[0][0]
+            createcpm['vUpdt_cpm'] = ds[0][1]
+            createcpm['vUpdt_qpp'] = ds[0][2]
+            createcpm['vEnd_dt'] = ds[0][3]
+            createcpm['vEnd_time'] = ds[0][4]
+
+            if createcpm['vEnd_dt'] == "" and createcpm['vEnd_time'] == "":
+                msg= "CPM UPDATION IS IN PROGRESS, " + createcpm['vAssly_over'] + " ASSEMBLIES ARE PROCEESSED. SO WAIT TILL ALL ASSEMBLIES GETS OVER.."
+                r=0
+            elif ((createcpm['vEnd_dt'] != "" and createcpm['vEnd_time'] != "") and (createcpm['vUpdt_cpm'] == "Y") and (createcpm['vUpdt_qpp']  == "Y")):
+                dtTime = createcpm['curTime']    
+                createcpm['DT_RUN']= datetime.datetime.today().strftime('%Y-%m-%d')
+                t1 = time.localtime()
+                current_time = time.strftime("%H%M%S", t1)
+                createcpm['CURRTIME']= current_time
+                cursor.execute('''insert into public."CPM_PROCESS" ("START_DT", "START_TIME") values (%s,%s);''',[ createcpm['DT_RUN'],createcpm['CURRTIME']])
+                print('start')
+                t.start()
+                print('end')
+                t.join()
+        else:
+            dtTime = createcpm['curTime']    
+            createcpm['DT_RUN']= datetime.datetime.today().strftime('%Y-%m-%d')
+            t = time.localtime()
+            current_time = time.strftime("%H%M%S", t)
+            createcpm['CURRTIME']= current_time
+            
+            cursor.execute('''insert into public."CPM_PROCESS" ("START_DT", "START_TIME") values (%s,%s);''',[ createcpm['DT_RUN'],createcpm['CURRTIME']])
+            ret=expolde()
+            status=ret[0]['status']
+            msg=ret[0]['msg']
+            btn=ret[0]['btn']
+        if r!=0 and msg !='':          
+            msg= "Explode Aborted"
+            r=0
+        lst=[{'status':r,'msg':msg}]
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:False"},status=400)
