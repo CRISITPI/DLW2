@@ -3666,7 +3666,7 @@ def checktotal(request):
         
         total=0
         try:
-            obj=dpo.objects.filter(loco_type=loco,order_no=b2)
+            obj=Dpo.objects.filter(loco_type=loco,order_no=b2)
             if(len(obj)):
                 total=obj[0].total_count
             
@@ -3832,7 +3832,7 @@ def dpo(request):
 @role_required(urlpass='/dpoinput/')
 def dpoinput(request):
     
-    from .models import annual_production,barrelfirst,dpo,dpoloco,jpo
+    from .models import annual_production,barrelfirst,Dpo,dpoloco,jpo
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -3889,7 +3889,7 @@ def dpoinput(request):
             for l in range(len(annualobj)):
                 annulloco.append(annualobj[l].loco_type)
             
-            obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+            obj=Dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
             if (obj is not None) and len(obj):
                 subject=obj[0].subject
                 reference=obj[0].reference
@@ -3957,12 +3957,12 @@ def dpoinput(request):
             annualobj=annual_production.objects.filter(financial_year=ctp,revisionid=revisionidmax)
             for l in range(len(annualobj)):
                 annulloco.append(annualobj[l].loco_type)
-            dpopb=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno)
+            dpopb=Dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno)
             if dpopb is not None and len(dpopb):
-                obj=dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno).update(subject=sub,reference=refn,date=datee,copyto=copyto,summary=summary)
+                obj=Dpo.objects.filter(procedureno=0,locotype=locot,orderno=ordno).update(subject=sub,reference=refn,date=datee,copyto=copyto,summary=summary)
                 
             else:
-                obj=dpo.objects.create()
+                obj=Dpo.objects.create()
                 obj.subject=sub
                 obj.reference=refn
                 obj.date=datee
@@ -4034,7 +4034,7 @@ def dpoinput(request):
 @login_required
 @role_required(urlpass='/dporeport/')
 def dporeport(request):
-    from .models import annual_production,dpo,barrelfirst,dpoloco,jpo
+    from .models import annual_production,Dpo,barrelfirst,dpoloco,jpo
     from django.db.models import Max
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
@@ -4118,7 +4118,7 @@ def dporeport(request):
             procedure=pord
 
             if(pord!=None and  len(pord)):
-                dloco=dpo.objects.filter(procedureno=pord)
+                dloco=Dpo.objects.filter(procedureno=pord)
                 if(len(dloco) and dloco is not None):
                     loco=dloco[0].locotype
                     b2=dloco[0].orderno
@@ -4126,7 +4126,7 @@ def dporeport(request):
                 if (obj1 is not None) and len(obj1):
                     b1=obj1[0].code
                 
-                obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
+                obj=Dpo.objects.filter(locotype=loco,orderno=b2,procedureno=pord)
                 if (obj is not None) and len(obj):
                     subject=obj[0].subject
                     reference=obj[0].reference
@@ -4175,7 +4175,7 @@ def dporeport(request):
                 obj1=barrelfirst.objects.filter(locotype=loco)
                 b1=obj1[0].code
                 
-                obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+                obj=Dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
                 if (obj is not None) and len(obj):
                     subject=obj[0].subject
                     reference=obj[0].reference
@@ -4281,8 +4281,8 @@ def dporeport(request):
 
             objlocobt=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0)
             if (objlocobt is not None) and len(objlocobt):
-                allobj = dpo.objects.all()
-                maxobj=dpo.objects.aggregate(Max('procedureno'))
+                allobj = Dpo.objects.all()
+                maxobj=Dpo.objects.aggregate(Max('procedureno'))
                 if allobj is None or len(allobj)==0:
                     pnonum=547
                 else:
@@ -4291,7 +4291,7 @@ def dporeport(request):
 
 
             
-            obj=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
+            obj=Dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0)
             if (obj is not None) and len(obj):
                 subject=obj[0].subject
                 reference=obj[0].reference
@@ -4340,7 +4340,7 @@ def dporeport(request):
                     data=1
 
                     dpp=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=0).update(procedureno=pnonum)
-                    dpp=dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0).update(procedureno=pnonum)
+                    dpp=Dpo.objects.filter(locotype=loco,orderno=b2,procedureno=0).update(procedureno=pnonum)
 
                     dpoop=dpoloco.objects.filter(locotype=loco,orderno=b2,procedureno=pnonum)
                     procedure=dpoop[0].procedureno
@@ -28217,3 +28217,56 @@ def btnProcess_Click(request):
         lst=[{'status':r,'msg':msg}]
         return JsonResponse(lst,safe=False)
     return JsonResponse({"success:False"},status=400)
+
+@login_required
+@role_required(urlpass='/batchrelease/')
+def batchrelease(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'batchrelease.html',context)

@@ -614,6 +614,7 @@ urlpatterns = [
     path('txtMaj_grp_TextChanged/',txtMaj_grp_TextChanged,name='txtMaj_grp_TextChanged'),
     path('BtnSave_Click/',BtnSave_Click,name='BtnSave_Click'),
     path('Unit_List/',Unit_List,name='Unit_List'),
+    path('batchrelease/',batchrelease,name='batchrelease'),
 
 
 

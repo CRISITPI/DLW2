@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>  -->
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font: 16px Arial;  
+    }
+    
+    /*the container must be positioned relative:*/
+    .autocomplete {
+      position: relative;
+      display: inline-block;
+    }
+    
+    input {
+      border: 1px solid transparent;    
+      background-color: #f1f1f1;
+      padding: 10px;
+      font-size: 16px;
+    }
+    
+    input[type=text] {
+      background-color: #f1f1f1;
+      width: 100%;
+    }
+    
+    input[type=submit] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+      width: 15%;
+        text-align: center;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    input[type=button] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+      width: 15%;
+        text-align: center;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    table tr{
+      cursor: pointer;transition: all .25s ease-in-out;
+  }
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      /*position the autocomplete items to be the same width as the container:*/
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 400px;
+      overflow-y: scroll; 
+      overflow-x: hidden;
+    }
+    
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff; 
+      border-bottom: 1px solid #d4d4d4; 
+    }
+    
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9; 
+    }
+    
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+      background-color: DodgerBlue !important; 
+      color: #ffffff; 
+    }
+    </style>
+<br>
+<h3><center>Work Demand By Shop</center></h3>
+<center>
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO%}
+    <div class="alert alert-primary" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+    <div class="alert alert-success" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+    <div class="alert alert-danger" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING%}
+    <div class="alert alert-warning" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% endfor %}
+    {% endif %}
+    
+  
+
+</center>
+<br>
+<center>
+    <form method="POST">{%csrf_token%}
+    <div class="container"> 
+    <div id='sse'>       
+        <div class="form-row">            
+            <div class="form-group col-md-3">
+                <label for="locono">LOCO NO</label>
+                <div class="autocomplete" style="width:250px;">
+                    <input id="locono" autocomplete="off" type="text" name="locono" placeholder="LOCO NO"    maxlength="8" onkeypress="return isNumberKeyln(event)" >
+                    <br><span id="lblErrora" style="color: red"></span> 
+                </div></div>
+            <div class="form-group col-md-3">
+                <label for="batchno">WORK ORDER</label>
+                  <div class="autocomplete" style="width:250px;">
+                        <input id="workorder" autocomplete="off" type="text" name="workorder" placeholder="WORK ORDER"  maxlength="8" onkeypress="return isNumberKeywo(event)" >
+                        <br><span id="lblErrorb" style="color: red"></span> 
+                    </div></div>
+            <div class="form-group col-md-3">
+                <label for="date">RELEASE DATE &nbsp;&nbsp; &nbsp;&nbsp;  </label>
+                 <div class="autocomplete" style="width:250px;">
+                    <input id="date" autocomplete="off" type="text" name="date" placeholder="SELECT DATE" >
+                    <br><span id="lblErrorbr" style="color: red"></span> 
+                </div></div>
+                <div class="form-group col-md-3">
+                  <label for="date">TYPE OF WO &nbsp;&nbsp; &nbsp;&nbsp;  </label>
+                   <div class="autocomplete" style="width:250px;">
+                      <input id="code" autocomplete="off" type="text" name="code" placeholder="SELECT TYPE OF WO" onkeypress="return isNumberKeycode(event)">
+                      <br><span id="lblErrorcode" style="color: red"></span> 
+                  </div></div>
+        </div> 
+</div>
+
+</form>
+</center>
+
+<script>
+
+</script>
+
+
+{% endblock content %}
