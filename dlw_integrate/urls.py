@@ -615,6 +615,10 @@ urlpatterns = [
     path('BtnSave_Click/',BtnSave_Click,name='BtnSave_Click'),
     path('Unit_List/',Unit_List,name='Unit_List'),
     path('batchrelease/',batchrelease,name='batchrelease'),
+    path('ajax/batchreleasegetbatch/',batchreleasegetbatch,name='batchreleasegetbatch'),
+    path('ajax/Batchreleasedetails/',Batchreleasedetails,name='Batchreleasedetails'),
+
+
 
 
 

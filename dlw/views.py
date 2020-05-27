@@ -28270,3 +28270,17 @@ def batchrelease(request):
             'subnav':subnav,
         }
     return render(request,'batchrelease.html',context)
+
+def batchreleasegetbatch(request):
+    if request.method=="GET" and request.is_ajax():
+        lst=list(dpoloco.objects.values('batchordno').order_by('batchordno').distinct())
+        print(lst)
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:False"},status=400)
+def Batchreleasedetails(request):
+    if request.method=="GET" and request.is_ajax():
+        lst=list(dpoloco.objects.values('batchordno').order_by('batchordno').distinct())
+        print(lst)
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:False"},status=400)
+
