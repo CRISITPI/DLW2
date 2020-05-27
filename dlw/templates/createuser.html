@@ -1,5 +1,10 @@
 {% extends 'base.html' %} {% block content %}
 
+<style>
+    .custom-control-label{
+        margin-right: 10px;
+    }
+</style>
 <br>
 <center>
     <h3>Add User</h3>
@@ -18,13 +23,9 @@
     {% endif %}
 </center>
 <center>
-    <form method="POST">{%csrf_token%}
+    <form method="POST">  {%csrf_token%}
 
-        <div class="col-4">
-
-
-
-
+        <div class="col-4"> 
 
             <label>Select Employee Id</label>
             <select class="form-control" id="users" name="emp_id" required>
@@ -33,12 +34,7 @@
    			<option value = {{uname.empno}}>{{uname.empno}}</option>
    		{% endfor %}
    	</select><br>
-
-
-
-
-
-            <label>Select Parent</label>
+        <label>Select Parent</label>
             <select class="form-control" name="role" id="role" required>
 	   <option id="roleop" selected disabled hidden>Select Parent</option>
    	</select><br>
@@ -48,36 +44,29 @@
 
             <label>Select Permission</label>
             <select class="form-control" name="sublevel" id="sublevel" required multiple>
-	   <option selected disabled hidden>Select Permission/s</option>
-			<script>
-			$(document).ready(function(){
-   $("#role").change(function(e){
-   	e.preventDefault();
-   	var username = $(this).val();
-   	var data = {username};
-       	$.ajax({
-   		type : 'GET',
-   		url :  "{% url 'get_permission_info' %}",
-        dataType : 'json',
-   		data : data,
-   		success : function(response){
-			   $('#sublevel').html('');
-   				for(var i=0;i<response.permission_info.sub.length;i++){
-				$("#sublevel").append(`<option>${response.permission_info.sub[i].role}</option>`);
-				}
-   		},
-   		error : function(response){
-   		}
-   	})
-})
-})
-			</script>
-   	</select><br> Email
-
-
-
-            <input type="email" id="email" name="email" class="form-control" readonly><br>
-        </div>
+       <option selected disabled hidden>Select Permission/s</option>  
+       </select>
+       <br>
+       <label>Select Operation </label>
+      <div style="display: flex">   
+       <div class="custom-control custom-checkbox ">
+        <input type="checkbox" class="custom-control-input" id="read" name="read" checked>
+        <label class="custom-control-label" for="read">Read </label>
+      </div><div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="create" name="create">
+        <label class="custom-control-label" for="create">Create </label>
+      </div>
+      <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="update" name="update">
+        <label class="custom-control-label" for="update">Update </label>
+      </div>
+      <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="delete" name="delete">
+        <label class="custom-control-label" for="delete">Delete </label>
+      </div>
+    </div>
+ 
+</div>
         <div class="col-12" id="user_info">
             <hr>
             <table class="table table-stripped table-fixed">
@@ -87,6 +76,7 @@
                         <td>Designation</td>
                         <td>Department</td>
                         <td>Contact-no</td>
+                        <td>Email-Id</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,7 +88,33 @@
     </form>
 </center>
 <br>
-<script type="text/javascript">
+
+
+<script>
+    $(document).ready(function(){
+     $("#role").change(function(e){
+         e.preventDefault();
+        
+         var username = $(this).val();
+         //alert(username)
+         var data = {username};
+             $.ajax({
+             type : 'GET',
+             url :  "{% url 'get_permission_info' %}",
+          dataType : 'json',
+             data : data,
+             success : function(response){
+                 $('#sublevel').html('');
+                     for(var i=0;i<response.permission_info.sub.length;i++){
+                  $("#sublevel").append(`<option>${response.permission_info.sub[i].role}</option>`);
+                  }
+             },
+             error : function(response){
+             }
+         })
+  })
+  })
+               
     $("#users").change(function(e) {
         e.preventDefault();
         var username = $(this).val();
@@ -132,8 +148,9 @@
    				<td name="designation">${response.emp_info.designation}</td>
    				<td name="department">${response.emp_info.department}</td>
    				<td name="contactno">${response.emp_info.contactno}</td>
+                <td name="contactno">${response.emp_info.email}</td>
    				</tr>`);
-                $("#email").val(`${response.emp_info.email}`);
+                
             },
             error: function(response) {}
         })

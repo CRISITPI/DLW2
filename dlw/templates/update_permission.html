@@ -1,4 +1,10 @@
 {% extends 'base.html' %} {% block content %}
+
+<style>
+    .custom-control-label{
+        margin-right: 10px;
+    }
+</style>
 <br>
 <center>
     <h3>Update Employee Permission</h3>
@@ -21,16 +27,16 @@
         <div class="col-4">
             <label>Select Employee-Id to Update</label>
 
-            <select class="form-control" id="users" name="emp_id">
-     <option selected disabled hidden>Select Employee Id</option>
+            <select class="form-control" id="users" name="emp_id" required  >
+     <option value="" selected disabled hidden>Select Employee Id</option>
    		{% for uname in users %}
    			<option value = {{uname.username}}>{{uname.username}}</option>
    		{% endfor %}
    	</select><br>
 
-            <label>Select Parent</label>
+            <label>Select Parent Role </label>
             <select class="form-control" name="role" id="role" required>
-	   <option selected disabled hidden>Select Parent</option>
+	   <option value="" selected disabled hidden>Select Parent</option>
    			{% for role in roles %}
    			<option value = {{role.parent}}>{{role.parent}}</option>
    		{% endfor %}
@@ -38,32 +44,31 @@
 
 
 
-            <label>Select New Permission</label>
+            <label>Select New Role Permission</label>
             <select class="form-control" name="sublevel" id="sublevel" required multiple>
-	   <option selected disabled hidden>Select Permission/s</option>
-			<script>
-			$(document).ready(function(){
-   $("#role").change(function(e){
-   	e.preventDefault();
-   	var username = $(this).val();
-   	var data = {username};
-       	$.ajax({
-   		type : 'GET',
-   		url :  "{% url 'get_permission_info' %}",
-        dataType : 'json',
-   		data : data,
-   		success : function(response){
-			   $('#sublevel').html('');
-   				for(var i=0;i<response.permission_info.sub.length;i++){
-				$("#sublevel").append(`<option>${response.permission_info.sub[i].role}</option>`);
-				}
-   		},
-   		error : function(response){
-   		}
-   	})
-})
-})
-			</script>
+            <option value="" selected disabled hidden>Select Permission/s</option>
+            </select>
+
+       <br>
+       <label>Select Operation </label>
+      <div style="display: flex">   
+       <div class="custom-control custom-checkbox ">
+        <input type="checkbox" class="custom-control-input" id="read" name="read"  >
+        <label class="custom-control-label" for="read">Read </label>
+      </div><div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="create" name="create">
+        <label class="custom-control-label" for="create">Create </label>
+      </div>
+      <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="update" name="update">
+        <label class="custom-control-label" for="update">Update </label>
+      </div>
+      <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="delete" name="delete">
+        <label class="custom-control-label" for="delete">Delete </label>
+      </div>
+    </div>
+			
    	</select><br>
         </div><br>
         <div class="col-12" id="user_info">
@@ -75,6 +80,7 @@
                         <td>Designation</td>
                         <td>Department</td>
                         <td>Contact-no</td>
+                        <td>Email-Id</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -91,7 +97,7 @@
 </center>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+  
         $("#users").change(function(e) {
             e.preventDefault();
             var username = $(this).val();
@@ -109,12 +115,55 @@
    				<td name="designation">${response.emp_info.designation}</td>
    				<td name="department">${response.emp_info.department}</td>
    				<td name="contactno">${response.emp_info.contactno}</td>
+                <td name="contactno">${response.emp_info.email}</td>
    				</tr>`);
+                   //alert(response.emp_info.read)
+                 if(response.emp_info.read){
+                   $("#read").attr('checked', true); 
+                 }else{
+                 $("#read").attr('checked', false);   
+                 }
+                 if(response.emp_info.create){
+                   $("#create").attr('checked', true);
+                 }else{
+                 $("#create").attr('checked', false);   
+                 }
+                 if(response.emp_info.update){
+                   $("#update").attr('checked', true);
+                 }else{
+                 $("#update").attr('checked', false);   
+                 }
+                 if(response.emp_info.delete){
+                   $("#delete").attr('checked', true);
+                 }else{
+                 $("#delete").attr('checked', false);   
+                 }
+
+
                 },
                 error: function(response) {}
             })
         })
-    })
-</script>
-
+    
+$("#role").change(function(e){
+e.preventDefault();
+var username = $(this).val();
+var data = {username};
+   $.ajax({
+   type : 'GET',
+   url :  "{% url 'get_permission_info' %}",
+dataType : 'json',
+   data : data,
+   success : function(response){
+       $('#sublevel').html('');
+           for(var i=0;i<response.permission_info.sub.length;i++){
+        $("#sublevel").append(`<option>${response.permission_info.sub[i].role}</option>`);
+        }
+   },
+   error : function(response){
+   }
+})
+})
+ 
+    </script>
 {% endblock content %}

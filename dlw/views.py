@@ -205,18 +205,31 @@ def viewsPermissionUpdate(request):
     return render(request,'viewsPermissionUpdate.html',context)
 
 
+from collections import defaultdict 
+ 
+nav=defaultdict()
+subnav=defaultdict()
+usermaster=defaultdict()
+rolelist = []
+
 
 
 
 def login_request(request):
     if request.method=='POST':
         u_id = request.POST.get('user_id')
-        pwd=request.POST.get('password')
+        pwd=request.POST.get('password') 
+                
+        global usermaster
+        global rolelist  
         user = authenticate(username=u_id, password=pwd)
+        usermaster=empmast.objects.filter(empno=user).first() 
+        rolelist=usermaster.role.split(", ") 
+        get_navbar(user)  
+ 
+ 
         if user is not None:
-            login(request, user)
-            currentuser=empmast.objects.filter(empno=user).first()
-            rolelist=currentuser.role.split(", ")
+            login(request, user) 
             if "Superuser" in rolelist:
                 return redirect('homeadmin')
             else:
@@ -226,7 +239,24 @@ def login_request(request):
     form = AuthenticationForm()
     return render(request, 'login.html', {"form": form})
 
-
+def get_navbar(user):        
+    global nav
+    global subnav 
+    nav=dynamicnavbarNew()    
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)    
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist).order_by('childmenu')
+  
+def dynamicnavbarNew():
+    if("Superuser" in rolelist):
+        nav=navbar.objects.filter(role="Superuser")
+        return nav
+    else:       
+        nav=navbar.objects.filter(role__in=rolelist).distinct('navmenu','navitem')        
+        return nav
+ 
 
 
 
@@ -320,22 +350,38 @@ def dynamicnavbar(request,rolelist=[]):
 
 @login_required
 @role_required(urlpass='/createuser/')
-def create(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+def create(request): 
+
     emp=empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL') | empmast.objects.filter(role__isnull=True,dept_desc='CRIS_MU')
     availableroles=roles.objects.all().values('parent').distinct()
     if request.method == "POST":
         emp_id=request.POST.get('emp_id')
         email=request.POST.get('email')
         role=request.POST.get('role')
+        read=request.POST.get('read')
+        create=request.POST.get('create')
+        update=request.POST.get('update')
+        delete=request.POST.get('delete')
+        if read=='on':
+           read=True 
+        else:
+           read=False
+
+        if create=='on':
+           create=True 
+        else:
+           create=False
+
+        if update=='on':
+           update=True 
+        else:
+           update=False
+
+        if delete=='on':
+           delete=True 
+        else:
+           delete=False
+
         sublevelrole=request.POST.getlist('sublevel')
         sublevelrolelist= ", ".join(sublevelrole)
         password="dlw@123"
@@ -343,6 +389,11 @@ def create(request):
             employee=empmast.objects.filter(empno=emp_id).first()
             employee.role=sublevelrolelist
             employee.parent=role
+            employee.op_read=read
+            employee.op_create=create
+            employee.op_update=update
+            employee.op_delete=delete
+
             newuser = User.objects.create_user(username=emp_id, password=password,email=email)
             employee.save()
             newuser.is_staff= True
@@ -354,6 +405,10 @@ def create(request):
             employee=empmast.objects.filter(empno=emp_id).first()
             employee.role=sublevelrolelist
             employee.parent=role
+            employee.op_read=read
+            employee.op_create=create
+            employee.op_update=update
+            employee.op_delete=delete
             newuser = User.objects.create_user(username=emp_id, password=password,email=email)
             employee.save()
             newuser.is_staff= True
@@ -377,7 +432,6 @@ def create(request):
 
 
 
-
     
 
 
@@ -386,26 +440,46 @@ def create(request):
 @login_required
 @role_required(urlpass='/update_permission/')
 def update_permission(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+     
     users=User.objects.all()
     availableroles=roles.objects.all().values('parent').distinct() 
     if request.method == "POST":
         updateuser=request.POST.get('emp_id')
         sublevelrole=request.POST.getlist('sublevel')
+        read=request.POST.get('read')
+        create=request.POST.get('create')
+        update=request.POST.get('update')
+        delete=request.POST.get('delete')
+        if read=='on':
+           read=True 
+        else:
+           read=False
+
+        if create=='on':
+           create=True 
+        else:
+           create=False
+
+        if update=='on':
+           update=True 
+        else:
+           update=False
+
+        if delete=='on':
+           delete=True 
+        else:
+           delete=False
+ 
         role=request.POST.get('role')
         sublevelrolelist= ", ".join(sublevelrole)
         if updateuser and sublevelrole:
             usermasterupdate=empmast.objects.filter(empno=updateuser).first()
             usermasterupdate.role=sublevelrolelist
             usermasterupdate.parent=role
+            usermasterupdate.op_read=read
+            usermasterupdate.op_create=create
+            usermasterupdate.op_update=update
+            usermasterupdate.op_delete=delete
             usermasterupdate.save()
             messages.success(request, 'Successfully Updated!')
             return redirect('update_permission')

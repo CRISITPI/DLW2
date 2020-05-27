@@ -3334,8 +3334,11 @@ class empmast(models.Model):
     contactno = models.CharField(max_length=10, blank=True, null=True)
     ticket_no = models.CharField(max_length=12, blank=True, null=True)
     idcard_no= models.CharField(max_length=15, blank=True, null=True)
-        
-
+    op_read = models.BooleanField(default=True)
+    op_create= models.BooleanField(default=False)
+    op_delete= models.BooleanField(default=False)
+    op_update= models.BooleanField(default=False)
+    
 
 class MiscellSection(models.Model):
    sno=models.AutoField(primary_key=True)
