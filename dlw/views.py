@@ -206,20 +206,15 @@ def viewsPermissionUpdate(request):
 
 
 from collections import defaultdict 
- 
 nav=defaultdict()
 subnav=defaultdict()
 usermaster=defaultdict()
 rolelist = []
 
-
-
-
 def login_request(request):
     if request.method=='POST':
         u_id = request.POST.get('user_id')
         pwd=request.POST.get('password') 
-                
         global usermaster
         global rolelist  
         user = authenticate(username=u_id, password=pwd)
@@ -259,9 +254,6 @@ def dynamicnavbarNew():
  
 
 
-
-
-
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -270,13 +262,6 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
-
-
-
-
-
-
-
 @login_required
 def logout_request(request):
     if request.method=='POST':
@@ -284,8 +269,6 @@ def logout_request(request):
         data={}
         return JsonResponse(data)
     return HttpResponseRedirect('login')
-
-
 
 @login_required
 @role_required(urlpass='/homeadmin/')
@@ -329,15 +312,6 @@ def homeuser(request):
         'subnav':subnav
     }
     return render(request,'homeuser.html',context)
-
-
-
-
-
-
-
-
-
 
 @login_required
 def dynamicnavbar(request,rolelist=[]):
@@ -428,14 +402,6 @@ def create(request):
     }
 
     return render(request,'createuser.html',context)
-
-
-
-
-    
-
-
-
 
 @login_required
 @role_required(urlpass='/update_permission/')
@@ -28358,3 +28324,1375 @@ def Batchreleasedetails(request):
         return JsonResponse(lst,safe=False)
     return JsonResponse({"success:False"},status=400)
 
+
+
+
+from collections import defaultdict  
+nav=defaultdict()
+subnav=defaultdict()
+usermaster=defaultdict()
+rolelist = []
+
+def login_request(request):
+    if request.method=='POST':
+        u_id = request.POST.get('user_id')
+        pwd=request.POST.get('password') 
+        global usermaster
+        global rolelist  
+        user = authenticate(username=u_id, password=pwd)
+        usermaster=empmast.objects.filter(empno=user).first() 
+        rolelist=usermaster.role.split(", ") 
+        get_navbar(user)  
+        if user is not None:
+            login(request, user) 
+            if "Superuser" in rolelist:
+                return redirect('homeadmin')
+            else:
+                return redirect('homeuser')
+        else:
+            messages.error(request,"Invalid username or password")
+    form = AuthenticationForm()
+    return render(request, 'login.html', {"form": form})
+
+
+def get_navbar(user):        
+    global nav
+    global subnav 
+    nav=dynamicnavbarNew()    
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)    
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist).order_by('childmenu')
+  
+def dynamicnavbarNew():
+    if("Superuser" in rolelist):
+        nav=navbar.objects.filter(role="Superuser")
+        return nav
+    else:       
+        nav=navbar.objects.filter(role__in=rolelist).distinct('navmenu','navitem')        
+        return nav
+ 
+
+@login_required
+@role_required(urlpass='/createuser/')
+def create(request): 
+    emp=empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL') | empmast.objects.filter(role__isnull=True,dept_desc='CRIS_MU')
+    availableroles=roles.objects.all().values('parent').distinct()
+    if request.method == "POST":
+        emp_id=request.POST.get('emp_id')
+        email=request.POST.get('email')
+        role=request.POST.get('role')
+        read=request.POST.get('read')
+        create=request.POST.get('create')
+        update=request.POST.get('update')
+        delete=request.POST.get('delete')
+        if read=='on':
+           read=True 
+        else:
+           read=False
+
+        if create=='on':
+           create=True 
+        else:
+           create=False
+
+        if update=='on':
+           update=True 
+        else:
+           update=False
+
+        if delete=='on':
+           delete=True 
+        else:
+           delete=False
+
+        sublevelrole=request.POST.getlist('sublevel')
+        sublevelrolelist= ", ".join(sublevelrole)
+        password="dlw@123"
+        if "Superuser" in sublevelrole and emp_id and role and sublevelrole:
+            employee=empmast.objects.filter(empno=emp_id).first()
+            employee.role=sublevelrolelist
+            employee.parent=role
+            employee.op_read=read
+            employee.op_create=create
+            employee.op_update=update
+            employee.op_delete=delete
+
+            newuser = User.objects.create_user(username=emp_id, password=password,email=email)
+            employee.save()
+            newuser.is_staff= True
+            newuser.is_superuser=True
+            newuser.save()
+            messages.success(request, 'Successfully Created!')
+            return redirect('create')
+        elif "Superuser" not in sublevelrole and emp_id and role and sublevelrole:
+            employee=empmast.objects.filter(empno=emp_id).first()
+            employee.role=sublevelrolelist
+            employee.parent=role
+            employee.op_read=read
+            employee.op_create=create
+            employee.op_update=update
+            employee.op_delete=delete
+            newuser = User.objects.create_user(username=emp_id, password=password,email=email)
+            employee.save()
+            newuser.is_staff= True
+            newuser.is_superuser=False
+            newuser.save()
+            messages.success(request, 'Successfully Created!')
+            return redirect('create')
+        else:
+            messages.error(request, 'Error, Try Again!')
+    context={
+        'nav':nav,
+        'usermaster':usermaster,
+        'emp':emp,
+        'ip':get_client_ip(request),
+        'roles':availableroles,
+        'subnav':subnav,
+    }
+
+    return render(request,'createuser.html',context)
+
+
+@login_required
+@role_required(urlpass='/update_permission/')
+def update_permission(request):
+     
+    users=User.objects.all()
+    availableroles=roles.objects.all().values('parent').distinct() 
+    if request.method == "POST":
+        updateuser=request.POST.get('emp_id')
+        sublevelrole=request.POST.getlist('sublevel')
+        read=request.POST.get('read')
+        create=request.POST.get('create')
+        update=request.POST.get('update')
+        delete=request.POST.get('delete')
+        if read=='on':
+           read=True 
+        else:
+           read=False
+
+        if create=='on':
+           create=True 
+        else:
+           create=False
+
+        if update=='on':
+           update=True 
+        else:
+           update=False
+
+        if delete=='on':
+           delete=True 
+        else:
+           delete=False
+ 
+        role=request.POST.get('role')
+        sublevelrolelist= ", ".join(sublevelrole)
+        if updateuser and sublevelrole:
+            usermasterupdate=empmast.objects.filter(empno=updateuser).first()
+            usermasterupdate.role=sublevelrolelist
+            usermasterupdate.parent=role
+            usermasterupdate.op_read=read
+            usermasterupdate.op_create=create
+            usermasterupdate.op_update=update
+            usermasterupdate.op_delete=delete
+            usermasterupdate.save()
+            messages.success(request, 'Successfully Updated!')
+            return redirect('update_permission')
+        else:
+            messages.error(request,"Error!")
+            return redirect('update_permission')
+
+    context={
+        'users':users,
+        'nav':nav,
+        'usermaster':usermaster,
+        'ip':get_client_ip(request),
+        'roles':availableroles,
+        'subnav':subnav,
+    }
+    return render(request,'update_permission.html',context)
+
+
+from .utils import render_to_pdf
+from django.db.models import Sum,Subquery
+from django.utils import formats
+from django.utils.dateformat import DateFormat
+import datetime
+from django.db.models import Count
+
+@login_required
+@role_required(urlpass='/EpCpm/')
+def EpCpm(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+
+    my_date=Cpm.objects.all().values('updt_dt').distinct()
+    my=[]
+    for i in my_date:
+        my.append(i['updt_dt'])
+    my.sort(reverse= True)
+    my1=my[0]
+    my=str(my[0])
+    mydate=my[8:10]+'-'+my[5:7]+'-'+my[0:4]
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp,
+            'lblDt': mydate,
+            'lblDt1': my1,
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+            'lblDt': mydate,
+            'lblDt1': my1,
+
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+            'lblDt': mydate,
+            'lblDt1': my1,
+
+        }
+    
+
+
+    return render(request,'EpCpm.html',context)
+      
+
+def unbound(request):
+    if request.method == "GET" and request.is_ajax():
+        Unbound = Code.objects.filter(cd_type='11').values('code').distinct()
+        un=[]
+        for j in Unbound:
+            un.append(j['code'])
+        un.sort()
+        data =  {
+            'un': un
+        }
+        return JsonResponse(un, safe=False)
+    return JsonResponse({"success": False}, status=400)
+
+
+
+def btnViewCPM_Click(request):
+    lblDt= request.GET.get('lblDt')
+    dtEpc= request.GET.get('dtEpc')
+    dtPtc= request.GET.get('dtPtc')
+    EpcAll= request.GET.get('EpcAll')
+    PtcAll= request.GET.get('PtcAll')
+  
+    p=Cpm.objects.values_list('part_no')
+    
+    monthTemp=lblDt.split(' ')[0]
+    dateTemp=lblDt.split(' ')[1]
+    final1=monthTemp[0:3]+' '+dateTemp.split(',')[0]+' '+lblDt.split(' ')[2]
+    date_time_str=final1
+    date_time_obj=datetime.datetime.strptime(date_time_str,'%b %d %Y')
+    date_1=date_time_obj.date()
+    
+    len1=len(dtEpc)
+    len2=len(dtPtc)
+
+    
+    e=[]
+    for k in range(0,len1):
+        if(dtEpc[k]==" " or dtEpc[k]==","):
+            pass
+        else:
+            e.append(dtEpc[k])
+
+    pt=[]
+    for k in range(0,len2):
+        if(dtPtc[k]==","):
+            pass
+        else:
+            pt.append(dtPtc[k])
+            
+
+    
+    elen=len(e)
+    plen=len(pt)
+    p=[]
+
+    for m in range(0,elen,2):
+        epc=str(e[m])+str(e[m+1])
+
+        for j in range(0,plen):
+
+            if(EpcAll=='B' and PtcAll=='B'):
+                c=Cpm.objects.filter(epc=epc,ptc=pt[j],qty__gt=0).values('epc','shop_ut','part_no','ptc','qty').order_by('part_no').distinct()
+                p.extend(c)
+            
+            else:
+                c=Cpm.objects.filter(epc=epc,ptc=pt[j]).values('epc','shop_ut','part_no','ptc','qty').order_by('part_no').distinct()
+                p.extend(c)
+
+    
+    seen = set()
+    new_l = []
+    for d in p:
+        t = tuple(d.items())
+        if t not in seen:
+            seen.add(t)
+            new_l.append(d)
+    
+
+    ptdes=[]
+    epc = [] 
+    ptc = [] 
+    shop_ut = [] 
+    part_no=[]
+    part=[]
+    qty=[]
+    
+    for x in p:
+        epc.append(x['epc'])
+        unit=Code.objects.filter(cd_type='51',code=x['shop_ut']).values('alpha_1')
+        if len(unit)>0:
+            unit=unit[0]['alpha_1']
+        else:
+            unit=''
+
+        shop_ut.append(unit)
+        if x['part_no'] not in part:
+            part.append(x['part_no'])
+        ptc.append(x['ptc'])
+        qty.append(x['qty'])
+    for x in part:    
+        ptdes.append({'part_no':x})
+    
+        
+
+    for i in range(0,len(ptdes)):
+        a =list(Part.objects.filter(partno=ptdes[i]['part_no']).values('des'))
+        ptdes[i].update({'sl':(i+1)})
+        ptdes[i].update({'ptc':ptc[i]})   
+        ptdes[i].update({'des':a[0]['des']})
+        ptdes[i].update({'epc':epc[i]})
+        ptdes[i].update({'part_no':ptdes[i]['part_no']})
+        ptdes[i].update({'shop_ut':shop_ut[i]})
+        ptdes[i].update({'qty':"{0:.2f}".format(float(qty[i]))})
+
+    if EpcAll=='B':
+        EpcAll=dtEpc
+    if PtcAll=='B':
+        PtcAll=dtPtc
+
+    today=datetime.datetime.today().strftime('%d/%m/%Y')
+ 
+    context={
+        'today':today,
+        'ptdes':ptdes,  
+        'EpcAll':EpcAll,
+        'PtcAll':PtcAll,
+    }
+
+    pdf=render_to_pdf('epcpmreport.html',context)
+    return HttpResponse(pdf,content_type='application/pdf')
+
+@login_required
+@role_required(urlpass='/jbs_doc/')
+def jbs_doc(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'jbs.html',context)
+txtepc=''   
+drpdwn='' 
+BROWKEY=''
+bonum=''
+a=''
+dt=[]
+ALTLINK=0
+ASSLY=''
+LFR=''
+LTO=''
+CASE=''
+CURTYM=''
+ALTPT=''
+cnt=1
+fg=[]
+def epc_changed(request):
+    if request.method == "GET" and request.is_ajax():
+        global txtepc
+        lst=[]
+        b=[]
+        txtepc = request.GET.get('txtepc')
+        global drpdwn
+        drpdwn = request.GET.get('drpdwn')
+        global a
+        a=epc()
+        if(a!=False):
+            b.append(a[0]['alpha_1'])
+            lst=get_batch() 
+            b.append(lst)
+        return JsonResponse(b,safe = False)
+    return JsonResponse({"success":False}, status = 400)   
+
+
+def epc():
+        alpha1_list=list(Code.objects.filter(code = txtepc,cd_type = "11").values('alpha_1'))
+        global BROWKEY
+        if alpha1_list != "":
+            if drpdwn == "ENG":
+                epc = ["01","02","05","1A","1C","1E","1Y","21"]
+                if  txtepc in epc:
+                    BROWKEY = "04"
+                    return alpha1_list
+                else :
+                    return False
+            if drpdwn == "VEH":
+                epc = ["03","04","06","07","08","09","1B","1D","1N","1F","1R","1Q","14","20","22","11","28","1W","1L","35","40","50"]
+                if txtepc in epc:
+                    BROWKEY = "05"
+                    return alpha1_list
+                else :
+                    return False
+            if drpdwn == "TRA":
+                epc =["1G","1H","1J","1K","1L","1M","1P","1T","12","22","11","36"]
+                if txtepc in epc:
+                    BROWKEY = "05"
+                    return alpha1_list
+                else :
+                    return False
+        else :
+            return False
+        
+def get_batch():
+    global BROWKEY
+    if drpdwn == "ENG":
+        BROWKEY="04"
+    if drpdwn == "VEH":
+        BROWKEY="05"
+    if drpdwn == "TRA":
+        BROWKEY="05"
+    cursor = connection.cursor()
+    cursor.execute('select "BO_NO", "PART_NO", "EP_TYPE","BATCH_TYPE","LOCO_FR", "LOCO_TO","B_EXPL_DT","REL_DATE" FROM public."BATCH" where (trim(substr("BO_NO", 1, 2))=%s or trim(substr("BO_NO", 1, 2))=%s or trim(substr("BO_NO", 1, 2))=%s) and trim("BATCH_TYPE")=%s and trim("EP_TYPE")=%s  and ("B_EXPL_DT"::text is not null or "B_EXPL_DT" :: text !=%s)  order by "B_EXPL_DT" desc;',[BROWKEY,'13','33','O',txtepc,''])    
+    row = cursor.fetchall()
+    lst=list(row)
+    return lst
+
+def listselected_index(request):
+    if request.method == "GET" and request.is_ajax():
+        global bonum
+        bonum = request.GET.get('bonum')
+        global dt
+        dt=v_batch()
+        return JsonResponse(dt,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def v_batch():
+    dt1=[]
+    f=0
+    dt1.append(list(Batch.objects.filter(bo_no=bonum,ep_type=txtepc).values('bo_no','batch_type','ep_type','part_no','loco_fr','loco_to','batch_qty','uot_wk_f','b_expl_dt','rel_date').order_by('bo_no','ep_type')))
+    if len(dt1) == 0:
+        return False
+    dt2 = list(Docjbs.objects.filter(epc=txtepc,batch_no=bonum).values('epc','batch_no'))
+    if len(dt2) !=0:
+        f=1
+    dt1.append(f)
+    return dt1
+    
+                                                                    
+def btncrtjbsdoc(request):
+    if request.method == "GET" and request.is_ajax():
+        txtqty = request.GET.get('txtqty')
+        txtloco_fr = request.GET.get('txtloco_fr')
+        txtloco_to = request.GET.get('txtloco_to')
+        txtpart_no = request.GET.get('txtpart_no')
+        txtbatch_type = request.GET.get('txtbatch_type')
+        if a == False and dt == False:
+            return JsonResponse({"success":False}, status = 400)
+        dt1 = list(Docjbs.objects.filter(epc=txtepc,batch_no=bonum).values('epc','batch_no'))
+        if len(dt1) > 0 :
+            f=[1]
+            return JsonResponse(f,safe = False)
+        sysdte = datetime.date.today()
+        systemdte = sysdte - timedelta(days=1)
+        del1 = TempJbs.objects.filter(dttym=systemdte).delete()
+        global CURTYM
+        CURTYM = datetime.datetime.today().strftime("%d%m%Y%H%M%S")
+        global ALTLINK
+        ALTLINK="0"
+        qt=1
+        if txtqty!="":
+            qt = txtqty
+        x=explodem(txtpart_no,txtepc,txtloco_fr,txtloco_to,txtbatch_type)
+        if x == True:
+            cursor = connection.cursor()
+            cursor.execute('''insert into public."DOCJBS" select  %s epc,%s batch_no, s.part_no,s.ptc,s.qty*%s qty_ord, o."SHOP_SEC", o."LC_NO",
+            o."OPN", o."AT", o."LOT", o."NCP_JBS",' ' as n_shop, null brn_no,%s updt_dt,s.alt_link,
+            s.alt_ind,s.a_part alt_part,null as epc_old from 
+            (select "CP" part_no,max("PTC") ptc , sum("QTY") qty, "A_IND" alt_ind, "A_LINK" alt_link, "A_PART" a_part from public."TEMP_JBS"
+            where trim("CURTYM")=%s GROUP by "CP", "A_LINK", "A_IND", "A_PART" ) s,public."OPRN" o where trim(s.part_no)=trim(o."PART_NO")
+            and trim(s.ptc) in('M','Z','L','B') and trim(o."NCP_JBS")='2' and  coalesce(trim(o."DEL_FL"),'*')<>'Y';''',[txtepc, bonum, qt , sysdte,CURTYM])
+            print("inserted in docjbs")
+        dsj = list(Docjbs.objects.filter(batch_no=bonum,epc=txtepc).values('part_no','opn','id').order_by('shop_sec','lc_no','part_no','opn'))
+        for i in range(len(dsj)):
+            dso = list(Oprn.objects.filter(part_no=dsj[i]['part_no'],opn=dsj[i]['opn']).values('shop_sec','part_no').order_by('part_no','opn'))
+            if len(dso) > 0 :
+                if len(dso) > 1 :
+                    re = Docjbs.objects.filter(id=dsj[i]['id']).update(n_shop=dso[1][shop_sec])
+                    if re == 0:
+                        return JsonResponse({"success":False}, status = 400)  
+                else:
+                    nxtpart = list(Oprn.objects.filter(part_no=dsj[i]['part_no'],opn__gt=dsj[i]['opn']).values('part_no').order_by('part_no'))
+                    if len(nxtpart) != 0 :
+                        nxtshop = list(Oprn.objects.filter(part_no=nxtpart[0]['part_no'],opn__gt=dsj[i]['opn']).values('shop_sec').order_by('part_no','opn'))
+                        if len(nxtshop) > 0:
+                            s = Docjbs.objects.filter(id=dsj[i]['id']).update(n_shop=nxtshop[0]['shop_sec'])
+                            if s == 0:
+                                return JsonResponse({"success":False}, status = 400)  
+        if len(fg) == 0:
+          d=[4]
+          return JsonResponse(d,safe = False)
+        elif len(fg) != 0:
+            return JsonResponse(fg,safe = False)
+    return JsonResponse({"success":False}, status = 400)  
+
+def explodem(assly,ep,lfr,lto,bt):
+    global ASSLY
+    global CASE
+    ASSLY = assly
+    lst = list(Part.objects.filter(partno=assly).values('partno','des','ptc').order_by('partno'))
+    if len(lst) <= 0 :
+        return True
+    assly_desc = lst[0]['des']
+    assly_ptc = lst[0]['ptc']
+    if assly != "" and ep != "" and lfr != "" and lto != "":
+        CASE = "1"
+        SrchQry = list(Nstr.objects.filter(Q(l_fr__lte = lfr) | Q(l_to__gte = lto),Q(pp_part=assly),Q(epc=ep),Q(l_to='9999')).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
+    if assly != "" and ep != "" and lfr != "" and lto == "":
+        CASE = "2"
+        SrchQry = list(Nstr.objects.filter(pp_part=assly,epc=ep,l_to='9999',l_fr__lte = lfr,l_to__gte=lfr).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
+    if assly != "" and ep != "" and lfr == "" and lto == "":
+        CASE = "3"
+        SrchQry = list(Nstr.objects.filter(pp_part=assly,epc=ep,l_fr='0000',l_to='9999').values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
+    if assly != "" and ep == "" and lfr == "" and lto == "":
+        return True
+    global LFR
+    global LTO
+    LFR = lfr
+    LTO = lto
+    global f1
+    if len(SrchQry) == 0 :
+        global fg
+        fg=[10]
+        return True
+    sysdte = datetime.date.today().strftime("%Y-%m-%d")
+    InsrtQry = TempJbs.objects.create(cp=assly,l_fr=lfr,l_to=lto,ptc=assly_ptc,epc=ep,qty=00001.000,a_ind="",a_part="",dttym=sysdte,curtym=CURTYM,sl=1)
+    if InsrtQry == 0:
+        return False
+    global cnt
+    cnt=cnt+1
+    explm(assly, "1", bt, ep,SrchQry,lfr,lto)
+    return True
+
+def explm(parent,wt,bt,ep,srchqry,lfr,lto):
+    sysdte = datetime.date.today().strftime("%Y-%m-%d")
+    global ALTPT
+    global ALTLINK
+    global cnt
+    ALTIND=None
+    check2=0
+    check3=len(srchqry)
+    if len(srchqry) > 0:
+        for i in range(len(srchqry)):
+            if ASSLY == parent:
+                if str(srchqry[i]['alt_link']) != ALTLINK or srchqry[i]['alt_ind'] != ALTIND :
+                    ALTLINK = srchqry[i]['alt_link']
+                    ALTIND = srchqry[i]['alt_ind']
+                    ALTPT = srchqry[i]['cp_part']
+            WT=1
+            if srchqry[i]['qty'] != "":
+                WT = srchqry[i]['qty']
+            mqty1 = Decimal(WT*Decimal(wt))
+            alpt=""
+            if ALTLINK != "0" and ALTLINK != "":
+                alpt = ALTPT
+            x = ['M','Z','L','B']
+            if srchqry[i]['ptc'] in x :
+                InsrtQry = TempJbs.objects.create(pp=srchqry[i]['pp_part'],cp=srchqry[i]['cp_part'],l_fr=srchqry[i]['l_fr'],l_to=srchqry[i]['l_to'],ptc=srchqry[i]['ptc'],epc=srchqry[i]['epc'],qty=mqty1,a_ind=ALTIND,a_link=ALTLINK,a_part=alpt,dttym=sysdte,curtym=CURTYM,sl=cnt)
+                if InsrtQry == 0:
+                    return False
+                cnt=cnt+1
+            if srchqry[i]['ptc'] in x :
+                if CASE == "1":
+                    Qry=list(Nstr.objects.filter(Q(pp_part=srchqry[i]['cp_part']),Q(epc=ep),Q(l_to='9999'),Q(l_fr__lte=LFR) | Q(l_to__gte=LTO)).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
+                if CASE == "2":
+                    Qry=list(Nstr.objects.filter(pp_part=srchqry[i]['cp_part'],epc=ep,l_to='9999',l_fr__lte=LFR,l_to__gte=LFR).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
+                if CASE == "3":
+                    Qry=list(Nstr.objects.filter(pp_part=srchqry[i]['cp_part'],epc=ep,l_to='9999',l_fr='0000').values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
+                if len(Qry) !=0 :
+                    check2=check2+1
+                    explm(srchqry[i]['cp_part'], mqty1,bt,ep,Qry,lfr,lto)
+    return True
+
+#report work of jbs starts from here
+def jbsreport(request):
+    shopsec=[]
+    lc_no=[]
+    partno=request.GET.get('partno')
+    cursor = connection.cursor()
+    cursor.execute('SELECT j."ALT_PART" FROM public."DOCJBS" j, public."OPRN" o, public."PART" p WHERE j."PART_NO" = o."PART_NO" and j."OPN" = o."OPN" and j."NCP_JBS" = %s and j."BATCH_NO"=%s and j."EPC"=%s and p."PARTNO" = j."PART_NO" ORDER BY j."PART_NO",j."OPN"',['2',bonum,txtepc])
+    row = cursor.fetchall()
+    lst=list(row)
+    if len(lst) != 0 :
+        part_des=''
+        doc_no=0
+        cd = list(Code.objects.filter(cd_type='11',code=txtepc).values('alpha_1').order_by('cd_type','code'))
+        if len(cd) > 0:
+            part_des = cd[0]['alpha_1']
+            cursor = connection.cursor()
+            cursor.execute('SELECT DISTINCT "SHOP_SEC","LC_NO" FROM (SELECT j."SHOP_SEC",j."LC_NO" from public."DOCJBS" j,public."OPRN" o, public."PART" p WHERE j."PART_NO"= o."PART_NO" and j."OPN"= o."OPN" and j."NCP_JBS"=%s and j."BATCH_NO"=%s and j."EPC"=%s and p."PARTNO"=j."PART_NO" order by j."SHOP_SEC",j."LC_NO",j."PART_NO",j."OPN") abc order by "SHOP_SEC","LC_NO"',['2',bonum,txtepc])
+            row = cursor.fetchall()
+            dt=list(row)  
+            dt1=[]
+            lst=[]
+            b=1
+            for i in range(len(dt)):
+                shop_sec= dt[i][0]
+                lc_no = dt[i][1]
+                cursor.execute('''SELECT j."PART_NO", substr(p."DES",0,21) des, substr(trim(o."DES"),0,26) t_des, j."OPN",
+                coalesce(o."AT",'0.00')as at , trim(o."LOT" :: text)as lot, trim(j."N_SHOP"), 
+                trim(coalesce(j."QTY_ORD" :: text,'0'))as qty_ord, j."SHOP_SEC", j."LC_NO" FROM public."DOCJBS" j, 
+                public."OPRN" o, public."PART" p WHERE j."PART_NO"= o."PART_NO" and j."OPN"= o."OPN" and j."NCP_JBS"=%s and 
+                j."BATCH_NO"=%s and j."EPC"=%s and 
+                p."PARTNO"=j."PART_NO" and j."SHOP_SEC" = %s and j."LC_NO"=%s ORDER BY j."OPN"''',['2',bonum,txtepc,shop_sec,lc_no])
+                row = cursor.fetchall()
+                dt1=(list(row))
+                a=0
+                lst.append([])
+                for j in range(len(dt1)):
+                    if a==0:
+                        lst[i].append({'sno':j+1,'doc':b,'s':shop_sec,'l':lc_no,'a':dt1[j][0],'b':dt1[j][1],'c':dt1[j][2],'d':dt1[j][3],'e':dt1[j][4],'f':dt1[j][5],'g':dt1[j][6],'h':dt1[j][7],'i':dt1[j][8],'j':dt1[j][9]})
+                        a=1
+                        b=b+1
+                    else:
+                        lst[i].append({'sno':j+1,'doc':'','s':'','l':'','a':dt1[j][0],'b':dt1[j][1],'c':dt1[j][2],'d':dt1[j][3],'e':dt1[j][4],'f':dt1[j][5],'g':dt1[j][6],'h':dt1[j][7],'i':dt1[j][8],'j':dt1[j][9]})
+
+            dte=datetime.datetime.today().strftime("%d-%m-%Y")
+            print("my listt is",lst)
+    context={
+     'tdate':dte,  #today's date
+     'pn':partno,     #assmbly no
+     'des':part_des,  #assmbly design
+     'head':dt,       #list of shop_sec and lc_no
+     'lst':lst,      #list of lists
+     'm':len(dt),     
+     'n':len(dt1),
+    }           
+    pdf=render_to_pdf('jbs_report.html', context)
+    return HttpResponse(pdf, content_type='application/pdf')
+@login_required
+@role_required(urlpass='/prodqry/')
+def prodqry(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+
+
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'prodqry.html',context)
+
+
+
+def sel_main(request):
+    if request.method == "GET" and request.is_ajax():   
+        sel_val=request.GET.get('val')
+    
+
+        if(sel_val=="11"):
+            bno=request.GET.get('val1')
+            pno=request.GET.get('val2')
+            bono=Batch.objects.values('bo_no')
+            x=[]
+            for i in bono:
+                x.append(i['bo_no'])
+            if pno is None and bno in x:
+                qry=Batch.objects.filter(bo_no=bno).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('bo_no','part_no','seq').distinct()
+                BT=qry
+                if(BT.count()>0):
+                    a=''
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'B')
+            else:
+                qry=Batch.objects.filter(bo_no=bno,part_no=pno).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('bo_no','part_no','seq').distinct()
+                BT=qry
+                if(BT.count()>0):
+                    a=''
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'BP')
+
+
+        if(sel_val=="12"):
+            pno=request.GET.get('val1')
+            qry=Batch.objects.filter(part_no=pno).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('bo_no','part_no','seq').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:
+                BT=list(BT)
+                BT.insert(0,'P')
+
+        
+        if(sel_val=="13"):
+            brn=request.GET.get('val1')
+            qry=Batch.objects.filter(brn_no=brn).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('brn_no').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:
+                BT=list(BT)
+                BT.insert(0,'Brn')
+
+
+        if(sel_val=="21"):
+            bno=request.GET.get('val1')
+            asno=request.GET.get('val2')
+            if asno is not None:
+                qry=M2Docnew1.objects.filter(batch_no=bno,assly_no=asno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('batch_no','assly_no','seq','scl_cl','f_shopsec','part_no').distinct()
+                BT=qry
+                if(BT.count()>0):
+                    a=''
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'BA')
+            else:
+                qry=M2Docnew1.objects.filter(batch_no=bno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('batch_no','assly_no','seq','scl_cl','f_shopsec','part_no').distinct()
+                BT=qry
+                if(BT.count()>0):
+                    a=''
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'B')
+
+
+        if(sel_val=="22"):
+            rcno=request.GET.get('val1')
+            qry=M2Docnew1.objects.filter(m2sln=rcno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:
+                BT=list(BT)
+                BT.insert(0,'RCN')
+              
+
+
+        if(sel_val=="23"):
+            pno=request.GET.get('val1')
+            bno=request.GET.get('val2')
+            brn_no=0
+            if bno is not None:
+                qry=M2Docnew1.objects.filter(batch_no=bno).values('brn_no').order_by('batch_no','assly_no','seq','scl_cl','f_shopsec','part_no').distinct()
+                
+
+                JOIN=qry
+                if(JOIN.count()>0):
+                    brn_no=JOIN[0]['brn_no']
+                qry=M2Docnew1.objects.filter(part_no=pno,brn_no=brn_no).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
+            else:
+                qry=M2Docnew1.objects.filter(part_no=pno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
+            BT=qry
+            if pno is None:
+                BT=list(BT)
+                BT.insert(0,'EP')
+            if(len(BT)>0):
+                a=''
+            else:   
+                BT=list(BT)
+                BT.insert(0,'BP')
+
+
+        if(sel_val=="24"):
+            brn=request.GET.get('val1')
+            qry=M2Docnew1.objects.filter(brn_no=brn).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:
+                BT=list(BT)
+                BT.insert(0,'Brn')
+
+
+        if(sel_val=="31"):
+            bno=request.GET.get('val1')
+            asno=request.GET.get('val2')
+            if asno is not None:
+                qry=list(M5Docnew1.objects.filter(batch_no=bno,assly_no=asno).values('scl_cl','part_no','qty_ord','assly_no','rm_partno','rm_qty','cut_shear','m5glsn','brn_no','m2slno','m5prtdt','shop_sec','lc_no','opn').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct())
+                for j in range(len(qry)):
+                    qry[j].update({'des':None})
+                BT=qry
+                if(len(BT)>0):
+                    for i in range(len(BT)):
+                        part=BT[i]['part_no']
+                        qry=Oprn.objects.filter(part_no=part).values('des').order_by('part_no','opn').distinct()
+                        OP=qry
+                        if(OP.count()>0):
+                            BT[i]['des']=OP[0]['des'][0:37]
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'BA')
+            else:
+                qry=list(M5Docnew1.objects.filter(batch_no=bno).values('scl_cl','part_no','qty_ord','assly_no','rm_partno','rm_qty','cut_shear','m5glsn','brn_no','m2slno','m5prtdt','shop_sec','lc_no','opn').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct())
+                for j in range(len(qry)):
+                    qry[j].update({'des':None})
+                BT=qry
+                if(len(BT)>0):
+                    for i in range(len(BT)):
+                        part=BT[i]['part_no']
+                        qry=Oprn.objects.filter(part_no=part).values('des').order_by('part_no','opn').distinct()
+                        OP=qry
+                        if(OP.count()>0):
+                            BT[i]['des']=OP[0]['des'][0:37]
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'B')
+
+
+
+
+        
+        if(sel_val=="32"):
+            rcn=request.GET.get('val1')
+            batchno=''
+            if rcn is not None:
+                qry=M2Docnew1.objects.filter(m2sln=rcn).values('batch_no').order_by('m2sln').distinct()
+                DOC=qry
+                if(DOC.count()>0):
+                    batchno=DOC[0]['batch_no']
+
+                oprn_sub=Oprn.objects.all().distinct()
+                qry=M5Docnew1.objects.filter(batch_no=batchno,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct()
+                BT=qry
+                if(BT.count()>0):
+                    a=''
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'RCN')
+                
+        
+        if(sel_val=="33"):
+            jcn=request.GET.get('val1')
+            print(jcn)
+            oprn_sub=Oprn.objects.all().distinct()
+            qry=M5Docnew1.objects.filter(m5glsn=jcn,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('m5glsn').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:
+                BT=list(BT)
+                BT.insert(0,'JCN')
+
+       
+
+        if(sel_val=="34"):
+            pno=request.GET.get('val1')
+            bno=request.GET.get('val2')
+            if pno is None:
+                print("Enter Part Number")
+            if bno is not None:
+                qry=M5Docnew1.objects.filter(batch_no=bno).values('brn_no').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct()
+                JOIN=qry
+                brnno=''
+                if(JOIN.count()>0):
+                    brnno=JOIN[0]['brn_no']
+                oprn_sub=Oprn.objects.all().distinct()
+                qry=M5Docnew1.objects.filter(part_no=pno,brn_no=brnno,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('part_no','brn_no','scl_cl').distinct()
+            else:
+                oprn_sub=Oprn.objects.all().distinct()
+                qry=M5Docnew1.objects.filter(part_no=pno,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('part_no','brn_no','scl_cl').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:
+                BT=list(BT)
+                BT.insert(0,'BP')
+            
+
+
+        if(sel_val=="35"):
+            brno=request.GET.get('val1')
+            if brno is not None:
+                qry=list(M5Docnew1.objects.filter(brn_no=brno).values('scl_cl','part_no','qty_ord','assly_no','rm_partno','rm_qty','cut_shear','m5glsn','batch_no','m2slno','m5prtdt','shop_sec','lc_no','opn').order_by('m5glsn').distinct())
+                for j in range(len(qry)):
+                    qry[j].update({'des':None})
+                BT=qry
+                if(len(BT)>0):
+                    for i in range(len(BT)):
+                        part=BT[i]['part_no']
+                        qry=Oprn.objects.filter(part_no=part).values('des').order_by('part_no','opn')
+                        OP=qry
+                        if(OP.count()>0):
+                            if(len(OP[0]['des'])>=37):
+                                BT[i]['des']=OP[0]['des'][0:37]
+                            else:
+                               BT[i]['des']=OP[0]['des'] 
+                else:
+                    BT=list(BT)
+                    BT.insert(0,'Brn')
+
+
+        if(sel_val=="41"):
+            bno=request.GET.get('val1')
+            pno=request.GET.get('val2')
+            brn_no=0
+            if pno is None:
+                print("Enter Part Number")
+            if bno is not None:
+                qry=Batch.objects.filter(bo_no=bno).values('brn_no').order_by('bo_no','part_no','seq').distinct()
+                JOIN=qry
+                if(JOIN.count()>0):
+                    brn_no=JOIN[0]['brn_no']
+                qry=M14M4new1.objects.filter(part_no=pno,brn_no=brn_no).values('part_no','bo_no','pm_no','qty','l_fr','l_to','assly_no','brn_no','doc_no').order_by('doc_no').distinct()
+            else:
+                qry=M14M4new1.objects.filter(part_no=pno).values('part_no','bo_no','pm_no','qty','l_fr','l_to','assly_no','brn_no','doc_no').order_by('l_fr').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:        
+                BT=list(BT)
+                BT.insert(0,'BP')
+
+
+        if(sel_val=="42"):
+            brno=request.GET.get('val1')
+            qry=M14M4new1.objects.filter(brn_no=brno,doc_code='89').values('part_no','bo_no','pm_no','qty','l_fr','l_to','assly_no','brn_no','doc_no').order_by('brn_no','assly_no','kit_ind','station','stg','sub_kit','part_no').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:   
+                BT=list(BT)
+                BT.insert(0,'Brn')
+
+
+
+        if(sel_val=="71"):
+            bno=request.GET.get('val1')
+            pno=request.GET.get('val2')
+            qry=Batch.objects.filter(bo_no=bno).values('brn_no').order_by('bo_no','part_no','seq').distinct()
+            JOIN=qry
+            
+            if((bno is not None) and (JOIN.count()>0)):
+                sub=Batch.objects.values('brn_no').distinct()
+                qry=Altdoc.objects.filter(part_no=pno,brn_no__in=Subquery(sub.values('brn_no'))).values('brn_no', 'part_no', 'l_fr', 'l_to', 'm2_fr', 'm2_to', 'm5_fr', 'm5_to', 'm14_fr', 'm14_to','m4_fr', 'm4_to','expl_dt','prt_dt').order_by('brn_no','alt_link','l_fr','l_to').distinct()
+            else:
+                sub=Batch.objects.all().distinct()
+                qry=Altdoc.objects.filter(part_no=pno,brn_no__in=Subquery(sub.values('brn_no'))).values('brn_no', 'part_no', 'l_fr', 'l_to', 'm2_fr', 'm2_to', 'm5_fr', 'm5_to', 'm14_fr', 'm14_to','m4_fr', 'm4_to','expl_dt','prt_dt').order_by('brn_no','alt_link','l_fr','l_to').distinct()
+            BT=qry
+            if(BT.count()>0):
+                a=''
+            else:
+                BT=list(BT)
+                BT.insert(0,'BrP')
+        return JsonResponse(list(BT), safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+from django.db.models.functions import Substr
+import datetime
+
+@login_required
+@role_required(urlpass='/qrycstr/')
+def qrycstr(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+
+
+    if "Superuser" in rolelist:
+        tm=shop_section.objects.all()
+        tmp=[]
+        for on in tm:
+            tmp.append(on.section_code)
+        context={
+            'sub':0,
+            'lenm' :2,
+            'nav':nav,
+            'subnav':subnav,
+            'ip':get_client_ip(request),
+            'roles':tmp
+        }
+    elif(len(rolelist)==1):
+        for i in range(0,len(rolelist)):
+            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
+            wo_nop =wo_nop | req
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'wo_nop':wo_nop,
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+        
+    elif(len(rolelist)>1):
+        context = {
+            'sub':0,
+            'lenm' :len(rolelist),
+            'nav':nav,
+            'ip':get_client_ip(request),
+            'usermaster':usermaster,
+            'roles' :rolelist,
+            'subnav':subnav,
+        }
+    return render(request,'qrycstr.html',context)
+
+def qrycstr1(request):
+    if request.method == "GET" and request.is_ajax():   
+        part_no=request.GET.get('val')
+        c=list(Part.objects.filter(partno=part_no).values('des'))
+        return JsonResponse(c, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def qrycstr_ddCn_fun(request):
+    if request.method == "GET" and request.is_ajax():   
+        ddCn=request.GET.get('val1')
+        
+        ds=list(Cnote.objects.filter(chg_ind=ddCn).values('reg_no','reg_dt','ppl_cn_no','assly_no','ref_1_dt','updt_dt').annotate(mysubstring1=Substr('assly_desc',1,14),mysubstring2=Substr('ref_1',1,14)).order_by('ppl_cn_no').distinct())
+        return JsonResponse(ds, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+
+
+def qrycstr_viewstatus(request):
+    ddCN= request.GET.get('ddCN')
+    rbtnquery= request.GET.get('rbtnquery')
+    formateDate= request.GET.get('formateDate')
+    
+    if(rbtnquery=='3'):
+        tbox = datetime.datetime.strptime(formateDate, "%d-%m-%Y")
+    else:
+        tbox = formateDate
+   
+    if(rbtnquery=="1"):
+        tmpstr=Cstr.objects.values('reg_no','slno','pp_part','cp_part','l_fr','l_to','ptc','epc','qty','cutdia_no','cn_no','cn_date','acd','updt_dt','errmsg').filter(status='U',chg_ind=ddCN,cp_part=tbox).distinct().order_by('chg_ind','cp_part','reg_no')
+    elif(rbtnquery=="2"):
+        tmpstr=Cstr.objects.values('reg_no','slno','pp_part','cp_part','l_fr','l_to','ptc','epc','qty','cutdia_no','cn_no','cn_date','acd','updt_dt','errmsg').filter(status='U',chg_ind=ddCN,cn_no=tbox).distinct().order_by('chg_ind','cp_part','reg_no')
+    elif(rbtnquery=="3"):
+        tmpstr=Cstr.objects.values('reg_no','slno','pp_part','cp_part','l_fr','l_to','ptc','epc','qty','cutdia_no','cn_no','cn_date','acd','updt_dt','errmsg').filter(status='U',chg_ind=ddCN,updt_dt=tbox).distinct().order_by('chg_ind','cp_part','reg_no')
+
+    cp_part=[]
+    cn_no=[]
+    for x in tmpstr:
+        cp_part.append(x['cp_part'])
+        cn_no.append(x['cn_no'])
+    
+    tmpstr1=Part.objects.filter(partno__in=cp_part).count()
+    
+
+    if tmpstr1 > 0:
+        tmp=Part.objects.filter(partno__in=cp_part).values('des').distinct()
+    else:
+        tmp=[{'des':'null'}]
+    
+    desc=[]
+    for y in tmp:
+        desc.append(y['des'])
+
+    
+
+    tmpstr2=Cnote.objects.filter(chg_ind=ddCN,ppl_cn_no__in=cn_no).count()
+    
+    if tmpstr2 > 0:
+        tmp1=Cnote.objects.filter(chg_ind=ddCN,ppl_cn_no__in=cn_no).values('ref_1').distinct()
+    else:
+        tmp1=[{'ref_1':'null'}]
+
+    design=[]
+    for z in tmp1:
+        design.append(z['ref_1'])
+    
+    for j in range(len(tmpstr)):
+        tmpstr[j].update({'des':desc[0]})
+        if len(tmp1)==len(tmpstr):
+            tmpstr[j].update({'design':design[j]})
+        else:
+            tmpstr[j].update({'design':design[0]})
+
+    today = date.today()
+    context={
+        'today':today,
+        'tmpstr':tmpstr,
+    }
+    pdf=render_to_pdf('qrycstrreport.html',context)
+    return HttpResponse(pdf,content_type='application/pdf')
+
+@login_required
+@role_required(urlpass='/screenforloadmasterupdation/')
+def screenforloadmasterupdation(request):
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    wo_nop = empmast.objects.none()
+    if "Superuser" in rolelist:
+        context={
+            'nav' : nav,
+            'ip' : get_client_ip(request),
+            'subnav' : subnav,
+        }
+    return render(request, "screenforloadmasterupdation.html",context) 
+
+def ScreenLoadMasterUpdateValidShop(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec = request.GET.get('shopsec')
+        obj=list(Lc1.objects.filter(shop_sec=shopsec).exclude(del_fl='Y').values('shop_sec'))
+        if len(obj) != 0:
+            obj=list(shop_section.objects.filter(section_code=shopsec).values('section_desc'))   
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success=false"},status=400)
+
+def ScreenLoadMasterUpdateGetAll(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec = request.GET.get('shopsec')
+        loadcentre = request.GET.get('loadcentre')
+        obj=list(Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).exclude(del_fl='Y').values('des','no_men','no_mcs1','no_mcs2','no_mcs3').distinct())
+        return JsonResponse(obj,safe=False)
+    return JsonResponse({"success=false"},status=400)
+
+def ScreenLoadMasterUpdateSave(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        desc=request.GET.get('desc')
+        noman=request.GET.get('noman')
+        nomcs1=request.GET.get('nomcs1')
+        nomcs2=request.GET.get('nomcs2')
+        nomcs3=request.GET.get('nomcs3')
+        mwno=request.GET.get('mwno')
+        mcgr=request.GET.get('mcgr')
+        d1 = date.today()
+        temp=list(Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).exclude(del_fl='Y').values('shop_sec').distinct())
+        if len(temp) == 0:
+            temp=Lc1.objects.create(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
+            no_men=noman,no_mcs1=nomcs1,no_mcs2=nomcs2,no_mcs3=nomcs3,updt_dt=d1)
+        
+        else:
+            obj=[1]
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenLoadMasterUpdateUYes(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        desc=request.GET.get('desc')
+        noman=request.GET.get('noman')
+        nomcs1=request.GET.get('nomcs1')
+        nomcs2=request.GET.get('nomcs2')
+        nomcs3=request.GET.get('nomcs3')
+        d1 = date.today()
+        Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).update(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
+            no_men=noman,no_mcs1=nomcs1,no_mcs2=nomcs2,no_mcs3=nomcs3,updt_dt=d1)
+
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenLoadMasterUpdateDelete(request):
+    if request.method == "GET" and request.is_ajax():
+        obj=[]
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        d1 = date.today()
+        Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).update(del_fl='Y',updt_dt=d1)   
+        return JsonResponse(obj,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+    
+def ScreenLoadMasterUpdateAddMwNo(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        mwno=request.GET.get('mwno')
+        mcgr=request.GET.get('mcgr')
+        desc=request.GET.get('desc')
+        obj2=list(Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).exclude(del_fl='Y').values('mwno','mc_gr').distinct())
+        d1 = date.today()
+        if len(obj2) == 0:
+            temp=Mp.objects.create(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
+            mwno=str(mwno),mc_gr=str(mcgr),updt_dt=d1)
+        
+        return JsonResponse(obj2,safe=False) 
+    return JsonResponse({"success:False"},status=400) 
+
+def ScreenLoadMasterUpdateDelMwNo(request):
+    if request.method == "GET" and request.is_ajax():
+        shopsec=request.GET.get('shopsec')
+        loadcentre=request.GET.get('loadcentre')
+        mwno=request.GET.get('mwno')
+        mcgr=request.GET.get('mcgr')
+        obj2=list(Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).exclude(del_fl='Y').values('mwno').distinct())
+        d1 = date.today()
+        if len(obj2) != 0:
+            Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).update(del_fl='Y',updt_dt=d1)   
+
+        return JsonResponse(obj2,safe=False) 
+    return JsonResponse({"success:False"},status=400)  
+
+def ScreenLoadMasterUpdateAutoDesc(request):
+    if request.method=="GET" and request.is_ajax():
+        obj1=list(Lc1.objects.filter(des__isnull=False).values('des').distinct())  
+        return JsonResponse(obj1,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+def ScreenLoadMasterUpdateAutomw_no(request):
+    if request.method=="GET" and request.is_ajax():
+        loadcentre=request.GET.get('loadcentre')
+        shopsec=request.GET.get('shopsec')
+        obj1=list(Mp.objects.filter(mwno__isnull=False,shop_sec=shopsec,lcno=loadcentre).values('mwno').distinct())  
+        return JsonResponse(obj1,safe=False)
+    return JsonResponse({"success":False}, status=400)
+
+def ScreenLoadMasterUpdateAutoMcgr(request):
+    if request.method=="GET" and request.is_ajax():
+        loadcentre=request.GET.get('loadcentre')
+        shopsec=request.GET.get('shopsec')
+        obj1=list(Mp.objects.filter(mc_gr__isnull=False,shop_sec=shopsec,lcno=loadcentre).values('mc_gr').distinct())  
+        return JsonResponse(obj1,safe=False)
+    return JsonResponse({"success":False}, status=400)
