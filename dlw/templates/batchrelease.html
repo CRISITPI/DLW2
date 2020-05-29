@@ -6,6 +6,16 @@
     * {
       box-sizing: border-box;
     }
+        
+.read
+    {
+      border: 1px solid transparent;    
+      background-color: #f1f1f1;
+      padding: 10px;
+      font-size: 16px;
+  
+    
+    }
     
     body {
       font: 16px Arial;  
@@ -20,11 +30,7 @@
       padding: 10px;
       font-size: 16px;
     }
-    
-    input[type=text] {
-      background-color: white;
-      width: 100%;
-    }
+  
     
     input[type=submit] {
       background-color: DodgerBlue;
@@ -114,28 +120,51 @@
         <div class="form-row">            
             <div class="form-group col-md-3">
                 <label for="batchno">BATCH NO</label>
-                <div class="autocomplete" style="width:250px;">
+                <div class="autocomplete" style="width:220px;">
                     <input id="batchno" autocomplete="off" type="text" name="batchno" placeholder="ENTER BATCH NO"    maxlength="8" onkeypress="return isNumberKeybatch(event)" >
                     <br><span id="lblErrorbatch" style="color: red"></span> 
                 </div></div>
+                <div class="form-group col-md-3">
+                  <label for="date">RELEASE DATE &nbsp;&nbsp; &nbsp;&nbsp;  </label>
+                   <div class="autocomplete" style="width:220px;">
+                      <input id="date" type="text" autocomplete="off" name="date" placeholder="SELECT DATE" >
+                    </div>
+                  </div>
             <div class="form-group col-md-3">
                 <label for="asslyno">ASSEMBLY NO</label>
-                  <div class="autocomplete" style="width:250px;">
-                        <input id="asslyno" autocomplete="off" type="text" name="asslyno" placeholder="ENTER ASSEMBLY NO"  maxlength="8" onkeypress="return isNumberKeyassly(event)" >
-                        <br><span id="lblErrorassly" style="color: red"></span> 
-                    </div></div>
+                        <input id="asslyno" class="read" type="text" name="asslyno" placeholder=" ASSEMBLY NO"  onclick="abc()" readonly>
+                    </div>
                     <div class="form-group col-md-3">
                       <label for="brn">BRN NO &nbsp;&nbsp; &nbsp;&nbsp;  </label>
                        <div class="autocomplete" style="width:250px;">
-                          <input id="brn" autocomplete="off" type="text" name="brn" placeholder="ENTER BRN NO" maxlength="5" onkeypress="return isNumberKeybrn(event)">
-                          <br><span id="lblErrorbrn" style="color: red"></span> 
+                          <input id="brn"  type="text" class="read" name="brn" placeholder=" BRN NO" onclick="abc()" readonly>
+                          
                       </div></div>
-            <div class="form-group col-md-3">
-                <label for="date">RELEASE DATE &nbsp;&nbsp; &nbsp;&nbsp;  </label>
-                 <div class="autocomplete" style="width:250px;">
-                    <input id="date" autocomplete="off" type="text" name="date" placeholder="SELECT DATE" >
-                  </div>
-                </div></div>
+                      <div class="form-group col-md-3">
+                        <label for="batchno">EPC</label>
+                        <div class="autocomplete" style="width:250px;">
+                            <input id="epc" class="read" type="text" name="epc" placeholder="EPC" onclick="abc()" readonly >
+                            
+                        </div></div>
+                        <div class="form-group col-md-3">
+                          <label for="date">QUANTITY &nbsp;&nbsp; &nbsp;&nbsp;  </label>
+                           <div class="autocomplete" style="width:250px;">
+                              <input id="qty"  type="text" class="read" name="qty" placeholder="QUANTITY" onclick="abc()" readonly >
+                            </div>
+                          </div>
+                    <div class="form-group col-md-3">
+                        <label for="asslyno">LOCO FROM</label>
+                          <div class="autocomplete" style="width:250px;">
+                                <input id="locofr"  type="text" class="read" name="locofr" placeholder="LOCO FROM"  onclick="abc()" readonly >
+                                 
+                            </div></div>
+                            <div class="form-group col-md-3">
+                              <label for="brn">LOCO TO &nbsp;&nbsp; &nbsp;&nbsp;  </label>
+                               <div class="autocomplete" style="width:250px;">
+                                  <input id="locoto" type="text" class="read" name="locoto" placeholder="LOCO TO" onclick="abc()" readonly>
+ 
+                              </div></div>
+            </div>
                 <br>
                 <br>
                 <div >
@@ -143,6 +172,23 @@
                 <input type="submit" name="releasebatch" id="releasebatch" value="Release Batch" class="btn btn-primary" hidden></button>
                 <input type="button" name="viewbatch" id="viewbatch" value="View Batch" class="btn btn-primary"></button>
                 <!-- <input type="submit" name="releasebatch" id="releasebatch" value="Release Batch" class="btn btn-primary" onclick="wait()"></button> -->
+              </div>
+              <div>
+                <table id="details" class="table table-striped table-bordered" >
+                  <thead style="background-color:ghostwhite; font-size:12px;">
+                      <tr>
+                          <th>PART NO.</th>
+                          <th>BRN NO.</th>
+                          <th>EPC</th>
+                          <th>BATCH QTY</th>
+                          <th>LOCO FROM</th>
+                          <th>LOCO TO</th>
+                      </tr>
+                  </thead>
+                  <tbody style="font-size:11px; font-weight: 610;">
+                  
+                </table>
+
               </div>
 
 
@@ -160,32 +206,26 @@ setTimeout(function(){
 
     function checkdetails() 
     {
-      batch=$('#batchno').val();
-      assly=$('#asslyno').val();
-      brn=$('#brn').val();
-      if(batch.length==0)
-        alert('Enter Batch no.!!!');
-      else
-      if(batch.length<8)
-        alert("Batch No. Should be 8 Character!!!");
-      else
-      if(assly.length==0)
-        alert('Enter Assembly No.!!! ');
-      else
-      if(assly.length<8)
-        alert('Assembly No. should be 8 Character!!!');
-      else
-      if(brn.length==0)
-        alert('Enter Brn No.!!!');
-      else
-      if(brn.length<5)
-        alert('Brn No. Should be 5 Character!!!');
-      else
-      if($('#date').val().length==0)
-        alert('Select Date!!!');
-      else
-        alert('Under development!!!');
-      
+                    if($('#batchno').val().length==0)
+                    {
+                      alert('Enter Batch no.!!!');
+                      $('#batchno').focus();
+                    }
+                    else
+                    if($('#batchno').val().length<8)
+                    {
+                      alert("Batch No. Should be 8 Character!!!");
+                      $('#batchno').focus();
+                    }
+                    else
+                      if($('#date').val().length==0)
+                        {
+                          alert('Select Date!!!');
+                          $('#date').focus();
+                        }
+                    else
+                      alert('Under development!!!');
+                        
 
     }
     function isNumberKeybatch(evt) {
@@ -199,36 +239,21 @@ if (charCode > 31 && (charCode < 48 || charCode > 57))
 } 
 return true;
 }
-function isNumberKeyassly(evt) {
-    var lblErrora = document.getElementById("lblErrorassly");
-        lblErrora.innerHTML = "";
-var charCode = (evt.which) ? evt.which : evt.keyCode;
-if (charCode > 31 && (charCode < 48 || charCode > 57))
-{
-    lblErrora.innerHTML = "Only Numbers allowed.";
-    return false;
-} 
-return true;
-}
-function isNumberKeybrn(evt) {
-    var lblErrora = document.getElementById("lblErrorbrn");
-        lblErrora.innerHTML = "";
-var charCode = (evt.which) ? evt.which : evt.keyCode;
-if (charCode > 31 && (charCode < 48 || charCode > 57))
-{
-    lblErrora.innerHTML = "Only Numbers allowed.";
-    return false;
-} 
-return true;
-}
-var batchac=[' '];
-var asslyac=[' '];
-var brnac=[' '];
+
+// $(".date").datepicker().on("changeDate", function(e) {
+//    alert('aaaa')
+// });
+
+
+var batchac=[' '];                      
 $(document).ready(function()
 {
-  $('#date').datepicker({dateFormat:'dd-mm-yy',
+  
+  $('#date').datepicker({dateFormat:'dd-mm-yy',onSelect: function(date) {
+        changedate1();
+     },
                       beforeShow: function(){    
-                      $(".ui-datepicker").css('font-size', 14.8) 
+                      $(".ui-datepicker").css('font-size', 13) 
                       }
                       });
                       var data = {};
@@ -246,40 +271,61 @@ $(document).ready(function()
 
   });
                       });
-document.querySelector("#asslyno").addEventListener('click',(e)=>{
-                    e.preventDefault();
-                    if($('#batchno').val().length==0)
-                    {
-                      alert('Enter Batch no.!!!');
-                      $('#batchno').focus();
-                    }
-                    else
-                    if($('#batchno').val().length<8)
-                    {
-                      alert("Batch No. Should be 8 Character!!!");
-                      $('#batchno').focus();
-                    }
-                    var batch = $("#batchno").val();
-                                   
-                    var data = {mAsslyno};
+
+  function changedate1()
+  {
+    alert('hiii');
+
+    var batch=$('#batchno').val();
+    if(batch.length==0)
+    {
+    
+      alert('Enter Batch no.!!!');
+       $('#batchno').focus();
+       $('#date').val('');
+
+     }
+     else
+     if($('#batchno').val().length<8)
+      {
+        alert("Batch No. Should be 8 Character!!!");
+         $('#batchno').focus();
+         $('#date').val('');
+
+     }
+       else     
+       {                                     
+                    var data = {batch};
                       $.ajax({
                         type : 'GET',
                         url : "{% url 'Batchreleasedetails' %}",
                         dataType : 'json',
                         data : data,
                         success : function(response){
-                            for(i=0;i<response.length;i++)
-                           {
-                             countries1.push((response[i].bo_no).toString());
-                           }
+                          var trHTML = '';
+                          $.each(response, function (i, item) {
+                          trHTML += '<tr><td style="display:none;">' + item.id + '</td><td>' + item.part_no + '</td><td>' + item.brn_no + '</td><td>' + item.ep_type + '</td><td>' + item.batch_qty + '</td><td>' + item.loco_fr + '</td><td>' + item.loco_to+'</td></tr>';
+                            });
+                          trHTML+='</tbody>'
+                        $('#details').append(trHTML);
+                        table=$('#details').DataTable();
 
                            }
                      })
-                });
+                    }
+          // $('#date').datepicker({dateFormat:'dd-mm-yy',onSelect: function(date) {
+          //       changedate1();
+          //   },
+          //                     beforeShow: function(){    
+          //                     $(".ui-datepicker").css('font-size', 14.8) 
+          //                     }
+          //                     });
 
-document.querySelector("#brn").addEventListener('click',(e)=>{
-                    e.preventDefault();
-                    if($('#batchno').val().length==0)
+  }
+
+  function abc()
+  {
+    if($('#batchno').val().length==0)
                     {
                       alert('Enter Batch no.!!!');
                       $('#batchno').focus();
@@ -291,19 +337,82 @@ document.querySelector("#brn").addEventListener('click',(e)=>{
                       $('#batchno').focus();
                     }
                     else
-                    if($('#asslyno').val().length==0)
-                    {
-                      alert('Enter Assembly no.!!!');
-                      $('#asslyno').focus();
-                    }
-                    else
-                    if($('#asslyno').val().length<8)
-                    {
-                      alert("Asslembly No. Should be 8 Character!!!");
-                      $('#asslyno').focus();
-                    }
+                      if($('#date').val().length==0)
+                        {
+                          alert('Select Date!!!');
+                          $('#date').focus();
+                        }
+  }
 
-                  });
+
+// document.querySelector("#date").addEventListener('onchange',(e)=>{
+//                     e.preventDefault();
+//                     alert('hhhhh')
+// });
+
+// document.querySelector("#asslyno").addEventListener('click',(e)=>{
+//                     e.preventDefault();
+//                     if($('#batchno').val().length==0)
+//                     {
+//                       alert('Enter Batch no.!!!');
+//                       $('#batchno').focus();
+//                     }
+//                     else
+//                     if($('#batchno').val().length<8)
+//                     {
+//                       alert("Batch No. Should be 8 Character!!!");
+//                       $('#batchno').focus();
+//                     }
+//                     else
+//                       if($('#date').val().length==0)
+//                         alert('Select Date!!!');
+//                     var batch = $("#batchno").val();
+                                   
+//                     var data = {mAsslyno};
+//                       $.ajax({
+//                         type : 'GET',
+//                         url : "{% url 'Batchreleasedetails' %}",
+//                         dataType : 'json',
+//                         data : data,
+//                         success : function(response){
+//                             for(i=0;i<response.length;i++)
+//                            {
+//                              countries1.push((response[i].bo_no).toString());
+//                            }
+
+//                            }
+//                      })
+//                 });
+
+// document.querySelector("#brn").addEventListener('click',(e)=>{
+//                     e.preventDefault();
+//                     if($('#batchno').val().length==0)
+//                     {
+//                       alert('Enter Batch no.!!!');
+//                       $('#batchno').focus();
+//                     }
+//                     else
+//                     if($('#batchno').val().length<8)
+//                     {
+//                       alert("Batch No. Should be 8 Character!!!");
+//                       $('#batchno').focus();
+//                     }
+//                     else
+//                     if($('#date').val().length==0)
+//                       alert('Select Date!!!');
+//                     if($('#asslyno').val().length==0)
+//                     {
+//                       alert('Enter Assembly no.!!!');
+//                       $('#asslyno').focus();
+//                     }
+//                     else
+//                     if($('#asslyno').val().length<8)
+//                     {
+//                       alert("Asslembly No. Should be 8 Character!!!");
+//                       $('#asslyno').focus();
+//                     }
+
+//                   });
 
   // document.querySelector("#date").addEventListener('click',(e)=>{
   //                   e.preventDefault();
