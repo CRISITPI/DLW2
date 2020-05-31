@@ -65,7 +65,7 @@
    
     <style>
         #customers {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            font-family: 'Quicksand', sans-serif;
             border-collapse: collapse;
             margin-left: auto;
             margin-right: auto;
@@ -116,30 +116,26 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" {% if usermaster.op_delete %}{% else %} disabled {% endif%}  data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
-                    <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
-                                <font color="white">Dispatch</font>
-                         </button>
-                    </li>
+                    
                     <li class="dropdown">
-                        <a href="#" class="btn btn-primary" data-toggle="dropdown" role="button"
+                        <a href="#" class="btn btn-primary" data-toggle="dropdown" role="button" {% if usermaster.op_update %}{% else %} disabled {% endif%} 
                             aria-haspopup="true" aria-expanded="false"  style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% "><font color="white">Inspect</font></a>
                         <ul class="dropdown-menu">
-                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#InspectModalNormal">Inspect</button></li>
-                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#InspectModalHHP">Inspect HHP</button></li>
+                            <li><button type="button" class="btn btn"  {% if usermaster.op_update %}{% else %} disabled {% endif%}data-toggle="modal" data-target="#InspectModalNormal">Inspect</button></li>
+                            <li><button type="button" class="btn btn" {% if usermaster.op_update %}{% else %} disabled {% endif%} data-toggle="modal" data-target="#InspectModalHHP">Inspect HHP</button></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" {% if usermaster.op_update %}{% else %} disabled {% endif%}  data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">EditRecord</font>
                      </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" {% if usermaster.op_create %}{% else %} disabled {% endif%}  data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                         <font color="white">AddRecord</font>
                      </button>
                     </li>
@@ -169,19 +165,19 @@ footer, .page-content::after{
         <th>Serial No.</th>
         <th>Batch Order No.</th>
         <th>Part No. &nbsp;</th>
-        <th>Batch Qty &nbsp;</th>
+        <th>Batch Qty</th>
         <th>Batch Order Date &nbsp;</th>
-        <th>Loco Type </th>
-        <th>Date &nbsp;</th>
-        <th>Axle No. </th>
+        <th>Loco Type&nbsp;&nbsp; </th>
+        <th>Date &nbsp;&nbsp;&nbsp;&nbsp;</th>
+        <th>Axle No. &nbsp;&nbsp;&nbsp;&nbsp;</th>
         <th>Wheel No(DE) &nbsp; </th>
         <th>Wheel No(NDE)</th>
         <th>Bull Gear No. &nbsp; </th>
-        <th>Bull Gear Make &nbsp; </th>
+        <th>Bull Gear Make </th>
         <th>Machine In Date &nbsp; </th>
         <th>Machine Out Date &nbsp; </th>
-        <th>Dispatch To</th>
-        <th>Dispatch Date &nbsp; </th>
+        <th>Inspection Status</th>
+        <th>Inspection Date &nbsp; </th>
         </tr>
         {% for objec in object %}
         <tr>
@@ -200,7 +196,7 @@ footer, .page-content::after{
         <td>{{objec.in_qty}} <br><br></td>
         <td>{{objec.out_qty}} <br><br></td>
         <td>{{objec.dispatch_to}} <br><br></td>
-        <td>{{objec.dispatch_date}} <br><br></td>
+        <td>{{objec.inspect_date}} <br><br></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -296,26 +292,38 @@ footer, .page-content::after{
                                 </div> 
                                 </div>
                                 <div class="row">
+                                    
+                                    <div class="col-6">
+                                      <label for="">Bull Gear Make</label>
+                                      <select name="bullgear_make" id="bullgear_make" class="form-control ll" required >
+                                        <option value="" hidden selected>Select Bull Gear Make.</option>
+                                          <option>GGAC</option>
+                                          <option>KPC</option>
+                                          <option>BHEL</option>
+                                          <option>TT</option>
+                                          <option>TRINA</option>
+                                          <option>KIRLOSKAR</option>
+                                          <option>ELECON</option>
+                                          <option>SAN</option>
+                                      </select>
+                              </div>
                                         <div class="col-6">
                                             <label for="">Machine In Date</label>
                                             <input type="text" class="form-control" name="in_qty" id="in_qty" placeholder="dd-mm-yyyy" readonly>
                                         </div>
-                                        <div class="col-6">
-                                            <label for="">Machine Out Date</label>
-                                            <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
-                                        </div>
                                     </div>
+                                    
                                 <div class="row">
-                                        <div class="col-6">
-                                                <label for="">Bull Gear Make</label>
-                                                <input type="text" class="form-control" name="bullgear_make" id="bullgear_make" maxlength="20" required>
-                                        </div>       
+                                  <div class="col-6">
+                                    <label for="">Machine Out Date</label>
+                                    <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
+                                </div>          
                                 </div>
                         </div>
                         
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" />
+            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" onclick="return funct()"/>
           </div>
           </form>
           </div>
@@ -334,16 +342,16 @@ footer, .page-content::after{
               </button>
                     </div>
                 
-                    <form method="POST" class="needs-validation" > {% csrf_token %}
+                    <form name="AxleWheelPressForm" id="AxleWheelPressForm" method="POST" class="needs-validation" > {% csrf_token %}
         
                     <div class="modal-body">
                           <div class="row">
                           <div class="col-6">
-                                  <label for="">Serial No.</label>
+                                  <label for="">Axle No.</label>
                                   <select name="sno" id="wheelpress" class="form-control ll" required>
-                                          <option value="" hidden selected>Select S.No.</option>  
+                                          <option value="" hidden selected>Select Axle No.</option>  
                                           {% for x in mysno %}
-                                          <option>{{x.sno}}</option>
+                                          <option>{{x.axle_no}}</option>
                                           {% endfor %}
                                   </select> 
                                 </div>         
@@ -356,6 +364,10 @@ footer, .page-content::after{
                                     <input type="text" class="form-control" name="inspectwheel_de_make" id="inspectwheel_de_make" placeholder="" maxlength="20" required>
                                   </div>
                                   <div class="col-6">
+                                    <label for="">Wheel (DE) pressure</label>
+                                    <input type="text" class="form-control" name="inspectwheel_de_pressure" id="inspectwheel_de_pressure" onchange="validateAxleWheelPressForm(this.id)"  placeholder="" maxlength="20" required>
+                                  </div>
+                                  <div class="col-6">
                                         <label for="">wheel No.(NDE)</label>
                                         <input type="text" class="form-control" name="inspectwheelno_nde" id="inspectwheelno_nde" placeholder="" maxlength="20" readonly required>
                                       </div>
@@ -365,7 +377,7 @@ footer, .page-content::after{
                                           </div>
                                           <div class="col-6">
                                                 <label for="">Wheel (NDE) pressure</label>
-                                                <input type="text" class="form-control" name="inspectwheel_nde_pressure" id="inspectwheel_nde_pressure" placeholder="" maxlength="20" required>
+                                                <input type="text" class="form-control" name="inspectwheel_nde_pressure" id="inspectwheel_nde_pressure" onchange="validateAxleWheelPressForm(this.id)"  placeholder="" maxlength="20" required>
                                               </div>
                                               <div class="col-6">
                                                 <label for="">Axle No</label>
@@ -373,7 +385,7 @@ footer, .page-content::after{
                                               </div>
                                               <div class="col-6">
                                                 <label for="">Axle Make</label>
-                                                <input type="text" class="form-control" name="inspectaxle_make" id="inspectaxle_make" placeholder="" maxlength="20" required>
+                                                <input type="text" class="form-control" name="inspectaxle_make" id="inspectaxle_make" placeholder="" maxlength="20" readonly required>
                                               </div>
                                               <div class="col-6">
                                                 <label for="">Bull Gear No</label>
@@ -385,72 +397,106 @@ footer, .page-content::after{
                                               </div>
                                               <div class="col-6">
                                                 <label for="">Bull Gear pressure</label>
-                                                <input type="text" class="form-control" name="inspectbullgear_pressure" id="inspectbullgear_pressure" placeholder="" maxlength="20" required>
+                                                <input type="text" class="form-control" name="inspectbullgear_pressure" id="inspectbullgear_pressure" onchange="validateAxleWheelPressForm(this.id)"  placeholder="" maxlength="20" required>
                                               </div>
                                               <div class="col-6">
                                                 <label for="">MSU Unit no</label>
                                                 <input type="text" class="form-control" name="inspectmsu_unit_no" id="inspectmsu_unit_no" placeholder="" maxlength="20" required>
                                               </div>
+                                             
                                               <div class="col-6">
                                                 <label for="">MSU Unit Make</label>
-                                                <input type="text" class="form-control" name="inspectmsu_unit_make" id="inspectmsu_unit_make" placeholder="" maxlength="20" required>
-                                              </div>
+                                                <select name="inspectmsu_unit_make" id="inspectmsu_unit_make" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select MSU Unit Make.</option>
+                                                    <option>KP</option>
+                                                    <option>KM</option>
+                                                </select>
+                                        </div>
                                               <div class="col-6">
                                                 <label for="">Axle Box No</label>
                                                 <input type="text" class="form-control" name="inspectaxle_box_no" id="inspectaxle_box_no" placeholder="" maxlength="20" required>
                                               </div>
+                                             
                                               <div class="col-6">
                                                 <label for="">Axle Box Make</label>
-                                                <input type="text" class="form-control" name="inspectaxle_box_make" id="inspectaxle_box_make" placeholder="" maxlength="20" required>
-                                              </div>
+                                                <select name="inspectaxle_box_make" id="inspectaxle_box_make" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select Axle Box Make.</option>
+                                                    <option>KMRI</option>
+                                                    <option>KP</option>
+                                                    <option>ANIL</option>
+                                                    <option>SES</option>
+                                                </select>
+                                        </div>
                                               <div class="col-6">
                                                 <label for="">Axle Box Clearance</label>
-                                                <input type="text" class="form-control" name="inspectaxle_box_clearance" id="inspectaxle_box_clearance" placeholder="" maxlength="20" required>
+                                                <input type="text" class="form-control" name="inspectaxle_box_clearance" id="inspectaxle_box_clearance" onchange="validateAxleWheelPressForm(this.id)" placeholder="" maxlength="20" required>
                                               </div>
                                               <div class="col-6">
                                                 <label for="">Suspension Bearing(DE) No</label>
                                                 <input type="text" class="form-control" name="inspectsuspension_bearing_de_no" id="inspectsuspension_bearing_de_no" placeholder="" maxlength="20" required>
                                               </div>
+                                              
                                               <div class="col-6">
                                                 <label for="">Suspension Bearing(DE) Make</label>
-                                                <input type="text" class="form-control" name="inspectsuspension_bearing_de_make" id="inspectsuspension_bearing_de_make" placeholder="" maxlength="20" required>
-                                              </div>
+                                                <select name="inspectsuspension_bearing_de_make" id="inspectsuspension_bearing_de_make" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select Suspension Bearing(DE) Make.</option>
+                                                    <option>SKF</option>
+                                                    <option>NBC</option>
+                                                </select>
+                                        </div>
                                               <div class="col-6">
                                                 <label for="">Suspension Bearing(NDE) No</label>
                                                 <input type="text" class="form-control" name="inspectsuspension_bearing_nde_no" id="inspectsuspension_bearing_nde_no" placeholder="" maxlength="20" required>
                                               </div>
+                                              
                                               <div class="col-6">
                                                 <label for="">Suspension Bearing(NDE) Make</label>
-                                                <input type="text" class="form-control" name="inspectsuspension_bearing_nde_make" id="inspectsuspension_bearing_nde_make" placeholder="" maxlength="20" required>
-                                              </div>
+                                                <select name="inspectsuspension_bearing_nde_make" id="inspectsuspension_bearing_nde_make" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select Suspension Bearing(NDE) Make.</option>
+                                                    <option>SKF</option>
+                                                    <option>NBC</option>
+                                                </select>
+                                        </div>
                           </div>
                                               <div class="row">
                                                   
                                                 <div class="col-6">
-                                                <label for="">CRU Bearing No</label>
+                                                <label for="">CRU Bearing No(DE)</label>
                                                 <input type="text" class="form-control" name="inspectcru_bearing_no_de" id="inspectcru_bearing_no_de" placeholder="" maxlength="20" required>
                                               </div>
+                                             
                                               <div class="col-6">
-                                                <label for="">CRU Bearing Make</label>
-                                                <input type="text" class="form-control" name="inspectcru_bearing_make_de" id="inspectcru_bearing_make_de" placeholder="" maxlength="20" required>
-                                              </div>
+                                                <label for="">CRU Bearing Make(DE)</label>
+                                                <select name="inspectcru_bearing_make_de" id="inspectcru_bearing_make_de" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select CRU Bearing Make(DE).</option>
+                                                    <option>SKF</option>
+                                                    <option>NBC</option>
+                                                    <option>FAG</option>
+                                                </select>
+                                        </div>
                                               <div class="col-6">
-                                                <label for="">CRU Bearing Pressure</label>
+                                                <label for="">CRU Bearing Pressure(DE)</label>
                                                 <input type="text" class="form-control" name="inspectcru_bearing_pressure_de" id="inspectcru_bearing_pressure_de" placeholder="" maxlength="20" required>
                                               </div>
                                             </div>
                                             <div class="row">
                                               
                                                 <div class="col-6">
-                                                  <label for="">CRU Bearing No</label>
+                                                  <label for="">CRU Bearing No(NDE)</label>
                                                   <input type="text" class="form-control" name="inspectcru_bearing_no_nde" id="inspectcru_bearing_no_nde" placeholder="" maxlength="20" required>
                                                 </div>
+                                              
                                                 <div class="col-6">
-                                                  <label for="">CRU Bearing Make</label>
-                                                  <input type="text" class="form-control" name="inspectcru_bearing_make_nde" id="inspectcru_bearing_make_nde" placeholder="" maxlength="20" required>
-                                                </div>
+                                                  <label for="">CRU Bearing Make(NDE)</label>
+                                                  <select name="inspectcru_bearing_make_nde" id="inspectcru_bearing_make_nde" class="form-control ll" required >
+                                                    <option value="" hidden selected>Select CRU Bearing Make(NDE).</option>
+                                                      <option>SKF</option>
+                                                      <option>NBC</option>
+                                                      <option>FAG</option>
+                                                  </select>
+                                          </div>
                                                 <div class="col-6">
-                                                  <label for="">CRU Bearing Pressure</label>
+                                                  <label for="">CRU Bearing Pressure(NDE)</label>
                                                   <input type="text" class="form-control" name="inspectcru_bearing_pressure_nde" id="inspectcru_bearing_pressure_nde" placeholder="" maxlength="20" required>
                                                 </div>
                                               </div>
@@ -459,15 +505,17 @@ footer, .page-content::after{
                                                   <label for="">Date</label>
                                                   <input type="text" name="inspectdate" id="inspectdate" class="form-control" placeholder="dd-mm-yyyy" readonly required>
                                           </div>
-                                            <!-- <div class="col-6">
-                                            <h6><label for="">Loco Type</label></h6>
-                                            <input type="text" class="form-control" name="locos" id="locos" required>
-                                            </div> -->
+                                           
                                             <div class="col-6">
                                                 <label for="">Inspector Name</label>
                                                 <input type="text" class="form-control" name="inspectinspector_name" id="inspectinspector_name" placeholder="" maxlength="20" required>
                                               </div>
+                                              <div class="col-6">
+                                                                     
+                                                <input type="hidden" class="form-control" name="hide" id="hide" placeholder="" required>
+                                              </div>
                                             </div>
+                                            
                                     </div>                        
         
                                 <div class="modal-footer">
@@ -491,16 +539,16 @@ footer, .page-content::after{
       </button>
             </div>
         
-            <form method="POST" class="needs-validation" > {% csrf_token %}
+            <form name="hhpAxleWheelPressForm" id="hhpAxleWheelPressForm" method="POST" class="needs-validation" > {% csrf_token %}
 
             <div class="modal-body">
                   <div class="row">
                   <div class="col-6">
-                          <label for="">Serial No.</label>
+                          <label for="">Axle No.</label>
                           <select name="sno" id="wheelpresshhp" class="form-control ll" required>
-                                  <option value="" hidden selected>Select S.No.</option>  
+                                  <option value="" hidden selected>Select Axle No.</option>  
                                   {% for x in hhpmysno %}
-                                  <option>{{x.sno}}</option>
+                                  <option>{{x.axle_no}}</option>
                                   {% endfor %}
                           </select> 
                         </div>         
@@ -513,6 +561,10 @@ footer, .page-content::after{
                             <input type="text" class="form-control" name="hhpwheel_de_make" id="hhpwheel_de_make" placeholder="" maxlength="20" required>
                           </div>
                           <div class="col-6">
+                            <label for="">Wheel (DE) pressure</label>
+                            <input type="text" class="form-control" name="hhpwheel_de_pressure" id="inspectwheel_nde_pressure" onchange="validateAxleWheelPressForm(this.id)"  placeholder="" maxlength="20" required>
+                          </div>
+                          <div class="col-6">
                                 <label for="">wheel No.(NDE)</label>
                                 <input type="text" class="form-control" name="hhpwheelno_nde" id="hhpwheelno_nde" placeholder="" maxlength="20" readonly required>
                               </div>
@@ -522,7 +574,7 @@ footer, .page-content::after{
                                   </div>
                                   <div class="col-6">
                                         <label for="">Wheel (NDE) pressure</label>
-                                        <input type="text" class="form-control" name="hhpwheel_nde_pressure" id="hhpwheel_nde_pressure" placeholder="" maxlength="20" required>
+                                        <input type="text" class="form-control" name="hhpwheel_nde_pressure" id="hhpwheel_nde_pressure"  placeholder="" maxlength="20" required>
                                       </div>
                                       <div class="col-6">
                                         <label for="">Axle No</label>
@@ -530,7 +582,7 @@ footer, .page-content::after{
                                       </div>
                                       <div class="col-6">
                                         <label for="">Axle Make</label>
-                                        <input type="text" class="form-control" name="hhpaxle_make" id="hhpaxle_make" placeholder="" maxlength="20" required>
+                                        <input type="text" class="form-control" name="hhpaxle_make" id="hhpaxle_make" placeholder="" maxlength="20" readonly required>
                                       </div>
                                       <div class="col-6">
                                         <label for="">Bull Gear No</label>
@@ -548,18 +600,30 @@ footer, .page-content::after{
                                         <label for="">MSU Unit no</label>
                                         <input type="text" class="form-control" name="hhpmsu_unit_no" id="hhpmsu_unit_no" placeholder="" maxlength="20" required>
                                       </div>
+                                     
                                       <div class="col-6">
                                         <label for="">MSU Unit Make</label>
-                                        <input type="text" class="form-control" name="hhpmsu_unit_make" id="hhpmsu_unit_make" placeholder="" maxlength="20" required>
-                                      </div>
+                                        <select name="hhpmsu_unit_make" id="hhpmsu_unit_make" class="form-control ll" required >
+                                          <option value="" hidden selected>Select MSU Unit Make.</option>
+                                            <option>KPE</option>
+                                            <option>KMRI</option>
+                                        </select>
+                                </div>
                                       <div class="col-6">
                                         <label for="">Axle Box No</label>
                                         <input type="text" class="form-control" name="hhpaxle_box_no" id="hhpaxle_box_no" placeholder="" maxlength="20" required>
                                       </div>
+                                     
                                       <div class="col-6">
                                         <label for="">Axle Box Make</label>
-                                        <input type="text" class="form-control" name="hhpaxle_box_make" id="hhpaxle_box_make" placeholder="" maxlength="20" required>
-                                      </div>
+                                        <select name="hhpaxle_box_make" id="hhpaxle_box_make" class="form-control ll" required >
+                                          <option value="" hidden selected>Select Axle Box Make.</option>
+                                            <option>KMRI</option>
+                                            <option>KPE</option>
+                                            <option>NBC</option>
+                                            <option>FAG</option>
+                                        </select>
+                                </div>
                                       <div class="col-6">
                                         <label for="">Axle Box Clearance</label>
                                         <input type="text" class="form-control" name="hhpaxle_box_clearance" id="hhpaxle_box_clearance" placeholder="" maxlength="20" required>
@@ -568,44 +632,74 @@ footer, .page-content::after{
                                         <label for="">Suspension Bearing(DE) No</label>
                                         <input type="text" class="form-control" name="hhpsuspension_bearing_de_no" id="hhpsuspension_bearing_de_no" placeholder="" maxlength="20" required>
                                       </div>
+                                     
                                       <div class="col-6">
                                         <label for="">Suspension Bearing(DE) Make</label>
-                                        <input type="text" class="form-control" name="hhpsuspension_bearing_de_make" id="hhpsuspension_bearing_de_make" placeholder="" maxlength="20" required>
-                                      </div>
+                                        <select name="hhpsuspension_bearing_de_make" id="hhpsuspension_bearing_de_make" class="form-control ll" required >
+                                          <option value="" hidden selected>Select Suspension Bearing(DE) Make.</option>
+                                            <option>SKF</option>
+                                            <option>NBC</option>
+                                            <option>FAG</option>
+                                            <option>TIM</option>
+                                        </select>
+                                </div>
                                       <div class="col-6">
                                         <label for="">Suspension Bearing(NDE) No</label>
                                         <input type="text" class="form-control" name="hhpsuspension_bearing_nde_no" id="hhpsuspension_bearing_nde_no" placeholder="" maxlength="20" required>
                                       </div>
+                                      
                                       <div class="col-6">
                                         <label for="">Suspension Bearing(NDE) Make</label>
-                                        <input type="text" class="form-control" name="hhpsuspension_bearing_nde_make" id="hhpsuspension_bearing_nde_make" placeholder="" maxlength="20" required>
-                                      </div>
+                                        <select name="hhpsuspension_bearing_nde_make" id="hhpsuspension_bearing_nde_make" class="form-control ll" required >
+                                          <option value="" hidden selected>Select Suspension Bearing(NDE) Make.</option>
+                                          <option>SKF</option>
+                                          <option>NBC</option>
+                                          <option>FAG</option>
+                                          <option>TIM</option>
+                                        </select>
+                                </div>
                                      </div>
                                       <div class="row">
                                       <div class="col-6">
-                                        <label for="">CRU Bearing No DE</label>
+                                        <label for="">CRU Bearing No. (DE)</label>
                                         <input type="text" class="form-control" name="hhpcru_bearing_no_de" id="hhpcru_bearing_no_de" placeholder="" maxlength="20" required>
                                       </div>
+                                     
                                       <div class="col-6">
-                                        <label for="">CRU Bearing Make DE</label>
-                                        <input type="text" class="form-control" name="hhpcru_bearing_make_de" id="hhpcru_bearing_make_de" placeholder="" maxlength="20" required>
-                                      </div>
+                                        <label for="">CRU Bearing Make(DE)</label>
+                                        <select name="hhpcru_bearing_make_de" id="hhpcru_bearing_make_de" class="form-control ll" required >
+                                          <option value="" hidden selected>Select CRU Bearing Make(DE).</option>
+                                          <option>SKF</option>
+                                          <option>NBC</option>
+                                          <option>FAG</option>
+                                          <option>TIMKEN</option>
+                                          <option>BRENCO</option>
+                                        </select>
+                                </div>
                                       <div class="col-6">
-                                        <label for="">CRU Bearing Pressure DE</label>
+                                        <label for="">CRU Bearing Pressure (DE)</label>
                                         <input type="text" class="form-control" name="hhpcru_bearing_pressure_de" id="hhpcru_bearing_pressure_de" placeholder="" maxlength="20" required>
                                       </div>
                                     </div>
                                     <div class="row">
                                        <div class="col-6">
-                                          <label for="">CRU Bearing No NDE</label>
+                                          <label for="">CRU Bearing No (NDE)</label>
                                           <input type="text" class="form-control" name="hhpcru_bearing_no_nde" id="hhpcru_bearing_no_nde" placeholder="" maxlength="20" required>
                                         </div>
+                                      
                                         <div class="col-6">
-                                          <label for="">CRU Bearing Make NDE</label>
-                                          <input type="text" class="form-control" name="hhpcru_bearing_make_nde" id="hhpcru_bearing_make_nde" placeholder="" maxlength="20" required>
-                                        </div>
+                                          <label for="">CRU Bearing Make(NDE)</label>
+                                          <select name="hhpcru_bearing_make_nde" id="hhpcru_bearing_make_nde" class="form-control ll" required >
+                                            <option value="" hidden selected>Select CRU Bearing Make(NDE).</option>
+                                              <option>SKF</option>
+                                              <option>NBC</option>
+                                              <option>FAG</option>
+                                              <option>TIMKEN</option>
+                                              <option>BRENCO</option>
+                                          </select>
+                                  </div>
                                         <div class="col-6">
-                                          <label for="">CRU Bearing Pressure NDE</label>
+                                          <label for="">CRU Bearing Pressure (NDE)</label>
                                           <input type="text" class="form-control" name="hhpcru_bearing_pressure_nde" id="hhpcru_bearing_pressure_nde" placeholder="" maxlength="20" required>
                                         </div>
                                       </div>
@@ -633,13 +727,13 @@ footer, .page-content::after{
                                             <div class="col-6">
                                                 <label for="">Journal Bearing Make for NDE</label>
                                                 <input type="text" class="form-control" name="hhpjournal_make_nde" id="hhpjournal_make_nde" placeholder="" maxlength="20" required>
-                                              </div>   
+                                              </div> 
+                                              <div class="col-6">
+                                                                     
+                                                <input type="hidden" class="form-control" name="hhphide" id="hhphide" placeholder="" required>
+                                              </div>  
                                             </div> 
-                                <!-- <div class="col-6">
-                                <label>Loco Type</label>
-                                    <input type="text" class="form-control" name="locos" id="locos" required readonly>
-                                    </div> -->
-                              
+                               
                                           
                 </div>
                          
@@ -673,7 +767,7 @@ footer, .page-content::after{
                                   <select name="editsno" id="editsno" class="form-control ll" required>
                                       <option value="" hidden selected>Select S No.</option>  
                                       {% for y in mysno %}
-                                      <option>{{y.sno}}</option>
+                                      <option>{{y.axle_no}}</option>
                                       {% endfor %}
                               </select> 
                               </div>
@@ -705,27 +799,53 @@ footer, .page-content::after{
                                                   <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                           </div>
 
-                                 <div class="col-6">
-                                              <label for="">Axle No.</label>
-                                              <input type="text" name="editaxle_no" id="editaxle_no" class="form-control ll" placeholder="" required>
-                                  </div>
+                                          <div class="col-6">
+                                            <label for="">Axle No.</label>
+                                            <select name="editaxle_no" id="editaxle_no" class="form-control ll" required>
+                                                    <option value="" hidden selected>Select Axle No.</option>  
+                                                    {% for d in myaxle %}
+                                                    <option>{{d.axle_no}}</option>
+                                                    {% endfor %}
+                                            </select> 
+                                          </div>
 
                                   <div class="col-6">
-                                          <label for="">Wheel No(DE)</label>
-                                          <input type="text" class="form-control" name="editwheelno_de" id="editwheelno_de" placeholder="" required>
-                                  </div> 
-                                  <div class="col-6">
-                                          <label for="">Wheel No(NDE)</label>
-                                          <input type="text" class="form-control" name="editwheelno_nde" id="editwheelno_nde" required>
-                                  </div> 
+                                    <label for="">Wheel No(DE)</label>
+                                    <select name="editwheelno_de" id="editwheelno_de" class="form-control ll" required>
+                                      <datalist id="optionsdata">
+                                        <option value="" hidden selected>Select Wheel No.</option>  
+                                            {% for c in mywheel %}
+                                            <option>{{c.wheel_no}}</option>
+                                            {% endfor %}
+                                     </datalist>
+                                    </select> 
+                              </div>
+                              <div class="col-6">
+                                <label for="">Wheel No(NDE)</label>
+                                          <select name="editwheelno_nde" id="editwheelno_nde" class="form-control ll">
+                                                  <option value="" hidden selected>Select Wheel No.</option>
+                                        </select>
+                                </div> 
+                                  
                                   <div class="col-6">
                                           <label for="">Bull Gear No.</label>
                                           <input type="text" class="form-control" name="editbullgear_no" id="editbullgear_no" maxlength="20" required>
                                   </div> 
+                                 
                                   <div class="col-6">
-                                          <label for="">Bull Gear Make</label>
-                                          <input type="text" class="form-control" name="editbullgear_make" id="editbullgear_make" maxlength="20" required>
-                                  </div>  
+                                    <label for="">Bull Gear Make</label>
+                                    <select name="editbullgear_make" id="editbullgear_make" class="form-control ll" required >
+                                      <option value="" hidden selected>Select Bull Gear Make.</option>
+                                        <option>GGAC</option>
+                                        <option>KPC</option>
+                                        <option>BHEL</option>
+                                        <option>TT</option>
+                                        <option>TRINA</option>
+                                        <option>KIRLOSKAR</option>
+                                        <option>ELECON</option>
+                                        <option>SAN</option>
+                                    </select>
+                            </div>
                                         <div class="col-6">
                                             <label for="">Machine In Date</label>
                                             <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
@@ -749,7 +869,7 @@ footer, .page-content::after{
               </div>                      
       <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" />
+          <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" onclick="return editfunct()" />
         </div>
         </form>
       </div>
@@ -815,10 +935,15 @@ footer, .page-content::after{
         <form method="POST" class="needs-validation" > {% csrf_token %}
                <div class="modal-body">
                         <div class="row">
-                            <div class="col">
-                                    <label for="">Serial No.</label>
-                                    <input type="number" class="form-control" id="delsno" name="delsno"  required>
-                            </div> 
+                          <div class="col-6">
+                            <label for="">Axle No.</label>
+                            <select name="delsno" id="delsno" class="form-control ll" required>
+                                    <option value="" hidden selected>Select Axle No.</option>  
+                                    {% for x in mysno %}
+                                    <option>{{x.axle_no}}</option>
+                                    {% endfor %}
+                            </select> 
+                          </div> 
                         </div>
                 </div>
             <div class="modal-footer">
@@ -834,6 +959,43 @@ footer, .page-content::after{
 </form>
 
 <script>
+$("#wheelpress").change(function(e){
+            e.preventDefault();
+            var val_loco;
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'validate_axlepress_inspect' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        $("#hide").val(`${response[0].loco_type}`);
+                    }
+
+                })
+                
+        });
+
+        $("#wheelpresshhp").change(function(e){
+            e.preventDefault();
+            var val_loco;
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'validate_axlepress_inspect' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        $("#hhphide").val(`${response[0].loco_type}`);
+                    }
+
+                })
+                
+        });
+
+
         $("#addbono").change(function(e){
             e.preventDefault();
             var selbo_no = $(this).val();
@@ -867,73 +1029,9 @@ footer, .page-content::after{
                 }
 
 
-           $("#editaxle_no").change(function(e){
-            e.preventDefault();
-            var axle_no = $(this).val();
-            var x=$("#hide1").val();
-            var data = {axle_no,x};
-              $.ajax({
-                type : 'GET',
-                url : "{% url 'validate_axleno' %}",
-                dataType : 'json',
-                data : data,
-                success : function(response){
-                  if(response == "false"){
-                        alert("Please Enter Valid Axle Number.");
-                        document.getElementById("editaxle_no").value="";
-                        document.getElementById("")
-                        $("#editaxle_no").focus();
-                        }   
-                }
-            })
-        });
+           
 
-       $("#editwheelno_de").change(function(e){
-            e.preventDefault();
-            var wheelno_de = $(this).val();
-            var x=$("#hide3").val();
-            var data = {wheelno_de, x};
-            
-            // var data1={x};
-           // alert(x);
-              $.ajax({
-                type : 'GET',
-                url : "{% url 'validate_wheelnode' %}",
-                dataType : 'json',
-                data : data,
-                // data1 : data1,
-                success : function(response){
-                  if(response == "false"){
-                        // alert("Please Enter Valid Wheel Number.");
-                        document.getElementById("editwheelno_de").value="";
-                        alert("Please Enter Valid Wheel Number.");
-                        document.getElementById("")
-                        $("#editwheelno_de").focus();
-                        }   
-                }
-            })
-        });
 
-        $("#editwheelno_nde").change(function(e){
-            e.preventDefault();
-            var wheelno_nde= $(this).val();
-            var x=$("#hide2").val();
-            var data = {wheelno_nde,x};
-              $.ajax({
-                type : 'GET',
-                url : "{% url 'validate_wheelnonde' %}",
-                dataType : 'json',
-                data : data,
-                success : function(response){
-                  if(response == "false"){
-                        alert("Please Enter Valid Wheel Number.");
-                        document.getElementById("editwheelno_nde").value="";
-                        document.getElementById("")
-                        $("#editwheelno_nde").focus();
-                        }   
-                }
-            })
-        });
 
         $("#editsno").change(function(e){
             e.preventDefault();
@@ -946,13 +1044,38 @@ footer, .page-content::after{
                     data:data,
                     success:function(response){
                         console.log(response);
+                        var indate=response[0].in_qty;
+                        var outdate=response[0].out_qty;
+                  
+                        if(indate != null)
+                        {
+                            var month1 = indate.substring(5,7);
+                            var day1 = indate.substring(8,10);
+                            var year1 = indate.substring(0,4);
+                            var date1 =  day1 + "-" + month1 + "-" + year1; 
+                            $("#editin_qty").val(date1);
+                        }
+                        else
+                        {
+                            $("#editin_qty").val(`${response[0].in_qty}`);
+                        }
+                        if(outdate != null)
+                        {
+                            var month2 = outdate.substring(5,7);
+                            var day2 = outdate.substring(8,10);
+                            var year2 = outdate.substring(0,4);
+                            var date2 =  day2 + "-" + month2 + "-" + year2; 
+                            $("#editout_qty").val(date2);
+                        }
+                        else
+                        {
+                            $("#editout_qty").val(`${response[0].out_qty}`);
+                        }
                         $("#editbo_no").val(`${response[0].bo_no}`);
                         $("#editbo_date").val(`${response[0].bo_date}`);
                         $("#editpt_no").val(`${response[0].pt_no}`);
                         $("#editbo_qty").val(`${response[0].bo_qty}`);
                         $("#editdate").val(`${response[0].date}`);
-                        $("#editin_qty").val(`${response[0].in_qty}`);
-                        $("#editout_qty").val(`${response[0].out_qty}`);
                         $("#editaxle_no").val(`${response[0].axle_no}`);
                         $("#editwheelno_de").val(`${response[0].wheelno_de}`);
                         $("#editwheelno_nde").val(`${response[0].wheelno_nde}`);
@@ -1010,6 +1133,40 @@ footer, .page-content::after{
             })
         });
 
+        $("#wheelpress").change(function(e){
+          
+            e.preventDefault();
+            var sels_no = $(this).val();
+            var data = {sels_no};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'fetch_axlemake' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                 
+                $("#inspectaxle_make").val(`${response[0].axle_make}`);
+                    
+                }
+            })
+        });
+
+        $("#wheelpresshhp").change(function(e){
+            e.preventDefault();
+            var sels_no = $(this).val();
+            var data = {sels_no};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'fetch_axlemake' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+              $("#hhpaxle_make").val(`${response[0].axle_make}`);
+                    
+                }
+            })
+        });
+
         $("#wheelpresshhp").change(function(e){
             e.preventDefault();
             var sels_no = $(this).val();
@@ -1030,6 +1187,64 @@ footer, .page-content::after{
             })
         });
 
+        $("#bullgear_no").change(function(e){
+            e.preventDefault();
+            var bullgear_no=$(this).val();
+            var data={bullgear_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'uniquebullgear' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false")
+                        {
+                            alert("This Bullgear No. already exists. Please Enter a unique Bullgear No.!")
+                            document.getElementById("bullgear_no").value="";
+                        }
+                    }
+
+                })
+                
+        });
+
+        $("#editbullgear_no").change(function(e){
+            e.preventDefault();
+            var bullgear_no=$(this).val();
+            var data={bullgear_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'uniquebullgear' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false")
+                        {
+                            alert("This Bullgear No. already exists. Please Enter a unique Bullgear No.!")
+                            document.getElementById("editbullgear_no").value="";
+                        }
+                    }
+
+                })
+                
+        });
+
+        function funct(){
+          if((document.getElementById('bullgear_make').value =='')||(document.getElementById('bullgear_no').value =='')||(document.getElementById('wheelno_nde').value =='')||(document.getElementById('wheelno_de').value =='')||(document.getElementById('axle_no').value =='')||(document.getElementById('in_qty').value =='')||(document.getElementById('out_qty').value =='')||(document.getElementById('date').value ==''))
+            {
+                alert("Please enter all the fields.");
+                return false;
+            }
+        }
+
+        function editfunct(){
+          if((document.getElementById('editbullgear_make').value =='')||(document.getElementById('editbullgear_no').value =='')||(document.getElementById('editwheelno_nde').value =='')||(document.getElementById('editwheelno_de').value =='')||(document.getElementById('editaxle_no').value =='')||(document.getElementById('editin_qty').value =='')||(document.getElementById('editout_qty').value =='')||(document.getElementById('editdate').value ==''))
+            {
+                alert("Please enter all the fields.");
+                return false;
+            }
+        }
+
         $("#wheelpress").change(function(e){
             e.preventDefault();
             var sels_no=$(this).val();
@@ -1045,7 +1260,7 @@ footer, .page-content::after{
                         document.getElementById('inspectwheel_de_make').value ='';
                         document.getElementById('inspectwheel_nde_make').value ='';
                         document.getElementById('inspectwheel_nde_pressure').value ='';
-                        document.getElementById('inspectaxle_make').value ='';
+                        document.getElementById('inspectwheel_de_pressure').value ='';
                         document.getElementById('inspectbullgear_pressure').value ='';
                         document.getElementById('inspectmsu_unit_no').value ='';
                         document.getElementById('inspectmsu_unit_make').value ='';
@@ -1066,10 +1281,23 @@ footer, .page-content::after{
                         document.getElementById('inspectinspector_name').value ='';
                         }
                         else {
+                          var inspect_date=response[0].inspect_date;
+                                if(inspect_date != null)
+                                {
+                                    var month2 = inspect_date.substring(5,7);
+                                    var day2 = inspect_date.substring(8,10);
+                                    var year2 = inspect_date.substring(0,4);
+                                    var date2 =  day2 + "-" + month2 + "-" + year2; 
+                                    $("#inspectdate").val(date2);
+                                }
+                                else
+                                {
+                                    $("#inspectdate").val(`${response[0].inspect_date}`);
+                                }
                         $("#inspectwheel_de_make").val(`${response[0].wheel_de_make}`);
                         $("#inspectwheel_nde_make").val(`${response[0].wheel_nde_make}`);
                         $("#inspectwheel_nde_pressure").val(`${response[0].wheel_nde_pressure}`);
-                        $("#inspectaxle_make").val(`${response[0].axle_make}`);
+                        $("#inspectwheel_de_pressure").val(`${response[0].wheel_de_pressure}`);
                         $("#inspectbullgear_pressure").val(`${response[0].bullgear_pressure}`);
                         $("#inspectmsu_unit_no").val(`${response[0].msu_unit_no}`);
                         $("#inspectmsu_unit_make").val(`${response[0].msu_unit_make}`);
@@ -1086,7 +1314,7 @@ footer, .page-content::after{
                         $("#inspectcru_bearing_no_nde").val(`${response[0].cru_bearing_no_nde}`);
                         $("#inspectcru_bearing_make_nde").val(`${response[0].cru_bearing_make_nde}`);
                         $("#inspectcru_bearing_pressure_nde").val(`${response[0].cru_bearing_pressure_nde}`);
-                        $("#inspectdate").val(`${response[0].date}`);
+                     
                         $("#inspectinspector_name").val(`${response[0].inspector_name}`);
                         }
                     }
@@ -1110,7 +1338,7 @@ footer, .page-content::after{
                         document.getElementById('hhpwheel_de_make').value ='';
                         document.getElementById('hhpwheel_nde_make').value ='';
                         document.getElementById('hhpwheel_nde_pressure').value ='';
-                        document.getElementById('hhpaxle_make').value ='';
+                        document.getElementById('hhpwheel_de_pressure').value ='';
                         document.getElementById('hhpbullgear_pressure').value ='';
                         document.getElementById('hhpmsu_unit_no').value ='';
                         document.getElementById('hhpmsu_unit_make').value ='';
@@ -1131,10 +1359,23 @@ footer, .page-content::after{
                         document.getElementById('hhpinspector_name').value ='';
                         }
                         else {
+                          var hhpdate=response[0].inspect_date;
+                                if(hhpdate != null)
+                                {
+                                    var month2 = hhpdate.substring(5,7);
+                                    var day2 = hhpdate.substring(8,10);
+                                    var year2 = hhpdate.substring(0,4);
+                                    var date2 =  day2 + "-" + month2 + "-" + year2; 
+                                    $("#hhpdate").val(date2);
+                                }
+                                else
+                                {
+                                    $("#hhpdate").val(`${response[0].inspect_date}`);
+                                }
                         $("#hhpwheel_de_make").val(`${response[0].wheel_de_make}`);
                         $("#hhpwheel_nde_make").val(`${response[0].wheel_nde_make}`);
                         $("#hhpwheel_nde_pressure").val(`${response[0].wheel_nde_pressure}`);
-                        $("#hhpaxle_make").val(`${response[0].axle_make}`);
+                        $("#hhpwheel_de_pressure").val(`${response[0].wheel_de_pressure}`);
                         $("#hhpbullgear_pressure").val(`${response[0].bullgear_pressure}`);
                         $("#hhpmsu_unit_no").val(`${response[0].msu_unit_no}`);
                         $("#hhpmsu_unit_make").val(`${response[0].msu_unit_make}`);
@@ -1151,7 +1392,7 @@ footer, .page-content::after{
                         $("#hhpcru_bearing_no_nde").val(`${response[0].cru_bearing_no_nde}`);
                         $("#hhpcru_bearing_make_nde").val(`${response[0].cru_bearing_make_nde}`);
                         $("#hhpcru_bearing_pressure_nde").val(`${response[0].cru_bearing_pressure_nde}`);
-                        $("#hhpdate").val(`${response[0].date}`);
+                        $("#hhpdate").val(`${response[0].inspect_date}`);
                         $("#hhpinspector_name").val(`${response[0].inspector_name}`);
                         $("#hhpjournal_no_de").val(`${response[0].journal_no_de}`);
                         $("#hhpjournal_make_de").val(`${response[0].journal_make_de}`);
@@ -1164,6 +1405,139 @@ footer, .page-content::after{
                 })
                 
         });
+
+        function validateAxleWheelPressForm(a) {
+        var myval=document.getElementById('hide').value;
+        var x = document.forms["AxleWheelPressForm"][a].value;
+        if(isNaN(x)==false)
+        {
+        if(a=="inspectwheel_nde_pressure"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
+    b=80;
+    c=102;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+    if(a=="inspectwheel_de_pressure"){ 
+      
+        if (myval=="WAP-7"||myval=="WAP-9") {   
+                 
+    b=80;
+    c=102;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+
+    if(a=="inspectbullgear_pressure"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
+    b=55;
+    c=115;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+
+    if(a=="inspectaxle_box_clearance"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
+    b=45;
+    c=50;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+
+
+        }
+else
+    {
+        setvalidation4(a);
+    } 
+
+        }
+
+        
+    function setvalidation1(a,b,c)
+{
+    alert("Please enter the value between "+b+" and "+c);
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
+
+function setvalidation2(a)
+{
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="";
+}
+
+function setvalidation3(a)
+{
+    document.getElementById(a).style.color = "black";
+    document.getElementById(a).style.backgroundColor="";
+}
+
+function setvalidation4(a)
+{
+    alert("Please enter valid Numeric value");
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
+
 
         document.querySelector("#wheelno_de").addEventListener('change',(e)=>{
             e.preventDefault();
@@ -1191,6 +1565,37 @@ footer, .page-content::after{
                                       });
                                       html = "";
                                       document.querySelector("#wheelno_nde").insertAdjacentHTML('beforeend',mystr);
+                                      mystr=""; 
+                                }
+                                  })
+                        });
+
+                        document.querySelector("#editwheelno_de").addEventListener('change',(e)=>{
+            e.preventDefault();
+            var wheel_no = $("#editwheelno_de").val();
+            var data = {wheel_no};
+                  $.ajax({
+                        type : 'GET',
+                        url : "{% url 'wheelnde' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          console.log(response);
+                                  var elementsadded = document.querySelectorAll(".neweledoc");
+                                      if(elementsadded.length>0){
+                                          var elementsaddedarr = Array.from(elementsadded);
+                                          elementsaddedarr.forEach((el)=> el.remove());
+                                          document.querySelector("#editwheelnonde").selected = true; 
+                                       }
+                                      var brarr,mystr,html;
+                                      brarr = response.map((el)=>el.wheel_no);
+                                      mystr = "";
+                                      brarr.forEach((el,index)=>{
+                                        html = `<option class="neweledoc">${brarr[index]}</option>`
+                                        mystr = html.concat(mystr);
+                                      });
+                                      html = "";
+                                      document.querySelector("#editwheelno_nde").insertAdjacentHTML('beforeend',mystr);
                                       mystr=""; 
                                 }
                                   })

@@ -2,7 +2,7 @@
 <style>
 
 #customers {
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-family: 'Quicksand', sans-serif;
     border-collapse: collapse;
     width: 100%;
     
@@ -38,11 +38,11 @@
     <center>
     <table style="height: 100%; margin-bottom: 0px;">
     <tr>
-    <td><center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br></td>
-    <td><center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br></td>
-    <td><center><input type="submit" name="btn" value="Pinion Pressing Detail" class="form-control ll" required style="width:250px;" /></center><br></td>
-    <td><center><input type="submit" name="btn" value="Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center><br></td>
-    <td><center><input type="submit" name="btn" value="Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center><br></td>
+    <td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+    <td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+    <td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Pinion Pressing Detail" class="form-control ll" required style="width:250px;" /></center><br></td>
+    <td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center><br></td>
+    <td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center><br></td>
     </tr>
     </table>
     </center>
@@ -91,14 +91,12 @@
 <br><br>
 <table id="customers" align="left">
 <tr>
-    <!-- <th style="width:250px;text-align:center;">Part No.</th> -->
     <th style="width:250px;text-align:center;">Loco Type</th>
     <th style="width:250px;text-align:center;">In Quantity</th>
     <th style="width:250px;text-align:center;">Out Quantity</th>
 </tr>
 {% for i in unique_final %}
 <tr>
-    <!-- <td style="width:250px;text-align:center;">{{i.pt_no}}</td> -->
     <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
     <td style="width:250px;text-align:center;">{{i.count1}}</td>
     <td style="width:250px;text-align:center;">{{i.count2}}</td>
@@ -126,14 +124,12 @@
 <h2 align="left">Shop Section : Pinion Pressing Section</h2>
 <table id="customers" align="left">
 <tr>
-    <!-- <th style="width:250px;text-align:center;">Part No.</th> -->
     <th style="width:250px;text-align:center;">Loco Type</th>
     <th style="width:250px;text-align:center;">In Quantity</th>
     <th style="width:250px;text-align:center;">Out Quantity</th>
 </tr>
 {% for i in unique_final %}
 <tr>
-    <!-- <td style="width:250px;text-align:center;">{{i.pt_no}}</td> -->
     <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
     <td style="width:250px;text-align:center;">{{i.count1}}</td>
     <td style="width:250px;text-align:center;">{{i.count2}}</td>
@@ -162,41 +158,7 @@
 <h2 align="left">Shop Section : Pinion Pressing Section</h2>
 <br>
 
-<!-- <div id="printdata" style="align:center;">
-    <table align="center" id = "table">
-            {% for i in ob1 %}
-            <tr>  
-                <td>
-                    <label for="loco_type"><b>Batch No. : &nbsp;&nbsp;
-                         </b></label>
-                </td> 
-                <td>
-                    <label for="loco_type">{{i.bo_no}} 
-                         </label>
-                </td> 
-            
-                <td>
-                    <label for="batch no"><b>
-                        &nbsp;&nbsp; &nbsp;&nbsp; Part No. : &nbsp;&nbsp;
-                         </b></label>
-                </td> 
-                <td>
-                    <label for="loco_type">{{i.pt_no}} 
-                         </label>
-                </td>
-                <td>
-                    <label for="machine date"><b>
-                        &nbsp;&nbsp; &nbsp;&nbsp; Loco Type : &nbsp;&nbsp;
-                         </b></label>
-                </td>
-                <td>
-                    <label for="loco_type">{{i.loco_type}} 
-                         </label>
-                </td>
-            </tr>
-            {% endfor %}
-        </table> 
-            <br><br> -->
+
 <table id="customers" align="left">
 <tr>
     <th style="width:250px;text-align:center;">Batch No.</th>
@@ -209,7 +171,9 @@
     <th style="width:250px;text-align:center;">Pinion No.</th>
     <th style="width:250px;text-align:center;">Pinion Make</th>
     <th style="width:250px;text-align:center;">Pinion Travel</th>
-    <th style="width:250px;text-align:center;">Pinion Pressure</th>
+    <th style="width:250px;text-align:center;">Pinion Pressure (Glycerin)</th>
+    <th style="width:250px;text-align:center;">Pinion Pressure (Ram)</th>
+    <th style="width:250px;text-align:center;">Distance between Pinion Teeth and DE</th>
     <th style="width:250px;text-align:center;">Blue Machining Status</th>
     <th style="width:250px;text-align:center;">Inspection Date</th>
 </tr>
@@ -225,7 +189,9 @@
     <td style="width:250px;text-align:center;">{{i.pinion_no}}</td>
     <td style="width:250px;text-align:center;">{{i.pinion_make}}</td>
     <td style="width:250px;text-align:center;">{{i.pinion_travel}}</td>
-    <td style="width:250px;text-align:center;">{{i.pinion_pressure}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_pressure_triangle_glycerin}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_pressure_square_ram}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_teeth_dist}}</td>
     <td style="width:250px;text-align:center;">{{i.blue_match}}</td>
     <td style="width:250px;text-align:center;">{{i.inspect_date}}</td>
 {% endfor %}
@@ -256,7 +222,9 @@
     <th style="width:250px;text-align:center;">Pinion No.</th>
     <th style="width:250px;text-align:center;">Pinion Make</th>
     <th style="width:250px;text-align:center;">Pinion Travel</th>
-    <th style="width:250px;text-align:center;">Pinion Pressure</th>
+    <th style="width:250px;text-align:center;">Pinion Pressure (Glycerin)</th>
+    <th style="width:250px;text-align:center;">Pinion Pressure (Ram)</th>
+    <th style="width:250px;text-align:center;">Distance between Pinion Teeth and DE</th>
     <th style="width:250px;text-align:center;">Blue Machining Status</th>
     <th style="width:250px;text-align:center;">Inspection Date</th>
 </tr>
@@ -273,7 +241,9 @@
     <td style="width:250px;text-align:center;">{{i.pinion_no}}</td>
     <td style="width:250px;text-align:center;">{{i.pinion_make}}</td>
     <td style="width:250px;text-align:center;">{{i.pinion_travel}}</td>
-    <td style="width:250px;text-align:center;">{{i.pinion_pressure}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_pressure_triangle_glycerin}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_pressure_square_ram}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_teeth_dist}}</td>
     <td style="width:250px;text-align:center;">{{i.blue_match}}</td>
     <td style="width:250px;text-align:center;">{{i.inspect_date}}</td>
 {% endfor %}
@@ -336,7 +306,9 @@
     <th style="width:250px;text-align:center;">Pinion No.</th>
     <th style="width:250px;text-align:center;">Pinion Make</th>
     <th style="width:250px;text-align:center;">Pinion Travel</th>
-    <th style="width:250px;text-align:center;">Pinion Pressure</th>
+    <th style="width:250px;text-align:center;">Pinion Pressure (Glycerin)</th>
+    <th style="width:250px;text-align:center;">Pinion Pressure (Ram)</th>
+    <th style="width:250px;text-align:center;">Distance between Pinion Teeth and DE</th>
     <th style="width:250px;text-align:center;">Blue Machining Status</th>
     <th style="width:250px;text-align:center;">Inspection Date</th>
 </tr>
@@ -352,7 +324,9 @@
     <td style="width:250px;text-align:center;">{{i.pinion_no}}</td>
     <td style="width:250px;text-align:center;">{{i.pinion_make}}</td>
     <td style="width:250px;text-align:center;">{{i.pinion_travel}}</td>
-    <td style="width:250px;text-align:center;">{{i.pinion_pressure}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_pressure_triangle_glycerin}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_pressure_square_ram}}</td>
+    <td style="width:250px;text-align:center;">{{i.pinion_teeth_dist}}</td>
     <td style="width:250px;text-align:center;">{{i.blue_match}}</td>
     <td style="width:250px;text-align:center;">{{i.inspect_date}}</td>
 {% endfor %}
@@ -515,9 +489,9 @@ function printDiv() {
 $('#axle_no').change(function(e){
             e.preventDefault();
             var axle_no=$(this).val();
-            //alert(wheel_no);
+        
             var data={axle_no};
-           // alert(data);
+        
                 $.ajax({
                     type: 'GET',
                     url: "{% url 'pinionaxle_validate' %}",

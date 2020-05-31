@@ -69,7 +69,7 @@ $(document).ready(function () {
    
     <style>
         #customers {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            font-family: 'Quicksand', sans-serif;
             border-collapse: collapse;
             margin-left: auto;
             margin-right: auto;
@@ -120,27 +120,24 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary"  {% if usermaster.op_delete %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#exampleModal3" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
-                    <!-- <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
-                                <font color="white">Dispatch</font>
-                         </button> -->
+                    
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inspectmodal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary"  {% if usermaster.op_update %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#inspectmodal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Inspect</font>
                          </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editmodal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary"   {% if usermaster.op_update %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#editmodal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">EditRecord</font>
                          </button>
                     </li>
-                    <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <li class="nav-item"> 
+                        <button type="button" class="btn btn-primary"  {% if usermaster.op_create %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">AddRecord</font>
                          </button>
                     </li>
@@ -265,10 +262,16 @@ footer, .page-content::after{
                                 </div>   
                                 </div>
                                 <div class="row">
+                                            
                                             <div class="col-6">
                                                 <label for="">Axle Make</label>
-                                                <input type="text" class="form-control" name="axle_make" id="axle_make" maxlength="20" required>
-                                            </div> 
+                                                <select name="axle_make" id="axle_make" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select Axle Make.</option>
+                                                    <option>RWF</option>
+                                                    
+                                                </select>
+                                        </div>
+                                        
                                             <div class="col-6">
                                                     <label for="">Axle HeatCast No.</label>
                                                     <input type="text" class="form-control" name="axle_heatcaseno" id="axle_heatcaseno" maxlength="25" required>
@@ -287,7 +290,7 @@ footer, .page-content::after{
                             </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" />
+            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" onclick="return funct()" />
           </div>
           </form>
         </div>
@@ -357,16 +360,21 @@ footer, .page-content::after{
                                                 <label for="">Axle No.</label>
                                                 <input type="text" class="form-control" name="editaxle_no" id="editaxle_no" maxlength="10" required>
                                             </div> 
+                                            
                                             <div class="col-6">
                                                 <label for="">Axle Make</label>
-                                                <input type="text" class="form-control" name="editaxle_make" id="editaxle_make" maxlength="20" required>
-                                            </div>
+                                                <select name="editaxle_make" id="editaxle_make" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select Axle Make.</option>
+                                                    <option>RWF</option>
+                                                    
+                                                </select>
+                                        </div>
                                     </div>
 
                                                 <div class="row">
                                                 <div class="col-6">
                                                     <label for="">Axle HeatCast No.</label>
-                                                    <input type="text" class="form-control" name="editaxle_heatcaseno" id="editaxle_heatcaseno" maxlength="20" required>
+                                                    <input type="text" class="form-control" name="editaxle_heatcaseno" id="editaxle_heatcaseno" maxlength="25" required>
                                                 </div>
                                                 <div class="col-6">
                                                         <label for="">Machine In Date</label>
@@ -386,58 +394,14 @@ footer, .page-content::after{
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="save" >
+                <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="save" onclick="return editfunct()">
               </div>
               </form>
             </div>
           </div>
         </div>
     
-         <!--Dispatch-->
-    <!-- Modal -->
-    <!-- <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel2">AxleMachining</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <form method="POST" class="needs-validation" > {% csrf_token %}
-             <div class="modal-body">       
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <label for="">Serial No.</label>
-                                            <input type="number" class="form-control" id="dissno" name="dissno" required>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                                    <div class="col-6">
-                                                            <label for="">Dispatch Date(Manually)</label>
-                                                            <input type="text" name="dispatch_date" id="dispatch_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
-                                                      </div>
-                                    </div><br>
-                                    <div class="row">
-                                   <div class="col-6">
-                                    <div class="dropdown">
-                                      <select name="dislocos" type="form-control ll" required>
-                                        <option value="" hidden selected>Dispatch To</option>
-                                        <option value="Axle Wheel Pressing">Axle & Wheel Pressing Section</option>
-                                      </select>
-                                      </div>
-                                    </div>  
-                                    </div>
-                                  </div>
-                                  <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                      <input type="submit" name="submit" class="btn btn-primary"  id="dissavebtn" value="Dispatch" >
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                     </div> -->
+        
     <!--Delete-->
     <!-- Modal -->
     <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
@@ -451,12 +415,7 @@ footer, .page-content::after{
             </div>
         <form method="POST" class="needs-validation" > {% csrf_token %}
                <div class="modal-body">
-                        <!-- <div class="row">
-                            <div class="col">
-                                    <label for="">Axle No.</label>
-                                    <input type="text" class="form-control" id="delsno" name="delsno"  required>
-                            </div> 
-                        </div> -->
+                        
                         <div class="row">
                             <div class="col">
                                   <label for="">Axle No.</label>
@@ -508,6 +467,7 @@ footer, .page-content::after{
                             <div class="col-4">
                             <label for="Axle">UST</label>
                                 <select name="ustaxle" id="ustaxle" class="form-control ll" required >
+                                    <option value="" hidden selected>Select UST</option>
                                     <option>Ok</option>
                                     <option>Not Ok</option>
                                  </select>
@@ -519,6 +479,7 @@ footer, .page-content::after{
                           <div class="col-6">
                            <label for="">Inspection Status</label>
                                     <select name="ustaxle_status" id="ustaxle_status" class="form-control ll" required >
+                                        <option value="" hidden selected>Select Inspection Status</option>
                                         <option>Pass</option>
                                         <option>Reject</option>
                                      </select>
@@ -691,6 +652,19 @@ $("#addsno").change(function(e){
                         document.getElementById('gearseat_surfacefinishFE').value ='6.3';
                         }
                         else{
+                                var axled=response[0].dateaxle;
+                                if(axled != null)
+                                {
+                                    var month2 = axled.substring(5,7);
+                                    var day2 = axled.substring(8,10);
+                                    var year2 = axled.substring(0,4);
+                                    var date2 =  day2 + "-" + month2 + "-" + year2; 
+                                    $("#axled").val(date2);
+                                }
+                                else
+                                {
+                                    $("#axled").val(`${response[0].dateaxle}`);
+                                }
                         $("#ustaxle").val(`${response[0].ustaxle}`);
                         $("#ustaxle_date").val(`${response[0].ustaxle_date}`);
                         $("#ustaxle_status").val(`${response[0].ustaxle_status}`);
@@ -704,7 +678,7 @@ $("#addsno").change(function(e){
                         $("#throweraxlende").val(`${response[0].throweraxlende}`);
                         $("#wheelseataxlende").val(`${response[0].wheelseataxlende}`);
                         $("#collaraxlende").val(`${response[0].collaraxlende}`);
-                        $("#axled").val(`${response[0].dateaxle}`);
+                       
                         $("#bearingaxle").val(`${response[0].bearingaxle}`);
                         $("#abutmentaxle").val(`${response[0].abutmentaxle}`);
                         $("#inspector_nameaxle").val(`${response[0].inspector_nameaxle}`);
@@ -732,7 +706,7 @@ $("#addsno").change(function(e){
                     data:data,
                     success:function(response){
                         if(response == "false"){
-                            document.getElementById('axlep_no').value = '  ';
+                            document.getElementById('axlep_no').value ='';
                         }
                         else
                         {
@@ -761,6 +735,63 @@ $("#addsno").change(function(e){
                 
         });
 
+        $("#axle_no").change(function(e){
+            e.preventDefault();
+            var axle_no=$(this).val();
+            var data={axle_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'uniqueaxle' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false")
+                        {
+                            alert("This Axle No. already exists. Please Enter a unique Axle No.!")
+                            document.getElementById("axle_no").value="";
+                        }
+                    }
+
+                })
+                
+        });
+
+        $("#editaxle_no").change(function(e){
+            e.preventDefault();
+            var axle_no=$(this).val();
+            var data={axle_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'uniqueaxle' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false")
+                        {
+                            alert("This Axle No. already exists. Please Enter a unique Axle No.!")
+                            document.getElementById("editaxle_no").value="";
+                        }
+                    }
+
+                })
+                
+        });
+
+        function funct(){
+            if((document.getElementById('axle_heatcaseno').value =='')||(document.getElementById('date').value =='')||(document.getElementById('axle_no').value =='')||(document.getElementById('axlep_no').value =='')||(document.getElementById('axle_make').value =='')||(document.getElementById('in_qty').value =='')||(document.getElementById('out_qty').value ==''))
+            {
+                alert("Please enter all the fields.");
+                return false;
+            }
+        }
+
+        function editfunct(){
+            if((document.getElementById('editaxle_heatcaseno').value =='')||(document.getElementById('editdate').value =='')||(document.getElementById('editaxle_no').value =='')||(document.getElementById('editaxlep_no').value =='')||(document.getElementById('editaxle_make').value =='')||(document.getElementById('editin_qty').value =='')||(document.getElementById('editout_qty').value ==''))
+            {
+                alert("Please enter all the fields.");
+                return false;
+            }
+        }
 
         window.onload=function(){
             document.getElementById('axlelength').readOnly=true;
@@ -1156,46 +1187,7 @@ if (myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO
         setvalidation4(a);
     } 
 } 
-// function validateAxle(a){
-//     var myval=document.getElementById('hide').value;
-//     var x = document.forms["AxleForm"][a].value;
-//     if(isNaN(x)==false){
-//     if (myval=="WAP-7"){
-//         alert(myval);
-//     var b=99.062;
-//     var relax = 10;
-//     var min=b - ((relax/100) * b);
-//     var max=b + ((relax/100) * b);
-//     if (x < min || x > max) {
-//     setvalidation1(a,min,max);
-//     }
-//     else if((x>=min && x<b)||(x>b && x<=max)){
-//     setvalidation2(a);
-//     }
-//     else if(x==b){
-//     setvalidation3(a);
-//         }   
-//     }
-//     if(myval=="ENGINE ASM 4500 HP" || myval=="VEHCLE OF WDG4D 4500" || myval=="LOCO ASSLY 5500 HP" || myval=="WDP4D LOCO ASSLY" || myval=="WDG4 LOCO(4000 HP)" || myval=="LOCO COMPLETE 4500" || myval=="MTA FOR WDP4D" || myval=="MOTR TRUK WDG4D(RSP)" || myval=="MTA-16 CYL EMD") {
-//     var b=99.250;
-//     var relax = 10;
-//     var min=b - ((relax/100) * b);
-//     var max=b + ((relax/100) * b);
-//     if (x < min || x > max) {
-//     setvalidation1(a,min,max);
-//     }
-//     else if((x>=min && x<b)||(x>b && x<=max)){
-//     setvalidation2(a);
-//     }
-//     else if(x==b){
-//     setvalidation3(a);
-//     }   
-// }
-// }
-// else {
-//     setvalidation4(a);
-// }
-// }
+
 function validateGEFE(a){
     var x = document.forms["AxleForm"][a].value;
     if(isNaN(x)==false){
@@ -1319,12 +1311,36 @@ function setvalidation4(a)
                 data:data,
                 success:function(response){
                     console.log(response);
+                    var indate=response[0].in_qty;
+                    var outdate=response[0].out_qty;
+                        if(indate != null)
+                        {
+                            var month1 = indate.substring(5,7);
+                            var day1 = indate.substring(8,10);
+                            var year1 = indate.substring(0,4);
+                            var date1 =  day1 + "-" + month1 + "-" + year1; 
+                            $("#editin_qty").val(date1);
+                        }
+                        else
+                        {
+                            $("#editin_qty").val(`${response[0].in_qty}`);
+                        }
+                        if(outdate != null)
+                        {
+                            var month2 = outdate.substring(5,7);
+                            var day2 = outdate.substring(8,10);
+                            var year2 = outdate.substring(0,4);
+                            var date2 =  day2 + "-" + month2 + "-" + year2; 
+                            $("#editout_qty").val(date2);
+                        }
+                        else
+                        {
+                            $("#editout_qty").val(`${response[0].out_qty}`);
+                        }
                     $("#editbo_no").val(`${response[0].bo_no}`);
                     $("#editbo_date").val(`${response[0].bo_date}`);
                     $("#editpt_no").val(`${response[0].pt_no}`);
                     $("#editbo_qty").val(`${response[0].bo_qty}`);
-                    $("#editin_qty").val(`${response[0].in_qty}`);
-                    $("#editout_qty").val(`${response[0].out_qty}`);
                     $("#editdate").val(`${response[0].date}`);
                     $("#editaxlep_no").val(`${response[0].axlep_no}`);
                     $("#editaxle_no").val(`${response[0].axle_no}`);

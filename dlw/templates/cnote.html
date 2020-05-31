@@ -1,144 +1,152 @@
 {% extends 'base.html' %} 
 {% block content %}
 {% load static %}
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script> -->
 
-
-<style>
-  input[type=text],input[type=number],
-  select {
-      width: 100%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      display: block;
-      border: 3px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-  }
-  
-  input[type=submit] {
-      width: 30%;
-      text-align: center;
-      background-color: #4CAF50;
-      color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-  }
-  
-  input[type=submit]:hover {
-      background-color: #45a049;
-      text-align: center;
-  }
-  
-  input[type=button] {
-      width: 100%;
-      text-align: center;
-      background-color: #4CAF50;
-      color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-  }
-  
-  input[type=button]:hover {
-      background-color: #45a049;
-      text-align: center;
-  }
-  .button{
-    background-color:aqua;
-    width: 60px;
-  }
-
-</style>
-  
-  <br>
-  <br>
-  <h3 align="center"><b>Module For EDP Reg No. Allotment for STR/OPN Change Notice</b></h3>
-  <br>
-  <br>
-
-  <div id="div1"> <h5 align="left" style="margin-left: 100px;"><b>आई.एस.ओ. - 9002/ I.S.O. - 9002 </b></h5> </div>
-  <div id="div2"> <h5 align="left" style="margin-left: 100px;"><b>डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</b></h5>
-  <br>
-<form action="{% url 'cnote' %}" method="POST" id="myform"> 
-    {% csrf_token %}
-    <div class="container" width="100%" id="cn_div">
-        <center>
-            <table  width="100%" align="center" id="cn_tb">
-                    <tr>
-                    <td colspan="2" style="width:fit-content;"><label for="sno" align ="right"><h4><b> Change Index</b></h4></label></td>
-                    <td  style="width: fit-content; width: 150px;"><select class="form-control" id="chng_ind" name="chng_ind" style="margin-left: -80px;" required>
-                        <option id="chng_ind" style="border: 8px solid #ccc;" selected disabled hidden></option>
+<div class="container">
+    <br>
+    <div>
+        <h4 align="center">Module For EDP Reg No. Allotment for STR/OPN Change Notice</h4>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-12" align="left">
+            <div id="div1"> <p align="left" >आई.एस.ओ. - 9002/ I.S.O. - 9002 </p> </div>
+            <div id="div2"> <p align="left" >डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</p></div> 
+        </div>
+    </div>
+   <hr>
+    
+    <form action="{% url 'cnote' %}" method="POST" id="myform"> 
+        {% csrf_token %}
+        <div class="row">
+           
+            <div class="col-lg-2">
+                <label for="sno">Change Indicator</label>
+                <select class="form-control" id="chng_ind" name="chng_ind" required>
+                <option id="chng_ind" selected disabled hidden></option>
                         {% if lenm == 1 %}
                         {% for i in obj %}
                           <option>{{i.chg_ind}}</option>
                         {% endfor %}
                         {% endif %}
-                      </select></td>
-                    
-                   <td><center><label for="chng_ind" align ="right" style="margin-left: -100px;"><h4><b> CN No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="cn_no" name="cn_no" style="margin-left: -80px;"></center></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><label for="chng_ind" align ="right"><h4><b> CN Reg. Date.</b></h4></label></td>
-                    <td><input type="text" id="cn_reg_dt" name="cn_reg_dt" class="date" style="margin-left: -80px; width: 150px;"></td>
-
-                    <td><center><label for="chng_ind" align ="right" style="margin-left: -80px;"><h4><b> Letter No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="ltr_no" name="ltr_no" align ="right" style="margin-left: -80px; width: 160px;"></center></td>
-
-                    <td><center><label for="chng_ind" align ="right"><h4><b> CN Date.</b></h4></label></center></td>
-                    <td><center><input type="text" id="cn_dt" name="cn_dt" class="date"> </center></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><center><label for="chng_ind" align ="right" style="margin-left: -120px;"><h4><b> EDP Reg. No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="edp_reg_no" name="edp_reg_no" style="margin-left: -160px; width: 150px;"></center></td>
-
-                    <td><center><label for="chng_ind" align ="right"><h4><b> EDP Reg. Date.</b></h4></label></center></td>
-                    <td><center><input type="text" id="edp_reg_dt" name="edp_reg_dt" class="date"></center></td>
-
-                    <td><center><label for="chng_ind" align ="right"><h4><b> Update Date.</b></h4></label></center></td>
-                    <td><center><input type="text" id="up_dt" name="up_dt" readonly></center></td>
-                </tr>
-                <br>
-                <br>
-                <tr>
-                    <td><center><label for="chng_ind" align ="right" style="margin-left: -80px; width: 150px;"><h4><b> File No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="file_no" name="file_no" ></center></td>
-
-                    <td><center><label for="chng_ind" align ="right"><h4><b> Page No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="page_no" name="page_no"> </center></td>
-
-                    <td><center><label for="chng_ind" align ="right"><h4><b> Status</b></h4></label></center></td>
-                    <td><center><input type="text" id="sts" name="sts" </center></td>
-                </tr>
-                <tr>
-                    <td><center><label for="chng_ind" align ="right" style="margin-left: -60px; width: 150px;"><h4><b> Assly No.</b></h4></label></center></td>
-                    <td><center><input type="text" id="assly_no" name="assly_no" maxlength="8"></center></td>
-
-                    <td ><center><label for="chng_ind" align ="right"><h4><b> Assly Desc</b></h4></label></center></td>
-                    <td colspan="2"><center><input type="text" id="assly_desc" name="assly_desc" ></center></td>
-                </tr>
-                <tr>
-                    <td><center><label for="chng_ind" align ="right" style="margin-left: -80px; width: 100px;"><h4><b>Ref_1</b></h4></label></center></td>
-                    <td colspan="2"><center><input type="text" id="ref_1" name="ref_1" </center></td>
-
-                    <td><center><label for="chng_ind" align ="right"><h4><b> Date Ref</b></h4></label></center></td>
-                    <td><center><input type="text" id="dt_ref" name="dt_ref" class="date"></center></td>
-                </tr>
-                <tr>
-                    <td colspan="3"> </td>
-                    <center><td colspan="2"><input type="button" id="updt" name="updt" value="Allot EDP_Reg No /Update status " onclick="allot_update()"></td>
-                    <td colspan="1"><input type="button" id="clear" name="clear" value="Clear" onclick="window.location.reload()"></td></center>
+                      </select>
+            </div>
+            <div class="col-lg-2">
+                    <label for="chng_ind">Change Notice No.</label>
+                   
+                    <select class="form-control" id="cn_no" name="cn_no" required></select>
+                    <option id="cn_op" selected disabled hidden>Select</option>
                 
-                </tr>
-        </table>
-        </center>
-    </div>
-</form>
+            </div>
+            <div class="col-lg-2"></div>
+            <div class="col-lg-2"></div>
+            <div class="col-lg-2"></div>
+            <div class="col-lg-2"></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2">
+                <label for="chng_ind" >CN Reg. Date.</label>
+                <input type="text" id="cn_reg_dt" name="cn_reg_dt" class="date form-control" readonly>
+            </div>
+            <div class="col-lg-4">
+                <label for="chng_ind">Letter No.</label>
+                <input type="text" id="ltr_no" name="ltr_no" class="form-control" readonly>
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">CN Date.</label>
+                <input type="text" id="cn_dt" name="cn_dt" class="date form-control" readonly> 
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">Ref_1</label>
+                <input type="text" id="ref_1" name="ref_1" class="form-control" readonly>
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">Date Ref</label>
+                <input type="text" id="dt_ref" name="dt_ref" class="date form-control" readonly>
+            </div>
+            
+        </div>
+        <div class="row">
+            
+            <div class="col-lg-2">
+                <label for="chng_ind"> Assly No.</label>
+                <input type="text" id="assly_no" name="assly_no" maxlength="8" class="form-control" readonly>
+            </div>
+            <div class="col-lg-10">
+                <label for="chng_ind">Assly Desc</label>
+                <input type="text" id="assly_desc" name="assly_desc" class="form-control" readonly>
+                
+            </div>
+            <div class="col-lg-2">
+                
+            </div>
+        </div>
+        <div class="row">
+            
+            <div class="col-lg-2">
+                <label for="chng_ind">Update Date</label>
+                <input type="text" id="up_dt" name="up_dt" class="form-control" readonly>
+                
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">File No.</label>
+                <input type="text" id="file_no" name="file_no" class="form-control">
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">Page No.</label>
+                <input type="text" id="page_no" name="page_no" class="form-control"> 
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">Status</label>
+                
+                <select id="sts" name="sts"  class="form-control">
+                    <option value="Select">Select</option>
+                    <option value="E">E</option>
+                    <option value="U">U</option>
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">EDP Reg. No.</label>
+                <input type="text" id="edp_reg_no" name="edp_reg_no" class="form-control" readonly>
+            </div>
+            <div class="col-lg-2">
+                <label for="chng_ind">EDP Reg. Date.</label>
+                <input type="text" id="edp_reg_dt" name="edp_reg_dt" class="date form-control" readonly>
+            </div>
+            
+        </div>
+        
+        <br>
+        <div class="row">
+            
+            <div class="col-lg-3">
+               
+            </div>
+            <div class="col-lg-3">
+                
+               <input type="button" id="updt" name="updt" class="btn btn-primary" value="Allot EDP_Reg No /Update status " onclick="allot_update()">
+                
+            </div>
+            <div class="col-lg-1">
+               
+            </div>
+            <div class="col-lg-3">
+                <input type="button" id="clear" name="clear" value="Clear" class="btn btn-primary" onclick="window.location.reload()">
+
+            </div>
+            <div class="col-lg-2">
+               
+            </div>
+        </div>
+        </form>
+        <br>
+</div>
+
+
 <script>
 $(document).ready(function(){
     $('.date').datepicker({
@@ -226,36 +234,50 @@ document.querySelector("#cn_no").addEventListener('change',(e)=>{
   })
 });
 
-document.querySelector("#assly_no").addEventListener('change',(e)=>{ 
-  e.preventDefault();
-  var an = $('#assly_no').val();
-  var data = {an};
-    $.ajax({
-    type : 'GET',
-    url : "{% url 'assly_validation' %}",
-    dataType : 'json',
-    data : data,
+document.querySelector("#chng_ind").addEventListener('change',(e)=>{ 
+    e.preventDefault();
 
-    success : function(response){     
-      if(response.length == 0){
-        alert("NO SUCH ASSLY NO");
-        document.getElementById('assly_no').value = '';
+    var cnind = $("#chng_ind").val()
+    var data = {cnind};
+        $.ajax({
+        type : 'GET',
+        url : "{% url 'cnote_getcn' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){
+            var elementsadded = document.querySelectorAll(".newelewono");
+                if(elementsadded.length>0){
+                    var elementsaddedarr = Array.from(elementsadded);
+                    elementsaddedarr.forEach((el)=> el.remove());
+                    document.querySelector("#cn_op").selected=true;
+                   
+                }
+                var brarr,mystr,html;
+                brarr = response.map((el)=>el.ppl_cn_no);
+                mystr = "";
+                brarr.forEach((el,index)=>{
+                html = `<option class="newelewono">${brarr[index]}</option>`
+                mystr = html.concat(mystr);
+                });
+                html = "";
+                document.querySelector("#cn_no").insertAdjacentHTML('beforeend',mystr);
+                mystr=""; 
+                }
+                
+            })
+            
 
-        } 
-
-    }
-    })
-});
-
+  });
+  
 function allot_update()
 {
     if($("#cn_no").val() == null)
     {
         alert("PLEASE ENTER CN NO.");
-    }
+    }   
     if($("#chng_ind").val() == null)
     {
-        alert("ENTER CHANGE INDEX");
+        alert("ENTER CHANGE INDICATOR");
     }
     
     else
@@ -267,58 +289,19 @@ function allot_update()
         var ref_1 =  $("#ref_1").val();
         var dt_ref =  $("#dt_ref").val();
         
-        if(dt_ref != null)
-        {
-            var month1 = dt_ref.substring(3,5);
-            var day1 = dt_ref.substring(0,2);
-            var year1 = dt_ref.substring(6,10);
-            var date1 =  year1 + "-" + month1 + "-" + day1;
-            dt_ref = date1;
-            
-        }
         var edp_reg_dt = $("#edp_reg_dt").val();
-        if(edp_reg_dt != null)
-        {
-            var month1 = edp_reg_dt.substring(3,5);
-            var day1 = edp_reg_dt.substring(0,2);
-            var year1 = edp_reg_dt.substring(6,10);
-            var date1 =  year1 + "-" + month1 + "-" + day1;
-            edp_reg_dt = date1;
-        }
-        // alert(edp_reg_dt);
+        
         var edp_reg_no =  $("#edp_reg_no").val();
         var up_dt = $("#up_dt").val();
-        if(up_dt != null)
-        {
-            var month1 = up_dt.substring(3,5);
-            var day1 = up_dt.substring(0,2);
-            var year1 = up_dt.substring(6,10);
-            var date1 =  year1 + "-" + month1 + "-" + day1;
-            up_dt = date1;
-        }
+        
         var sts  = $("#sts").val();
         var assly_no =$("#assly_no").val();
         var assly_desc = $("#assly_desc").val();
         var cn_dt = $("#cn_dt").val();
-        if(cn_dt != null)
-        {
-            var month1 = cn_dt.substring(3,5);
-            var day1 = cn_dt.substring(0,2);
-            var year1 = cn_dt.substring(6,10);
-            var date1 =  year1 + "-" + month1 + "-" + day1;
-            cn_dt = date1;
-        }
+        
         var ltr_no = $("#ltr_no").val();
         var cn_reg_dt = $("#cn_reg_dt").val();
-        if(cn_reg_dt != null)
-        {
-            var month1 = cn_reg_dt.substring(3,5);
-            var day1 = cn_reg_dt.substring(0,2);
-            var year1 = cn_reg_dt.substring(6,10);
-            var date1 =  year1 + "-" + month1 + "-" + day1;
-            cn_reg_dt = date1;
-        }
-        var data ={cn_no,chng_ind,ref_1,dt_ref,assly_no,assly_desc,sts,page_no,file_no,up_dt,edp_reg_no,edp_reg_dt,cn_dt,ltr_no,cn_reg_dt};
+        var data ={cn_no,chng_ind,sts,page_no,file_no,up_dt,edp_reg_no,edp_reg_dt};
         $.ajax({
         type : 'GET',
         url : "{% url 'allot_update' %}",

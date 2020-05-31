@@ -6564,19 +6564,53 @@ def m7getpart_no(request):
 @login_required
 @role_required(urlpass='/PinionPress/')
 def pinionpressing_section(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    obj2=PinionPressing.objects.all().order_by('sno')
+     
+    n=1
+    now = datetime.now()
+    disnow=datetime.now()-timedelta(days=n)
+    dt_string = now.strftime("%Y-%m-%d")
+    dis_string = disnow.strftime("%Y-%m-%d")
+    
+    dd3=[]
+    obj2=list(PinionPressing.objects.filter(Q(inspect_date__range=(dis_string,dt_string),dispatch_status=False) | Q(inspection_status=False,dispatch_status=False)).values('sno','bo_no','pt_no','bo_qty','bo_date','loco_type','date','in_qty','out_qty','tm_no','tm_make','axle_no','dispatch_to','inspect_date').order_by('sno'))
+    obj3=list(PinionPressing.objects.filter(Q(inspect_date__range=(dis_string,dt_string),dispatch_status=False) | Q(inspection_status=False,dispatch_status=False)).values('inspect_date','in_qty','out_qty').order_by('sno'))
+    ll=len(obj3)
+    for i in range(0,ll):
+        dd=obj3[i]['inspect_date']
+        indate=obj3[i]['in_qty']
+        outdate=obj3[i]['out_qty']
+        if dd!=None :
+            s = dd.split('-')
+            month1 = s[1]
+            day1 = s[2]
+            year1 = s[0]
+            dd2 =  day1 + "-" + month1 + "-" + year1
+            obj2[i].update({'inspect_date':dd2})
+        else :
+            obj2[i].update({'inspect_date':None})
+        if indate!=None :
+            s1 = indate.split('-')
+            newmonth1 = s1[1]
+            newday1 = s1[2]
+            newyear1 = s1[0]
+            newindate =  newday1 + "-" + newmonth1 + "-" + newyear1
+            obj2[i].update({'in_qty':newindate})
+        else :
+            obj2[i].update({'in_qty':None}) 
+
+        if outdate!=None :
+            s2 = outdate.split('-')
+            newmonth2 = s2[1]
+            newday2 = s2[2]
+            newyear2 = s2[0]
+            newoutdate =  newday2 + "-" + newmonth2 + "-" + newyear2
+            obj2[i].update({'out_qty':newoutdate})
+        else :
+            obj2[i].update({'out_qty':None})
+    
     mybo=Batch.objects.all().values('bo_no')
-    mysno=PinionPressing.objects.all().values('sno')
-    axleno=AxleMachining.objects.filter(axlefitting_status=True).values('axle_no')
+    mysno=(PinionPressing.objects.filter(dispatch_status=False).values('axle_no')).order_by('axle_no')
+    axleno=(AxleWheelPressing.objects.filter(inspectinspection_status=True).values('axle_no')).order_by('axle_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -6591,6 +6625,7 @@ def pinionpressing_section(request):
     
     if request.method=="POST":
         once=request.POST.get('once')
+       
         submit=request.POST.get('submit')
         
         if submit=='Save':
@@ -6605,6 +6640,16 @@ def pinionpressing_section(request):
             indate=request.POST.get('in_qty')
             outdate=request.POST.get('out_qty')
             axle_no=request.POST.get('axle_no')
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
             if first and second and third and fourth and fifth and sixth and pt_no and bo_qty and indate and outdate and axle_no:
                 obj=PinionPressing.objects.create()
                 obj.bo_no=first
@@ -6616,11 +6661,12 @@ def pinionpressing_section(request):
                 obj.tm_no=fifth
                 obj.loco_type=sixth
                 obj.inspection_status=False
-                obj.in_qty=indate
-                obj.out_qty=outdate
+                obj.in_qty=newindate
+                obj.out_qty=newoutdate
                 obj.axle_no=axle_no
                 obj.save()
                 messages.success(request,'Successfully Added!')
+                AxleWheelPressing.objects.filter(axle_no=axle_no).update(dispatch_status=True)
             else:
                 messages.error(request,"Please Enter All Records!")    
         
@@ -6630,38 +6676,56 @@ def pinionpressing_section(request):
             }   
 
         if submit=='Edit':
-            temp=request.POST.get('sno')
-            if temp is not None:
-                sno=int(temp)
-            else:
-                sno=None
-            bo_no=request.POST.get('editbo_no')
-            bo_date=request.POST.get('editbo_date')
-            date=request.POST.get('editdate')
-            tm_make=request.POST.get('edittm_make')
-            tm_no=request.POST.get('edittm_no')
-            bo_qty=request.POST.get('editbo_qty')
-            pt_no=request.POST.get('editpt_no')
-            indate=request.POST.get('editin_qty')
-            outdate=request.POST.get('editout_qty')
-            if sno and bo_no and bo_date and date and tm_make and tm_no and pt_no and bo_qty and indate and outdate:
-                PinionPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,tm_make=tm_make,tm_no=tm_no,pt_no=pt_no,bo_qty=bo_qty,in_qty=indate,out_qty=outdate)
-                messages.success(request, 'Successfully Edited!')
-            else:
-                messages.error(request,"Please Enter S.No.!")        
+            sno=request.POST.get('sno')
+        
+            if sno is not None:
+           
+                bo_no=request.POST.get('editbo_no')
+                bo_date=request.POST.get('editbo_date')
+                date=request.POST.get('editdate')
+                tm_make=request.POST.get('edittm_make')
+                tm_no=request.POST.get('edittm_no')
+                bo_qty=request.POST.get('editbo_qty')
+                pt_no=request.POST.get('editpt_no')
+                indate=request.POST.get('editin_qty')
+                outdate=request.POST.get('editout_qty')
+                s1 = indate.split('-')
+                month1 = s1[1]
+                day1 = s1[0]
+                year1 = s1[2]
+                newindate =  year1 + "-" + month1 + "-" + day1
+                s2 = outdate.split('-')
+                month2 = s2[1]
+                day2 = s2[0]
+                year2 = s2[2]
+                newoutdate =  year2 + "-" + month2 + "-" + day2
+                if sno and bo_no and bo_date and date and tm_make and tm_no and pt_no and bo_qty and indate and outdate:
+                    PinionPressing.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,tm_make=tm_make,tm_no=tm_no,pt_no=pt_no,bo_qty=bo_qty,in_qty=newindate,out_qty=newoutdate)
+                    messages.success(request, 'Successfully Edited!')
+                else:
+                    messages.error(request,"Please Enter S.No.!")        
 
 
 
         if submit=='Inspect':
-            sno=int(request.POST.get('snowheel'))
+            sno=request.POST.get('snowheel')
             pinion_no=request.POST.get('pinion_no')
             pinion_make=request.POST.get('pinion_make')
             pinion_travel=request.POST.get('pinion_travel')
-            pinion_pressure=request.POST.get('pinion_pressure')
+            pinion_pressure_triangle_glycerin=request.POST.get('pinion_pressure_triangle_glycerin')
+            pinion_pressure_square_ram=request.POST.get('pinion_pressure_square_ram')
+            pinion_teeth_dist=request.POST.get('pinion_teeth_dist')
             blue_match=request.POST.get('blue_match')
             inspect_date=request.POST.get('inspect_date')
-            if pinion_no and pinion_make and pinion_travel and pinion_pressure and blue_match and inspect_date :
-                PinionPressing.objects.filter(sno=sno).update(pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,pinion_pressure=pinion_pressure,blue_match=blue_match,inspect_date=inspect_date,inspection_status=True,dispatch_to="Inspected") 
+          
+            s = inspect_date.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newinspect_date =  year1 + "-" + month1 + "-" + day1
+            
+            if pinion_pressure_triangle_glycerin and pinion_pressure_square_ram and pinion_teeth_dist and pinion_no and pinion_make and pinion_travel and blue_match and inspect_date :
+                PinionPressing.objects.filter(axle_no=sno).update(pinion_pressure_triangle_glycerin=pinion_pressure_triangle_glycerin,pinion_pressure_square_ram=pinion_pressure_square_ram,pinion_teeth_dist=pinion_teeth_dist,pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,blue_match=blue_match,inspect_date=newinspect_date,inspection_status=True,dispatch_to="Inspected") 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
@@ -6680,15 +6744,39 @@ def pinionpressing_section(request):
         
         if submit=='Delete':
 
-            sno=int(request.POST.get('delsno'))
+            sno=request.POST.get('delsno')
             if sno:
-                PinionPressing.objects.filter(sno=sno).delete()
+                PinionPressing.objects.filter(axle_no=sno).delete()
                 messages.success(request, 'Successfully Deleted!')
             else:
                 messages.error(request,"Please Enter S.No.!")
 
         return HttpResponseRedirect("/PinionPress/")
+    
     return render(request,"PinionPress.html",my_context)
+
+def uniquetm(request):
+    if request.method=="GET" and request.is_ajax():
+        tm_no = request.GET.get('tm_no')
+        ob1=list(PinionPressing.objects.filter(tm_no=tm_no).values('bo_no'))
+        l=len(ob1)
+        if l==0 :
+            msg=["true"]
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+def uniquepinion(request):
+    if request.method=="GET" and request.is_ajax():
+        pinion_no = request.GET.get('pinion_no')
+        ob1=list(PinionPressing.objects.filter(pinion_no=pinion_no).values('bo_no'))
+        l=len(ob1)
+        if l==0 :
+            msg=["true"]
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 def pinion_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -10452,25 +10540,57 @@ def m23report(request):
 
 
 
-
 @login_required
 @role_required(urlpass='/bogieassembly/')
 def bogieassembly_section(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    obj2=BogieAssembly.objects.all().filter(dispatch_status=False).order_by('sno')
-    mybo=Batch.objects.all().values('bo_no')
-    hhpmysno=BogieAssembly.objects.all().filter((Q(pt_no='17010019')|Q(pt_no='17010706')|Q(pt_no='17010639')|Q(pt_no='17010330')|Q(pt_no='17010421')|Q(pt_no='16010085')|Q(pt_no='16010206')|Q(pt_no='16010255')|Q(pt_no='17010019')|Q(pt_no='17010391')),dispatch_status=False).values('sno','pt_no')
+    
+    n=1
+    now = datetime.now()
+    disnow=datetime.now()-timedelta(days=n)
+    dt_string = now.strftime("%Y-%m-%d")
+    dis_string = disnow.strftime("%Y-%m-%d")
+    
+    dd3=[]
+    obj2=list(BogieAssembly.objects.filter(Q(inspect_date__range=(dis_string,dt_string),dispatch_status=False) | Q(inspection_status=False,dispatch_status=False)).values('sno','bo_no','pt_no','bo_qty','bo_date','loco_type','date','frameserial_no','frame_make','frame_type','in_date','out_qty','dispatch_to','inspect_date').order_by('sno'))
+    obj3=list(BogieAssembly.objects.filter(Q(inspect_date__range=(dis_string,dt_string),dispatch_status=False) | Q(inspection_status=False,dispatch_status=False)).values('inspect_date','in_date','out_qty').order_by('sno'))
+    ll=len(obj3)
+    for i in range(0,ll):
+        dd=obj3[i]['inspect_date']
+        indate=obj3[i]['in_date']
+        outdate=obj3[i]['out_qty']
+        if dd!=None :
+            s = dd.split('-')
+            month1 = s[1]
+            day1 = s[2]
+            year1 = s[0]
+            dd2 =  day1 + "-" + month1 + "-" + year1
+            obj2[i].update({'inspect_date':dd2})
+        else :
+            obj2[i].update({'inspect_date':None})
+        if indate!=None :
+            s1 = indate.split('-')
+            newmonth1 = s1[1]
+            newday1 = s1[2]
+            newyear1 = s1[0]
+            newindate =  newday1 + "-" + newmonth1 + "-" + newyear1
+            obj2[i].update({'in_date':newindate})
+        else :
+            obj2[i].update({'in_qty':None}) 
 
-    mysno=BogieAssembly.objects.filter(dispatch_status=False).values('sno')
-    myaxle=AxleMachining.objects.all().values('axle_no')
+        if outdate!=None :
+            s2 = outdate.split('-')
+            newmonth2 = s2[1]
+            newday2 = s2[2]
+            newyear2 = s2[0]
+            newoutdate =  newday2 + "-" + newmonth2 + "-" + newyear2
+            obj2[i].update({'out_qty':newoutdate})
+        else :
+            obj2[i].update({'out_qty':None})
+    mybo=Batch.objects.all().values('bo_no')
+    hhpmysno=BogieAssembly.objects.all().filter((Q(pt_no='17010019')|Q(pt_no='17010706')|Q(pt_no='17010639')|Q(pt_no='17010330')|Q(pt_no='17010421')|Q(pt_no='16010085')|Q(pt_no='16010206')|Q(pt_no='16010255')|Q(pt_no='17010019')|Q(pt_no='17010391')),dispatch_status=False).values('frameserial_no','pt_no')
+
+    mysno=(BogieAssembly.objects.values('frameserial_no')).order_by('frameserial_no')
+    myaxle=(PinionPressing.objects.all().filter(inspection_status=True,dispatch_status=False).values('axle_no')).order_by('axle_no')
     mytm=PinionPressing.objects.all().values('tm_no')
     mymsu=AxleWheelPressing.objects.all().values('msu_unit_no')
     my_context={
@@ -10490,6 +10610,7 @@ def bogieassembly_section(request):
     if request.method=="POST":
 
         once=request.POST.get('once')
+        print(once)
         submit=request.POST.get('submit')
 
         if submit=='Save':
@@ -10504,8 +10625,25 @@ def bogieassembly_section(request):
             frameserial_no=request.POST.get('frameserial_no')
             frame_make=request.POST.get('frame_make')
             frame_type=request.POST.get('frame_type')
+            first_axle=request.POST.get('first_axle')
+            second_axle=request.POST.get('second_axle')
+            third_axle=request.POST.get('third_axle')
+            first_axle_location=request.POST.get('first_axle_location')
+            second_axle_location=request.POST.get('second_axle_location')
+            third_axle_location=request.POST.get('third_axle_location')
+            s1 = in_date.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
             
-            if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date and outdate and bo_qty and pt_no:
+
+            if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date and outdate and bo_qty and pt_no and first_axle and second_axle and third_axle and first_axle_location and second_axle_location and third_axle_location :
                obj=BogieAssembly.objects.create()
                obj.bo_no=bo_no
                obj.bo_date=bo_date
@@ -10513,14 +10651,23 @@ def bogieassembly_section(request):
                obj.bo_qty=bo_qty
                obj.date=date
                obj.loco_type=loco_type
-               obj.in_date=in_date
-               obj.out_qty=outdate
+               obj.in_date=newindate
+               obj.out_qty=newoutdate
                obj.frame_make=frame_make
                obj.frame_type=frame_type
                obj.frameserial_no=frameserial_no
                obj.inspection_status=False
+               obj.first_axle=first_axle
+               obj.second_axle=second_axle
+               obj.third_axle=third_axle
+               obj.first_axle_location=first_axle_location
+               obj.second_axle_location=second_axle_location
+               obj.third_axle_location=third_axle_location
                obj.save()
                messages.success(request, 'Successfully Added!')
+               PinionPressing.objects.filter(axle_no=first_axle).update(dispatch_status=True)
+               PinionPressing.objects.filter(axle_no=second_axle).update(dispatch_status=True)
+               PinionPressing.objects.filter(axle_no=third_axle).update(dispatch_status=True)
             else:
                messages.error(request,"Please Enter All Records!") 
 
@@ -10532,93 +10679,190 @@ def bogieassembly_section(request):
             }
 
         if submit=='Edit':
-            temp=request.POST.get('editsno')
-            if temp is not None:
-                sno=int(temp)
-            else:
-                sno=None
-            bo_no=request.POST.get('editbo_no')
-            bo_date=request.POST.get('editbo_date')
-            date=request.POST.get('editdate')
-            loco_type=request.POST.get('editlocos')
-            in_date=request.POST.get('editin_date')
-            outdate=request.POST.get('editout_date')
-            frameserial_no=request.POST.get('editframeserial_no')
-            frame_make=request.POST.get('editframe_make')
-            frame_type=request.POST.get('editframe_type')
-            bo_qty=request.POST.get('editbo_qty')
-            pt_no=request.POST.get('editpt_no')        
-            if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date and outdate and pt_no and bo_qty:
-               BogieAssembly.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,frameserial_no=frameserial_no,frame_make=frame_make,frame_type=frame_type,in_date=in_date,out_qty=outdate,pt_no=pt_no,bo_qty=bo_qty)
-               messages.success(request, 'Successfully Edited!')
-            else:
-               messages.error(request,"Please Enter S.No.!")
+            sno=request.POST.get('editsno')
+           
+            if sno is not None:
+                
+                bo_no=request.POST.get('editbo_no')
+                bo_date=request.POST.get('editbo_date')
+                date=request.POST.get('editdate')
+                loco_type=request.POST.get('editlocos')
+                in_date=request.POST.get('editin_date')
+                outdate=request.POST.get('editout_qty')
+                frameserial_no=request.POST.get('editframeserial_no')
+                frame_make=request.POST.get('editframe_make')
+                frame_type=request.POST.get('editframe_type')
+                bo_qty=request.POST.get('editbo_qty')
+                pt_no=request.POST.get('editpt_no')
+                first_axle=request.POST.get('editfirst_axle')
+                second_axle=request.POST.get('editsecond_axle')
+                third_axle=request.POST.get('editthird_axle')
+                first_axle_location=request.POST.get('editfirst_axle_location')
+                second_axle_location=request.POST.get('editsecond_axle_location')
+                third_axle_location=request.POST.get('editthird_axle_location')
+                s1 = in_date.split('-')
+                month1 = s1[1]
+                day1 = s1[0]
+                year1 = s1[2]
+                newindate =  year1 + "-" + month1 + "-" + day1
+                s2 = outdate.split('-')
+                month2 = s2[1]
+                day2 = s2[0]
+                year2 = s2[2]
+                newoutdate =  year2 + "-" + month2 + "-" + day2
+            
+                if bo_no and bo_date and date and loco_type and frameserial_no and frame_make and frame_type and in_date and outdate and pt_no and bo_qty and first_axle and second_axle and third_axle and first_axle_location and second_axle_location and third_axle_location:
+                    BogieAssembly.objects.filter(frameserial_no=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,loco_type=loco_type,frameserial_no=frameserial_no,frame_make=frame_make,frame_type=frame_type,in_date=newindate,out_qty=newoutdate,pt_no=pt_no,bo_qty=bo_qty,first_axle=first_axle,second_axle=second_axle,third_axle=third_axle,first_axle_location=first_axle_location,second_axle_location=second_axle_location,third_axle_location=third_axle_location)
+                    messages.success(request, 'Successfully Edited!')
+                else:
+                    messages.error(request,"Please Enter S.No.!")
 
-            my_context={
-            'object':obj2,
-            'mybo':mybo,
-            'mysno':mysno,
+                my_context={
+                'object':obj2,
+                'mybo':mybo,
+                'mysno':mysno,
             }
 
         if submit=="Dispatch":
-            sno=int(request.POST.get('dissno'))
+            sno=request.POST.get('dissno')
             dislocos=request.POST.get('dislocos')
             disdate=request.POST.get('dispatch_date')
             if sno and dislocos and disdate:
-                BogieAssembly.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True,dispatch_date=disdate)
+                BogieAssembly.objects.filter(frameserial_no=sno).update(dispatch_to=dislocos,dispatch_status=True,dispatch_date=disdate)
                 messages.success(request, 'Successfully Dispatched!')
             else:
                 messages.error(request,"Please Enter S.No.!")
 
         if submit=='InspectHHP':
-            sno=int(request.POST.get('hhpaddsno'))
-            axle_no=request.POST.get('hhpaxle_no')
-            axle_location=request.POST.get('hhpaxle_location')
-            gear_case_no=request.POST.get('hhpgear_case_no')
-            tm_no=request.POST.get('hhptm_no')
-            gear_case_make=request.POST.get('hhpgear_case_make')
-            msu_unit_no=request.POST.get('hhpmsu_unit_no')
+            sno=request.POST.get('hhpaddsno')
+            h_plate=request.POST.get('h_plate')
+            first_axle_location=request.POST.get('hhpfirst_location')
+            first=request.POST.get('hhpfirst')
+            first_coilspring_make=request.POST.get('hhpfirst_coilspring_make')
+            first_secondary_coilspring_make=request.POST.get('hhpfirst_secondary_coilspring_make')
+            first_gearcase_no=request.POST.get('hhpfirst_gearcase_no')
+            first_gearcase_make=request.POST.get('hhpfirst_gearcase_make')
+            first_back_lash=request.POST.get('hhpfirst_back_lash')
+            first_vertical_r=request.POST.get('hhpfirst_vertical_r')
+            first_vertical_l=request.POST.get('hhpfirst_vertical_l')
+            first_horizontal_r=request.POST.get('hhpfirst_horizontal_r')
+            first_horizontal_l=request.POST.get('hhpfirst_horizontal_l')
+            second_axle_location=request.POST.get('hhpsecond_location')
+            second=request.POST.get('hhpsecond')
+            second_coilspring_make=request.POST.get('hhpsecond_coilspring_make')
+            second_secondary_coilspring_make=request.POST.get('hhpsecond_secondary_coilspring_make')
+            second_gearcase_no=request.POST.get('hhpsecond_gearcase_no')
+            second_gearcase_make=request.POST.get('hhpsecond_gearcase_make')
+            second_back_lash=request.POST.get('hhpsecond_back_lash')
+            second_vertical_r=request.POST.get('hhpsecond_vertical_r')
+            second_vertical_l=request.POST.get('hhpsecond_vertical_l')
+            second_horizontal_r=request.POST.get('hhpsecond_horizontal_r')
+            second_horizontal_l=request.POST.get('hhpsecond_horizontal_l')
+            third_axle_location=request.POST.get('hhpthird_location')
+            third=request.POST.get('hhpthird')
+            third_coilspring_make=request.POST.get('hhpthird_coilspring_make')
+            third_secondary_coilspring_make=request.POST.get('hhpthird_secondary_coilspring_make')
+            third_gearcase_no=request.POST.get('hhpthird_gearcase_no')
+            third_gearcase_make=request.POST.get('hhpthird_gearcase_make')
+            third_back_lash=request.POST.get('hhpthird_back_lash')
+            third_vertical_r=request.POST.get('hhpthird_vertical_r')
+            third_vertical_l=request.POST.get('hhpthird_vertical_l')
+            third_horizontal_r=request.POST.get('hhpthird_horizontal_r')
+            third_horizontal_l=request.POST.get('hhpthird_horizontal_l')
+            wheel_set_guide=request.POST.get('hhpwheel_set_guide')
+            gear_case_oil=request.POST.get('hhpgear_case_oil')
             break_rigging_make=request.POST.get('hhpbreak_rigging_make')
-            coil_spring_make=request.POST.get('hhpcoil_spring_make')
             sand_box_make=request.POST.get('hhpsand_box_make')
             spheri_block_make=request.POST.get('hhpspheri_block_make')
             elastic_shop_make=request.POST.get('hhpelastic_shop_make')
-            secondary_coil_make=request.POST.get('hhpsecondary_coil_make')
+            lateral_damper=request.POST.get('hhplateral_damper')
             thrust_pad_make=request.POST.get('hhpthrust_pad_make')
             break_cylinder_make=request.POST.get('hhpbreak_cylinder_make')
-            lateral_damper=request.POST.get('hhplateral_damper')
-            if axle_no and axle_location and gear_case_no and tm_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and secondary_coil_make and thrust_pad_make and break_cylinder_make and lateral_damper :
-                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,secondary_coil_make=secondary_coil_make,thrust_pad_make=thrust_pad_make,break_cylinder_make=break_cylinder_make,lateral_damper=lateral_damper,dispatch_to="HHP_Inspected") 
+            inspect_date=request.POST.get('hhpdate')
+            motor_check=request.POST.get('hhpmotor_check')
+            motor_date=request.POST.get('hhpmotor_date')
+            lowering_check=request.POST.get('hhplowering_check')
+            lowering_date=request.POST.get('hhplowering_date')
+            dispatch_check=request.POST.get('hhpdispatch_check')
+            dispatch_check_date=request.POST.get('hhpdispatch_check_date')
+            loco_paper=request.POST.get('hhploco_paper')
+            locopaper_date=request.POST.get('hhplocopaper_date')
+            s = inspect_date.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newinspect_date =  year1 + "-" + month1 + "-" + day1
+            if  motor_check and motor_date and lowering_check and lowering_date and dispatch_check and dispatch_check_date and loco_paper and locopaper_date and h_plate and first_axle_location and second_axle_location and third_axle_location and first and second and third and first_coilspring_make and first_secondary_coilspring_make and first_gearcase_make and first_back_lash and first_gearcase_no and first_horizontal_l and first_vertical_l and first_horizontal_r and first_vertical_r and second_back_lash and second_coilspring_make and second_secondary_coilspring_make and second_gearcase_make and second_gearcase_no and second_horizontal_l and second_horizontal_l and second_horizontal_r and second_vertical_l and second_vertical_r and third_back_lash and third_coilspring_make and third_secondary_coilspring_make and third_gearcase_make and third_gearcase_no and third_horizontal_l and third_horizontal_r and third_vertical_l and third_vertical_r  and wheel_set_guide and gear_case_oil and break_rigging_make and sand_box_make and spheri_block_make and elastic_shop_make and lateral_damper and wheel_set_guide and gear_case_oil and thrust_pad_make and inspect_date:
+                BogieAssembly.objects.filter(frameserial_no=sno).update(locopaper_date=locopaper_date,loco_paper=loco_paper,dispatch_check_date=dispatch_check_date,dispatch_check=dispatch_check,lowering_date=lowering_date,lowering_check=lowering_check,motor_check=motor_check,motor_date=motor_date,h_plate=h_plate,inspection_status=True,first_axle_location=first_axle_location,second_axle_location=second_axle_location,third_axle_location=third_axle_location,first_axle=first,second_axle=second,third_axle=third,first_coilspring_make=first_coilspring_make,first_secondary_coilspring_make=first_secondary_coilspring_make,first_gearcase_make=first_gearcase_make,first_back_lash=first_back_lash,first_gearcase_no=first_gearcase_no,first_horizontal_l=first_horizontal_l,first_vertical_l=first_vertical_l,first_horizontal_r=first_horizontal_r,first_vertical_r=first_vertical_r,second_back_lash=second_back_lash,second_coilspring_make =second_coilspring_make,second_secondary_coilspring_make=second_secondary_coilspring_make,second_gearcase_make =second_gearcase_make ,second_gearcase_no =second_gearcase_no ,second_horizontal_l =second_horizontal_l ,second_horizontal_r =second_horizontal_r ,second_vertical_l =second_vertical_l ,second_vertical_r =second_vertical_r ,third_back_lash =third_back_lash ,third_coilspring_make =third_coilspring_make,third_secondary_coilspring_make=third_secondary_coilspring_make ,third_gearcase_make =third_gearcase_make ,third_gearcase_no =third_gearcase_no ,third_horizontal_l =third_horizontal_l ,third_horizontal_r =third_horizontal_r ,third_vertical_l =third_vertical_l ,third_vertical_r=third_vertical_r,wheel_set_guide=wheel_set_guide,gear_case_oil=gear_case_oil,break_rigging_make=break_rigging_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,lateral_damper=lateral_damper,thrust_pad_make=thrust_pad_make ,dispatch_to="HHP_Inspected",inspect_date=newinspect_date) 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
 
         if submit=='Inspect':
-            sno=int(request.POST.get('sno'))
-            axle_no=request.POST.get('axle_no')
-            axle_location=request.POST.get('axle_location')
-            gear_case_no=request.POST.get('gear_case_no')
-            tm_no=request.POST.get('tm_no')
-            gear_case_make=request.POST.get('gear_case_make')
-            msu_unit_no=request.POST.get('msu_unit_no')
+            sno=request.POST.get('addsno')
+            torque_support=request.POST.get('torque_support')
+            first_axle_location=request.POST.get('first_location')
+            first=request.POST.get('first')
+            first_coilspring_make=request.POST.get('first_coilspring_make')
+            first_gearcase_no=request.POST.get('first_gearcase_no')
+            first_gearcase_make=request.POST.get('first_gearcase_make')
+            first_back_lash=request.POST.get('first_back_lash')
+            first_vertical_r=request.POST.get('first_vertical_r')
+            first_vertical_l=request.POST.get('first_vertical_l')
+            first_horizontal_r=request.POST.get('first_horizontal_r')
+            first_horizontal_l=request.POST.get('first_horizontal_l')
+            second_axle_location=request.POST.get('second_location')
+            second=request.POST.get('second')
+            second_coilspring_make=request.POST.get('second_coilspring_make')
+            second_gearcase_no=request.POST.get('second_gearcase_no')
+            second_gearcase_make=request.POST.get('second_gearcase_make')
+            second_back_lash=request.POST.get('second_back_lash')
+            second_vertical_r=request.POST.get('second_vertical_r')
+            second_vertical_l=request.POST.get('second_vertical_l')
+            second_horizontal_r=request.POST.get('second_horizontal_r')
+            second_horizontal_l=request.POST.get('second_horizontal_l')
+            third_axle_location=request.POST.get('third_location')
+            third=request.POST.get('third')
+            third_coilspring_make=request.POST.get('third_coilspring_make')
+            third_gearcase_no=request.POST.get('third_gearcase_no')
+            third_gearcase_make=request.POST.get('third_gearcase_make')
+            third_back_lash=request.POST.get('third_back_lash')
+            third_vertical_r=request.POST.get('third_vertical_r')
+            third_vertical_l=request.POST.get('third_vertical_l')
+            third_horizontal_r=request.POST.get('third_horizontal_r')
+            third_horizontal_l=request.POST.get('third_horizontal_l')
+            wheel_set_guide=request.POST.get('wheel_set_guide')
+            gear_case_oil=request.POST.get('gear_case_oil')
             break_rigging_make=request.POST.get('break_rigging_make')
-            coil_spring_make=request.POST.get('coil_spring_make')
             sand_box_make=request.POST.get('sand_box_make')
             spheri_block_make=request.POST.get('spheri_block_make')
             elastic_shop_make=request.POST.get('elastic_shop_make')
             horizontal_damper=request.POST.get('horizontal_damper')
-            if axle_no and axle_location and gear_case_no and tm_no and gear_case_make and msu_unit_no and break_rigging_make and coil_spring_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper:
-                BogieAssembly.objects.filter(sno=sno).update(axle_no=axle_no,axle_location=axle_location,gear_case_no=gear_case_no,traction_motor_no=tm_no,gear_case_make=gear_case_make,msu_unit_no=msu_unit_no,break_rigging_make=break_rigging_make,coil_spring_make=coil_spring_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper,dispatch_to="Inspected") 
+            inspect_date=request.POST.get('inspectdate')
+            motor_check=request.POST.get('motor_check')
+            motor_date=request.POST.get('motor_date')
+            lowering_check=request.POST.get('lowering_check')
+            lowering_date=request.POST.get('lowering_date')
+            dispatch_check=request.POST.get('dispatch_check')
+            dispatch_check_date=request.POST.get('dispatch_check_date')
+            loco_paper=request.POST.get('loco_paper')
+            locopaper_date=request.POST.get('locopaper_date')
+            s = inspect_date.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newinspect_date =  year1 + "-" + month1 + "-" + day1
+            if  torque_support and locopaper_date and loco_paper and dispatch_check_date and dispatch_check and lowering_date and lowering_check and motor_date and motor_check and first_axle_location and second_axle_location and third_axle_location and first and second and third and first_coilspring_make and first_gearcase_make and first_back_lash and first_gearcase_no and first_horizontal_l and first_vertical_l and first_horizontal_r and first_vertical_r and second_back_lash and second_coilspring_make and second_gearcase_make and second_gearcase_no and second_horizontal_l and second_horizontal_l and second_horizontal_r and second_vertical_l and second_vertical_r and third_back_lash and third_coilspring_make and third_gearcase_make and third_gearcase_no and third_horizontal_l and third_horizontal_r and third_vertical_l and third_vertical_r  and wheel_set_guide and gear_case_oil and break_rigging_make and sand_box_make and spheri_block_make and elastic_shop_make and horizontal_damper and inspect_date:
+                BogieAssembly.objects.filter(frameserial_no=sno).update(torque_support=torque_support,inspection_status=True,motor_check=motor_check,motor_date=motor_date,lowering_check=lowering_check,lowering_date=lowering_date,dispatch_check=dispatch_check,dispatch_check_date=dispatch_check_date,loco_paper=loco_paper,locopaper_date=locopaper_date,first_axle_location=first_axle_location,second_axle_location=second_axle_location,third_axle_location=third_axle_location,first_axle=first,second_axle=second,third_axle=third,first_coilspring_make=first_coilspring_make,first_gearcase_make=first_gearcase_make,first_back_lash=first_back_lash,first_gearcase_no=first_gearcase_no,first_horizontal_l=first_horizontal_l,first_vertical_l=first_vertical_l,first_horizontal_r=first_horizontal_r,first_vertical_r=first_vertical_r,second_back_lash=second_back_lash,second_coilspring_make =second_coilspring_make ,second_gearcase_make =second_gearcase_make ,second_gearcase_no =second_gearcase_no ,second_horizontal_l =second_horizontal_l ,second_horizontal_r =second_horizontal_r ,second_vertical_l =second_vertical_l ,second_vertical_r =second_vertical_r ,third_back_lash =third_back_lash ,third_coilspring_make =third_coilspring_make ,third_gearcase_make =third_gearcase_make ,third_gearcase_no =third_gearcase_no ,third_horizontal_l =third_horizontal_l ,third_horizontal_r =third_horizontal_r ,third_vertical_l =third_vertical_l ,third_vertical_r=third_vertical_r,wheel_set_guide=wheel_set_guide,gear_case_oil=gear_case_oil,break_rigging_make=break_rigging_make,sand_box_make=sand_box_make,spheri_block_make=spheri_block_make,elastic_shop_make=elastic_shop_make,horizontal_damper=horizontal_damper ,dispatch_to="Inspected",inspect_date=newinspect_date) 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
 
         if submit=='Delete':
 
-            sno=int(request.POST.get('delsno'))
+            sno=request.POST.get('delsno')
             if sno:
-                myval=list(BogieAssembly.objects.filter(sno=sno))
-                BogieAssembly.objects.filter(sno=sno).delete()
+                BogieAssembly.objects.filter(frameserial_no=sno).delete()
                 messages.success(request, 'Successfully Deleted!')
             else:
                 messages.error(request,"Please Enter S.No.!")
@@ -10628,6 +10872,19 @@ def bogieassembly_section(request):
         return HttpResponseRedirect("/bogieassembly/")
 
     return render(request,"bogieassembly.html",my_context)
+
+
+def uniqueframeserial(request):
+    if request.method=="GET" and request.is_ajax():
+        frameserial_no = request.GET.get('frameserial_no')
+        ob1=list(BogieAssembly.objects.filter(frameserial_no=frameserial_no).values('bo_no'))
+        l=len(ob1)
+        if l==0 :
+            msg=["true"]
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 
 def bogieassemb_addbo(request):
@@ -11186,19 +11443,51 @@ def wogen(request):
 @login_required
 @role_required(urlpass='/axlewheelpressing_section/')
 def axlewheelpressing_section(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    obj2=AxleWheelPressing.objects.all().filter(dispatch_status=False).order_by('sno')
+     
+    n=1
+    now = datetime.now()
+    disnow=datetime.now()-timedelta(days=n)
+    dt_string = now.strftime("%Y-%m-%d")
+    dis_string = disnow.strftime("%Y-%m-%d")
+    
+    obj2=list(AxleWheelPressing.objects.all().filter(Q(inspect_date__range=(dis_string,dt_string),dispatch_status=False) | Q(inspectinspection_status=False,dispatch_status=False) | Q(hhpinspection_status=False,dispatch_status=False)).values('sno','bo_no','pt_no','axle_no','inspect_date','bo_qty','bo_date','loco_type','date','wheelno_de','wheelno_nde','bullgear_no','in_qty','out_qty','bullgear_make','dispatch_to').order_by('sno'))
+    obj3=list(AxleWheelPressing.objects.all().filter(Q(inspect_date__range=(dis_string,dt_string),dispatch_status=False) | Q(inspectinspection_status=False,dispatch_status=False) | Q(hhpinspection_status=False,dispatch_status=False)).values('inspect_date','in_qty','out_qty').order_by('sno'))
+    ll=len(obj3)
+    for i in range(0,ll):
+        dd=obj3[i]['inspect_date']
+        indate=obj3[i]['in_qty']
+        outdate=obj3[i]['out_qty']
+        if dd!=None :
+            s = dd.split('-')
+            month1 = s[1]
+            day1 = s[2]
+            year1 = s[0]
+            dd2 =  day1 + "-" + month1 + "-" + year1
+            obj2[i].update({'inspect_date':dd2})
+        else :
+            obj2[i].update({'inspect_date':None})
+        if indate!=None :
+            s1 = indate.split('-')
+            newmonth1 = s1[1]
+            newday1 = s1[2]
+            newyear1 = s1[0]
+            newindate =  newday1 + "-" + newmonth1 + "-" + newyear1
+            obj2[i].update({'in_qty':newindate})
+        else :
+            obj2[i].update({'in_qty':None}) 
+
+        if outdate!=None :
+            s2 = outdate.split('-')
+            newmonth2 = s2[1]
+            newday2 = s2[2]
+            newyear2 = s2[0]
+            newoutdate =  newday2 + "-" + newmonth2 + "-" + newyear2
+            obj2[i].update({'out_qty':newoutdate})
+        else :
+            obj2[i].update({'out_qty':None})
     mybo=Batch.objects.all().values('bo_no')
-    hhpmysno=AxleWheelPressing.objects.all().filter((Q(pt_no='17010019')|Q(pt_no='17010706')|Q(pt_no='17010639')|Q(pt_no='17010330')|Q(pt_no='17010421')|Q(pt_no='16010085')|Q(pt_no='16010206')|Q(pt_no='16010255')|Q(pt_no='17010019')|Q(pt_no='17010391')),dispatch_status=False).values('sno')
-    mysno=AxleWheelPressing.objects.all().filter(dispatch_status=False).values('sno')
+    hhpmysno=(AxleWheelPressing.objects.all().filter((Q(pt_no='17010019')|Q(pt_no='17010706')|Q(pt_no='17010639')|Q(pt_no='17010330')|Q(pt_no='17010421')|Q(pt_no='16010085')|Q(pt_no='16010206')|Q(pt_no='16010255')|Q(pt_no='17010019')|Q(pt_no='17010391')),dispatch_status=False).values('axle_no')).order_by('axle_no')
+    mysno=(AxleWheelPressing.objects.all().filter(dispatch_status=False).values('axle_no')).order_by('axle_no')
     axle=list(AxleMachining.objects.filter(axlefitting_status=False,axleinspection_status=True).values('axle_no'))
     wheelde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no'))
     wheelpressde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no'))
@@ -11276,43 +11565,52 @@ def axlewheelpressing_section(request):
             }
 
         if submit=='Edit':
-            temp=request.POST.get('editsno')
-            if temp is not None:
-                sno=int(temp)
-            else:
-                sno=None
-            bo_no=request.POST.get('editbo_no')
-            bo_date=request.POST.get('editbo_date')
-            bo_qty=request.POST.get('editbo_qty')
-            indate=request.POST.get('editin_qty')
-            outdate=request.POST.get('editout_qty')
-            pt_no=request.POST.get('editpt_no')
-            date=request.POST.get('editdate')
-            loco_type=request.POST.get('editlocos')
-            axle_no=request.POST.get('editaxle_no')
-            wheelno_de=request.POST.get('editwheelno_de')
-            wheelno_nde=request.POST.get('editwheelno_nde')
-            bullgear_no=request.POST.get('editbullgear_no')
-            bullgear_make=request.POST.get('editbullgear_make')
-            in_qty=request.POST.get('editin_qty')
-            out_qty=request.POST.get('editout_qty')
-
-            if bo_no and bo_date and date and loco_type and pt_no and bo_qty and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
-               AxleWheelPressing.objects.filter(sno=sno).update(bo_no=bo_no,bo_date=bo_date,edit_date=date,loco_type=loco_type,axle_no=axle_no,in_qty=in_qty,out_qty=out_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make,pt_no=pt_no,bo_qty=bo_qty)
-               AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
-               WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True,dispatch_status=True)
-               WheelMachining.objects.filter(wheel_no=wheelno_nde).update(wheelfitting_status=True,dispatch_status=True)
-               messages.success(request, 'Successfully Edited!')
-            else:
-               messages.error(request,"Please Enter S.No.!")
+            sno=request.POST.get('editsno')
+            
+            if sno is not None:
+            
+                bo_no=request.POST.get('editbo_no')
+                bo_date=request.POST.get('editbo_date')
+                bo_qty=request.POST.get('editbo_qty')
+                indate=request.POST.get('editin_qty')
+                outdate=request.POST.get('editout_qty')
+                pt_no=request.POST.get('editpt_no')
+                date=request.POST.get('editdate')
+                loco_type=request.POST.get('editlocos')
+                axle_no=request.POST.get('editaxle_no')
+                wheelno_de=request.POST.get('editwheelno_de')
+                wheelno_nde=request.POST.get('editwheelno_nde')
+                bullgear_no=request.POST.get('editbullgear_no')
+                bullgear_make=request.POST.get('editbullgear_make')
+                in_qty=request.POST.get('editin_qty')
+                out_qty=request.POST.get('editout_qty')
+                s1 = in_qty.split('-')
+                month1 = s1[1]
+                day1 = s1[0]
+                year1 = s1[2]
+                newin_qty =  year1 + "-" + month1 + "-" + day1
+                s2 = out_qty.split('-')
+                month2 = s2[1]
+                day2 = s2[0]
+                year2 = s2[2]
+                newout_qty =  year2 + "-" + month2 + "-" + day2
+                if bo_no and bo_date and date and loco_type and pt_no and bo_qty and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
+                    AxleWheelPressing.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,edit_date=date,loco_type=loco_type,axle_no=axle_no,in_qty=newin_qty,out_qty=newout_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make,pt_no=pt_no,bo_qty=bo_qty)
+                    AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
+                    WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True,dispatch_status=True)
+                    WheelMachining.objects.filter(wheel_no=wheelno_nde).update(wheelfitting_status=True,dispatch_status=True)
+                    messages.success(request, 'Successfully Edited!')
+                else:
+                    messages.error(request,"Please Enter S.No.!")
 
         if submit=='InspectHHP':
-            sno=int(request.POST.get('sno'))
+            sno=request.POST.get('sno')
             wheelno_de=request.POST.get('hhpwheelno_de')
             wheel_de_make=request.POST.get('hhpwheel_de_make')
             wheelno_nde=request.POST.get('hhpwheelno_nde')
             wheel_nde_make=request.POST.get('hhpwheel_nde_make')
             wheel_nde_pressure=request.POST.get('hhpwheel_nde_pressure')
+            wheel_de_pressure=request.POST.get('hhpwheel_de_pressure')
             axle_no=request.POST.get('hhpaxle_no')
             axle_make=request.POST.get('hhpaxle_make')
             bullgear_no=request.POST.get('hhpbullgear_no')
@@ -11339,21 +11637,26 @@ def axlewheelpressing_section(request):
             journal_make_de=request.POST.get('hhpjournal_make_de')
             journal_no_nde=request.POST.get('hhpjournal_no_nde')
             journal_make_nde=request.POST.get('hhpjournal_make_nde')
-            
-            if cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde and journal_no_de and journal_make_de and journal_no_nde and journal_make_nde:
+            s = date.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newdate =  year1 + "-" + month1 + "-" + day1
+            if wheel_de_pressure and cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde and journal_no_de and journal_make_de and journal_no_nde and journal_make_nde:
                 
-                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,inspect_date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,hhpinspection_status=True,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde,dispatch_to="HHP_Inspected")
+                AxleWheelPressing.objects.filter(axle_no=sno).update(wheel_de_pressure=wheel_de_pressure,wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,inspect_date=newdate,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,hhpinspection_status=True,journal_no_de=journal_no_de,journal_make_de=journal_make_de,journal_no_nde=journal_no_nde,journal_make_nde=journal_make_nde,dispatch_to="HHP_Inspected")
 
                 messages.success(request,'Successfully Edited!')
             else:
                 messages.error(request,"Please Enter the all the records!")    
         if submit=='Inspect':
-            sno=int(request.POST.get('sno'))
+            sno=request.POST.get('sno')
             wheelno_de=request.POST.get('inspectwheelno_de')
             wheel_de_make=request.POST.get('inspectwheel_de_make')
             wheelno_nde=request.POST.get('inspectwheelno_nde')
             wheel_nde_make=request.POST.get('inspectwheel_nde_make')
             wheel_nde_pressure=request.POST.get('inspectwheel_nde_pressure')
+            wheel_de_pressure=request.POST.get('inspectwheel_de_pressure')
             axle_no=request.POST.get('inspectaxle_no')
             axle_make=request.POST.get('inspectaxle_make')
             bullgear_no=request.POST.get('inspectbullgear_no')
@@ -11376,8 +11679,13 @@ def axlewheelpressing_section(request):
             cru_bearing_pressure_nde=request.POST.get('inspectcru_bearing_pressure_nde')
             date=request.POST.get('inspectdate')
             inspector_name=request.POST.get('inspectinspector_name')
-            if cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde:
-                AxleWheelPressing.objects.filter(sno=sno).update(wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,inspect_date=date,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,inspectinspection_status=True,dispatch_to="Inspected")
+            s = date.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newdate =  year1 + "-" + month1 + "-" + day1
+            if wheel_de_pressure and cru_bearing_pressure_nde and cru_bearing_make_nde and wheelno_de and wheel_de_make and wheelno_nde and wheel_nde_make and wheel_nde_pressure and axle_no and axle_make and bullgear_no and bullgear_make and bullgear_pressure and msu_unit_no and msu_unit_make and axle_box_no and axle_box_make and axle_box_clearance and suspension_bearing_de_no and suspension_bearing_de_make and suspension_bearing_nde_no and suspension_bearing_nde_make and cru_bearing_no_de and cru_bearing_make_de and cru_bearing_pressure_de and date and inspector_name and cru_bearing_no_nde:
+                AxleWheelPressing.objects.filter(axle_no=sno).update(wheel_de_pressure=wheel_de_pressure,wheelno_de=wheelno_de,wheel_de_make=wheel_de_make,wheel_nde_make=wheel_nde_make,wheelno_nde=wheelno_nde,wheel_nde_pressure=wheel_nde_pressure,axle_no=axle_no,axle_make=axle_make,bullgear_no=bullgear_no,bullgear_make=bullgear_make,bullgear_pressure=bullgear_pressure,msu_unit_no=msu_unit_no,msu_unit_make=msu_unit_make,axle_box_no=axle_box_no,axle_box_make=axle_box_make,axle_box_clearance=axle_box_clearance,suspension_bearing_de_no=suspension_bearing_de_no,suspension_bearing_de_make=suspension_bearing_de_make,suspension_bearing_nde_no=suspension_bearing_nde_no,suspension_bearing_nde_make=suspension_bearing_nde_make,cru_bearing_no_de=cru_bearing_no_de,cru_bearing_make_de=cru_bearing_make_de,cru_bearing_pressure_de=cru_bearing_pressure_de,inspect_date=newdate,inspector_name=inspector_name,cru_bearing_no_nde=cru_bearing_no_nde,cru_bearing_make_nde=cru_bearing_make_nde,cru_bearing_pressure_nde=cru_bearing_pressure_nde,inspectinspection_status=True,dispatch_to="Inspected")
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter all the records!")
@@ -11395,9 +11703,9 @@ def axlewheelpressing_section(request):
         
         if submit=='Delete':
 
-            sno=int(request.POST.get('delsno'))
+            sno=request.POST.get('delsno')
             if sno:
-                AxleWheelPressing.objects.filter(sno=sno).delete()
+                AxleWheelPressing.objects.filter(axle_no=sno).delete()
                 messages.success(request, 'Successfully Deleted!')
             else:
                 messages.error(request,"Please Enter S.No.!")
@@ -11405,7 +11713,40 @@ def axlewheelpressing_section(request):
         return HttpResponseRedirect("/axlewheelpressing_section/")
 
     return render(request,"axlewheelpressing_section.html",my_context)
+def fetch_axlemake(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno=request.GET.get('sels_no')
+        ax_make=list(AxleMachining.objects.filter(axle_no=mysno).values('axle_make'))
+        
+        return JsonResponse(ax_make, safe = False)
+    return JsonResponse({"success":False}, status=400)
+def uniquebullgear(request):
+    if request.method=="GET" and request.is_ajax():
+        bullgear_no = request.GET.get('bullgear_no')
+        ob1=list(AxleWheelPressing.objects.filter(bullgear_no=bullgear_no).values('bo_no'))
+        l=len(ob1)
+        if l==0 :
+            msg=["true"]
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
+def validate_axlepress_inspect(request):
+    if request.method=="GET" and request.is_ajax():
+        sels_no = request.GET.get('sels_no')
+        ob1=list(AxleWheelPressing.objects.filter(axle_no=sels_no).values('loco_type'))
+       
+        return JsonResponse(ob1, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def validate_pinionpress_inspect(request):
+    if request.method=="GET" and request.is_ajax():
+        sels_no = request.GET.get('sels_no')
+        ob1=list(PinionPressing.objects.filter(axle_no=sels_no).values('loco_type'))
+        
+        return JsonResponse(ob1, safe = False)
+    return JsonResponse({"success":False}, status=400)
 def axlepress_addbo(request):
     if request.method=="GET" and request.is_ajax():
         mybo = request.GET.get('selbo_no')
@@ -14017,18 +14358,15 @@ def performaA(request):
 @login_required
 @role_required(urlpass='/axlemachining_section/')
 def axlemachining_section(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+     
+    n=1
+    now = datetime.now()
+    disnow=datetime.now()-timedelta(days=n)
+    dt_string = now.strftime("%Y-%m-%d")
+    dis_string = disnow.strftime("%Y-%m-%d")
     dd3=[]
-    obj2=list(AxleMachining.objects.all().filter(dispatch_status=False).values('sno','bo_no','pt_no','axle_no','dateaxle','bo_qty','bo_date','loco_type','date','axle_no','axlep_no','axle_make','axle_heatcaseno','in_qty','out_qty','dispatch_to').order_by('sno'))
-    obj3=list(AxleMachining.objects.all().filter(dispatch_status=False).values('dateaxle','in_qty','out_qty').order_by('sno'))
+    obj2=list(AxleMachining.objects.all().filter(Q(dateaxle__range=(dis_string,dt_string),dispatch_status=False) | Q(axleinspection_status=False,dispatch_status=False)).values('sno','bo_no','pt_no','axle_no','dateaxle','bo_qty','bo_date','loco_type','date','axle_no','axlep_no','axle_make','axle_heatcaseno','in_qty','out_qty','dispatch_to').order_by('sno'))
+    obj3=list(AxleMachining.objects.all().filter(Q(dateaxle__range=(dis_string,dt_string),dispatch_status=False) | Q(axleinspection_status=False,dispatch_status=False)).values('dateaxle','in_qty','out_qty').order_by('sno'))
     ll=len(obj3)
     for i in range(0,ll):
         dd=obj3[i]['dateaxle']
@@ -14064,7 +14402,7 @@ def axlemachining_section(request):
             obj2[i].update({'out_qty':None})     
 
     mybo=Batch.objects.all().values('bo_no')
-    mysno=AxleMachining.objects.filter(dispatch_status=False).values('axle_no')
+    mysno=(AxleMachining.objects.filter(dispatch_status=False).values('axle_no')).order_by('axle_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -14077,6 +14415,7 @@ def axlemachining_section(request):
        }
     if request.method=="POST":
         once=request.POST.get('once')
+        print(once)
         submit=request.POST.get('submit')
         if submit=='Save':
         
@@ -14172,6 +14511,7 @@ def axlemachining_section(request):
         if submit=='Delete':
 
             sno=request.POST.get('delsno')
+            
             if sno:
                 w=list(AxleMachining.objects.filter(axle_no=sno).values('axle_no'))
                 l=len(w)
@@ -14214,6 +14554,7 @@ def axlemachining_section(request):
             day1 = s[0]
             year1 = s[2]
             newdateaxle =  year1 + "-" + month1 + "-" + day1
+           
             if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE and journalaxlende and throweraxlende and wheelseataxlende and collaraxlende:
                 AxleMachining.objects.filter(axle_no=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=newdateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,journalaxlende=journalaxlende,throweraxlende=throweraxlende,wheelseataxlende=wheelseataxlende,collaraxlende=collaraxlende,axleinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Axle Successfully Inspected!')
@@ -14224,7 +14565,6 @@ def axlemachining_section(request):
         return HttpResponseRedirect("/axlemachining_section/")
 
     return render(request,"axlemachining_section.html",my_context)
-
 
 def axle_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -14243,18 +14583,50 @@ def axle_editsno(request):
 @login_required
 @role_required(urlpass='/wheelmachining_section/')
 def wheelmachining_section(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    obj2=WheelMachining.objects.all().filter(dispatch_status=False).order_by('sno')
+    
+    n=1
+    now = datetime.now()
+    disnow=datetime.now()-timedelta(days=n)
+    dt_string = now.strftime("%Y-%m-%d")
+    dis_string = disnow.strftime("%Y-%m-%d")
+    dd3=[]
+    obj2=list(WheelMachining.objects.all().filter(Q(datewhl__range=(dis_string,dt_string),dispatch_status=False) | Q(wheelinspection_status=False,dispatch_status=False)).values('sno','bo_no','pt_no','bo_qty','bo_date','loco_type','date','wheel_no','wheelp_no','wheel_make','wheel_heatcaseno','in_qty','out_qty','dispatch_to','datewhl').order_by('sno'))
+    obj3=list(WheelMachining.objects.all().filter(Q(datewhl__range=(dis_string,dt_string),dispatch_status=False) | Q(wheelinspection_status=False,dispatch_status=False)).values('datewhl','in_qty','out_qty').order_by('sno'))
+    ll=len(obj3)
+    for i in range(0,ll):
+        dd=obj3[i]['datewhl']
+        indate=obj3[i]['in_qty']
+        outdate=obj3[i]['out_qty']
+        if dd!=None :
+            s = dd.split('-')
+            month1 = s[1]
+            day1 = s[2]
+            year1 = s[0]
+            dd2 =  day1 + "-" + month1 + "-" + year1
+            obj2[i].update({'datewhl':dd2})
+        else :
+            obj2[i].update({'datewhl':None})
+        if indate!=None :
+            s1 = indate.split('-')
+            newmonth1 = s1[1]
+            newday1 = s1[2]
+            newyear1 = s1[0]
+            newindate =  newday1 + "-" + newmonth1 + "-" + newyear1
+            obj2[i].update({'in_qty':newindate})
+        else :
+            obj2[i].update({'in_qty':None}) 
+
+        if outdate!=None :
+            s2 = outdate.split('-')
+            newmonth2 = s2[1]
+            newday2 = s2[2]
+            newyear2 = s2[0]
+            newoutdate =  newday2 + "-" + newmonth2 + "-" + newyear2
+            obj2[i].update({'out_qty':newoutdate})
+        else :
+            obj2[i].update({'out_qty':None})
     mybo=Batch.objects.all().values('bo_no')
-    mysno=WheelMachining.objects.filter(dispatch_status=False).values('wheel_no')
+    mysno=(WheelMachining.objects.filter(dispatch_status=False).values('wheel_no')).order_by('wheel_no')
     my_context={
        'object':obj2,
        'nav':nav,
@@ -14266,6 +14638,7 @@ def wheelmachining_section(request):
        }
     if request.method=="POST":
         once=request.POST.get('once')
+        print(once)
         submit=request.POST.get('submit')
         if submit=='Save':
         
@@ -14281,6 +14654,16 @@ def wheelmachining_section(request):
             twelve=request.POST.get('bo_qty')
             indate=request.POST.get('in_qty')
             outdate=request.POST.get('out_qty')
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
             if first and second and third and fourth and fifth and sixth and seventh and eighth and eleven and twelve and indate and outdate :
                 obj=WheelMachining.objects.create()
                 obj.bo_no=first
@@ -14294,8 +14677,8 @@ def wheelmachining_section(request):
                 obj.wheelinspection_status=False
                 obj.pt_no=eleven
                 obj.bo_qty=twelve
-                obj.in_qty=indate
-                obj.out_qty=outdate
+                obj.in_qty=newindate
+                obj.out_qty=newoutdate
                 obj.save()
                 messages.success(request, 'Successfully Added!')
             else:
@@ -14321,8 +14704,18 @@ def wheelmachining_section(request):
             wheel_heatcaseno=request.POST.get('editwheel_heatcaseno')
             indate=request.POST.get('editin_qty')
             outdate=request.POST.get('editout_qty')
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
             if bo_no and bo_date and date and loco_type and wheel_make and wheel_no and wheel_heatcaseno and wheelp_no and pt_no and bo_qty and indate and outdate:
-                WheelMachining.objects.filter(wheel_no=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=indate,out_qty=outdate,date=date,wheel_no=wheel_no,wheel_make=wheel_make,loco_type=loco_type,wheel_heatcaseno=wheel_heatcaseno,wheelp_no=wheelp_no)
+                WheelMachining.objects.filter(wheel_no=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=newindate,out_qty=newoutdate,date=date,wheel_no=wheel_no,wheel_make=wheel_make,loco_type=loco_type,wheel_heatcaseno=wheel_heatcaseno,wheelp_no=wheelp_no)
                 messages.success(request, 'Successfully Edited!')
             else:
                 messages.error(request,"Please Enter S.No.!")
@@ -14341,8 +14734,6 @@ def wheelmachining_section(request):
             else:
                 messages.error(request,"Please Enter S.No.!")
 
-
-
         if submit=='InspectWheel':
     
             sno=request.POST.get('snowheel')
@@ -14355,8 +14746,13 @@ def wheelmachining_section(request):
             obore_diawhl=request.POST.get('bore_diawhl')
             oinspector_namewhl=request.POST.get('inspector_namewhl')
             odatewhl=request.POST.get('datewhl')
+            s = odatewhl.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newodatewhl =  year1 + "-" + month1 + "-" + day1
             if oustwhl_status and oustwhl_date and oustwhl and ohub_lengthwhl and otread_diawhl and orim_thicknesswhl and obore_diawhl and oinspector_namewhl and odatewhl:
-                WheelMachining.objects.filter(wheel_no=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_namewhl=oinspector_namewhl,datewhl=odatewhl,wheelinspection_status=True,dispatch_to="Inspected")
+                WheelMachining.objects.filter(wheel_no=sno).update(ustwhl_status=oustwhl_status,ustwhl_date=oustwhl_date,ustwhl=oustwhl,hub_lengthwhl=ohub_lengthwhl,tread_diawhl=otread_diawhl,rim_thicknesswhl=orim_thicknesswhl,bore_diawhl=obore_diawhl,inspector_namewhl=oinspector_namewhl,datewhl=newodatewhl,wheelinspection_status=True,dispatch_to="Inspected")
                 messages.success(request, 'Wheel Successfully Inspected!')
             else:
                 messages.error(request,"Please Select S.No.!")
@@ -15806,15 +16202,7 @@ def axlereport(request):
 @login_required
 @role_required(urlpass='/wheelreport/')
 def wheelreport(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+     
     a=0
     context={
         'a':a,
@@ -15903,8 +16291,13 @@ def wheelreport(request):
             c1=0
             c2=0
             dt=request.POST.get('datew')
-            ob1=list(WheelMachining.objects.filter(in_qty=dt).values('pt_no','loco_type','wheel_no'))
-            ob2=list(WheelMachining.objects.filter(out_qty=dt).values('pt_no','loco_type','wheel_no'))   
+            s = dt.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(WheelMachining.objects.filter(in_qty=date).values('pt_no','loco_type','wheel_no'))
+            ob2=list(WheelMachining.objects.filter(out_qty=date).values('pt_no','loco_type','wheel_no'))   
             len2=len(ob2)
             len1=len(ob1)
             for i in range(0,len(ob1)):
@@ -15974,8 +16367,18 @@ def wheelreport(request):
         if bval=='Proceed2':
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=WheelMachining.objects.filter(in_qty__range=(dt1,dt2)).values('pt_no','loco_type')
-            ob2=WheelMachining.objects.filter(out_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            date1 =  year1 + "-" + month1 + "-" + day1
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            date2 =  year2 + "-" + month2 + "-" + day2
+            ob1=WheelMachining.objects.filter(in_qty__range=(date1,date2)).values('pt_no','loco_type')
+            ob2=WheelMachining.objects.filter(out_qty__range=(date1,date2)).values('pt_no','loco_type')
             pt=[] 
             lt=[] 
             pto=[]
@@ -16059,8 +16462,32 @@ def wheelreport(request):
             wheel_no=request.POST.get('wheel_no')
             ob1=list(WheelMachining.objects.filter(wheel_no=wheel_no).values('wheel_no','loco_type','date','bo_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
             l=len(ob1)
+            if l>0:
+                for i in range(0,l):
+                    dd=ob1[i]['datewhl']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'datewhl':dd2})
+                    else:
+                        ob1[i].update({'datewhl':None})
             ob2=list(AxleWheelPressing.objects.filter(Q(wheelno_de=wheel_no)|Q(wheelno_nde=wheel_no)).values('axle_no','inspect_date','inspector_name'))
-            
+            l1=len(ob2)
+            if l1>0:
+                for i in range(0,l1):
+                    dd3=ob2[i]['inspect_date']
+                    if dd3!=None:
+                        s1=dd3.split('-')
+                        month1=s1[1]
+                        day1=s1[2]
+                        year1=s1[0]
+                        dd4=day1 + '-' + month1 + '-' + year1
+                        ob2[i].update({'inspect_date':dd4})
+                    else:
+                        ob2[i].update({'inspect_date':None})
             context={
                 'nav':nav,
                 'subnav':subnav,
@@ -16122,7 +16549,12 @@ def wheelreport(request):
         if bval=='Proceed20':
             a=1
             datel=request.POST.get('datel')
-            ob1=list(WheelMachining.objects.filter(datewhl=datel).values('wheel_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
+            s = datel.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(WheelMachining.objects.filter(datewhl=date).values('wheel_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
             context={
             'a':a,
             'nav':nav,
@@ -16136,7 +16568,30 @@ def wheelreport(request):
         if bval=='Proceed22':
             datell1=request.POST.get('datell1')
             datell2=request.POST.get('datell2')
-            ob1=list(WheelMachining.objects.filter(datewhl__range=(datell1,datell2)).values('wheel_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
+            s1 = datell1.split('-')
+            s2 = datell2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            date1 =  year1 + "-" + month1 + "-" + day1
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            date2 =  year2 + "-" + month2 + "-" + day2
+            ob1=list(WheelMachining.objects.filter(datewhl__range=(date1,date2)).values('wheel_no','wheel_heatcaseno','ustwhl','hub_lengthwhl','tread_diawhl','rim_thicknesswhl','bore_diawhl','inspector_namewhl','datewhl'))
+            ll=len(ob1)
+            if ll>0:
+                for i in range(0,ll):
+                    dd=ob1[i]['datewhl']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'datewhl':dd2})
+                    else:
+                        ob1[i].update({'datewhl':None})
             context={
             'a':a,
             'nav':nav,
@@ -16159,15 +16614,7 @@ def wheelreport(request):
 @login_required
 @role_required(urlpass='/bogiereport/')
 def bogiereport(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+     
     context={
        'nav':nav,
        'subnav':subnav,
@@ -16192,18 +16639,109 @@ def bogiereport(request):
             'ip':get_client_ip(request),
             'sub':2,
             }
-        if bval=='Month Wise Detail':
+        if bval=='Record of Loco Type (date wise)':
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
-            'sub':10,
+            'sub':4,
+            }
+        if bval=='Record of Loco Type (date range)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':6,
+            }
+        if bval=='Consolidated Detail Report':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':8,
             }
         if bval=='Proceed1':
+            pt=[]
+            pto=[]
+            lt=[]
+            lto=[]
+            fm=[]
+            count=[]
+            count1=[]
+            myval=[]
+            myval1=[]
+            unique_myval=[]
+            unique_myval1=[]
+            c1=0
+            c2=0
             dt=request.POST.get('datew')
-            ob1=BogieAssembly.objects.filter(in_date=dt).values('sno','pt_no')
-            ob2=BogieAssembly.objects.filter(out_qty=dt).values('sno','pt_no')
+            s = dt.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(BogieAssembly.objects.filter(in_date=date).values('pt_no','loco_type','frame_make'))
+            ob2=list(BogieAssembly.objects.filter(out_qty=date).values('pt_no','loco_type','frame_make'))   
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range(0,len(ob1)):
+                fm.append(ob1[i]['frame_make'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i],'frame_make':fm[i],'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i],'frame_make':fm[i],'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i],'frame_make':fm[i],'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i],'frame_make':fm[i],'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j],'frame_make':fm[j],'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
             context={
             'nav':nav,
             'subnav':subnav,
@@ -16213,51 +16751,259 @@ def bogiereport(request):
             'ob1':ob1,
             'ob2':ob2,
             'dt':dt,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
         if bval=='Proceed2':
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=BogieAssembly.objects.filter(in_date__range=(dt1,dt2)).values('sno','pt_no','in_date').order_by('in_date')
-            ob2=BogieAssembly.objects.filter(out_qty__range=(dt1,dt2)).values('sno','pt_no','out_qty').order_by('out_qty')
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            date1 =  year1 + "-" + month1 + "-" + day1
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            date2 =  year2 + "-" + month2 + "-" + day2
+            ob1=BogieAssembly.objects.filter(in_date__range=(date1,date2)).values('pt_no','loco_type','frame_make')
+            ob2=BogieAssembly.objects.filter(out_qty__range=(date1,date2)).values('pt_no','loco_type','frame_make')
+            pt=[] 
+            lt=[] 
+            fm=[]
+            pto=[]
+            lto=[]
+            myval=[]
+            myval1=[]
+            final=[]
+            unique_final=[]
+            count=[]
+            count1=[]
+            c1=0
+            c2=0
+
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range(0,len(ob1)):
+                fm.append(ob1[i]['frame_make'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i],'frame_make':fm[i],'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+            
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i],'frame_make':fm[i],'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i],'frame_make':fm[i],'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i],'frame_make':fm[i],'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j],'frame_make':fm[j],'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
             'sub':3,
-            'ob1':ob1,
-            'ob2':ob2,
-            'dt1':dt1,'dt2':dt2,
+            'dt1':dt1,
+            'dt2':dt2,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
             }
-        if bval=='Proceed10':
-            mon=request.POST.get('month')
-            ob1=BogieAssembly.objects.filter(date__contains=mon).values('sno','axle_no','in_qty','out_qty','pt_no','date').order_by('date')
+        if bval=='Proceed6':
+            dt1=request.POST.get('datea')
+            s = dt1.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(BogieAssembly.objects.filter(inspect_date=date).values('axle_no','axle_location','traction_motor_no','gear_case_no','gear_case_make','msu_unit_no','break_rigging_make','coil_spring_make','secondary_coil_make','sand_box_make','spheri_block_make','thrust_pad_make','break_cylinder_make','elastic_shop_make','horizontal_damper','lateral_damper','inspect_date'))
+            l=len(ob1)
             context={
             'nav':nav,
             'subnav':subnav,
             'usermaster':usermaster,
             'ip':get_client_ip(request),
-            'sub':11,
+            'sub':5,
             'ob1':ob1,
-            'mon':mon,
+            'dt1':dt1,
+            'l':l,
             }
-
+        if bval=='Proceed7':
+            datea1=request.POST.get('datea1')
+            datea2=request.POST.get('datea2')
+            s1 = datea1.split('-')
+            s2 = datea2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            datell1 =  year1 + "-" + month1 + "-" + day1
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            datell2 =  year2 + "-" + month2 + "-" + day2
+            ob1=list(BogieAssembly.objects.filter(inspect_date__range=(datell1,datell2)).values('axle_no','axle_location','traction_motor_no','gear_case_no','gear_case_make','msu_unit_no','break_rigging_make','coil_spring_make','secondary_coil_make','sand_box_make','spheri_block_make','thrust_pad_make','break_cylinder_make','elastic_shop_make','horizontal_damper','lateral_damper','inspect_date'))
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':7,
+            'ob1':ob1,
+           
+            'datea1':datea1, 
+            'datea2':datea2,
+            }
+        if bval=='Proceed':
+            bo_no=request.POST.get('bo_no')
+            fs_no=request.POST.get('fs_no')
+            ob1=list(BogieAssembly.objects.filter(bo_no=bo_no,frameserial_no=fs_no,dispatch_to='Inspected').values('first_coilspring_make','break_rigging_make','motor_check','motor_date','lowering_check','lowering_date','dispatch_check','dispatch_check_date','loco_paper','locopaper_date','frameserial_no','pt_no','horizontal_damper','loco_type','first_axle','second_axle','third_axle','first_gearcase_no','second_gearcase_no','third_gearcase_no','first_back_lash','second_back_lash','third_back_lash','wheel_set_guide','gear_case_oil','lateral_damper','spheri_block_make','sand_box_make','elastic_shop_make','coil_spring_make','break_cylinder_make','date','first_vertical_r','first_vertical_l','first_horizontal_r','first_horizontal_l','second_vertical_r','second_vertical_l','second_horizontal_r','second_horizontal_l','third_vertical_r','third_vertical_l','third_horizontal_r','third_horizontal_l'))  
+            l=len(ob1)
+            if l>0 :
+                ax1=ob1[0]['first_axle']
+                ax2=ob1[0]['second_axle']
+                ax3=ob1[0]['third_axle']
+                tm1=list(PinionPressing.objects.filter(axle_no=ax1).values('tm_no','tm_make'))
+                tm2=list(PinionPressing.objects.filter(axle_no=ax2).values('tm_no','tm_make'))
+                tm3=list(PinionPressing.objects.filter(axle_no=ax3).values('tm_no','tm_make'))
+                axle_box1=list(AxleWheelPressing.objects.filter(axle_no=ax1).values('axle_box_no'))
+                tno1=tm1[0]['tm_no']
+                tno2=tm2[0]['tm_no']
+                tno3=tm3[0]['tm_no']
+                tmake1=tm1[0]['tm_make']
+                tmake2=tm2[0]['tm_make']
+                tmake3=tm3[0]['tm_make']
+                axle_box=axle_box1[0]['axle_box_no']
+            ob2=list(BogieAssembly.objects.filter(bo_no=bo_no,frameserial_no=fs_no,dispatch_to='HHP_Inspected').values('first_coilspring_make','break_cylinder_make','motor_check','motor_date','lowering_check','lowering_date','dispatch_check','dispatch_check_date','loco_paper','locopaper_date','frameserial_no','pt_no','horizontal_damper','lateral_damper','loco_type','first_axle','second_axle','third_axle','first_gearcase_no','second_gearcase_no','third_gearcase_no','first_back_lash','second_back_lash','third_back_lash','wheel_set_guide','gear_case_oil','lateral_damper','spheri_block_make','sand_box_make','elastic_shop_make','coil_spring_make','break_cylinder_make','date','first_vertical_r','first_vertical_l','first_horizontal_r','first_horizontal_l','second_vertical_r','second_vertical_l','second_horizontal_r','second_horizontal_l','third_vertical_r','third_vertical_l','third_horizontal_r','third_horizontal_l'))  
+            l2=len(ob1)
+            if l2>0 :
+                ax1=ob1[0]['first_axle']
+                ax2=ob1[0]['second_axle']
+                ax3=ob1[0]['third_axle']
+                tm1=list(PinionPressing.objects.filter(axle_no=ax1).values('tm_no','tm_make'))
+                tm2=list(PinionPressing.objects.filter(axle_no=ax2).values('tm_no','tm_make'))
+                tm3=list(PinionPressing.objects.filter(axle_no=ax3).values('tm_no','tm_make'))
+                axle_box1=list(AxleWheelPressing.objects.filter(axle_no=ax1).values('axle_box_no'))
+                tno1=tm1[0]['tm_no']
+                tno2=tm2[0]['tm_no']
+                tno3=tm3[0]['tm_no']
+                tmake1=tm1[0]['tm_make']
+                tmake2=tm2[0]['tm_make']
+                tmake3=tm3[0]['tm_make']
+                axle_box=axle_box1[0]['axle_box_no']
+            
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':9,
+            'ob1':ob1,
+            'l':l,
+            'l2':l2,
+           'ob2':ob2,
+            'bo_no':bo_no,
+            'fs_no':fs_no,
+            'tno1':tno1,
+            'tno2':tno2,
+            'tno3':tno3,
+            'tmake1':tmake1,
+            'tmake2':tmake2,
+            'tmake3':tmake3,
+            'axle_box':axle_box
+            }
     return render(request,'bogiereport.html',context)
+def bogiereportbono_validate(request):
+    if request.method=="GET" and request.is_ajax():
+        bo_no = request.GET.get('bo_no')
+        ob1=list(BogieAssembly.objects.filter(bo_no=bo_no).values('bo_no'))
+        l=len(ob1)
+        if l>0 :
+            msg=ob1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400) 
+def bogiereportfsno_validate(request):
+    if request.method=="GET" and request.is_ajax():
+        fs_no = request.GET.get('fs_no')
+        ob1=list(BogieAssembly.objects.filter(frameserial_no=fs_no).values('frameserial_no'))
+        l=len(ob1)
+        if l>0 :
+            msg=ob1
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400) 
+def FetchBogieDetail(request):
+    if request.method=="GET" and request.is_ajax():
+        mysno = request.GET.get('sels_no')
+        myval2=list(BogieAssembly.objects.filter(frameserial_no=mysno).values('first_axle','second_axle','third_axle','loco_type').distinct())
+        msg=myval2
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
+def firstaxle(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('first_axle')
+        myval = list(PinionPressing.objects.filter(inspection_status=True).values('axle_no').exclude(axle_no=mybo))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
-
+def secondaxle(request):
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('first_axle')
+        mybb = request.GET.get('second_axle')
+        myval = list(PinionPressing.objects.filter(inspection_status=True).values('axle_no').exclude(Q(axle_no=mybo)|Q(axle_no=mybb)))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success":False}, status=400)
 @login_required
 @role_required(urlpass='/pinionreport/')
 def pinionreport(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+   
     context={
        'nav':nav,
        'subnav':subnav,
@@ -16320,8 +17066,13 @@ def pinionreport(request):
             c1=0
             c2=0
             dt=request.POST.get('datew')
-            ob1=list(PinionPressing.objects.filter(in_qty=dt).values('loco_type'))
-            ob2=list(PinionPressing.objects.filter(out_qty=dt).values('loco_type'))   
+            s = dt.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(PinionPressing.objects.filter(in_qty=date).values('loco_type'))
+            ob2=list(PinionPressing.objects.filter(out_qty=date).values('loco_type'))   
             len2=len(ob2)
             len1=len(ob1)
             for i in range(0,len(ob1)):
@@ -16398,8 +17149,19 @@ def pinionreport(request):
             c2=0
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=list(PinionPressing.objects.filter(in_qty__range=(dt1,dt2)).values('loco_type'))
-            ob2=list(PinionPressing.objects.filter(out_qty__range=(dt1,dt2)).values('loco_type'))
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            date1 =  year1 + "-" + month1 + "-" + day1
+          
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            date2 =  year2 + "-" + month2 + "-" + day2
+            ob1=list(PinionPressing.objects.filter(in_qty__range=(date1,date2)).values('loco_type'))
+            ob2=list(PinionPressing.objects.filter(out_qty__range=(date1,date2)).values('loco_type'))
             len2=len(ob2)
             len1=len(ob1)
             for i in range(0,len(ob1)):
@@ -16464,8 +17226,26 @@ def pinionreport(request):
             }
         if bval=='Proceed3':
             dt=request.POST.get('datea')
-            ob1=PinionPressing.objects.filter(inspect_date=dt).all()
+            s1 = dt.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            datell1 =  year1 + "-" + month1 + "-" + day1
+            ob1=list(PinionPressing.objects.filter(inspect_date=datell1).values('bo_no','pt_no','loco_type','date','axle_no','loco_type','tm_no','tm_make','pinion_no','pinion_make','pinion_travel','pinion_pressure_square_ram','pinion_pressure_triangle_glycerin','pinion_teeth_dist','blue_match','inspect_date'))
             l=len(ob1)
+            ll=len(ob1)
+            if ll>0:
+                for i in range(0,ll):
+                    dd=ob1[i]['inspect_date']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'inspect_date':dd2})
+                    else:
+                        ob1[i].update({'inspect_date':None})
             context={
             'nav':nav,
             'subnav':subnav,
@@ -16479,8 +17259,32 @@ def pinionreport(request):
         if bval=='Proceed10':
             dt1=request.POST.get('datell1')
             dt2=request.POST.get('datell2')
-            ob1=PinionPressing.objects.filter(inspect_date__range=(dt1,dt2)).all()
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            datell1 =  year1 + "-" + month1 + "-" + day1
+          
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            datell2 =  year2 + "-" + month2 + "-" + day2
+            ob1=list(PinionPressing.objects.filter(inspect_date__range=(datell1,datell2)).values('bo_no','pt_no','loco_type','date','axle_no','loco_type','tm_no','tm_make','pinion_no','pinion_make','pinion_travel','pinion_pressure_square_ram','pinion_pressure_triangle_glycerin','pinion_teeth_dist','blue_match','inspect_date'))
             l=len(ob1)
+            ll=len(ob1)
+            if ll>0:
+                for i in range(0,ll):
+                    dd=ob1[i]['inspect_date']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'inspect_date':dd2})
+                    else:
+                        ob1[i].update({'inspect_date':None})
             context={
             'nav':nav,
             'subnav':subnav,
@@ -16494,9 +17298,21 @@ def pinionreport(request):
             }
         if bval=='Proceed':
             axle_no=request.POST.get('axle_no')
-            ob1=PinionPressing.objects.filter(axle_no=axle_no,inspection_status=True).all()
+            ob1=list(PinionPressing.objects.filter(axle_no=axle_no,inspection_status=True).values('bo_no','pt_no','loco_type','date','axle_no','loco_type','tm_no','tm_make','pinion_no','pinion_make','pinion_travel','pinion_pressure_square_ram','pinion_pressure_triangle_glycerin','pinion_teeth_dist','blue_match','inspect_date'))
             l1=len(ob1)
-            ob2=PinionPressing.objects.filter(axle_no=axle_no,inspection_status=False).all()
+            if l1>0:
+                for i in range(0,l1):
+                    dd=ob1[i]['inspect_date']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'inspect_date':dd2})
+                    else:
+                        ob1[i].update({'inspect_date':None})
+            ob2=list(PinionPressing.objects.filter(axle_no=axle_no,inspection_status=False).all())
             l2=len(ob2)
             context={
             'nav':nav,
@@ -16513,23 +17329,9 @@ def pinionreport(request):
 
     return render(request,'pinionreport.html',context)
 
-
-
-
-
-
 @login_required
 @role_required(urlpass='/axlepressreport/')
-def axlepressreport(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+def axlepressreport(request):     
     context={
        'nav':nav,
        'subnav':subnav,
@@ -16592,8 +17394,13 @@ def axlepressreport(request):
             c1=0
             c2=0
             dt=request.POST.get('datew')
-            ob1=list(AxleWheelPressing.objects.filter(in_qty=dt).values('pt_no','loco_type','axle_no'))
-            ob2=list(AxleWheelPressing.objects.filter(out_qty=dt).values('pt_no','loco_type','axle_no'))   
+            s = dt.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(AxleWheelPressing.objects.filter(in_qty=date).values('pt_no','loco_type','axle_no'))
+            ob2=list(AxleWheelPressing.objects.filter(out_qty=date).values('pt_no','loco_type','axle_no'))   
             len2=len(ob2)
             len1=len(ob1)
             for i in range(0,len(ob1)):
@@ -16665,8 +17472,19 @@ def axlepressreport(request):
         if bval=='Proceed2':
             dt1=request.POST.get('date1')
             dt2=request.POST.get('date2')
-            ob1=AxleWheelPressing.objects.filter(in_qty__range=(dt1,dt2)).values('pt_no','loco_type')
-            ob2=AxleWheelPressing.objects.filter(out_qty__range=(dt1,dt2)).values('pt_no','loco_type')
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            date1 =  year1 + "-" + month1 + "-" + day1
+            
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            date2 =  year2 + "-" + month2 + "-" + day2
+            ob1=AxleWheelPressing.objects.filter(in_qty__range=(date1,date2)).values('pt_no','loco_type')
+            ob2=AxleWheelPressing.objects.filter(out_qty__range=(date1,date2)).values('pt_no','loco_type')
             pt=[] 
             lt=[] 
             pto=[]
@@ -16752,6 +17570,7 @@ def axlepressreport(request):
             l=len(ob1)
             ob3=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('date','loco_type','axle_no','wheelno_de','wheelno_nde','axle_no','bo_no','inspect_date','inspector_name'))
             c=ob1[0]['dispatch_to']
+           
             ob2=[]
             ll1=0
             ll2=0
@@ -16759,10 +17578,35 @@ def axlepressreport(request):
                 ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','inspector_name'))
                 ll1=len(ob2)
                 ll2=0
+                if ll1>0:
+                    for i in range(0,ll1):
+                        dd=ob2[i]['inspect_date']
+                        if dd!=None:
+                            s=dd.split('-')
+                            month=s[1]
+                            day=s[2]
+                            year=s[0]
+                            dd2=day + '-' + month + '-' + year
+                            ob2[i].update({'inspect_date':dd2})
+                        else:
+                            ob2[i].update({'inspect_date':None})
+               
             elif l>0 and c=="HHP_Inspected" :
                 ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name'))
                 ll2=len(ob2)
                 ll1=0
+                if ll2>0:
+                    for i in range(0,ll2):
+                        dd=ob2[i]['inspect_date']
+                        if dd!=None:
+                            s=dd.split('-')
+                            month=s[1]
+                            day=s[2]
+                            year=s[0]
+                            dd2=day + '-' + month + '-' + year
+                            ob2[i].update({'inspect_date':dd2})
+                        else:
+                            ob2[i].update({'inspect_date':None})
             context={
                 'nav':nav,
                 'subnav':subnav,
@@ -16779,8 +17623,32 @@ def axlepressreport(request):
         if bval=='Proceed3':
             dt1=request.POST.get('datel1')
             dt2=request.POST.get('datel2')
-            ob1=AxleWheelPressing.objects.filter(inspect_date__range=(dt1,dt2)).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name')
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            datell1 =  year1 + "-" + month1 + "-" + day1
+           
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            datell2 =  year2 + "-" + month2 + "-" + day2
+            ob1=AxleWheelPressing.objects.filter(inspect_date__range=(datell1,datell2)).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name')
             l=len(ob1)
+            ll=len(ob1)
+            if ll>0:
+                for i in range(0,ll):
+                    dd=ob1[i]['inspect_date']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'inspect_date':dd2})
+                    else:
+                        ob1[i].update({'inspect_date':None})
             context={
             'nav':nav,
             'subnav':subnav,
@@ -16794,7 +17662,12 @@ def axlepressreport(request):
             }
         if bval=='Proceed10':
             dt1=request.POST.get('datea')
-            ob1=list(AxleWheelPressing.objects.filter(inspect_date=dt1).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name'))
+            s = dt1.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(AxleWheelPressing.objects.filter(inspect_date=date).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde','inspect_date','inspector_name'))
             l=len(ob1)
             context={
             'nav':nav,
@@ -16808,6 +17681,361 @@ def axlepressreport(request):
             }
     return render(request,'axlepress.html',context)
 
+@login_required
+@role_required(urlpass='/axlereport/')
+def axlereport(request):
+     
+    context={
+       'nav':nav,
+       'subnav':subnav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       }
+    if request.method=="POST":
+        bval=request.POST.get('btn')
+        if bval=='Date Wise Report':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':0,
+            }
+        if bval=='Date Range Report':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':2,
+            }
+        if bval=='Axle Report':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':10,
+            }
+        if bval=='Axle Record of Loco Type (date wise)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':6,
+            }
+        if bval=='Axle Record of Loco Type (date range)':
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':7,
+            }
+        if bval=='Proceed1':
+                    
+            pt=[]
+            pto=[]
+            lt=[]
+            lto=[]
+            count=[]
+            count1=[]
+            myval=[]
+            myval1=[]
+            unique_myval=[]
+            unique_myval1=[]
+            c1=0
+            c2=0
+            dt=request.POST.get('datew')
+            s = dt.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(AxleMachining.objects.filter(in_qty=date).values('pt_no','loco_type','axle_no'))
+            ob2=list(AxleMachining.objects.filter(out_qty=date).values('pt_no','loco_type','axle_no'))   
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+
+
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
+            
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':1,
+            'dt':dt,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
+            }
+            
+        if bval=='Proceed2':
+            dt1=request.POST.get('date1')
+            dt2=request.POST.get('date2')
+            s1 = dt1.split('-')
+            s2 = dt2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            date1 =  year1 + "-" + month1 + "-" + day1
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            date2 =  year2 + "-" + month2 + "-" + day2
+            ob1=AxleMachining.objects.filter(in_qty__range=(date1,date2)).values('pt_no','loco_type')
+            ob2=AxleMachining.objects.filter(out_qty__range=(date1,date2)).values('pt_no','loco_type')
+            pt=[] 
+            lt=[] 
+            pto=[]
+            lto=[]
+            myval=[]
+            myval1=[]
+            final=[]
+            unique_final=[]
+            count=[]
+            count1=[]
+            c1=0
+            c2=0
+
+            len2=len(ob2)
+            len1=len(ob1)
+            for i in range(0,len(ob1)):
+                pt.append(ob1[i]['pt_no'])
+            for i in range(0,len(ob1)):
+                lt.append(ob1[i]['loco_type'])
+            for i in range (0,len(pt)):
+                for j in range(0,len(pt)):
+                    if(pt[i]==pt[j]):
+                        c1=c1+1
+                count.append(c1)
+                c1=0
+            for i in range (0,len(pt)):
+                myval.append({'pt_no':pt[i], 'loco_type':lt[i], 'count1':count[i],'count2':'0'})
+            
+            for i in range(0,len(ob2)):
+                pto.append(ob2[i]['pt_no'])
+            
+            for i in range(0,len(ob2)):
+                lto.append(ob2[i]['loco_type'])
+            
+            for i in range (0,len(pto)):
+                for j in range(0,len(pto)):
+                    if(pto[i]==pto[j]):
+                        c2=c2+1
+                count1.append(c2)
+                c2=0
+
+            for i in range (0,len(pto)):
+                myval1.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            id=[]
+            final=[]
+            unique_final=[]
+            c=0
+            for i in range(len(myval1)):
+                for j in range(len(myval)):
+                    if myval1[i]['pt_no']==myval[j]['pt_no']:
+                        final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':myval[j]['count1'], 'count2':count1[i]})
+                        id.append(myval1[i]['pt_no'])
+                        c=1
+                        break
+                if c==1:
+                    c=0
+                    continue
+                else:
+                    final.append({'pt_no':pto[i], 'loco_type':lto[i],'count1':'0', 'count2':count1[i]})
+            
+            for j in range(len(myval)):
+                if  myval[j]['pt_no'] not in id:
+                    final.append({'pt_no':pt[j], 'loco_type':lt[j], 'count1':count[j],'count2':'0'})
+
+            for x in final:  
+                if x not in unique_final: 
+                    unique_final.append(x)
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':3,
+            'dt1':dt1,
+            'dt2':dt2,
+            'len1':len1,
+            'len2':len2,
+            'unique_final':unique_final,
+            }
+
+        if bval=='Proceed3':
+            dt1=request.POST.get('date3')
+            dt2=request.POST.get('date4')
+            ob1=AxleMachining.objects.filter(in_qty__range=(dt1,dt2)).values('sno','pt_no','axle_no','ustaxle_status','in_qty').order_by('in_qty')
+            ob2=AxleMachining.objects.filter(out_qty__range=(dt1,dt2)).values('sno','pt_no','axle_no','ustaxle_status','out_qty').order_by('out_qty')
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':4,
+            'ob1':ob1,
+            'ob2':ob2,
+            'dt1':dt1,'dt2':dt2,
+            }
+        if bval=='Proceed6':
+            datel=request.POST.get('datea')
+            s = datel.split('-')
+            month = s[1]
+            day = s[0]
+            year = s[2]
+            date =  year + "-" + month + "-" + day
+            ob1=list(AxleMachining.objects.filter(dateaxle=date).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            l=len(ob1)
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':8,
+            'ob1':ob1,
+            'datel':datel,
+            }
+        if bval=='Proceed7':
+            datea1=request.POST.get('datea1')
+            datea2=request.POST.get('datea2')
+            s1 = datea1.split('-')
+            s2 = datea2.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            datell1 =  year1 + "-" + month1 + "-" + day1
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            datell2 =  year2 + "-" + month2 + "-" + day2
+            ob1=list(AxleMachining.objects.filter(dateaxle__range=(datell1,datell2)).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            ll=len(ob1)
+            if ll>0:
+                for i in range(0,ll):
+                    dd=ob1[i]['dateaxle']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'dateaxle':dd2})
+                    else:
+                        ob1[i].update({'dateaxle':None})
+            l=len(ob1)
+            context={
+            'nav':nav,
+            'subnav':subnav,
+            'usermaster':usermaster,
+            'ip':get_client_ip(request),
+            'sub':9,
+            'ob1':ob1,
+            'datea1':datea1, 
+            'datea2':datea2,
+            }
+        if bval=='Proceed':
+            axle_no=request.POST.get('axle_no')
+            ob1=list(AxleMachining.objects.filter(axle_no=axle_no).values('axle_no','bo_no','date','loco_type','axle_heatcaseno','ustaxle','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','collaraxlende','wheelseataxlende','throweraxlende','journalaxlende','bearingaxle','abutmentaxle','dateaxle','inspector_nameaxle'))
+            ax=ob1[0]['axle_no']
+            l=len(ob1)
+            if l>0:
+                for i in range(0,l):
+                    dd=ob1[i]['dateaxle']
+                    if dd!=None:
+                        s=dd.split('-')
+                        month=s[1]
+                        day=s[2]
+                        year=s[0]
+                        dd2=day + '-' + month + '-' + year
+                        ob1[i].update({'dateaxle':dd2})
+                    else:
+                        ob1[i].update({'dateaxle':None})
+            ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('wheelno_de','wheelno_nde','inspect_date','inspector_name'))
+            l1=len(ob2)
+            if l1>0:
+                for i in range(0,l1):
+                    dd3=ob2[i]['inspect_date']
+                    if dd3!=None:
+                        s1=dd3.split('-')
+                        month1=s1[1]
+                        day1=s1[2]
+                        year1=s1[0]
+                        dd4=day1 + '-' + month1 + '-' + year1
+                        ob2[i].update({'inspect_date':dd4})
+                    else:
+                        ob2[i].update({'inspect_date':None})
+            context={
+                'nav':nav,
+                'subnav':subnav,
+                'usermaster':usermaster,
+                'ip':get_client_ip(request),
+                'sub':4,
+                'ob1':ob1,
+                'ob2':ob2,
+                'l':l,
+                'ax':ax,
+                'l1':l1
+            }
+
+    return render(request,'axlereport.html',context)
 
 
 @login_required
@@ -22259,6 +23487,13 @@ def rmqry_rpt(request):
             } 
             return render(request,"rmqry_rpt.html",context) 
 
+from .utils import render_to_pdf
+from django.db.models import Sum,Subquery
+from django.utils import formats
+from django.utils.dateformat import DateFormat
+import datetime
+from django.db.models import Count
+
 @login_required
 @role_required(urlpass='/EpCpm/')
 def EpCpm(request):
@@ -22278,7 +23513,9 @@ def EpCpm(request):
     for i in my_date:
         my.append(i['updt_dt'])
     my.sort(reverse= True)
-
+    my1=my[0]
+    my=str(my[0])
+    mydate=my[8:10]+'-'+my[5:7]+'-'+my[0:4]
     if "Superuser" in rolelist:
         tm=shop_section.objects.all()
         tmp=[]
@@ -22291,7 +23528,8 @@ def EpCpm(request):
             'subnav':subnav,
             'ip':get_client_ip(request),
             'roles':tmp,
-            'lblDt': my[0],
+            'lblDt': mydate,
+            'lblDt1': my1,
         }
     elif(len(rolelist)==1):
         for i in range(0,len(rolelist)):
@@ -22306,7 +23544,9 @@ def EpCpm(request):
             'usermaster':usermaster,
             'roles' :rolelist,
             'subnav':subnav,
-            'lblDt': my[0],
+            'lblDt': mydate,
+            'lblDt1': my1,
+
         }
         
     elif(len(rolelist)>1):
@@ -22318,7 +23558,9 @@ def EpCpm(request):
             'usermaster':usermaster,
             'roles' :rolelist,
             'subnav':subnav,
-            'lblDt': my[0],
+            'lblDt': mydate,
+            'lblDt1': my1,
+
         }
     
 
@@ -22347,18 +23589,15 @@ def btnViewCPM_Click(request):
     dtPtc= request.GET.get('dtPtc')
     EpcAll= request.GET.get('EpcAll')
     PtcAll= request.GET.get('PtcAll')
-    
-    
+  
     p=Cpm.objects.values_list('part_no')
     
-
     monthTemp=lblDt.split(' ')[0]
     dateTemp=lblDt.split(' ')[1]
     final1=monthTemp[0:3]+' '+dateTemp.split(',')[0]+' '+lblDt.split(' ')[2]
     date_time_str=final1
     date_time_obj=datetime.datetime.strptime(date_time_str,'%b %d %Y')
     date_1=date_time_obj.date()
-   
     
     len1=len(dtEpc)
     len2=len(dtPtc)
@@ -22390,12 +23629,13 @@ def btnViewCPM_Click(request):
         for j in range(0,plen):
 
             if(EpcAll=='B' and PtcAll=='B'):
-                c=Cpm.objects.filter(epc=epc,ptc=pt[j],qty__gt=0).values('epc','shop_ut','part_no','ptc').order_by('part_no').distinct()
+                c=Cpm.objects.filter(epc=epc,ptc=pt[j],qty__gt=0).values('epc','shop_ut','part_no','ptc','qty').order_by('part_no').distinct()
                 p.extend(c)
             
             else:
-                c=Cpm.objects.filter(epc=epc,ptc=pt[j]).values('epc','shop_ut','part_no','ptc').order_by('part_no').distinct()
+                c=Cpm.objects.filter(epc=epc,ptc=pt[j]).values('epc','shop_ut','part_no','ptc','qty').order_by('part_no').distinct()
                 p.extend(c)
+
     
     seen = set()
     new_l = []
@@ -22412,13 +23652,21 @@ def btnViewCPM_Click(request):
     shop_ut = [] 
     part_no=[]
     part=[]
+    qty=[]
     
     for x in p:
         epc.append(x['epc'])
-        shop_ut.append(x['shop_ut'])
+        unit=Code.objects.filter(cd_type='51',code=x['shop_ut']).values('alpha_1')
+        if len(unit)>0:
+            unit=unit[0]['alpha_1']
+        else:
+            unit=''
+
+        shop_ut.append(unit)
         if x['part_no'] not in part:
             part.append(x['part_no'])
         ptc.append(x['ptc'])
+        qty.append(x['qty'])
     for x in part:    
         ptdes.append({'part_no':x})
     
@@ -22432,108 +23680,21 @@ def btnViewCPM_Click(request):
         ptdes[i].update({'epc':epc[i]})
         ptdes[i].update({'part_no':ptdes[i]['part_no']})
         ptdes[i].update({'shop_ut':shop_ut[i]})
+        ptdes[i].update({'qty':"{0:.2f}".format(float(qty[i]))})
 
-    
-    
+    if EpcAll=='B':
+        EpcAll=dtEpc
+    if PtcAll=='B':
+        PtcAll=dtPtc
 
-    M2Eng =Cpm.objects.filter(epc='01',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    S6Eng = Cpm.objects.filter(epc='02',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    M2cEng = Cpm.objects.filter(epc='1F',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    G2Eng = Cpm.objects.filter(epc='1A',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    P2Eng = Cpm.objects.filter(epc='1C',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    M2Loc = Cpm.objects.filter(epc='03',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    M4Loc = Cpm.objects.filter(epc='04',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    M2CaLoc = Cpm.objects.filter(epc='1E',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    S6Loc = Cpm.objects.filter(epc='08',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    G2ALoc = Cpm.objects.filter(epc='1N',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    P2ALoc = Cpm.objects.filter(epc='1R',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    M2Tra = Cpm.objects.filter(epc='1G',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    M4Tra = Cpm.objects.filter(epc='1H',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    S6Tra = Cpm.objects.filter(epc='1J',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    P1Tra = Cpm.objects.filter(epc='1K',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    G2Tra = Cpm.objects.filter(epc='1L',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-    P2Tra = Cpm.objects.filter(epc='1M',updt_dt=date_1,part_no__in=part,ptc__in=ptc).aggregate(Sum('qty'))
-
-
-
-
-    for value1 in M2Eng.values():
-        m2eng=str(value1)
-
-    for value2 in S6Eng.values():
-        s6eng=str(value2)
-
-    for value3 in M2cEng.values():
-        m2ceng=str(value3)
-
-    for value4 in G2Eng.values():
-        g2eng=str(value4)
-    
-    for value5 in P2Eng.values():
-        p2eng=str(value5)
-
-    for value6 in M2Loc.values():
-        m2loc=str(value6)
-
-    for value7 in M4Loc.values():
-        m4loc=str(value7)
-
-    for value8 in M2CaLoc.values():
-        m2caloc=str(value8)
-    
-    for value9 in S6Loc.values():
-        s6loc=str(value9)
-    
-    for value10 in G2ALoc.values():
-        g2aloc=str(value10)
-
-    for value11 in P2ALoc.values():
-        p2aloc=str(value11)
-
-    for value12 in M2Tra.values():
-        m2tra=str(value12)
-    
-    for value13 in M4Tra.values():
-        m4tra=str(value13)
-
-    for value14 in S6Tra.values():
-        s6tra=str(value14)
-
-    for value15 in P1Tra.values():
-        p1tra=str(value15)
-
-    for value16 in G2Tra.values():
-        g2tra=str(value16)
-    
-    for value17 in P2Tra.values():
-        p2tra=str(value17)
-
-        
-    ptdes[0].update({'M2Eng':m2eng})
-    ptdes[0].update({'S6Eng':s6eng})
-    ptdes[0].update({'M2cEng':m2ceng})
-    ptdes[0].update({'G2Eng':g2eng})
-    ptdes[0].update({'P2Eng':p2eng})
-    ptdes[0].update({'M2Loc':m2loc})
-    ptdes[0].update({'M4Loc':m4loc})
-    ptdes[0].update({'M2CaLoc':m2caloc})
-    ptdes[0].update({'S6Loc':s6loc})
-    ptdes[0].update({'G2ALoc':g2aloc})
-    ptdes[0].update({'P2ALoc':p2aloc})
-    ptdes[0].update({'M2Tra':m2tra})
-    ptdes[0].update({'M4Tra':m4tra})
-    ptdes[0].update({'S6Tra':s6tra})
-    ptdes[0].update({'P1Tra':p1tra})
-    ptdes[0].update({'G2Tra':g2tra})
-    ptdes[0].update({'P2Tra':p2tra}) 
-    today=date.today()
+    today=datetime.datetime.today().strftime('%d/%m/%Y')
+ 
     context={
-        'ptdes':ptdes,
-        'today': today,
+        'today':today,
+        'ptdes':ptdes,  
         'EpcAll':EpcAll,
         'PtcAll':PtcAll,
     }
-    
 
     pdf=render_to_pdf('epcpmreport.html',context)
     return HttpResponse(pdf,content_type='application/pdf')
@@ -23356,7 +24517,6 @@ def part_label(request):
 @login_required
 @role_required(urlpass='/cnote/')
 def cnote(request):
-
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
     rolelist=usermaster.role.split(", ")
@@ -23390,6 +24550,13 @@ def cnote_get_details(request):
         return JsonResponse(obj, safe = False)
     return JsonResponse({"success":False}, status = 400)
 
+def cnote_getcn(request):
+    if request.method == "GET" and request.is_ajax():
+        cind = request.GET.get('cnind')
+        obj = list(Cnote.objects.filter(chg_ind = cind,status='Y').values('ppl_cn_no').distinct().order_by('ppl_cn_no'))
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status = 400)
+
 def assly_validation(request):
     if request.method == "GET" and request.is_ajax():
         asno = request.GET.get('an')
@@ -23403,28 +24570,31 @@ def allot_update(request):
         chng_ind = request.GET.get('chng_ind')
         num = list(Code.objects.filter(cd_type = '21', code = 'MRG').values('num_1').order_by('cd_type','code').distinct())
         num = num[0]['num_1'] +1
-        ref_1 = request.GET.get('ref_1')
-        dt_ref = request.GET.get('dt_ref')
-        cn_reg_dt = request.GET.get('cn_reg_dt')
-        cn_dt = request.GET.get('cn_dt')
+        
         edp_reg_no = request.GET.get('edp_reg_no')
         edp_reg_dt = request.GET.get('edp_reg_dt')
+        if(edp_reg_dt=='' or edp_reg_dt=='undefined' or edp_reg_dt==None):
+            edp_reg_dt=datetime.datetime.now()
+        else:
+            edp_reg_dt= datetime.datetime.strptime(edp_reg_dt,'%d-%m-%Y').date()
         page_no = request.GET.get('page_no')
         file_no = request.GET.get('file_no')
-        ltr_no = request.GET.get('ltr_no')
-        assly_no = request.GET.get('assly_no')
-        assly_desc = request.GET.get('assly_desc')
+        
         up_dt = request.GET.get('up_dt')
+        up_dt =datetime.datetime.strptime(up_dt,'%d-%m-%Y').date()
         sts = request.GET.get('sts')
-        Code.objects.filter(cd_type = '21' , code = 'MRG').update(num_1 = num, lupd_date = up_dt)
-        Cpart.objects.filter(ppl_cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
-        Cstr.objects.filter(pp_part = None , cp_part = None).delete()
-        Cstr.objects.filter(chg_ind = chng_ind, cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
-        if(chng_ind == 'OPN'):
-            Copn.objects.filter(part_no = None).delete()
-            Copn.objects.filter(cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
-        else:
-            Cnote.objects.filter(chg_ind = chng_ind, ppl_cn_no = cn_no).update(reg_no = edp_reg_no, reg_dt = edp_reg_dt, file_no = file_no, page_no= page_no, cn_dt= cn_dt, updt_dt = up_dt, lett_no = ltr_no, status = sts, ref_1_dt = dt_ref, assly_no = assly_no, assly_desc = assly_desc, cn_reg_dt=cn_reg_dt)
+        
+        if(edp_reg_no=='' or edp_reg_no==None ):
+            Code.objects.filter(cd_type = '21' , code = 'MRG').update(num_1 = num, lupd_date = up_dt)
+            edp_reg_no=num
+            if(chng_ind =='STM' or chng_ind == 'STE'):
+                Cpart.objects.filter(ppl_cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
+                Cstr.objects.filter(pp_part = None , cp_part = None).delete()
+                Cstr.objects.filter(chg_ind = chng_ind, cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
+            elif(chng_ind == 'OPN'):
+                Copn.objects.filter(part_no = None).delete()
+                Copn.objects.filter(cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
+        Cnote.objects.filter(chg_ind = chng_ind, ppl_cn_no = cn_no).update(reg_no = edp_reg_no, reg_dt = edp_reg_dt, file_no = file_no, page_no= page_no, updt_dt = up_dt, status = sts)
         return JsonResponse(num, safe = False)
     return JsonResponse({"success":False}, status = 400)
 
@@ -23974,6 +25144,17 @@ def wheelreport_validate(request):
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)  
 
+def uniquewheel(request):
+    if request.method=="GET" and request.is_ajax():
+        wheel_no = request.GET.get('wheel_no')
+        ob1=list(WheelMachining.objects.filter(wheel_no=wheel_no).values('bo_no'))
+        l=len(ob1)
+        if l==0 :
+            msg=["true"]
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
 def axlereport_validate(request):
     if request.method=="GET" and request.is_ajax():
         axle_no = request.GET.get('axle_no')
@@ -23984,7 +25165,7 @@ def axlereport_validate(request):
         else :
             msg=["false"]
         return JsonResponse(msg, safe = False)
-    return JsonResponse({"success":False}, status=400) 
+    return JsonResponse({"success":False}, status=400)  
 
 def validate_axleno(request):
     if request.method=="GET" and request.is_ajax():
@@ -25210,7 +26391,17 @@ def axlepressreport_validate(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
-
+def uniqueaxle(request):
+    if request.method=="GET" and request.is_ajax():
+        axle_no = request.GET.get('axle_no')
+        ob1=list(AxleMachining.objects.filter(axle_no=axle_no).values('bo_no'))
+        l=len(ob1)
+        if l==0 :
+            msg=["true"]
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
 def pinionaxle_validate(request):
     if request.method=="GET" and request.is_ajax():
         axle_no = request.GET.get('axle_no')
@@ -25222,7 +26413,6 @@ def pinionaxle_validate(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
-
 
 def m9getmw(request):
     if request.method == "GET" and request.is_ajax():
@@ -28324,1454 +29514,3 @@ def Batchreleasedetails(request):
         print(lst)     
         return JsonResponse(lst,safe=False)
     return JsonResponse({"success:False"},status=400)
-
-
-
-
-from collections import defaultdict  
-nav=defaultdict()
-subnav=defaultdict()
-usermaster=defaultdict()
-rolelist = []
-
-def login_request(request):
-    if request.method=='POST':
-        u_id = request.POST.get('user_id')
-        pwd=request.POST.get('password') 
-        global usermaster
-        global rolelist  
-        user = authenticate(username=u_id, password=pwd)
-        usermaster=empmast.objects.filter(empno=user).first() 
-        rolelist=usermaster.role.split(", ") 
-        get_navbar(user)  
-        if user is not None:
-            login(request, user) 
-            if "Superuser" in rolelist:
-                return redirect('homeadmin')
-            else:
-                return redirect('homeuser')
-        else:
-            messages.error(request,"Invalid username or password")
-    form = AuthenticationForm()
-    return render(request, 'login.html', {"form": form})
-
-
-def get_navbar(user):        
-    global nav
-    global subnav 
-    nav=dynamicnavbarNew()    
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)    
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist).order_by('childmenu')
-  
-def dynamicnavbarNew():
-    if("Superuser" in rolelist):
-        nav=navbar.objects.filter(role="Superuser")
-        return nav
-    else:       
-        nav=navbar.objects.filter(role__in=rolelist).distinct('navmenu','navitem')        
-        return nav
- 
-
-@login_required
-@role_required(urlpass='/createuser/')
-def create(request): 
-    emp=empmast.objects.filter(role__isnull=True,dept_desc='MECHANICAL') | empmast.objects.filter(role__isnull=True,dept_desc='CRIS_MU')
-    availableroles=roles.objects.all().values('parent').distinct()
-    if request.method == "POST":
-        emp_id=request.POST.get('emp_id')
-        email=request.POST.get('email')
-        role=request.POST.get('role')
-        read=request.POST.get('read')
-        create=request.POST.get('create')
-        update=request.POST.get('update')
-        delete=request.POST.get('delete')
-        if read=='on':
-           read=True 
-        else:
-           read=False
-
-        if create=='on':
-           create=True 
-        else:
-           create=False
-
-        if update=='on':
-           update=True 
-        else:
-           update=False
-
-        if delete=='on':
-           delete=True 
-        else:
-           delete=False
-
-        sublevelrole=request.POST.getlist('sublevel')
-        sublevelrolelist= ", ".join(sublevelrole)
-        password="dlw@123"
-        if "Superuser" in sublevelrole and emp_id and role and sublevelrole:
-            employee=empmast.objects.filter(empno=emp_id).first()
-            employee.role=sublevelrolelist
-            employee.parent=role
-            employee.op_read=read
-            employee.op_create=create
-            employee.op_update=update
-            employee.op_delete=delete
-
-            newuser = User.objects.create_user(username=emp_id, password=password,email=email)
-            employee.save()
-            newuser.is_staff= True
-            newuser.is_superuser=True
-            newuser.save()
-            messages.success(request, 'Successfully Created!')
-            return redirect('create')
-        elif "Superuser" not in sublevelrole and emp_id and role and sublevelrole:
-            employee=empmast.objects.filter(empno=emp_id).first()
-            employee.role=sublevelrolelist
-            employee.parent=role
-            employee.op_read=read
-            employee.op_create=create
-            employee.op_update=update
-            employee.op_delete=delete
-            newuser = User.objects.create_user(username=emp_id, password=password,email=email)
-            employee.save()
-            newuser.is_staff= True
-            newuser.is_superuser=False
-            newuser.save()
-            messages.success(request, 'Successfully Created!')
-            return redirect('create')
-        else:
-            messages.error(request, 'Error, Try Again!')
-    context={
-        'nav':nav,
-        'usermaster':usermaster,
-        'emp':emp,
-        'ip':get_client_ip(request),
-        'roles':availableroles,
-        'subnav':subnav,
-    }
-
-    return render(request,'createuser.html',context)
-
-
-@login_required
-@role_required(urlpass='/update_permission/')
-def update_permission(request):
-     
-    users=User.objects.all()
-    availableroles=roles.objects.all().values('parent').distinct() 
-    if request.method == "POST":
-        updateuser=request.POST.get('emp_id')
-        sublevelrole=request.POST.getlist('sublevel')
-        read=request.POST.get('read')
-        create=request.POST.get('create')
-        update=request.POST.get('update')
-        delete=request.POST.get('delete')
-        if read=='on':
-           read=True 
-        else:
-           read=False
-
-        if create=='on':
-           create=True 
-        else:
-           create=False
-
-        if update=='on':
-           update=True 
-        else:
-           update=False
-
-        if delete=='on':
-           delete=True 
-        else:
-           delete=False
- 
-        role=request.POST.get('role')
-        sublevelrolelist= ", ".join(sublevelrole)
-        if updateuser and sublevelrole:
-            usermasterupdate=empmast.objects.filter(empno=updateuser).first()
-            usermasterupdate.role=sublevelrolelist
-            usermasterupdate.parent=role
-            usermasterupdate.op_read=read
-            usermasterupdate.op_create=create
-            usermasterupdate.op_update=update
-            usermasterupdate.op_delete=delete
-            usermasterupdate.save()
-            messages.success(request, 'Successfully Updated!')
-            return redirect('update_permission')
-        else:
-            messages.error(request,"Error!")
-            return redirect('update_permission')
-
-    context={
-        'users':users,
-        'nav':nav,
-        'usermaster':usermaster,
-        'ip':get_client_ip(request),
-        'roles':availableroles,
-        'subnav':subnav,
-    }
-    return render(request,'update_permission.html',context)
-
-
-from .utils import render_to_pdf
-from django.db.models import Sum,Subquery
-from django.utils import formats
-from django.utils.dateformat import DateFormat
-import datetime
-from django.db.models import Count
-
-@login_required
-@role_required(urlpass='/EpCpm/')
-def EpCpm(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-
-    my_date=Cpm.objects.all().values('updt_dt').distinct()
-    my=[]
-    for i in my_date:
-        my.append(i['updt_dt'])
-    my.sort(reverse= True)
-    my1=my[0]
-    my=str(my[0])
-    mydate=my[8:10]+'-'+my[5:7]+'-'+my[0:4]
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
-        context={
-            'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles':tmp,
-            'lblDt': mydate,
-            'lblDt1': my1,
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
-            wo_nop =wo_nop | req
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-            'lblDt': mydate,
-            'lblDt1': my1,
-
-        }
-        
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-            'lblDt': mydate,
-            'lblDt1': my1,
-
-        }
-    
-
-
-    return render(request,'EpCpm.html',context)
-      
-
-def unbound(request):
-    if request.method == "GET" and request.is_ajax():
-        Unbound = Code.objects.filter(cd_type='11').values('code').distinct()
-        un=[]
-        for j in Unbound:
-            un.append(j['code'])
-        un.sort()
-        data =  {
-            'un': un
-        }
-        return JsonResponse(un, safe=False)
-    return JsonResponse({"success": False}, status=400)
-
-
-
-def btnViewCPM_Click(request):
-    lblDt= request.GET.get('lblDt')
-    dtEpc= request.GET.get('dtEpc')
-    dtPtc= request.GET.get('dtPtc')
-    EpcAll= request.GET.get('EpcAll')
-    PtcAll= request.GET.get('PtcAll')
-  
-    p=Cpm.objects.values_list('part_no')
-    
-    monthTemp=lblDt.split(' ')[0]
-    dateTemp=lblDt.split(' ')[1]
-    final1=monthTemp[0:3]+' '+dateTemp.split(',')[0]+' '+lblDt.split(' ')[2]
-    date_time_str=final1
-    date_time_obj=datetime.datetime.strptime(date_time_str,'%b %d %Y')
-    date_1=date_time_obj.date()
-    
-    len1=len(dtEpc)
-    len2=len(dtPtc)
-
-    
-    e=[]
-    for k in range(0,len1):
-        if(dtEpc[k]==" " or dtEpc[k]==","):
-            pass
-        else:
-            e.append(dtEpc[k])
-
-    pt=[]
-    for k in range(0,len2):
-        if(dtPtc[k]==","):
-            pass
-        else:
-            pt.append(dtPtc[k])
-            
-
-    
-    elen=len(e)
-    plen=len(pt)
-    p=[]
-
-    for m in range(0,elen,2):
-        epc=str(e[m])+str(e[m+1])
-
-        for j in range(0,plen):
-
-            if(EpcAll=='B' and PtcAll=='B'):
-                c=Cpm.objects.filter(epc=epc,ptc=pt[j],qty__gt=0).values('epc','shop_ut','part_no','ptc','qty').order_by('part_no').distinct()
-                p.extend(c)
-            
-            else:
-                c=Cpm.objects.filter(epc=epc,ptc=pt[j]).values('epc','shop_ut','part_no','ptc','qty').order_by('part_no').distinct()
-                p.extend(c)
-
-    
-    seen = set()
-    new_l = []
-    for d in p:
-        t = tuple(d.items())
-        if t not in seen:
-            seen.add(t)
-            new_l.append(d)
-    
-
-    ptdes=[]
-    epc = [] 
-    ptc = [] 
-    shop_ut = [] 
-    part_no=[]
-    part=[]
-    qty=[]
-    
-    for x in p:
-        epc.append(x['epc'])
-        unit=Code.objects.filter(cd_type='51',code=x['shop_ut']).values('alpha_1')
-        if len(unit)>0:
-            unit=unit[0]['alpha_1']
-        else:
-            unit=''
-
-        shop_ut.append(unit)
-        if x['part_no'] not in part:
-            part.append(x['part_no'])
-        ptc.append(x['ptc'])
-        qty.append(x['qty'])
-    for x in part:    
-        ptdes.append({'part_no':x})
-    
-        
-
-    for i in range(0,len(ptdes)):
-        a =list(Part.objects.filter(partno=ptdes[i]['part_no']).values('des'))
-        ptdes[i].update({'sl':(i+1)})
-        ptdes[i].update({'ptc':ptc[i]})   
-        ptdes[i].update({'des':a[0]['des']})
-        ptdes[i].update({'epc':epc[i]})
-        ptdes[i].update({'part_no':ptdes[i]['part_no']})
-        ptdes[i].update({'shop_ut':shop_ut[i]})
-        ptdes[i].update({'qty':"{0:.2f}".format(float(qty[i]))})
-
-    if EpcAll=='B':
-        EpcAll=dtEpc
-    if PtcAll=='B':
-        PtcAll=dtPtc
-
-    today=datetime.datetime.today().strftime('%d/%m/%Y')
- 
-    context={
-        'today':today,
-        'ptdes':ptdes,  
-        'EpcAll':EpcAll,
-        'PtcAll':PtcAll,
-    }
-
-    pdf=render_to_pdf('epcpmreport.html',context)
-    return HttpResponse(pdf,content_type='application/pdf')
-
-@login_required
-@role_required(urlpass='/jbs_doc/')
-def jbs_doc(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
-        context={
-            'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles':tmp
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
-            wo_nop =wo_nop | req
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
-        
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
-    return render(request,'jbs.html',context)
-txtepc=''   
-drpdwn='' 
-BROWKEY=''
-bonum=''
-a=''
-dt=[]
-ALTLINK=0
-ASSLY=''
-LFR=''
-LTO=''
-CASE=''
-CURTYM=''
-ALTPT=''
-cnt=1
-fg=[]
-def epc_changed(request):
-    if request.method == "GET" and request.is_ajax():
-        global txtepc
-        lst=[]
-        b=[]
-        txtepc = request.GET.get('txtepc')
-        global drpdwn
-        drpdwn = request.GET.get('drpdwn')
-        global a
-        a=epc()
-        if(a!=False):
-            b.append(a[0]['alpha_1'])
-            lst=get_batch() 
-            b.append(lst)
-        return JsonResponse(b,safe = False)
-    return JsonResponse({"success":False}, status = 400)   
-
-
-def epc():
-        alpha1_list=list(Code.objects.filter(code = txtepc,cd_type = "11").values('alpha_1'))
-        global BROWKEY
-        if alpha1_list != "":
-            if drpdwn == "ENG":
-                epc = ["01","02","05","1A","1C","1E","1Y","21"]
-                if  txtepc in epc:
-                    BROWKEY = "04"
-                    return alpha1_list
-                else :
-                    return False
-            if drpdwn == "VEH":
-                epc = ["03","04","06","07","08","09","1B","1D","1N","1F","1R","1Q","14","20","22","11","28","1W","1L","35","40","50"]
-                if txtepc in epc:
-                    BROWKEY = "05"
-                    return alpha1_list
-                else :
-                    return False
-            if drpdwn == "TRA":
-                epc =["1G","1H","1J","1K","1L","1M","1P","1T","12","22","11","36"]
-                if txtepc in epc:
-                    BROWKEY = "05"
-                    return alpha1_list
-                else :
-                    return False
-        else :
-            return False
-        
-def get_batch():
-    global BROWKEY
-    if drpdwn == "ENG":
-        BROWKEY="04"
-    if drpdwn == "VEH":
-        BROWKEY="05"
-    if drpdwn == "TRA":
-        BROWKEY="05"
-    cursor = connection.cursor()
-    cursor.execute('select "BO_NO", "PART_NO", "EP_TYPE","BATCH_TYPE","LOCO_FR", "LOCO_TO","B_EXPL_DT","REL_DATE" FROM public."BATCH" where (trim(substr("BO_NO", 1, 2))=%s or trim(substr("BO_NO", 1, 2))=%s or trim(substr("BO_NO", 1, 2))=%s) and trim("BATCH_TYPE")=%s and trim("EP_TYPE")=%s  and ("B_EXPL_DT"::text is not null or "B_EXPL_DT" :: text !=%s)  order by "B_EXPL_DT" desc;',[BROWKEY,'13','33','O',txtepc,''])    
-    row = cursor.fetchall()
-    lst=list(row)
-    return lst
-
-def listselected_index(request):
-    if request.method == "GET" and request.is_ajax():
-        global bonum
-        bonum = request.GET.get('bonum')
-        global dt
-        dt=v_batch()
-        return JsonResponse(dt,safe = False)
-    return JsonResponse({"success":False}, status = 400)  
-
-def v_batch():
-    dt1=[]
-    f=0
-    dt1.append(list(Batch.objects.filter(bo_no=bonum,ep_type=txtepc).values('bo_no','batch_type','ep_type','part_no','loco_fr','loco_to','batch_qty','uot_wk_f','b_expl_dt','rel_date').order_by('bo_no','ep_type')))
-    if len(dt1) == 0:
-        return False
-    dt2 = list(Docjbs.objects.filter(epc=txtepc,batch_no=bonum).values('epc','batch_no'))
-    if len(dt2) !=0:
-        f=1
-    dt1.append(f)
-    return dt1
-    
-                                                                    
-def btncrtjbsdoc(request):
-    if request.method == "GET" and request.is_ajax():
-        txtqty = request.GET.get('txtqty')
-        txtloco_fr = request.GET.get('txtloco_fr')
-        txtloco_to = request.GET.get('txtloco_to')
-        txtpart_no = request.GET.get('txtpart_no')
-        txtbatch_type = request.GET.get('txtbatch_type')
-        if a == False and dt == False:
-            return JsonResponse({"success":False}, status = 400)
-        dt1 = list(Docjbs.objects.filter(epc=txtepc,batch_no=bonum).values('epc','batch_no'))
-        if len(dt1) > 0 :
-            f=[1]
-            return JsonResponse(f,safe = False)
-        sysdte = datetime.date.today()
-        systemdte = sysdte - timedelta(days=1)
-        del1 = TempJbs.objects.filter(dttym=systemdte).delete()
-        global CURTYM
-        CURTYM = datetime.datetime.today().strftime("%d%m%Y%H%M%S")
-        global ALTLINK
-        ALTLINK="0"
-        qt=1
-        if txtqty!="":
-            qt = txtqty
-        x=explodem(txtpart_no,txtepc,txtloco_fr,txtloco_to,txtbatch_type)
-        if x == True:
-            cursor = connection.cursor()
-            cursor.execute('''insert into public."DOCJBS" select  %s epc,%s batch_no, s.part_no,s.ptc,s.qty*%s qty_ord, o."SHOP_SEC", o."LC_NO",
-            o."OPN", o."AT", o."LOT", o."NCP_JBS",' ' as n_shop, null brn_no,%s updt_dt,s.alt_link,
-            s.alt_ind,s.a_part alt_part,null as epc_old from 
-            (select "CP" part_no,max("PTC") ptc , sum("QTY") qty, "A_IND" alt_ind, "A_LINK" alt_link, "A_PART" a_part from public."TEMP_JBS"
-            where trim("CURTYM")=%s GROUP by "CP", "A_LINK", "A_IND", "A_PART" ) s,public."OPRN" o where trim(s.part_no)=trim(o."PART_NO")
-            and trim(s.ptc) in('M','Z','L','B') and trim(o."NCP_JBS")='2' and  coalesce(trim(o."DEL_FL"),'*')<>'Y';''',[txtepc, bonum, qt , sysdte,CURTYM])
-            print("inserted in docjbs")
-        dsj = list(Docjbs.objects.filter(batch_no=bonum,epc=txtepc).values('part_no','opn','id').order_by('shop_sec','lc_no','part_no','opn'))
-        for i in range(len(dsj)):
-            dso = list(Oprn.objects.filter(part_no=dsj[i]['part_no'],opn=dsj[i]['opn']).values('shop_sec','part_no').order_by('part_no','opn'))
-            if len(dso) > 0 :
-                if len(dso) > 1 :
-                    re = Docjbs.objects.filter(id=dsj[i]['id']).update(n_shop=dso[1][shop_sec])
-                    if re == 0:
-                        return JsonResponse({"success":False}, status = 400)  
-                else:
-                    nxtpart = list(Oprn.objects.filter(part_no=dsj[i]['part_no'],opn__gt=dsj[i]['opn']).values('part_no').order_by('part_no'))
-                    if len(nxtpart) != 0 :
-                        nxtshop = list(Oprn.objects.filter(part_no=nxtpart[0]['part_no'],opn__gt=dsj[i]['opn']).values('shop_sec').order_by('part_no','opn'))
-                        if len(nxtshop) > 0:
-                            s = Docjbs.objects.filter(id=dsj[i]['id']).update(n_shop=nxtshop[0]['shop_sec'])
-                            if s == 0:
-                                return JsonResponse({"success":False}, status = 400)  
-        if len(fg) == 0:
-          d=[4]
-          return JsonResponse(d,safe = False)
-        elif len(fg) != 0:
-            return JsonResponse(fg,safe = False)
-    return JsonResponse({"success":False}, status = 400)  
-
-def explodem(assly,ep,lfr,lto,bt):
-    global ASSLY
-    global CASE
-    ASSLY = assly
-    lst = list(Part.objects.filter(partno=assly).values('partno','des','ptc').order_by('partno'))
-    if len(lst) <= 0 :
-        return True
-    assly_desc = lst[0]['des']
-    assly_ptc = lst[0]['ptc']
-    if assly != "" and ep != "" and lfr != "" and lto != "":
-        CASE = "1"
-        SrchQry = list(Nstr.objects.filter(Q(l_fr__lte = lfr) | Q(l_to__gte = lto),Q(pp_part=assly),Q(epc=ep),Q(l_to='9999')).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
-    if assly != "" and ep != "" and lfr != "" and lto == "":
-        CASE = "2"
-        SrchQry = list(Nstr.objects.filter(pp_part=assly,epc=ep,l_to='9999',l_fr__lte = lfr,l_to__gte=lfr).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
-    if assly != "" and ep != "" and lfr == "" and lto == "":
-        CASE = "3"
-        SrchQry = list(Nstr.objects.filter(pp_part=assly,epc=ep,l_fr='0000',l_to='9999').values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
-    if assly != "" and ep == "" and lfr == "" and lto == "":
-        return True
-    global LFR
-    global LTO
-    LFR = lfr
-    LTO = lto
-    global f1
-    if len(SrchQry) == 0 :
-        global fg
-        fg=[10]
-        return True
-    sysdte = datetime.date.today().strftime("%Y-%m-%d")
-    InsrtQry = TempJbs.objects.create(cp=assly,l_fr=lfr,l_to=lto,ptc=assly_ptc,epc=ep,qty=00001.000,a_ind="",a_part="",dttym=sysdte,curtym=CURTYM,sl=1)
-    if InsrtQry == 0:
-        return False
-    global cnt
-    cnt=cnt+1
-    explm(assly, "1", bt, ep,SrchQry,lfr,lto)
-    return True
-
-def explm(parent,wt,bt,ep,srchqry,lfr,lto):
-    sysdte = datetime.date.today().strftime("%Y-%m-%d")
-    global ALTPT
-    global ALTLINK
-    global cnt
-    ALTIND=None
-    check2=0
-    check3=len(srchqry)
-    if len(srchqry) > 0:
-        for i in range(len(srchqry)):
-            if ASSLY == parent:
-                if str(srchqry[i]['alt_link']) != ALTLINK or srchqry[i]['alt_ind'] != ALTIND :
-                    ALTLINK = srchqry[i]['alt_link']
-                    ALTIND = srchqry[i]['alt_ind']
-                    ALTPT = srchqry[i]['cp_part']
-            WT=1
-            if srchqry[i]['qty'] != "":
-                WT = srchqry[i]['qty']
-            mqty1 = Decimal(WT*Decimal(wt))
-            alpt=""
-            if ALTLINK != "0" and ALTLINK != "":
-                alpt = ALTPT
-            x = ['M','Z','L','B']
-            if srchqry[i]['ptc'] in x :
-                InsrtQry = TempJbs.objects.create(pp=srchqry[i]['pp_part'],cp=srchqry[i]['cp_part'],l_fr=srchqry[i]['l_fr'],l_to=srchqry[i]['l_to'],ptc=srchqry[i]['ptc'],epc=srchqry[i]['epc'],qty=mqty1,a_ind=ALTIND,a_link=ALTLINK,a_part=alpt,dttym=sysdte,curtym=CURTYM,sl=cnt)
-                if InsrtQry == 0:
-                    return False
-                cnt=cnt+1
-            if srchqry[i]['ptc'] in x :
-                if CASE == "1":
-                    Qry=list(Nstr.objects.filter(Q(pp_part=srchqry[i]['cp_part']),Q(epc=ep),Q(l_to='9999'),Q(l_fr__lte=LFR) | Q(l_to__gte=LTO)).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
-                if CASE == "2":
-                    Qry=list(Nstr.objects.filter(pp_part=srchqry[i]['cp_part'],epc=ep,l_to='9999',l_fr__lte=LFR,l_to__gte=LFR).values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
-                if CASE == "3":
-                    Qry=list(Nstr.objects.filter(pp_part=srchqry[i]['cp_part'],epc=ep,l_to='9999',l_fr='0000').values('pp_part','cp_part','epc','alt_link','alt_ind','ptc','qty','l_fr','l_to').order_by('pp_part','epc','cp_part'))
-                if len(Qry) !=0 :
-                    check2=check2+1
-                    explm(srchqry[i]['cp_part'], mqty1,bt,ep,Qry,lfr,lto)
-    return True
-
-#report work of jbs starts from here
-def jbsreport(request):
-    shopsec=[]
-    lc_no=[]
-    partno=request.GET.get('partno')
-    cursor = connection.cursor()
-    cursor.execute('SELECT j."ALT_PART" FROM public."DOCJBS" j, public."OPRN" o, public."PART" p WHERE j."PART_NO" = o."PART_NO" and j."OPN" = o."OPN" and j."NCP_JBS" = %s and j."BATCH_NO"=%s and j."EPC"=%s and p."PARTNO" = j."PART_NO" ORDER BY j."PART_NO",j."OPN"',['2',bonum,txtepc])
-    row = cursor.fetchall()
-    lst=list(row)
-    if len(lst) != 0 :
-        part_des=''
-        doc_no=0
-        cd = list(Code.objects.filter(cd_type='11',code=txtepc).values('alpha_1').order_by('cd_type','code'))
-        if len(cd) > 0:
-            part_des = cd[0]['alpha_1']
-            cursor = connection.cursor()
-            cursor.execute('SELECT DISTINCT "SHOP_SEC","LC_NO" FROM (SELECT j."SHOP_SEC",j."LC_NO" from public."DOCJBS" j,public."OPRN" o, public."PART" p WHERE j."PART_NO"= o."PART_NO" and j."OPN"= o."OPN" and j."NCP_JBS"=%s and j."BATCH_NO"=%s and j."EPC"=%s and p."PARTNO"=j."PART_NO" order by j."SHOP_SEC",j."LC_NO",j."PART_NO",j."OPN") abc order by "SHOP_SEC","LC_NO"',['2',bonum,txtepc])
-            row = cursor.fetchall()
-            dt=list(row)  
-            dt1=[]
-            lst=[]
-            b=1
-            for i in range(len(dt)):
-                shop_sec= dt[i][0]
-                lc_no = dt[i][1]
-                cursor.execute('''SELECT j."PART_NO", substr(p."DES",0,21) des, substr(trim(o."DES"),0,26) t_des, j."OPN",
-                coalesce(o."AT",'0.00')as at , trim(o."LOT" :: text)as lot, trim(j."N_SHOP"), 
-                trim(coalesce(j."QTY_ORD" :: text,'0'))as qty_ord, j."SHOP_SEC", j."LC_NO" FROM public."DOCJBS" j, 
-                public."OPRN" o, public."PART" p WHERE j."PART_NO"= o."PART_NO" and j."OPN"= o."OPN" and j."NCP_JBS"=%s and 
-                j."BATCH_NO"=%s and j."EPC"=%s and 
-                p."PARTNO"=j."PART_NO" and j."SHOP_SEC" = %s and j."LC_NO"=%s ORDER BY j."OPN"''',['2',bonum,txtepc,shop_sec,lc_no])
-                row = cursor.fetchall()
-                dt1=(list(row))
-                a=0
-                lst.append([])
-                for j in range(len(dt1)):
-                    if a==0:
-                        lst[i].append({'sno':j+1,'doc':b,'s':shop_sec,'l':lc_no,'a':dt1[j][0],'b':dt1[j][1],'c':dt1[j][2],'d':dt1[j][3],'e':dt1[j][4],'f':dt1[j][5],'g':dt1[j][6],'h':dt1[j][7],'i':dt1[j][8],'j':dt1[j][9]})
-                        a=1
-                        b=b+1
-                    else:
-                        lst[i].append({'sno':j+1,'doc':'','s':'','l':'','a':dt1[j][0],'b':dt1[j][1],'c':dt1[j][2],'d':dt1[j][3],'e':dt1[j][4],'f':dt1[j][5],'g':dt1[j][6],'h':dt1[j][7],'i':dt1[j][8],'j':dt1[j][9]})
-
-            dte=datetime.datetime.today().strftime("%d-%m-%Y")
-            print("my listt is",lst)
-    context={
-     'tdate':dte,  #today's date
-     'pn':partno,     #assmbly no
-     'des':part_des,  #assmbly design
-     'head':dt,       #list of shop_sec and lc_no
-     'lst':lst,      #list of lists
-     'm':len(dt),     
-     'n':len(dt1),
-    }           
-    pdf=render_to_pdf('jbs_report.html', context)
-    return HttpResponse(pdf, content_type='application/pdf')
-@login_required
-@role_required(urlpass='/prodqry/')
-def prodqry(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-
-
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
-        context={
-            'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles':tmp
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
-            wo_nop =wo_nop | req
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
-        
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
-    return render(request,'prodqry.html',context)
-
-
-
-def sel_main(request):
-    if request.method == "GET" and request.is_ajax():   
-        sel_val=request.GET.get('val')
-    
-
-        if(sel_val=="11"):
-            bno=request.GET.get('val1')
-            pno=request.GET.get('val2')
-            bono=Batch.objects.values('bo_no')
-            x=[]
-            for i in bono:
-                x.append(i['bo_no'])
-            if pno is None and bno in x:
-                qry=Batch.objects.filter(bo_no=bno).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('bo_no','part_no','seq').distinct()
-                BT=qry
-                if(BT.count()>0):
-                    a=''
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'B')
-            else:
-                qry=Batch.objects.filter(bo_no=bno,part_no=pno).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('bo_no','part_no','seq').distinct()
-                BT=qry
-                if(BT.count()>0):
-                    a=''
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'BP')
-
-
-        if(sel_val=="12"):
-            pno=request.GET.get('val1')
-            qry=Batch.objects.filter(part_no=pno).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('bo_no','part_no','seq').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:
-                BT=list(BT)
-                BT.insert(0,'P')
-
-        
-        if(sel_val=="13"):
-            brn=request.GET.get('val1')
-            qry=Batch.objects.filter(brn_no=brn).values('part_no','bo_no','ep_type','loco_fr','loco_to','batch_qty','batch_type','seq','brn_no','status','so_no').order_by('brn_no').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:
-                BT=list(BT)
-                BT.insert(0,'Brn')
-
-
-        if(sel_val=="21"):
-            bno=request.GET.get('val1')
-            asno=request.GET.get('val2')
-            if asno is not None:
-                qry=M2Docnew1.objects.filter(batch_no=bno,assly_no=asno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('batch_no','assly_no','seq','scl_cl','f_shopsec','part_no').distinct()
-                BT=qry
-                if(BT.count()>0):
-                    a=''
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'BA')
-            else:
-                qry=M2Docnew1.objects.filter(batch_no=bno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('batch_no','assly_no','seq','scl_cl','f_shopsec','part_no').distinct()
-                BT=qry
-                if(BT.count()>0):
-                    a=''
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'B')
-
-
-        if(sel_val=="22"):
-            rcno=request.GET.get('val1')
-            qry=M2Docnew1.objects.filter(m2sln=rcno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:
-                BT=list(BT)
-                BT.insert(0,'RCN')
-              
-
-
-        if(sel_val=="23"):
-            pno=request.GET.get('val1')
-            bno=request.GET.get('val2')
-            brn_no=0
-            if bno is not None:
-                qry=M2Docnew1.objects.filter(batch_no=bno).values('brn_no').order_by('batch_no','assly_no','seq','scl_cl','f_shopsec','part_no').distinct()
-                
-
-                JOIN=qry
-                if(JOIN.count()>0):
-                    brn_no=JOIN[0]['brn_no']
-                qry=M2Docnew1.objects.filter(part_no=pno,brn_no=brn_no).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
-            else:
-                qry=M2Docnew1.objects.filter(part_no=pno).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
-            BT=qry
-            if pno is None:
-                BT=list(BT)
-                BT.insert(0,'EP')
-            if(len(BT)>0):
-                a=''
-            else:   
-                BT=list(BT)
-                BT.insert(0,'BP')
-
-
-        if(sel_val=="24"):
-            brn=request.GET.get('val1')
-            qry=M2Docnew1.objects.filter(brn_no=brn).values('scl_cl','part_no','epc','f_shopsec','qty','ptc','assly_no','rm_partno','rm_qty','rm_ptc','m4_no','brn_no','m2sln','m2prtdt','cut_shear').order_by('brn_no').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:
-                BT=list(BT)
-                BT.insert(0,'Brn')
-
-
-        if(sel_val=="31"):
-            bno=request.GET.get('val1')
-            asno=request.GET.get('val2')
-            if asno is not None:
-                qry=list(M5Docnew1.objects.filter(batch_no=bno,assly_no=asno).values('scl_cl','part_no','qty_ord','assly_no','rm_partno','rm_qty','cut_shear','m5glsn','brn_no','m2slno','m5prtdt','shop_sec','lc_no','opn').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct())
-                for j in range(len(qry)):
-                    qry[j].update({'des':None})
-                BT=qry
-                if(len(BT)>0):
-                    for i in range(len(BT)):
-                        part=BT[i]['part_no']
-                        qry=Oprn.objects.filter(part_no=part).values('des').order_by('part_no','opn').distinct()
-                        OP=qry
-                        if(OP.count()>0):
-                            BT[i]['des']=OP[0]['des'][0:37]
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'BA')
-            else:
-                qry=list(M5Docnew1.objects.filter(batch_no=bno).values('scl_cl','part_no','qty_ord','assly_no','rm_partno','rm_qty','cut_shear','m5glsn','brn_no','m2slno','m5prtdt','shop_sec','lc_no','opn').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct())
-                for j in range(len(qry)):
-                    qry[j].update({'des':None})
-                BT=qry
-                if(len(BT)>0):
-                    for i in range(len(BT)):
-                        part=BT[i]['part_no']
-                        qry=Oprn.objects.filter(part_no=part).values('des').order_by('part_no','opn').distinct()
-                        OP=qry
-                        if(OP.count()>0):
-                            BT[i]['des']=OP[0]['des'][0:37]
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'B')
-
-
-
-
-        
-        if(sel_val=="32"):
-            rcn=request.GET.get('val1')
-            batchno=''
-            if rcn is not None:
-                qry=M2Docnew1.objects.filter(m2sln=rcn).values('batch_no').order_by('m2sln').distinct()
-                DOC=qry
-                if(DOC.count()>0):
-                    batchno=DOC[0]['batch_no']
-
-                oprn_sub=Oprn.objects.all().distinct()
-                qry=M5Docnew1.objects.filter(batch_no=batchno,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct()
-                BT=qry
-                if(BT.count()>0):
-                    a=''
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'RCN')
-                
-        
-        if(sel_val=="33"):
-            jcn=request.GET.get('val1')
-            print(jcn)
-            oprn_sub=Oprn.objects.all().distinct()
-            qry=M5Docnew1.objects.filter(m5glsn=jcn,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('m5glsn').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:
-                BT=list(BT)
-                BT.insert(0,'JCN')
-
-       
-
-        if(sel_val=="34"):
-            pno=request.GET.get('val1')
-            bno=request.GET.get('val2')
-            if pno is None:
-                print("Enter Part Number")
-            if bno is not None:
-                qry=M5Docnew1.objects.filter(batch_no=bno).values('brn_no').order_by('batch_no','assly_no','scl_cl','shop_sec','part_no','opn','l_fr').distinct()
-                JOIN=qry
-                brnno=''
-                if(JOIN.count()>0):
-                    brnno=JOIN[0]['brn_no']
-                oprn_sub=Oprn.objects.all().distinct()
-                qry=M5Docnew1.objects.filter(part_no=pno,brn_no=brnno,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('part_no','brn_no','scl_cl').distinct()
-            else:
-                oprn_sub=Oprn.objects.all().distinct()
-                qry=M5Docnew1.objects.filter(part_no=pno,opn__in=Subquery(oprn_sub.values('opn')),part_no__in=Subquery(oprn_sub.values('part_no'))).values('scl_cl', 'part_no', 'batch_no', 'qty_ord', 'assly_no', 'rm_partno', 'rm_qty', 'cut_shear', 'm5glsn', 'brn_no', 'm2slno', 'm5prtdt', 'shop_sec', 'lc_no', 'opn_desc').order_by('part_no','brn_no','scl_cl').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:
-                BT=list(BT)
-                BT.insert(0,'BP')
-            
-
-
-        if(sel_val=="35"):
-            brno=request.GET.get('val1')
-            if brno is not None:
-                qry=list(M5Docnew1.objects.filter(brn_no=brno).values('scl_cl','part_no','qty_ord','assly_no','rm_partno','rm_qty','cut_shear','m5glsn','batch_no','m2slno','m5prtdt','shop_sec','lc_no','opn').order_by('m5glsn').distinct())
-                for j in range(len(qry)):
-                    qry[j].update({'des':None})
-                BT=qry
-                if(len(BT)>0):
-                    for i in range(len(BT)):
-                        part=BT[i]['part_no']
-                        qry=Oprn.objects.filter(part_no=part).values('des').order_by('part_no','opn')
-                        OP=qry
-                        if(OP.count()>0):
-                            if(len(OP[0]['des'])>=37):
-                                BT[i]['des']=OP[0]['des'][0:37]
-                            else:
-                               BT[i]['des']=OP[0]['des'] 
-                else:
-                    BT=list(BT)
-                    BT.insert(0,'Brn')
-
-
-        if(sel_val=="41"):
-            bno=request.GET.get('val1')
-            pno=request.GET.get('val2')
-            brn_no=0
-            if pno is None:
-                print("Enter Part Number")
-            if bno is not None:
-                qry=Batch.objects.filter(bo_no=bno).values('brn_no').order_by('bo_no','part_no','seq').distinct()
-                JOIN=qry
-                if(JOIN.count()>0):
-                    brn_no=JOIN[0]['brn_no']
-                qry=M14M4new1.objects.filter(part_no=pno,brn_no=brn_no).values('part_no','bo_no','pm_no','qty','l_fr','l_to','assly_no','brn_no','doc_no').order_by('doc_no').distinct()
-            else:
-                qry=M14M4new1.objects.filter(part_no=pno).values('part_no','bo_no','pm_no','qty','l_fr','l_to','assly_no','brn_no','doc_no').order_by('l_fr').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:        
-                BT=list(BT)
-                BT.insert(0,'BP')
-
-
-        if(sel_val=="42"):
-            brno=request.GET.get('val1')
-            qry=M14M4new1.objects.filter(brn_no=brno,doc_code='89').values('part_no','bo_no','pm_no','qty','l_fr','l_to','assly_no','brn_no','doc_no').order_by('brn_no','assly_no','kit_ind','station','stg','sub_kit','part_no').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:   
-                BT=list(BT)
-                BT.insert(0,'Brn')
-
-
-
-        if(sel_val=="71"):
-            bno=request.GET.get('val1')
-            pno=request.GET.get('val2')
-            qry=Batch.objects.filter(bo_no=bno).values('brn_no').order_by('bo_no','part_no','seq').distinct()
-            JOIN=qry
-            
-            if((bno is not None) and (JOIN.count()>0)):
-                sub=Batch.objects.values('brn_no').distinct()
-                qry=Altdoc.objects.filter(part_no=pno,brn_no__in=Subquery(sub.values('brn_no'))).values('brn_no', 'part_no', 'l_fr', 'l_to', 'm2_fr', 'm2_to', 'm5_fr', 'm5_to', 'm14_fr', 'm14_to','m4_fr', 'm4_to','expl_dt','prt_dt').order_by('brn_no','alt_link','l_fr','l_to').distinct()
-            else:
-                sub=Batch.objects.all().distinct()
-                qry=Altdoc.objects.filter(part_no=pno,brn_no__in=Subquery(sub.values('brn_no'))).values('brn_no', 'part_no', 'l_fr', 'l_to', 'm2_fr', 'm2_to', 'm5_fr', 'm5_to', 'm14_fr', 'm14_to','m4_fr', 'm4_to','expl_dt','prt_dt').order_by('brn_no','alt_link','l_fr','l_to').distinct()
-            BT=qry
-            if(BT.count()>0):
-                a=''
-            else:
-                BT=list(BT)
-                BT.insert(0,'BrP')
-        return JsonResponse(list(BT), safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-from django.db.models.functions import Substr
-import datetime
-
-@login_required
-@role_required(urlpass='/qrycstr/')
-def qrycstr(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-
-
-    if "Superuser" in rolelist:
-        tm=shop_section.objects.all()
-        tmp=[]
-        for on in tm:
-            tmp.append(on.section_code)
-        context={
-            'sub':0,
-            'lenm' :2,
-            'nav':nav,
-            'subnav':subnav,
-            'ip':get_client_ip(request),
-            'roles':tmp
-        }
-    elif(len(rolelist)==1):
-        for i in range(0,len(rolelist)):
-            req = M13.objects.all().filter(shop=rolelist[i]).values('wo').distinct()
-            wo_nop =wo_nop | req
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'wo_nop':wo_nop,
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
-        
-    elif(len(rolelist)>1):
-        context = {
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'ip':get_client_ip(request),
-            'usermaster':usermaster,
-            'roles' :rolelist,
-            'subnav':subnav,
-        }
-    return render(request,'qrycstr.html',context)
-
-def qrycstr1(request):
-    if request.method == "GET" and request.is_ajax():   
-        part_no=request.GET.get('val')
-        c=list(Part.objects.filter(partno=part_no).values('des'))
-        return JsonResponse(c, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-def qrycstr_ddCn_fun(request):
-    if request.method == "GET" and request.is_ajax():   
-        ddCn=request.GET.get('val1')
-        
-        ds=list(Cnote.objects.filter(chg_ind=ddCn).values('reg_no','reg_dt','ppl_cn_no','assly_no','ref_1_dt','updt_dt').annotate(mysubstring1=Substr('assly_desc',1,14),mysubstring2=Substr('ref_1',1,14)).order_by('ppl_cn_no').distinct())
-        return JsonResponse(ds, safe = False)
-    return JsonResponse({"success":False}, status=400)
-
-
-
-def qrycstr_viewstatus(request):
-    ddCN= request.GET.get('ddCN')
-    rbtnquery= request.GET.get('rbtnquery')
-    formateDate= request.GET.get('formateDate')
-    
-    if(rbtnquery=='3'):
-        tbox = datetime.datetime.strptime(formateDate, "%d-%m-%Y")
-    else:
-        tbox = formateDate
-   
-    if(rbtnquery=="1"):
-        tmpstr=Cstr.objects.values('reg_no','slno','pp_part','cp_part','l_fr','l_to','ptc','epc','qty','cutdia_no','cn_no','cn_date','acd','updt_dt','errmsg').filter(status='U',chg_ind=ddCN,cp_part=tbox).distinct().order_by('chg_ind','cp_part','reg_no')
-    elif(rbtnquery=="2"):
-        tmpstr=Cstr.objects.values('reg_no','slno','pp_part','cp_part','l_fr','l_to','ptc','epc','qty','cutdia_no','cn_no','cn_date','acd','updt_dt','errmsg').filter(status='U',chg_ind=ddCN,cn_no=tbox).distinct().order_by('chg_ind','cp_part','reg_no')
-    elif(rbtnquery=="3"):
-        tmpstr=Cstr.objects.values('reg_no','slno','pp_part','cp_part','l_fr','l_to','ptc','epc','qty','cutdia_no','cn_no','cn_date','acd','updt_dt','errmsg').filter(status='U',chg_ind=ddCN,updt_dt=tbox).distinct().order_by('chg_ind','cp_part','reg_no')
-
-    cp_part=[]
-    cn_no=[]
-    for x in tmpstr:
-        cp_part.append(x['cp_part'])
-        cn_no.append(x['cn_no'])
-    
-    tmpstr1=Part.objects.filter(partno__in=cp_part).count()
-    
-
-    if tmpstr1 > 0:
-        tmp=Part.objects.filter(partno__in=cp_part).values('des').distinct()
-    else:
-        tmp=[{'des':'null'}]
-    
-    desc=[]
-    for y in tmp:
-        desc.append(y['des'])
-
-    
-
-    tmpstr2=Cnote.objects.filter(chg_ind=ddCN,ppl_cn_no__in=cn_no).count()
-    
-    if tmpstr2 > 0:
-        tmp1=Cnote.objects.filter(chg_ind=ddCN,ppl_cn_no__in=cn_no).values('ref_1').distinct()
-    else:
-        tmp1=[{'ref_1':'null'}]
-
-    design=[]
-    for z in tmp1:
-        design.append(z['ref_1'])
-    
-    for j in range(len(tmpstr)):
-        tmpstr[j].update({'des':desc[0]})
-        if len(tmp1)==len(tmpstr):
-            tmpstr[j].update({'design':design[j]})
-        else:
-            tmpstr[j].update({'design':design[0]})
-
-    today = date.today()
-    context={
-        'today':today,
-        'tmpstr':tmpstr,
-    }
-    pdf=render_to_pdf('qrycstrreport.html',context)
-    return HttpResponse(pdf,content_type='application/pdf')
-
-@login_required
-@role_required(urlpass='/screenforloadmasterupdation/')
-def screenforloadmasterupdation(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-    if "Superuser" in rolelist:
-        context={
-            'nav' : nav,
-            'ip' : get_client_ip(request),
-            'subnav' : subnav,
-        }
-    return render(request, "screenforloadmasterupdation.html",context) 
-
-def ScreenLoadMasterUpdateValidShop(request):
-    if request.method == "GET" and request.is_ajax():
-        shopsec = request.GET.get('shopsec')
-        obj=list(Lc1.objects.filter(shop_sec=shopsec).exclude(del_fl='Y').values('shop_sec'))
-        if len(obj) != 0:
-            obj=list(shop_section.objects.filter(section_code=shopsec).values('section_desc'))   
-        return JsonResponse(obj,safe=False)
-    return JsonResponse({"success=false"},status=400)
-
-def ScreenLoadMasterUpdateGetAll(request):
-    if request.method == "GET" and request.is_ajax():
-        shopsec = request.GET.get('shopsec')
-        loadcentre = request.GET.get('loadcentre')
-        obj=list(Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).exclude(del_fl='Y').values('des','no_men','no_mcs1','no_mcs2','no_mcs3').distinct())
-        return JsonResponse(obj,safe=False)
-    return JsonResponse({"success=false"},status=400)
-
-def ScreenLoadMasterUpdateSave(request):
-    if request.method == "GET" and request.is_ajax():
-        obj=[]
-        shopsec=request.GET.get('shopsec')
-        loadcentre=request.GET.get('loadcentre')
-        desc=request.GET.get('desc')
-        noman=request.GET.get('noman')
-        nomcs1=request.GET.get('nomcs1')
-        nomcs2=request.GET.get('nomcs2')
-        nomcs3=request.GET.get('nomcs3')
-        mwno=request.GET.get('mwno')
-        mcgr=request.GET.get('mcgr')
-        d1 = date.today()
-        temp=list(Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).exclude(del_fl='Y').values('shop_sec').distinct())
-        if len(temp) == 0:
-            temp=Lc1.objects.create(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
-            no_men=noman,no_mcs1=nomcs1,no_mcs2=nomcs2,no_mcs3=nomcs3,updt_dt=d1)
-        
-        else:
-            obj=[1]
-        return JsonResponse(obj,safe=False) 
-    return JsonResponse({"success:False"},status=400) 
-
-def ScreenLoadMasterUpdateUYes(request):
-    if request.method == "GET" and request.is_ajax():
-        obj=[]
-        shopsec=request.GET.get('shopsec')
-        loadcentre=request.GET.get('loadcentre')
-        desc=request.GET.get('desc')
-        noman=request.GET.get('noman')
-        nomcs1=request.GET.get('nomcs1')
-        nomcs2=request.GET.get('nomcs2')
-        nomcs3=request.GET.get('nomcs3')
-        d1 = date.today()
-        Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).update(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
-            no_men=noman,no_mcs1=nomcs1,no_mcs2=nomcs2,no_mcs3=nomcs3,updt_dt=d1)
-
-        return JsonResponse(obj,safe=False) 
-    return JsonResponse({"success:False"},status=400) 
-
-def ScreenLoadMasterUpdateDelete(request):
-    if request.method == "GET" and request.is_ajax():
-        obj=[]
-        shopsec=request.GET.get('shopsec')
-        loadcentre=request.GET.get('loadcentre')
-        d1 = date.today()
-        Lc1.objects.filter(shop_sec=shopsec,lcno=loadcentre).update(del_fl='Y',updt_dt=d1)   
-        return JsonResponse(obj,safe=False) 
-    return JsonResponse({"success:False"},status=400) 
-
-    
-def ScreenLoadMasterUpdateAddMwNo(request):
-    if request.method == "GET" and request.is_ajax():
-        shopsec=request.GET.get('shopsec')
-        loadcentre=request.GET.get('loadcentre')
-        mwno=request.GET.get('mwno')
-        mcgr=request.GET.get('mcgr')
-        desc=request.GET.get('desc')
-        obj2=list(Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).exclude(del_fl='Y').values('mwno','mc_gr').distinct())
-        d1 = date.today()
-        if len(obj2) == 0:
-            temp=Mp.objects.create(shop_sec=str(shopsec),lcno=str(loadcentre),des=str(desc),
-            mwno=str(mwno),mc_gr=str(mcgr),updt_dt=d1)
-        
-        return JsonResponse(obj2,safe=False) 
-    return JsonResponse({"success:False"},status=400) 
-
-def ScreenLoadMasterUpdateDelMwNo(request):
-    if request.method == "GET" and request.is_ajax():
-        shopsec=request.GET.get('shopsec')
-        loadcentre=request.GET.get('loadcentre')
-        mwno=request.GET.get('mwno')
-        mcgr=request.GET.get('mcgr')
-        obj2=list(Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).exclude(del_fl='Y').values('mwno').distinct())
-        d1 = date.today()
-        if len(obj2) != 0:
-            Mp.objects.filter(shop_sec=shopsec,lcno=loadcentre,mwno=mwno,mc_gr=mcgr).update(del_fl='Y',updt_dt=d1)   
-
-        return JsonResponse(obj2,safe=False) 
-    return JsonResponse({"success:False"},status=400)  
-
-def ScreenLoadMasterUpdateAutoDesc(request):
-    if request.method=="GET" and request.is_ajax():
-        obj1=list(Lc1.objects.filter(des__isnull=False).values('des').distinct())  
-        return JsonResponse(obj1,safe=False)
-    return JsonResponse({"success":False}, status=400)
-
-def ScreenLoadMasterUpdateAutomw_no(request):
-    if request.method=="GET" and request.is_ajax():
-        loadcentre=request.GET.get('loadcentre')
-        shopsec=request.GET.get('shopsec')
-        obj1=list(Mp.objects.filter(mwno__isnull=False,shop_sec=shopsec,lcno=loadcentre).values('mwno').distinct())  
-        return JsonResponse(obj1,safe=False)
-    return JsonResponse({"success":False}, status=400)
-
-def ScreenLoadMasterUpdateAutoMcgr(request):
-    if request.method=="GET" and request.is_ajax():
-        loadcentre=request.GET.get('loadcentre')
-        shopsec=request.GET.get('shopsec')
-        obj1=list(Mp.objects.filter(mc_gr__isnull=False,shop_sec=shopsec,lcno=loadcentre).values('mc_gr').distinct())  
-        return JsonResponse(obj1,safe=False)
-    return JsonResponse({"success":False}, status=400)
-
-@login_required
-@role_required(urlpass='/cnote/')
-def cnote(request):
-    cuser=request.user
-    usermaster=empmast.objects.filter(empno=cuser).first()
-    rolelist=usermaster.role.split(", ")
-    nav=dynamicnavbar(request,rolelist)
-    menulist=set()
-    for ob in nav:
-        menulist.add(ob.navitem)
-    menulist=list(menulist)
-    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
-    wo_nop = empmast.objects.none()
-    obj = list(Cnote.objects.values('chg_ind').distinct())
-    
-    if "Superuser" in rolelist:
-        context={
-            'sub':0,
-            'lenm' :len(rolelist),
-            'nav':nav,
-            'obj':obj,
-            'ip':get_client_ip(request),
-            'op_opnno' : wo_nop,
-            'subnav':subnav,
-        }
-
-    return render(request,'cnote.html',context)
-
-def cnote_get_details(request):
-    if request.method == "GET" and request.is_ajax():
-        cno = request.GET.get('cn')
-        cind = request.GET.get('chng_ind')
-        obj = list(Cnote.objects.filter(chg_ind = cind, ppl_cn_no = cno).values('reg_no','reg_dt','ref_1','ref_1_dt','cn_reg_dt','cn_dt','status','file_no','page_no','lett_no','assly_no', 'assly_desc').distinct())
-        return JsonResponse(obj, safe = False)
-    return JsonResponse({"success":False}, status = 400)
-
-def cnote_getcn(request):
-    if request.method == "GET" and request.is_ajax():
-        cind = request.GET.get('cnind')
-        obj = list(Cnote.objects.filter(chg_ind = cind,status='Y').values('ppl_cn_no').distinct().order_by('ppl_cn_no'))
-        return JsonResponse(obj, safe = False)
-    return JsonResponse({"success":False}, status = 400)
-
-
-def allot_update(request):
-    if request.method == "GET" and request.is_ajax():
-        cn_no = request.GET.get('cn_no')
-        chng_ind = request.GET.get('chng_ind')
-        num = list(Code.objects.filter(cd_type = '21', code = 'MRG').values('num_1').order_by('cd_type','code').distinct())
-        num = num[0]['num_1'] +1
-        
-        edp_reg_no = request.GET.get('edp_reg_no')
-        edp_reg_dt = request.GET.get('edp_reg_dt')
-        if(edp_reg_dt=='' or edp_reg_dt=='undefined' or edp_reg_dt==None):
-            edp_reg_dt=datetime.datetime.now()
-        else:
-            edp_reg_dt= datetime.datetime.strptime(edp_reg_dt,'%d-%m-%Y').date()
-        page_no = request.GET.get('page_no')
-        file_no = request.GET.get('file_no')
-        
-        up_dt = request.GET.get('up_dt')
-        up_dt =datetime.datetime.strptime(up_dt,'%d-%m-%Y').date()
-        sts = request.GET.get('sts')
-        
-        if(edp_reg_no=='' or edp_reg_no==None ):
-            Code.objects.filter(cd_type = '21' , code = 'MRG').update(num_1 = num, lupd_date = up_dt)
-            edp_reg_no=num
-            if(chng_ind =='STM' or chng_ind == 'STE'):
-                Cpart.objects.filter(ppl_cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
-                Cstr.objects.filter(pp_part = None , cp_part = None).delete()
-                Cstr.objects.filter(chg_ind = chng_ind, cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
-            elif(chng_ind == 'OPN'):
-                Copn.objects.filter(part_no = None).delete()
-                Copn.objects.filter(cn_no = cn_no, reg_no = None).update(reg_no = edp_reg_no)
-        Cnote.objects.filter(chg_ind = chng_ind, ppl_cn_no = cn_no).update(reg_no = edp_reg_no, reg_dt = edp_reg_dt, file_no = file_no, page_no= page_no, updt_dt = up_dt, status = sts)
-        return JsonResponse(num, safe = False)
-    return JsonResponse({"success":False}, status = 400)

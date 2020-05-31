@@ -13,25 +13,7 @@
         box-sizing: border-box;
     }
     
-    input[type=submit] {
-        width: 20%;
-        text-align: center;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    input[type=submit]:hover {
-        background-color: #45a049;
-        text-align: center;
-    }
-    
     input[type=button] {
-        width: 10%;
         text-align: center;
         background-color: #4CAF50;
         color: white;
@@ -46,54 +28,54 @@
         background-color: #45a049;
         text-align: center;
     }
-   
+
 
 </style>
 
 </br>
-<h3 align="center">
+<h5 align="center">
     
         <b>CONSOLIDATED PART MASTER LISTING</b>
     
-</h3>
+</h5>
 </br>
 <form action="{% url 'EpCpm' %}" method="POST"> 
     {% csrf_token %}
     <div class="container">
-<table width=70% align=center>
-    <tr>
-        <td width=10%>
-            <label for="LastCreationDate" class="td_txt"><b>Last Creation Date:</b></label>
-        </td>
-        <td>
-            
-            <input type="text" name="LastCreationDate" class="td_cntrl" id=lblDt  value="{{lblDt}}" readonly>
-        </td>
-    </tr>
-    <tr>
-        <td  class="td_txt" width=20%>
+        <input type="text" id="lblDt"  value="{{lblDt1}}" hidden>
+        <label for="LastCreationDate" style=" display: block; text-align:right;"><b>Last Creation Date: {{lblDt}}</b></label>
+<table width=70% align="center">
+    
+        <tr>
+            <td colspan="2">
             </br><b>DESIRED END PRODUCT CODES:</b>
-        </td>
-        <td align=center class="td_cntrl"></br>
-            <div id="wkslist"></div></br>   
-        </td>
+            </td>
+
+        </tr>
+        <tr >
+             <td><br>
+            <div id="wkslist"></div>   
+            </td>
+            <td align="left"></br>
+                <input type="checkbox" name="allepc" id="chkAllEpc">
+                <b>All EPC</b></br>
+                </td>
+        </tr>
+       
+       
         
-        <td width=15%></br>
-            <input type="checkbox" name="allepc" id="chkAllEpc">
-            <b>All EPC</b></br>
+    
+    <tr>
+        <td colspan="2"><b>01=M2Eng &nbsp; 02=S6Eng &nbsp; 03=M2Loc &nbsp; 05=P1Eng &nbsp; 06=P1Loc &nbsp; 08=S6Loc &nbsp; 09=G2Eng &nbsp; 1A=G2Loc &nbsp; 1B=P2Loc &nbsp; 1G=M2Tra &nbsp; 1J=S6Tra &nbsp; 1K=P1Tra &nbsp; 1L=G2Tra</b>
         </td>
     </tr>
     <tr>
-        <td width=10%></td>
-        <td colspan=2>
-            <b>01=M2Eng &nbsp; 02=S6Eng &nbsp; 03=M2Loc &nbsp; 05=P1Eng &nbsp; 06=P1Loc &nbsp; 08=S6Loc &nbsp; 09=G2Eng &nbsp; 1A=G2Loc &nbsp; 1B=P2Loc &nbsp; 1G=M2Tra &nbsp; 1J=S6Tra &nbsp; 1K=P1Tra &nbsp; 1L=G2Tra</b>
-        </td>
-    </tr>
-    <tr>
-        <td></br>
+        <td colspan="2"></br>
             <b>PART TYPE CODES COMBINATION:</b>
         </td>
-        <td align=center><div id="one"><b></br>
+    </tr>
+    <tr>
+        <td ><div id="one" style="width: 275px;"><b>
             <input type="checkbox" id="P" name="P" >
             P&nbsp;
             <input type="checkbox" id="Q" name="Q" >
@@ -105,27 +87,28 @@
             <input type="checkbox" id="B" name="B" >
             B&nbsp;
             <input type="checkbox" id="M" name="M" >
-            M</b></div>
+            M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        
         </td>
-        <td></br>
+    
+        <td  align="left"></br>
             <input type="checkbox" name="End" id="chkAllPtc">
             <b>All PTC</b></br>
         </td>
     </tr>
     <tr>
-        <td width=10%></td>
-        <td>
-            <b>P=PF &nbsp; Q=PRF &nbsp; R=RM &nbsp; L=Stk.Suspence &nbsp; B=Bal.Input  &nbsp;M=SM</b>
+        <td colspan="2" width=100%><b>P=PF &nbsp; Q=PRF &nbsp; R=RM &nbsp; L=Stk.Suspence &nbsp; B=Bal.Input  &nbsp;M=SM</b>
         </td>
+        
     </tr>
-    <tr align=center>
-        <td colspan=3></br>
+    <tr>
+        <td colspan=2 align="center"></br>
             <input type="button" name="btnViewCPM" id="btnViewCPM" value="View CPM" onclick="Cpmfunc()">
             <input type="button" name="btnClear_Click" id="btnClear_Click" value="Clear" onclick="Clearfunc()">
-            <input type="text" id="lbldtEpc" name="lbldtEpc" readonly value="{{lbldtEpc}}">
-            <input type="text" id="lbldtPtc" readonly>
-            <input type="text" id="lblPtcAll" readonly value="B">
-            <input type="text" id="lblEpcAll" readonly value="B">
+            <input type="text" id="lbldtEpc" name="lbldtEpc" readonly value="{{lbldtEpc}}" hidden>
+            <input type="text" id="lbldtPtc" readonly hidden>
+            <input type="text" id="lblPtcAll" readonly value="B" hidden>
+            <input type="text" id="lblEpcAll" readonly value="B" hidden>
         </td>
     </tr>
 </table>
@@ -278,9 +261,21 @@ $(document).ready(function()
                       success : function(response){ 
                             for(i=0;i<response.length;i++)
                             {
-                                var li = $('<input type="checkbox"  name="' + response[i] +'"value="'+i+'"class=chk"'+ '" id="' + response[i] + '"/>' +'<label for="' + i + '">'+response[i]+'&nbsp;&nbsp;</label>');
+                                
+                                if(i%15==0)
+                                {
+                                        li="<tr><td width=60%>"
+                                            $('#wkslist').append(li);
+                                }
+                                li = $('<input type="checkbox"  name="' + response[i] +'"value="'+i+'"class=chk"'+ '" id="' + response[i].trim() + '"/>' +'<label for="' + i + '">'+response[i]+'&nbsp;&nbsp;</label>');
                                 $('#wkslist').append(li);
-                                arr[i]=response[i];
+
+                                if(i%15==14)
+                                {
+                                        li="</td></tr>"
+                                        $('#wkslist').append(li);
+                                }
+                                arr[i]=response[i].trim();
                                 arr1[i]=0;
                             }
                         }
@@ -296,7 +291,7 @@ document.querySelector("#wkslist").addEventListener('change',(e)=>{
         arr1[i]=0;
     }
     for(i=0;i<arr.length;i++)
-    {
+    { 
         if(document.getElementById(arr[i]).checked==true)
         {
             if(arr1[i]==0);
@@ -372,12 +367,10 @@ $("#chkAllEpc").on("change", function () {
 
 
 function Cpmfunc(){
-  
     window.location.href="{% url 'btnViewCPM_Click' %}"+"?lblDt="+$('#lblDt').val()+"&dtEpc="+$('#lbldtEpc').val()+"&dtPtc="+$('#lbldtPtc').val()+"&EpcAll="+$('#lblEpcAll').val()+"&PtcAll="+$('#lblPtcAll').val();
-    
 }
 function Clearfunc(){
-    window.location.href="{% url 'btnClear_Click' %}"
+    window.location.reload();
 }
 </script>
 

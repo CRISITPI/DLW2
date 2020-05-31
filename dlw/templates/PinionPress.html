@@ -63,7 +63,7 @@
    
     <style>
         #customers {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            font-family: 'Quicksand', sans-serif;
             border-collapse: collapse;
             margin-left: auto;
             margin-right: auto;
@@ -115,27 +115,23 @@ footer, .page-content::after{
         <div class="collapse navbar-collapse" id="collapse_target">
             <ul class="navbar nav" style="width:100%;">
                 <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <button type="button" class="btn btn-primary" {% if usermaster.op_delete %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                             <font color="white">Delete</font>
                      </button>
                 </li>
+                
                 <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
-                            <font color="white">Dispatch</font>
-                     </button>
-                </li>
-                <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#InspectModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <button type="button" class="btn btn-primary" {% if usermaster.op_update %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#InspectModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                             <font color="white">Inspect</font>
                      </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EditModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                    <button type="button" class="btn btn-primary" {% if usermaster.op_update %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#EditModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                             <font color="white">EditRecord</font>
                  </button>
                 </li>
-                <li class="nav-item">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                <li class="nav-item">                   
+                    <button type="button" class="btn btn-primary" {% if usermaster.op_create %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#AddModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                     <font color="white">AddRecord</font>
                  </button>
                 </li>
@@ -234,16 +230,7 @@ footer, .page-content::after{
                                         <input type="text" class="form-control" name="bo_qty" id="bo_qty" required readonly>
                                     </div>
                                     </div>
-                                    <div class="row">
-                                                <div class="col-6">
-                                                    <label for="">Machine In Date</label>
-                                                    <input type="text" class="form-control" name="in_qty" id="in_qty" placeholder="dd-mm-yyyy" readonly>
-                                                </div>
-                                                <div class="col-6">
-                                                    <label for="">Machine Out Date</label>
-                                                    <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
-                                                </div>
-                                            </div>
+                                    
 
                                         <div class="row">
                                             <div class="col-6">
@@ -259,28 +246,50 @@ footer, .page-content::after{
                                     <div class="row">   
                                         <div class="col-6">
                                             <label for="">Traction motor No.</label>
-                                            <input type="text" class="form-control" name="tm_no" id="tm_no" placeholder="TM no." maxlength="20" required>
+                                            <input type="text" class="form-control" name="tm_no" id="tm_no" placeholder="TM no" maxlength="20" required>
                                         </div>   
+                                       
                                         <div class="col-6">
                                             <label for="">Traction motor Make</label>
-                                            <input type="text" class="form-control" name="tm_make" id="tm_make" placeholder="TM make" maxlength="20" required>
-                                        </div> 
+                                            <select name="tm_make" id="tm_make" class="form-control ll" required >
+                                              <option value="" hidden selected>Select Traction motor Make.</option>
+                                                <option>CGL</option>
+                                                <option>BHEL</option>
+                                                <option>SAINI</option>
+                                                <option>MEDHA</option>
+                                                <option>EMD</option>
+                                                <option>SIMENS</option>
+                                                <option>CHINA</option>
+                                               
+                                            </select>
+                                    </div>
                                 </div>
                                 <div class="row">  
                                     <div class="col-6">
                                     <label for="">Axle No.</label>
                                     <select name="axle_no" id="axle_no" class="form-control ll" required>
-                                            <option value="" hidden selected>Select BO No.</option>  
+                                            <option value="" hidden selected>Select Axle No.</option>  
                                             {% for x in axleno %}
                                             <option>{{x.axle_no}}</option>
                                             {% endfor %}
                                     </select> 
                                 </div> 
+                                <div class="col-6">
+                                    <label for="">Machine In Date</label>
+                                    <input type="text" class="form-control" name="in_qty" id="in_qty" placeholder="dd-mm-yyyy" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="col-6">
+                                    <label for="">Machine Out Date</label>
+                                    <input type="text" class="form-control" name="out_qty" id="out_qty" placeholder="dd-mm-yyyy" readonly>
+                                </div>
                             </div>
                             </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" />
+            <input type="submit" name="submit" class="btn btn-primary"  id="savebtn" value="Save" onclick="return funct()" />
           </div>
           </form>
         </div>
@@ -303,11 +312,11 @@ footer, .page-content::after{
         <div class="modal-body"> 
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="">S No.</label>
+                                    <label for="">Axle No.</label>
                                     <select name="sno" id="editsno" class="form-control ll" required>
-                                        <option value="" hidden selected>Select S No.</option>  
+                                        <option value="" hidden selected>Select Axle No.</option>  
                                         {% for y in mysno %}
-                                        <option>{{y.sno}}</option>
+                                        <option>{{y.axle_no}}</option>
                                         {% endfor %}
                                 </select> 
                                 </div>
@@ -329,36 +338,49 @@ footer, .page-content::after{
                                                     <h6><label>Batch Qty</label></h6>
                                                     <input type="text" class="form-control" name="editbo_qty" id="editbo_qty" required readonly>
                                             </div>
-                                                <div class="col-6">
-                                                    <label for="">Machine In Date</label>
-                                                    <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
-                                                </div>
-                                                <div class="col-6">
-                                                    <label for="">Machine Out Date</label>
-                                                    <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
-                                                </div>
+                                                
                                       
                                          <div class="col-6">
                                                 <h6><label for="">Loco Type</label></h6>
                                                 <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
                                             </div>
-                                            <div class="col-6">
-                                                <label for="">Traction motor No.</label>
-                                                <input type="text" class="form-control" id="edittm_no" name="edittm_no" placeholder="" maxlength="20" required>
-                                   </div>
+                                          
                                    <div class="col-6">
                                       <label for="">Date</label>
                                       <input type="text" id="editdate" name="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly> 
                                    </div>
+                                   <div class="col-6">
+                                    <label for="">Traction motor No.</label>
+                                    <input type="text" class="form-control" id="edittm_no" name="edittm_no" placeholder="TM no." maxlength="20" required>
+                                 </div>
+                                
                                 <div class="col-6">
                                     <label for="">Traction motor Make</label>
-                                    <input type="text" class="form-control" id="edittm_make" name="edittm_make" placeholder="" maxlength="20" required>
-                                </div> 
+                                    <select name="edittm_make" id="edittm_make" class="form-control ll" required >
+                                      <option value="" hidden selected>Select Traction motor Make.</option>
+                                        <option>CGL</option>
+                                        <option>BHEL</option>
+                                        <option>SAINI</option>
+                                        <option>MEDHA</option>
+                                        <option>EMD</option>
+                                        <option>SIMENS</option>
+                                        <option>CHINA</option>
+                                       
+                                    </select>
+                            </div>
+                                <div class="col-6">
+                                    <label for="">Machine In Date</label>
+                                    <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
+                                </div>
+                                <div class="col-6">
+                                    <label for="">Machine Out Date</label>
+                                    <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
+                                </div>
                                      </div>  
                                     </div>                      
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" />
+            <input type="submit" name="submit" class="btn btn-primary"  id="editsavebtn" value="Edit" onclick="return editfunct()"/>
           </div>
           </form>
         </div>
@@ -423,16 +445,16 @@ footer, .page-content::after{
       </button>
             </div>
         
-            <form method="POST" class="needs-validation" > {% csrf_token %}
+            <form name="PinionForm" id="PinionForm" method="POST" class="needs-validation" > {% csrf_token %}
 
             <div class="modal-body">
                   <div class="row">
                   <div class="col-6">
-                          <label for="">Serial No.</label>
+                          <label for="">Axle No.</label>
                           <select name="snowheel" id="addsno" class="form-control ll" required>
-                                  <option value="" hidden selected>Select S.No.</option>  
+                                  <option value="" hidden selected>Select Axle No.</option>  
                                   {% for x in mysno %}
-                                  <option>{{x.sno}}</option>
+                                  <option>{{x.axle_no}}</option>
                                   {% endfor %}
                           </select> 
                         </div>         
@@ -440,17 +462,32 @@ footer, .page-content::after{
                         <label for="">Pinion No.</label>
                         <input type="text" class="form-control" name="pinion_no" id="pinion_no" placeholder="" maxlength="20" required>
                       </div>
-                      <div class="col-6">
+                     
+                          <div class="col-6">
                             <label for="">Pinion Make</label>
-                            <input type="text" class="form-control" name="pinion_make" id="pinion_make" placeholder="" maxlength="20" required>
-                          </div>
+                            <select name="pinion_make" id="pinion_make" class="form-control ll" required >
+                              <option value="" hidden selected>Select Pinion Make.</option>
+                                <option>SHANTHI</option>
+                                <option>BHEL</option>
+                                <option>GGAG</option>
+                                <option>TRINA</option>
+                            </select>
+                    </div>
                           <div class="col-6">
                                 <label for="">Pinion Travel</label>
-                                <input type="text" class="form-control" name="pinion_travel" id="pinion_travel" placeholder="" maxlength="20" required>
+                                <input type="text" class="form-control" name="pinion_travel" id="pinion_travel" onchange="validatePinionForm(this.id)" placeholder="" maxlength="20" required>
                               </div>
                               <div class="col-6">
-                                    <label for="">Pinion Pressure</label>
-                                    <input type="text" class="form-control" id="pinion_pressure" name="pinion_pressure" placeholder="" maxlength="20" required>
+                                    <label for="">Pinion Pressure (Triangle Glycerin)</label>
+                                    <input type="text" class="form-control" id="pinion_pressure_triangle_glycerin" onchange="validatePinionForm(this.id)" name="pinion_pressure_triangle_glycerin" placeholder="" maxlength="20" required>
+                                  </div>
+                                  <div class="col-6">
+                                    <label for="">Pinion Pressure (Square RAM)</label>
+                                    <input type="text" class="form-control" id="pinion_pressure_square_ram" onchange="validatePinionForm(this.id)" name="pinion_pressure_square_ram" placeholder="" maxlength="20" required>
+                                  </div>
+                                  <div class="col-6">
+                                    <label for="">Distance between Pinion Teeth and DE</label>
+                                    <input type="text" class="form-control" id="pinion_teeth_dist" onchange="validatePinionForm(this.id)" name="pinion_teeth_dist" placeholder="" maxlength="20" required>
                                   </div>
                                   <div class="col-6">
                                         <label for="">Blue matching status</label>
@@ -460,14 +497,15 @@ footer, .page-content::after{
                                         <label for="">Date(Manually)</label>
                                         <input type="text" name="inspect_date" id="inspect_date" class="form-control" placeholder="dd-mm-yyyy" required readonly>
                                       </div>
-                                <!-- <div class="col-6">
-                                <label>Loco Type</label>
-                                    <input type="text" class="form-control" name="locos" id="locos" required readonly>
-                                    </div> -->
+                                      <div class="col-6">
+                                                                     
+                                        <input type="hidden" class="form-control" name="hide" id="hide" placeholder="" required>
+                                      </div>
                               
                                           
                 </div>
             </div>                        
+
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -492,10 +530,15 @@ footer, .page-content::after{
     <form method="POST" class="needs-validation" > {% csrf_token %}
            <div class="modal-body">
                     <div class="row">
-                        <div class="col">
-                                <label for="">Serial No.</label>
-                                <input type="number" class="form-control" id="delsno" name="delsno"  required>
-                        </div> 
+                        <div class="col-6">
+                            <label for="">Axle No.</label>
+                            <select name="delsno" id="delsno" class="form-control ll" required>
+                                    <option value="" hidden selected>Select Axle No.</option>  
+                                    {% for x in mysno %}
+                                    <option>{{x.axle_no}}</option>
+                                    {% endfor %}
+                            </select> 
+                    </div> 
                     </div>
             </div>
         <div class="modal-footer">
@@ -526,6 +569,25 @@ footer, .page-content::after{
             }
         });
     });
+
+    $("#addsno").change(function(e){
+            e.preventDefault();
+            var val_loco;
+            var sels_no=$(this).val();
+            var data={sels_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'validate_pinionpress_inspect' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        $("#hide").val(`${response[0].loco_type}`);
+                    }
+
+                })
+                
+        });
+
     
     $("#addbono").change(function(e){
         e.preventDefault();
@@ -559,6 +621,85 @@ footer, .page-content::after{
                     })
                 }
 
+            $("#tm_no").change(function(e){
+            e.preventDefault();
+            var tm_no=$(this).val();
+            var data={tm_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'uniquetm' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false")
+                        {
+                            alert("This Traction Motor No. already exists. Please Enter a unique Traction Motor No.!")
+                            document.getElementById("tm_no").value="";
+                        }
+                    }
+
+                })
+                
+        });
+
+        $("#edittm_no").change(function(e){
+            e.preventDefault();
+            var tm_no=$(this).val();
+            var data={tm_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'uniquetm' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false")
+                        {
+                            alert("This Traction Motor No. already exists. Please Enter a unique Traction Motor No.!")
+                            document.getElementById("edittm_no").value="";
+                        }
+                    }
+
+                })
+                
+        });
+
+        function funct(){
+            if((document.getElementById('axle_no').value =='')||(document.getElementById('tm_make').value =='')||(document.getElementById('tm_no').value =='')||(document.getElementById('in_qty').value =='')||(document.getElementById('out_qty').value =='')||(document.getElementById('date').value ==''))
+            {
+                alert("Please enter all the fields.");
+                return false;
+            }
+        }
+
+        function editfunct(){
+            if((document.getElementById('editaxle_no').value =='')||(document.getElementById('edittm_make').value =='')||(document.getElementById('edittm_no').value =='')||(document.getElementById('editin_qty').value =='')||(document.getElementById('editout_qty').value =='')||(document.getElementById('editdate').value ==''))
+            {
+                alert("Please enter all the fields.");
+                return false;
+            }
+        }
+
+          $("#pinion_no").change(function(e){
+            e.preventDefault();
+            var pinion_no=$(this).val();
+            var data={pinion_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'uniquepinion' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response == "false")
+                        {
+                            alert("This Pinion No. already exists. Please Enter a unique Pinion No.!")
+                            document.getElementById("pinion_no").value="";
+                        }
+                    }
+
+                })
+                
+        });         
+
 
 
     $("#editsno").change(function(e){
@@ -572,6 +713,34 @@ footer, .page-content::after{
                             data:data,
                             success:function(response){
                                 console.log(response);
+                                var indate=response[0].in_qty;
+                   
+                    var outdate=response[0].out_qty;
+                
+                        if(indate != null)
+                        {
+                            var month1 = indate.substring(5,7);
+                            var day1 = indate.substring(8,10);
+                            var year1 = indate.substring(0,4);
+                            var date1 =  day1 + "-" + month1 + "-" + year1; 
+                            $("#editin_qty").val(date1);
+                        }
+                        else
+                        {
+                            $("#editin_qty").val(`${response[0].in_qty}`);
+                        }
+                        if(outdate != null)
+                        {
+                            var month2 = outdate.substring(5,7);
+                            var day2 = outdate.substring(8,10);
+                            var year2 = outdate.substring(0,4);
+                            var date2 =  day2 + "-" + month2 + "-" + year2; 
+                            $("#editout_qty").val(date2);
+                        }
+                        else
+                        {
+                            $("#editout_qty").val(`${response[0].out_qty}`);
+                        }
                                 $("#editbo_no").val(`${response[0].bo_no}`);
                                 $("#editbo_date").val(`${response[0].bo_date}`);
                                 $("#editpt_no").val(`${response[0].pt_no}`);
@@ -579,8 +748,7 @@ footer, .page-content::after{
                                 $("#editdate").val(`${response[0].date}`);
                                 $("#edittm_make").val(`${response[0].tm_make}`);
                                 $("#edittm_no").val(`${response[0].tm_no}`);
-                                $("#editin_qty").val(`${response[0].in_qty}`);
-                                $("#editout_qty").val(`${response[0].out_qty}`);
+                             
                                 var locodes=document.getElementById('editbo_no').value;
                                 func2(locodes);
                                 
@@ -615,23 +783,171 @@ footer, .page-content::after{
                         if(response=="false")
                         {
                         document.getElementById('pinion_make').value ='';
-                        document.getElementById('pinion_pressure').value ='';
+                        document.getElementById('pinion_pressure_triangle_glycerin').value ='';
+                        document.getElementById('pinion_pressure_square_ram').value ='';
+                        document.getElementById('pinion_teeth_dist').value ='';
                         document.getElementById('pinion_travel').value ='';
                         document.getElementById('blue_match').value ='';
                         document.getElementById('pinion_no').value ='';
+                        document.getElementById('inspect_date').value ='';
                         }
                         else {
+                            var inspectdate=response[0].inspect_date;
+                                if(inspectdate != null)
+                                {
+                                    var month2 = inspectdate.substring(5,7);
+                                    var day2 = inspectdate.substring(8,10);
+                                    var year2 = inspectdate.substring(0,4);
+                                    var date2 =  day2 + "-" + month2 + "-" + year2; 
+                                    $("#inspect_date").val(date2);
+                                }
+                                else
+                                {
+                                    $("#inspect_date").val(`${response[0].inspect_date}`);
+                                }
                         $("#pinion_make").val(`${response[0].pinion_make}`);
-                        $("#pinion_pressure").val(`${response[0].pinion_pressure}`);
+                        $("#pinion_pressure_triangle_glycerin").val(`${response[0].pinion_pressure_triangle_glycerin}`);
                         $("#pinion_travel").val(`${response[0].pinion_travel}`);
                         $("#blue_match").val(`${response[0].blue_match}`);
+                        $("#pinion_pressure_square_ram").val(`${response[0].pinion_pressure_square_ram}`);
+                        $("#pinion_teeth_dist").val(`${response[0].pinion_teeth_dist}`);
                         $("#pinion_no").val(`${response[0].pinion_no}`);
+                        
+                       
                         }
+
 
                     }
 
                 })
             });
+
+
+            function validatePinionForm(a) {
+        var myval=document.getElementById('hide').value;
+        var x = document.forms["PinionForm"][a].value;
+        if(isNaN(x)==false)
+        {
+       
+        if(a=="pinion_travel"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
+    b=11.9;
+    c=12.1;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+    if(a=="pinion_pressure_triangle_glycerin"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
+    b=24.5;
+    c=29;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+    if(a=="pinion_pressure_square_ram"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
+    b=1;
+    c=8;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+    if(a=="pinion_teeth_dist"){ 
+        if (myval=="WAP-7"||myval=="WAP-9") {           
+    b=3;
+    c=5;
+    var relax = 10;
+    var min=b - ((relax/100) * b);
+    var max=c + ((relax/100) * c);
+    
+    if(x < min || x > max){
+    setvalidation1(a,b,c);
+    }
+    else if((x>=min && x<b)||(x>c && x<=max)){
+    setvalidation2(a);
+    }
+    else if((x >= b) && (x <= c)){
+    setvalidation3(a);
+    }
+}
+    
+    }
+        }
+else
+    {
+        setvalidation4(a);
+    } 
+
+        }
+
+    function setvalidation1(a,b,c)
+{
+    alert("Please enter the value between "+b+" and "+c);
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
+
+function setvalidation2(a)
+{
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="";
+}
+
+function setvalidation3(a)
+{
+    document.getElementById(a).style.color = "black";
+    document.getElementById(a).style.backgroundColor="";
+}
+
+function setvalidation4(a)
+{
+    alert("Please enter valid Numeric value");
+    document.getElementById(a).value="";
+    document.getElementById("")
+    $('#'+a).focus();
+    document.getElementById(a).style.color = "red";
+    document.getElementById(a).style.backgroundColor="yellow";
+}
     
 </script>
 

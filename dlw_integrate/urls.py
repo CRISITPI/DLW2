@@ -617,6 +617,24 @@ urlpatterns = [
     path('batchrelease/',batchrelease,name='batchrelease'),
     path('ajax/batchreleasegetbatch/',batchreleasegetbatch,name='batchreleasegetbatch'),
     path('ajax/Batchreleasedetails/',Batchreleasedetails,name='Batchreleasedetails'),
+    path('ajax/cnote_getcn/',cnote_getcn,name='cnote_getcn'),
+
+
+
+    path('ajax/bogiereportbono_validate',bogiereportbono_validate,name='bogiereportbono_validate'),
+    path('ajax/bogiereportfsno_validate',bogiereportfsno_validate,name='bogiereportfsno_validate'),
+    path('ajax/firstaxle',firstaxle,name='firstaxle'),
+    path('ajax/secondaxle',secondaxle,name='secondaxle'),
+    path('ajax/FetchBogieDetail',FetchBogieDetail,name='FetchBogieDetail'),
+    path('ajax/uniquewheel',uniquewheel,name='uniquewheel'),
+    path('ajax/uniqueaxle',uniqueaxle,name='uniqueaxle'),
+    path('ajax/uniquebullgear',uniquebullgear,name='uniquebullgear'),
+    path('ajax/uniquetm',uniquetm,name='uniquetm'),
+    path('ajax/uniquepinion',uniquepinion,name='uniquepinion'),
+    path('ajax/uniqueframeserial',uniqueframeserial,name='uniqueframeserial'),
+    path('ajax/validate_axlepress_inspect',validate_axlepress_inspect,name='validate_axlepress_inspect'),
+    path('ajax/validate_pinionpress_inspect',validate_pinionpress_inspect,name='validate_pinionpress_inspect'),
+    path('ajax/fetch_axlemake',fetch_axlemake,name='fetch_axlemake'),
 
 
 

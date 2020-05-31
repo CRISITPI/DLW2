@@ -2,7 +2,7 @@
 <style>
 
 #customers {
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-family: 'Quicksand', sans-serif;
     border-collapse: collapse;
     width: 100%;
     
@@ -41,14 +41,11 @@
 <center>
 <table style="height: 100%; margin-bottom: 0px;">
 <tr>
-<td><center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br></td>
-<td><center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br></td>
-<td><center><input type="submit" name="btn" value="Wheel Report" class="form-control ll"  required style="width:260px;" /></center><br></td>
-<!-- <center><input type="submit" name="btn" value="No. of Wheel (date wise)" class="form-control ll" required style="width:250px;" /></center><br> -->
-<!-- <center><input type="submit" name="btn" value="No. of Wheel (date range)" class="form-control ll" required style="width:250px;" /></center><br> -->
-<!-- <center><input type="submit" name="btn" value="Month Wise Detail" class="form-control ll" required style="width:250px;" /></center><br> -->
-<td><center><input type="submit" name="btn" value="Wheel Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center><br></td>
-<td><center><input type="submit" name="btn" value="Wheel Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center><br></td>
+<td><center><input type="submit" name="btn" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+<td><center><input type="submit" name="btn" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+<td><center><input type="submit" name="btn" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Wheel Report" class="form-control ll"  required style="width:260px;" /></center><br></td>
+<td><center><input type="submit" name="btn" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Wheel Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center><br></td>
+<td><center><input type="submit" name="btn" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Wheel Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center><br></td>
 </tr>
 </table>
 </center>
@@ -71,6 +68,11 @@
 <input type="submit" value="Proceed2" name="btn" id="proceeddt" hidden/>
 {% endif %}
 {% if sub == 5 %}
+<center>                
+    <label for="batch no"><b>
+    Enter Wheel No. :
+    </b></label><br><br>
+</center>
 <center><input type="text" name="wheel_no" id="wheel_no"  class="form-control ll" required style="width:250px;" placeholder="" required/></center>
 <br><br>
 <center><input type="submit" value="Proceed" name="btn" id="Proceed"></center>
@@ -164,7 +166,7 @@
     <td style="width:250px;text-align:center;">{{i.tread_diawhl}}</td>
     <td style="width:250px;text-align:center;">{{i.rim_thicknesswhl}}</td>
     <td style="width:250px;text-align:center;">{{i.bore_diawhl}}</td>
-    <td style="width:250px;text-align:center;">{{i.datewhl}}</td>
+    <td style="width:250px;text-align:center;">{{datel}}</td>
     <td style="width:250px;text-align:center;">{{i.inspector_namewhl}}</td>
 </tr>
 {% endfor %}
@@ -254,34 +256,43 @@
 <center><h2>DLW Varanasi</h2></center>
 <h2 align="left">Shop : TMS</h2>
 <h2 align="left">Shop Section : Wheel Machining</h2>
-<br><br><br>
 <div id="printdata" style="align:center;">
     <table align="center" id = "table">
        
-        <!-- <div id ="tb1"></div> -->
+       
             {% for i in ob1 %}
 
             <h3 align="left">Wheel No. : {{i.wheel_no}}</h3>
             <tr>  
                 <td>
-                    <label for="loco_type"><b>Loco Type 
-                         </b></label><br><br>
+                    <label for="loco_type"><b>Loco Type : &nbsp;&nbsp;
+                         </b></label>
                 </td> 
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="loco_type" id="loco_type" value="{{i.loco_type}}"readonly></td><br><br>
-            
+               
+                <td>
+                    <label for="loco_type">{{i.loco_type}} 
+                         </label>
+                </td>
             
                 <td>
                     <label for="batch no"><b>
-                        Batch No
-                         </b></label><br><br>
+                        &nbsp;&nbsp; &nbsp;&nbsp; Batch No : &nbsp;&nbsp;
+                         </b></label>
                 </td> 
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="batch no" id="batch no" value="{{i.bo_no}}"readonly></td><br><br>
+                <td>
+                    <label for="loco_type">{{i.bo_no}} 
+                         </label>
+                </td>
                 <td>
                     <label for="machine date"><b>
-                        Machining Date
-                         </b></label></br></br>
+                        &nbsp;&nbsp; &nbsp;&nbsp; Machining Date : &nbsp;&nbsp;
+                         </b></label>
                 </td>
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="staffName" id="staffName" value="{{i.date}}"readonly></td>
+                <td>
+                    <label for="loco_type">{{i.date}} 
+                         </label>
+                </td>
+                
             </tr>
         </table> 
             <br><br>
@@ -309,33 +320,38 @@
     <td style="width:250px;text-align:center;">{{i.inspector_namewhl}}</td>
 </tr>
 </table>
-
-
             {% endfor %}
-            <br><br><br><br><br><br><br>
+            <br><br><br><br><br><br>
             <h3 align="left">Wheel Pressing Details :</h3>
             <table align="center" id = "table1">
             {% for i in ob2 %}
             <tr>  
                 <td>
-                    <label for="loco_type"><b>Axle No.
-                         </b></label><br><br>
+                    <label for="loco_type"><b>Axle No. : &nbsp;&nbsp;
+                         </b></label>
                 </td> 
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="loco_type" id="loco_type" value="{{i.axle_no}}"readonly></td><br><br>
-            
-            
+                <td>
+                    <label for="loco_type">{{i.axle_no}}
+                    </label>
+                </td>
                 <td>
                     <label for="batch no"><b>
-                        Inspection Date
-                         </b></label><br><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Inspection Date : &nbsp;&nbsp;
+                         </b></label>
                 </td> 
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="batch no" id="batch no" value="{{i.inspect_date}}"readonly></td><br><br>
+                <td>
+                    <label for="loco_type">{{i.inspect_date}}
+                    </label>
+                </td>
                 <td>
                     <label for="machine date"><b>
-                        Inspector Name
-                         </b></label></br></br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Inspector Name : &nbsp;&nbsp;
+                         </b></label>
                 </td>
-                <td><input type="text" style="border-style : hidden;font-size:20px" name="staffName" id="staffName" value="{{i.inspector_name}}"readonly></td>
+                <td>
+                    <label for="loco_type">{{i.inspector_name}}
+                    </label>
+                </td> 
             </tr>
             {% endfor %}
         </table>
@@ -481,7 +497,7 @@ $(document).ready(function () {
 });
 $(document).ready(function () {
     $('#wheel_no').change({
-        // dateFormat: 'dd-mm-yy',
+       
         onSelect : function(  ){
     document.querySelector("#Proceed5").click();
     }

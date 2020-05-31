@@ -1,13 +1,22 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 
-<html>
-  <head>
     <style>
-    @page {
-      size: A1;
-      margin: 2cm;
-    }
+      @page {
+              size: A4;
+              margin: 2cm;
+                
+              thead {display: table-header-group;}
+              @frame footer {
+                -pdf-frame-content: footerContent;
+                bottom: 0cm;
+                margin-left: 9cm;
+                margin-right: 9cm;
+                height: 1cm;
+              }
+               
+      }
+   
     table {
       border-collapse: collapse;
       word-break: break-all;
@@ -16,23 +25,27 @@
       table-layout: fixed;
       width: 100%;
     }
-    th {
+    th,td {
       text-align: left;
       white-space: nowrap;
+      padding: 1px;
     }
-
     
-    </style>
-  </head>
-  <body>
+  </style>
+    <div id="footerContent">
+      {%block page_foot%}
+          Page <pdf:pagenumber>
+      {%endblock%}
+  </div>
+  
     <center><b>DIESEL LOCOMOTIVE WORKS, VARANASI</b></center>
     <center><b>CONSOLIDATED LIST OF DLW LOCOMOTIVE PARTS</b></center>
     <br>
     <table>
       <tr>
-        <td align=left>End Product Code : {{EpcAll}}</td>
-        <td align=left>Part Type : {{PtcAll}}</td>
-        <td align=left>CPM Creation Date : {{today}}</td>
+        <td>End Product Code :{{EpcAll}}</td>
+        <td>Part Type : {{PtcAll}}</td>
+        <td>CPM Creation Date :{{today}}</td>
       </tr>  
     </table>
     <br>
@@ -42,65 +55,30 @@
       <table class="table report">
         <thead>
           <tr>
-            <th>S No</th>
-            <th>Part No</th>
-            <th>Part Description</th>
-            <th>ptc</th>
-            <th>Shop_ut</th>
-            <th>opn</th>
-            <th>Shop_sec</th>
-            <th>M2/Eng</th>
-            <th>S6/Eng</th>
-            <th>M2c/Eng</th>
-            <th>G2/Eng</th>
-            <th>P2/Eng</th>
-            <th>M2/Loc</th>
-            <th>M4/Loc</th>
-            <th>M2ca/Loc</th>
-            <th>S6/Loc</th>
-            <th>G2A/Loc</th>
-            <th>P2A/Loc</th>
-            <th>M2/Tra</th>
-            <th>M4/Tra</th>
-            <th>S6/Tra</th>
-            <th>P1/Tra</th>
-            <th>G2/Tra</th>
-            <th>P2/Tra</th>
+            <th width="10%">S No</th>
+            <th width="15%">Part No</th>
+            <th width="35%">Part Description</th>
+            <th width="10%">PTC</th>
+            <th width="10%">Qty</th>
+            <th width="20%">Unit</th>
           </tr>
         </thead>
+        
         <tbody>
           {% for i in ptdes %}
           <tr>
             <td>{{i.sl}}</td>
             <td>{{i.part_no}}</td>
-            <td width="10%" >{{i.des}}</td>
+            <td>{{i.des}}</td>
             <td>{{i.ptc}}</td>
+            <td>{{i.qty}}</td>
             <td>{{i.shop_ut}}</td>
-            <td></td>
-            <td></td>
-            <td>{{i.M2Eng}}</td> 
-            <td>{{i.S6Eng}}</td> 
-            <td>{{i.M2cEng}}</td> 
-            <td>{{i.G2Eng}}</td> 
-            <td>{{i.P2Eng}}</td> 
-            <td>{{i.M2Loc}}</td> 
-            <td>{{i.M4Loc}}</td> 
-            <td>{{i.M2CaLoc}}</td> 
-            <td>{{i.S6Loc}}</td> 
-            <td>{{i.G2ALoc}}</td> 
-            <td>{{i.P2ALoc}}</td> 
-            <td>{{i.M2Tra}}</td> 
-            <td>{{i.M4Tra}}</td> 
-            <td>{{i.S6Tra}}</td> 
-            <td>{{i.P1Tra}}</td> 
-            <td>{{i.G2Tra}}</td> 
-            <td>{{i.P2Tra}}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
     <br>
-  </body>
-</html>
+
+  
 

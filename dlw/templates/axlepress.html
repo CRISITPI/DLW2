@@ -1,12 +1,12 @@
 {% extends 'base.html' %} {% block content %} {% load static %}
 <style>
 
-/* #customers {
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+#customers {
+    font-family: 'Quicksand', sans-serif;
     border-collapse: collapse;
     width: 100%;
     
-} */
+}
 
 #customers td, #customers th {
     border: 1px solid #ddd;
@@ -35,13 +35,11 @@
 <center>
 <table>
 <tr>
-<td><center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center></td>
-<td><center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center></td>
-<td><center><input type="submit" name="btn" value="Axle Report" class="form-control ll"  required style="width:260px;" /></center></td>
-<!-- <td><center><input type="submit" name="btn" value="Axle No. Detail" class="form-control ll" required style="width:250px;" /></center></td> -->
-<!-- <td><center><input type="submit" name="btn" value="Month Wise Detail" class="form-control ll" required style="width:250px;" /></center></td> -->
-<td><center><input type="submit" name="btn" value="Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center></td>
-<td><center><input type="submit" name="btn" value="Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center></td>
+<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center></td>
+<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  value="Date Range Report" class="form-control ll" required style="width:250px;" /></center></td>
+<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Axle Report" class="form-control ll"  required style="width:260px;" /></center></td>
+<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center></td>
+<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center></td>
 </tr>
 </table>
 </center>
@@ -222,7 +220,7 @@
     {% endfor %}
     </table>
     {% endif %}
-    <br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+    <br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report"  class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
 {% if sub == 8 %}
 {% if l > 0 %}
@@ -284,29 +282,26 @@
         <td style="width:250px;text-align:center;">{{i.journal_make_de}}</td>
         <td style="width:250px;text-align:center;">{{i.journal_no_nde}}</td>
         <td style="width:250px;text-align:center;">{{i.journal_make_nde}}</td>
-        <td style="width:250px;text-align:center;">{{i.inspect_date}}</td>
+        <td style="width:250px;text-align:center;">{{dt1}}</td>
         <td style="width:250px;text-align:center;">{{i.inspector_name}}</td>
     </tr>
     {% endfor %}
     </table>
     {% endif %}
-    <br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+    <br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
 {% if sub == 11 %}
 <center><h2>DLW Varanasi</h2></center>
 <h2 align="left">Shop : TMS</h2>
 <h2 align="left">Shop Section : Axle Wheel Pressing</h2>
-<!-- <div id="printdata" style="align:center;"> -->
-    {% if l > 0 %}
+{% if l > 0 %}
     <table align="center" id = "table">
-        <!-- <div id ="tb1"></div> -->
-            {% for i in ob3 %}
+         {% for i in ob3 %}
             <h3 align="left">Axle No. : {{i.axle_no}}</h3>
             <tr>  
                 <td>
                     <label for="loco_type"><b>Loco Type : </b></label>&nbsp;&nbsp;
                 </td> 
-                <!-- <td><input type="text" style="border-style : hidden;font-size:20px" name="loco_type" id="loco_type" value="{{i.loco_type}}"readonly></td><br><br> -->
                 <td>
                     <label for="loco_type">{{i.loco_type}}</label>
                 </td>
@@ -317,14 +312,12 @@
                 <td>
                     <label for="loco_type">{{i.bo_no}}</label>
                 </td> 
-                <!-- <td><input type="text" style="border-style : hidden;font-size:20px" name="batch no" id="batch no" value="{{i.bo_no}}"readonly></td><br><br> -->
                 <td>
                     &nbsp;&nbsp;&nbsp;<label for="machine date"><b>Machining Date : </b></label>&nbsp;&nbsp;
                 </td>
                 <td>
                     <label for="loco_type">{{i.date}}</label>
                 </td>
-                <!-- <td><input type="text" style="border-style : hidden;font-size:20px" name="staffName" id="staffName" value="{{i.date}}"readonly></td> -->
             </tr>
         </table> 
         {% endfor %}
@@ -444,7 +437,7 @@
 
 {% endif %}
 <br><br><br><br>
-<br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+<br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" id="print_report"  class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
 
 </form>
@@ -534,9 +527,9 @@ function printDiv() {
 $('#axle_no').change(function(e){
             e.preventDefault();
             var axle_no=$(this).val();
-            //alert(wheel_no);
+      
             var data={axle_no};
-           // alert(data);
+        
                 $.ajax({
                     type: 'GET',
                     url: "{% url 'axlepressreport_validate' %}",
@@ -559,6 +552,6 @@ $('#axle_no').change(function(e){
         });
 
 </script>
-</script>
+
 
 {% endblock content %}

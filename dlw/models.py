@@ -3439,7 +3439,9 @@ class PinionPressing(models.Model):
     pinion_no=models.CharField(max_length=20,null=True)
     pinion_make=models.CharField(max_length=20,null=True)
     pinion_travel=models.CharField(max_length=20,null=True)
-    pinion_pressure=models.CharField(max_length=20,null=True)
+    pinion_pressure_triangle_glycerin=models.CharField(max_length=20,null=True)
+    pinion_pressure_square_ram=models.CharField(max_length=20,null=True)
+    pinion_teeth_dist=models.CharField(max_length=20,null=True)
     blue_match=models.CharField(max_length=20,null=True)
     loco_type=models.CharField(max_length=20,null=True)
     dispatch_to=models.CharField(max_length=50,null=True)
@@ -3448,6 +3450,7 @@ class PinionPressing(models.Model):
     inspection_status=models.NullBooleanField()
     axle_no=models.CharField(max_length=20,null=True)
     inspect_date=models.CharField(max_length=20,null=True)
+
 
 class Dpo(models.Model):
     procedureno=models.CharField(max_length=50,null=True,default='0')
@@ -3512,6 +3515,7 @@ class AxleWheelPressing(models.Model):
     dispatch_to=models.CharField(max_length=50,null=True)
     dispatch_status=models.BooleanField(default=False)
     wheel_de_make=models.CharField(max_length=20,null=True)
+    wheel_de_pressure=models.CharField(max_length=20,null=True)
     wheel_nde_make=models.CharField(max_length=20,null=True)
     wheel_nde_pressure=models.CharField(max_length=20,null=True)
     axle_make=models.CharField(max_length=20,null=True)
@@ -3543,6 +3547,7 @@ class AxleWheelPressing(models.Model):
     dispatch_date=models.CharField(max_length=20,null=True)
     edit_date=models.CharField(max_length=20,null=True)
     inspect_date=models.CharField(max_length=20,null=True)
+
 
 class M22(models.Model):
     update = models.CharField(db_column='UPDATE', max_length=20, blank=True, null=True,default=0)  # Field name made lowercase.
@@ -3682,6 +3687,53 @@ class BogieAssembly(models.Model):
     dispatch_status=models.BooleanField(default=False)
     inspection_status=models.NullBooleanField()
     dispatch_date=models.CharField(max_length=20,null=True)
+    inspect_date=models.CharField(max_length=20,null=True)
+    first_axle=models.CharField(max_length=20,null=True)
+    second_axle=models.CharField(max_length=20,null=True)
+    third_axle=models.CharField(max_length=20,null=True)
+    first_axle_location=models.CharField(max_length=10,null=True)
+    second_axle_location=models.CharField(max_length=10,null=True)
+    third_axle_location=models.CharField(max_length=10,null=True)
+    first_coilspring_make=models.CharField(max_length=20,null=True)
+    first_gearcase_no=models.CharField(max_length=20,null=True)
+    first_gearcase_make=models.CharField(max_length=20,null=True)
+    first_back_lash=models.CharField(max_length=20,null=True)
+    first_vertical_r=models.CharField(max_length=20,null=True)
+    first_vertical_l=models.CharField(max_length=20,null=True)
+    first_horizontal_r=models.CharField(max_length=20,null=True)
+    first_horizontal_l=models.CharField(max_length=20,null=True)
+    second_coilspring_make=models.CharField(max_length=20,null=True)
+    second_gearcase_no=models.CharField(max_length=20,null=True)
+    second_gearcase_make=models.CharField(max_length=20,null=True)
+    second_back_lash=models.CharField(max_length=20,null=True)
+    second_vertical_r=models.CharField(max_length=20,null=True)
+    second_vertical_l=models.CharField(max_length=20,null=True)
+    second_horizontal_r=models.CharField(max_length=20,null=True)
+    second_horizontal_l=models.CharField(max_length=20,null=True)
+    third_coilspring_make=models.CharField(max_length=20,null=True)
+    third_gearcase_no=models.CharField(max_length=20,null=True)
+    third_gearcase_make=models.CharField(max_length=20,null=True)
+    third_back_lash=models.CharField(max_length=20,null=True)
+    third_vertical_r=models.CharField(max_length=20,null=True)
+    third_vertical_l=models.CharField(max_length=20,null=True)
+    third_horizontal_r=models.CharField(max_length=20,null=True)
+    third_horizontal_l=models.CharField(max_length=20,null=True)
+    wheel_set_guide=models.CharField(max_length=20,null=True)
+    gear_case_oil=models.CharField(max_length=20,null=True)
+    first_secondary_coilspring_make=models.CharField(max_length=20,null=True)
+    second_secondary_coilspring_make=models.CharField(max_length=20,null=True)
+    third_secondary_coilspring_make=models.CharField(max_length=20,null=True)
+    motor_check=models.CharField(max_length=20,null=True)
+    motor_date=models.CharField(max_length=20,null=True)
+    lowering_check=models.CharField(max_length=20,null=True)
+    lowering_date=models.CharField(max_length=20,null=True)
+    dispatch_check=models.CharField(max_length=20,null=True)
+    dispatch_check_date=models.CharField(max_length=20,null=True)
+    loco_paper=models.CharField(max_length=20,null=True)
+    locopaper_date=models.CharField(max_length=20,null=True)
+    h_plate=models.CharField(max_length=20,null=True)
+    torque_support=models.CharField(max_length=20,null=True)
+
 
 class MG22new(models.Model):
     updt_date = models.CharField(blank = True, null=True,max_length=10)
@@ -4302,7 +4354,6 @@ class AxleMachining(models.Model):
     wheelseataxlende=models.CharField(max_length=20,blank=True)
     collaraxlende=models.CharField(max_length=20,blank=True)
 
-
 class M27TimeSheet(models.Model):
     shop_sec=models.CharField(max_length=20,null=True)
     staff_no=models.CharField(max_length=20,null=True)
@@ -4315,6 +4366,8 @@ class M27TimeSheet(models.Model):
     wo_date=models.CharField(max_length=20,null=True)
     tot_hrs=models.CharField(max_length=20,null=True)
 
+
+    
 class WheelMachining(models.Model):
     sno=models.AutoField(primary_key=True)
     bo_no=models.CharField(max_length=20,null=True)

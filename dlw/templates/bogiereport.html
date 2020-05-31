@@ -2,7 +2,7 @@
 <style>
 
 #customers {
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-family: 'Quicksand', sans-serif;
     border-collapse: collapse;
     width: 100%;
     
@@ -24,15 +24,25 @@
     background-color: #808080;
     color: white;
 }
+
 </style>
+</style>
+<br>
+<br>
+<div> <h6 align="left" style="margin-left: 100px;"><b>आई.एस.ओ. - 9002/ I.S.O. - 9002</b> </h6> </div>
+<div> <h6 align="left" style="margin-left: 100px;"><b>डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</b></h6> <h6 align="right" style="margin-right: 100px;"></h6></div><br>
+<br>
+<br>
 <form action="." method="POST">{%csrf_token%}
 <br>
-
 <br>
-<br>
-<center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br>
-<center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br>
-<center><input type="submit" name="btn" value="Month Wise Detail" class="form-control ll" required style="width:250px;" /></center><br>
+<center>
+<table>
+<td><center><input type="submit" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+<td><center><input type="submit" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}   name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+<td><center><input type="submit" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  name="btn" value="Consolidated Detail Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+</table>
+</center>
 <br>
 {% if sub == 0 %}
 <center><input type="text" name="datew" id='datew' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
@@ -45,113 +55,696 @@
 <center><h3>To Date:</h3><input type="text" name="date2" id='date2' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
 <input type="submit" value="Proceed2" name="btn" id="proceeddt" hidden/>
 {% endif %}
-{% if sub == 10 %}
-<center><h3>Month:</h3><input type="text" class="form-control ll" id="month" name="month" onchange ="monthc()" style="width:250px;" required autocomplete="off"/>
-<input type="submit" value="Proceed10" name="btn" id="monthdata" hidden/>
-<br>{% endif %}
+{% if sub == 4 %}
+<center><input type="text" name="datea" id='datea' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed6" name="btn" id="Proceed6" hidden/>
+{% endif %}
+{% if sub == 6 %}
+<center><h3>From Date:</h3><input type="text" name="datea1" id='datea1' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<br>
+<center><h3>To Date:</h3><input type="text" name="datea2" id='datea2' class="form-control ll" required style="width:250px;" placeholder="date" readonly required/></center>
+<input type="submit" value="Proceed7" name="btn" id="Proceed7" hidden/>
+{% endif %}
+{% if sub == 8 %}
+<center><h4>Enter Batch Order No. :</h4><input type="text" name="bo_no" id='bo_no' class="form-control ll" required style="width:250px;" required/></center>
+<br>
+<center><h4>Enter Frame No. :</h4><input type="text" name="fs_no" id='fs_no' class="form-control ll" required style="width:250px;" required/></center>
+<br>
+<center><input type="submit" value="Proceed" name="btn" id="Proceed"/></center>
+{% endif %}
 <div id="print">
 {% if sub == 1 %}
 <center><h2>DLW Varanasi</h2></center>
-<h2 align="right">Shop : TMS</h2>
-<h2 align="left">Date : {{dt}}</h2>
+<br><br>
+<center><h2>Turnout Report for Bogie Section</h2></center>
+<h2 align="left">Shop : TMS</h2>
+<h2 align="right">Date : {{dt}}</h2>
 <h2 align="left">Shop Section : Bogie Assembly</h2>
+<br><br>
+<br><br>
 <table id="customers" align="left">
 <tr>
     <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Loco Type</th>
+    <th style="width:250px;text-align:center;">Frame Make</th>
+    <th style="width:250px;text-align:center;">In Quantity</th>
+    <th style="width:250px;text-align:center;">Out Quantity</th>
 </tr>
-{% for i in ob1 %}
+{% for i in unique_final %}
 <tr>
     <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+    <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
+    <td style="width:250px;text-align:center;">{{i.frame_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.count1}}</td>
+    <td style="width:250px;text-align:center;">{{i.count2}}</td>
 </tr>
 {% endfor %}
 </table>
+
+<br><br><br><br><br><br><br><br><br><br>
 <table id="customers" align="right">
-<tr>
-    <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
-</tr>
-{% for i in ob2 %}
-<tr>
-    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
-</tr>
-{% endfor %}
+    <tr>
+        <th style="width:250px;text-align:center;">Total In Quantity</th>
+        <th style="width:250px;text-align:center;">Total Out Quantity</th>
+    </tr>
+    <tr>
+        <td style="width:250px;text-align:center;">{{len1}}</td>
+        <td style="width:250px;text-align:center;">{{len2}}</td>
+    </tr>
 </table>
-<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+<br><br><br><br><br><br>
+<br><center><input type="button" onclick="printDiv()" id="print_report" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+
 {% endif %}
 {% if sub == 3 %}
 <center><h2>DLW Varanasi</h2></center>
-<h2 align="right">Shop : TMS</h2>
-<h2 align="left">Date : {{dt1}} to {{dt2}}</h2>
+<center><h2>Turnout Report for Bogie Section</h2></center>
+<h2 align="left">Shop : TMS</h2>
+<h2 align="right">Date : {{dt1}} to {{dt2}}</h2>
 <h2 align="left">Shop Section : Bogie Assembly</h2>
-<table id="customers" align="left">
+<br><br>
+<table id="customers" align="center">
 <tr>
-    <th style="width:250px;text-align:center;">Date</th>
     <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">In. Qty for Machining</th>
+    <th style="width:250px;text-align:center;">Loco Type</th>
+    <th style="width:250px;text-align:center;">Frame Make</th>
+    <th style="width:250px;text-align:center;">In Quantity</th>
+    <th style="width:250px;text-align:center;">Out Quantity</th>
 </tr>
-{% for i in ob1 %}
+{% for i in unique_final %}
 <tr>
-    <td style="width:250px;text-align:center;">{{i.in_date}}</td>
     <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
+    <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
+    <td style="width:250px;text-align:center;">{{i.frame_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.count1}}</td>
+    <td style="width:250px;text-align:center;">{{i.count2}}</td>
 </tr>
 {% endfor %}
 </table>
-<table id="customers" align="right">
-<tr>
-    <th style="width:250px;text-align:center;">Date</th>
-    <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">Out Qty for Machining</th>
-</tr>
-{% for i in ob2 %}
-<tr>
-    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
-    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
-</tr>
-{% endfor %}
+<br><br><br><br>
+<table id="customers" align="center">
+    <tr>
+        <th style="width:250px;text-align:center;">Total In Quantity</th>
+        <th style="width:250px;text-align:center;">Total Out Quantity</th>
+    </tr>
+    <tr>
+        <td style="width:250px;text-align:center;">{{len1}}</td>
+        <td style="width:250px;text-align:center;">{{len2}}</td>
+    </tr>
 </table>
-</div>
-<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+<br><br><br><br>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
 {% endif %}
-{% if sub == 11 %}
+{% if sub == 5 %}
+<center><h2>Turnout Report for Bogie Section</h2></center>
 <center><h2>DLW Varanasi</h2></center>
-<h2 align="right">Shop : TMS</h2>
-<h2 align="left">Month : {{mon}}</h2>
+<h2 align="left">Shop : TMS</h2>
+<h2 align="right">Date : {{dt1}}</h2>
 <h2 align="left">Shop Section : Bogie Assembly</h2>
 <table id="customers" align="left">
 <tr>
-    <th style="width:250px;text-align:center;">Date</th>
-    <th style="width:250px;text-align:center;">Wheel No.</th>
-    <th style="width:250px;text-align:center;">Part No.</th>
-    <th style="width:250px;text-align:center;">Serial No.</th>
-    <th style="width:250px;text-align:center;">In Date for Machining</th>
-    <th style="width:250px;text-align:center;">Out Date for Machining</th>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">Axle Location</th>
+    <th style="width:250px;text-align:center;">Transaction Motor  No.</th>
+    <th style="width:250px;text-align:center;">Gear Case No.</th>
+    <th style="width:250px;text-align:center;">Gear Case make</th>
+    <th style="width:250px;text-align:center;">MSU Unit No.</th>
+    <th style="width:250px;text-align:center;">Break Rigging make</th>
+    <th style="width:250px;text-align:center;">Coil Spring make</th>
+    <th style="width:250px;text-align:center;">Secondary Coil make</th>
+    <th style="width:250px;text-align:center;">Sand Box make</th>
+    <th style="width:250px;text-align:center;">Spheri Block make</th>
+    <th style="width:250px;text-align:center;">Thrush Pad make</th>
+    <th style="width:250px;text-align:center;">Break Cylinder make</th>
+    <th style="width:250px;text-align:center;">Elastic Shop make</th>
+    <th style="width:250px;text-align:center;">Lateral Damper</th>
+    <th style="width:250px;text-align:center;">Horizontal Damper</th>
+    <th style="width:250px;text-align:center;">Inspection Date</th>
 </tr>
 {% for i in ob1 %}
 <tr>
-    <td style="width:250px;text-align:center;">{{i.date}}</td>
-    <td style="width:250px;text-align:center;">{{i.wheel_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.pt_no}}</td>
-    <td style="width:250px;text-align:center;">{{i.sno}}</td>
-    <td style="width:250px;text-align:center;">{{i.in_qty}}</td>
-    <td style="width:250px;text-align:center;">{{i.out_qty}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_location}}</td>
+    <td style="width:250px;text-align:center;">{{i.traction_motor_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.gear_case_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.gear_case_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.msu_unit_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.break_rigging_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.coil_spring_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.secondary_coil_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.sand_box_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.spheri_block_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.thrust_pad_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.break_cylinder_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.elastic_shop_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.lateral_damper}}</td>
+    <td style="width:250px;text-align:center;">{{i.horizontal_damper}}</td>
+    <td style="width:250px;text-align:center;">{{i.inspect_date}}</td>
 {% endfor %}
 </tr>
 </table>
 </div>
-<br><center><input type="button" onclick="printDiv()" value="Print Report" class="form-control ll" required style="width:200px;" /></center>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 7 %}
+<center><h2>Turnout Report for Bogie Section</h2></center>
+<center><h2>DLW Varanasi</h2></center>
+<h2 align="left">Shop : TMS</h2>
+<h2 align="right">Date : {{datea1}} to {{datea2}}</h2>
+<h2 align="left">Shop Section : Bogie Assembly</h2>
+<table id="customers" align="left">
+<tr>
+    <th style="width:250px;text-align:center;">Axle No.</th>
+    <th style="width:250px;text-align:center;">Axle Location</th>
+    <th style="width:250px;text-align:center;">Transaction Motor  No.</th>
+    <th style="width:250px;text-align:center;">Gear Case No.</th>
+    <th style="width:250px;text-align:center;">Gear Case make</th>
+    <th style="width:250px;text-align:center;">MSU Unit No.</th>
+    <th style="width:250px;text-align:center;">Break Rigging make</th>
+    <th style="width:250px;text-align:center;">Coil Spring make</th>
+    <th style="width:250px;text-align:center;">Secondary Coil make</th>
+    <th style="width:250px;text-align:center;">Sand Box make</th>
+    <th style="width:250px;text-align:center;">Spheri Block make</th>
+    <th style="width:250px;text-align:center;">Thrush Pad make</th>
+    <th style="width:250px;text-align:center;">Break Cylinder make</th>
+    <th style="width:250px;text-align:center;">Elastic Shop make</th>
+    <th style="width:250px;text-align:center;">Lateral Damper</th>
+    <th style="width:250px;text-align:center;">Horizontal Damper</th>
+    <th style="width:250px;text-align:center;">Inspection Date</th>
+</tr>
+{% for i in ob1 %}
+<tr>
+    <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.axle_location}}</td>
+    <td style="width:250px;text-align:center;">{{i.traction_motor_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.gear_case_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.gear_case_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.msu_unit_no}}</td>
+    <td style="width:250px;text-align:center;">{{i.break_rigging_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.coil_spring_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.secondary_coil_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.sand_box_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.spheri_block_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.thrust_pad_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.break_cylinder_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.elastic_shop_make}}</td>
+    <td style="width:250px;text-align:center;">{{i.lateral_damper}}</td>
+    <td style="width:250px;text-align:center;">{{i.horizontal_damper}}</td>
+    <td style="width:250px;text-align:center;">{{i.inspect_date}}</td>
+{% endfor %}
+</tr>
+</table>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
+{% endif %}
+{% if sub == 9 %}
+{% if l > 0 %}
+<center><h2>Turnout Report for Bogie Section</h2></center>
+<center><h2>DLW Varanasi</h2></center>
+<br><br>
+<div>
+<table id="customers" align="left">
+{% for i in ob1%}
+<tr>
+    <td>
+        <label for="loco_type"><b>DATE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">{{i.date}} 
+             </label>
+    </td>
+    <td>
+        <label for="loco_type"><b>BOGIE NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">{{i.frameserial_no}}
+             </label>
+    </td>
+    <td>
+        <label for="loco_type"><b>LOCO TYPE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">{{i.loco_type}} 
+             </label>
+    </td>
+</tr>
+<tr>
+    <td>
+        <label for="loco_type"><b>LOCO NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">
+             </label>
+    </td>
+    <td>
+        <label for="loco_type"><b>LOCO ROAD NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">
+             </label>
+    </td>
+</tr>
+<tr>
+    <td>
+        <label for="loco_type"><b>AXLE NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>TRACTION MOTOR MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>TRACTION MOTOR NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>GEAR CASE NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>BACK LASH&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> VERTICAL CLEARANCE (R)&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> VERTICAL CLEARANCE (L)&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> HORIZONTAL CLEARANCE (R)&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> HORIZONTAL CLEARANCE (L)&nbsp;&nbsp;
+             </b></label>
+    </td>
+</tr>
+<tr>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_axle}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tmake1}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tno1}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_gearcase_no}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_back_lash}}"readonly></td>   
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_vertical_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_vertical_l}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_horizontal_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_horizontal_l}}"readonly> 
+</tr>
+<tr>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_axle}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tmake2}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tno2}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_gearcase_no}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_back_lash}}"readonly></td>   
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_vertical_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_vertical_l}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_horizontal_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_horizontal_l}}"readonly> 
+</tr>
+<tr>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_axle}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tmake3}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tno3}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_gearcase_no}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_back_lash}}"readonly></td>   
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_vertical_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_vertical_l}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_horizontal_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_horizontal_l}}"readonly>
+</tr>
+<tr>
+    <td>
+        <label for="loco_type"><b> COMPONENTS&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> COMPONENTS&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> COMPONENTS&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    
+    <tr>
+        <td>
+            <label for="loco_type"><b> AXLE BOX&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{axle_box}}"readonly> </td>
+        
+        <td>
+            <label for="loco_type"><b> HORIZONTAL DAMPER&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.horizontal_damper}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> SPHERI BLOCK&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.spheri_block_make}}"readonly> </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> WHEEL SET GUIDE&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.wheel_set_guide}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> SAND BOX&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.sand_box_make}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> ELASTIC SHOP&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.elastic_shop_make}}"readonly> </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> COIL SPRING&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_coilspring_make}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> BRAKE CYLINDER&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.break_rigging_make}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> GEAR CASE OIL&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.gear_case_oil}}"readonly> </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> MOTORING CHECKED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.motor_check}} - {{i.motor_date}}" readonly> </td>
+        
+        <td>
+            <label for="loco_type"><b> FINAL LOWERING CHECKED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.lowering_check}} - {{i.lowering_date}}" readonly> </td>
+    
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> DISPATCH CHECKED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.dispatch_check}} - {{i.dispatch_check_date}}" readonly> </td>
+    
+        <td>
+            <label for="loco_type"><b> LOCO PAPER PREPARED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.loco_paper}} - {{i.locopaper_date}}" readonly> </td>
+    </tr>
+</tr>
+
+{% endfor %}
+</table>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
+</div>
+{% endif %}
+{% if l2 > 0 %}
+<center><h2>Turnout Report for Bogie Section</h2></center>
+<center><h2>DLW Varanasi</h2></center>
+<br><br>
+<div>
+<table id="customers" align="left">
+{% for i in ob2%}
+<tr>
+    <td>
+        <label for="loco_type"><b>DATE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">{{i.date}} 
+             </label>
+    </td>
+    <td>
+        <label for="loco_type"><b>BOGIE NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">{{i.frameserial_no}}
+             </label>
+    </td>
+    <td>
+        <label for="loco_type"><b>LOCO TYPE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">{{i.loco_type}} 
+             </label>
+    </td>
+</tr>
+<tr>
+    <td>
+        <label for="loco_type"><b>LOCO NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">
+             </label>
+    </td>
+    <td>
+        <label for="loco_type"><b>LOCO ROAD NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type">
+             </label>
+    </td>
+</tr>
+<tr>
+    <td>
+        <label for="loco_type"><b>AXLE NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>TRACTION MOTOR MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>TRACTION MOTOR NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>GEAR CASE NO&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b>BACK LASH&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> VERTICAL CLEARANCE (R)&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> VERTICAL CLEARANCE (L)&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> HORIZONTAL CLEARANCE (R)&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> HORIZONTAL CLEARANCE (L)&nbsp;&nbsp;
+             </b></label>
+    </td>
+</tr>
+<tr>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_axle}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tmake1}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tno1}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_gearcase_no}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_back_lash}}"readonly></td>   
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_vertical_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_vertical_l}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_horizontal_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_horizontal_l}}"readonly> 
+</tr>
+<tr>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_axle}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tmake2}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tno2}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_gearcase_no}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_back_lash}}"readonly></td>   
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_vertical_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_vertical_l}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_horizontal_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.second_horizontal_l}}"readonly> 
+</tr>
+<tr>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_axle}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tmake3}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{tno3}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_gearcase_no}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_back_lash}}"readonly></td>   
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_vertical_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_vertical_l}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_horizontal_r}}"readonly>
+    <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.third_horizontal_l}}"readonly>
+</tr>
+<tr>
+    <td>
+        <label for="loco_type"><b> COMPONENTS&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> COMPONENTS&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> COMPONENTS&nbsp;&nbsp;
+             </b></label>
+    </td>
+    <td>
+        <label for="loco_type"><b> MAKE&nbsp;&nbsp;
+             </b></label>
+    </td>
+    
+    <tr>
+        <td>
+            <label for="loco_type"><b> AXLE BOX&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{axle_box}}"readonly> </td>
+        
+        <td>
+            <label for="loco_type"><b> VERTICAL DAMPER&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.lateral_damper}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> SPHERI BLOCK&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.spheri_block_make}}"readonly> </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> WHEEL SET GUIDE&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.wheel_set_guide}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> SAND BOX&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.sand_box_make}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> ELASTIC SHOP&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.elastic_shop_make}}"readonly> </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> COIL SPRING&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.first_coilspring_make}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> BRAKE CYLINDER&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.break_cylinder_make}}"readonly> </td>
+        <td>
+            <label for="loco_type"><b> GEAR CASE OIL&nbsp;&nbsp;
+                 </b></label>
+        </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.gear_case_oil}}"readonly> </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> MOTORING CHECKED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.motor_check}} - {{i.motor_date}}" readonly> </td>
+        
+        <td>
+            <label for="loco_type"><b> FINAL LOWERING CHECKED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.lowering_check}} - {{i.lowering_date}}" readonly> </td>
+    
+    </tr>
+    <tr>
+        <td>
+            <label for="loco_type"><b> DISPATCH CHECKED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.dispatch_check}} - {{i.dispatch_check_date}}" readonly> </td>
+    
+        <td>
+            <label for="loco_type"><b> LOCO PAPER PREPARED BY&nbsp;&nbsp;
+                </b></label>
+        </td>
+        <td><input type="text"  style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.loco_paper}} - {{i.locopaper_date}}" readonly> </td>
+    </tr>
+</tr>
+
+{% endfor %}
+</table>
+<br><center><input type="button" onclick="printDiv()" value="Print Report" id="print_report" class="form-control ll" required style="width:200px;" /></center>
+</div>
+{% endif %}
+{% if l == 0 and l2 == 0 %}
+<h2 align="center">NO DATA TO DISPLAY.</h2>
+{% endif %}
 {% endif %}
 </form>
+</div>
 <script>
 $(document).ready(function () {
     $('#datew').datepicker({
         dateFormat: 'dd-mm-yy',
         onSelect: function(  ){
     document.querySelector("#myproceed").click();
+    }
+});                   
+});
+$(document).ready(function () {
+    $('#datea').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#Proceed6").click();
     }
 });                   
 });
@@ -169,6 +762,19 @@ $(document).ready(function () {
 });                   
 });
 $(document).ready(function () {
+    $('#datea1').datepicker({
+        dateFormat: 'dd-mm-yy',
+});                   
+});
+$(document).ready(function () {
+    $('#datea2').datepicker({
+        dateFormat: 'dd-mm-yy',
+        onSelect: function(  ){
+    document.querySelector("#Proceed7").click();
+    }
+});                   
+});
+$(document).ready(function () {
     $('#month').datepicker({
         dateFormat: 'mm-yy',
         onSelect: function(  ){
@@ -177,8 +783,8 @@ $(document).ready(function () {
 });                   
 });
 function printDiv() {
+    $("#print_report").hide();
      var printContents = document.getElementById("print").innerHTML;
-
        var style = "<style>";
         style = style + "table {width: 100%;font: 17px Calibri;}";
         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
@@ -194,13 +800,65 @@ function printDiv() {
         win.document.write('<body>');
         win.document.write(printContents);
         win.document.write('</body></html>');
-
         win.print();
         win.close();
+        
+        
 
 
 
 }
+
+$('#bo_no').change(function(e){
+            e.preventDefault();
+            var bo_no=$(this).val();
+            var data={bo_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'bogiereportbono_validate' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response=="false")
+                        {
+                            alert("Please enter valid batch order number.");
+                            document.getElementById('bo_no').value ='';
+                        }
+                        else
+                        {
+                            // alert("Click proceed button");
+                        }
+                    }
+
+                })
+                
+        });
+
+        $('#fs_no').change(function(e){
+            e.preventDefault();
+            var fs_no=$(this).val();
+            var data={fs_no};
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'bogiereportfsno_validate' %}",
+                    dataType: 'json',
+                    data:data,
+                    success:function(response){
+                        if(response=="false")
+                        {
+                            alert("Please enter valid frame serial number.");
+                            document.getElementById('fs_no').value ='';
+                        }
+                        else
+                        {
+                            // alert("Click proceed button");
+                        }
+                    }
+
+                })
+                
+        });
+
 </script>
 
 {% endblock content %}
