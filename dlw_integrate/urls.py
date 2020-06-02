@@ -617,6 +617,8 @@ urlpatterns = [
     path('batchrelease/',batchrelease,name='batchrelease'),
     path('ajax/batchreleasegetbatch/',batchreleasegetbatch,name='batchreleasegetbatch'),
     path('ajax/Batchreleasedetails/',Batchreleasedetails,name='Batchreleasedetails'),
+    path('ajax/Batchreleasestatus/',Batchreleasestatus,name='Batchreleasestatus'),
+
     path('ajax/cnote_getcn/',cnote_getcn,name='cnote_getcn'),
 
 

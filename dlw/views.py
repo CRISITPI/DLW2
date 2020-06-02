@@ -8513,8 +8513,9 @@ def CardGeneration(request):
         ades=list(Part.objects.filter(partno = asmno).values('des').distinct()) 
         if len(ades)!=0:
             ades=ades[0]['des']
-        bat=Batch.objects.filter(part_no=asmno,bo_no=batch,brn_no=bno1).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq','uot_wk_f','version')
+        bat=Batch.objects.filter(part_no=asmno,bo_no=batch,brn_no=bno1).values('ep_type','brn_no','loco_to','loco_fr','batch_type','batch_qty','seq','uot_wk_f','version','rel_date')
         if len(bat)!=0:
+            reldate=bat[0]['rel_date']
             epc=bat[0]['ep_type']
             version=bat[0]['version']
             brn=bno1
@@ -8525,6 +8526,7 @@ def CardGeneration(request):
             btype=bat[0]['batch_type']
             DUE_WK=bat[0]['uot_wk_f']
         else:
+            reldate=''
             epc=''
             brn=bno1
             l_to=''
@@ -8535,6 +8537,9 @@ def CardGeneration(request):
             DUE_WK=''
             version=''
         ep=''
+        if reldate != '':
+            messages.error(request, "This Batch No is Already Released. Can't Generate Again!!!")
+            return render(request,'CardGeneration.html',context)
         for i in Code.objects.raw('select id,substr("NUM_1" :: text, 1,8) as num_1 from public."CODE" where "CD_TYPE"=%s and "CODE"=%s order by "CD_TYPE","CODE";',['11',epc]):
             ep=i.num_1
             break
@@ -29499,18 +29504,45 @@ def batchrelease(request):
             'roles' :rolelist,
             'subnav':subnav,
         }
+    if request.method == "POST":       
+            Submit = request.POST.get('releasebatch')
+            dataForm = request.POST.get('dataForm')
+            if Submit=="Release Batch":
+                asslyno = request.POST.get('asslyno')
+                batchno = request.POST.get('batchno')
+                date = request.POST.get('date')
+                brn = request.POST.get('brn')
+                epc = request.POST.get('epc')
+                qty = request.POST.get('qty')
+                locofr = request.POST.get('locofr')
+                locoto = request.POST.get('locoto')
+                date=date[6:10]+'-'+date[3:5]+'-'+date[0:2]
+                date=datetime.datetime.strptime(date, "%Y-%m-%d")
+                try:
+                    Batch.objects.filter(bo_no=batchno,part_no=asslyno,ep_type=epc,loco_fr=locofr,loco_to=locoto,batch_qty=qty,brn_no=brn).update(rel_date=date,status='R')
+                    messages.success(request, 'Batch Released!!!')
+                except:
+                    messages.error(request, ' Some Error Occured!!!')
     return render(request,'batchrelease.html',context)
-
+def Batchreleasestatus(request):
+    if request.method=="GET" and request.is_ajax():
+        batch=request.GET.get('batch')
+        lst=list(M2Docnew1.objects.filter(batch_no=batch).values('batch_no'))
+        return JsonResponse(lst,safe=False)
+    return JsonResponse({"success:False"},status=400)
 def batchreleasegetbatch(request):
     if request.method=="GET" and request.is_ajax():
         lst=list(dpoloco.objects.values('batchordno').order_by('batchordno').distinct())
-        print(lst)
         return JsonResponse(lst,safe=False)
     return JsonResponse({"success:False"},status=400)
 def Batchreleasedetails(request):
     if request.method=="GET" and request.is_ajax():
         batch=request.GET.get('batch')
-        lst=list(Batch.objects.filter(bo_no=batch).values('id','part_no','brn_no','loco_fr','loco_to','batch_qty','ep_type'))  
-        print(lst)     
+        print('batch',batch)
+        if batch is not None:
+            lst=list(Batch.objects.filter(bo_no=batch).values('id','part_no','brn_no','loco_fr','loco_to','batch_qty','ep_type','bo_no'))  
+        else:
+            lst=list(Batch.objects.values('id','part_no','brn_no','loco_fr','loco_to','batch_qty','ep_type','bo_no'))  
+        print(lst)
         return JsonResponse(lst,safe=False)
     return JsonResponse({"success:False"},status=400)

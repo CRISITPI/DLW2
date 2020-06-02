@@ -170,14 +170,31 @@
                 <div >
                 <input type="button" name="releasebatch1" id="releasebatch1" value="Release Batch" class="btn btn-primary" onclick="checkdetails()"></button>
                 <input type="submit" name="releasebatch" id="releasebatch" value="Release Batch" class="btn btn-primary" hidden></button>
-                <input type="button" name="viewbatch" id="viewbatch" value="View Batch" class="btn btn-primary"></button>
+                <input type="button" name="viewbatch" id="viewbatch" value="View Batch" class="btn btn-primary" onclick="viewdetails()"></button>
                 <!-- <input type="submit" name="releasebatch" id="releasebatch" value="Release Batch" class="btn btn-primary" onclick="wait()"></button> -->
               </div>
               <div>
                 <table id="details" class="table table-striped table-bordered" >
                   <thead style="background-color:ghostwhite; font-size:12px;">
                       <tr>
-                          <th>PART NO.</th>
+                        <td style="display:none;"></td>
+                          <th>ASSLY NO.</th>
+                          <th>BRN NO.</th>
+                          <th>EPC</th>
+                          <th>BATCH QTY</th>
+                          <th>LOCO FROM</th>
+                          <th>LOCO TO</th>
+                      </tr>
+                  </thead>
+                  <tbody style="font-size:11px; font-weight: 610;">
+                  
+                </table>
+                <table id="detailsview" class="table table-striped table-bordered" >
+                  <thead style="background-color:ghostwhite; font-size:12px;">
+                      <tr>
+                        <td style="display:none;"></td>
+                        <th>BATCH NO.</th>
+                          <th>ASSLY NO.</th>
                           <th>BRN NO.</th>
                           <th>EPC</th>
                           <th>BATCH QTY</th>
@@ -224,7 +241,8 @@ setTimeout(function(){
                           $('#date').focus();
                         }
                     else
-                      alert('Under development!!!');
+                      document.querySelector('#releasebatch').click();
+
                         
 
     }
@@ -248,7 +266,9 @@ return true;
 var batchac=[' '];                      
 $(document).ready(function()
 {
-  
+  $('#details').hide();
+  $('#detailsview').hide();
+
   $('#date').datepicker({dateFormat:'dd-mm-yy',onSelect: function(date) {
         changedate1();
      },
@@ -271,11 +291,10 @@ $(document).ready(function()
 
   });
                       });
-
+                      var table='';
   function changedate1()
   {
-    alert('hiii');
-
+   
     var batch=$('#batchno').val();
     if(batch.length==0)
     {
@@ -294,7 +313,23 @@ $(document).ready(function()
 
      }
        else     
-       {                                     
+       {  
+        var data = {batch};
+        $.ajax({
+          type : 'GET',
+          url : "{% url 'Batchreleasestatus' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response)
+          {
+            if(response.length>0)
+            {
+        $('#details').show();
+        if (table!='')
+        {
+          table.destroy();
+          $('#details tbody').empty();                     
+        }
                     var data = {batch};
                       $.ajax({
                         type : 'GET',
@@ -308,21 +343,107 @@ $(document).ready(function()
                             });
                           trHTML+='</tbody>'
                         $('#details').append(trHTML);
-                        table=$('#details').DataTable();
+                      
+                        table=$('#details').DataTable({
+                          "language": {
+                          "emptyTable": "No Record Found"}
+                          
+                        });
+                          $('#details tbody').on( 'click', 'tr', function () {
+                          if ( $(this).hasClass('selected') ) {
+                          $(this).removeClass('selected');
+                          // var data = table.row( this ).data();
+                          }
+                          else {
+                          table.$('tr.selected').removeClass('selected');
+                          $(this).addClass('selected');
+                          var data1 = String(table.row( this ).data());
+                          docno=data1.split(",");
+                          a=docno[0];
+                          $('#asslyno').val(docno[1]);
+                          $('#brn').val(docno[2]);
+                          $('#epc').val(docno[3]);
 
+                          $('#qty').val(docno[4]);
+                          $('#locofr').val(docno[5]);
+                          $('#locoto').val(docno[6]);
+                          table.destroy();
+                          $('#details tbody').empty(); 
+                          $('#details').hide();
+
+                          }
+                        });
                            }
-                     })
+                     });
+
+                     
                     }
-          // $('#date').datepicker({dateFormat:'dd-mm-yy',onSelect: function(date) {
-          //       changedate1();
-          //   },
-          //                     beforeShow: function(){    
-          //                     $(".ui-datepicker").css('font-size', 14.8) 
-          //                     }
-          //                     });
+                    else
+                     alert('Card is Not Generated Yet for this Work Order!!!');
+                  }
+                }); 
 
+                    }
+      
   }
+  var table1='';
+function viewdetails()
+{
+  $('#detailsview').show();
+  if (table!='')
+        {
+          table1.destroy();
+          $('#detailsview tbody').empty();                     
+        }
+       var batch=$('#batch').val();
+  var data={batch};
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'Batchreleasedetails' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+      var trHTML = '';
+      $.each(response, function (i, item) {
+      trHTML += '<tr><td style="display:none;">' + item.id + '</td><td>' + item.bo_no + '</td><td>' + item.part_no + '</td><td>' + item.brn_no + '</td><td>' + item.ep_type + '</td><td>' + item.batch_qty + '</td><td>' + item.loco_fr + '</td><td>' + item.loco_to+'</td></tr>';
+        });
+      trHTML+='</tbody>'
+    $('#detailsview').append(trHTML);
+  
+    table1=$('#detailsview').DataTable({
+      "language": {
+      "emptyTable": "No Record Found"}
+      
+    });
+      $('#detailsview tbody').on( 'click', 'tr', function () {
+      if ( $(this).hasClass('selected') ) {
+      $(this).removeClass('selected');
+      // var data = table.row( this ).data();
+      }
+      else {
+      table1.$('tr.selected').removeClass('selected');
+      $(this).addClass('selected');
+      var data1 = String(table1.row( this ).data());
+      docno=data1.split(",");
+      a=docno[0];
+      $('#batchno').val(docno[1]);
 
+      $('#asslyno').val(docno[2]);
+      $('#brn').val(docno[3]);
+      $('#epc').val(docno[4]);
+
+      $('#qty').val(docno[5]);
+      $('#locofr').val(docno[6]);
+      $('#locoto').val(docno[7]);
+      table1.destroy();
+      $('#detailsview tbody').empty(); 
+      $('#details').hide();
+      $('#detailsview').hide();
+      }
+    });
+       }
+ })
+}
   function abc()
   {
     if($('#batchno').val().length==0)
