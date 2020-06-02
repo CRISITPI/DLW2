@@ -6566,8 +6566,8 @@ def m7getpart_no(request):
 def pinionpressing_section(request):
      
     n=1
-    now = datetime.now()
-    disnow=datetime.now()-timedelta(days=n)
+    now = datetime.datetime.now()
+    disnow=datetime.datetime.now()-timedelta(days=n)
     dt_string = now.strftime("%Y-%m-%d")
     dis_string = disnow.strftime("%Y-%m-%d")
     
@@ -10550,8 +10550,8 @@ def m23report(request):
 def bogieassembly_section(request):
     
     n=1
-    now = datetime.now()
-    disnow=datetime.now()-timedelta(days=n)
+    now = datetime.datetime.now()
+    disnow=datetime.datetime.now()-timedelta(days=n)
     dt_string = now.strftime("%Y-%m-%d")
     dis_string = disnow.strftime("%Y-%m-%d")
     
@@ -11450,8 +11450,8 @@ def wogen(request):
 def axlewheelpressing_section(request):
      
     n=1
-    now = datetime.now()
-    disnow=datetime.now()-timedelta(days=n)
+    now = datetime.datetime.now()
+    disnow=datetime.datetime.now()-timedelta(days=n)
     dt_string = now.strftime("%Y-%m-%d")
     dis_string = disnow.strftime("%Y-%m-%d")
     
@@ -14365,8 +14365,8 @@ def performaA(request):
 def axlemachining_section(request):
      
     n=1
-    now = datetime.now()
-    disnow=datetime.now()-timedelta(days=n)
+    now = datetime.datetime.now()
+    disnow=datetime.datetime.now()-timedelta(days=n)
     dt_string = now.strftime("%Y-%m-%d")
     dis_string = disnow.strftime("%Y-%m-%d")
     dd3=[]
@@ -14590,8 +14590,8 @@ def axle_editsno(request):
 def wheelmachining_section(request):
     
     n=1
-    now = datetime.now()
-    disnow=datetime.now()-timedelta(days=n)
+    now = datetime.datetime.now()
+    disnow=datetime.datetime.now()-timedelta(days=n)
     dt_string = now.strftime("%Y-%m-%d")
     dis_string = disnow.strftime("%Y-%m-%d")
     dd3=[]
