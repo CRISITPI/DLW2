@@ -1,7 +1,7 @@
 authy==2.2.3
 phonenumbers==8.10.15
 python-dotenv==0.10.3
-django==2.0.7
+django==2.2.13
 djangorestframework
 django-session-timeout
 django-session-idle-timeout
