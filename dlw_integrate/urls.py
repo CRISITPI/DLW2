@@ -469,7 +469,6 @@ urlpatterns = [
     path('ajax/ScreenLoadMasterUpdateValidShop/',ScreenLoadMasterUpdateValidShop,name='ScreenLoadMasterUpdateValidShop'),
     path('ajax/ScreenLoadMasterUpdateGetAll/',ScreenLoadMasterUpdateGetAll,name='ScreenLoadMasterUpdateGetAll'),
     path('ajax/ScreenLoadMasterUpdateSave/',ScreenLoadMasterUpdateSave,name='ScreenLoadMasterUpdateSave'),
-    path('ajax/ScreenLoadMasterUpdateSave/',ScreenLoadMasterUpdateSave,name='ScreenLoadMasterUpdateSave'),
     path('ajax/ScreenLoadMasterUpdateUYes/',ScreenLoadMasterUpdateUYes,name='ScreenLoadMasterUpdateUYes'),
     path('ajax/ScreenLoadMasterUpdateDelete/',ScreenLoadMasterUpdateDelete,name='ScreenLoadMasterUpdateDelete'),
     path('ajax/ScreenLoadMasterUpdateAddMwNo/',ScreenLoadMasterUpdateAddMwNo,name='ScreenLoadMasterUpdateAddMwNo'),
@@ -643,7 +642,11 @@ urlpatterns = [
     path('btncrtjbsdoc/',btncrtjbsdoc,name='btncrtjbsdoc'),
     path('jbsreport/',jbsreport,name='jbsreport'),
    
-  	
+   
+    path('ajax/ScreenLoadMasterUpdateAutoDesc/',ScreenLoadMasterUpdateAutoDesc,name='ScreenLoadMasterUpdateAutoDesc'),
+    path('ajax/ScreenLoadMasterUpdateAutomw_no/',ScreenLoadMasterUpdateAutomw_no,name='ScreenLoadMasterUpdateAutomw_no'),
+    path('ajax/ScreenLoadMasterUpdateAutoMcgr/',ScreenLoadMasterUpdateAutoMcgr,name='ScreenLoadMasterUpdateAutoMcgr'),
+      	
 ]
 
 
