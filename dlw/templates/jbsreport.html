@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+</style>
+</head>
+<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"> -->
+<body>
+{% for i in lst %}
+{% for d in i %}
+{% if d.s != '' %}
+<table id="myTable" style="width: 100%;">
+  <tr>
+  <td width=150px><label><b>Date : </b>{{tdate}}</label></td>
+	<td width=300px><label><b>JOB BULKING STATEMENT FOR ASSEMBLY : </b>{{pn}}</label></td>
+	<td width=230px><label><b>ASSLY-DESC : </b>{{des}}</label></td>
+	<td width=70px><label><b>DOC-NO : </b>{{d.doc}}</label></td>
+  </tr>
+<tr>
+    <td><label><b>Shop Sec : </b>{{d.s}}</label></td>
+	<td><label><b>Load Center : </b>{{d.l}}</label></td>
+  </tr>
+ </table>
+ {% endif %}
+ {% endfor %}
+ 
+<table id="myTable1" style="width:100%;">
+  <tr>
+    <td width=70px><b>SN</b></td>  
+    <td width=100px><b>Part No</b></td>
+    <td width=200px><b>Name of Part</b></td> 
+    <td width=270px><b>Operation Description</b></td> 
+	  <td width=90px><b>OPN No</b></td>  
+	  <td width=90px><b>AT</b></td>  
+	  <td width=90px><b>NO OFF</b></td>  
+	  <td width=90px><b>Next Sec</b></td>  
+	  <td width=90px><b>QTY ORD</b></td>  
+    </tr>
+  {% for j in i %}
+  <tr>
+    <td>{{j.sno}}</td> 
+    <td>{{j.a}}</td>  
+    <td>{{j.b}}</td>
+    <td>{{j.c}}</td> 
+    <td>{{j.d}}</td> 
+	  <td>{{j.e}}</td>  
+	  <td>{{j.f}}</td>  
+	  <td>{{j.g}}</td>  
+	  <td>{{j.h}}</td>  
+    </tr>
+  {% endfor %}
+  
+</table>
+<hr style="margin-left: 98px;margin-right: 42px;height: 2px;color: #333;">
+<br>
+{% endfor %}
+
+</body>
+</html>

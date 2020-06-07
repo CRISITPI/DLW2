@@ -539,6 +539,7 @@ class DbUpdt(models.Model):
 
 
 class Docjbs(models.Model):
+    id = models.AutoField(primary_key=True)
     epc = models.CharField(db_column='EPC', max_length=2, blank=True, null=True)  # Field name made lowercase.
     batch_no = models.CharField(db_column='BATCH_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
     part_no = models.CharField(db_column='PART_NO', max_length=8, blank=True, null=True)  # Field name made lowercase.
@@ -2758,6 +2759,7 @@ class TempExpl(models.Model):
 
 
 class TempJbs(models.Model):
+    id = models.AutoField(primary_key=True)
     pp = models.CharField(db_column='PP', max_length=8, blank=True, null=True)  # Field name made lowercase.
     cp = models.CharField(db_column='CP', max_length=8, blank=True, null=True)  # Field name made lowercase.
     l_fr = models.CharField(db_column='L_FR', max_length=4, blank=True, null=True)  # Field name made lowercase.
@@ -2776,7 +2778,6 @@ class TempJbs(models.Model):
     class Meta:
         managed = False
         db_table = 'TEMP_JBS'
-
 
 # class TempM14M4(models.Model):
 #     doc_code = models.CharField(db_column='DOC_CODE', max_length=2, blank=True, null=True)  # Field name made lowercase.

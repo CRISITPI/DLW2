@@ -78,11 +78,11 @@ body {
 <form action="{% url 'prodqry' %}" method="POST"> 
     {% csrf_token %}
     <div class="container" id="div1">
-      <h4 style="margin-left: 0px;">PRODUCTION QUERY</h4>
-<center><h4 id="hi">Please Choose Your Option</h4></center><br><br>
-<div class="class1" id="link">
+      <h5 style="margin-left: 0px;">PRODUCTION QUERY</h5>
+<center><h5 id="hi">Please Choose Your Option</h5></center><br><br>
+<div class="class1" id="link" style="width: 665px;margin-left: 219px;">
 <div class="class2">
-  <button class="class3">Batch</button>
+  <button class="class3">BATCH</button>
   <div class="class4">
     <a href="javascript:anchor_test()" id="11">WORK ORDER NO</a>
     <a href="javascript:an_test()" id="12">PART NO</a>
@@ -118,23 +118,6 @@ body {
     <a href="javascript:a_test()" id="42">BRN NO</a>
   </div>
 </div>
-
-<!-- <div class="class2">
-  <button class="class3">JBS</button>
-  <div class="class4">
-    <a href="#" id="51">WORK ORDER NO</a>
-    <a href="#" id="52">PART NO</a>
-    <a href="#" id="53">BRN NO</a>
-  </div>
-</div>
-
-<div class="class2">
-  <button class="class3">VOUCHER POSTING</button>
-  <div class="class4">
-    <a href="javascript:anchor_test()" id="61">PART NO</a>
-    <a href="#" id="62">BRN NO</a>
-  </div>
-</div> -->
 
 <div class="class2">
   <button class="class3">ALT-DOC</button>
@@ -559,9 +542,21 @@ $('a').click(function() {
          $("#img").hide();
           $("#div1").show();}
         else if(response=="EP")
-        {alert("Enter Part Number");}
+        {alert("Enter Part Number");
+        $("#img").hide();
+          $("#div1").show();}
         else if(response=="BrP")
         {alert("Enter Correct Brn No and Part No");
+        $("#img").hide();
+          $("#div1").show();
+          }
+        else if(response=="RCN")
+        {alert("Enter Correct Route Card No");
+        $("#img").hide();
+          $("#div1").show();
+          }
+          else if(response=="JCN")
+        {alert("Enter Correct Job Card No");
         $("#img").hide();
           $("#div1").show();
           }
@@ -1101,9 +1096,7 @@ $('a').click(function() {
       }
       }
     });
- }
-
-
+}
 
 function back() {
     window.location.reload();

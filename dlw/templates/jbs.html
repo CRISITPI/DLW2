@@ -1,0 +1,217 @@
+{% extends 'base.html' %} 
+{% block content %}
+{% load static %}
+<!-- 
+<script src= "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js">  </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+<head>
+<style>
+ .bt1{
+    height: 38px;
+    padding-right: 36px;
+    padding-left: 35px;
+	font-size: 18px;
+	background-color:green;
+ }
+/* css for dynamic tableee */
+
+table.scrolldown { 
+    width: 56%; 
+    border: 2px solid black; 
+} 
+
+table.scrolldown tr:hover{background-color:#DCDCDC !important;}
+
+</style>
+</head>
+<form>
+<h4 align="center">INPUT SCREEN FOR CREATION OF JBSDOC</h4><br>
+<div>
+<table style="text-align:right;margin-left: 290px;">
+<tr>
+    <td><label style="font-size:20px;">Division:</label></td>
+    <td><select id="DropOpt" style="width:178px;height:32px;">
+    <option value="ENG">ENG</option>
+    <option value="VEH">VEH</option>
+    <option value="TRA">TRA</option>
+    </select></td>
+    <td><label style="font-size:20px;">EPC:</label></td>
+    <td><input type="text" id="TxtEpc" name="TxtEpc" maxlength="2" required></td>
+ </tr>
+<tr>
+ <td><label style="font-size:20px;">Batch No:</label></td>
+ <td><input type="text" id="Txtbo_no" name="Txtbo_no" maxlength="7" onkeypress="return onlyNumberKey(event)"></td>
+ <td><label style="font-size:20px;">Batch Type:</label></td>
+ <td><input type="text" id="Txtbatch_type" name="Txtbatch_type" maxlength="1" onkeypress="return /[a-z]/i.test(event.key)"></td>
+</tr>
+<tr>
+  <td><label style="font-size:20px;">Assly Part No:</label></td>
+  <td><input type="text" id="Txtpart_no" name="Txtpart_no" maxlength="8" onkeypress="return onlyNumberKey(event)"></td>
+  <td><label style="font-size:20px;">Epc Description:</label></td>
+ <td><textarea name="Txtepdesc" id="Txtepdesc" style="resize:none;width:178px;height:30px;"></textarea></td>
+</tr>
+<tr>
+ <td><label style="font-size:20px;">Loco From:<label></td>
+ <td><input type="text" id="Txtloco_fr" name="Txtloco_fr" maxlength="4" onkeypress="return onlyNumberKey(event)"></td>
+ <td><label style="font-size:20px;">Loco To:</label></td>
+ <td><input type="text" id="Txtloco_to" name="Txtloco_to" maxlength="4" onkeypress="return onlyNumberKey(event)"></td>
+</tr>
+<tr>
+ <td><label style="font-size:20px;">Batch Qty:<label></td>
+ <td><input type="text" id="Txtbatch_qty" name="Txtbatch_qty" maxlength="5" onkeypress="return onlyNumberKey(event)"></td>
+ <td><label style="font-size:20px;">Finish Week:</label></td>
+ <td><input type="text" id="Txtuot_wk_f" name="Txtuot_wk_f" maxlength="4" onkeypress="return onlyNumberKey(event)"></td>
+</tr>
+<tr>
+ <td><label style="font-size:20px;">Batch Expl Date:<label></td>
+ <td><input type="text" id="Txtb_expl_dt" name="Txtb_expl_dt"></td>
+ <td><label style="font-size:20px;">Batch Rel. Date:</label></td>
+ <td><input type="text" id="Txtrel_date" name="Txtrel_date"></td>
+</tr>
+<tr></tr><tr></tr><tr></tr>
+<tr>
+ <td></td>
+ <td><button type="button" id="Btncrtjbsdoc" name="Btncrtjbsdoc" class="bt1" onclick="Btncrtjbsdoc_Click()">Create JBS</button></td>
+ <td><button type="button" id="Btnprnt" name="Btnprnt" class="bt1" style="margin-left: 20px;" onclick="create_report()">View Report</button></td>
+ <td><button type="button" id="btnClear" name="btnClear" class="bt1" style="padding-left: 50px;padding-right: 58px;" onclick="window.location.reload();">Clear</button></td>
+ </tr>
+</table>
+<br>
+</div>
+<div style="overflow:scroll;height:120px;width:100%;overflow:auto">
+        <table align="center"  id="table1" name="table1" required>
+                 <tbody>
+                 </tbody>
+        </table>  
+</div>
+</form>  
+<script>
+    $(document).ready(function(){
+        $('#Txtb_expl_dt').datepicker({dateFormat: 'dd-mm-yy'});
+    });
+    $(document).ready(function(){
+        $('#Txtrel_date').datepicker({dateFormat: 'dd-mm-yy'});
+    });
+
+    function onlyNumberKey(evt) { 
+        var ASCIICode = (evt.which) ? evt.which : evt.keyCode 
+        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57)) 
+            return false; 
+        return true; 
+    } 
+
+    document.querySelector("#TxtEpc").addEventListener('change',(e)=>{
+        e.preventDefault();
+        var txtepc = $("#TxtEpc").val();
+        var drpdwn = $("#DropOpt").val();
+        var data = {txtepc,drpdwn};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'epc_changed' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){
+                document.getElementById('Txtepdesc').value=response[0]; 
+                var res2 = response[1].length;
+                document.getElementById("table1").className = 'table table-striped scrolldown';
+                for(var i=0;i<res2;i++)
+                    {   
+                        
+                        $('#table1 > tbody:last').append("<tr><td id="+i+">"+response[1][i][0]+"</td><td id="+i+">"+response[1][i][1]+"</td><td id="+i+">"+response[1][i][2]+"</td><td id="+i+">"+response[1][i][3]+"</td><td id="+i+">"+response[1][i][4]+"</td><td id="+i+">"+response[1][i][5]+"</td><td id="+i+">"+response[1][i][6]+"</td><td id="+i+">"+response[1][i][7]+"</td></tr>"); 
+                    }
+
+            },
+            error : function(){
+                alert("WRONG OPTION OF EPC");
+            },
+        })
+    });
+
+    var table = document.querySelector('table1');
+    table1.addEventListener('click', function(ev){
+        var serviceID = ev.target.id;
+
+        var bonum=document.getElementById("table1").rows[serviceID].cells[0].innerHTML;
+        var data = {bonum}; 
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'listselected_index' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response)
+            {                
+                document.getElementById('Txtbo_no').value=response[0][0].bo_no; 
+                document.getElementById('Txtbatch_type').value=response[0][0].batch_type;
+                document.getElementById('Txtpart_no').value=response[0][0].part_no; 
+                document.getElementById('Txtloco_fr').value=response[0][0].loco_fr; 
+                document.getElementById('Txtloco_to').value=response[0][0].loco_to;  
+                document.getElementById('Txtbatch_qty').value=response[0][0].batch_qty; 
+                document.getElementById('Txtuot_wk_f').value=response[0][0].uot_wk_f;
+                var a=response[0][0].b_expl_dt; 
+                var str=a.split("-");
+                var arr=str[2]+"-"+str[1]+"-"+str[0];
+                document.getElementById('Txtb_expl_dt').value=arr; 
+                var a1=response[0][0].rel_date; 
+                if(a1!=null)
+                {
+                var str1=a1.split("-");
+                var arr1=str1[2]+"-"+str1[1]+"-"+str1[0];
+                document.getElementById('Txtrel_date').value=arr1; 
+                }
+                if(response[1]==1)
+                {
+                    alert("JBS Already Created You Can View Now");
+                }
+                                                                        
+            },
+            error : function(){
+                alert("ERROR");
+            },
+       })
+       document.getElementById("table1").style.visibility="hidden";
+    });
+
+
+    function Btncrtjbsdoc_Click()
+    {
+        var txtqty = document.getElementById('Txtbatch_qty').value;
+        var txtloco_fr = document.getElementById('Txtloco_fr').value;
+        var txtloco_to = document.getElementById('Txtloco_to').value;
+        var txtpart_no = document.getElementById('Txtpart_no').value;
+        var txtbatch_type = document.getElementById('Txtbatch_type').value;
+        var data={txtqty,txtloco_fr,txtloco_to,txtpart_no,txtbatch_type};
+
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'btncrtjbsdoc' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){
+                if(response[0]==1)
+                {
+                    alert("JBS Already Created You Can View Now");
+                }
+                else if(response[0]==4)
+                {
+                    alert("JBS created. Click '...Create Report...'");
+                }
+                else if(response[0]==10)
+                {
+                    alert("Assembly not in structure");
+                }
+            },
+            error : function(){
+                alert("Error");
+            },
+        })
+        
+    }
+
+    function create_report(){
+        window.location.href="{% url 'jbsreport' %}"+"?partno="+$('#Txtpart_no').val();
+    }
+</script>
+{% endblock content %}

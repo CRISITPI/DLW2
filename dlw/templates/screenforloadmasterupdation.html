@@ -1,5 +1,6 @@
 {% extends 'base.html' %} 
 {% block content %}
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -33,15 +34,56 @@
                 cursor: pointer;
         
             }
+            * {
+                box-sizing: border-box;
+              }
+              
+              .autocomplete {
+                position: relative;
+                display: inline-block;
+              }
+              
+              .autocomplete-items {
+                position: absolute;
+                border: 1px solid #d4d4d4;
+                border-bottom: none;
+                border-top: none;
+                z-index: 99;
+                /*position the autocomplete items to be the same width as the container:*/
+                top: 100%;
+                left: 0;
+                right: 0;
+                max-height: 120px;
+                overflow-y: scroll; 
+                overflow-x: hidden;
+              }
+              
+              .autocomplete-items div {
+                padding: 10px;
+                cursor: pointer;
+                background-color: #fff; 
+                border-bottom: 1px solid #d4d4d4; 
+              }
+              
+              /*when hovering an item:*/
+              .autocomplete-items div:hover {
+                background-color: #e9e9e9; 
+              }
+              
+              /*when navigating through the items using the arrow keys:*/
+              .autocomplete-active {
+                background-color: DodgerBlue !important; 
+                color: #ffffff; 
+              }
         
         </style>
     </head>
     <body>
-        <form action="{% url 'screenforloadmasterupdation' %}" method="POST">
+        <form action="{% url 'screenforloadmasterupdation' %}" method="POST" autocomplete="off">
             {% csrf_token %}
             <br><br>
             <center>
-                <h4><b>SCREEN FOR LOAD MASTER UPDATION</b></h4>
+                <h5><b>SCREEN FOR LOAD MASTER UPDATION</b></h5>
             </center>
             <br>
             <div class="container">
@@ -63,12 +105,31 @@
                         <input type="text" class="form-control mb-2" id="shopsec" name="shopsec" maxlength="4">
 
                     </div>
-
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b>LOAD_CENTRE :</b></label>
+                            <label class="form-check-label" ><b style="margin-left: -25px;">SHOP DESCRIPTION :</b></label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="shopdes" name="shopdes" readonly>
+
+                    </div>
+
+                    
+                </div>
+
+                <div class="form-row align-items-center">  
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 137px;">LOAD_CENTRE :</b></label>
 
                         </div>
 
@@ -79,30 +140,33 @@
                         <input type="text" class="form-control mb-2" id="loadcentre" name="loadcentre" maxlength="4" onkeypress="return isNumberKey(event)">
 
                     </div>
-                </div>
-
-                <div class="form-row align-items-center">   
+                    
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b style="margin-left: 150px;">DESCRIPTION :</b></label>
+                            <label class="form-check-label" ><b style="margin-left: 21px;">DESCRIPTION :</b></label>
                            
                         </div>
                 
                     </div>
-
-                    <div class="col-auto">                        
-
+                      
+                    <div class="col-auto">  
+                        <div class="autocomplete">                    
                         <input type="text" class="form-control mb-2" id="desc" name="desc" maxlength="30">
-
+                        </div>
                     </div>
 
+                    
+                </div>
+
+                <div class="form-row align-items-center"> 
+                    
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b style="margin-left: 48px;">NO_MEN :</b></label>
+                            <label class="form-check-label" ><b style="margin-left: 182px;">NO_MEN :</b></label>
 
                         </div>
 
@@ -113,14 +177,12 @@
                         <input type="text" class="form-control mb-2" id="no_man" name="no_man" value="0" maxlength="2" onkeypress="return isNumberKey(event)">
 
                     </div>
-                </div>
 
-                <div class="form-row align-items-center">   
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b style="margin-left: 179px;">NO_MCS1 :</b></label>
+                            <label class="form-check-label" ><b style="margin-left: 50px;">NO_MCS1 :</b></label>
             
                         </div>
                 
@@ -132,11 +194,15 @@
 
                     </div>
 
+                    
+                </div>
+
+                <div class="form-row align-items-center">  
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b style="margin-left: 39px;">NO_MCS2 : </b></label>
+                            <label class="form-check-label" ><b style="margin-left: 173px;">NO_MCS2 : </b></label>
                             
                         </div>
 
@@ -146,15 +212,12 @@
 
                         <input type="text" class="form-control mb-2" id="no_mcs2" name="no_mcs2" value="0" maxlength="2" onkeypress="return isNumberKey(event)">
 
-                    </div>
-                </div>
-
-                <div class="form-row align-items-center">   
+                    </div> 
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b style="margin-left: 175px;">NO_MCS3 :</b></label>
+                            <label class="form-check-label" ><b style="margin-left: 49px;">NO_MCS3 :</b></label>
 
                         </div>
                 
@@ -166,11 +229,15 @@
 
                     </div>
 
+                    
+                </div>
+
+                <div class="form-row align-items-center"> 
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b style="margin-left: 53px;">MW_NO : </b></label>
+                            <label class="form-check-label" ><b style="margin-left: 186px;">MW_NO : </b></label>
 
                         </div>
 
@@ -180,15 +247,12 @@
 
                         <input type="text" class="form-control mb-2" id="mw_no" name="mw_no" maxlength="5" onkeypress="return isNumberKey(event)">
 
-                    </div>
-                </div>
-
-                <div class="form-row align-items-center">   
+                    </div> 
                     <div class="col-auto">
 
                         <div class="form-check mb-2">
 
-                            <label class="form-check-label" ><b style="margin-left: 193px;">MC_GR :</b></label>
+                            <label class="form-check-label" ><b style="margin-left: 65px;">MC_GR :</b></label>
                             
                         </div>
                 
@@ -207,7 +271,6 @@
                 <center>
                     <input type="button" id="clear" value="Clear" onclick="window.location.reload();">
                     <input type="button" id="save" value="Save" onclick="ScreenlmSave()">
-                    <input type="button" id="lcno_id" name="lcnobtn" value="LOOK LCNO DESC" onclick="ScreenlmViewLcdesc()">
                 </center>
                 <br>
                 <br>
@@ -243,6 +306,11 @@
         </form>
     </body>
     <script>
+        var countries=[' '];
+        var mw1=[' '];
+        var mcgr1=[' '];
+        var check=0;
+        var check1=0;var check2=0;
         document.querySelector("#shopsec").addEventListener('change',(e)=>{
             e.preventDefault();
             var shopsec=$('#shopsec').val();
@@ -258,6 +326,10 @@
                         alert("Please Enter Correct Shop");
                         document.getElementById('shopsec').value="";
                         document.getElementById("shopsec").focus(); 
+                    }
+                    else
+                    {
+                        document.getElementById('shopdes').value=response[0].section_desc;
                     }
                 }
             })
@@ -327,6 +399,108 @@
                 })
             } 
         })
+
+        document.querySelector("#desc").addEventListener('click',(e)=>{
+            e.preventDefault();  
+            autocompleteDesc(); 
+        }); 
+        
+        function autocompleteDesc(){
+            var desc= $("#desc").val();
+            var data = {desc};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'ScreenLoadMasterUpdateAutoDesc' %}",
+                dataType : 'json',
+                data : data,  
+                success : function(response){  
+                    //alert("hiiiiii");
+
+                if(check==0)
+                {
+                    //alert("hello");
+                    for(i=0;i<response.length;i++)
+                    {
+                    countries.push((response[i].des).toString()); 
+                    }
+                    autocomplete(document.getElementById("desc"), countries); 
+
+                    check=1;
+                    
+
+                }    
+            }
+         });
+        }  
+        document.querySelector("#mw_no").addEventListener('click',(e)=>{
+            e.preventDefault();  
+            autocompletemw_no(); 
+        }); 
+        
+        function autocompletemw_no(){
+            var loadcentre =$('#loadcentre').val();
+            var shopsec=$('#shopsec').val();
+            var data = {loadcentre,shopsec};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'ScreenLoadMasterUpdateAutomw_no' %}",
+                dataType : 'json',
+                data : data,  
+                success : function(response){  
+                    //5alert("hiiiiii");
+
+                if(check1==0)
+                {
+                    //alert("hello");
+                    for(i=0;i<response.length;i++)
+                    {
+                        mw1.push((response[i].mwno).toString()); 
+                    }
+                    autocomplete(document.getElementById("mw_no"), mw1); 
+
+                    check1=1;
+                    //alert(mw1);
+
+                }    
+            }
+         });
+        }  
+
+        document.querySelector("#mc_gr").addEventListener('click',(e)=>{
+            e.preventDefault();  
+            autocompletemcgr(); 
+        }); 
+
+        function autocompletemcgr(){
+            var loadcentre =$('#loadcentre').val();
+            var shopsec=$('#shopsec').val();
+            var data = {loadcentre,shopsec};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'ScreenLoadMasterUpdateAutoMcgr' %}",
+                dataType : 'json',
+                data : data,  
+                success : function(response){  
+                    //alert("hiiiiii");
+                //alert(check2)
+                if(check2==0)
+                {
+                    //alert("hello");
+                    for(i=0;i<response.length;i++)
+                    {
+                        mcgr1.push((response[i].mc_gr).toString()); 
+                    }
+                    autocomplete(document.getElementById("mc_gr"), mcgr1); 
+
+                    check2=1;
+                    //alert(mcgr1);
+
+                }    
+            }
+         });
+        }  
+
+
         function ValidateScreenLm()
         {
             var loadcentre =$('#loadcentre').val();
@@ -338,49 +512,58 @@
             var nomcs3=$("#no_mcs3").val();
             var mwno=$("#mw_no").val();
             var mcgr=$("#mc_gr").val();
-            if(loadcentre == "")
-            {
-                alert("Please Fill The LOAD_CENTRE");
-                return false;
-            }
-            else if(shopsec == "")
+            if(shopsec == "")
             {
                 alert("Please Fill The SHOP_SEC ");
+                document.getElementById("shopsec").focus(); 
+                return false;
+            }
+            else if(loadcentre == "")
+            {
+                alert("Please Fill The LOAD_CENTRE");
+                document.getElementById("loadcentre").focus(); 
                 return false;
             }
             else if(desc == "")
             {
                 alert("Please Fill The DESCRIPTION ");
+                document.getElementById("desc").focus();   
                 return false;
             }
             else if(noman == "")
             {
                 alert("Please Fill The NO_MEN");
+                document.getElementById("no_man").focus();   
                 return false;
             }
             else if(nomcs1 == "")
             {
                 alert("Please Fill The NO_MCS1 ");
+                document.getElementById("no_mcs1").focus();   
                 return false;
             }
             else if(nomcs2 == "")
             {
                 alert("Please Fill The NO_MCS2");
+                document.getElementById("no_mcs2").focus();   
                 return false;
             }
             else if(nomcs3 == "")
             {
                 alert("Please Fill The NO_MCS3");
+                document.getElementById("no_mcs3").focus();
                 return false;
             }
             else if(mwno == "")
             {
                 alert("Please Fill The MW_NO");
+                document.getElementById("mw_no").focus(); 
                 return false;
             }
             else if(mcgr == "")
             {
                 alert("Please Fill The MC_GR");
+                document.getElementById("mc_gr").focus(); 
                 return false;
             }
             else
@@ -464,29 +647,34 @@
             var mwno=$('#mw_no').val();
             var mcgr=$('#mc_gr').val();
             var desc=$('#desc').val();
-            if(loadcentre == "")
-            {
-                alert("Please Fill The LOAD_CENTRE");
-                return false;
-            }
-            else if(shopsec == "")
+            if(shopsec == "")
             {
                 alert("Please Fill The SHOP_SEC ");
+                document.getElementById("shopsec").focus(); 
+                return false;
+            }
+            else if(loadcentre == "")
+            {
+                alert("Please Fill The LOAD_CENTRE");
+                document.getElementById("loadcentre").focus(); 
                 return false;
             }
             else if(desc == "")
             {
                 alert("Please Fill The DESCRIPTION ");
+                document.getElementById("desc").focus();
                 return false;
             }
             else if(mwno == "")
             {
                 alert("Please Fill The MW_NO");
+                document.getElementById("mw_no").focus(); 
                 return false;
             }
             else if(mcgr == "")
             {
                 alert("Please Fill The MC_GR");
+                document.getElementById("mc_gr").focus(); 
                 return false;
             }
             else
@@ -547,43 +735,106 @@
                 return false;
             return true;
         }
-        function ScreenlmViewLcdesc()
-        {
-            var loadcentre =$('#loadcentre').val();
-            if(loadcentre == "")
-            {
-                alert("Please Enter Load Center to LOOK LCNO DESc");
-                return false;
-            }
-            var data={loadcentre};
-            $.ajax({
-                type : 'GET',
-                dataType : 'json',
-                data :data,
-                url : "{% url 'ScreenLoadMasterUpdateView' %}",
-                success : function(response){
-                    if(response.length != 0)
-                    {
-                        $('#mytable').show();
-                        //Here we had made this dynamic table 
-                        for(var i=0;i<response.length;i++){
-                            var table = document.getElementById("mytable");
-                            var row = table.insertRow(-1);
-                            var cell1 = row.insertCell(0);
-                            var cell2 = row.insertCell(1);
-                            cell1.innerHTML = response[i].lcno;
-                            cell2.innerHTML = response[i].des;                            
-                        }
-                    }
-                    else
-                    {
-                        alert("This Load Centre is not present");
-                    }
-                    
+        
+        function autocomplete(inp, arr) {
+            /*the autocomplete function takes two arguments,
+            the text field element and an array of possible autocompleted values:*/
+            var currentFocus;
+            /*execute a function when someone writes in the text field:*/
+            inp.addEventListener("input", function(e) {
+                var a, b, i, val = this.value;
+                /*close any already open lists of autocompleted values*/
+                closeAllLists();
+                if (!val) { return false;}
+                currentFocus = -1;
+                /*create a DIV element that will contain the items (values):*/
+                a = document.createElement("DIV");
+                a.setAttribute("id", this.id + "autocomplete-list");
+                a.setAttribute("class", "autocomplete-items");
+                /*append the DIV element as a child of the autocomplete container:*/
+                this.parentNode.appendChild(a);
+                /*for each item in the array...*/
+                for (i = 0; i < arr.length; i++) {
+                  /*check if the item starts with the same letters as the text field value:*/
+                  if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    /*create a DIV element for each matching element:*/
+                    b = document.createElement("DIV");
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                    b.addEventListener("click", function(e) {
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                  }
                 }
-
             });
-        }
+            /*execute a function presses a key on the keyboard:*/
+            inp.addEventListener("keydown", function(e) {
+                var x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                  /*If the arrow DOWN key is pressed,
+                  increase the currentFocus variable:*/
+                  currentFocus++;
+                  /*and and make the current item more visible:*/
+                  addActive(x);
+                } else if (e.keyCode == 38) { //up
+                  /*If the arrow UP key is pressed,
+                  decrease the currentFocus variable:*/
+                  currentFocus--;
+                  /*and and make the current item more visible:*/
+                  addActive(x);
+                } else if (e.keyCode == 13) {
+                  /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                  e.preventDefault();
+                  if (currentFocus > -1) {
+                    /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                  }
+                }
+            });
+            function addActive(x) {
+              /*a function to classify an item as "active":*/
+              if (!x) return false;
+              /*start by removing the "active" class on all items:*/
+              removeActive(x);
+              if (currentFocus >= x.length) currentFocus = 0;
+              if (currentFocus < 0) currentFocus = (x.length - 1);
+              /*add class "autocomplete-active":*/
+              x[currentFocus].classList.add("autocomplete-active");
+            }
+            function removeActive(x) {
+              /*a function to remove the "active" class from all autocomplete items:*/
+              for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+              }
+            }
+            function closeAllLists(elmnt) {
+              /*close all autocomplete lists in the document,
+              except the one passed as an argument:*/
+              var x = document.getElementsByClassName("autocomplete-items");
+              for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != inp) {
+                  x[i].parentNode.removeChild(x[i]);
+                }
+              }
+            }
+            /*execute a function when someone clicks in the document:*/
+            document.addEventListener("click", function (e) {
+                closeAllLists(e.target);
+            });
+          }   
+          
+          /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+          //////
     </script>
     
 </html>

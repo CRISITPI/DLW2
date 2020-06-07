@@ -637,12 +637,13 @@ urlpatterns = [
     path('ajax/validate_axlepress_inspect',validate_axlepress_inspect,name='validate_axlepress_inspect'),
     path('ajax/validate_pinionpress_inspect',validate_pinionpress_inspect,name='validate_pinionpress_inspect'),
     path('ajax/fetch_axlemake',fetch_axlemake,name='fetch_axlemake'),
-
-
-
-
-
-    	
+    path('jbs_doc/',jbs_doc,name='jbs_doc'),
+    path('epc_changed/',epc_changed,name='epc_changed'),
+    path('listselected_index/',listselected_index,name='listselected_index'),
+    path('btncrtjbsdoc/',btncrtjbsdoc,name='btncrtjbsdoc'),
+    path('jbsreport/',jbsreport,name='jbsreport'),
+   
+  	
 ]
 
 
