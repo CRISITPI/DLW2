@@ -11762,7 +11762,7 @@ def axlepress_addbo(request):
 def wheelpress_inspectsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
-        myval=list(AxleWheelPressing.objects.filter(sno=mysno).values('wheelno_de','wheelno_nde','axle_no','bullgear_no','bullgear_make'))
+        myval=list(AxleWheelPressing.objects.filter(axle_no=mysno).values('wheelno_de','wheelno_nde','axle_no','bullgear_no','bullgear_make'))
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
 
