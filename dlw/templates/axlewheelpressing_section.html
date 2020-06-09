@@ -1160,8 +1160,8 @@ $("#wheelpress").change(function(e){
 
         $("#wheelpress").change(function(e){
             e.preventDefault();
-            var sels_no = $(this).val();
-            var data = {sels_no};
+            var sels_no1 = $(this).val();
+            var data = {sels_no1};
               $.ajax({
                 type : 'GET',
                 url : "{% url 'wheelpress_inspectsno' %}",
@@ -1222,8 +1222,8 @@ $("#wheelpress").change(function(e){
 
         $("#wheelpresshhp").change(function(e){
             e.preventDefault();
-            var sels_no = $(this).val();
-            var data = {sels_no};
+            var sels_no1 = $(this).val();
+            var data = {sels_no1};
               $.ajax({
                 type : 'GET',
                 url : "{% url 'wheelpress_inspectsno' %}",
