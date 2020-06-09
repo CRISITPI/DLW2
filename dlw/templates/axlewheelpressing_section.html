@@ -116,26 +116,26 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" {% if usermaster.op_delete %}{% else %} disabled {% endif%}  data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
                     
                     <li class="dropdown">
-                        <a href="#" class="btn btn-primary" data-toggle="dropdown" role="button" {% if usermaster.op_update %}{% else %} disabled {% endif%} 
+                        <a href="#" class="btn btn-primary" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false"  style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% "><font color="white">Inspect</font></a>
                         <ul class="dropdown-menu">
-                            <li><button type="button" class="btn btn"  {% if usermaster.op_update %}{% else %} disabled {% endif%}data-toggle="modal" data-target="#InspectModalNormal">Inspect</button></li>
-                            <li><button type="button" class="btn btn" {% if usermaster.op_update %}{% else %} disabled {% endif%} data-toggle="modal" data-target="#InspectModalHHP">Inspect HHP</button></li>
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#InspectModalNormal">Inspect</button></li>
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#InspectModalHHP">Inspect HHP</button></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" {% if usermaster.op_update %}{% else %} disabled {% endif%}  data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">EditRecord</font>
                      </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" {% if usermaster.op_create %}{% else %} disabled {% endif%}  data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                         <font color="white">AddRecord</font>
                      </button>
                     </li>
@@ -406,20 +406,17 @@ footer, .page-content::after{
                                              
                                               <div class="col-6">
                                                 <label for="">MSU Unit Make</label>
-                                                <select name="inspectmsu_unit_make" id="inspectmsu_unit_make" class="form-control ll" required >
-                                                  <option value="" hidden selected>Select MSU Unit Make.</option>
-                                                    <option>KP</option>
-                                                    <option>KM</option>
-                                                </select>
+                                                <input type="text" name="inspectmsu_unit_make" id="inspectmsu_unit_make" class="form-control ll" placeholder="" maxlength="20" required >
+                                                  
                                         </div>
                                               <div class="col-6">
-                                                <label for="">Axle Box No</label>
-                                                <input type="text" class="form-control" name="inspectaxle_box_no" id="inspectaxle_box_no" placeholder="" maxlength="20" required>
+                                                <label for="">Axle Box No (DE)</label>
+                                                <input type="text" class="form-control" name="inspectaxle_box_node" id="inspectaxle_box_node" placeholder="" maxlength="20" required>
                                               </div>
                                              
                                               <div class="col-6">
-                                                <label for="">Axle Box Make</label>
-                                                <select name="inspectaxle_box_make" id="inspectaxle_box_make" class="form-control ll" required >
+                                                <label for="">Axle Box Make (DE)</label>
+                                                <select name="inspectaxle_box_makede" id="inspectaxle_box_makede" class="form-control ll" required >
                                                   <option value="" hidden selected>Select Axle Box Make.</option>
                                                     <option>KMRI</option>
                                                     <option>KP</option>
@@ -428,30 +425,43 @@ footer, .page-content::after{
                                                 </select>
                                         </div>
                                               <div class="col-6">
-                                                <label for="">Axle Box Clearance</label>
-                                                <input type="text" class="form-control" name="inspectaxle_box_clearance" id="inspectaxle_box_clearance" onchange="validateAxleWheelPressForm(this.id)" placeholder="" maxlength="20" required>
+                                                <label for="">Axle Box Clearance(DE)</label>
+                                                <input type="text" class="form-control" name="inspectaxle_box_clearancede" id="inspectaxle_box_clearancede" onchange="validateAxleWheelPressForm(this.id)" placeholder="" maxlength="20" required>
                                               </div>
                                               <div class="col-6">
-                                                <label for="">Suspension Bearing(DE) No</label>
-                                                <input type="text" class="form-control" name="inspectsuspension_bearing_de_no" id="inspectsuspension_bearing_de_no" placeholder="" maxlength="20" required>
+                                                <label for="">Axle Box No (NDE)</label>
+                                                <input type="text" class="form-control" name="inspectaxle_box_nonde" id="inspectaxle_box_nonde" placeholder="" maxlength="20" required>
+                                              </div>
+                                             
+                                              <div class="col-6">
+                                                <label for="">Axle Box Make (NDE)</label>
+                                                <select name="inspectaxle_box_makende" id="inspectaxle_box_makende" class="form-control ll" required >
+                                                  <option value="" hidden selected>Select Axle Box Make.</option>
+                                                    <option>KMRI</option>
+                                                    <option>KP</option>
+                                                    <option>ANIL</option>
+                                                    <option>SES</option>
+                                                </select>
+                                        </div>
+                                              <div class="col-6">
+                                                <label for="">Axle Box Clearance(NDE)</label>
+                                                <input type="text" class="form-control" name="inspectaxle_box_clearancende" id="inspectaxle_box_clearancende" onchange="validateAxleWheelPressForm(this.id)" placeholder="" maxlength="20" required>
                                               </div>
                                               
+                                              
                                               <div class="col-6">
-                                                <label for="">Suspension Bearing(DE) Make</label>
-                                                <select name="inspectsuspension_bearing_de_make" id="inspectsuspension_bearing_de_make" class="form-control ll" required >
+                                                <label for="">MSU Bearing(DE) Make</label>
+                                                <select name="inspectmsu_bearing_de_make" id="inspectmsu_bearing_de_make" class="form-control ll" required >
                                                   <option value="" hidden selected>Select Suspension Bearing(DE) Make.</option>
                                                     <option>SKF</option>
                                                     <option>NBC</option>
                                                 </select>
                                         </div>
-                                              <div class="col-6">
-                                                <label for="">Suspension Bearing(NDE) No</label>
-                                                <input type="text" class="form-control" name="inspectsuspension_bearing_nde_no" id="inspectsuspension_bearing_nde_no" placeholder="" maxlength="20" required>
-                                              </div>
+                                              
                                               
                                               <div class="col-6">
-                                                <label for="">Suspension Bearing(NDE) Make</label>
-                                                <select name="inspectsuspension_bearing_nde_make" id="inspectsuspension_bearing_nde_make" class="form-control ll" required >
+                                                <label for="">MSU Bearing(NDE) Make</label>
+                                                <select name="inspectmsu_bearing_nde_make" id="inspectmsu_bearing_nde_make" class="form-control ll" required >
                                                   <option value="" hidden selected>Select Suspension Bearing(NDE) Make.</option>
                                                     <option>SKF</option>
                                                     <option>NBC</option>
@@ -498,6 +508,23 @@ footer, .page-content::after{
                                                 <div class="col-6">
                                                   <label for="">CRU Bearing Pressure(NDE)</label>
                                                   <input type="text" class="form-control" name="inspectcru_bearing_pressure_nde" id="inspectcru_bearing_pressure_nde" placeholder="" maxlength="20" required>
+                                                </div>
+                                              </div>
+                                              <div class="row">
+                                              
+                                                <div class="col-6">
+                                                  <label for="">Wheel Distance</label>
+                                                  <input type="text" class="form-control" name="inspectwheel_distance" id="inspectwheel_distance" placeholder="" maxlength="20" required>
+                                                </div>
+                                              
+                                                <div class="col-6">
+                                                  <label for="">Axial Play (DE)</label>
+                                                  <input type="text" class="form-control" name="inspectaxialplay_de" id="inspectaxialplay_de" placeholder="" maxlength="20" required>
+                                               
+                                          </div>
+                                                <div class="col-6">
+                                                  <label for="">Axial Play (NDE)</label>
+                                                  <input type="text" class="form-control" name="inspectaxialplay_nde" id="inspectaxialplay_nde" placeholder="" maxlength="20" required>
                                                 </div>
                                               </div>
                                               <div class="row">
@@ -562,7 +589,7 @@ footer, .page-content::after{
                           </div>
                           <div class="col-6">
                             <label for="">Wheel (DE) pressure</label>
-                            <input type="text" class="form-control" name="hhpwheel_de_pressure" id="inspectwheel_nde_pressure" onchange="validateAxleWheelPressForm(this.id)"  placeholder="" maxlength="20" required>
+                            <input type="text" class="form-control" name="hhpwheel_de_pressure" id="hhpwheel_de_pressure" onchange="validateAxleWheelPressForm(this.id)"  placeholder="" maxlength="20" required>
                           </div>
                           <div class="col-6">
                                 <label for="">wheel No.(NDE)</label>
@@ -603,20 +630,17 @@ footer, .page-content::after{
                                      
                                       <div class="col-6">
                                         <label for="">MSU Unit Make</label>
-                                        <select name="hhpmsu_unit_make" id="hhpmsu_unit_make" class="form-control ll" required >
-                                          <option value="" hidden selected>Select MSU Unit Make.</option>
-                                            <option>KPE</option>
-                                            <option>KMRI</option>
-                                        </select>
+                                        <input type="text" name="hhpmsu_unit_make" id="hhpmsu_unit_make" class="form-control ll" placeholder="" maxlength="20" required >
+                                                 
                                 </div>
                                       <div class="col-6">
-                                        <label for="">Axle Box No</label>
-                                        <input type="text" class="form-control" name="hhpaxle_box_no" id="hhpaxle_box_no" placeholder="" maxlength="20" required>
+                                        <label for="">Axle Box No (DE)</label>
+                                        <input type="text" class="form-control" name="hhpaxle_box_node" id="hhpaxle_box_node" placeholder="" maxlength="20" required>
                                       </div>
                                      
                                       <div class="col-6">
-                                        <label for="">Axle Box Make</label>
-                                        <select name="hhpaxle_box_make" id="hhpaxle_box_make" class="form-control ll" required >
+                                        <label for="">Axle Box Make (DE)</label>
+                                        <select name="hhpaxle_box_makede" id="hhpaxle_box_makede" class="form-control ll" required >
                                           <option value="" hidden selected>Select Axle Box Make.</option>
                                             <option>KMRI</option>
                                             <option>KPE</option>
@@ -625,17 +649,32 @@ footer, .page-content::after{
                                         </select>
                                 </div>
                                       <div class="col-6">
-                                        <label for="">Axle Box Clearance</label>
-                                        <input type="text" class="form-control" name="hhpaxle_box_clearance" id="hhpaxle_box_clearance" placeholder="" maxlength="20" required>
+                                        <label for="">Axle Box Clearance (DE)</label>
+                                        <input type="text" class="form-control" name="hhpaxle_box_clearancede" id="hhpaxle_box_clearancede" placeholder="" maxlength="20" required>
                                       </div>
                                       <div class="col-6">
-                                        <label for="">Suspension Bearing(DE) No</label>
-                                        <input type="text" class="form-control" name="hhpsuspension_bearing_de_no" id="hhpsuspension_bearing_de_no" placeholder="" maxlength="20" required>
+                                        <label for="">Axle Box No (NDE)</label>
+                                        <input type="text" class="form-control" name="hhpaxle_box_nonde" id="hhpaxle_box_nonde" placeholder="" maxlength="20" required>
                                       </div>
                                      
                                       <div class="col-6">
-                                        <label for="">Suspension Bearing(DE) Make</label>
-                                        <select name="hhpsuspension_bearing_de_make" id="hhpsuspension_bearing_de_make" class="form-control ll" required >
+                                        <label for="">Axle Box Make (NDE)</label>
+                                        <select name="hhpaxle_box_makende" id="hhpaxle_box_makende" class="form-control ll" required >
+                                          <option value="" hidden selected>Select Axle Box Make.</option>
+                                            <option>KMRI</option>
+                                            <option>KPE</option>
+                                            <option>NBC</option>
+                                            <option>FAG</option>
+                                        </select>
+                                </div>
+                                      <div class="col-6">
+                                        <label for="">Axle Box Clearance (NDE)</label>
+                                        <input type="text" class="form-control" name="hhpaxle_box_clearancende" id="hhpaxle_box_clearancende" placeholder="" maxlength="20" required>
+                                      </div>
+                                     
+                                      <div class="col-6">
+                                        <label for="">MSU Bearing(DE) Make</label>
+                                        <select name="hhpmsu_bearing_de_make" id="hhpmsu_bearing_de_make" class="form-control ll" required >
                                           <option value="" hidden selected>Select Suspension Bearing(DE) Make.</option>
                                             <option>SKF</option>
                                             <option>NBC</option>
@@ -643,14 +682,11 @@ footer, .page-content::after{
                                             <option>TIM</option>
                                         </select>
                                 </div>
-                                      <div class="col-6">
-                                        <label for="">Suspension Bearing(NDE) No</label>
-                                        <input type="text" class="form-control" name="hhpsuspension_bearing_nde_no" id="hhpsuspension_bearing_nde_no" placeholder="" maxlength="20" required>
-                                      </div>
+                                     
                                       
                                       <div class="col-6">
-                                        <label for="">Suspension Bearing(NDE) Make</label>
-                                        <select name="hhpsuspension_bearing_nde_make" id="hhpsuspension_bearing_nde_make" class="form-control ll" required >
+                                        <label for="">MSU Bearing(NDE) Make</label>
+                                        <select name="hhpmsu_bearing_nde_make" id="hhpmsu_bearing_nde_make" class="form-control ll" required >
                                           <option value="" hidden selected>Select Suspension Bearing(NDE) Make.</option>
                                           <option>SKF</option>
                                           <option>NBC</option>
@@ -701,6 +737,23 @@ footer, .page-content::after{
                                         <div class="col-6">
                                           <label for="">CRU Bearing Pressure (NDE)</label>
                                           <input type="text" class="form-control" name="hhpcru_bearing_pressure_nde" id="hhpcru_bearing_pressure_nde" placeholder="" maxlength="20" required>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                              
+                                        <div class="col-6">
+                                          <label for="">Wheel Distance</label>
+                                          <input type="text" class="form-control" name="hhpwheel_distance" id="hhpwheel_distance" placeholder="" maxlength="20" required>
+                                        </div>
+                                      
+                                        <div class="col-6">
+                                          <label for="">Axial Play (DE)</label>
+                                          <input type="text" class="form-control" name="hhpaxialplay_de" id="hhpaxialplay_de" placeholder="" maxlength="20" required>
+                                       
+                                  </div>
+                                        <div class="col-6">
+                                          <label for="">Axial Play (NDE)</label>
+                                          <input type="text" class="form-control" name="hhpaxialplay_nde" id="hhpaxialplay_nde" placeholder="" maxlength="20" required>
                                         </div>
                                       </div>
                                       <div class="row">
@@ -1264,13 +1317,14 @@ $("#wheelpress").change(function(e){
                         document.getElementById('inspectbullgear_pressure').value ='';
                         document.getElementById('inspectmsu_unit_no').value ='';
                         document.getElementById('inspectmsu_unit_make').value ='';
-                        document.getElementById('inspectaxle_box_no').value ='';
-                        document.getElementById('inspectaxle_box_make').value ='';
-                        document.getElementById('inspectaxle_box_clearance').value ='';
-                        document.getElementById('inspectsuspension_bearing_de_no').value ='';
-                        document.getElementById('inspectsuspension_bearing_de_make').value ='';
-                        document.getElementById('inspectsuspension_bearing_nde_no').value ='';
-                        document.getElementById('inspectsuspension_bearing_nde_make').value ='';
+                        document.getElementById('inspectaxle_box_node').value ='';
+                        document.getElementById('inspectaxle_box_makede').value ='';
+                        document.getElementById('inspectaxle_box_clearancede').value ='';
+                        document.getElementById('inspectaxle_box_nonde').value ='';
+                        document.getElementById('inspectaxle_box_makende').value ='';
+                        document.getElementById('inspectaxle_box_clearancende').value ='';
+                        document.getElementById('inspectmsu_bearing_de_make').value ='';
+                        document.getElementById('inspectmsu_bearing_nde_make').value ='';
                         document.getElementById('inspectcru_bearing_no_de').value ='';
                         document.getElementById('inspectcru_bearing_make_de').value ='';
                         document.getElementById('inspectcru_bearing_pressure_de').value ='';
@@ -1279,6 +1333,9 @@ $("#wheelpress").change(function(e){
                         document.getElementById('inspectcru_bearing_pressure_nde').value ='';
                         document.getElementById('inspectdate').value ='';
                         document.getElementById('inspectinspector_name').value ='';
+                        document.getElementById('inspectaxialplay_de').value ='';
+                        document.getElementById('inspectaxialplay_nde').value ='';
+                        document.getElementById('inspectwheel_distance').value ='';
                         }
                         else {
                           var inspect_date=response[0].inspect_date;
@@ -1301,21 +1358,25 @@ $("#wheelpress").change(function(e){
                         $("#inspectbullgear_pressure").val(`${response[0].bullgear_pressure}`);
                         $("#inspectmsu_unit_no").val(`${response[0].msu_unit_no}`);
                         $("#inspectmsu_unit_make").val(`${response[0].msu_unit_make}`);
-                        $("#inspectaxle_box_no").val(`${response[0].axle_box_no}`);
-                        $("#inspectaxle_box_make").val(`${response[0].axle_box_make}`);
-                        $("#inspectaxle_box_clearance").val(`${response[0].axle_box_clearance}`);
-                        $("#inspectsuspension_bearing_de_no").val(`${response[0].suspension_bearing_de_no}`);
-                        $("#inspectsuspension_bearing_de_make").val(`${response[0].suspension_bearing_de_make}`);
-                        $("#inspectsuspension_bearing_nde_no").val(`${response[0].suspension_bearing_nde_no}`);
-                        $("#inspectsuspension_bearing_nde_make").val(`${response[0].suspension_bearing_nde_make}`);
+                        $("#inspectaxle_box_node").val(`${response[0].axle_box_node}`);
+                        $("#inspectaxle_box_makede").val(`${response[0].axle_box_makede}`);
+                        $("#inspectaxle_box_clearancede").val(`${response[0].axle_box_clearancede}`);
+                        $("#inspectaxle_box_nonde").val(`${response[0].axle_box_nonde}`);
+                        $("#inspectaxle_box_makende").val(`${response[0].axle_box_makende}`);
+                        $("#inspectaxle_box_clearancende").val(`${response[0].axle_box_clearancende}`);
+                        $("#inspectmsu_bearing_de_make").val(`${response[0].msu_bearing_de_make}`);
+                        $("#inspectmsu_bearing_nde_make").val(`${response[0].msu_bearing_nde_make}`);
                         $("#inspectcru_bearing_no_de").val(`${response[0].cru_bearing_no_de}`);
                         $("#inspectcru_bearing_make_de").val(`${response[0].cru_bearing_make_de}`);
                         $("#inspectcru_bearing_pressure_de").val(`${response[0].cru_bearing_pressure_de}`);
                         $("#inspectcru_bearing_no_nde").val(`${response[0].cru_bearing_no_nde}`);
                         $("#inspectcru_bearing_make_nde").val(`${response[0].cru_bearing_make_nde}`);
                         $("#inspectcru_bearing_pressure_nde").val(`${response[0].cru_bearing_pressure_nde}`);
-                     
+                        $("#inspectwheel_distance").val(`${response[0].wheel_distance}`);
+                        $("#inspectaxialplay_de").val(`${response[0].axialplay_de}`);
+                        $("#inspectaxialplay_nde").val(`${response[0].axialplay_nde}`);
                         $("#inspectinspector_name").val(`${response[0].inspector_name}`);
+                        
                         }
                     }
 
@@ -1342,13 +1403,14 @@ $("#wheelpress").change(function(e){
                         document.getElementById('hhpbullgear_pressure').value ='';
                         document.getElementById('hhpmsu_unit_no').value ='';
                         document.getElementById('hhpmsu_unit_make').value ='';
-                        document.getElementById('hhpaxle_box_no').value ='';
-                        document.getElementById('hhpaxle_box_make').value ='';
-                        document.getElementById('hhpaxle_box_clearance').value ='';
-                        document.getElementById('hhpsuspension_bearing_de_no').value ='';
-                        document.getElementById('hhpsuspension_bearing_de_make').value ='';
-                        document.getElementById('hhpsuspension_bearing_nde_no').value ='';
-                        document.getElementById('hhpsuspension_bearing_nde_make').value ='';
+                        document.getElementById('hhpaxle_box_node').value ='';
+                        document.getElementById('hhpaxle_box_makede').value ='';
+                        document.getElementById('hhpaxle_box_clearancede').value ='';
+                        document.getElementById('hhpaxle_box_nonde').value ='';
+                        document.getElementById('hhpaxle_box_makende').value ='';
+                        document.getElementById('hhpaxle_box_clearancende').value ='';
+                        document.getElementById('hhpmsu_bearing_de_make').value ='';
+                        document.getElementById('hhpmsu_bearing_nde_make').value ='';
                         document.getElementById('hhpcru_bearing_no_de').value ='';
                         document.getElementById('hhpcru_bearing_make_de').value ='';
                         document.getElementById('hhpcru_bearing_pressure_de').value ='';
@@ -1357,6 +1419,9 @@ $("#wheelpress").change(function(e){
                         document.getElementById('hhpcru_bearing_pressure_nde').value ='';
                         document.getElementById('hhpdate').value ='';
                         document.getElementById('hhpinspector_name').value ='';
+                        document.getElementById('hhpwheel_distance').value ='';
+                        document.getElementById('hhpaxialplay_de').value ='';
+                        document.getElementById('hhpaxialplay_nde').value ='';
                         }
                         else {
                           var hhpdate=response[0].inspect_date;
@@ -1379,13 +1444,14 @@ $("#wheelpress").change(function(e){
                         $("#hhpbullgear_pressure").val(`${response[0].bullgear_pressure}`);
                         $("#hhpmsu_unit_no").val(`${response[0].msu_unit_no}`);
                         $("#hhpmsu_unit_make").val(`${response[0].msu_unit_make}`);
-                        $("#hhpaxle_box_no").val(`${response[0].axle_box_no}`);
-                        $("#hhpaxle_box_make").val(`${response[0].axle_box_make}`);
-                        $("#hhpaxle_box_clearance").val(`${response[0].axle_box_clearance}`);
-                        $("#hhpsuspension_bearing_de_no").val(`${response[0].suspension_bearing_de_no}`);
-                        $("#hhpsuspension_bearing_de_make").val(`${response[0].suspension_bearing_de_make}`);
-                        $("#hhpsuspension_bearing_nde_no").val(`${response[0].suspension_bearing_nde_no}`);
-                        $("#hhpsuspension_bearing_nde_make").val(`${response[0].suspension_bearing_nde_make}`);
+                        $("#hhpaxle_box_node").val(`${response[0].axle_box_node}`);
+                        $("#hhpaxle_box_makede").val(`${response[0].axle_box_makede}`);
+                        $("#hhpaxle_box_clearancede").val(`${response[0].axle_box_clearancede}`);
+                        $("#hhpaxle_box_nonde").val(`${response[0].axle_box_nonde}`);
+                        $("#hhpaxle_box_makende").val(`${response[0].axle_box_makende}`);
+                        $("#hhpaxle_box_clearancende").val(`${response[0].axle_box_clearancende}`);
+                        $("#hhpmsu_bearing_de_make").val(`${response[0].msu_bearing_de_make}`);
+                        $("#hhpmsu_bearing_nde_make").val(`${response[0].msu_bearing_nde_make}`);
                         $("#hhpcru_bearing_no_de").val(`${response[0].cru_bearing_no_de}`);
                         $("#hhpcru_bearing_make_de").val(`${response[0].cru_bearing_make_de}`);
                         $("#hhpcru_bearing_pressure_de").val(`${response[0].cru_bearing_pressure_de}`);
@@ -1398,6 +1464,9 @@ $("#wheelpress").change(function(e){
                         $("#hhpjournal_make_de").val(`${response[0].journal_make_de}`);
                         $("#hhpjournal_no_nde").val(`${response[0].journal_no_nde}`);
                         $("#hhpjournal_make_nde").val(`${response[0].journal_make_nde}`);
+                        $("#hhpwheel_distance").val(`${response[0].wheel_distance}`);
+                        $("#hhpaxialplay_de").val(`${response[0].axialplay_de}`);
+                        $("#hhpaxialplay_nde").val(`${response[0].axialplay_nde}`);
 
                         }
                     }
