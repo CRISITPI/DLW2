@@ -3452,7 +3452,6 @@ class PinionPressing(models.Model):
     axle_no=models.CharField(max_length=20,null=True)
     inspect_date=models.CharField(max_length=20,null=True)
 
-
 class Dpo(models.Model):
     procedureno=models.CharField(max_length=50,null=True,default='0')
     locotype=models.CharField(max_length=50,null=True)
@@ -3523,19 +3522,23 @@ class AxleWheelPressing(models.Model):
     msu_unit_no=models.CharField(max_length=20,null=True)
     bullgear_pressure=models.CharField(max_length=20,null=True)
     msu_unit_make=models.CharField(max_length=20,null=True)
-    axle_box_no=models.CharField(max_length=20,null=True)
-    axle_box_make=models.CharField(max_length=20,null=True)
-    axle_box_clearance=models.CharField(max_length=20,null=True)
-    suspension_bearing_de_no=models.CharField(max_length=20,null=True)
-    suspension_bearing_de_make=models.CharField(max_length=20,null=True)
-    suspension_bearing_nde_no=models.CharField(max_length=20,null=True)
-    suspension_bearing_nde_make=models.CharField(max_length=20,null=True)
+    axle_box_node=models.CharField(max_length=20,null=True)
+    axle_box_makede=models.CharField(max_length=20,null=True)
+    axle_box_clearancede=models.CharField(max_length=20,null=True)
+    axle_box_nonde=models.CharField(max_length=20,null=True)
+    axle_box_makende=models.CharField(max_length=20,null=True)
+    axle_box_clearancende=models.CharField(max_length=20,null=True)
+    msu_bearing_de_make=models.CharField(max_length=20,null=True)
+    msu_bearing_nde_make=models.CharField(max_length=20,null=True)
     cru_bearing_no_de=models.CharField(max_length=20,null=True)
     cru_bearing_make_de=models.CharField(max_length=20,null=True)
     cru_bearing_pressure_de=models.CharField(max_length=20,null=True)
     cru_bearing_no_nde=models.CharField(max_length=20,null=True)
     cru_bearing_make_nde=models.CharField(max_length=20,null=True)
     cru_bearing_pressure_nde=models.CharField(max_length=20,null=True)
+    wheel_distance=models.CharField(max_length=20,null=True)
+    axialplay_de=models.CharField(max_length=20,null=True)
+    axialplay_nde=models.CharField(max_length=20,null=True)
     date=models.CharField(max_length=20,null=True)
     locos=models.CharField(max_length=20,null=True)
     inspector_name=models.CharField(max_length=20,null=True)
@@ -3734,6 +3737,7 @@ class BogieAssembly(models.Model):
     locopaper_date=models.CharField(max_length=20,null=True)
     h_plate=models.CharField(max_length=20,null=True)
     torque_support=models.CharField(max_length=20,null=True)
+
 
 
 class MG22new(models.Model):
@@ -4354,6 +4358,7 @@ class AxleMachining(models.Model):
     throweraxlende=models.CharField(max_length=20,blank=True)
     wheelseataxlende=models.CharField(max_length=20,blank=True)
     collaraxlende=models.CharField(max_length=20,blank=True)
+
 
 class M27TimeSheet(models.Model):
     shop_sec=models.CharField(max_length=20,null=True)

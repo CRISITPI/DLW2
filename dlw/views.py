@@ -6754,7 +6754,6 @@ def pinionpressing_section(request):
         return HttpResponseRedirect("/PinionPress/")
     
     return render(request,"PinionPress.html",my_context)
-
 def uniquetm(request):
     if request.method=="GET" and request.is_ajax():
         tm_no = request.GET.get('tm_no')
@@ -6766,6 +6765,8 @@ def uniquetm(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
+
+
 def uniquepinion(request):
     if request.method=="GET" and request.is_ajax():
         pinion_no = request.GET.get('pinion_no')
@@ -11736,6 +11737,7 @@ def uniquebullgear(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 
 def validate_axlepress_inspect(request):
     if request.method=="GET" and request.is_ajax():
@@ -16982,7 +16984,7 @@ def bogiereportfsno_validate(request):
         else :
             msg=["false"]
         return JsonResponse(msg, safe = False)
-    return JsonResponse({"success":False}, status=400) 
+    return JsonResponse({"success":False}, status=400)  
 def FetchBogieDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
@@ -24209,6 +24211,7 @@ def airbox_addeditloco(request):
         return JsonResponse(myvalue, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
 def fetchloco(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
@@ -24226,6 +24229,7 @@ def fetchaxleloco(request):
         myval3 = list(Code.objects.filter(code=myval2[0]['ep_type'],cd_type='11').values('alpha_1').distinct())
         return JsonResponse(myval3, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 
 def fetchwheelpartno(request):
     if request.method=="GET" and request.is_ajax():
@@ -24265,6 +24269,7 @@ def fetchaxlepartno(request):
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
 def fetchwheeleditpartno(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('b_no')
@@ -24296,7 +24301,7 @@ def FetchWheelInspectDetail(request):
 def FetchAxleInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval1=list(AxleMachining.objects.filter(axle_no=mysno,dispatch_to="Inspected").values('ustaxle','ustaxle_date','ustaxle_status','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','dateaxle','bearingaxle','abutmentaxle','inspector_nameaxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE').distinct())
+        myval1=list(AxleMachining.objects.filter(axle_no=mysno,dispatch_to="Inspected").values('ustaxle','ustaxle_date','ustaxle_status','axlelength','journalaxle','throweraxle','wheelseataxle','gearseataxle','collaraxle','dateaxle','bearingaxle','abutmentaxle','inspector_nameaxle','journal_surfacefinishGE','wheelseat_surfacefinishGE','gearseat_surfacefinishGE','journal_surfacefinishFE','wheelseat_surfacefinishFE','gearseat_surfacefinishFE','journalaxlende','throweraxlende','wheelseataxlende','collaraxlende').distinct())
         l=len(myval1)
         if l>0 :
             msg=myval1
@@ -24308,7 +24313,7 @@ def FetchAxleInspectDetail(request):
 def FetchPressInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval1=list(AxleWheelPressing.objects.filter(sno=mysno,dispatch_to="Inspected").values('wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','date','wheel_nde_pressure').distinct())
+        myval1=list(AxleWheelPressing.objects.filter(axle_no=mysno,dispatch_to="Inspected").values('wheel_de_pressure','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','wheel_nde_pressure').distinct())
         l=len(myval1)
         if l>0 :
             msg=myval1
@@ -24320,7 +24325,7 @@ def FetchPressInspectDetail(request):
 def FetchPressInspectHHPDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval2=list(AxleWheelPressing.objects.filter(sno=mysno,dispatch_to="HHP_Inspected").values('wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','date','wheel_nde_pressure','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde').distinct())
+        myval2=list(AxleWheelPressing.objects.filter(axle_no=mysno,dispatch_to="HHP_Inspected").values('wheel_de_pressure','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','wheel_nde_pressure','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde').distinct())
         l1=len(myval2)
         if l1>0 :
             msg=myval2
@@ -24332,7 +24337,7 @@ def FetchPressInspectHHPDetail(request):
 def FetchPinionInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval2=list(PinionPressing.objects.filter(sno=mysno,dispatch_to="Inspected").values('pinion_no','pinion_make','pinion_pressure','pinion_travel','blue_match').distinct())
+        myval2=list(PinionPressing.objects.filter(axle_no=mysno,dispatch_to="Inspected").values('pinion_pressure_triangle_glycerin','pinion_pressure_square_ram','pinion_teeth_dist','pinion_no','pinion_make','pinion_pressure_triangle_glycerin','pinion_travel','blue_match','inspect_date').distinct())
         l1=len(myval2)
         if l1>0 :
             msg=myval2
@@ -24344,10 +24349,11 @@ def FetchPinionInspectDetail(request):
 def FetchBogieInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval2=list(BogieAssembly.objects.filter(sno=mysno,dispatch_to="Inspected").values('axle_no','axle_location','traction_motor_no','gear_case_no','gear_case_make','msu_unit_no','break_rigging_make','coil_spring_make','sand_box_make','spheri_block_make','elastic_shop_make','horizontal_damper').distinct())
+        myval2=list(BogieAssembly.objects.filter(frameserial_no=mysno,dispatch_to="Inspected").values('torque_support','first_axle','first_coilspring_make','first_gearcase_no','first_gearcase_make','first_back_lash','first_vertical_r','first_vertical_l','first_horizontal_r','first_horizontal_l','second_axle','second_coilspring_make','second_gearcase_no','second_gearcase_make','second_back_lash','second_vertical_r','second_vertical_l','second_horizontal_r','second_horizontal_l','third_axle','third_coilspring_make','third_gearcase_no','third_gearcase_make','third_back_lash','third_vertical_r','third_vertical_l','third_horizontal_r','third_horizontal_l','wheel_set_guide','gear_case_oil','break_rigging_make','sand_box_make','spheri_block_make','elastic_shop_make','horizontal_damper','inspect_date','motor_check','motor_date','lowering_check','lowering_date','dispatch_check','dispatch_check_date','loco_paper','locopaper_date','first_axle','second_axle','third_axle').distinct())
         l1=len(myval2)
         if l1>0 :
             msg=myval2
+            
         else :
             msg=["false"]
         return JsonResponse(msg, safe = False)
@@ -24356,7 +24362,7 @@ def FetchBogieInspectDetail(request):
 def FetchBogieInspectHHPDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval2=list(BogieAssembly.objects.filter(sno=mysno,dispatch_to="HHP_Inspected").values('axle_no','axle_location','traction_motor_no','gear_case_no','gear_case_make','msu_unit_no','break_rigging_make','coil_spring_make','sand_box_make','spheri_block_make','elastic_shop_make','horizontal_damper','secondary_coil_make','thrust_pad_make','break_cylinder_make','lateral_damper').distinct())
+        myval2=list(BogieAssembly.objects.filter(frameserial_no=mysno,dispatch_to="HHP_Inspected").values('first_secondary_coilspring_make','second_secondary_coilspring_make','third_secondary_coilspring_make','h_plate','first_axle','first_coilspring_make','first_gearcase_no','first_gearcase_make','first_back_lash','first_vertical_r','first_vertical_l','first_horizontal_r','first_horizontal_l','second_axle','second_coilspring_make','second_gearcase_no','second_gearcase_make','second_back_lash','second_vertical_r','second_vertical_l','second_horizontal_r','second_horizontal_l','third_axle','third_coilspring_make','third_gearcase_no','third_gearcase_make','third_back_lash','third_vertical_r','third_vertical_l','third_horizontal_r','third_horizontal_l','wheel_set_guide','gear_case_oil','break_cylinder_make','break_rigging_make','sand_box_make','spheri_block_make','elastic_shop_make','lateral_damper','inspect_date','motor_check','motor_date','lowering_check','lowering_date','dispatch_check','dispatch_check_date','loco_paper','locopaper_date','first_axle','second_axle','third_axle').distinct())
         l1=len(myval2)
         if l1>0 :
             msg=myval2
@@ -25154,7 +25160,7 @@ def wheelreport_validate(request):
         else :
             msg=["false"]
         return JsonResponse(msg, safe = False)
-    return JsonResponse({"success":False}, status=400)  
+    return JsonResponse({"success":False}, status=400)   
 
 def uniquewheel(request):
     if request.method=="GET" and request.is_ajax():
@@ -26427,6 +26433,7 @@ def axlepressreport_validate(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 def uniqueaxle(request):
     if request.method=="GET" and request.is_ajax():
         axle_no = request.GET.get('axle_no')
@@ -26438,6 +26445,7 @@ def uniqueaxle(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
+
 def pinionaxle_validate(request):
     if request.method=="GET" and request.is_ajax():
         axle_no = request.GET.get('axle_no')
