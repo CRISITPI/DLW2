@@ -154,12 +154,12 @@ footer, .page-content::after{
             <div class="collapse navbar-collapse" id="collapse_target">
                 <ul class="navbar nav" style="width:100%;">
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" {% if usermaster.op_delete %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DeleteModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Delete</font>
                          </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" {% if usermaster.op_update %} {% else %} disabled {% endif%} data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DispatchModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">Dispatch</font>
                          </button>
                     </li>
@@ -167,17 +167,17 @@ footer, .page-content::after{
                         <a href="#" class="btn btn-primary" data-toggle="dropdown" role="button"
                             aria-haspopup="true" aria-expanded="false"  style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% "><font color="white">Inspect</font></a>
                         <ul class="dropdown-menu">
-                            <li><button type="button" class="btn btn" data-toggle="modal" {% if usermaster.op_update %} {% else %} disabled {% endif%} data-target="#inspectmodal">Inspect</button></li>
-                            <li><button type="button" class="btn btn" data-toggle="modal" {% if usermaster.op_update %} {% else %} disabled {% endif%} data-target="#inspectmodalhhp">Inspect HHP</button></li>
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#inspectmodal">Inspect</button></li>
+                            <li><button type="button" class="btn btn" data-toggle="modal" data-target="#inspectmodalhhp">Inspect HHP</button></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" {% if usermaster.op_update %} {% else %} disabled {% endif%} data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                                 <font color="white">EditRecord</font>
                      </button>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" {% if usermaster.op_create %} {% else %} disabled {% endif%} data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="background: none;font-size: 12pt;margin-Top:2%;margin-left: 2% ">
                         <font color="white">AddRecord</font>
                      </button>
                     </li>
@@ -1177,10 +1177,15 @@ footer, .page-content::after{
                                       <label for="">Gear Case Oil</label>
                                       <input type="text" class="form-control" name="gear_case_oil" id="gear_case_oil" placeholder="" maxlength="20" required>
                                     </div>  
+
+                                    <div class="col-6">
+                                      <label for="">Brake Rigging make</label>
+                                      <input type="text" class="form-control" name="break_rigging_make" id="break_rigging_make" placeholder="" maxlength="20" required>
+                                    </div> 
                              
                                   <div class="col-6">
                                     <label for="">Brake Cylinder make</label>
-                                    <select name="break_rigging_make" id="break_rigging_make" class="form-control ll" required >
+                                    <select name="break_cylinder_make" id="break_cylinder_make" class="form-control ll" required >
                                       <option value="" hidden selected>Select Brake Cylinder make.</option>
                                         <option>TEW</option>
                                         <option>FABCON</option>
@@ -1441,6 +1446,7 @@ footer, .page-content::after{
                         document.getElementById('loco_paper').value ='';
                         document.getElementById('locopaper_date').value ='';
                         document.getElementById('torque_support').value ='';
+                        document.getElementById('break_cylinder_make').value ='';
                         }
                         else {
                           var inspectdate=response[0].inspect_date;
@@ -1456,6 +1462,8 @@ footer, .page-content::after{
                                 {
                                     $("#inspectdate").val(`${response[0].inspect_date}`);
                                 }
+                                
+                        $("#break_cylinder_make").val(`${response[0].break_cylinder_make}`);
                         $("#first").val(`${response[0].first}`);
                         $("#first_coilspring_make").val(`${response[0].first_coilspring_make}`);
                         $("#first_gearcase_no").val(`${response[0].first_gearcase_no}`);
@@ -1561,7 +1569,7 @@ footer, .page-content::after{
                     success:function(response){
                         if(response=="false")
                         {
-                          document.getElementById('hhpfirst').value ='';
+                        
                         document.getElementById('hhpfirst_coilspring_make').value ='';
                         document.getElementById('hhpfirst_gearcase_no').value ='';
                         document.getElementById('hhpfirst_gearcase_make').value ='';
@@ -1570,7 +1578,7 @@ footer, .page-content::after{
                         document.getElementById('hhpfirst_vertical_l').value ='';
                         document.getElementById('hhpfirst_horizontal_r').value ='';
                         document.getElementById('hhpfirst_horizontal_l').value ='';
-                        document.getElementById('hhpsecond').value ='';
+                       
                         document.getElementById('hhpsecond_coilspring_make').value ='';
                         document.getElementById('hhpsecond_gearcase_no').value ='';
                         document.getElementById('hhpsecond_gearcase_make').value ='';
@@ -1579,7 +1587,7 @@ footer, .page-content::after{
                         document.getElementById('hhpsecond_vertical_l').value ='';
                         document.getElementById('hhpsecond_horizontal_r').value ='';
                         document.getElementById('hhpsecond_horizontal_l').value ='';
-                        document.getElementById('hhpthird').value ='';
+                  
                         document.getElementById('hhpthird_coilspring_make').value ='';
                         document.getElementById('hhpthird_gearcase_no').value ='';
                         document.getElementById('hhpthird_gearcase_make').value ='';
@@ -1659,6 +1667,7 @@ footer, .page-content::after{
                         $("#hhpspheri_block_make").val(`${response[0].spheri_block_make}`);
                         $("#hhpelastic_shop_make").val(`${response[0].elastic_shop_make}`);
                         $("#hhplateral_damper").val(`${response[0].lateral_damper}`);
+                        $("#hhpthrust_pad_make").val(`${response[0].thrust_pad_make}`);
                         
                         $("#hhpmotor_check").val(`${response[0].motor_check}`);
                         $("#hhpmotor_date").val(`${response[0].motor_date}`);

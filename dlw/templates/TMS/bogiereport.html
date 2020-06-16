@@ -38,9 +38,9 @@
 <br>
 <center>
 <table>
-<td><center><input type="submit" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br></td>
-<td><center><input type="submit" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}   name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br></td>
-<td><center><input type="submit" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  name="btn" value="Consolidated Detail Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+<td><center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+<td><center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center><br></td>
+<td><center><input type="submit" name="btn" value="Consolidated Detail Report" class="form-control ll" required style="width:250px;" /></center><br></td>
 </table>
 </center>
 <br>
@@ -169,13 +169,13 @@
     <th style="width:250px;text-align:center;">Gear Case No.</th>
     <th style="width:250px;text-align:center;">Gear Case make</th>
     <th style="width:250px;text-align:center;">MSU Unit No.</th>
-    <th style="width:250px;text-align:center;">Break Rigging make</th>
+    <th style="width:250px;text-align:center;">Brake Rigging make</th>
     <th style="width:250px;text-align:center;">Coil Spring make</th>
     <th style="width:250px;text-align:center;">Secondary Coil make</th>
     <th style="width:250px;text-align:center;">Sand Box make</th>
     <th style="width:250px;text-align:center;">Spheri Block make</th>
     <th style="width:250px;text-align:center;">Thrush Pad make</th>
-    <th style="width:250px;text-align:center;">Break Cylinder make</th>
+    <th style="width:250px;text-align:center;">Brake Cylinder make</th>
     <th style="width:250px;text-align:center;">Elastic Shop make</th>
     <th style="width:250px;text-align:center;">Lateral Damper</th>
     <th style="width:250px;text-align:center;">Horizontal Damper</th>
@@ -220,13 +220,13 @@
     <th style="width:250px;text-align:center;">Gear Case No.</th>
     <th style="width:250px;text-align:center;">Gear Case make</th>
     <th style="width:250px;text-align:center;">MSU Unit No.</th>
-    <th style="width:250px;text-align:center;">Break Rigging make</th>
+    <th style="width:250px;text-align:center;">Brake Rigging make</th>
     <th style="width:250px;text-align:center;">Coil Spring make</th>
     <th style="width:250px;text-align:center;">Secondary Coil make</th>
     <th style="width:250px;text-align:center;">Sand Box make</th>
     <th style="width:250px;text-align:center;">Spheri Block make</th>
     <th style="width:250px;text-align:center;">Thrush Pad make</th>
-    <th style="width:250px;text-align:center;">Break Cylinder make</th>
+    <th style="width:250px;text-align:center;">Brake Cylinder make</th>
     <th style="width:250px;text-align:center;">Elastic Shop make</th>
     <th style="width:250px;text-align:center;">Lateral Damper</th>
     <th style="width:250px;text-align:center;">Horizontal Damper</th>
@@ -450,7 +450,7 @@
             <label for="loco_type"><b> BRAKE CYLINDER&nbsp;&nbsp;
                  </b></label>
         </td>
-        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.break_rigging_make}}"readonly> </td>
+        <td><input type="text" style="border-style : hidden" name="reportdate" id="reportdate" value="{{i.break_cylinder_make}}"readonly> </td>
         <td>
             <label for="loco_type"><b> GEAR CASE OIL&nbsp;&nbsp;
                  </b></label>

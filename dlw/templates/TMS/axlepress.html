@@ -35,11 +35,11 @@
 <center>
 <table>
 <tr>
-<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center></td>
-<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  value="Date Range Report" class="form-control ll" required style="width:250px;" /></center></td>
-<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Axle Report" class="form-control ll"  required style="width:260px;" /></center></td>
-<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center></td>
-<td><center><input type="submit" name="btn"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center></td>
+<td><center><input type="submit" name="btn" value="Date Wise Report" class="form-control ll" required style="width:250px;" /></center></td>
+<td><center><input type="submit" name="btn" value="Date Range Report" class="form-control ll" required style="width:250px;" /></center></td>
+<td><center><input type="submit" name="btn" value="Axle Report" class="form-control ll"  required style="width:260px;" /></center></td>
+<td><center><input type="submit" name="btn" value="Record of Loco Type (date wise)" class="form-control ll" required style="width:310px;" /></center></td>
+<td><center><input type="submit" name="btn" value="Record of Loco Type (date range)" class="form-control ll" required style="width:320px;" /></center></td>
 </tr>
 </table>
 </center>
@@ -163,21 +163,22 @@
 <br>
 <table id="customers" align="left">
     <tr>
-        <th>Loco Type</th>
+        <th style="width:250px;text-align:center;">Axle No.</th>
+        <th style="width:250px;text-align:center;">Loco Type</th>
         <th style="width:250px;text-align:center;">Wheel No.(DE)</th>
         <th style="width:250px;text-align:center;">Wheel No.(NDE)</th>
         <th style="width:250px;text-align:center;">Bullgear Make</th>
         <th style="width:250px;text-align:center;">Bullgear No.</th>
         <th style="width:250px;text-align:center;">Wheel Make(DE)</th>
         <th style="width:250px;text-align:center;">Wheel Make(NDE)</th>
-        <th style="width:250px;text-align:center;">Axle Box No.</th>
-        <th style="width:250px;text-align:center;">Axle Box Make</th>
+        <th style="width:250px;text-align:center;">Axle Box No.(DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make(DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box No.(NDE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make(NDE)</th>
         <th style="width:250px;text-align:center;">MSU UNIT No.</th>
         <th style="width:250px;text-align:center;">MSU UNIT Make</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (NDE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (NDE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (DE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (NDE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing Make (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (NDE)</th>
@@ -191,6 +192,7 @@
     </tr>
     {% for i in ob1 %}
     <tr>
+        <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
         <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_de}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_nde}}</td>
@@ -198,14 +200,14 @@
         <td style="width:250px;text-align:center;">{{i.bullgear_no}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_de_make}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_nde_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_node}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makede}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_nonde}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makende}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_no}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_de_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_nde_make}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_make_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_nde}}</td>
@@ -231,21 +233,22 @@
 <br>
 <table id="customers" align="left">
     <tr>
-        <th>Loco Type</th>
+        <th style="width:250px;text-align:center;">Axle No.</th>
+        <th style="width:250px;text-align:center;">Loco Type</th>
         <th style="width:250px;text-align:center;">Wheel No.(DE)</th>
         <th style="width:250px;text-align:center;">Wheel No.(NDE)</th>
         <th style="width:250px;text-align:center;">Bullgear Make</th>
         <th style="width:250px;text-align:center;">Bullgear No.</th>
         <th style="width:250px;text-align:center;">Wheel Make(DE)</th>
         <th style="width:250px;text-align:center;">Wheel Make(NDE)</th>
-        <th style="width:250px;text-align:center;">Axle Box No.</th>
-        <th style="width:250px;text-align:center;">Axle Box Make</th>
+        <th style="width:250px;text-align:center;">Axle Box No. (DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make (DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box No. (NDE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make (NDE)</th>
         <th style="width:250px;text-align:center;">MSU UNIT No.</th>
         <th style="width:250px;text-align:center;">MSU UNIT Make</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (NDE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (NDE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (DE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (NDE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing Make (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (NDE)</th>
@@ -259,6 +262,7 @@
     </tr>
     {% for i in ob1 %}
     <tr>
+        <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
         <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_de}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_nde}}</td>
@@ -266,14 +270,14 @@
         <td style="width:250px;text-align:center;">{{i.bullgear_no}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_de_make}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_nde_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_node}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makede}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_nonde}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makende}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_no}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_de_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_nde_make}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_make_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_nde}}</td>
@@ -326,6 +330,7 @@
 {% if ll1 > 0 %}
 <table id="customers" align="left">
     <tr>
+        <th style="width:250px;text-align:center;">Axle No.</th>
         <th style="width:250px;text-align:center;">Loco Type</th>
         <th style="width:250px;text-align:center;">Wheel No.(DE)</th>
         <th style="width:250px;text-align:center;">Wheel No.(NDE)</th>
@@ -333,14 +338,14 @@
         <th style="width:250px;text-align:center;">Bullgear No.</th>
         <th style="width:250px;text-align:center;">Wheel Make(DE)</th>
         <th style="width:250px;text-align:center;">Wheel Make(NDE)</th>
-        <th style="width:250px;text-align:center;">Axle Box No.</th>
-        <th style="width:250px;text-align:center;">Axle Box Make</th>
+        <th style="width:250px;text-align:center;">Axle Box No.(DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make(DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box No.(NDE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make(NDE)</th>
         <th style="width:250px;text-align:center;">MSU UNIT No.</th>
         <th style="width:250px;text-align:center;">MSU UNIT Make</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (NDE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (NDE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (DE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (NDE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing Make (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (NDE)</th>
@@ -350,6 +355,7 @@
     </tr>
     {% for i in ob2 %}
     <tr>
+        <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
         <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_de}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_nde}}</td>
@@ -357,14 +363,14 @@
         <td style="width:250px;text-align:center;">{{i.bullgear_no}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_de_make}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_nde_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_node}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makede}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_nonde}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makende}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_no}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_de_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_nde_make}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_make_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_nde}}</td>
@@ -378,6 +384,7 @@
 {% if ll2 > 0 %}
 <table id="customers" align="left">
     <tr>
+        <th style="width:250px;text-align:center;">Axle No.</th>
         <th style="width:250px;text-align:center;">Loco Type</th>
         <th style="width:250px;text-align:center;">Wheel No.(DE)</th>
         <th style="width:250px;text-align:center;">Wheel No.(NDE)</th>
@@ -385,14 +392,14 @@
         <th style="width:250px;text-align:center;">Bullgear No.</th>
         <th style="width:250px;text-align:center;">Wheel Make(DE)</th>
         <th style="width:250px;text-align:center;">Wheel Make(NDE)</th>
-        <th style="width:250px;text-align:center;">Axle Box No.</th>
-        <th style="width:250px;text-align:center;">Axle Box Make</th>
+        <th style="width:250px;text-align:center;">Axle Box No.(DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make(DE)</th>
+        <th style="width:250px;text-align:center;">Axle Box No.(NDE)</th>
+        <th style="width:250px;text-align:center;">Axle Box Make(NDE)</th>
         <th style="width:250px;text-align:center;">MSU UNIT No.</th>
         <th style="width:250px;text-align:center;">MSU UNIT Make</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (DE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing No. (NDE)</th>
-        <th style="width:250px;text-align:center;">Suspension Bearing Make (NDE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (DE)</th>
+        <th style="width:250px;text-align:center;">MSU Bearing Make (NDE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing Make (DE)</th>
         <th style="width:250px;text-align:center;">CRU Bearing No. (NDE)</th>
@@ -406,6 +413,7 @@
     </tr>
     {% for i in ob2 %}
     <tr>
+        <td style="width:250px;text-align:center;">{{i.axle_no}}</td>
         <td style="width:250px;text-align:center;">{{i.loco_type}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_de}}</td>
         <td style="width:250px;text-align:center;">{{i.wheelno_nde}}</td>
@@ -413,14 +421,14 @@
         <td style="width:250px;text-align:center;">{{i.bullgear_no}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_de_make}}</td>
         <td style="width:250px;text-align:center;">{{i.wheel_nde_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.axle_box_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_node}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makede}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_nonde}}</td>
+        <td style="width:250px;text-align:center;">{{i.axle_box_makende}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_no}}</td>
         <td style="width:250px;text-align:center;">{{i.msu_unit_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_de_make}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_no}}</td>
-        <td style="width:250px;text-align:center;">{{i.suspension_bearing_nde_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_de_make}}</td>
+        <td style="width:250px;text-align:center;">{{i.msu_bearing_nde_make}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_make_de}}</td>
         <td style="width:250px;text-align:center;">{{i.cru_bearing_no_nde}}</td>
@@ -552,6 +560,6 @@ $('#axle_no').change(function(e){
         });
 
 </script>
-
+</script>
 
 {% endblock content %}
