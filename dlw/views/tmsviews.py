@@ -3152,7 +3152,7 @@ def FetchAxleInspectDetail(request):
 def FetchPressInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval1=list(AxleWheelPressing.objects.filter(axle_no=mysno,dispatch_to="Inspected").values('wheel_de_pressure','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','wheel_nde_pressure').distinct())
+        myval1=list(AxleWheelPressing.objects.filter(axle_no=mysno,dispatch_to="Inspected").values('wheel_distance','axialplay_de','axialplay_nde','wheel_de_pressure','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_node','axle_box_makede','axle_box_clearancede','axle_box_nonde','axle_box_makende','axle_box_clearancende','msu_bearing_de_make','msu_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','wheel_nde_pressure').distinct())
         l=len(myval1)
         if l>0 :
             msg=myval1
@@ -3164,7 +3164,7 @@ def FetchPressInspectDetail(request):
 def FetchPressInspectHHPDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval2=list(AxleWheelPressing.objects.filter(axle_no=mysno,dispatch_to="HHP_Inspected").values('wheel_de_pressure','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_no','axle_box_make','axle_box_clearance','suspension_bearing_de_no','suspension_bearing_de_make','suspension_bearing_nde_no','suspension_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','wheel_nde_pressure','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde').distinct())
+        myval2=list(AxleWheelPressing.objects.filter(axle_no=mysno,dispatch_to="HHP_Inspected").values('wheel_de_pressure','wheel_distance','axialplay_de','axialplay_nde','wheel_de_pressure','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','inspector_name','wheel_de_make','wheel_nde_make','wheel_nde_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_node','axle_box_makede','axle_box_clearancede','axle_box_nonde','axle_box_makende','axle_box_clearancende','msu_bearing_de_make','msu_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','wheel_nde_pressure','journal_no_de','journal_make_de','journal_no_nde','journal_make_nde').distinct())
         l1=len(myval2)
         if l1>0 :
             msg=myval2

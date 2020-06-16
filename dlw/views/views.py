@@ -29679,7 +29679,7 @@ def bogiereport(request):
                 tmake3=tm3[0]['tm_make']
                 axle_box=axle_box1[0]['axle_box_node']
             ob2=list(BogieAssembly.objects.filter(bo_no=bo_no,frameserial_no=fs_no,dispatch_to='HHP_Inspected').values('first_coilspring_make','break_cylinder_make','motor_check','motor_date','lowering_check','lowering_date','dispatch_check','dispatch_check_date','loco_paper','locopaper_date','frameserial_no','pt_no','horizontal_damper','lateral_damper','loco_type','first_axle','second_axle','third_axle','first_gearcase_no','second_gearcase_no','third_gearcase_no','first_back_lash','second_back_lash','third_back_lash','wheel_set_guide','gear_case_oil','lateral_damper','spheri_block_make','sand_box_make','elastic_shop_make','coil_spring_make','break_cylinder_make','date','first_vertical_r','first_vertical_l','first_horizontal_r','first_horizontal_l','second_vertical_r','second_vertical_l','second_horizontal_r','second_horizontal_l','third_vertical_r','third_vertical_l','third_horizontal_r','third_horizontal_l'))  
-            l2=len(ob1)
+            l2=len(ob2)
             if l2>0 :
                 ax1=ob1[0]['first_axle']
                 ax2=ob1[0]['second_axle']
