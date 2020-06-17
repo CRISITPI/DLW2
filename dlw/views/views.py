@@ -28919,7 +28919,7 @@ def axlepressreport(request):
             ll1=0
             ll2=0
             if l>0 and c=="Inspected" :
-                ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','wheel_de_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_node','axle_box_makede','axle_box_clearancede','axle_box_nonde''axle_box_makende','axle_box_clearancende','msu_bearing_de_make','msu_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','inspector_name'))
+                ob2=list(AxleWheelPressing.objects.filter(axle_no=axle_no).values('loco_type','axle_no','wheelno_de','wheelno_nde','bullgear_make','bullgear_no','wheel_de_make','wheel_nde_make','wheel_nde_pressure','wheel_de_pressure','axle_make','msu_unit_no','bullgear_pressure','msu_unit_make','axle_box_node','axle_box_makede','axle_box_clearancede','axle_box_nonde','axle_box_makende','axle_box_clearancende','msu_bearing_de_make','msu_bearing_nde_make','cru_bearing_no_de','cru_bearing_make_de','cru_bearing_pressure_de','cru_bearing_no_nde','cru_bearing_make_nde','cru_bearing_pressure_nde','inspect_date','inspector_name'))
                 ll1=len(ob2)
                 ll2=0
                 if ll1>0:

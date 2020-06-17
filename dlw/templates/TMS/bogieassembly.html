@@ -1295,25 +1295,7 @@ footer, .page-content::after{
 
 <script>
     var i=0;
-        $(document).ready(function() {
-            $('#delform').bootstrapValidator({
-                feedbackIcons: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-                fields: {
-                    delsno: {
-                        validators: {
-                            notEmpty: {
-                                message: 'The username is required'
-                            }
-                        }
-                    }
-                }
-            });
-        });
-        
+       
         $("#addbono").change(function(e){
             e.preventDefault();
             var selbo_no = $(this).val();
@@ -1436,7 +1418,7 @@ footer, .page-content::after{
                         document.getElementById('spheri_block_make').value ='';
                         document.getElementById('elastic_shop_make').value ='';
                         document.getElementById('horizontal_damper').value ='';
-                        document.getElementById('inspect_date').value ='';
+                        document.getElementById('inspectdate').value ='';
                         document.getElementById('motor_check').value ='';
                         document.getElementById('motor_date').value ='';
                         document.getElementById('lowering_check').value ='';
@@ -1528,7 +1510,7 @@ footer, .page-content::after{
                     data:data,
                     success:function(response){
                       
-                      $("#first").val(`${response[0].first_axle}`);
+                        $("#first").val(`${response[0].first_axle}`);
                         $("#second").val(`${response[0].second_axle}`);
                         $("#third").val(`${response[0].third_axle}`);
                         $("#hide").val(`${response[0].loco_type}`);
@@ -1604,7 +1586,7 @@ footer, .page-content::after{
                         document.getElementById('hhpspheri_block_make').value ='';
                         document.getElementById('hhpelastic_shop_make').value ='';
                         document.getElementById('hhplateral_damper').value ='';
-                        document.getElementById('hhpinspect_date').value ='';
+                        document.getElementById('hhpdate').value ='';
                         document.getElementById('hhpmotor_check').value ='';
                         document.getElementById('hhpmotor_date').value ='';
                         document.getElementById('hhplowering_check').value ='';
