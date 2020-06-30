@@ -4539,7 +4539,7 @@ def m1view(request):
         shop_sec = request.POST.get('shop_sec')
         part_no = request.POST.get('part_nop')
         part11=part_no
-        obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('shop_sec','opn')
+        obj  = Oprn.objects.filter(part_no=part_no).values('opn', 'shop_sec', 'lc_no', 'des','pa','at','ncp_jbs',).order_by('opn','shop_sec')
         leng = obj.count()
         epcv=0
         ptcv=0
@@ -4644,7 +4644,7 @@ def m1getshopsec(request):
     return JsonResponse({"success":False}, status=400)
 
 def m1genrept1(request):
-    from .models import Part,Partalt,Nstr
+    from dlw.models import Part,Partalt,Nstr
     pa_no = empmast.objects.none()
     cuser=request.user
     usermaster=empmast.objects.filter(empno=cuser).first()
