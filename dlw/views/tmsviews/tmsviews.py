@@ -47,14 +47,234 @@ from django.db.models import Sum,Subquery
 from django.utils import formats
 from django.utils.dateformat import DateFormat
 from decimal import *
-from .views import *
+from dlw.views import *
+import dlw.views.globals as g
 
+@login_required
+@role_required(urlpass='/axlemachining_section/')
+def axlemachining_section(request):
+    
+    print('hhh',g.usermaster)
+    print('hhh',g.rolelist)
+    print('hhh',g.nav)
+    print('hhh',g.subnav)
 
+    cuser=request.user
+    usermaster=empmast.objects.filter(empno=cuser).first()
+    rolelist=usermaster.role.split(", ")
+    nav=dynamicnavbar(request,rolelist)
+    menulist=set()
+    for ob in nav:
+        menulist.add(ob.navitem)
+    menulist=list(menulist)
+    subnav=subnavbar.objects.filter(parentmenu__in=menulist)
+    n=1
+    now = datetime.datetime.now()
+    disnow=datetime.datetime.now()-timedelta(days=n)
+    dt_string = now.strftime("%Y-%m-%d")
+    dis_string = disnow.strftime("%Y-%m-%d")
+    dd3=[]
+    obj2=list(AxleMachining.objects.all().filter(Q(dateaxle__range=(dis_string,dt_string),dispatch_status=False) | Q(axleinspection_status=False,dispatch_status=False)).values('sno','bo_no','pt_no','axle_no','dateaxle','bo_qty','bo_date','loco_type','date','axle_no','axlep_no','axle_make','axle_heatcaseno','in_qty','out_qty','dispatch_to').order_by('sno'))
+    obj3=list(AxleMachining.objects.all().filter(Q(dateaxle__range=(dis_string,dt_string),dispatch_status=False) | Q(axleinspection_status=False,dispatch_status=False)).values('dateaxle','in_qty','out_qty').order_by('sno'))
+    ll=len(obj3)
+    for i in range(0,ll):
+        dd=obj3[i]['dateaxle']
+        indate=obj3[i]['in_qty']
+        outdate=obj3[i]['out_qty']
+        if dd!=None :
+            s = dd.split('-')
+            month1 = s[1]
+            day1 = s[2]
+            year1 = s[0]
+            dd2 =  day1 + "-" + month1 + "-" + year1
+            obj2[i].update({'dateaxle':dd2})
+        else :
+            obj2[i].update({'dateaxle':None})
+        if indate!=None :
+            s1 = indate.split('-')
+            newmonth1 = s1[1]
+            newday1 = s1[2]
+            newyear1 = s1[0]
+            newindate =  newday1 + "-" + newmonth1 + "-" + newyear1
+            obj2[i].update({'in_qty':newindate})
+        else :
+            obj2[i].update({'in_qty':None}) 
 
-# from dlw.views.views import nav
-# from dlw.views.views import subnav
-# from dlw.views.views import usermaster
-# from dlw.views.views import rolelist
+        if outdate!=None :
+            s2 = outdate.split('-')
+            newmonth2 = s2[1]
+            newday2 = s2[2]
+            newyear2 = s2[0]
+            newoutdate =  newday2 + "-" + newmonth2 + "-" + newyear2
+            obj2[i].update({'out_qty':newoutdate})
+        else :
+            obj2[i].update({'out_qty':None})     
+
+    mybo=Batch.objects.all().values('bo_no')
+    mysno=(AxleMachining.objects.filter(dispatch_status=False).values('axle_no')).order_by('axle_no')
+    my_context={
+       'object':obj2,
+       'nav':nav,
+       'subnav':subnav,
+       'usermaster':usermaster,
+       'ip':get_client_ip(request),
+       'mybo':mybo,
+       'mysno':mysno,
+       'obj3':obj3,
+       }
+    if request.method=="POST":
+        once=request.POST.get('once')
+        print(once)
+        submit=request.POST.get('submit')
+        if submit=='Save':
+        
+            first=request.POST.get('bo_no')
+            second=request.POST.get('bo_date')
+            third=request.POST.get('date')
+            fourth=request.POST.get('axlep_no')
+            sixth=request.POST.get('loco_type')
+            eighth=request.POST.get('axle_no')
+            ninth=request.POST.get('axle_make')
+            tenth=request.POST.get('axle_heatcaseno')
+            eleven=request.POST.get('pt_no')
+            twelve=request.POST.get('bo_qty')
+            indate=request.POST.get('in_qty')
+            outdate=request.POST.get('out_qty')
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
+            if first and second and third and fourth and sixth and eighth and ninth and tenth and eleven and twelve and indate and outdate:
+                obj=AxleMachining.objects.create()
+                obj.bo_no=first
+                obj.bo_date=second
+                obj.date=third
+                obj.axlep_no=fourth
+                obj.loco_type=sixth
+                obj.axle_no=eighth
+                obj.axle_make=ninth
+                obj.axle_heatcaseno=tenth
+                obj.axleinspection_status=False
+                obj.pt_no=eleven
+                obj.bo_qty=twelve
+                obj.in_qty=newindate
+                obj.out_qty=newoutdate
+                obj.save()
+                messages.success(request, 'Successfully Added!')
+            else:
+                messages.error(request,"Please Enter All Records!")
+
+            obj2=AxleMachining.objects.all().order_by('sno')
+            my_context={
+            'object':obj2,
+            }
+
+        if submit=='save':
+
+            sno=request.POST.get('editsno')
+            bo_no=request.POST.get('editbo_no')
+            bo_date=request.POST.get('editbo_date')
+            bo_qty=request.POST.get('editbo_qty')
+            pt_no=request.POST.get('editpt_no')
+            date=request.POST.get('editdate')
+            loco_type=request.POST.get('editlocos')
+            axlep_no=request.POST.get('editaxlep_no')
+            axle_no=request.POST.get('editaxle_no')
+            axle_make=request.POST.get('editaxle_make')
+            axle_heatcaseno=request.POST.get('editaxle_heatcaseno')
+            indate=request.POST.get('editin_qty')
+            outdate=request.POST.get('editout_qty')
+            s1 = indate.split('-')
+            month1 = s1[1]
+            day1 = s1[0]
+            year1 = s1[2]
+            newindate =  year1 + "-" + month1 + "-" + day1
+            s2 = outdate.split('-')
+            month2 = s2[1]
+            day2 = s2[0]
+            year2 = s2[2]
+            newoutdate =  year2 + "-" + month2 + "-" + day2
+            if bo_no and bo_date and date and loco_type and axlep_no and axle_no and axle_make and axle_heatcaseno and pt_no and bo_qty and indate and outdate:
+                AxleMachining.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,pt_no=pt_no,bo_qty=bo_qty,in_qty=newindate,out_qty=newoutdate,date=date,axlep_no=axlep_no,loco_type=loco_type,axle_no=axle_no,axle_make=axle_make,axle_heatcaseno=axle_heatcaseno)
+                messages.success(request, 'Successfully Edited!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+                
+        if submit=="Dispatch":
+            
+            sno=int(request.POST.get('dissno'))
+            dislocos=request.POST.get('dislocos')
+            dispatchdate=request.POST.get('dispatch_date')
+            if sno and dislocos:
+                AxleMachining.objects.filter(sno=sno).update(dispatch_to=dislocos,dispatch_status=True,dispatch_date=dispatchdate)
+                messages.success(request, 'Successfully Dispatched!')
+            else:
+                messages.error(request,"Please Enter S.No.!")
+        
+        if submit=='Delete':
+
+            sno=request.POST.get('delsno')
+            
+            if sno:
+                w=list(AxleMachining.objects.filter(axle_no=sno).values('axle_no'))
+                l=len(w)
+                if l>0 :
+                    AxleMachining.objects.filter(axle_no=sno).delete()
+                    messages.success(request, 'Successfully Deleted!')
+                else:
+                    messages.error(request,"Please Enter Valid Axle Number!")
+            else:
+                messages.error(request,"Please Enter S.No.!")
+
+        if submit=='InspectAxle':
+            
+            sno=request.POST.get('snoaxle')
+            ustaxle=request.POST.get('ustaxle')
+            ustaxle_date=request.POST.get('ustaxle_date')
+            ustaxle_status=request.POST.get('ustaxle_status')
+            axlelength=request.POST.get('axlelength')
+            journalaxle=request.POST.get('journalaxle')
+            throweraxle=request.POST.get('throweraxle')
+            wheelseataxle=request.POST.get('wheelseataxle')
+            gearseataxle=request.POST.get('gearseataxle')
+            collaraxle=request.POST.get('collaraxle')
+            journalaxlende=request.POST.get('journalaxlende')
+            throweraxlende=request.POST.get('throweraxlende')
+            wheelseataxlende=request.POST.get('wheelseataxlende')
+            collaraxlende=request.POST.get('collaraxlende')
+            dateaxle=request.POST.get('dateaxle')
+            bearingaxle=request.POST.get('bearingaxle')
+            abutmentaxle=request.POST.get('abutmentaxle')
+            inspector_nameaxle=request.POST.get('inspector_nameaxle')
+            journal_surfacefinishGE=request.POST.get('journal_surfacefinishGE')
+            wheelseat_surfacefinishGE=request.POST.get('wheelseat_surfacefinishGE')
+            gearseat_surfacefinishGE=request.POST.get('gearseat_surfacefinishGE')
+            journal_surfacefinishFE=request.POST.get('journal_surfacefinishFE')
+            wheelseat_surfacefinishFE=request.POST.get('wheelseat_surfacefinishFE')
+            gearseat_surfacefinishFE=request.POST.get('gearseat_surfacefinishFE')
+            s = dateaxle.split('-')
+            month1 = s[1]
+            day1 = s[0]
+            year1 = s[2]
+            newdateaxle =  year1 + "-" + month1 + "-" + day1
+           
+            if ustaxle_date and ustaxle_status and ustaxle and axlelength and journalaxle and throweraxle and wheelseataxle and gearseataxle and collaraxle and dateaxle and bearingaxle and abutmentaxle and inspector_nameaxle and journal_surfacefinishGE and wheelseat_surfacefinishGE and gearseat_surfacefinishGE and journal_surfacefinishFE and wheelseat_surfacefinishFE and gearseat_surfacefinishFE and journalaxlende and throweraxlende and wheelseataxlende and collaraxlende:
+                AxleMachining.objects.filter(axle_no=sno).update(ustaxle_date=ustaxle_date,ustaxle_status=ustaxle_status,ustaxle=ustaxle,axlelength=axlelength,journalaxle=journalaxle,throweraxle=throweraxle,wheelseataxle=wheelseataxle,gearseataxle=gearseataxle,collaraxle=collaraxle,dateaxle=newdateaxle,bearingaxle=bearingaxle,abutmentaxle=abutmentaxle,inspector_nameaxle=inspector_nameaxle,journal_surfacefinishGE=journal_surfacefinishGE,wheelseat_surfacefinishGE=wheelseat_surfacefinishGE,gearseat_surfacefinishGE=gearseat_surfacefinishGE,journal_surfacefinishFE=journal_surfacefinishFE,wheelseat_surfacefinishFE=wheelseat_surfacefinishFE,gearseat_surfacefinishFE=gearseat_surfacefinishFE,journalaxlende=journalaxlende,throweraxlende=throweraxlende,wheelseataxlende=wheelseataxlende,collaraxlende=collaraxlende,axleinspection_status=True,dispatch_to="Inspected")
+                messages.success(request, 'Axle Successfully Inspected!')
+            else:
+                messages.error(request,"Please Enter all records!")
+
+        
+        return HttpResponseRedirect("/axlemachining_section/")
+
+    return render(request,"TMS/axlemachining_section.html",my_context)
+
 
 # @login_required
 # @role_required(urlpass='/wheelmachining_section/')

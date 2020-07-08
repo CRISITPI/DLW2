@@ -3447,6 +3447,7 @@ class dpoloco(models.Model):
     orderno=models.CharField(max_length=10,null=True)
 
 
+
 class subnavbar(models.Model):
     parentmenu=models.CharField(null=True,max_length=50)
     childmenu=models.CharField(null=True,max_length=50)

@@ -108,15 +108,15 @@
                 </select>
             </div></div> -->
             <div class="form-group col-md-4">
-                <label for="asslyno">Assembly No.</label>
+                <label for="asslyno">ASSEMBLY NO.</label>
                 <div class="autocomplete" style="width:300px;">
-                    <input id="asslyno" autocomplete="off" type="text" name="asslyno" placeholder="Assembly NO"    maxlength="8" onkeypress="return isNumberKeya(event)" >
+                    <input id="asslyno" autocomplete="off" type="text" name="asslyno" placeholder="ASSEMBLY NO"    maxlength="8" onkeypress="return isNumberKeya(event)" >
                     <br><span id="lblErrora" style="color: red"></span> 
                 </div>
-                
+
             </div>
             <div class="form-group col-md-4">
-                <label for="batchno">Batch Order No.</label>
+                <label for="batchno">BATCH NO.</label>
                   <div class="autocomplete" style="width:300px;">
                         <input id="batchno" autocomplete="off" type="text" name="batchno" placeholder="BATCH NO" onclick="funbatch();"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
                         <br><span id="lblErrorb" style="color: red"></span> 
@@ -176,8 +176,8 @@
           <div class="form-row" >
                 <div class="form-group col-md-4">
                     <label for="isalt" style=" margin-top: 31px;">Is Alternate  :   </label>
-                    <input type="radio" id="ralt" name="ralt" value="T" onclick="only1();" checked="checked"> True
-                    <input type="radio" id="ralt" name="ralt" value="F" onclick="only1();" > False
+                    <input type="radio" id="ralt" name="ralt" value="T" onclick="only1();" > True
+                    <input type="radio" id="ralt" name="ralt" value="F" onclick="only1();" checked="checked"> False
                 </div>
             </div>
 
@@ -220,24 +220,37 @@ document.querySelector("#brn_no").addEventListener('focus',(e)=>{
     data : data,
 
     success : function(response)
-    {    
-      for(i=0;i<response.length;i++)
+    { 
+      if(response[0].check=='E')  
+      for(i=1;i<response.length;i++)
       {
-        countries.push((response[i].brn_no).toString());
+        countries.push((response[i][0].brn_no).toString());
       }
       if (d==0 && b==1)
        {
               d=1;
-        if (response.length==0)
+        if (response[0].check=='NE')
       {
         alert("Batch Does not exist in master.  CREATE NEW! ");
         $('#id3').show();
         $('#id4').show();
-        $("#brn_no").focus();
+        //$("#brn_no").focus();
         imp=1;
-          
+        $('#brn_no').val(response[0].brn);
+        $('#loco_to').val(response[0].l_to);
+        $('#loco_fr').val(response[0].l_fr);
+        $('#ep_type').val(response[0].epc);
+        $('#b_type').val(response[0].batch_type);
+        $('#b_qty').val(response[0].qty);
+        $('#wkf').val(response[0].week_no);
+         
       }
-      else{
+      if (response[0].check=='O')
+      {
+        ba=1;
+        alert('Batch Number is not Registered yet!!!');
+        $('#batchno').val('');
+        $("#batchno").focus();
         $('#id3').hide();
         $('#id4').hide();
       }
@@ -247,7 +260,7 @@ document.querySelector("#brn_no").addEventListener('focus',(e)=>{
     }); 
                 
  })
-
+var ba=0;
 function funcbtncg()
 {
    
@@ -366,7 +379,7 @@ window.onload=function()
 {
     $('#div1').show();
     $('#div2').hide();
-    $( "#ralt" ).prop( "checked", false );
+    //$( "#ralt" ).prop( "checked", true );
     $('#id3').hide();
     $('#id4').hide();
     imp=0;
@@ -413,6 +426,8 @@ function myFunc1()
 }
 function myFunc2(){
     var brn_no1 = $("#batchno").val();
+    if(ba==0)
+    {
     if(brn_no1.length < '8'){
         //document.getElementById('brn_no').focus();
         $("#batchno").focus();
@@ -421,6 +436,8 @@ function myFunc2(){
     }
     else
         b=1;
+  }
+  ba=0;
 }
 function myFunc3(){
     var brn_no2 = $("#asslyno").val();

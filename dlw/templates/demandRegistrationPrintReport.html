@@ -1,72 +1,85 @@
-<h5>Date:{{today}}</h5><center><h5><u>INDIAN RAILWAYS</u></h5><h5><u>DIESEL LOCOMOTIVE WORKS</u></h5><h5><u>VARANASI</u></h5>
-    <h5><u>DEMAND LIST OF PRODUCTION DOCUMENTS FORM </u>&nbsp;&nbsp;&nbsp;&nbsp;<u>PCO</u></h5></center>
-    <input type="button" id="print" name="print" value="Print Report" style="background-color:darkgrey; margin-left: 900px; padding: 5px;" onclick="PrintReport()" class="btn btn-primary">
-        <hr>
-    <table border="0" align="center">
-        {% for i in tmpstr %}
-        {% for j in i%}
-        {%if j.c == 0%}
-        <tr style="background-color: antiquewhite; margin-left:20px;">
-            <td colspan="8" style="margin-left:300px;"><b>DEMAND_DATE:</b> {{j.dem_date}}&nbsp;&nbsp;&nbsp;</td>
-            <td colspan="8"style="margin-left:400px;"><b>DEMAND_NO:</b> {{j.dem_regno}}&nbsp;&nbsp;&nbsp;</td>
-            <td colspan="8" style="margin-left:500px;"><b>STAFF_NO:</b> {{j.staff_no}}&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td colspan="6" style="margin-left:700px;"><b>{{j.name}}</b></td>
-    
-        </tr>
-        <tr>
-            <td><b>SINo</b></td>
-            <td colspan="2"><b>Part_No</b></td>
-            <td colspan="2"><b>L_fr</b></td>
-            <td colspan="2"><b>L_to</b></td>
-            <td colspan="2"><b>Batch_No</b></td>
-            <td colspan="2"><b>Qty</b></td>
-            <td colspan="2"><b>Epc</b></td>
-            <td colspan="2"><b>B_Type</b></td>
-            <td colspan="2"><b>Seq</b></td>
-            <td colspan="2"><b>Week_No</b></td>
-            <td><b>D</b></td>
-            <td><b>E</b></td>
-            <td><b>M</b></td>
-            <td><b>A</b></td>
-            <td><b>N</b></td>
-            <td><b>D</b></td>
-            <td colspan="2"><b>Doc_Type</b></td>
-            <td colspan="1"><b>Demand_Others</b></td>
-        </tr>
-        {%endif%}
-        <tr>
-            <td>{{j.slno}}</td>
-            <td colspan="2">{{j.part_no}}</td>
-            <td colspan="2">{{j.l_fr}}</td>
-            <td colspan="2">{{j.l_to}}</td>
-            <td colspan="2">{{j.bo_no}}</td>
-            <td colspan="2">{{j.qty}}</td>
-            <td colspan="2">{{j.epc}}</td>
-            <td colspan="2">{{j.batch_type}}</td>
-            <td colspan="2">{{j.seq}}</td>
-            <td colspan="2">{{j.week_no}}</td>
-            <td>M2</td>
-            <td>M4</td>
-            <td>M</td>
-            <td>5</td>
-            <td>M</td>
-            <td>15</td>
-            <td colspan="2">{{j.ddoc_type}}</td>
-            <td colspan="2">{{j.dem_others}}</td>
-        </tr> 
-       <tr></tr>
-       <tr></tr>
-       <tr></tr>
-        {% endfor %}
-        {% endfor %}
+<style>   
+    table { 
+    border-collapse:collapse; 
+    text-align: left;
+    }
+    #row2
+    {
+        border-bottom: 1px solid #000;
+        border-top: 1px solid #000;
+    }
+</style>
+
+<h4>Date:{{today}}</h4><center><h4>DIESEL LOCOMOTIVE WORKS, VARANASI</h4>
+    <h4><u>PRODUCTION DEMAND REGISTRATION</u></h4></center>
+    <br>
+<table align="center" border="0" class="table table-striped table-bordered" cellpadding="4">
+    {% for i in tmpstr %}
+    {% for j in i%}
+    {%if j.c == 0%}
+    <tr id="row1">
+        <td colspan="5" style="text-align:center;"><b>DEMAND_DATE:</b> {{j.dem_date}}</td>
+        <td colspan="4" style="text-align:center;"><b>DEMAND_NO:</b> {{j.dem_regno}}</td>
+        <td colspan="4" style="text-align:center;"><b>STAFF_NO:</b> {{j.staff_no}}</td>
+        <td colspan="4" style="text-align: center;"><b>{{j.name}}</b></td>
+    </tr>
+    <tr id="row2">
+        <td style="width:100px;text-align: center;"><b>SINo</b></td>
+        <td style="width:150px;text-align: center;"><b>Part_No</b></td>
+        <td style="width:200px;text-align: center;"><b>L_fr</b></td>
+        <td style="width:200px;text-align: center;"><b>L_to</b></td>
+        <td style="width:200px;text-align: center;"><b>Batch_No</b></td>
+        <td style="width:150px;text-align: center;"><b>Qty</b></td>
+        <td style="width:100px;text-align: center;"><b>Epc</b></td>
+        <td style="width:150px;text-align: center;"><b>B_Type</b></td>
+        <td style="width:100px;text-align: center;"><b>Seq</b></td>
+        <td style="width:200px;text-align: center;"><b>Week_No</b></td>
+        <td style="width:15px;"><b>D</b></td>
+        <td style="width:15px;"><b>E</b></td>
+        <td style="width:15px;"><b>M</b></td>
+        <td style="width:15px;"><b>A</b></td>
+        <td style="width:15px;"><b>N</b></td>
+        <td style="width:15px;"><b>D</b></td>
+        <td style="width:200px;text-align: center;"><b>Doc_Type</b></td>
+        <td style="width:300px;text-align: center;"><b>Demand_Others</b></td>
+    </tr>
+    {%endif%}
+    <tr>
+        <td style="width:100px;text-align: center;">{{j.slno}}</td>
+        <td style="width:200px;text-align: center;">{{j.part_no}}</td>
+        <td style="width:200px;text-align: center;">{{j.l_fr}}</td>
+        <td style="width:200px;text-align: center;">{{j.l_to}}</td>
+        <td style="width:200px;text-align: center;">{{j.bo_no}}</td>
+        <td style="width:150px;text-align: center;">{{j.qty}}</td>
+        <td style="width:100px;text-align: center;">{{j.epc}}</td>
+        <td style="width:150px;text-align: center;">{{j.batch_type}}</td>
+        <td style="width:100px;text-align: center;">{{j.seq}}</td>
+        <td style="width:200px;text-align: center;">{{j.week_no}}</td>
+        {% if j.m2 == 'Y' %}
+        <td style="width:15px;text-align: center;">M2</td>
+        {% else %}
+        <td style="width:15px"></td>{% endif %}
+        {% if j.m4 == 'Y' %}
+        <td style="width:15px;text-align: center;">M4</td>
+        {% else %}
+        <td style="width:15px"></td>{% endif %}
+        {% if j.m5 == 'Y' %}
+        <td style="width:15px;text-align: center;">M5</td>
+        {% else %}
+        <td style="width:15px"></td>{% endif %}
+        {% if j.m14 == 'Y' %}
+        <td style="width:15px;text-align: center;">M14</td>
+        {% else %}
+        <td style="width:15px"></td>{% endif %}
+        <td style="width:15px;text-align: center;"></td>
+        <td style="width:15px;text-align: center;"></td>
+        <td style="width:200px;text-align: center;">{{j.ddoc_type}}</td>
+        {% if i.dem_others == None %}
+        <td style="width:300px;text-align: center;">--</td>
+        {% else %}
+        <td style="width:300px;text-align: center;">{{j.dem_others}}</td>{% endif %}
         
-    </table>
-    <script>
-        function PrintReport()
-        {
-            var ButtonControl1 = document.getElementById("print");      
-            ButtonControl1.style.visibility = "hidden";
-            window.print();
-            ButtonControl1.style.visibility = "visible";
-        }
-    </script>
+    </tr> 
+    {% endfor %}
+    {% endfor %}    
+</table>
