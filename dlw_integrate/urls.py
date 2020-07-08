@@ -506,7 +506,6 @@ urlpatterns = [
     path('PpncdemBackClick/',PpncdemBackClick,name='PpncdemBackClick'),
     path('ajax/PpncDemPartNoDetails/',PpncDemPartNoDetails,name='PpncDemPartNoDetails'),
     path('ajax/PpncDemEPCDetails/',PpncDemEPCDetails,name='PpncDemEPCDetails'),
-    # path('ajax/PpncDemLocoDetails',PpncDemLocoDetails,name='PpncDemLocoDetails'),
     path('ajax/PpncDemWODetails/',PpncDemWODetails,name='PpncDemWODetails'),
     path('ajax/PpncDemWODetails1/',PpncDemWODetails1,name='PpncDemWODetails1'),
     path('ajax/PpncDemshopdetails',PpncDemshopdetails,name='PpncDemshopdetails'),
@@ -641,12 +640,17 @@ urlpatterns = [
     path('listselected_index/',listselected_index,name='listselected_index'),
     path('btncrtjbsdoc/',btncrtjbsdoc,name='btncrtjbsdoc'),
     path('jbsreport/',jbsreport,name='jbsreport'),
-   
-   
     path('ajax/ScreenLoadMasterUpdateAutoDesc/',ScreenLoadMasterUpdateAutoDesc,name='ScreenLoadMasterUpdateAutoDesc'),
     path('ajax/ScreenLoadMasterUpdateAutomw_no/',ScreenLoadMasterUpdateAutomw_no,name='ScreenLoadMasterUpdateAutomw_no'),
     path('ajax/ScreenLoadMasterUpdateAutoMcgr/',ScreenLoadMasterUpdateAutoMcgr,name='ScreenLoadMasterUpdateAutoMcgr'),
-      	
+    path('ajax/PpncDemLocoFromToValue/',PpncDemLocoFromToValue,name='PpncDemLocoFromToValue'),
+    path('ajax/PpncDemvalidation1',PpncDemvalidation1,name='PpncDemvalidation1'),
+    path('ajax/PpncDemvalidation2',PpncDemvalidation2,name='PpncDemvalidation2'),
+    path('ajax/PpncDemvalidation3',PpncDemvalidation3,name='PpncDemvalidation3'),
+    path('ajax/PpncDemlocofunc',PpncDemlocofunc,name='PpncDemlocofunc'),
+    path('ajax/PpncDemlocofunc1',PpncDemlocofunc1,name='PpncDemlocofunc1'),
+    path('ajax/PpncDemlocofunc2',PpncDemlocofunc2,name='PpncDemlocofunc2')
+
 ]
 
 

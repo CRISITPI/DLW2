@@ -261,6 +261,7 @@ var ordno=document.getElementById('b2').value;
 });
 
 $(document).ready(function(){
+ 
     $(document).on("click", ".delete", function(){
 
 //var user_choice = window.confirm('Are you sure you want to delete the Record??');
@@ -451,8 +452,10 @@ function myFunction(elem){
     var cuminoname="cumino"+String(array[1]);
     if(array[1]==1)
     {
+      
+
     var cm= parseInt(document.getElementById("cm").value);
-    var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+    var cuminoval=String(cm).padStart(4,'0')+'-'+String(cm+parseInt(txt)-1).padStart(4,'0');
     document.getElementById(cuminoname).value=cuminoval;
 
     var i;
@@ -466,7 +469,7 @@ function myFunction(elem){
           // var cuminoval=document.getElementById(cuminoname).value;
           if(i==1)
           {
-          var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+          var cuminoval=String(cm).padStart(4,'0')+'-'+String(cm+parseInt(txt)-1).padStart(4,'0');
         }
         else
         {
@@ -508,7 +511,7 @@ function myFunction(elem){
           else
           {
 
-          cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
+          cuminoval=String(parseInt(cval[1])+1).padStart(4,'0')+'-'+String(parseInt(cval[1])+parseInt(qval)).padStart(4,'0');
           cuminoname="cumino"+String(i);
           document.getElementById(cuminoname).value=cuminoval;
         }
@@ -563,7 +566,7 @@ function myFunction(elem){
            }
           }
 
-          cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
+          cuminoval=String(parseInt(cval[1])+1).padStart(4,'0')+'-'+String(parseInt(cval[1])+parseInt(qval).padStart(4,'0'));
           cuminoname="cumino"+String(i);
           document.getElementById(cuminoname).value=cuminoval;
       }
@@ -616,7 +619,7 @@ function myFunction(elem){
       console.log("arr1",arr1);
 
       var cm= parseInt(document.getElementById("cm").value);
-    var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+    var cuminoval=String(cm).padStart(4,'0')+'-'+String(cm+parseInt(txt)-1).padStart(4,'0');
     document.getElementById(cuminoname).value=cuminoval;
     console.log(cm);
     console.log("cumival",cuminoval,"cuminame",cuminoname);
@@ -634,7 +637,7 @@ function myFunction(elem){
           if(i==arr1)
           {
             console.log("i",i,"arr1",arr1,"array[1]",array[1],"j",j);
-          var cuminoval=String(cm)+'-'+String(cm+parseInt(txt)-1);
+          var cuminoval=String(cm).padStart(4,'0')+'-'+String(cm+parseInt(txt)-1).padStart(4,'0');
             console.log("if i==arr1",cuminoval);
 
         }
@@ -680,7 +683,7 @@ function myFunction(elem){
           else
           {
 
-          cuminoval=String(parseInt(cval[1])+1)+'-'+String(parseInt(cval[1])+parseInt(qval));
+          cuminoval=String(parseInt(cval[1])+1).padStart(4,'0')+'-'+String(parseInt(cval[1])+parseInt(qval)).padStart(4,'0');
           cuminoname="cumino"+String(i);
           document.getElementById(cuminoname).value=cuminoval;
         }

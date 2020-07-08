@@ -65,7 +65,7 @@
                       <select class="form-control" id="work" name="work" required style="width:150px">
                           <option id="op_work_no" selected disabled hidden>Select Work Order Number</option>
                           {% if lenm == 1 %}
-                              <option selected readonly>{% for role in work_no %}{{role.bo_no}}{% endfor %}</option>
+                              <option selected readonly>{% for role in work_no %}{{role.batch_no}}{% endfor %}</option>
                           {% endif %}
                           {% if lenm > 1 %}
                           {% for role in work_no %}
@@ -211,7 +211,6 @@ var y=0;
 var z=0;
 function myfun(i_id)
 {
-    alert("hello"+i_id)
     var ins_id=i_id;
     var data={ins_id};
     $.ajax({
@@ -288,10 +287,9 @@ document.querySelector("#part_no1").addEventListener('change',(e)=>{
                  dataType : 'json',
                  data : data,
                success : function(response){  
-                     alert("returned successfully")                           
-                       var htAppend='<tr><td>'+response[5][0].m2prtdt+'</td><td>'+work+'</td><td>'+response[0][0].brn_no+'</td><td>'+response[5][0].qty+'</td><td>'+response[0][0].assly_no+'</td><td>'+response[2][0].des+'</td><td>'+response[6][0].l_to+'</td><td>'+response[0][0].scl_cl+'</td><td>'+response[0][0].rm_partno+'</td><td>'+response[7][0].des+'</td><td>'+response[0][0].rc_st_wk+'</td><td>'+response[0][0].m4_no+'</td></tr>';
+                       var htAppend='<tr><td>'+response[5][0].m2prtdt+'</td><td>'+work+'</td><td>'+response[0][0].brn_no+'</td><td>'+response[5][0].qty+'</td><td>'+response[0][0].assly_no+'</td><td>'+response[2][0].des+'</td><td>'+response[6][0].loco_to+'</td><td>'+response[0][0].scl_cl+'</td><td>'+response[0][0].rm_partno+'</td><td>'+response[7][0].des+'</td><td>'+response[0][0].rc_st_wk+'</td><td>'+response[0][0].m4_no+'</td></tr>';
                            htAppend=htAppend+'<tr class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;"><th><center>Shop Section</center></th><th><center>Part NO</center></th><th><center>Part Description</center></th><th>Drawing NO</th><th>Document NO</th><th>Order Type</th><th>Loco From:</th><th>Unit:</th><th>Label</th><th>Cut Number</th><th><center>Length/Weight</center></th><center><th>End Week</th></center></tr>';
-                         htAppend=htAppend+'<tr ><td>'+shop_no1+'</td><td>'+part_no+'</td><td>'+response[1][0].des+'</td><td>'+response[1][0].drgno+'</td><td>'+response[0][0].m2sln+'</td><td>'+response[3][0].batch_type+'</td><td>'+response[6][0].l_fr+'</td><td>'+response[9][0].shop_ut+'</td><td>'+response[10][0].alpha_1+'</td><td>'+response[11][0].cutdia_no+'</td><td>'+response[8][0].rm_qty+'</td><td></td></tr>';
+                         htAppend=htAppend+'<tr ><td>'+shop_no1+'</td><td>'+part_no+'</td><td>'+response[1][0].des+'</td><td>'+response[1][0].drgno+'</td><td>'+response[0][0].m2sln+'</td><td>'+response[3][0].batch_type+'</td><td>'+response[6][0].loco_fr+'</td><td>'+response[9][0].shop_ut+'</td><td>'+response[10][0].alpha_1+'</td><td>'+response[11][0].cutdia_no+'</td><td>'+response[8][0].rm_qty+'</td><td></td></tr>';
                         $('#table3').append(htAppend);
                         $("#table3").show();
                         for(i=1;i<=response[4].length;i++)

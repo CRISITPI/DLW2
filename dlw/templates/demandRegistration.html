@@ -1,11 +1,7 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% block content %} {% load static %}
 <style>
     * {
       box-sizing: border-box;
-    }
-    .container{
-        background-color: #f2f2f2;
-        padding: 20px;   
     }
     
     .autocomplete {
@@ -22,6 +18,9 @@
       top: 100%;
       left: 0;
       right: 0;
+      max-height: 180px;
+      overflow-y: scroll; 
+      overflow-x: hidden;
     }
     
     .autocomplete-items div {
@@ -31,12 +30,10 @@
       border-bottom: 1px solid #d4d4d4; 
     }
     
-    /*when hovering an item:*/
     .autocomplete-items div:hover {
       background-color: #e9e9e9; 
     }
     
-    /*when navigating through the items using the arrow keys:*/
     .autocomplete-active {
       background-color: DodgerBlue !important; 
       color: #ffffff; 
@@ -46,23 +43,24 @@
 <form action="{% url 'demandRegistrationview' %}" method="POST" onkeydown="return event.key != 'Enter';"> 
 {% csrf_token %}
 <div id="divlayout" align="center">
-    <h3 align="center" style="color:black;"><b>DEMAND REGISTRATION SCREEN<b></h3>
+    <h4 align="center" style="color:black;"><b>DEMAND REGISTRATION SCREEN<b></h4>
     <br>
-    <div id="div1" class="container">
+    <div id="div1">
         <table border="0">
             <tr>
-                 <td>
+                 <td style="width:300px;text-align: center;"">
                      <label ><b>Staff No:</b></label>
                      <input type="text" id="staff_no" name="staff_no" value="{{staff_no}}" maxlength="5" style=" padding: 6px 10px; margin: 8px 0;
                      border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"required/>        
                  </td>
-                 <td>
-                     <label><b>Name:</b></label>
+                 <td style="width:350px; text-align: center;">
+                     <label><b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;Name:</b></label>
                      <input type="text" id="name" name="name" value="{{name}}" maxlength="20" style=" padding: 6px 10px; margin: 8px 0;
                      border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/>       
                  </td>
-                  <td>
-                     <label><b>Department:</b></label>
+                  <td style="width:350px;text-align: center;"">
+                     <label><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Department:</b></label>
                      <input type="text" id="dep" name="dep" value="{{dep}}" maxlength="10" style=" padding: 6px 10px; margin: 8px 0;
                      border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/> 
                  </td>
@@ -70,8 +68,9 @@
          </table>
       </div>
       <br>
-      <div id="div2" class="container">
-      <h4 align="center" style="color:blue;"><b>DEMAND DETAILS<b></h4>
+      <div id="div2">
+      <h5 align="center" style="color:black;"><b>DEMAND DETAILS<b></h5>
+     
       <table border="0" style="width: 1050px;">
             <tr>
                  <td >
@@ -81,7 +80,7 @@
                  </td>
                  <td>
                      <label style="margin-left: 55px;"><b>Dated:&nbsp;&nbsp;</b></label>
-                     <input type="text" id="dem_date" name="dem_date" style=" padding: 6px 10px; margin: 8px 0;
+                     <input type="text" id="dem_date" name="dem_date" value="{{dem_date}}" style=" padding: 6px 10px; margin: 8px 0;
                      border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" disabled/>       
                  </td>
                   <td>
@@ -111,79 +110,94 @@
                  <td>
                     <label  style="margin-left: 65px;"><b>WO:&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
                    <div class="autocomplete" style="width:190px;">
-                   <input type="text" id="wo_no" name="wo_no" value="{{wo_no}}" onclick="formfun4()" maxlength="7" style=" padding: 6px 5px; margin: 8px 0;
+                   <input type="text" id="wo_no" name="wo_no" value="{{wo_no}}" onclick="formfun4()" maxlength="8" style=" padding: 6px 5px; margin: 8px 0;
                    border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
                    </div> 
                  </td>
                  <td>
-                     <label style="margin-left: 45px;"><b>WO Type:</b></label>
-                     <input type="text" id="wo_type" name="wo_type" value="{{wo_type}}" maxlength="1" style=" padding: 6px 10px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                     <label style="margin-left: 45px;"><b>WO Type:</b></lab"el>
+                     <select name="wo_type" id="wo_type" style="width: 195px; margin:8px 0; border-radius: 4px; padding: 6px 5px; border: 1px solid #ccc;box-sizing: border-box;">
+                        <option value="select">Select</option>
+                        <option value="O">O</option>
+                        <option value="S">S</option>
+                        <option value="R">R</option>
+                        <option value="M">M</option>
+                        <option value="B">B</option>
+                        <option value="N">N</option>
+                    </select>
                  </td>
                    <td>
                      <label style="margin-left: 8px;"><b>Loco From:</b></label>
                      <input type="text" id="loco_from" name="loco_from" value="{{l_fr}}" maxlength="4"  style=" padding: 6px 1px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" /> 
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" readonly/> 
                  </td>
              </tr>
              <tr>
                  <td>
                      <label style="margin-left: 35px;"><b>Loco To:&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
                      <input type="text" id="loco_to" name="loco_to" value="{{l_to}}"  maxlength="4" style=" padding: 6px 5px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" readonly/>        
                  </td>
                  <td>
                      <label style="margin-left: 50px;"><b>Quantity:</b></label>
                      <input type="text" id="Qty" name="Qty" value="{{Qty}}" maxlength="5" style=" padding: 6px 10px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;" readonly/>       
                  </td>
                    <td>
                      <label style="margin-left: 55px;"><b>Seq:&nbsp;</b></label>
-                     <input type="text" id="Seq" name="Seq" value="{{Seq}}" maxlength="3" value="0" style=" padding: 6px 1px; margin: 8px 0;
+                     <input type="text" id="Seq" name="Seq"  maxlength="3" value="0" style=" padding: 6px 1px; margin: 8px 0;
                      border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/> 
                  </td>
              </tr>
              <tr>
                  <td>
                      <label style="margin-left: 40px;"><b>Week No:&nbsp;</b></label>
-                     <input type="text" id="week_no" name="week_no" value="0" maxlength="4" style=" padding: 6px 5px; margin: 8px 0;
+                     <input type="text" id="week_no" name="week_no" value="{{week_no}}" maxlength="4" style=" padding: 6px 5px; margin: 8px 0;
                      border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
                  </td>
                  <td>
                      <label><b>RouteCard(M2):</b></label>
-                     <input type="text" id="m2" name="m2" maxlength="1" value="Y" style=" padding: 6px 10px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                    <select name="m2" id="m2" style="width: 197px; margin:8px 0; border-radius: 4px; padding: 6px 5px; border: 1px solid #ccc;box-sizing: border-box;">
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
                  </td>
                    <td>
                      <label><b>Mat Slip(M4):</b></label>
-                     <input type="text" id="m4" name="m4" maxlength="1" value="Y"  style=" padding: 6px 0px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/> 
+                    <select name="m4" id="m4" style="width: 173px; margin:8px 0; border-radius: 4px; padding: 6px 5px; border: 1px solid #ccc;box-sizing: border-box;" >
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
                  </td>
              </tr>
              <tr>
                  <td>
-                     <label><b>Job Card(M5):</b></label>
-                     <input type="text" id="m5" name="m5" maxlength="1" value="Y" style=" padding: 6px 9px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>        
+                     <label><b>Job Card(M5):&nbsp;</b></label>
+                    <select name="m5" id="m5" style="width: 192px; margin:8px 0; border-radius: 4px; padding: 6px 5px; border: 1px solid #ccc;box-sizing: border-box;" >
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
                  </td>
                  <td>
-                     <label><b>Pur Slip(M14):&nbsp;&nbsp;&nbsp;</b></label>
-                     <input type="text" id="m14" name="m14" maxlength="1" value="N"  style=" padding: 6px 15px; margin: 8px 0;
-                     border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
+                     <label><b>Pur Slip(M14):&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                    <select name="m14" id="m14" style="width: 197px; margin:8px 0; border-radius: 4px; padding: 6px 5px; border: 1px solid #ccc;box-sizing: border-box;" >
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
                  </td>
              </tr>
               <tr>
                    <td>
-                     <label><b>Dem Others:&nbsp;&nbsp;</b></label>
-                     <input type="text" id="dem_others" name="dem_others" maxlength="30"  style=" padding: 6px 10px; margin: 8px 0;
+                     <label><b>Dem Others:&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                     <input type="text" id="dem_others" name="dem_others" maxlength="30"  style=" padding: 6px 8px; margin: 8px 0;
                      border: 1px solid #ccc; border-radius: 4px;box-sizing: border-box;"/>       
                  </td>
              </tr>
          </table>
       </div>
       <br>
-      <div id="div3" class="container">
-      <h4 align="center" style="color:blue;"><b>STATUS DETAILS<b></h4>
+      <div id="div3" style="display: none;">
+      <h5 align="center" style="color:black;"><b>STATUS DETAILS<b></h5>
       <table border="0">
             <tr>
                  <td>
@@ -222,7 +236,6 @@
              </table>
          </div>
          <br>
-         <br>
          <div id="div4">
              <table border="0" align="center">
                 <tr id="btn_row1">
@@ -230,7 +243,6 @@
                    <td>&nbsp;&nbsp;&nbsp;<input type="button" value="View" id="View" name="View" onclick="ViewInfo()" class="btn btn-primary"></td>
                    <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Delete" id="Delete" name="Delete" onclick="DeleteClick()" class="btn btn-primary"></td>
                    <td>&nbsp;&nbsp;&nbsp;<input type="submit" value="Edit" id="Edit" name="Edit" class="btn btn-primary"></td>
-                   <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Send To EDP" id="Send_to" name="Send_to" class="btn btn-primary"></td>
                    <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Generate Report" id="report" name="report" class="btn btn-primary" onclick="GenerateReport()"></td>
                    <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Clear" id="clear" name="clear" onclick="DemandRegisClear()" class="btn btn-primary"></td>
                    <td>&nbsp;&nbsp;&nbsp;<input type="button" value="Back" id="Back" name="Back" onclick="backToHomePage()" class="btn btn-primary"></td>
@@ -238,7 +250,7 @@
                 <tr id="btn_row2" style="display:none;">
                   <td colspan="6">
                       <center>
-                          <font color="red">WANT TO ADD NEW DEMAND</font>
+                          <font color="black">WANT TO ADD NEW DEMAND</font>
                           <input type="radio" id="RbtnaddYN" name="RbtnaddYN" value="y" onclick="RbtnaddYN_SelectedIndexChanged()">YES
                           <input type="radio" id="RbtnaddYN" name="RbtnaddYN" value="n" onclick="RbtnaddYN_SelectedIndexChanged()">NO
                       </center>
@@ -247,7 +259,7 @@
               <tr id="btn_row3" style="display:none;">
                   <td colspan="6">
                           <center>
-                              <font color="red">WANT TO MODIFY DEMAND</font>
+                              <font color="black">WANT TO MODIFY DEMAND</font>
                               <input type="radio" id="RbtnaddMODI" name="RbtnaddMODI" id="RbtnaddMODI" onclick="RbtnaddMODI_SelectedIndexChanged()">YES
                               <input type="radio" id="RbtnaddMODI" name="RbtnaddMODI" id="RbtnaddMODI" onclick="RbtnaddMODI_SelectedIndexChanged()">NO
                           </center>
@@ -266,30 +278,71 @@
     <input type="hidden" id="LBLROWID" name="LBLROWID">
     <input type="hidden" id="doc" name="doc">
     <input type="hidden" id="ondate" name="ondate">
+    <input type="hidden" id="hid1" value="{{wo_type}}">
+    <input type="hidden" id="check" value="{{check}}">
+    <input type="hidden" id="hid2" value="{{m2}}">
+    <input type="hidden" id="hid3" value="{{m4}}">
+    <input type="hidden" id="hid4" value="{{m5}}">
+    <input type="hidden" id="hid5" value="{{m14}}">
     </form>
     <script>
     var docno;
     countries=[''];
+    var check=0;
     window.onload=function()
     {
+
+        if(document.getElementById('check').value=='1')
+        {
+            $("#wo_type").empty();
+            var x = document.getElementById("wo_type");
+            var option = document.createElement("option");
+            option.text =document.getElementById('hid1').value;
+            x.add(option);
+
+            $("#m2").empty();
+            var x1 = document.getElementById("m2");
+            var option = document.createElement("option");
+            option.text =document.getElementById('hid2').value;
+            x1.add(option);
+
+            $("#m4").empty();
+            var x2 = document.getElementById("m4");
+            var option = document.createElement("option");
+            option.text =document.getElementById('hid3').value;
+            x2.add(option);
+
+            $("#m5").empty();
+            var x3 = document.getElementById("m5");
+            var option = document.createElement("option");
+            option.text =document.getElementById('hid4').value;
+            x3.add(option);
+
+            $("#m14").empty();
+            var x4 = document.getElementById("m14");
+            var option = document.createElement("option");
+            option.text =document.getElementById('hid5').value;
+            x4.add(option);
+        }    
         var num_1=0;
-                var data={num_1};
-                $.ajax({
-                    type : 'GET',
-                    url : "{% url 'PpncDemGetNewDemno' %}",
-                    dataType : 'json',
-                    data : data,  
-                    success : function(response){
-                    if(response[0].length > 0){ 
-                    docno=parseInt(response[0][0].num_1)+1;
-                    
+        var data={num_1};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemGetNewDemno' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){
+                if(response[0].length > 0){ 
+                    docno=parseInt(response[0][0].num_1)+1;                 
                     document.getElementById('doc').value=docno;
                     }
                  }
                 })
-                var today = new Date();
-                var date = today.getFullYear()+'/'+(today.getMonth()+1)+'/'+today.getDate(); 
-                document.getElementById('ondate').value=date   
+            var now = new Date(); 
+            var day = ("0" + now.getDate()).slice(-2);
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+            var today=(day)+"-"+(month)+"-"+now.getFullYear();     
+            document.getElementById('ondate').value=today  
     }
     function DemandRegissaveInfo()
     {
@@ -301,6 +354,8 @@
         var wo_type=$("#wo_type").val();
         var loco_from=$("#loco_from").val();
         var loco_to=$("#loco_to").val();
+        var Seq=$("#Seq").val();
+        var week_no=$("#week_no").val();
         var Qty=$("#Qty").val();
         var m2=$("#m2").val();
         var m4=$("#m4").val();
@@ -346,9 +401,24 @@
                 alert("Enter Loco To")
                 loco_to.focus();
             }
+            if(week_no != parseInt(week_no))
+            {
+                alert("Week No. is not valid");
+                week_no.focus();
+            }
+            if(Seq != parseInt(Seq))
+            {
+                alert("Seq is not valid");
+                Seq.focus();
+            }
             if(Qty=="" || Qty=="0")
             {
                 alert("Quantity cannot be 0 or blank");
+                Qty.focus();
+            }
+            if(Qty != parseInt(Qty))
+            {
+                alert("Quantity should be Integer value");
                 Qty.focus();
             }
             if(dem_RegNo=="")
@@ -428,23 +498,12 @@
         document.getElementById('part_no').value="";
         document.getElementById('epc').value="";
         document.getElementById('wo_no').value="";
-        document.getElementById('wo_type').value="";
+        document.getElementById('week_no').value="";
         document.getElementById('loco_from').value="";
         document.getElementById('loco_to').value="";
         document.getElementById('Qty').value="";
         document.getElementById('Seq').value="0";
-        document.getElementById('week_no').value="0";
-        document.getElementById('m2').value="Y";
-        document.getElementById('m4').value="Y";
-        document.getElementById('m5').value="Y";
-        document.getElementById('m14').value="N";
         document.getElementById('dem_others').value="";
-        document.getElementById('process_date').value="";
-        document.getElementById('loading_date').value="";
-        document.getElementById('print_date').value="";
-        document.getElementById('issue_date').value="";
-        document.getElementById('remark').value="";
-        document.getElementById('status').value="";
         document.getElementById("name").disabled = false;
         document.getElementById("dep").disabled = false;  
         var staff_no = $("#staff_no").val();
@@ -549,7 +608,7 @@
         e.preventDefault();  
         formfun4II();                              
         }); 
-
+    
     function formfun4(){
         var wo_no= $("#wo_no").val();
         var data = {wo_no};
@@ -558,13 +617,15 @@
             url : "{% url 'PpncDemWODetails1' %}",
             dataType : 'json',
             data : data,  
-            success : function(response){   
-            for(i=0;i<response.length;i++)
-            {
-               countries.push((response[i].orderno).toString()); 
+            success : function(response){ 
+            if(check==0)
+            {  
+                for(i=0;i<response.length;i++)
+                {
+                countries.push((response[i].batchordno).toString()); 
+                }
+            check=1;
             }
-            
-           
         }
      });
     }             
@@ -585,89 +646,90 @@
             else{
                 document.getElementById('doc_type').value="GEN"
             }
-        
         }
      });
-    }                                 
-                    
+    }   
 
+    function formfun5I(){
+        var wo_no= $("#wo_no").val();
+        var data = {wo_no};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemLocoFromToValue' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){   
+            document.getElementById('loco_from').value=response[0];
+            document.getElementById('loco_to').value=response[1];
+            document.getElementById('Qty').value=response[2];
+        }
+     });
+    }                                                         
+                
     document.querySelector("#wo_type").addEventListener('change',(e)=>{
-        e.preventDefault();  
-        formfun5();                                  
+        e.preventDefault(); 
+        formfun5I();      
+        formfun5II();  
+                                  
         }); 
 
-    function formfun5(){
+    function formfun5II(){
         var t1=document.getElementById('wo_no').value;
         fb=t1.substring(0,2);
         sb=t1.substring(2,5);
         tb=t1.substring(5,7);
         document.getElementById('tbnum').value=tb;
         var batch_type=document.getElementById('wo_type').value;
-        if(batch_type=="O" || batch_type=="S" || batch_type=="R" || batch_type=="M" || batch_type=="B" || batch_type=="N")
+        if(batch_type!="O" || batch_type!="S" || batch_type!="R" || batch_type!="M" || batch_type!="B" || batch_type!="N")
         {
             document.getElementById('loco_from').focus();
         }
         else{ 
             alert("Enter O,S,R,M,B,N");
-            document.getElementById('wo_type').value="";
             document.getElementById('wo_type').focus();  
         }
         part_no=document.getElementById('part_no').value;
         lblEp_Part=document.getElementById('lblEp_Part').value;
         lblAlt=document.getElementById('lblAlt').value;
-        // check for ordinary batch
         if(batch_type=="O" && part_no!=lblEp_Part)
         {
             if(lblAlt=="N")
             {
                alert("Ordinary Batch can be loaded only for End Product=" +lblEp_Part);
-               document.getElementById('part_no').value=""
                document.getElementById('part_no').focus();
             }
         }
         if(batch_type=="O")
         {
-            if(fb=="04" || fb=="05" || fb=="13" || fb=="12" || fb=="33")
+            if(fb == "04" || fb == "05" || fb == "13" || fb == "12" || fb == "33")
             {
+                
                 document.getElementById('loco_from').focus();
-
             }
-            else{
-                alert("Ordinary Batch should start with 04/05/13/33");
-                document.getElementById('wo_no').value=""
-                document.getElementById('wo_no').focus()
-            }    
-            //batch starting with '04'
-            epc=document.getElementById('epc').value;
-            if(fb=="04" && (epc=="01" || epc=="02" || epc=="05" || epc=="1A" || epc=="1C" || epc=="1F" || epc=="1U" || epc=="26" || epc=="1Y" || epc=="21"))
+            else
             {
-                 document.getElementById('loco_from').focus()
+                alert("Ordinary Batch should start with 04/05/13/33");
+                document.getElementById('wo_no').focus()
             }
-            else{
-                 alert("EPC should be 01/02/05/1A/1C/1F/1U/26/1Y/21 for batch starting with [04]");
+            epc=document.getElementById('epc').value;
+            if(fb=="04" && (epc!="01" || epc!="02" || epc!="05" || epc!="1A" || epc!="1C" || epc!="1F" || epc!="1U" || epc!="26" || epc!="1Y" || epc!="21"))
+            {
+                alert("EPC should be 01/02/05/1A/1C/1F/1U/26/1Y/21 for batch starting with [04]");
                  document.getElementById('wo_no').focus();
             }
-            //batch starting with '05'
-            if(fb=="05" && (epc=="03" || epc=="04" || epc=="06" || epc=="07" || epc=="08" || epc=="09" || epc=="1B" || epc=="1G" || epc=="1H" || epc=="1J" || epc=="1K" || epc=="1L" || epc=="1D" || epc=="1M" || epc=="1P" || epc=="1E" || epc=="1N" || epc=="1R" || epc=="1Q" || epc=="12" || epc=="28" || epc=="14" || epc=="18" || epc=="22" || epc=="42"))
+            
+            if(fb=="05" && (epc!="03" || epc!="04" || epc!="06" || epc!="07" || epc!="08" || epc!="09" || epc!="1B" || epc!="1G" || epc!="1H" || epc!="1J" || epc!="1K" || epc!="1L" || epc!="1D" || epc!="1M" || epc!="1P" || epc!="1E" || epc!="1N" || epc!="1R" || epc!="1Q" || epc!="12" || epc!="28" || epc!="14" || epc!="18" || epc!="22" || epc!="42"))
             {
-                document.getElementById('loco_from').focus()
-            }
-            else{
                 alert("EPC should be 03/04/06/07/08/09/1B/1G/1H/1J/1K/1L/1D/1M/1Q/12/28/14/18/22/42 for batch starting with [05]");
                 document.getElementById('wo_no').focus();
             }
         }
-        //Checks for batches other than ordinary
-        if((batch_type=="O" || batch_type=="M" || batch_type=="N") && (part_no==lblEp_Part))
+        if((batch_type!="O" || batch_type!="M" || batch_type!="N") && (part_no==lblEp_Part))
         {
-            document.getElementById('loco_from').focus();
-        }
-        else{
             alert("End-Product can be loaded only against Ordinary/Misc Batches");
             document.getElementById('part_no').focus();
         }
-
-        //Check for Special Type Batch 'S'
+        
         if(batch_type=="S")
         {
             if(fb!="07")
@@ -682,20 +744,15 @@
                 document.getElementById('wo_no').focus();
             }
         }
-        //check for work order for spares to NRC's [N]
+        
         if(batch_type=="N")
         {
-            if(fb=="13" || fb=="12")
-            {
-                document.getElementById('loco_from').focus();
-            }
-            else
+            if(fb!="13" || fb!="12")
             {
               alert("WO for Spares to NRC's should start with 13 or 12");
               document.getElementById('wo_no').focus();
             }
         }
-        //Check for Balance input items
         if(batch_type=="B")
         {
             if(fb!="25")
@@ -704,14 +761,10 @@
                 document.getElementById('wo_no').focus();
             }
         }
-        //Check for Misc Work Order
         if(batch_type=="M")
         {
-            if(fb=="01" || fb=="02" || fb=="08" || fb=="10" || fb=="18"  || fb=="21"  || fb=="24"  || fb=="69")
+            if(fb!="01" || fb!="02" || fb!="08" || fb!="10" || fb!="18"  || fb!="21"  || fb!="24"  || fb!="69")
             {
-               document.getElementById('loco_from').focus(); 
-            }
-            else{
                 alert("Misc WO should start with 10/18/21/24/69");
                 document.getElementById('wo_no').focus();
             }
@@ -721,29 +774,21 @@
                 document.getElementById('wo_no').focus();
             }
         }
-        //check for replacement work orders
         if(batch_type=="R")
         {
-            if(fb=="01" || fb=="02")
+            if(fb!="01" || fb!="02")
             {
-               document.getElementById('loco_from').focus(); 
-            }
-            else{
                 alert("REPLACEMENT WORK ORDER WITH SHOULD START WITH 01/02");
                 document.getElementById('wo_no').focus();
             }
             if(fb=="01")
             {
-                if(sb=="117" || sb=="118")
+                if(sb!="117" || sb!="118")
                 {
-                   document.getElementById('loco_from').focus();
-                }
-                else{
                     alert("WORK ORDER STARTING WITH [01] SHOULD HAVE 117/118 IN SECOND BARREL");
                     document.getElementById('wo_no').focus();
                 }
-                
-                if(sb=="117" || sb=="118")
+                else
                 {
                     var tb= $("#tbnum").val();
                     var data={tb};
@@ -772,7 +817,7 @@
     }
     document.querySelector("#loco_to").addEventListener('change',(e)=>{
         e.preventDefault();  
-        formfun6();                            
+        formfun6();                          
         }); 
 
     function formfun6()
@@ -789,35 +834,97 @@
                 document.getElementById('loco_from').focus();
             }
         }
+        func();
     }
-    document.querySelector("#week_no").addEventListener('change',(e)=>{
+    function func()
+    {
+        var part_no= $("#part_no").val();
+        var epc=$("#epc").val();
+        var ep_part=$("#lblEp_Part").val();
+        var l_to=$("#loco_to").val()
+        var data={part_no,epc,ep_part,l_to};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemlocofunc' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){  
+            if(response.length == 0)
+            {
+                alert("Part Not in current structure for this End Product"); 
+                document.getElementById('part_no').value="";   
+                document.getElementById('part_no').focus();    
+            } 
+            func1();   
+          }
+        })
+    }
+    function func1()
+    {
+        var part_no= $("#part_no").val();
+        var epc=$("#epc").val();
+        var data={part_no,epc};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemlocofunc1' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){  
+            if(response.length == 0)
+            {
+                alert("Part Not in this End Product");  
+                document.getElementById('part_no').focus();       
+            }
+            func3(); 
+          }
+        })
+    }
+    function func3()
+    {
+        var part_no= $("#part_no").val();
+        var epc=$("#epc").val();
+        var l_to=$("#loco_to").val();
+        var l_fr=$("#loco_from").val();
+        var data={part_no,epc,l_to,l_fr};
+        $.ajax({
+            type : 'GET',
+            url : "{% url 'PpncDemlocofunc2' %}",
+            dataType : 'json',
+            data : data,  
+            success : function(response){  
+            if(response.length == 0)
+            {
+                alert("Part Not currently in this End Product");  
+                document.getElementById('part_no').focus();       
+            } 
+            else
+            {
+                document.getElementById('lblPTC').value=response[0][0].ptc;
+                var t=document.getElementById('wo_no').value;
+                var fb=t.substring(0,2);
+                var ptc=document.getElementById('lblPTC').value;
+                if(ptc!="M" || ptc!="Z" || ptc!="L" || ptc!="B")
+                {
+                    alert("Not a Shop Manufactured Part");
+                    document.getElementById('part_no').focus();   
+                }
+                if(fb=="25")
+                {
+                    if(ptc!="B")
+                    {
+                        alert("NOT A BAL.INPUT ITEM [B]");
+                    }
+                }  
+            }
+          }
+        })
+    }
+    document.querySelector("#m2").addEventListener('change',(e)=>{
         e.preventDefault();  
         formfun7();                                  
     }); 
 
     function formfun7()
-    {
-        weekno=document.getElementById('week_no').value;
-        if(weekno!="")
-        {
-            if(weekno>=0)
-            {
-                document.getElementById('m2').focus();
-            }
-            else{
-                alert("Not a valid Week");
-                document.getElementById('week_no').value="";
-                document.getElementById('week_no').focus();
-            }
-        }
-    }
-
-    document.querySelector("#m2").addEventListener('change',(e)=>{
-        e.preventDefault();  
-        formfun8();                                  
-    }); 
-
-    function formfun8()
     {
         m2=document.getElementById('m2').value;
         if(m2=="Y" || m2=="N")
@@ -832,10 +939,10 @@
     }
     document.querySelector("#m4").addEventListener('change',(e)=>{
         e.preventDefault();  
-        formfun9();                                  
+        formfun8();                                  
     }); 
 
-    function formfun9()
+    function formfun8()
     {
         m4=document.getElementById('m4').value;
         if(m4=="Y" || m4=="N")
@@ -850,10 +957,10 @@
     }
     document.querySelector("#m5").addEventListener('change',(e)=>{
         e.preventDefault();  
-        formfun10();                                  
+        formfun9();                                  
     }); 
 
-    function formfun10()
+    function formfun9()
     {
         m5=document.getElementById('m5').value;
         if(m5=="Y" || m5=="N")
@@ -868,10 +975,10 @@
     }
     document.querySelector("#m14").addEventListener('change',(e)=>{
         e.preventDefault();  
-        formfun11();                                  
+        formfun10();                                  
     }); 
 
-    function formfun11()
+    function formfun10()
     {
         m14=document.getElementById('m14').value;
         if(m14=="Y" || m14=="N")
@@ -884,7 +991,6 @@
             document.getElementById("m14").focus();
         }        
     }
-
     function RbtnaddYN_SelectedIndexChanged(){
         var ele = document.getElementsByName('RbtnaddYN'); 
         for(i = 0; i < ele.length-1; i++) { 
@@ -908,9 +1014,7 @@
                     document.getElementById('btn_row1').style.display="none";
                     document.getElementById('btn_row2').style.display="none";
                     document.getElementById('btn_row3').style.display="block";
-
-                } 
-                
+                }            
             }   
     }
     function Key_f1_addnew()
@@ -1010,23 +1114,13 @@
         document.getElementById('part_no').value="";
         document.getElementById('epc').value="";
         document.getElementById('wo_no').value="";
+        document.getElementById('week_no').value="";
         document.getElementById('wo_type').value="";
         document.getElementById('loco_from').value="";
         document.getElementById('loco_to').value="";
         document.getElementById('Qty').value="";
         document.getElementById('Seq').value="0";
-        document.getElementById('week_no').value="0";
-        document.getElementById('m2').value="Y";
-        document.getElementById('m4').value="Y";
-        document.getElementById('m5').value="Y";
-        document.getElementById('m14').value="N";
         document.getElementById('dem_others').value="";
-        document.getElementById('process_date').value="";
-        document.getElementById('loading_date').value="";
-        document.getElementById('print_date').value="";
-        document.getElementById('issue_date').value="";
-        document.getElementById('remark').value="";
-        document.getElementById('status').value="";
         document.getElementById("name").disabled = true;
         document.getElementById("dep").disabled = true;
         document.getElementById("part_no").focus();

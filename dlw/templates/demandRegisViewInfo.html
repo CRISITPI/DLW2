@@ -1,25 +1,14 @@
-{% extends 'base.html' %} {% block content %}
-{% load static %}
-<!-- 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
- -->
+{% extends 'base.html' %} {% block content %}{% load static %}
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script> -->
 
 
-
-<style>
-    .container{
-        background-color: #f2f2f2;
-        padding: 20px;
-    }
-</style>
-<br>
 <form action="{% url 'PpncdemViewInfo' %}" method="POST"> 
 {% csrf_token %}
 <div id="divlayout" align="center">
-    <h3 align="center" style="color:red;" ><b>SELECT OPTION TO PRINT/VIEW<b></h3>
+    <h5 align="center" style="color:black;" ><b>SELECT OPTION TO PRINT/VIEW<b></h5>
     <br>
-<div id="view1" class="container">
+<div id="view1">
 <table>
     <tr>
         <td>
@@ -30,48 +19,64 @@
         </td>
     </tr>
 </table><br>
-<table align="left">
+<table align="center">
     <tr id="DemandNo" style="display:none;">
         <td>Demand Reg No.</td>
-        <td><input type="text" id="dem_reg"></td>
+        <td><input type="text" id="dem_reg" name="dem_reg" style="width:100px;"></td>
     </tr>
 </table>
-<table align="left">
+<table align="center">
     <tr id="date" style="display:none;">
         <td>Date From</td>
-        <td><input type="date" id="date_from"></td>
+        <td><input type="text" id="date_from" name="date_fr" style="width:100px;"></td>
         <td>Date To</td>
-        <td><input type="date" id="date_to"></td>
+        <td><input type="text" id="date_to" name="date_from" style="width:100px;"></td>
     </tr>
 </table>
-<table align="left">
+<table align="center">
     <tr id="Staff_No" style="display:none;">
         <td>Staff No.</td>
-        <td><input type="text" id="staffNo"></td>
+        <td><input type="text" id="staffNo" name="staffNo" style="width:100px;"></td>
     </tr>
 </table>
-<table align="left">
+<table align="center">
     <tr id="edp" style="display:none;">
         <td>Enter demand Reg No.</td>
-        <td><input type="text" id="demReg"></td>
+        <td><input type="text" id="demReg" name="demReg" style="width:100px;"></td>
     </tr>
 </table>
 </div>
-<div id="view2" class="container" align="left">
+<br>
+<div id="view2" class="container" align="center">
 <input type="button" id="create" name="create" value="Create" class="btn btn-primary" onclick="Create()">
 <input type="button" id="back" name="back" value="Back" onclick="DemandRegistrationRedirect()" class="btn btn-primary">
 </div>
 </div>
 <script>
+    $(document).ready(function () {               
+        $('#date_to').datepicker({
+            dateFormat: "dd-mm-yy" 
+    });
+                       
+    $("#date_from").datepicker({
+        dateFormat: "dd-mm-yy",                        
+        onSelect: function(date){            
+            var date1 = $('#date_from').datepicker('getDate');                                                         
+            $('#date_to').datepicker("option","minDate",date1);            
+           }
+    });              
+  });
 var val4;
 var val5;  
 var val3;
 var val2;
 var val1;
 var val;
+var check;
 $("input[type='radio']").on('change',function(){
     val1=($(this).val());
     if($(this).val()=="1"){
+        check=$(this).val();
      $("#DemandNo").show();
      $("#DemandNo").focus();
      $("#date").hide();
@@ -79,6 +84,8 @@ $("input[type='radio']").on('change',function(){
      $("#edp").hide();
     }
     else if($(this).val()=="2"){
+        check=$(this).val();
+
     $("#DemandNo").hide();
      $("#date").focus();
      $("#date").show();
@@ -86,6 +93,8 @@ $("input[type='radio']").on('change',function(){
      $("#edp").hide();
     }
     else if($(this).val()=="3"){
+        check=$(this).val();
+
     $("#DemandNo").hide();
      $("#Staff_No").focus();
      $("#date").hide();
@@ -93,6 +102,7 @@ $("input[type='radio']").on('change',function(){
      $("#edp").hide();
     }
     else{
+        check=4;
      $("#DemandNo").hide();
      $("#edp").focus();
      $("#date").hide();
@@ -123,8 +133,79 @@ function DemandRegistrationRedirect(){
     }
 function Create()
 {
-    window.location.href="{% url 'demandRegistrationReportview' %}"+"?staffno="+$("#staffNo").val()+"&rbtnquery="+val1+"&dem_reg="+$("#dem_reg").val()+"&demReg="+$("#demReg").val()+"&date_from="+$("#date_from").val()+"&date_to="+$("#date_to").val();
-      
+    if (check==1)
+        formfun();
+    else
+    if (check==3)
+        formfun1();
+    else
+    if (check==4)
+        formfun2();
+    else
+    if(check==2)
+        window.location.href="{% url 'demandRegistrationReportview' %}"+"?staffno="+$("#staffNo").val()+"&rbtnquery="+val1+"&dem_reg="+$("#dem_reg").val()+"&demReg="+$("#demReg").val()+"&date_from="+$("#date_from").val()+"&date_to="+$("#date_to").val();
+       
+
+}
+function formfun()
+{
+    var dem_reg = $("#dem_reg").val();
+    var data = {dem_reg};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'PpncDemvalidation1' %}",
+                dataType : 'json',
+                data : data,  
+                success : function(response){
+                if(response.length == 0){ 
+                    alert("Please enter valid Demand No.");            
+                }
+                else
+                {
+                    window.location.href="{% url 'demandRegistrationReportview' %}"+"?staffno="+$("#staffNo").val()+"&rbtnquery="+val1+"&dem_reg="+$("#dem_reg").val()+"&demReg="+$("#demReg").val()+"&date_from="+$("#date_from").val()+"&date_to="+$("#date_to").val();
+                }
+            }
+        })
+}
+function formfun1()
+{
+    var staffNo = $("#staffNo").val();
+    var data = {staffNo};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'PpncDemvalidation2' %}",
+                dataType : 'json',
+                data : data,  
+                success : function(response){
+                if(response.length == 0){ 
+                    alert("Please enter valid Staff No.");            
+                }
+                else{
+                    window.location.href="{% url 'demandRegistrationReportview' %}"+"?staffno="+$("#staffNo").val()+"&rbtnquery="+val1+"&dem_reg="+$("#dem_reg").val()+"&demReg="+$("#demReg").val()+"&date_from="+$("#date_from").val()+"&date_to="+$("#date_to").val();
+                }
+            }
+        })
+}
+function formfun2()
+{
+    var demReg = $("#demReg").val();
+    var data = {demReg};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'PpncDemvalidation3' %}",
+                dataType : 'json',
+                data : data,  
+                success : function(response){
+                    alert(response.length);
+                if(response.length == 0){ 
+                    alert("Please enter valid demand no.");            
+                }
+                else
+                {
+                    window.location.href="{% url 'demandRegistrationReportview' %}"+"?staffno="+$("#staffNo").val()+"&rbtnquery="+val1+"&dem_reg="+$("#dem_reg").val()+"&demReg="+$("#demReg").val()+"&date_from="+$("#date_from").val()+"&date_to="+$("#date_to").val();
+                }
+            }
+        })
 }
 </script>
 {% endblock content %}
