@@ -6567,10 +6567,10 @@ def pinion_addbo(request):
 def pinion_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
-        myval=list(PinionPressing.objects.filter(sno=mysno).values('bo_no','bo_date','loco_type','date','tm_make','tm_no','pt_no','bo_qty','in_qty','out_qty'))
+        myval=list(PinionPressing.objects.filter(tm_no=mysno).values('bo_no','bo_date','loco_type','date','tm_make','tm_no','pt_no','bo_qty','in_qty','out_qty'))
         return JsonResponse(myval, safe=False)
-    return JsonResponse({"success":False}, status=400)  
-
+    return JsonResponse({"success":False}, status=400) 
+    
 def airbox_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
@@ -6582,7 +6582,7 @@ def airbox_editsno(request):
 def axlepress_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
-        myval=list(AxleWheelPressing.objects.filter(sno=mysno).values('bo_no','bo_date','loco_type','date','axle_no','wheelno_de','wheelno_nde','bullgear_no','bullgear_make','pt_no','bo_qty','in_qty','out_qty'))
+        myval=list(AxleWheelPressing.objects.filter(axle_no=mysno).values('bo_no','bo_date','loco_type','date','axle_no','wheelno_de','wheelno_nde','bullgear_no','bullgear_make','pt_no','bo_qty','in_qty','out_qty'))
         AxleMachining.objects.filter(axle_no=myval[0]['axle_no']).update(axlefitting_status=False)
         WheelMachining.objects.filter(wheel_no=myval[0]['wheelno_de']).update(wheelfitting_status=False)
         return JsonResponse(myval, safe=False)
@@ -27333,7 +27333,6 @@ def axlewheelpressing_section(request):
 
     return render(request,"TMS/axlewheelpressing_section.html",my_context)
 
-
 @login_required
 @role_required(urlpass='/PinionPress/')
 def pinionpressing_section(request):
@@ -27389,9 +27388,12 @@ def pinionpressing_section(request):
         else :
             obj2[i].update({'out_qty':None})
     
-    mybo=Batch.objects.all().values('bo_no')
+    mybo=(Batch.objects.all().values('bo_no')).order_by('bo_no')
     mysno=(PinionPressing.objects.filter(dispatch_status=False).values('axle_no')).order_by('axle_no')
     axleno=(AxleWheelPressing.objects.filter(inspectinspection_status=True).values('axle_no')).order_by('axle_no')
+    mytm=(PinionPressing.objects.filter(dispatch_status=False).values('tm_no')).order_by('tm_no')
+    
+    
     my_context={
        'object':obj2,
        'nav':nav,
@@ -27401,6 +27403,10 @@ def pinionpressing_section(request):
        'mysno':mysno,
        'subnav':subnav,
        'axleno':axleno,
+       'mytm':mytm,
+       
+
+       
         }
     
     
@@ -27481,7 +27487,7 @@ def pinionpressing_section(request):
                 year2 = s2[2]
                 newoutdate =  year2 + "-" + month2 + "-" + day2
                 if sno and bo_no and bo_date and date and tm_make and tm_no and pt_no and bo_qty and indate and outdate:
-                    PinionPressing.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,tm_make=tm_make,tm_no=tm_no,pt_no=pt_no,bo_qty=bo_qty,in_qty=newindate,out_qty=newoutdate)
+                    PinionPressing.objects.filter(tm_no=sno).update(bo_no=bo_no,bo_date=bo_date,date=date,tm_make=tm_make,tm_no=tm_no,pt_no=pt_no,bo_qty=bo_qty,in_qty=newindate,out_qty=newoutdate)
                     messages.success(request, 'Successfully Edited!')
                 else:
                     messages.error(request,"Please Enter S.No.!")        
@@ -27506,7 +27512,7 @@ def pinionpressing_section(request):
             newinspect_date =  year1 + "-" + month1 + "-" + day1
             
             if pinion_pressure_triangle_glycerin and pinion_pressure_square_ram and pinion_teeth_dist and pinion_no and pinion_make and pinion_travel and blue_match and inspect_date :
-                PinionPressing.objects.filter(axle_no=sno).update(pinion_pressure_triangle_glycerin=pinion_pressure_triangle_glycerin,pinion_pressure_square_ram=pinion_pressure_square_ram,pinion_teeth_dist=pinion_teeth_dist,pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,blue_match=blue_match,inspect_date=newinspect_date,inspection_status=True,dispatch_to="Inspected") 
+                PinionPressing.objects.filter(tm_no=sno).update(pinion_pressure_triangle_glycerin=pinion_pressure_triangle_glycerin,pinion_pressure_square_ram=pinion_pressure_square_ram,pinion_teeth_dist=pinion_teeth_dist,pinion_no=pinion_no,pinion_make=pinion_make,pinion_travel=pinion_travel,blue_match=blue_match,inspect_date=newinspect_date,inspection_status=True,dispatch_to="Inspected") 
                 messages.success(request,'Successfully Inspected!')
             else:
                 messages.error(request,"Please Enter All Records!")
@@ -27527,7 +27533,7 @@ def pinionpressing_section(request):
 
             sno=request.POST.get('delsno')
             if sno:
-                PinionPressing.objects.filter(axle_no=sno).delete()
+                PinionPressing.objects.filter(tm_no=sno).delete()
                 messages.success(request, 'Successfully Deleted!')
             else:
                 messages.error(request,"Please Enter S.No.!")
