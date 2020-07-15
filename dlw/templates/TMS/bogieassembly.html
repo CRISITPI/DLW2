@@ -1,103 +1,135 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <html lang="en">
-        <head>
-                <script>
-                   $(document).ready(function () {
-                        $('#date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#motor_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#lowering_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#dispatch_check_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#locopaper_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#hhpmotor_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#hhplowering_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#hhpdispatch_check_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                    $(document).ready(function () {
-                        $('#hhplocopaper_date').datepicker({
-                            dateFormat: 'dd-mm-yy'
-                        });
-                    });
-                </script>
-                    <script>
-                    $(document).ready(function () {
-                            $('#out_qty').datepicker({
-                                dateFormat: 'dd-mm-yy'
-                            });
-                        });
-                    </script>
-                    <script>
-                            $(document).ready(function () {
-                                    $('#editout_qty').datepicker({
-                                        dateFormat: 'dd-mm-yy'
-                                    });
-                                });
-                            </script>
-                <script>
-                        $(document).ready(function () {
-                             $('#editdate').datepicker({
-                                 dateFormat: 'dd-mm-yy'
-                             });
-                         });
-                </script>
-<script>
-                        $(document).ready(function () {
-                             $('#in_date').datepicker({
-                                 dateFormat: 'dd-mm-yy'
-                             });
-                             $('#editin_date').datepicker({
-                                 dateFormat: 'dd-mm-yy'
-                             });
-                         });
-                </script>
-        <script>
-            $(document).ready(function () {
-                $('#dispatch_date').datepicker({
-                    dateFormat: 'dd-mm-yy'
-                });
-            });
-        </script>
-                        <script>
-                          $(document).ready(function () {
-                               $('#inspectdate').datepicker({
-                                   dateFormat: 'dd-mm-yy'
-                               });
-                               $('#hhpdate').datepicker({
-                                   dateFormat: 'dd-mm-yy'
-                               });
-                           });
-                  </script>
-        </head>    
+  <head>
+    <script>
+      $(document).ready(function () {
+        $("#date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#motor_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#lowering_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#dispatch_check_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#locopaper_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#hhpmotor_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#hhplowering_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#hhpdispatch_check_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+      $(document).ready(function () {
+        $("#hhplocopaper_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#out_qty").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#editout_qty").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#editdate").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#in_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+        $("#editin_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#dispatch_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#inspectdate").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+        $("#hhpdate").datepicker({
+          dateFormat: "dd-mm-yy",
+          maxDate: "0",
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        var drpdwn = $("#addsno");
+        drpdwn.append(
+          $(`{% for x in mysno1 %}<option>{{x.frameserial_no}}</option>{% endfor %}`)
+        );
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        var drpdwn = $("#hhpaddsno");
+        drpdwn.append(
+          $(`{% for x in hhpmysno1 %}<option>{{x.frameserial_no}}</option>{% endfor %}`)
+        );
+      });
+    </script>
+  </head>  
    
     <style>
         #customers {
@@ -307,7 +339,6 @@ footer, .page-content::after{
                                   <label for="">Frame Make</label>
                                   <select name="frame_make" id="frame_make" class="form-control ll" required >
                                     <option value="" hidden selected>Select Frame Make.</option>
-                                    <option>DLW</option>
                                       <option>BEC</option>
                                       <option>SIMPLEX</option>
                                       <option>HEI</option>
@@ -631,14 +662,30 @@ footer, .page-content::after{
             <form  name="hhpBogieForm" id="hhpBogieForm" method="POST" class="needs-validation" > {% csrf_token %}
 
             <div class="modal-body">
+              <div class="row">
+                <div class="col-3">
+                  <label class="radio-inline"
+                    ><input
+                      type="radio"
+                      value="notinspected"
+                      name="optradiohhp"
+                      checked
+                    />
+                    Not Inspected</label
+                  >
+                </div>
+                <div class="col-3">
+                  <label class="radio-inline"
+                    ><input type="radio" value="inspected" name="optradiohhp" />
+                    Inspected</label
+                  >
+                </div>
+              </div>
                   <div class="row">
                   <div class="col-6">
                           <label for="">Select Frame Serial No. / Bogie No.</label>
                           <select name="hhpaddsno" id="hhpaddsno" class="form-control ll" required>
                                   <option value="" hidden selected>Select Frame Serial No.</option>  
-                                  {% for x in hhpmysno %}
-                                  <option>{{x.frameserial_no}}</option>
-                                  {% endfor %}
                           </select> 
                   </div>
                   <div class="col-6">
@@ -967,14 +1014,30 @@ footer, .page-content::after{
             <form name="BogieForm" id="BogieForm" method="POST" class="needs-validation" > {% csrf_token %}
 
             <div class="modal-body" >
+              <div class="row">
+                <div class="col-3">
+                  <label class="radio-inline"
+                    ><input
+                      type="radio"
+                      value="notinspected"
+                      name="optradio"
+                      checked
+                    />
+                    Not Inspected</label
+                  >
+                </div>
+                <div class="col-3">
+                  <label class="radio-inline"
+                    ><input type="radio" value="inspected" name="optradio" />
+                    Inspected</label
+                  >
+                </div>
+              </div>
                   <div class="row">
                   <div class="col-6">
                           <label for="">Frame Serial No. / Bogie No.</label>
                           <select name="addsno" id="addsno" class="form-control ll" required>
                                   <option value="" hidden selected>Select Frame Serial No.</option>  
-                                  {% for x in mysno %}
-                                  <option>{{x.frameserial_no}}</option>
-                                  {% endfor %}
                           </select> 
                   </div>
                   <div class="col-6">                                                
@@ -1296,7 +1359,25 @@ footer, .page-content::after{
 
 <script>
     var i=0;
-       
+        $(document).ready(function() {
+            $('#delform').bootstrapValidator({
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    delsno: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The username is required'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        
         $("#addbono").change(function(e){
             e.preventDefault();
             var selbo_no = $(this).val();
@@ -1357,6 +1438,55 @@ footer, .page-content::after{
                 
         });
         
+      $('input:radio[name="optradio"]').change(function () {
+      var drpdwn = $("#addsno");
+
+      if (this.checked && this.value == "inspected") {
+        drpdwn.empty();
+        drpdwn.append(
+          $(`<option value="" hidden selected
+                      >Select Frame Serial No.
+                    </option>
+                    {% for x in mysno0 %}
+                    <option>{{x.frameserial_no}}</option>
+                    {% endfor %}`)
+        );
+      } else if (this.checked && this.value == "notinspected") {
+        drpdwn.empty();
+        drpdwn.append(
+          $(`<option value="" hidden selected
+                      >Select Frame Serial No.
+                    </option>{% for x in mysno1 %}
+                    <option>{{x.frameserial_no}}</option>
+                    {% endfor %}`)
+        );
+      }
+    });
+    $('input:radio[name="optradiohhp"]').change(function () {
+      var drpdwn = $("#hhpaddsno");
+
+      if (this.checked && this.value == "inspected") {
+        drpdwn.empty();
+        drpdwn.append(
+          $(`<option value="" hidden selected
+                      >Select Frame Serial No.
+                    </option>
+                    {% for x in hhpmysno0 %}
+                    <option>{{x.frameserial_no}}</option>
+                    {% endfor %}`)
+        );
+      } else if (this.checked && this.value == "notinspected") {
+        drpdwn.empty();
+        drpdwn.append(
+          $(`<option value="" hidden selected
+                      >Select Frame Serial No.
+                    </option>{% for x in hhpmysno1 %}
+                    <option>{{x.frameserial_no}}</option>
+                    {% endfor %}`)
+        );
+      }
+    });
+
         function funct(){
           if((document.getElementById('third_axle').value =='')||(document.getElementById('second_axle').value =='')||(document.getElementById('first_axle').value =='')||(document.getElementById('frameserial_no').value =='')||(document.getElementById('frame_type').value =='')||(document.getElementById('in_qty').value =='')||(document.getElementById('out_qty').value =='')||(document.getElementById('date').value =='')||(document.getElementById('frame_make').value ==''))
             {
@@ -1385,7 +1515,7 @@ footer, .page-content::after{
                     success:function(response){
                         if(response=="false")
                         {
-                        
+                        document.getElementById('first').value ='';
                         document.getElementById('first_coilspring_make').value ='';
                         document.getElementById('first_gearcase_no').value ='';
                         document.getElementById('first_gearcase_make').value ='';
@@ -1394,7 +1524,7 @@ footer, .page-content::after{
                         document.getElementById('first_vertical_l').value ='';
                         document.getElementById('first_horizontal_r').value ='';
                         document.getElementById('first_horizontal_l').value ='';
-                        
+                        document.getElementById('second').value ='';
                         document.getElementById('second_coilspring_make').value ='';
                         document.getElementById('second_gearcase_no').value ='';
                         document.getElementById('second_gearcase_make').value ='';
@@ -1403,7 +1533,7 @@ footer, .page-content::after{
                         document.getElementById('second_vertical_l').value ='';
                         document.getElementById('second_horizontal_r').value ='';
                         document.getElementById('second_horizontal_l').value ='';
-                        
+                        document.getElementById('third').value ='';
                         document.getElementById('third_coilspring_make').value ='';
                         document.getElementById('third_gearcase_no').value ='';
                         document.getElementById('third_gearcase_make').value ='';
@@ -1419,7 +1549,7 @@ footer, .page-content::after{
                         document.getElementById('spheri_block_make').value ='';
                         document.getElementById('elastic_shop_make').value ='';
                         document.getElementById('horizontal_damper').value ='';
-                        document.getElementById('inspectdate').value ='';
+                        document.getElementById('inspect_date').value ='';
                         document.getElementById('motor_check').value ='';
                         document.getElementById('motor_date').value ='';
                         document.getElementById('lowering_check').value ='';
@@ -1447,7 +1577,7 @@ footer, .page-content::after{
                                 }
                                 
                         $("#break_cylinder_make").val(`${response[0].break_cylinder_make}`);
-                        $("#first").val(`${response[0].first_axle}`);
+                        $("#first").val(`${response[0].first}`);
                         $("#first_coilspring_make").val(`${response[0].first_coilspring_make}`);
                         $("#first_gearcase_no").val(`${response[0].first_gearcase_no}`);
                         $("#first_gearcase_make").val(`${response[0].first_gearcase_make}`);
@@ -1456,7 +1586,7 @@ footer, .page-content::after{
                         $("#first_vertical_l").val(`${response[0].first_vertical_l}`);
                         $("#first_horizontal_r").val(`${response[0].first_horizontal_r}`);
                         $("#first_horizontal_l").val(`${response[0].first_horizontal_l}`);
-                        $("#second").val(`${response[0].second_axle}`);
+                        $("#second").val(`${response[0].second}`);
                         $("#second_coilspring_make").val(`${response[0].second_coilspring_make}`);
                         $("#second_gearcase_no").val(`${response[0].second_gearcase_no}`);
                         $("#second_gearcase_make").val(`${response[0].second_gearcase_make}`);
@@ -1465,7 +1595,7 @@ footer, .page-content::after{
                         $("#second_vertical_l").val(`${response[0].second_vertical_l}`);
                         $("#second_horizontal_r").val(`${response[0].second_horizontal_r}`);
                         $("#second_horizontal_l").val(`${response[0].second_horizontal_l}`);
-                        $("#third").val(`${response[0].third_axle}`);
+                        $("#third").val(`${response[0].third}`);
                         $("#third_coilspring_make").val(`${response[0].third_coilspring_make}`);
                         $("#third_gearcase_no").val(`${response[0].third_gearcase_no}`);
                         $("#third_gearcase_make").val(`${response[0].third_gearcase_make}`);
@@ -1511,7 +1641,7 @@ footer, .page-content::after{
                     data:data,
                     success:function(response){
                       
-                        $("#first").val(`${response[0].first_axle}`);
+                      $("#first").val(`${response[0].first_axle}`);
                         $("#second").val(`${response[0].second_axle}`);
                         $("#third").val(`${response[0].third_axle}`);
                         $("#hide").val(`${response[0].loco_type}`);
@@ -1587,7 +1717,7 @@ footer, .page-content::after{
                         document.getElementById('hhpspheri_block_make').value ='';
                         document.getElementById('hhpelastic_shop_make').value ='';
                         document.getElementById('hhplateral_damper').value ='';
-                        document.getElementById('hhpdate').value ='';
+                        document.getElementById('hhpinspect_date').value ='';
                         document.getElementById('hhpmotor_check').value ='';
                         document.getElementById('hhpmotor_date').value ='';
                         document.getElementById('hhplowering_check').value ='';
@@ -1615,7 +1745,7 @@ footer, .page-content::after{
                                 {
                                     $("#hhpdate").val(`${response[0].inspect_date}`);
                                 }
-                                $("#hhpfirst").val(`${response[0].first_axle}`);
+                                $("#hhpfirst").val(`${response[0].first}`);
                         $("#hhpfirst_coilspring_make").val(`${response[0].first_coilspring_make}`);
                         $("#hhpfirst_gearcase_no").val(`${response[0].first_gearcase_no}`);
                         $("#hhpfirst_gearcase_make").val(`${response[0].first_gearcase_make}`);
@@ -1624,7 +1754,7 @@ footer, .page-content::after{
                         $("#hhpfirst_vertical_l").val(`${response[0].first_vertical_l}`);
                         $("#hhpfirst_horizontal_r").val(`${response[0].first_horizontal_r}`);
                         $("#hhpfirst_horizontal_l").val(`${response[0].first_horizontal_l}`);
-                        $("#hhpsecond").val(`${response[0].second_axle}`);
+                        $("#hhpsecond").val(`${response[0].second}`);
                         $("#hhpsecond_coilspring_make").val(`${response[0].second_coilspring_make}`);
                         $("#hhpsecond_gearcase_no").val(`${response[0].second_gearcase_no}`);
                         $("#hhpsecond_gearcase_make").val(`${response[0].second_gearcase_make}`);
@@ -1633,7 +1763,7 @@ footer, .page-content::after{
                         $("#hhpsecond_vertical_l").val(`${response[0].second_vertical_l}`);
                         $("#hhpsecond_horizontal_r").val(`${response[0].second_horizontal_r}`);
                         $("#hhpsecond_horizontal_l").val(`${response[0].second_horizontal_l}`);
-                        $("#hhpthird").val(`${response[0].third_axle}`);
+                        $("#hhpthird").val(`${response[0].third}`);
                         $("#hhpthird_coilspring_make").val(`${response[0].third_coilspring_make}`);
                         $("#hhpthird_gearcase_no").val(`${response[0].third_gearcase_no}`);
                         $("#hhpthird_gearcase_make").val(`${response[0].third_gearcase_make}`);
@@ -2070,4 +2200,4 @@ footer, .page-content::after{
 
 </script>
 </html>  
-                     {% endblock content %}
+{% endblock content %}

@@ -5,67 +5,83 @@
 <script>
     $(document).ready(function () {
         $('#date').datepicker({
-            dateFormat: 'dd-mm-yy'
+            dateFormat: 'dd-mm-yy',
+            maxDate: "0",
         });
     });
 </script>
 <script>
 $(document).ready(function () {
         $('#editdate').datepicker({
-            dateFormat: 'dd-mm-yy'
+            dateFormat: 'dd-mm-yy',
+            maxDate: "0",
         });
     });
 </script>
 <script>
     $(document).ready(function () {
             $('#in_qty').datepicker({
-                dateFormat: 'dd-mm-yy'
+                dateFormat: 'dd-mm-yy',
+                maxDate: "0",
             });
         });
     </script> 
     <script>
     $(document).ready(function () {
             $('#out_qty').datepicker({
-                dateFormat: 'dd-mm-yy'
+                dateFormat: 'dd-mm-yy',
+                maxDate: "0",
             });
         });
     </script>
     <script>
             $(document).ready(function () {
                     $('#editin_qty').datepicker({
-                        dateFormat: 'dd-mm-yy'
+                        dateFormat: 'dd-mm-yy',
+                        maxDate: "0",
                     });
                 });
             </script> 
             <script>
             $(document).ready(function () {
                     $('#editout_qty').datepicker({
-                        dateFormat: 'dd-mm-yy'
+                        dateFormat: 'dd-mm-yy',
+                        maxDate: "0",
                     });
                 });
             </script>
 <script>
     $(document).ready(function () {
         $('#datewhl').datepicker({
-            dateFormat: 'dd-mm-yy'
+            dateFormat: 'dd-mm-yy',
+            maxDate: "0",
         });
     });
 </script> 
         <script>
             $(document).ready(function () {
                 $('#ustwhl_date').datepicker({
-                    dateFormat: 'dd-mm-yy'
+                    dateFormat: 'dd-mm-yy',
+                    maxDate: "0",
                 });
             });
         </script>
         <script>
             $(document).ready(function () {
                 $('#dispatch_date').datepicker({
-                    dateFormat: 'dd-mm-yy'
+                    dateFormat: 'dd-mm-yy',
+                    maxDate: "0",
                 });
             });
         </script>
-    
+    <script>
+        $(document).ready(function () {
+          var drpdwn = $("#addsno");
+          drpdwn.append(
+            $(`{% for x in mysno1 %}<option>{{x.wheel_no}}</option>{% endfor %}`)
+          );
+        });
+      </script>
             </head>
    
     <style>
@@ -466,14 +482,28 @@ footer, .page-content::after{
                               <form name="WheelForm" method="POST" class="needs-validation" > {% csrf_token %}
               
                               <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                      <label class="radio-inline">
+                                          <input
+                                          type="radio"
+                                          value="notinspected"
+                                          name="optradio"
+                                          checked
+                                        />
+                                        Not Inspected</label>
+                                    </div>
+                                    <div class="col-3">
+                                      <label class="radio-inline">
+                                          <input type="radio" value="inspected" name="optradio" />
+                                        Inspected</label>
+                                    </div>
+                                  </div>
                                     <div class="row">
                                     <div class="col">
                                             <label for="">Wheel No.</label>
                                             <select name="snowheel" id="addsno" class="form-control ll" required>
-                                                <option value="0">Select Wheel No.</option>   
-                                                    {% for x in mysno %}
-                                                    <option>{{x.wheel_no}}</option>
-                                                    {% endfor %}
+                                                <option value="" hidden selected>Select Wheel No.</option>   
                                             </select> 
                                     </div>
                                     </div>
@@ -801,6 +831,24 @@ footer, .page-content::after{
                 
         });
 
+        $('input:radio[name="optradio"]').change(function () {
+        var drpdwn = $("#addsno");
+        if (this.checked && this.value == "inspected") {
+            drpdwn.empty();
+            drpdwn.append(
+            $(
+                `<option value="" hidden selected>Select Wheel No.</option>{% for x in mysno0 %}<option>{{x.wheel_no}}</option>{% endfor %}`
+            )
+            );
+        } else if (this.checked && this.value == "notinspected") {
+            drpdwn.empty();
+            drpdwn.append(
+            $(
+                `<option value="" hidden selected>Select Wheel No.</option>{% for y in mysno1 %}<option>{{y.wheel_no}}</option>{% endfor %}`
+            )
+            );
+        }
+        });
 
         function funct(){
             if((document.getElementById('wheel_heatcaseno').value =='')||(document.getElementById('date').value =='')||(document.getElementById('wheel_no').value =='')||(document.getElementById('wheelp_no').value =='')||(document.getElementById('wheel_make').value =='')||(document.getElementById('in_qty').value =='')||(document.getElementById('out_qty').value ==''))

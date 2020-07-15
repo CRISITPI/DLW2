@@ -65,7 +65,15 @@ $(document).ready(function () {
         });
     });
 </script>
-            </head>
+<script>
+      $(document).ready(function () {
+        var drpdwn = $("#addsno");
+        drpdwn.append(
+          $(`{% for x in mysno1 %}<option>{{x.axle_no}}</option>{% endfor %}`)
+        );
+      });
+    </script>
+</head>
    
     <style>
         #customers {
@@ -452,19 +460,36 @@ footer, .page-content::after{
                         <form name="AxleForm" id="AxleForm" method="POST" class="needs-validation" > {% csrf_token %}
         
                           <div class="modal-body">
+                            <div class="row">
+                                <div class="col-3">
+                                  <label class="radio-inline"
+                                    ><input
+                                      type="radio"
+                                      value="notinspected"
+                                      name="optradio"
+                                      checked
+                                    />
+                                    Not Inspected</label
+                                  >
+                                </div>
+                                <div class="col-3">
+                                  <label class="radio-inline"
+                                    ><input type="radio" value="inspected" name="optradio" />
+                                    Inspected</label
+                                  >
+                                </div>
+                              </div>
                               <div class="row">
                               <div class="col">
                                     <label for="">Axle No.</label>
                                     <select name="snoaxle" id="addsno" class="form-control ll" required>
-                                            <option value="0">Select Axle No.</option>  
-                                            {% for x in mysno %}
-                                            <option>{{x.axle_no}}</option>
-                                            {% endfor %}
+                                            <option value="" hidden selected>Select Axle No.</option>  
+                                            
                                     </select> 
                               </div>
                               </div>
                           <div class="row">
-                            <div class="col-4">
+                            <div class="col-6">
                             <label for="Axle">UST</label>
                                 <select name="ustaxle" id="ustaxle" class="form-control ll" required >
                                     <option value="" hidden selected>Select UST</option>
@@ -484,7 +509,7 @@ footer, .page-content::after{
                                         <option>Reject</option>
                                      </select>
                           </div>
-                            <div class="col-4">
+                            <div class="col-6">
                             <label for="Axle">Axle Length</label>
                             <input type="text" class="form-control" name="axlelength" id="axlelength" onchange="validateAxleForm(this.id)" placeholder="" value="" required>
                             </div>  
@@ -776,6 +801,28 @@ $("#addsno").change(function(e){
                 })
                 
         });
+
+        $('input:radio[name="optradio"]').change(function () {
+        var drpdwn = $("#addsno");
+
+        if (this.checked && this.value == "inspected") {
+            drpdwn.empty();
+            drpdwn.append(
+            $(`<option value="" hidden selected
+                        >Select Axle No.
+                        </option>
+                        {% for x in mysno0 %}<option>{{x.axle_no}}</option>{% endfor %}`)
+            );
+        } else if (this.checked && this.value == "notinspected") {
+            drpdwn.empty();
+            drpdwn.append(
+            $(`<option value="" hidden selected
+                        >Select Axle No.
+                        </option>{% for y in mysno1 %}<option>{{y.axle_no}}</option>{% endfor %}`)
+            );
+        }
+        });
+
 
         function funct(){
             if((document.getElementById('axle_heatcaseno').value =='')||(document.getElementById('date').value =='')||(document.getElementById('axle_no').value =='')||(document.getElementById('axlep_no').value =='')||(document.getElementById('axle_make').value =='')||(document.getElementById('in_qty').value =='')||(document.getElementById('out_qty').value ==''))

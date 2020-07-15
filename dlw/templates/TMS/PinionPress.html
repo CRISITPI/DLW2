@@ -65,6 +65,14 @@
         });
       });
     </script>
+    <script>
+      $(document).ready(function () {
+        var drpdwn = $("#addsno");
+        drpdwn.append(
+          $(`{% for x in mytm1 %}<option>{{x.tm_no}}</option>{% endfor %}`)
+        );
+      });
+    </script>
   </head>
 
   <style>
@@ -765,6 +773,25 @@
 
             <div class="modal-body">
               <div class="row">
+                <div class="col-3">
+                  <label class="radio-inline"
+                    ><input
+                      type="radio"
+                      value="notinspected"
+                      name="optradio"
+                      checked
+                    />
+                    Not Inspected</label
+                  >
+                </div>
+                <div class="col-3">
+                  <label class="radio-inline"
+                    ><input type="radio" value="inspected" name="optradio" />
+                    Inspected</label
+                  >
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-6">
                   <label for="">Traction Motor No.</label>
                   <select
@@ -773,12 +800,10 @@
                     class="form-control ll"
                     required
                   >
-                    <option value="" hidden selected>Select Traction Motor No.</option>
-                    
-                    {% for x in mytm %}
-                    <option>{{x.tm_no}}</option>
-                    {% endfor %}
-                  </select>
+                    <option value="" hidden selected
+                      >Select Traction Motor No.</option
+                    >
+                 </select>
                 </div>
                 <div class="col-6">
                   <label for="">Pinion No.</label>
@@ -958,7 +983,6 @@
                       >Select Traction Motor No.</option
                     >
                     {% for x in mytm %}
-
                     <option>{{x.tm_no}}</option>
                     {% endfor %}
                   </select>
@@ -1085,6 +1109,27 @@
       });
     });
 
+    $('input:radio[name="optradio"]').change(function () {
+      var drpdwn = $("#addsno");
+
+      if (this.checked && this.value == "inspected") {
+        drpdwn.empty();
+        drpdwn.append(
+          $(`<option value="" hidden selected
+                      >Select Traction Motor No.
+                    </option>
+                    {% for x in mytm0 %}<option>{{x.tm_no}}</option>{% endfor %}`)
+        );
+      } else if (this.checked && this.value == "notinspected") {
+        drpdwn.empty();
+        drpdwn.append(
+          $(`<option value="" hidden selected
+                      >Select Traction Motor No.
+                    </option>{% for y in mytm1 %}<option>{{y.tm_no}}</option>{% endfor %}`)
+        );
+      }
+    });
+
     function funct() {
       if (
         document.getElementById("axle_no").value == "" ||
@@ -1098,7 +1143,7 @@
         return false;
       }
     }
-    
+
     function editfunct() {
       if (
         document.getElementById("editaxle_no").value == "" ||
