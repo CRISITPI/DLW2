@@ -18,7 +18,6 @@ class NearMissIncident(models.Model):
     otherinvolve = models.CharField(max_length=200,null=True)
     incident_description = models.CharField(max_length=200,null=True)  
     details_of_damages_to_infrastructure = models.CharField(max_length=500,null=True) 
-
     site_sketch = models.FileField(upload_to = 'investigationdoc/',  blank=True, null= True)
     section_bay = models.CharField(max_length=15, null=True)  
     plant_machine_tools = models.CharField(max_length=20, null=True)  
