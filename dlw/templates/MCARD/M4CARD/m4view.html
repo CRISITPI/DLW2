@@ -1,0 +1,613 @@
+{% extends 'base.html' %} {% block content %}{% load static %}
+
+
+<!-- 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script> -->
+
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+    
+    input[type=button] {
+        width: 20%;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=button]:hover {
+        background-color: #45a049;
+        text-align: center;
+    }
+</style>
+<br>
+<br>
+<h3 align="center">Material Requition (M4) Card</h3>
+<br>
+<center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3" color="green">
+                <li>
+                    {{ message }}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </center>
+<br>
+ <form action="{% url 'm4view' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+            {% if lenm == 1 %}
+            {% for role in roles %}
+                <option selected readonly>{{role}}</option>
+                {% endfor %}
+            {% endif %}
+            {% if lenm > 1 %}
+            {% for role in roles %}
+              <option>{{role}}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+                </td>
+                <td>
+                    <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
+                    <select class="form-control" id="wno" name="wo_no" required>
+        <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+        {% if lenm == 1 %}
+        {% for i in wo_nop %}
+          <option>{{i.bo_no}}</option>
+        {% endfor %}
+        {% endif %}
+    </select>
+                </td>
+                <td>
+                    <label for="br_no"><b>BR NO/बी.आर.नंबर</b></label>
+                    <select class="form-control" id="br_no" name="br_no" required>
+            <option id="op_br" selected disabled hidden>Select BR NO</option>
+
+              </select>
+                </td>
+
+                <td>
+                    <label for="apn"><b>Assembly NO/एसेम्ब्ली संख्या:</b></label>
+                    <select class="form-control" id="assm_no" name="assm_no" required>
+            <option id="op_assm" selected disabled hidden>Select Assembly No</option>
+        </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="partno"><b>Part NO:/पार्ट सं.:</b></label>
+                    <select class="form-control" id="part_nop" name="part_nop" required>
+            <option id="op_part" selected disabled hidden>Select Part No</option>
+        </select>
+                </td>
+                <td>
+                    <label for="docno"><b>Document NO:/प्रलेख सं.:</b></label>
+                    <select class="form-control" id="doc_no" name="doc_no" required>
+            <option id="op_doc" selected disabled hidden>Select Document No</option>
+        </select>
+                </td>
+            </tr>
+
+
+        </table>
+
+
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+
+
+    </div>
+    <br><br> {% if sub == 1 %}
+     <div id="print" style="align:center" >
+    <table border="2" align="center">
+        <tr>
+            <th>Printed Date(MM-DD-YYYY)</th>
+            <th>Work Order NO</th>
+            <th>BRN NO</th>
+            <th>LOCO FROM</th>
+            <th>LOCO TO</th>
+            <th>SPLIT</th>
+            <th>Ordered Quantity</th>
+            <th>Unit</th>
+            <th>End Product Part NO</th>
+            <th>End Product Description</th>
+        </tr>
+
+        <tr>
+            <td>
+                {% if datel == 0   %}
+                       None
+                {% else %}
+                   {% for i in date %}
+
+                      {{i.prtdt}}
+
+                   {% endfor %}
+                {% endif %}
+            </td>
+            <td>{{wo_no}}</td>
+            <input type="hidden" name="wo_no1" value="{{wo_no}}">
+            <td>{{brn_no}}</td>
+            <input type="hidden" name="brn_no1" value="{{brn_no}}">
+            {% for ij in obj4 %}
+            <td>{{ij.l_fr}}</td>
+            <td>{{ij.l_to}}</td>
+            {% endfor %}
+            {% for i2 in obj6 %}
+            <td>1/{{i2.m14splt_cd}}</td>
+            {% endfor %}
+             <td id="odrd_qty">
+                {% if datel == 0   %}
+                       None
+                {% else %}
+                   {% for i in date %}
+
+                      {{i.qty}}
+
+                   {% endfor %}
+                {% endif %}
+            </td>
+            {% for i3 in obj7 %}
+            <td>{{i3.alpha_1}}</td>
+            {% endfor %}
+            <td>{{assembly_no}}</td>
+            {% for g in obj2 %}
+            <td>{{g.des}}</td>{% endfor %}
+        </tr>
+         <tr>
+            <th>Shop Section</th>
+            <th>Part NO</th>
+            <th>Part Description</th>
+            <th>Drawing NO</th>
+            <th>PM NO</th>
+            <th>DUE WK</th>
+            <th>Opn No</th>
+            <th>Document NO</th>
+            <th>Order Type</th>
+        </tr>
+        <tr>
+             <td>{{shop_sec}}</td>
+            <td>{{part_no}}</td>
+            <input type="hidden" name="part_no1" value="{{part_no}}">
+            {% for ii in obj1 %}
+            <td>{{ii.des}}</td>
+            <td>{{ii.drgno}}</td>
+            {% endfor %}
+            {% for i1 in obj5 %}
+            <td>{{i1.pm_no}}</td>
+            <td>{{i1.due_wk}}</td>
+            <td>{{i1.opn_no}}</td>
+            {% endfor %}
+            <td>{{doc_no}}</td>
+            <input type="hidden" name="doc_no1" value="{{doc_no}}">
+            {% for k in obj3 %}
+            <td>{{k.batch_type}}</td>{% endfor %}
+        </tr>
+    </table>
+    </br></br></br>
+
+    <table border="2" align="center">
+        <tr>
+            <th>REC_MAT:</th>
+            <th>ISSUED_QTY:</th>
+            <th>REC_QTY:</th>
+            <th>LASER_PST:</th>
+            <th>LINE/लाइन:</th>
+            <th>CLOSING BALANCE:</th>
+            <th>REMARKS:</th>
+
+        </tr>
+        <tr>
+         {% for obj in obj %}
+             <td>
+            {% if obj.received_mat %}
+                <input type="text" id="received_mat" class="myinp" value="{{obj.received_mat}}" name="received_mat"  maxlength="50">
+                {% else %}
+                <input type="text" id="received_mat" class="myinp" value="0" name="received_mat"  maxlength="50">
+                {% endif %}
+            </td>
+
+            <td>
+            {% if obj.issued_qty %}
+              <input type="number" id="issued_qty" class="myinp" value="{{obj.issued_qty}}" name="issued_qty" title="Numeric Value" min="0" onchange="func1()" step="any" required>
+                {% else %}
+              <input type="number" id="issued_qty" class="myinp" value="0" name="issued_qty" title="Numeric Value" min="0" onchange="func1()" step="any" required>
+                {% endif %}
+            </td>
+
+            <td>
+            {% if obj.received_qty %}
+              <input type="number" id="received_qty" class="myinp" value="{{obj.received_qty}}" name="received_qty" min="0" step="any" title="Numeric Value" onchange="func2()" required>
+                {% else %}
+              <input type="number" id="received_qty" class="myinp" value="0" name="received_qty" min="0" step="any" title="Numeric Value" onchange="func2()" required>
+                {% endif %}
+            </td>
+
+             <td>
+            {% if obj.laser_pst %}
+
+                <input type="text" id="laser_pst" class="myinp" value="{{obj.laser_pst}}" name="laser_pst" maxlength="50">
+                {% else %}
+
+                <input type="text" id="laser_pst" class="myinp" value="0" name="laser_pst" maxlength="50">
+            {% endif %}
+            </td>
+
+            <td>
+            {% if obj.line %}
+              <input type="text" id="line" class="myinp" value="{{obj.line}}" name="line" maxlength="50">
+                {% else %}
+              <input type="text" id="line" class="myinp" value="" name="line" maxlength="50">
+                {% endif %}
+            </td>
+            <td>
+            {% if obj.closing_bal %}
+              <input type="text" id="closing_bal" class="myinp" value="{{obj.closing_bal}}" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
+                {% else %}
+              <input type="text" id="closing_bal" class="myinp" value="0" name="closing_bal" pattern="[0-9]*" title="Numeric Value" required>
+                {% endif %}
+            </td>
+
+        <td>
+            {% if obj.remarks %}
+              <input type="text" id="remarks" class="myinp" value="{{obj.remarks}}" name="remarks" maxlength="50">
+                {% else %}
+              <input type="text" id="remarks" class="myinp" value="" name="remarks" maxlength="50">
+                {% endif %}
+        </td>
+
+
+</tr>
+        <tr>
+
+            <th>POSTED DATE:</th>
+            <th>WARDKEEPER DATE:</th>
+            <th>SHOP SUPERINTENDENT DATE:</th>
+            <th>POSTED DATE:</th>
+
+        </tr>
+            <tr>
+
+            <td>
+            {% if obj.posted_date %}
+                <input type="text" id="posted_date" class="myinp" value="{{obj.posted_date}}" name="posted_date" required>
+                {% else %}
+                <input type="text" id="posted_date" class="myinp" value="0" name="posted_date" required>
+                {% endif %}
+
+            </td>
+            <td>
+            {% if obj.wardkp_date %}
+                <input type="text" id="wardkp_date" class="myinp" value="{{obj.wardkp_date}}" name="wardkp_date">
+                {% else %}
+                <input type="text" id="wardkp_date" class="myinp" value="0" name="wardkp_date">
+            {% endif %}
+            </td>
+            <td>
+            {% if obj.shopsup_date %}
+                <input type="text" id="shopsup_date" class="myinp" value="{{obj.shopsup_date}}" name="shopsup_date">
+                {% else %}
+                <input type="text" id="shopsup_date" value="0" class="myinp" name="shopsup_date">
+            {% endif %}
+            </td>
+
+            <td>
+            {% if obj.posted1_date %}
+                <input type="text" id="posted1_date" class="myinp" value="{{obj.posted1_date}}" name="posted1_date"required>
+                {% else %}
+                 <input type="text" id="posted1_date" class="myinp" value="0" name="posted1_date" required>
+            {% endif %}
+            </td>
+                {% endfor %}
+        </tr>
+    </table>
+         </div>
+    <br><br>
+    <center>
+        <input type="submit" name="proceed" value="Save" class="btn btn-success" {% if usermaster.op_create %} {% else %} disabled {% endif%} id="submitted">
+        <input type="button" onclick="printDiv()" class="btn btn-success" {% if usermaster.op_read %} {% else %} disabled {% endif%}  value="Print">
+
+    </center>
+    <br><br> {% endif %}
+
+</form>
+
+
+<script type="text/javaScript">
+document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                  e.preventDefault();
+                  var shop_sec = $("#shop_sec").val()
+                  var data = {shop_sec};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm4getwono' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                        var elementsadded = document.querySelectorAll(".newelewono");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#op_wo").selected=true;
+                                document.querySelector("#op_br").selected=true;
+                                document.querySelector("#op_assm").selected = true;
+                                document.querySelector("#op_part").selected = true;
+                                document.querySelector("#op_doc").selected = true;
+                            }
+                            var brarr,mystr,html;
+                            brarr = response.map((el)=>el.bo_no);
+                            mystr = "";
+                            brarr.forEach((el,index)=>{
+                              html = `<option class="newelewono">${brarr[index]}</option>`
+                              mystr = html.concat(mystr);
+                            });
+                            html = "";
+                            document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                            mystr="";
+                      }
+                        })
+              })
+$("#wno").change(function(e){
+    e.preventDefault();
+    var wo_no = $(this).val();
+    var shop_sec = $("#shop_sec").val();
+    var data = {wo_no,shop_sec};
+      $.ajax({
+        type : 'GET',
+        url : "{% url 'm4getbr' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){
+          if(response == ''){
+                       alert("BRN NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no);}
+              var elementsadded = document.querySelectorAll(".newelebr");
+              if(elementsadded.length>0){
+                var elementsaddedarr = Array.from(elementsadded);
+              elementsaddedarr.forEach((el)=> el.remove());
+              document.querySelector("#op_br").selected = true;
+              document.querySelector("#op_assm").selected = true;
+              document.querySelector("#op_part").selected = true;
+              document.querySelector("#op_doc").selected = true;
+              }
+              var brarr,mystr,html;
+              brarr = response.map((el)=>el.brn_no);
+              mystr = "";
+              brarr.forEach((el,index)=>{
+                html = `<option class="newelebr">${brarr[index]}</option>`
+                mystr = html.concat(mystr);
+              });
+              html = "";
+              document.querySelector("#br_no").insertAdjacentHTML('beforeend',mystr);
+              mystr="";
+        }
+           })
+           })
+document.querySelector("#br_no").addEventListener('change',(e)=>{
+                  e.preventDefault();
+                  var wo_no = $("#wno").val();
+                  var brn_no = $("#br_no").val();
+                  var shop_sec = $("#shop_sec").val();
+                  var data = {wo_no,brn_no,shop_sec};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm4getassly' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                        if(response == ''){
+                               alert("Assembly Number Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no);}
+  
+                           var elementsadded = document.querySelectorAll(".neweleassm");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#op_assm").selected = true;
+                                document.querySelector("#op_part").selected = true;
+                                document.querySelector("#op_doc").selected = true;
+                             }
+                            var brarr,mystr,html;
+                            brarr = response.map((el)=>el.assly_no);
+                            mystr = "";
+                            brarr.forEach((el,index)=>{
+                              html = `<option class="neweleassm">${brarr[index]}</option>`
+                              mystr = html.concat(mystr);
+                            });
+                            html = "";
+                            document.querySelector("#assm_no").insertAdjacentHTML('beforeend',mystr);
+                            mystr="";
+                      }
+                        })
+                        })
+
+document.querySelector("#assm_no").addEventListener('change',(e)=>{
+                  e.preventDefault();
+                  var wo_no = $("#wno").val();
+                  var brn_no = $("#br_no").val();
+                  var shop_sec = $("#shop_sec").val()
+                  var assm_no = $('#assm_no').val()
+                  var data = {wo_no,brn_no,shop_sec,assm_no};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm4getpart_no' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                        if(response == ''){
+                       alert("Part Number Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no+", Assembly NO:"+assm_no);}
+ 
+                        var elementsadded = document.querySelectorAll(".newelepart");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#op_part").selected = true;
+                                document.querySelector("#op_doc").selected = true;
+                             }
+                            var brarr,mystr,html;
+                            brarr = response.map((el)=>el.part_no);
+                            mystr = "";
+                            brarr.forEach((el,index)=>{
+                              html = `<option class="newelepart">${brarr[index]}</option>`
+                              mystr = html.concat(mystr);
+                            });
+                            html = "";
+                            document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
+                            mystr="";
+                      }
+                        })
+              })
+document.querySelector("#part_nop").addEventListener('change',(e)=>{
+  e.preventDefault();
+  var wo_no = $("#wno").val();
+  var brn_no = $("#br_no").val();
+  var shop_sec = $("#shop_sec").val()
+  var assm_no = $('#assm_no').val()
+  var part_no = $('#part_nop').val()
+  var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
+  $.ajax({
+    type : 'GET',
+    url : "{% url 'm4getdoc_no' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+      if(response == ''){
+        alert("Document NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no+", Assembly NO:"+assm_no+", Part NO:"+part_no);}
+        var elementsadded = document.querySelectorAll(".neweledoc");
+        if(elementsadded.length>0){
+          var elementsaddedarr = Array.from(elementsadded);
+          elementsaddedarr.forEach((el)=> el.remove());
+          document.querySelector("#op_doc").selected = true;
+        }
+        var brarr,mystr,html;
+        brarr = response.map((el)=>el.doc_no);
+        mystr = "";
+        brarr.forEach((el,index)=>{
+          html = `<option class="neweledoc">${brarr[index]}</option>`
+          mystr = html.concat(mystr);
+        });
+        html = "";
+        document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
+        mystr="";
+    }
+  });
+});
+
+
+document.querySelector("#doc_no").addEventListener('change',(e)=>{
+    document.querySelector("#myproceed").click();
+});
+document.addEventListener('keypress',(event)=>{
+    if(event.keyCode===13){
+        event.preventDefault();
+    }
+});
+
+$(document).ready(function()
+{ 
+  $('#posted_date').datepicker({dateFormat:'dd-mm-yy',minDate:'01-01-2015',maxDate:'31-12-2020'});
+});
+
+$(document).ready(function()
+{ 
+  $('#wardkp_date').datepicker({dateFormat:'dd-mm-yy',minDate:'01-01-2015',maxDate:'31-12-2020'});
+});
+$(document).ready(function()
+{ 
+  $('#shopsup_date').datepicker({dateFormat:'dd-mm-yy',minDate:'01-01-2015',maxDate:'31-12-2020'});
+});
+$(document).ready(function()
+{ 
+  $('#posted1_date').datepicker({dateFormat:'dd-mm-yy',minDate:'01-01-2015',maxDate:'31-12-2020'});
+});
+
+
+function printDiv() {
+  var printContents = document.getElementById("print").innerHTML;
+  var style = "<style>";
+  style = style + "table {width: 100%;font: 17px Calibri;}";
+  style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+  style = style + "padding: 2px 3px;text-align: left;}";
+  style = style + "</style>";
+  var win = window.open('', '', 'height=500,width=500');
+  win.document.write('<html><head>');
+  win.document.write('<title>M4 Card</title>');
+  win.document.write(style);
+  win.document.write('</head>');
+  win.document.write('<body>');
+  win.document.write(printContents);
+  win.document.write('</body></html>');
+  win.print();
+  win.close();
+}
+
+function func1(){
+  var x=$('#odrd_qty').text();
+  var y=$('#issued_qty').val();
+  if(parseFloat(y)<=parseFloat(x))
+  {
+    document.getElementById('issued_qty').value=y;
+  }
+  else
+  {
+    document.getElementById('issued_qty').value="";
+    document.getElementById('issued_qty').focus();
+    alert("Value should be less than or equal to ordered quantity");  
+  }
+}
+
+function func2(){
+  var i=$('#issued_qty').val();
+  var j=$('#received_qty').val(); 
+  if(parseFloat(j)<=parseFloat(i))
+  {
+    document.getElementById('received_qty').value=j;
+  }
+  else
+  {
+    alert("Value should be less than or equal to Issued quantity");
+    document.getElementById('received_qty').value="";
+    document.getElementById('received_qty').focus();
+    } 
+}
+</script>
+{% endblock content %}

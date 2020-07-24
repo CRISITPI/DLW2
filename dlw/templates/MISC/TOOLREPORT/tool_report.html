@@ -1,0 +1,342 @@
+
+{% extends 'base.html' %}
+       
+{% block content %} 
+{% load static %}
+    <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+<br>
+    <h1 align="center">TOOL  MASTER/ औज़ार मास्टर </h1>
+<form action="/tool_report/" method="POST"> 
+    
+    {%csrf_token%}    
+    <div class="container text-center">
+            <table class="table">
+                <tr>
+                
+
+                    <td>
+                        <label for="tool_no"><b>Tool Number/   औज़ार संख्या:</b></label>
+                        <input type="text" class="form-control" placeholder="Enter Tool Number" id="tr_toolnum" name="tr_toolnum" value="{{TOOL_NUM}}" >
+                        
+                   </td>
+                   <td>
+                    <label for="pl_no"><b>PL Number/ पी एल संख्या:</b></label>
+                    <input type="text" class="form-control" placeholder="Enter PL Number" id="tr_plnum" name="tr_plnum" value="{{pl_num}}" >
+                    </td>
+
+                    <td>
+                         <label for="dg_no"><b>DG Number/ डी जी संख्या :</b></label>
+                        <input type="text" class="form-control" placeholder="Enter DG Number" id="tr_dgnum" name="tr_dgnum" value="{{dg_num}}">
+                    </td>
+
+                    <td>
+                        <label for="tooldesc"><b>Tool Description/ औज़ार विवरण:</b></label>
+                        <input type="text" class="form-control" placeholder="Tool Description" id="tr_tooldesc" name="tr_tooldesc" value="{{tl_desc}}">
+                    </td>
+
+                </tr>
+                <tr><br></tr>
+               
+                <tr>
+                    <td>
+                        <label for="location"><b>Location/ स्थान:</b></label>
+                        <select class="form-control" id="tr_location" name="tool_no"  required>
+                            <option id="location">{{sh_locn}}</option>
+                                     {% for role in trlocation %}
+                                       <option >{{role}}</option>
+                                     {% endfor %}
+                                     
+                        </select>
+                     </td>
+                     <td>
+                        <label for=shop_desc><b>Shop Description/ दुकान विवरण:</b></label>
+                        <input type="text" class="form-control" placeholder="Shop Description" id="tr_shopdesc" name="tr_shopdesc" value="{{tr_shopdesc}}">
+                    </td>
+                    <th>
+                        <label for="from">Date Of Entry</label>
+                        <input type="text" id="date2" name="from" readonly class="form-control" value="{{doe}}" >
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="po_no"><b>po_no</b></label>
+                        <input type="text" class="form-control" placeholder="po_no" id="po_no" name="po_no" value="{{po_no}}">
+                    </td>
+                    <td>
+                        <label for="make"><b>Make</b></label>
+                        <input type="text" class="form-control" placeholder="Make" id="make" name="make" value="{{make}}">
+                    </td>
+                    <td>
+                        <label for="model"><b>Model</b></label>
+                        <input type="text" class="form-control" placeholder="Model" id="model" name="model" value="{{model}}">
+                    </td>
+                    <td>
+                        <label for="cost"><b>Cost</b></label>
+                        <input type="text" class="form-control" placeholder="Cost" id="cost" name="cost" value="{{cost}}" >
+                    </td>
+                </tr>
+                    <tr>
+                    <td>
+                        <label for="Range"><b>Range</b></label>
+                        <input type="text" class="form-control" placeholder="Tool Range" id="rangee" name="rangee" value="{{rangee}}">
+                    </td>
+                    <td>
+                        <label for="UnitOfMeasure"><b>UnitOfMeasure</b></label>
+                        <input type="text" class="form-control" placeholder="UnitOfMeasure" id="unitofmeasure" name="unitofmeasure" value="{{uom}}">
+                    </td>
+                    <td>
+                        <label for="cal_freq"><b>Calibration frequency</b></label>
+                        <input type="text" class="form-control" placeholder="Calibration frequency" id="cal_freq" name="cal_freq" value="{{cal_freq}}">
+                    </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="acc_cri"><b>Accuracy Criteria</b></label>
+                            <input type="text" class="form-control" placeholder="Accuracy Criteria" id="acc_cri" name="acc_cri" value="{{acc_cri}}">
+                        </td>
+                     <td>
+                        <label for="cali_link"><b>Calibration link</b></label>
+                        <input type="text" class="form-control" placeholder="Calibration link" id="cali_link" name="cali_link" value="{{cal_link}}">
+                     </td>
+                     <td>
+                        <label for="pro_tol"><b>Process Tolerance</b></label>
+                        <input type="text" class="form-control" placeholder="Process Tolerance" id="pro_tol" name="pro_tol" value="{{pro_tol}}">
+                     </td>
+                </tr>
+                <tr>
+                     <td>
+                        <label for="perror"><b>Plus Error</b></label>
+                        <input type="text" class="form-control" placeholder="Plus Error" id="perror" name="perror" value="{{perror}}">
+                     </td>
+                     <td>
+
+                        <label for="merror"><b>Minus Error</b></label>
+                        <input type="text" class="form-control" placeholder="Minus Error" id="merror" name="merror" value="{{merror}}">
+                     </td>
+                     <td>
+
+                        <label for="refstdno"><b>Reference Standard Number</b></label>
+                        <input type="text" class="form-control" placeholder="Reference Standard Number" id="refstdno" name="refstdno" value="{{rsn}}">
+                     </td>
+                     <td>
+                        <label for="win"><b>Work Instruction Number</b></label>
+                        <input type="text" class="form-control" placeholder="Work Instruction Number" id="win" name="win" value="{{win}}">
+                     </td>
+        
+    
+                </tr>
+                <tr>
+                     
+                   
+
+                    
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    
+
+                    <input type="submit" onclick="myclick();" class="btn btn-success", name="save"  value="SAVE" id="sve" {% if usermaster.op_create %}{% else %} disabled {% endif%} display="block">&nbsp;&nbsp;&nbsp;
+                    <input type="submit" onclick="deltool();" class="btn btn-success", name="DELETE" value="DELETE" {% if usermaster.op_delete %}{% else %} disabled {% endif%}>  &nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="submit" onclick="updtool();" class="btn btn-success", name="UPDATE" value="UPDATE" {% if usermaster.op_update %}{% else %} disabled {% endif%}>  &nbsp;&nbsp;&nbsp;&nbsp;
+                    <button onclick="location.href = 'http://127.0.0.1:8000/tool_reportedit/';" id="myButton" {% if usermaster.op_read %}{% else %} disabled {% endif%} class="btn btn-success" >MASTER LIST</button>
+                
+                  
+                    
+                </tr>
+            </table>
+           
+        </div>
+        <input type="hidden" name="sub" id="sub" value=0 >
+        <br><br> 
+               </form>
+               <script>
+                document.querySelector("#tr_location").addEventListener('change',(e)=>{
+                        
+                    
+                    e.preventDefault();                        
+                    var tr_location = $("#tr_location").val()
+    
+                    var data = {tr_location};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'getShopDesc' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){                                
+
+                        document.getElementById('tr_shopdesc').value=response[0].sh_desc;                       
+                        $('#tr_shopdesc').attr('readonly', true);
+                        }
+                          })
+
+                });
+
+               </script>
+
+               <script>
+                function myclick()  {   
+                               
+                    var tr_toolnum = $("#tr_toolnum").val();
+                    var tr_dgnum = $("#tr_dgnum").val();
+                    var tr_tooldesc = $("#tr_tooldesc").val();
+                    var tr_plnum = $("#tr_plnum").val();
+                    var tr_location = $("#tr_location").val();
+                    var tr_shopdesc = $("#tr_shopdesc").val();
+                    var doe= $("#date2").val();
+                    var po_no= $("#po_no").val();
+                    var make= $("#make").val();
+                    var model= $("#model").val();
+                    var cost= $("#cost").val();
+                    var rangee= $("#rangee").val();
+                    var uom= $("#unitofmeasure").val();
+                    var cal_freq= $("#cal_freq").val();
+                    var acc_cri= $("#acc_cri").val();
+                    var cali_link= $("#cali_link").val();
+                    var pro_tol= $("#pro_tol").val();
+                    var perror= $("#perror").val();
+                    var merror= $("#merror").val();
+                    var refstdno= $("#refstdno").val();
+                    var win= $("#win").val();
+
+                    
+    
+                    var data = {tr_toolnum, tr_dgnum, tr_tooldesc,tr_plnum,tr_location, tr_shopdesc,doe,po_no,make,model,cost,rangee,uom,cal_freq,acc_cri,cali_link,pro_tol,perror,merror,refstdno,win};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'addInfo' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){     
+                            alert('tool is saved');                           
+
+                        }
+                          })
+
+                }
+                function deltool()  {   
+                               
+                               var tr_toolnum = $("#tr_toolnum").val();
+                               var data = {tr_toolnum};
+                                 $.ajax({
+                                   type : 'GET',
+                                   url : "{% url 'delInfo' %}",
+                                   dataType : 'json',
+                                   data : data,
+                                   success : function(response){             
+                                    alert('tool is deleted');                   
+           
+                                   }
+                                     })
+           
+                           }
+                           document.querySelector("#tr_toolnum").addEventListener('change',(e)=>{
+                        
+                    
+                        e.preventDefault();  
+            
+            var tr_toolnum = $("#tr_toolnum").val();
+            var data = {tr_toolnum};
+                $.ajax({
+                type : 'GET',
+                url : "{% url 'updateInfo' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){   
+                    console.log(response[0].flag);        
+                    if(response[0].flag=='n'){
+                        confirm("deleted previously do you want to make changes") };              
+                    document.getElementById('tr_dgnum').value=response[0].dg_num;
+                    document.getElementById('tr_plnum').value=response[0].pl_num;
+                    document.getElementById('tr_tooldesc').value=response[0].tl_desc;
+                    document.getElementById('tr_location').value=response[0].sh_locn;
+                    document.getElementById('tr_shopdesc').value=response[0].tr_shopdesc;
+                    document.getElementById('date2').value=response[0].doe;
+                    document.getElementById('po_no').value=response[0].po_no;
+                    document.getElementById('make').value=response[0].make;
+                    document.getElementById('model').value=response[0].model;
+                    document.getElementById('cost').value=response[0].cost;
+                    document.getElementById('rangee').value=response[0].rangee;
+                    document.getElementById('unitofmeasure').value=response[0].uom;
+                    document.getElementById('cal_freq').value=response[0].cal_freq;
+                    document.getElementById('acc_cri').value=response[0].acc_cri;
+                    document.getElementById('cali_link').value=response[0].cal_link;
+                    document.getElementById('pro_tol').value=response[0].pro_tol;
+                    document.getElementById('perror').value=response[0].perror;
+                    document.getElementById('merror').value=response[0].merror;
+                    document.getElementById('refstdno').value=response[0].rsn;
+                    document.getElementById('win').value=response[0].win;
+
+                    document.getElementById('sve').style.display="none";
+                    
+                
+                    
+
+
+                    
+                    
+
+                }
+                    })
+
+        })
+        function updtool()  {   
+                               
+                    var tr_toolnum = $("#tr_toolnum").val();
+                    var tr_dgnum = $("#tr_dgnum").val();
+                    var tr_tooldesc = $("#tr_tooldesc").val();
+                    var tr_plnum = $("#tr_plnum").val();
+                    var tr_location = $("#tr_location").val();
+                    var tr_shopdesc = $("#tr_shopdesc").val();
+                    var doe= $("#date2").val();
+                    var po_no= $("#po_no").val();
+                    var make= $("#make").val();
+                    var model= $("#model").val();
+                    var cost= $("#cost").val();
+                    var rangee= $("#rangee").val();
+                    var uom= $("#unitofmeasure").val();
+                    var cal_freq= $("#cal_freq").val();
+                    var acc_cri= $("#acc_cri").val();
+                    var cali_link= $("#cali_link").val();
+                    var pro_tol= $("#pro_tol").val();
+                    var perror= $("#perror").val();
+                    var merror= $("#merror").val();
+                    var refstdno= $("#refstdno").val();
+                    var win= $("#win").val();
+
+                    
+    
+                    var data = {tr_toolnum, tr_dgnum, tr_tooldesc,tr_plnum,tr_location, tr_shopdesc,doe,po_no,make,model,cost,rangee,uom,cal_freq,acc_cri,cali_link,pro_tol,perror,merror,refstdno,win};
+                                 $.ajax({
+                                   type : 'GET',
+                                   url : "{% url 'updatetool' %}",
+                                   dataType : 'json',
+                                   data : data,
+                                   success : function(response){           
+                                       alert('tool data is updated');                     
+           
+                                   }
+                                     })
+           
+                           }
+                $(document).ready(function () {
+    $('#date2').datepicker({ dateFormat: 'dd-mm-yy',});
+
+
+    });
+        if ("{{flag}}"=='n'|| "{{flag}}"=='y'){
+            document.getElementById('sve').style.display="none";
+        }
+        if ("{{flag}}"=='n'){
+           var y=confirm('This tool was deleted.Are you sure you want to make changes?');
+           if(!y){
+                location.href = location.href;
+            }
+        }
+        
+        
+            </script>
+           
+
+{% endblock content %}

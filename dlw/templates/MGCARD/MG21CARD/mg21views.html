@@ -1,0 +1,398 @@
+{% extends 'base.html' %} 
+{% block content %}
+{% load static %}
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+ -->
+
+<style>
+  input[type=text],input[type=number],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+   
+
+</style>
+
+<br>
+<h3 align="center">Accident Report (MG 21)</h3>
+
+<div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
+<div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h6 align="right" style="margin-right: 100px;">एम. -338/ M 338 </h6></div><br>
+
+<br><br>
+<form action="{% url 'mg21views' %}" method="POST"> 
+    {% csrf_token %}
+    <div class="container">
+        <table  class="table" width = 100%>
+         <tr>
+            <td>
+              <td>
+                <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>
+                <select class="form-control" id="shop_sec" name="shop_sec" required>
+                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                
+                {% for role in roles %}
+                
+                <option value="{{role.shop_id}}">{{role.section_code}}</option>
+                {% endfor %}
+                
+                </select>
+            </td>
+             <td colspan="3">
+               <label for="staff_no"><b>EMPLOYEE NO/क्रम सं.:</b></label>
+                  <select class="form-control" id="staff_no" name="staff_no" required>
+                   <option id="op_staff_no" selected disabled hidden>Select EMPLOYEE No.</option>
+                  </select>        
+             </td>   
+            </tr>
+
+        </table >
+        <input type="submit" value="proceed" name="proceed" id="proceed" hidden/>
+        
+
+
+        <div id="divHideShow" style="align:center; display:none">
+          <center>
+          <table >
+            
+            <tr> 
+              <td>
+               <label for="staff_no"><b>Employee No./कर्मचारी :</b></label> </br></br>                 
+              </td>
+            
+              <td>
+                <input type = "text" id = staffNo name = staffNo value = staffNo>
+              </td>
+            </tr>
+            
+                    <tr> 
+                      <td>
+                       <label for="staff_no"><b>Employee Name./कर्मचारी नाम:</b></label> </br></br>                 
+                      </td>
+                    
+                      <td>
+                        <input type = "text" id = "staffName" name = "staffName" value = "staffName">
+                      </td>
+                    </tr>
+                    <tr>
+                    <td>
+                        <label for="staff_no"><b>Designation/पद:</b></label></br></br></br>
+                    </td>
+                  
+                    <td>
+                      <input type = "text" id = "staffDesg" name = "staffDesg" value = "staffDesg">
+                    </td>
+                  </tr>
+                  <tr> 
+                    </tr>
+          <tr>
+            <td>
+                <label for="sno"><b>Date of Reporting Accident/ 
+                    दुर्घटना की रिपोर्टिंग तारीख:</b></label>
+                </td>
+                <td>
+                <input type="text" name="date1" id="date1" readonly class="form-control" required>
+            </td>
+          <tr>
+            <tr>
+                <td>
+                    <label for="sno"><b>Date of not resuming duty/ड्यूटी फिर से शुरू नहीं करने की तारीख:</b></label>
+                    </td>
+                    <td>
+                    <input type="text" name="date2" id="date2" onclick="fun1()" readonly class="form-control" required>
+                </td>
+              <tr>
+        <td>
+            <label for="sse"><b>To The shop superintendent/
+                सेवा में शाप अधीक्षक :</b></label></br></br>
+        </td>
+        <td>
+            <input type="text" id="sse" name="sse">
+        </td>
+        <tr>
+        <td>
+            <label for="sse1"><b>Report No./
+                रिपोर्ट संख्या :</b></label></br></br>
+        </td>
+        <td>
+            <input type="text" id="sse1" name="sse1">
+        </td>
+      </tr>
+        
+  </table>
+</center>
+</div>
+
+    <br>   
+    <center>
+    <input type="submit" value="SAVE" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   name="SAVE" id="SAVE" />
+    <input type="submit" value="back" name="back" id="back" class="btn btn-success"  href="mg21views.html"/>
+    </center>
+    </div>
+    
+
+     
+</div>
+<br>
+</div>  
+</form>
+<script> $('.sub').click(function(e){
+  e.preventDefault();
+  var id1 = document.getElementById(this.id).value;
+  
+  var data = {id1};
+  
+  $.ajax({
+        type : 'GET',
+        url : "{% url 'edit_status' %}",
+        data : data,
+        dataType : 'json',
+        
+      
+  })
+ });
+
+
+ document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                          e.preventDefault();
+                          var shop_sec = $("#shop_sec").val()
+                          var data = {shop_sec};
+                            $.ajax({
+                              type : 'GET',
+                              url : "{% url 'm338getempno' %}",
+                              dataType : 'json',
+                              data : data,
+                              success : function(response){
+                                var elementsadded = document.querySelectorAll(".neweleempno");
+                                    if(elementsadded.length>0){
+                                        var elementsaddedarr = Array.from(elementsadded);
+                                        elementsaddedarr.forEach((el)=> el.remove());
+                                
+                                        document.querySelector("#op_emp").selected=true;
+                                       
+    
+                                        
+                                     }
+                                    var brarr,mystr,html;
+                                    brarr = response.map((el)=>el.empno);
+                                    mystr = "";
+                                    brarr.forEach((el,index)=>{
+                                      html = `<option class="neweleempno">${brarr[index]}</option>`
+                                      mystr = html.concat(mystr);
+                                    });
+                                    html = "";
+                                    document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                                    mystr=""; 
+                              }
+                                })
+                      });
+
+document.querySelector("#staff_no").addEventListener('change',(e)=>{
+    $('#divHideShow').show();
+
+    e.preventDefault();                        
+    var staff_no = $("#staff_no").val()
+    var shop_sec = $("#shop_sec").val()
+   
+    var data = {staff_no, shop_sec};
+      $.ajax({
+        type : 'GET',
+        url : "{% url 'm338get_details' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){
+                                      
+        document.getElementById('staffNo').value = response[0].empno;
+        document.getElementById('staffName').value=response[0].empname; 
+        document.getElementById('staffDesg').value=response[0].desig_longdesc; 
+        document.getElementById('staffRate').value=response[0].payrate; shop_sec
+        document.getElementById('shop_sec1').value=$('#shop_sec').val();
+        
+        }
+      })
+
+});
+
+                 document.querySelector("#toshop_sec").addEventListener('change',(e)=>{
+                     e.preventDefault();
+                     var toshop_sec = $("#toshop_sec").val();
+                     var data = {toshop_sec};
+                       $.ajax({
+                         type : 'GET',
+                         url : "{% url 'm27getDetails' %}",
+                         dataType : 'json',
+                         data : data,
+                         success : function(response){
+                           var elementsadded = document.querySelectorAll(".newelepart5");
+                               if(elementsadded.length>0){
+                                   var elementsaddedarr = Array.from(elementsadded);
+                                   elementsaddedarr.forEach((el)=> el.remove());         
+                                   document.querySelector("#op_date2").selected=true;                                                                     
+                                }
+                               var brarr,mystr,html;
+                               brarr = response.map((el)=>el.date);
+                               mystr = "";
+                               brarr.forEach((el,index)=>{
+                                 html = `<option class="newelepart5">${brarr[index]}</option>`
+                                 mystr = html.concat(mystr);
+                               });
+                               html = "";
+                               document.querySelector("#date2").insertAdjacentHTML('beforeend',mystr);
+                               mystr="";                              
+                         }
+                    })
+                 })
+                 document.querySelector("#reference_authority").addEventListener('change',(e)=>{
+                     e.preventDefault();
+                     var reference_authority = $("#reference_authority").val();
+                     var data = {reference_authority};
+                       $.ajax({
+                         type : 'GET',
+                         url : "{% url 'm338authority' %}",
+                         dataType : 'json',
+                         data : data,
+                         success : function(response){
+                           var elementsadded = document.querySelectorAll(".newelepart6");
+                               if(elementsadded.length>0){
+                                   var elementsaddedarr = Array.from(elementsadded);
+                                   elementsaddedarr.forEach((el)=> el.remove());         
+                                   document.querySelector("#op_date2").selected=true;                                                                     
+                                }
+                               var brarr,mystr,html;
+                               brarr = response.map((el)=>el.date);
+                               mystr = "";
+                               brarr.forEach((el,index)=>{
+                                 html = `<option class="newelepart6">${brarr[index]}</option>`
+                                 mystr = html.concat(mystr);
+                               });
+                               html = "";
+                               document.querySelector("#date2").insertAdjacentHTML('beforeend',mystr);
+                               mystr="";                              
+                         }
+                    });
+                 });
+ 
+ 
+ </script>
+ 
+ 
+ <script>
+    
+
+     $(document).ready(function () {
+    $('#date1').datepicker({ dateFormat: 'dd-mm-yy',});
+     });
+
+     document.querySelector("#date2").addEventListener('click',(e)=>{
+      e.preventDefault();
+      $('#date2').focus();
+     });
+
+    function fun1()
+    {
+      $('#date2').datepicker({ dateFormat: 'dd-mm-yy',minDate:$("#date1").val()});
+    }
+   
+     $( document ).ready(function() {    
+     var totindb=document.getElementById('totindb').value; 
+     });
+ 
+   var j=0;
+  
+   $("#add").click(function(e) {
+     event.preventDefault()
+         console.log("j"+String(j));
+         j++;           
+  
+         var nameoname="wono"+String(j);
+         var date2="date2"+String(j);
+         var date3="date3"+String(j);
+         var totindb="totindb"+String(j);        
+         console.log(wono+" : "+date2+" : "+date3+" : "+totindb);
+ 
+         var totindb=document.getElementById('totindb').value; 
+         document.getElementById("totmebs").value=j;
+         
+         var htAppend='<div><table id="customers"><tr>'+
+                           '<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" style="width: 220px;" required ><option  value="" disabled hidden>Select WO Number</option></select></td>'+          
+                           '<td><input type="text" id="'+date2+'"   name="'+date2+'" readonly ></td>'+
+                           '<td><input type="date" id="'+date3+'"   name="'+date3+'" ></td>'+
+                           '<td><input type="text" id="'+totindb+'" name="'+totindb+'" ></td>';
+  
+      htAppend=htAppend+'</tr></table>'+'</div>';
+      $('#items').append(htAppend);  
+      var shop_sec = $("#shop_sec").val();
+      var data = {shop_sec};
+       $.ajax({
+                         type : 'GET',
+                         url : "{% url 'm27getWorkOrder' %}",
+                         dataType : 'json',
+                         data : data,
+                         success : function(response){
+                           console.log("in add ajax");
+                           console.log(response);
+                           var elementsadded = document.querySelectorAll(".newelepart6");
+                               if(elementsadded.length>0){
+                                   var elementsaddedarr = Array.from(elementsadded);
+                                   elementsaddedarr.forEach((el)=> el.remove());         
+                                   document.querySelector("#op_wono").selected=true;
+                                   document.querySelector("#op_date2").selected=true;                                                                    
+                                }
+                               var brarr,mystr,html;
+                               brarr = response.map((el)=>el.batch_no);
+                               mystr = "";
+                               brarr.forEach((el,index)=>{
+                                 html = `<option class="newelepart6">${brarr[index]}</option>`
+                                 mystr = html.concat(mystr);
+                               });
+                               html = "";
+                               document.querySelector("#"+nameoname).insertAdjacentHTML('beforeend',mystr);
+                               mystr="";                              
+                         }
+                    });
+ 
+     
+      var x=document.getElementById("batch_no");
+      var pp=0;
+      for (pp = 0; pp < x.options.length; pp++) {
+       
+      $("#"+nameoname).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
+      }
+
+  var data = {shop_sec,staffNo,staffName,staffDesg,reference_authority,staffRate,toshop_sec,date1};
+  
+        $.ajax({
+              type : 'GET',
+              url : "{% url 'm338view' %}",
+              dataType : 'json',
+              data : data,
+              success : function(response){
+                        var elementsadded = document.querySelectorAll(".neweledoc");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#op_doc").selected = true;
+                             }
+                            var brarr,mystr,html;
+                            brarr = response.map((el)=>el.doc_no);
+                            mystr = "";
+                            brarr.forEach((el,index)=>{
+                              html = `<option class="neweledoc">${brarr[index]}</option>`
+                              mystr = html.concat(mystr);
+                            });
+                            html = "";
+                            document.querySelector("#doc_no").insertAdjacentHTML('beforeend',mystr);
+                            mystr="";
+                      }
+                        })
+              })
+
+ </script>
+{% endblock content %}

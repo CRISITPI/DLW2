@@ -1,0 +1,1473 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script> 
+ 
+
+<style>
+    .box{
+        color: #;
+        padding: 20px;
+        display: none;
+        margin-top: 20px;
+    }
+    .1{ background: #; }
+    .2{ background: #; }
+    .3{ background: #; } 
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+</style>
+
+<form action="{% url 'addAddtionview' %}"  method="POST"> {% csrf_token %}
+    <div  id="frontdiv">
+        <br>
+        <table style="width: 100% ; text-align: center;" >
+            <tr>
+                <td style="text-align: center;">
+                    <b>BATCH ADDITION (NON-PROD.) AND STATUS UPDATION</b>
+                </td>
+            </tr>
+            <tr>
+                <td >
+                    <Label ID="Label1"  Font-Bold="true"><b>(SHOP MANUFACTURED ITEMS)</b></Label>
+                </td>
+            </tr>
+        </table>
+        <table width="100%">
+            <tr>
+                <td style="padding-left: 2%;">B_Type:</td>
+                <td >
+                    <input  id="txtB_Type" name="txtB_Type" MaxLength="1" placeholder="Batch Type 'Z' for Non Loco Work or Leave Blank" onclick="v_B_Type();" Width="30px" onkeyup="TextUpper(this.value,'txtB_Type') ;"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    WO No:
+                </td>
+                <td >
+                    <input id="txtBO_No" name="txtBO_No" MaxLength="8"   onblur="editModal(this.id)" onkeypress="return isNumberKey(event);"/>
+                        
+                </td>
+                <td style="padding-left: 02%;">
+                    EPC:
+                </td>
+                <td>
+                    <input id="txtEp_Type" name="txtEp_Type" MaxLength="2" Width="30px" onclick="v_epc(); "  onkeyup="TextUpper(this.value,'txtEp_Type') ;  getepc();"/>
+                    <input id="txtEp_Desc" name="txtEp_Desc"  CssClass="ctrlCommon" Width="190px" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 2%;">
+                    BRN No:
+                </td>
+                <td >
+                    <input id="txtBrn_No" name="txtBrn_No"   MaxLength="5" Width="70px" onblur="checkbrn_no(this.id); brn_nodigit(this.id);" onkeypress="return isNumberKey(event);"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    Expl Dt:
+                </td>
+                <td>
+                    <input id="txtB_Expl_Dt" name="txtB_Expl_Dt"  MaxLength="10" Width="70px" autocomplete="off"/>
+                </td>
+                <td style="padding-left: 2%;">
+                    Ord Qty:
+                </td>
+                <td>
+                    <input id="txtBatch_Qty" name="txtBatch_Qty" MaxLength="5" onclick="txtBatch_Qty_TextChanged()" onkeypress="return isNumberKey(event)" Width="70px"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 2%;">
+                    Status:
+                </td>
+                <td>
+                    <input id="txtStatus" name="txtStatus"  MaxLength="1" Width="30px"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    L Fr:
+                </td>
+                <td>
+                    <input id="txtLoco_Fr" name="txtLoco_Fr"  MaxLength="4" Width="70px"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    L To:
+                </td>
+                <td>
+                    <input id="txtLoco_To" name="txtLoco_To"  MaxLength="4" Width="70px"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 2%;">
+                    Assly No:
+                </td>
+                <td  colspan="3">
+                    <input id="txtPart_No" name="txtPart_No" MaxLength="8" placeholder="Part No" onclick="v_part();" onkeyup="getAsslyNo(this.id);"Width="70px"/>
+                    <input id="txtDesc"  name="txtDesc"   Enabled="false" Width="170px" MaxLength="30"/>
+                        
+                    
+                </td>
+                <td style="padding-left: 02%;">
+                    Stores Cert. No:
+                </td>
+                <td >
+                    <input id="txtSCNNO" name="txtSCNNO" onkeypress="return isNumberKey(event)"  Width="70px"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 2%;">
+                    Rel. Dt: 1-
+                </td>
+                <td>
+                    <input id="txtRel_Date" name="txtRel_Date"  MaxLength="10" placeholder="Release Date for all batches" Width="70px" onclick="v_reldt()" autocomplete="off"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    Rel. Dt: 2-
+                </td>
+                <td  colspan="3">
+                    <input id="txtRel_Dt_Bc" name="txtRel_Dt_Bc" MaxLength="10" placeholder="Release Date for Eng Prog B/C" Width="70px" onclick="v_reldtbc();" autocomplete="off"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 2%;">
+                    Close Dt: 1-
+                </td>
+                <td>
+                    <input id="txtClos_Dt_B" name="txtClos_Dt_B"  MaxLength="10" placeholder="Close Date for Eng Prog B" Width="70px" onclick="txtClos_Dt_B_TextChanged()" autocomplete="off"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    Close Dt: 2-
+                </td>
+                <td>
+                    <input id="txtClos_Dt_C" name="txtClos_Dt_C" 
+                        MaxLength="10" placeholder="Close Date for Eng Prog C" Width="70px" onclick="txtClos_Dt_C_TextChanged()" autocomplete="off"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    Close Dt: 3-
+                </td>
+                <td>
+                    <input id="txtB_Close_dt" name="txtB_Close_dt" MaxLength="10" placeholder="Close Date for Batches other than Eng" Width="70px" onclick="txtB_Close_dt_TextChanged()" autocomplete="off"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 2%;">
+                    SO No:
+                </td>
+                <td>
+                    <input id="txtSo_No" name="txtSo_No" MaxLength="8" placeholder="Schedule Order No" Width="70px"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    Bal Qty:
+                </td>
+                <td >
+                    <input id="txtBal_Qty" name="txtBal_Qty" MaxLength="6" onkeypress="return isNumberKey(event)" placeholder="Balance Qty. if available" Width="70px" onclick="txtBal_Qty_TextChanged()"/>
+                </td>
+                <td style="padding-left: 02%;">
+                    Dept:
+                </td>
+                <td>
+                    <input id="txtProgress" name="txtProgress" Width="25px" MaxLength="1" placeholder="Progress/Department" onclick="txtProgress_TextChanged()" onkeyup="TextUpper(this.value,'txtProgress') ;"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-left: 2%;">
+                    Remark:
+                </td>
+                <td  colspan="2">
+                    <input id="txtRemark"  name="txtRemark"  Width="600%"  MaxLength="20" placeholder="Remarks, if any" onkeyup="TextUpper(this.value,'txtRemark') ;"/>
+                </td>
+            </tr>
+                
+            <br>
+            <br>
+            <tr></tr>
+                <tr>
+                <table  align="center"  class="table table-striped" style="width:60%; text-align: center;" >
+                <tbody id="inouttab"> 
+                
+            </tbody>
+        </table>
+        </tr>
+
+
+
+
+            <tr>
+                <td colspan="6">
+                    <center>
+                        <input type="button" id="btnSavUpdSt"  value="Save" OnClick="submitform();" style="display: none;" />
+                        <input type="button" id="btnUpdSt"   class="btn btn-success" {% if usermaster.op_update %}{% else %} disabled {% endif%} value="Update" OnClick="updateform();"/>
+                        <input type="button" id="btnReport"  class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} value="Report" OnClick="report();" />
+                        <input type="reset" id="btnClear" class="btn btn-success"   value="Clear" OnClick="btnClear_Click" />
+                            <input type="text" id="lblmDivsn"  Text="Label"  hidden/> 
+                    </center>
+                </td>
+            </tr>
+        </table>
+        <br><br>
+        <table id="fronttab"  align="center"  class="table table-striped" style="width:60%; text-align: center; display: none;">
+        <thead class="thead-dark"> 
+        <tr>
+            <th>S.NO </th>
+            <th>WO NO</th>
+            <th>EPC</th>
+            <th>Status</th> 
+            <th>Expl Date</th>
+            <th style="width: 13%;">Release <br>Date-1 </th>
+            <th style="width: 13%;">Release <br>Date-2 </th>  
+            <th style="width: 13%;">Close <br>Date-1</th>
+            <th style="width: 13%;">Close <br>Date-2</th>
+            <th style="width: 13%;">Close <br>Date-3</th>
+            <th>Loco From</th>
+            <th>Loco To</th> 
+            <th>BRN No</th>    
+            
+        </tr>
+        </thead>
+        <tbody id="inouttab1"> 
+    </tbody>
+    </table> 
+
+    
+                
+    </div>
+<br> 
+  
+<br>
+<div id="reportid">
+<div id="divId" style="display:none;">
+	<br>
+        <table style="width: 100% ; text-align: center;" >
+            <tr>
+                <td style="text-align: center;">
+                    <b>BATCH ADDITION (NON-PROD.) AND STATUS UPDATION</b>
+                </td>
+            </tr>
+            <tr>
+                <td >
+                    <Label ID="Label1"  Font-Bold="true"><b>(SHOP MANUFACTURED ITEMS)</b></Label>
+                </td>
+            </tr>
+        </table>
+		<br>
+	<table style="width: 100%">
+		<tr>
+			<td style="width: 31%">
+				&nbsp;
+			</td>
+			<td colspan="2"  style="width: 38%">
+				<label><input type="radio" name="colorRadio" value="1"> 1. Statement of Running Work Orders</label><br>
+				<label><input type="radio" name="colorRadio" value="2">2. Batches Released/Closed during Period</label><br>
+				<label><input type="radio" name="colorRadio" value="3"> 3. Numerical-Cum-Financial Tally Sheet</label>
+					
+			</td>
+			<td style="width: 31%">
+				&nbsp;
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+			<br>
+				<center>
+					<input type="button"  class="btn btn-primary" id="btnBackView1"  value="Back" onclick="back();" />
+				</center>
+			</td>
+		</tr>
+	</table>
+    </div>
+	
+	
+    <div class="1 box"  align="center">
+	<br>
+        <table style="width: 50% ; text-align: center;">
+            <tr>
+                <td style="text-align: center;">
+                    <b>BATCH ADDITION (NON-PROD.) AND STATUS UPDATION</b>
+                </td>
+            </tr>
+            <tr>
+                <td >
+                    <Label ID="Label1"  Font-Bold="true"><b>(SHOP MANUFACTURED ITEMS)</b></Label>
+                </td>
+            </tr>
+			</table>
+			<br>
+			<table style="width: 40% ; text-align: center;">
+		<tr>
+			<td style="text-align: center; padding-right: 25%;" colspan="4">
+				Statement of Running Work Orders
+			</td>
+        </tr>
+        <tr>
+			<td colspan="4">
+                &nbsp;
+                
+			</td>
+        </tr>
+		<tr>
+            <td style="text-align: center; padding-left: 20%;">
+				Division:
+			</td>
+			<td>
+				<input type="text" id="txtDiv3" name="txtDiv3"  onclick="txtDiv_TextChanged();" MaxLength="1" size="10%" onkeyup="TextUpper(this.value,'txtDiv3') ;"/>
+                 
+            </td>
+            <td style="text-align: center; padding-right: 17%;">
+				(Enter E/S/V)
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+                &nbsp;
+                
+			</td>
+        </tr>
+        
+		<tr>
+			<td  colspan="4">
+				<center>
+					<input type="button" id="btnView3" class="btn btn-primary"  value="View" onclick="repRWOReport();"/>
+                    <input type="reset" id="btnClear3" class="btn btn-primary"  value="Clear" OnClick="btnClr_Click" />
+                    <input type="submit" value="PrintPDF" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%} name="PrintPDF" id="printPDF" style="height:35px; width:100px; padding-top: 05px;"/>
+				</center>
+			</td>
+		</tr>
+	</table>
+	
+	</div>
+
+	
+	
+	
+	
+    <div class="2 box" align="center">
+	<br>
+        <table style="width: 40% ; text-align: center;">
+            <tr>
+                <td style="text-align: center; ">
+                    <b>BATCH ADDITION (NON-PROD.) AND STATUS UPDATION</b>
+                </td>
+            </tr>
+            <tr>
+                <td >
+                    <Label ID="Label1"  Font-Bold="true"><b>(SHOP MANUFACTURED ITEMS)</b></Label>
+                </td>
+            </tr>
+			</table>
+			<br>
+		<table style="width: 40%; text-align: center; " > 
+		<tr>
+			<td  style="width: 50%; padding-right: 20%;" colspan="4">
+				Batches Released/Closed during Period
+			</td>
+        </tr>
+        <tr>
+			<td colspan="4">
+                &nbsp;
+                
+			</td>
+        </tr>
+        <tr>
+            <td style="text-align: center; padding-left: 12%;">
+				Division:
+			</td>
+			<td>
+				<input type="text" id="txtDiv4"  name="txtDiv4"  onclick="txtDiv_TextChanged();" MaxLength="1" size="10%" onkeyup="TextUpper(this.value,'txtDiv4') ;"/>
+				
+            </td>
+            <td style="text-align: center; padding-right: 25%;" colspan="2">
+				(Enter E/S/V)
+			</td>
+        </tr>
+        <tr>
+			<td colspan="4">
+                &nbsp;
+                
+			</td>
+        </tr>
+		<tr>
+            <td style="width: 25%; padding-left: 05%;">
+				Date From: 
+			</td>
+			<td style="width: 25%;">
+				 <input type="text" name="txtDt41" id="txtDt41"  Width="70px" autocomplete="off"/>
+            </td>
+            <td style="width: 25%; padding-left: 05%;">
+				Date To:
+			</td>
+			<td style="width: 25%;">
+				<input type="text" id="txtDt42" name="txtDt42"  Width="70px" onchange="myfunDateAdd();" MaxLength="10" autocomplete="off"/>
+			</td>
+        </tr>
+        <tr>
+			<td colspan="4">
+                &nbsp;
+                
+			</td>
+        </tr>
+		<tr>
+			<td colspan="4">
+				<center>
+					<input type="button"  id="btnView4"  value="View" OnClick="BatchReleaseReport();" />
+                    <input type="reset" id="btnClear4"  value="Clear" OnClick="btnClr_Click" />
+                    <input type="submit" value="Print" name="Print" id="printPDF" style="height:35px; width:100px; padding-top: 05px;"/>
+				</center>
+			</td>
+		</tr>
+	</table>
+	</div>
+	
+	
+	
+    <div class="3 box" align="center"><br>
+        <table style="width: 40% ; text-align: center;">
+            <tr>
+                <td style="text-align: center;">
+                    <b>BATCH ADDITION (NON-PROD.) AND STATUS UPDATION</b>
+                </td>
+            </tr>
+            <tr>
+                <td >
+                    <Label ID="Label1"  Font-Bold="true"><b>(SHOP MANUFACTURED ITEMS)</b></Label>
+                </td>
+            </tr>
+			</table>
+			<br>
+			<table style="width: 40% ; text-align: center;">
+		<tr>
+	
+			<td style="text-align: center; padding-right: 20%;" colspan="4">
+				Numerical-Cum-Financial Tally Sheet
+			</td>
+        </tr>
+        <tr>
+			<td colspan="4">
+                &nbsp;
+                
+			</td>
+        </tr>
+		<tr>
+            <td style="text-align: center; padding-left: 20%;">
+				Division:
+			</td>
+			<td>
+				<input type="text" id="txtDiv5" name="txtDiv5" onclick="txtDiv_TextChanged();" MaxLength="1" size="10%" onkeyup="TextUpper(this.value,'txtDiv5') ;"/>
+				
+            </td>
+            <td style="text-align: center; padding-right: 15%;">
+				(Enter E/S/V)
+			</td>
+        </tr>
+        <tr>
+			<td colspan="4">
+                &nbsp;
+                
+			</td>
+        </tr>
+		<tr>
+			<td class="td_cntrl" colspan="4">
+				<center>
+					<input type="button" id="btnView5"  value="View" onclick="BatchAddTallyReport();" />
+                    <input type="reset" id="btnClear5"  value="Clear" OnClick="btnClr_Click" />
+                    <input type="submit" value="PDF" name="PDF" id="PDF" style="height:35px; width:75px; padding-top: 05px;"/>
+				</center>
+			</td>
+		</tr>
+    </table></div>
+
+    <div id='div1' align="center" style="display: none;">
+    <table   class="table table-striped" style="width:60%; text-align: center; ">
+        <thead class="thead-dark"> 
+        <tr>
+        <th>S.NO </th>
+        <th>TYPE OF LOCO</th>
+        <th>WO NO</th>
+        <th>LOCO COVERAGE</th>
+        <th>DATE OF ISSUE</th> 
+        <th>PROD. DOC.<br> (B+C)</th>
+        <th>COMPLETION<br>FROM  PROG-B</th>
+        <th>COMPLETION<br> FROM  PROG-C</th>
+        <th>BRN-NO</th>
+        <th>REMARK</th>
+        </tr>
+      </thead>
+      <tbody id="inouttab2"> 
+    </tbody>
+    </table> 
+</div>
+
+
+<div id='div2' align="center" style="display: none;">
+<table   class="table table-striped" style="width:60%; text-align: center; ">
+    <thead class="thead-dark"> 
+    <tr>
+    <th>S.NO </th>
+    <th>TYPE OF LOCO</th>
+    <th>WO NO</th>
+    <th>LOCO COVERAGE</th>
+    <th>RELEASE DATE</th> 
+    <th>CLOSED DATE</th>
+    <th>BRN-NO</th>
+    <th>REMARK</th>
+    </tr>
+  </thead>
+  <tbody id="inouttab3"> 
+</tbody>
+</table>
+</div>
+
+<div id='div3' align="center" style="display: none;">
+<table   class="table table-striped" style="width:60%; text-align: center;">
+    <thead class="thead-dark"> 
+    <tr>
+    <th>S.NO </th>
+    <th>SL No</th>
+    <th>TYPE OF LOCO</th>
+    <th>SCHEDULE ORDER NO</th>
+    <th>WO No</th> 
+    <th>DATE OF ISSUE</th>
+    <th>PROD. DOC.</th>
+    <th>PART NO</th>
+    <th>DESCRIPTION</th>
+    <th>QTY. ORDER</th>
+    <th>BAL. QTY.</th>
+    <th>PROGRESS</th>
+    <th>BRN No</th>
+    <th>REMARK</th>
+    </tr>
+  </thead>
+  <tbody id="inouttab4"> 
+</tbody>
+</table> 
+</div>
+</div>
+</form>
+</body>
+</html>
+
+<script type="text/javaScript">
+
+$('#txtRel_Date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+$('#txtRel_Dt_Bc').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+$('#txtB_Close_dt').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+$('#txtClos_Dt_B').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+$('#txtClos_Dt_C').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+$('#txtB_Expl_Dt').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+$('#txtDt41').datepicker({dateFormat:'dd-mm-yy'});
+$('#txtDt42').datepicker({dateFormat:'dd-mm-yy'});
+
+function myfunDateAdd()
+    {
+    var t2=document.getElementById("txtDt41").value;
+    var t3=document.getElementById("txtDt42").value;
+            if ( t3 < t2) 
+            {
+                alert("To date should be greater to from date");
+                document.getElementById("txtDt42").value="";
+                return false;
+            }
+
+    
+    }
+
+
+function brn_nodigit(th){  
+    var p=5;
+    var value = document.getElementById(th).value;
+    if(value.length!=p){
+            alert("Brn No must be 5 digit.");
+            document.getElementById("txtBrn_No").value='';
+            return false;
+            }
+        
+}
+
+
+
+
+function convertDate(dateString){
+    
+    if(dateString!=null){
+        var p = dateString.split(/\D/g);
+        return [p[2],p[1],p[0] ].join("-");
+    }
+    return '';
+}
+
+
+$(document).ready(function(){
+    $('input[type="radio"]').click(function(){
+        var inputValue = $(this).attr("value");
+        var targetBox = $("." + inputValue);
+        $(".box").not(targetBox).hide();
+        $(targetBox).show();
+    });
+});
+
+
+function checkbrn_no(th)
+  {
+        var id = th;
+        var id = document.getElementById(id).value;
+        var data = {id};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'batchAddBrn_no' %}", 
+            dataType : 'json',
+            data : data,
+            success : function(response){  
+            if(response.data.obj1.length>0){
+    
+                alert("Brn no already exists database Try again ?");
+                $("#btnSavUpdSt").hide();
+                $("#btnUpdSt").show();
+                    }
+                else
+                    {
+                    $("#btnSavUpdSt").show();
+                    $("#btnUpdSt").hide();
+                    }
+         }     
+      });
+
+  }
+
+
+function BatchAddTallyReport(){ 
+    var id=document.getElementById("txtDiv5").value;
+    $('#div1').css("display", "none");
+    $('#div3').css("display", "block");
+    $('#div2').css("display", "none");
+    var data = {id};
+      $.ajax({
+          type : 'GET',
+          url : "{% url 'BatchTallyReport' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+            console.log(response);
+          var html="";
+          var sno=1;
+          
+          for (var i = 0; i < response.length; i++) {                                                                                                        
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response[i].SL_NO+" </td> <td>"+response[i].ALPHA_1+"  </td>  <td>"+response[i].SO_NO+"  </td>  <td>"+response[i].BO_NO+" </td>  <td> "+convertDate(response[i].REL_DATE)+" </td> <td> "+convertDate(response[i].REL_DT_BC)+" </td> <td> "+response[i].PART_NO+" </td> <td> "+response[i].DESCR+" </td><td> "+response[i].QTY+" </td><td> "+response[i].BAL_QTY+" </td><td> "+response[i].PROGRESS+" </td><td> "+response[i].BRN_NO+" </td><td> "+response[i].REMARK+" </td></tr>";
+              }
+            
+                $("#inouttab4").html(html)
+                  html="";         
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+}
+
+
+function BatchReleaseReport(){ 
+    var id=document.getElementById("txtDiv4").value;
+    var txtDt41=document.getElementById("txtDt41").value;
+    var txtDt42=document.getElementById("txtDt42").value;
+    $('#div1').css("display", "none");
+    $('#div3').css("display", "none");
+    $('#div2').css("display", "block");
+    var data = {id,txtDt41,txtDt42};
+      $.ajax({
+          type : 'GET',
+          url : "{% url 'BatchRelReport' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+            console.log(response);
+          var html="";
+          var sno=1;
+          
+          for (var i = 0; i < response.length; i++) {                                                                                                          
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response[i].ALPHA_1+" </td> <td>"+response[i].BO_NO+"  </td>  <td>"+response[i].LOCO_FR+'-'+response[i].LOCO_TO+" </td>  <td> "+convertDate(response[i].REL_DATE)+" </td> <td> "+convertDate(response[i].B_CLOSE_DT)+" </td> <td> "+response[i].BRN_NO+" </td> <td> "+response[i].REMARK+" </td></tr>";
+          
+              }
+            
+                $("#inouttab3").html(html)
+                  html="";         
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+}
+
+function repRWOReport(){ 
+    var id=document.getElementById("txtDiv3").value;
+    $('#div2').css("display", "none");
+    $('#div3').css("display", "none");
+    $('#div1').css("display", "block");
+    var data = {id};
+      $.ajax({
+          type : 'GET',
+          url : "{% url 'repRWOReport' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+            console.log(response);
+          var html="";
+          var sno=1;
+          
+          for (var i = 0; i < response.length; i++) {                                                                                                          
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response[i].ALPHA_1+" </td> <td>"+response[i].BO_NO+"  </td>  <td>"+response[i].LOCO_FR+'-'+response[i].LOCO_TO+" </td>  <td> "+convertDate(response[i].REL_DATE)+" </td> <td> "+convertDate(response[i].REL_DT_BC)+" </td> <td> "+convertDate(response[i].CLOS_DT_B)+" </td> <td> "+convertDate(response[i].CLOS_DT_C)+" </td> <td> "+response[i].BRN_NO+" </td> <td> "+response[i].REMARK+" </td></tr>";
+          
+              }
+            
+                $("#inouttab2").html(html)
+                  html="";  
+
+                    
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+}
+
+
+function txtDiv_TextChanged()
+    {
+        var txtDiv3 =document.getElementById("txtDiv3").value;
+        var txtDiv4 =document.getElementById("txtDiv4").value;
+        var txtDiv5 =document.getElementById("txtDiv5").value;
+
+        var txtDt41 =document.getElementById("txtDt41").value;
+        var txtDt42 =document.getElementById("txtDt42").value;
+        
+        if (txtDiv3 == "")
+        {
+            alert("Enter E,V,S or T");
+            document.getElementById("txtDiv3").focus();
+            return false;
+        }
+
+        if (txtDiv4 == "")
+        {
+            alert("Enter E,V,S or T");
+            document.getElementById("txtDiv4").focus();
+            return false;
+        }
+        
+        if (txtDiv5 == "")
+        {
+            alert("Enter E,V,S or T");
+            document.getElementById("txtDiv5").focus();
+            return false;
+        }
+
+        if (txtDt41 == "")
+        {
+            alert("Please enter In date");
+            document.getElementById("txtDt41").focus();
+            return false;
+        }
+        if (txtDt42 == "")
+        {
+            alert("Please enter In date");
+            document.getElementById("txtDt42").focus();
+            return false;
+        }
+        return true;
+    }
+
+function report()
+{
+$('#divId').css("display", "block");
+$('#frontdiv').css("display", "none");
+}
+
+function back()
+{
+$('#reportid').css("display", "none");
+$('#frontdiv').css("display", "block");
+}
+
+function isNumberKey(evt) {
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+return true; 
+
+}
+
+function TextUpper(dd, fieldId)
+	   {
+	      document.getElementById(fieldId).value=dd.toUpperCase();  
+	   }
+
+       
+function txtBatch_Qty_TextChanged()
+    {
+        var txtB_Type =document.getElementById("txtB_Type").value;
+        var txtBatch_Qty =document.getElementById("txtBatch_Qty").value;
+        var txtB_Expl_Dt =document.getElementById("txtB_Expl_Dt").value;
+        if (txtB_Type == "Z") 
+        {
+            if (txtBatch_Qty == "")
+            {
+                alert("Qty empty not allowed for non Production W/O");
+                document.getElementById("txtBatch_Qty").focus();
+            }
+            
+        }
+        document.getElementById("txtB_Expl_Dt").focus();
+        
+    }
+
+function txtProgress_TextChanged()
+    {
+        var txtProgress =document.getElementById("txtProgress").value;
+        var txtRemark =document.getElementById("txtRemark").value;
+
+        if (!InList(txtProgress, "", "B", "C", "L", "T"))
+        {
+            alert("Enter B/C/T or empty.");
+            document.getElementById("txtProgress").focus();
+        }
+        else
+            document.getElementById("txtRemark").focus();
+    }
+
+function txtBal_Qty_TextChanged()
+    {
+        var txtB_Type =document.getElementById("txtB_Type").value;
+        var txtBal_Qty =document.getElementById("txtBal_Qty").value;
+        var txtBatch_Qty =document.getElementById("txtBatch_Qty").value;
+        if (txtBal_Qty != "" && txtBatch_Qty != "")
+        {
+            if (txtB_Type == "" && txtBal_Qty != "" && ToDouble(txtBal_Qty) > ToDouble(txtBatch_Qty))
+            {
+                alert("Worng Bal Qty.");
+                document.getElementById("txtBal_Qty").focus();
+                return false;
+            }
+        }
+        return true;
+    }
+
+function txtB_Close_dt_TextChanged()
+    {
+        var txtB_Type =document.getElementById("txtB_Type").value;
+        var txtB_Close_dt =document.getElementById("txtB_Close_dt").value;
+        var txtB_Expl_Dt =document.getElementById("txtB_Expl_Dt").value;
+        var lblmDivsn =document.getElementById("lblmDivsn").value;
+        var txtClos_Dt_B =document.getElementById("txtClos_Dt_B").value;
+        var txtClos_Dt_C =document.getElementById("txtClos_Dt_C").value;
+
+        if (txtB_Type == "" && txtB_Close_dt !="" && txtB_Expl_Dt =="")
+        {
+            alert("Batch not exploded hence cannot be Released.");
+        }
+
+        if (txtB_Type == "" && txtB_Close_dt  != "" && txtB_Expl_Dt != "" &&  Max_Date(txtB_Close_dt, txtB_Expl_Dt) == txtB_Expl_Dt)  
+        {
+            alert("Wrong Dates!! Please check.");
+            document.getElementById("txtB_Close_dt").focus();
+            return false;
+        }
+
+        if (txtB_Close_dt != "" && txtRel_Date == "")
+        {
+            alert("Enter Batch Release Date");
+            document.getElementById("txtRel_Date").focus();
+            return false;
+        }
+
+        if (txtB_Close_dt != "" && txtRel_Date != "")
+        {
+            if (Max_Date(txtB_Close_dt, txtRel_Date) == txtRel_Date)
+            {
+                alert("Wrong Dates!! Please check.");
+                document.getElementById("txtRel_Date").focus();
+                return false;
+            }
+            if (txtB_Type != "Z" && txtB_Expl_Dt !="" &&  Max_Date(txtB_Expl_Dt, txtRel_Date) == txtB_Expl_Dt)      
+            {
+                alert("Wrong Dates!! Please check.");
+                return false;
+            }
+        }
+
+        if ((lblmDivsn == "E") && (txtClos_Dt_B == "" || txtClos_Dt_C == ""))
+        {
+            alert("Batch cannot be closed till it is OPEN in Prog_Eng_B or Prog_Eng_C");
+            return false;
+        }
+        return true;
+    }
+
+
+function  txtClos_Dt_C_TextChanged()
+    {
+        var txtClos_Dt_C =document.getElementById("txtClos_Dt_C").value;
+        var lblmDivsn =document.getElementById("lblmDivsn").value;
+
+        if (lblmDivsn != "E" && txtClos_Dt_C != "")
+        {
+            alert("Enter Close Dt 2 in case of Engine.");
+            document.getElementById("txtClos_Dt_C").focus();
+            return false;
+        }
+        return true;
+    }
+
+function txtClos_Dt_B_TextChanged()											
+    {
+        var txtClos_Dt_B =document.getElementById("txtClos_Dt_B").value;
+        var lblmDivsn =document.getElementById("lblmDivsn").value;
+
+        if (txtClos_Dt_B != "" && lblmDivsn != "E")
+        {
+            alert("Enter Close Dt 1 in case of Engine.");
+            document.getElementById("txtClos_Dt_B").focus();
+            return false;
+        }
+        return true;
+    }
+
+
+
+function v_reldtbc()
+{
+    var txtRel_Dt_Bc =document.getElementById("txtRel_Dt_Bc").value;
+    var txtB_Expl_Dt =document.getElementById("txtB_Expl_Dt").value;
+    var txtClos_Dt_B =document.getElementById("txtClos_Dt_B").value;
+    var lblmDivsn =document.getElementById("lblmDivsn").value;
+    var txtClos_Dt_C =document.getElementById("txtClos_Dt_C").value;
+    if (txtRel_Dt_Bc != "")
+        {
+            if (txtB_Expl_Dt == "")
+            {
+                alert("Batch not exploded hence cannot be Released.");
+                document.getElementById("txtRel_Dt_Bc").focus();
+                return false;
+            }
+            else
+            {
+                if (Max_Date(txtRel_Dt_Bc, txtB_Expl_Dt) == txtB_Expl_Dt)
+                {
+                    alert("Wrong Dates !! Please Check.");
+                    document.getElementById("txtRel_Dt_Bc").focus();
+                    return false;
+                }
+            }
+        }
+
+        if (txtClos_Dt_B != "" && lblmDivsn != "E")
+        {
+            alert("Enter Close Dt 1 in case of Engine.");
+            document.getElementById("txtRel_Dt_Bc").focus();
+            return false;
+        }
+
+        if (lblmDivsn != "E" && txtRel_Dt_Bc != "")
+        {
+            alert("Enter Release Dt 2 in case of Engine.");
+            document.getElementById("txtRel_Dt_Bc").value="";
+            document.getElementById("txtRel_Dt_Bc").focus();
+            return false;
+        }
+
+        if (lblmDivsn != "E" && txtClos_Dt_C != "") 
+        {
+            alert( "Enter Close Dt 2 in case of Engine.");
+            document.getElementById("txtClos_Dt_C").value="";
+            document.getElementById("txtRel_Dt_Bc").focus();
+            return false;
+        }
+        return true;
+    }
+
+
+function v_reldt()
+{
+
+    var txtRel_Date =document.getElementById("txtRel_Date").value;
+    var txtB_Expl_Dt =document.getElementById("txtB_Expl_Dt").value;
+    var txtEp_Type =document.getElementById("txtEp_Type").value;
+
+    if ((txtRel_Date != "") && (txtB_Expl_Dt == "") && (txtEp_Type, "D", "Y"))
+        {
+            alert("Enter Batch Explosion Date.");
+            document.getElementById("txtRel_Date").focus();
+            return false;
+        }
+        else if ((txtRel_Date != "") && (txtB_Expl_Dt != "") && Max_Date(txtRel_Date, txtB_Expl_Dt) == txtB_Expl_Dt)
+        {
+            alert("Wrong Dates!! Please Check");
+            document.getElementById("txtRel_Date").focus();
+            return false;
+        }
+        return true;
+
+}
+
+
+
+function updateform(){ 
+    
+var lblmDivsn = $("#lblmDivsn").val();
+var mSeq = $("#mSeq").val();
+if(mSeq=="")
+{
+    mSeq=0;
+}
+var mUot_wk_f = $("#mUot_wk_f").val();
+if(mUot_wk_f=="")
+{
+    mUot_wk_f=0;
+}
+var txtB_Type = $("#txtB_Type").val();
+var txtBO_No = $("#txtBO_No").val();
+var txtEp_Type = $("#txtEp_Type").val();
+var txtEp_Desc = $("#txtEp_Desc").val();
+var txtBrn_No = $("#txtBrn_No").val();
+if(txtBrn_No=="")
+{
+    txtBrn_No=0;
+}
+var txtB_Expl_Dt = $("#txtB_Expl_Dt").val();
+var txtBatch_Qty = $("#txtBatch_Qty").val();
+if(txtBatch_Qty=="")
+{
+    txtBatch_Qty=0;
+}
+var txtStatus = $("#txtStatus").val();
+var txtLoco_Fr = $("#txtLoco_Fr").val();
+var txtLoco_To = $("#txtLoco_To").val();
+var txtPart_No = $("#txtPart_No").val();
+var txtDesc = $("#txtDesc").val();
+var txtSCNNO = $("#txtSCNNO").val();
+if(txtSCNNO=="")
+{
+    txtSCNNO=0;
+}
+var txtRel_Date = $("#txtRel_Date").val();
+var txtRel_Dt_Bc = $("#txtRel_Dt_Bc").val();
+var txtClos_Dt_B = $("#txtClos_Dt_B").val();
+var txtClos_Dt_C = $("#txtClos_Dt_C").val();
+var txtB_Close_dt = $("#txtB_Close_dt").val();
+var txtSo_No = $("#txtSo_No").val();
+var txtBal_Qty = $("#txtBal_Qty").val();
+if(txtBal_Qty=="")
+{
+    txtBal_Qty=0;
+}
+var txtProgress = $("#txtProgress").val();
+var txtRemark = $("#txtRemark").val();
+    
+
+    $('#fronttab').css("display", "block");
+    var data = {txtB_Type,txtBO_No,txtEp_Type,txtEp_Desc,txtBrn_No,txtB_Expl_Dt,txtBatch_Qty,txtStatus,txtLoco_Fr,txtLoco_To,txtPart_No,txtDesc,txtSCNNO,txtRel_Date,txtRel_Dt_Bc,txtClos_Dt_B,txtClos_Dt_C,txtB_Close_dt,txtSo_No,txtBal_Qty,txtProgress,txtRemark,lblmDivsn,mSeq,mUot_wk_f};
+    $.ajax({
+          type : 'GET',
+          url : "{% url 'batchAddupdatedata' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+            console.log(response);
+            alert("successfully changed the record");
+            var html="";
+          var sno=1;
+          for (var i = 0; i < response.data.obj1.length; i++) {                   
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response.data.obj1[i].bo_no+" </td>  <td>"+response.data.obj1[i].ep_type+" </td> <td>"+response.data.obj1[i].status+" </td>  <td> "+convertDate(response.data.obj1[i].b_expl_dt)+" </td> <td> "+convertDate(response.data.obj1[i].rel_date)+" </td><td> "+convertDate(response.data.obj1[i].rel_dt_bc)+" </td><td> "+convertDate(response.data.obj1[i].clos_dt_b)+" </td><td> "+convertDate(response.data.obj1[i].clos_dt_c)+" </td><td> "+convertDate(response.data.obj1[i].b_close_dt)+" </td><td> "+response.data.obj1[i].loco_fr+" </td> <td> "+response.data.obj1[i].loco_to+" </td> <td> "+response.data.obj1[i].brn_no+" </td>  </tr>";
+          
+              }
+            
+                $("#inouttab1").html(html)
+               
+                  html="";  
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+}
+
+
+function submitform()
+  {
+var vi=btnSavUpdSt_Click();
+if(vi){
+var lblmDivsn = $("#lblmDivsn").val();
+var mSeq = $("#mSeq").val();
+if(mSeq=="")
+{
+    mSeq=0;
+}
+var mUot_wk_f = $("#mUot_wk_f").val();
+if(mUot_wk_f=="")
+{
+    mUot_wk_f=0;
+}
+var txtB_Type = $("#txtB_Type").val();
+var txtBO_No = $("#txtBO_No").val();
+var txtEp_Type = $("#txtEp_Type").val();
+var txtEp_Desc = $("#txtEp_Desc").val();
+var txtBrn_No = $("#txtBrn_No").val();
+if(txtBrn_No=="")
+{
+    txtBrn_No=0;
+}
+var txtB_Expl_Dt = $("#txtB_Expl_Dt").val();
+var txtBatch_Qty = $("#txtBatch_Qty").val();
+if(txtBatch_Qty=="")
+{
+    txtBatch_Qty=0;
+}
+var txtStatus = $("#txtStatus").val();
+var txtLoco_Fr = $("#txtLoco_Fr").val();
+var txtLoco_To = $("#txtLoco_To").val();
+var txtPart_No = $("#txtPart_No").val();
+var txtDesc = $("#txtDesc").val();
+var txtSCNNO = $("#txtSCNNO").val();
+if(txtSCNNO=="")
+{
+    txtSCNNO=0;
+}
+var txtRel_Date = $("#txtRel_Date").val();
+var txtRel_Dt_Bc = $("#txtRel_Dt_Bc").val();
+var txtClos_Dt_B = $("#txtClos_Dt_B").val();
+var txtClos_Dt_C = $("#txtClos_Dt_C").val();
+var txtB_Close_dt = $("#txtB_Close_dt").val();
+var txtSo_No = $("#txtSo_No").val();
+var txtBal_Qty = $("#txtBal_Qty").val();
+if(txtBal_Qty=="")
+{
+    txtBal_Qty=0;
+}
+var txtProgress = $("#txtProgress").val();
+var txtRemark = $("#txtRemark").val();
+    
+
+    $('#fronttab').css("display", "block");
+    var data = {txtB_Type,txtBO_No,txtEp_Type,txtEp_Desc,txtBrn_No,txtB_Expl_Dt,txtBatch_Qty,txtStatus,txtLoco_Fr,txtLoco_To,txtPart_No,txtDesc,txtSCNNO,txtRel_Date,txtRel_Dt_Bc,txtClos_Dt_B,txtClos_Dt_C,txtB_Close_dt,txtSo_No,txtBal_Qty,txtProgress,txtRemark,lblmDivsn,mSeq,mUot_wk_f};
+    $.ajax({
+        type : 'GET',
+        url : "{% url 'batchAdditionsave' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){  
+          console.log(response);                             
+          alert("successfully save the record");
+            var html="";
+          var sno=1;
+          for (var i = 0; i < response.data.obj1.length; i++) {                          
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response.data.obj1[i].bo_no+" </td>  <td>"+response.data.obj1[i].ep_type+" </td> <td>"+response.data.obj1[i].status+" </td>  <td> "+convertDate(response.data.obj1[i].b_expl_dt)+" </td> <td> "+convertDate(response.data.obj1[i].rel_date)+" </td><td> "+convertDate(response.data.obj1[i].rel_dt_bc)+" </td><td> "+convertDate(response.data.obj1[i].clos_dt_b)+" </td><td> "+convertDate(response.data.obj1[i].clos_dt_c)+" </td><td> "+convertDate(response.data.obj1[i].b_close_dt)+" </td><td> "+response.data.obj1[i].loco_fr+" </td> <td> "+response.data.obj1[i].loco_to+" </td>  <td> "+response.data.obj1[i].brn_no+" </td>  </tr>";
+          
+              }
+            
+                $("#inouttab1").html(html)
+                $("#btnSavUpdSt").hide();
+                $("#btnUpdSt").show();
+                  html="";  
+
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+        } 
+    }
+
+function v_part(){
+    var txtStatus=document.getElementById("txtStatus").value;
+    var txtRel_Date=document.getElementById("txtRel_Date").value;
+    var txtRel_Dt_Bc=document.getElementById("txtRel_Dt_Bc").value;
+    if (txtStatus  == "E" && txtRel_Date =="")
+        document.getElementById("txtRel_Date").focus();
+    else if (txtStatus == "E" && txtRel_Dt_Bc == "")
+        document.getElementById("txtRel_Dt_Bc").focus();
+    else if (txtStatus == "R" && lblmDivsn =="V")   
+        document.getElementById("txtB_Close_dt").focus();
+    else if (txtStatus == "R" && lblmDivsn, "E","S" && txtClos_Dt_B.Enabled) 
+        document.getElementById("txtClos_Dt_B").focus();
+    else if (txtStatus == "R" && lblmDivsn, "E", "S" && txtClos_Dt_C.Enabled) 
+        document.getElementById("txtClos_Dt_C").focus();
+
+}
+
+function v_B_Type(){
+        var txtEp_Type=document.getElementById("txtB_Type").value;
+        if (txtEp_Type =="")
+        {
+
+            alert("Enter Z for Non Production W/O or Leave Blank");
+            document.getElementById("txtB_Type").value="";
+            document.getElementById("txtB_Type").focus();
+            return false;
+        }
+        if (txtB_Type == "Z")
+            {
+            alert("Enter Z for Nonff Production W/O or Leave Blank");
+            document.getElementById("txtB_Type").value="";
+            document.getElementById("txtB_Type").focus();
+            return false;
+            }
+
+    return true;
+    }
+
+
+    function v_epc(){
+        var txtEp_Type=document.getElementById("txtEp_Type").value;
+        var txtB_Type=document.getElementById("txtB_Type").value;
+        if (txtEp_Type == "" && txtB_Type != "Z")
+        {
+            alert("Enter EPC! Empty EPC not allowed for Production W/O");
+            document.getElementById("txtEp_Type").value="";
+            document.getElementById("txtEp_Type").focus();
+            return false;
+        }
+           return true;
+    }
+
+
+
+function getBatchno(id)
+{ 
+var BO_No=document.getElementById("txtBO_No").value;
+$("#inouttab").empty()
+var data = {id,BO_No};
+$.ajax({
+type : 'GET',
+url : "{% url 'getBatchAdditionno' %}",
+dataType : 'json',
+data : data,
+success : function(response){
+console.log(response);
+var html="";
+$("#txtBrn_No").val(response.data.obj1[0].brn_no);
+$("#txtDesc").val(response.data.wo_no[0].des);
+$("#txtBO_No").val(response.data.obj1[0].bo_no);
+$("#txtPart_No").val(response.data.obj1[0].part_no);
+$("#txtEp_Type").val(response.data.obj1[0].ep_type);
+$("#txtEp_Desc").val(response.data.epc[0].alpha_1);
+
+$("#txtStatus").val(response.data.obj1[0].status);
+if($("#txtStatus").val()=="C"){
+document.getElementById("txtStatus").Enabled = false;
+document.getElementById("btnUpdSt").Enabled = false;  
+}else{
+document.getElementById("txtStatus").Enabled = true; 
+document.getElementById("btnUpdSt").Enabled = true;
+}
+
+$("#txtB_Expl_Dt").val(convertDate(response.data.obj1[0].b_expl_dt));
+$("#txtLoco_Fr").val(response.data.obj1[0].loco_fr);
+$("#txtLoco_To").val(response.data.obj1[0].loco_to);
+
+$("#mUot_wk_f").val(response.data.obj1[0].uot_wk_f);
+$("#lblmDivsn").val(response.data.obj1[0].div);
+$("#mSeq").val(response.data.obj1[0].seq);
+$("#txtB_Type").val(response.data.obj1[0].batch_type);
+
+
+$("#txtRel_Date").val(convertDate(response.data.obj1[0].rel_date));
+if($("#txtRel_Date").val()==""){
+document.getElementById("txtRel_Date").readOnly = false;  
+}else{
+document.getElementById("txtRel_Date").readOnly = true; 
+}
+
+$("#txtB_Close_dt").val(convertDate(response.data.obj1[0].b_close_dt));
+if($("#txtB_Close_dt").val()==""){
+document.getElementById("txtB_Close_dt").readOnly = false;  
+}else{
+document.getElementById("txtB_Close_dt").readOnly = true; 
+}
+$("#txtRel_Dt_Bc").val(convertDate(response.data.obj1[0].rel_dt_bc));
+if($("#txtRel_Dt_Bc").val()==""){
+document.getElementById("txtRel_Dt_Bc").readOnly = false;  
+}else{
+document.getElementById("txtRel_Dt_Bc").readOnly = true; 
+}
+
+$("#txtClos_Dt_B").val(convertDate(response.data.obj1[0].clos_dt_b));
+if($("#txtClos_Dt_B").val()==""){
+document.getElementById("txtClos_Dt_B").readOnly = false;  
+}else{
+document.getElementById("txtClos_Dt_B").readOnly = true; 
+}
+
+$("#txtClos_Dt_C").val(convertDate(response.data.obj1[0].clos_dt_c));
+if($("#txtClos_Dt_C").val()==""){
+document.getElementById("txtClos_Dt_C").readOnly = false;  
+}else{
+document.getElementById("txtClos_Dt_C").readOnly = true; 
+}
+
+$("#txtSo_No").val(response.data.obj1[0].so_no);
+$("#txtBatch_Qty").val(response.data.obj1[0].batch_qty);
+$("#txtBal_Qty").val(response.data.obj1[0].bal_qty);
+$("#txtProgress").val(response.data.obj1[0].progress);
+$("#txtRemark").val(response.data.obj1[0].remark);
+$("#txtSCNNO").val(response.data.obj1[0].scno);
+html=""; 
+    }               
+     })
+}
+
+function getepc(){ 
+var id=document.getElementById("txtEp_Type").value;
+$("#inouttab").empty()
+var data = {id};
+$.ajax({
+type : 'GET',
+url : "{% url 'getepc' %}",
+dataType : 'json',
+data : data,
+success : function(response){
+console.log(response);
+var html="";
+$("#txtEp_Desc").val(response.data.obj1[0].alpha_1);
+html=""; 
+    }               
+     })
+
+}
+
+
+function getAsslyNo(id){ 
+    var id=document.getElementById(id).value;
+    var ec=document.getElementById("txtBrn_No").value;
+    var data = {id,ec};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'getAsslyNo' %}",
+    dataType : 'json',
+    data : data,
+    success : function(response){
+    console.log(response);
+    var html="";
+    $("#txtDesc").val(response.data.obj1[0].des);
+    html=""; 
+        }               
+        })
+
+}
+function editModal(id){ 
+    var id=document.getElementById(id).value;
+    if(id!=''){
+ var data = {id};
+      $.ajax({
+          type : 'GET',
+          url : "{% url 'addBatchwono' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+            console.log(response);
+          var html="";
+          var sno=1;
+          for (var i = 0; i < response.data.obj1.length; i++) {                          
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response.data.obj1[i].bo_no+" </td>  <td>"+response.data.obj1[i].ep_type+" </td> <td>"+response.data.obj1[i].status+" </td>  <td> "+convertDate(response.data.obj1[i].b_expl_dt)+" </td> <td> "+response.data.obj1[i].loco_fr+" </td> <td> "+response.data.obj1[i].loco_to+" </td>  <td><a href='#' onclick=getBatchno('"+response.data.obj1[i].brn_no+"')>"+response.data.obj1[i].brn_no+"</a></td> </tr>";
+          
+              }
+            
+                $("#inouttab").html(html)
+                  html="";  
+
+                    
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+    }
+}
+
+function btnSavUpdSt_Click()
+    {
+            var txtBO_No =document.getElementById("txtBO_No").value;
+            var txtBrn_No =document.getElementById("txtBrn_No").value;
+            var txtB_Type =document.getElementById("txtB_Type").value;
+            var txtEp_Type =document.getElementById("txtEp_Type").value;
+            var txtB_Expl_Dt =document.getElementById("txtB_Expl_Dt").value;
+            var txtClos_Dt_B =document.getElementById("txtClos_Dt_B").value;
+            var txtClos_Dt_C =document.getElementById("txtClos_Dt_C").value;
+            var txtB_Close_dt =document.getElementById("txtB_Close_dt").value;
+            var lblmDivsn =document.getElementById("lblmDivsn").value;
+            var txtRel_Date =document.getElementById("txtRel_Date").value;
+            var txtRel_Dt_Bc =document.getElementById("txtRel_Dt_Bc").value;
+            var txtStatus =document.getElementById("txtStatus").value;
+
+            if (v_B_Type())
+            {
+                if (txtBO_No == "")
+                {
+                    alert("Enter W/O Number");
+                    document.getElementById("txtBO_No").focus();
+                    return false;
+                }
+            }
+
+            if (txtB_Type != "Z" && txtEp_Type == "")
+            {
+
+                document.getElementById("txtEp_Type").value="";
+                alert("Enter EPC!! Empty not allowed.");
+                document.getElementById("txtEp_Type").focus();
+                return false;
+            }
+
+            if (txtB_Type != "Z" && txtB_Expl_Dt == "" && txtB_Type == "O" && !InList(txtEp_Type, "D", "Y"))
+            {
+                
+                document.getElementById("txtB_Expl_Dt").value="";
+                GenFunCls.Msg_alert(this.Page, "Enter Batch explosion date.");
+                document.getElementById("txtB_Expl_Dt").focus();
+                return false;
+            }
+            if (txtRel_Date == "" && txtRel_Dt_Bc != "")
+                txtRel_Date = txtRel_Dt_Bc;
+
+            if (txtRel_Date == "")
+            {
+                alert("Enter Batch Release Date.");
+                document.getElementById("txtRel_Date").focus();
+                return false;
+            }
+            
+            if (txtB_Type != "Z" &&  txtB_Type == "O" )  
+            {
+                alert("Wrong Dates!! Please check.");
+                return false;
+            }
+            if (txtRel_Date != "")
+                txtStatus = "R";
+
+            if (txtB_Close_dt != "")
+                txtStatus = "C";
+        return true;
+    }
+
+</script>
+{% endblock content %}      

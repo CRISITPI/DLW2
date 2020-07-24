@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+ -->
+
+<style>
+    input[type=text],
+    select {
+        width: 80%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+     
+    
+   
+</style>
+
+<br>
+<center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{message}}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+</center>
+
+<h2 align="center" >M.G.-5 Card</h2>
+<br>
+<form action="{% url 'mg5view' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td>
+                     <label for="i_no"><b>Identity card no.:</b></label>
+                    <select class="form-control" id="id_no" name="id_no" required>
+                    <option id="op_id" selected disabled hidden>Select Identity card no.</option>
+                    {% for i in obj %}
+                    <option value="{{i.idcard_no}}">{{i.idcard_no}}</option>
+                    {% endfor %}
+                 </select>
+                </td>
+                <td>
+                        <label  for="ti_no"><b>Ticket No.</b></label>
+                        <select  class="form-control" id="t_no" name="t_no" required>
+                        <option id="op_ticket" selected disabled hidden>Select Ticket no.</option>
+                        {% for i in objj %}
+                        <option value="{{i.ticket_no}}">{{i.ticket_no}}</option>
+                        {% endfor %}
+                        </select>
+                    </td>
+                
+        </tr>
+                  
+        </table>
+      
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+  
+    </div>
+
+    <input type="hidden" id="sub" name="sub" value={{sub}}>
+    
+ {% if sub == 1 %}
+<input type="hidden" name="len" value="{{len}}">
+
+<table  id= "customers" align="center" border="2" width="50%">  
+        
+        {% for i in obj %} 
+        <tr>
+            <th>SHOP NO.</th>
+            <input type="text" value={{i.shopno}} name="shop_no" id="shop_no" hidden /> 
+            <td>{{i.shopno}}</td>
+        </tr>
+        <tr>
+                <th>STAFF N0.</th>
+                <input type="text" value={{i.empno}} name="staff_no" id="staff_no" hidden /> 
+                <td>{{i.empno}}</td>
+            </tr>
+        <tr> 
+                <th>EMPLOYEE NAME</th>
+                <input type="text" value={{i.empname}} name="name" id="name" hidden /> 
+            <td>{{i.empname}}</td>
+        </tr>
+        <tr> 
+            <th>SHOP SUPERINTENDENT</th> 
+            <input type="text" value={{i.emptype}} name="emptype" id="emptype" hidden /> 
+        <td>{{i.emptype}}</td>
+    </tr>
+        <!-- <tr> 
+                <th>SHOP SUPERINTENDENT</th> 
+                <td><input type="text" name="emp_type" id="emp_type" /> </td>
+            <!-- <td>{{i.emptype}}</td> -->
+        </tr> 
+        {% endfor %}
+
+            <tr>
+                <th>IDENTITY CARD NO</th>
+                <input type="text" value={{id_no}} name="id_no" id="id_no" hidden /> 
+                <td>{{id_no}}</td>
+            </tr>
+            <tr>
+                <th>TICKET NO</th>
+                
+                <td><input type="text" value={{ticket_no}} name="t_no" id="t_no" readonly/> </td>
+            </tr>
+ 
+          
+        <tr> 
+                <input type="text" value="{{i.to_no}}" name="to_no" hidden />
+                <th>DLW TOOL ORDER NO</th> 
+            <td>{{i.to_no}}</td>
+        </tr>
+        
+
+
+
+            <tr> 
+                <th><b> PLEASE ISSUE ON LOAN THE FOLLOWING:</b></th> 
+                <td>
+                        <label for="tid_no"><b>Tool id:</b></label>
+                           <select class="form-control" id="t_id" name="t_id" required>
+                   <option id="t_emp" selected disabled hidden>Select tool id</option>
+                   {% for i in obj2 %}
+                    <option value="{{i.instrument_number}}">{{i.instrument_number}}</option>
+                    {% endfor %}
+                    </select>
+                   
+                    <label for="desc_no"><b>Tool Description:</b></label>
+                    <input type="text" name="make1" id="make1" readonly>
+                    <!-- {% for i in obj2 %}
+                    {{i.t_desc}}
+                    {% endfor %} -->
+
+                    <input type="submit" id="add1" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   name="add1" value="add">
+
+                   </td>
+            </tr> 
+    
+         <tr> 
+            <th><b> DATE:</b></th> 
+            <td><input type="text" id="date" style="width: 150px;" name="date" value="Select Date" placeholder="dd-mm-yy" required/></td>
+            </tr>
+            <script>
+                $(document).ready(function () { $('#date').datepicker({dateFormat: 'dd-mm-yy', minDate: 0}); });
+              </script>
+
+        <tr> 
+                <th>OPERATOR</th> 
+                <td>
+                <input type="text" name="optr" id="optr" />
+            </td>
+        </tr>
+        <tr> 
+                <th>TOOL CHECKER</th> 
+                <td>
+                        <input type="text" name="chkr" id="chkr" />
+                    </td>
+        </tr>
+</table>
+
+<br>
+</div>
+
+<center>  
+    <input type="submit" name="proceed"  class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   value="Save">
+</center> 
+{% endif %}
+</form> 
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script type="text/javaScript">
+ document.querySelector("#id_no").addEventListener('change',(e)=>{
+                  e.preventDefault();
+                  var id_no = $("#id_no").val()
+                  var data = {id_no};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'mg5getticket' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                        var elementsadded = document.querySelectorAll(".neweleticket");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#op_id").selected=true;
+                                document.querySelector("#op_ticket").selected=true;
+
+                            }
+                            var brarr,mystr,html;
+                            brarr = response.map((el)=>el.ticket_no);
+                            mystr = "";
+                            brarr.forEach((el,index)=>{
+                              html = `<option class="neweleticket">${brarr[index]}</option>`
+                              mystr = html.concat(mystr);
+                            });
+                            html = "";
+                            document.querySelector("#t_no").insertAdjacentHTML('beforeend',mystr);
+                            mystr="";
+                      }
+                        })
+              })
+
+
+document.querySelector("#t_no").addEventListener('change',(e)=>{
+
+    document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+    if(event.keyCode===13){
+        event.preventDefault();
+    }
+})
+
+
+var j=0;
+$("#add1").click(function(e){
+        event.preventDefault()
+        j++;
+        // console.log(j);
+        // assign();
+       var t_id="t_id"+String(j);
+      
+var htAppend='<div> <table id="customers" border="2" align="center"><tr> '+' <td style="width:11%" > <select class="form-control" type=text id='+t_id+' name='+t_id+' required > <option id="t_emp" selected disabled hidden> Select tool id </option> {% for i in obj2 %} <option value="{{i.instrument_number}}">{{i.instrument_number}} </option> {% endfor %} </select> </td>';
+     htAppend=htAppend+'</tr></table></div>';
+     $('#print1').append(htAppend); // id of div tag
+     document.getElementById("totaltools").value=j;  //hidden input field
+
+    });
+    $('body').on('click','#del',function(e){
+        $(this).parent('div').remove();
+    });
+
+
+
+    document.querySelector('#t_id').addEventListener('change',(e)=>{
+        e.preventDefault();
+        var make = $('#t_id').val();               
+        var data = {make};                
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'mg5gettooldesc' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){                       
+             document.getElementById('make1').value=response[0].make;
+                                    
+            }
+       })
+    });
+
+</script>
+
+<input type="hidden" name="totaltools" id="totaltools" /> 
+
+  {% endblock content %}

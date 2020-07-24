@@ -1,0 +1,1532 @@
+{% extends 'base.html' %} {% block content %}
+{% load static %}
+
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+<!-- <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
+
+<script src="{% static '/js/jquery-1.9.1.min.js' %}"></script>
+<script src="{% static '/js/jquery.min3.js' %}"></script>
+
+<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
+<script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
+<link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
+
+<link rel="stylesheet" type="text/css" media="screen" href="{% static '/css/jquery-ui1.css' %}">
+<style>
+  .ui-timepicker-wrapper {
+    overflow-y: auto;
+    max-height: 150px;
+    width: 6.5em;
+    background: #fff;
+    border: 1px solid #ddd;
+    -webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    outline: none;
+    z-index: 10052;
+    margin: 0;
+  }
+  
+  .ui-timepicker-wrapper.ui-timepicker-with-duration {
+    width: 13em;
+  }
+  
+  .ui-timepicker-wrapper.ui-timepicker-with-duration.ui-timepicker-step-30,
+  .ui-timepicker-wrapper.ui-timepicker-with-duration.ui-timepicker-step-60 {
+    width: 11em;
+  }
+  
+  .ui-timepicker-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .ui-timepicker-duration {
+    margin-left: 5px; color: #888;
+  }
+  
+  .ui-timepicker-list:hover .ui-timepicker-duration {
+    color: #888;
+  }
+  
+  .ui-timepicker-list li {
+    padding: 3px 0 3px 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #000;
+    list-style: none;
+    margin: 0;
+  }
+  
+  .ui-timepicker-list:hover .ui-timepicker-selected {
+    background: #fff; color: #000;
+  }
+  
+  li.ui-timepicker-selected,
+  .ui-timepicker-list li:hover,
+  .ui-timepicker-list .ui-timepicker-selected:hover {
+    background: #1980EC; color: #fff;
+  }
+  
+  li.ui-timepicker-selected .ui-timepicker-duration,
+  .ui-timepicker-list li:hover .ui-timepicker-duration {
+    color: #ccc;
+  }
+  
+  .ui-timepicker-list li.ui-timepicker-disabled,
+  .ui-timepicker-list li.ui-timepicker-disabled:hover,
+  .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+    color: #888;
+    cursor: default;
+  }
+  
+  .ui-timepicker-list li.ui-timepicker-disabled:hover,
+  .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+    background: #f2f2f2;
+  }
+  
+  .ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
+    width: 45%;
+    padding: 5px;
+}
+  </style>
+<style>
+  input[type=text],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+   
+</style>
+
+<script type="text/javascript">
+  $(document).ready(function()
+{   
+    $(".monthPicker").datepicker({
+        dateFormat: 'MM yy',
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+
+        onClose: function(dateText, inst) {
+            var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).val($.datepicker.formatDate('MM yy', new Date(year, month, 1)));
+        }
+    });
+
+    $(".monthPicker").focus(function () {
+        $(".ui-datepicker-calendar").hide();
+        $("#ui-datepicker-div").position({
+            my: "center top",
+            at: "center bottom",
+            of: $(this)
+        });
+    });
+});
+</script>
+<br>
+<h6 align="center"><b>M12</b></h6>
+<h6 align="center"><b>MACHINE IDLE TIME CARD</b></h6>
+<br><br><br><br>
+<form action="{% url 'm12view' %}"  method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td>
+                    <label for="month"><b>Month/माह :</b></label>
+                    <input name="month" id="month" class="monthPicker" autocomplete="off"/>
+                    <!-- <select class="form-control" id="month" name="month">
+                            <option value="select">SELECT MONTH</option>
+                            <option value="01-2020">JAN-2020</option>
+                            <option value="02-2020">FEB-2020</option>
+                            <option value="03-2020">MAR-2020</option>
+                            <option value="04-2020">APR-2020</option>
+                            <option value="05-2020">MAY-2020</option>
+                            <option value="06-2020">JUNE-2020</option>
+                            <option value="07-2020">JULY-2020</option>
+                            <option value="08-2020">AUG-2020</option>
+                            <option value="09-2020">SEPT-2020</option>
+                            <option value="10-2020">OCT-2020</option>
+                            <option value="11-2020">NOV-2020</option>
+                            <option value="12-2020">DEC-2020</option>
+                    </select> -->
+                </td>
+                <td>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+            
+            
+            {% for role in roles %}
+              <option  >{{role.section_code}}</option>
+            {% endfor %}
+            
+        </select>
+                </td>
+                <td>
+                    <label for="wk_ord_no"><b>Work Order NO:/कार्यादेश सं. :</b></label>
+                    <select class="form-control" id="wno" name="wo_no" required>
+        <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+        {% if len == 1 %}
+        {% for i in wo_no %}
+          <option>{{i.bo_no}}</option>
+        {% endfor %}
+        {% endif %}
+    </select>
+                </td>
+                
+                  <td>
+                  <label for="staff_no"><b>Employee Number:</b></label>
+                  <select class="form-control" id="staff_no" name="staff_no" required>
+          <option id="op_staff" selected disabled hidden>Select Employee No</option>
+      </select>
+              </td>
+            </tr>
+
+
+        </table>
+        <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
+
+        
+        <center><input type="submit" value="Proceed" id="myproceed" name="proceed" hidden /></center>
+
+
+    </div>
+    <input type="hidden" name="len" id="len" value="{{lent}}">
+    <input type="hidden" name="subb" id="subb" value="{{sub}}">
+
+    <br><br> {% if sub == 1 %}
+    <div id="print" style="align:center" >
+    <div class="container" style="width: 100%">
+       <table align="center">  
+        <tr>
+            <th>SHOP SECTION/शाप विभाग:</th> 
+            <td><u>{{shop_sec}}</u></td>
+            <input type="hidden" name="shopsec" id = "shop1" value="{{shop_sec}}">
+            <th>MONTH/माह:</th> 
+            <td><u>{{month}}</u></td>
+            <input type="hidden" name="month" id="fmonth" value="{{month}}">
+        </tr>
+        
+        <tr>
+            <th>WORK ORDER NO/का.सं.:</th> 
+            <td><u>{{wo_no}}</u></td>
+            <input type="hidden" name="wo_no" value="{{wo_no}}">
+    
+        </tr>
+        <tr>
+            <th>STAFF NO/क्रम सं.:</th> 
+            <td><u>{{staff_no}}</u></td>
+            <input type="hidden" name="staff_no" id='staff1' value="{{staff_no}}">
+        </tr>
+        <tr>
+            <th>Employee Name/कर्मचारी नाम</th> 
+            <td><u>{{empname}}</u></td>
+            <input type="hidden" name="empname" value="{{empname}}">
+    
+        </tr>
+        <tr>
+            <th>CAT/कोटि सं:</th>
+            <td>{{tcat}}</td>
+            <input type="hidden" name="tcat" value="{{tcat}}">
+        </tr>
+    
+        <tr>
+            <th>TOTAL NO OF HOURS /कुल घंटे:</th> 
+            <td><u>{{r1}}</u></td>
+        </tr>
+        <tr>
+            <th>AMT/धनराशि :</th>
+            <td><u>{{amt1}}</u></td>
+            
+            <input type="hidden" name="amt" value="{{amt1}}">
+        </tr>  
+        </table>
+        </div>
+       </div>
+  </br>
+          <table border="1"  style="width:100%">
+            
+            <div class="col-md-2" style="text-align: center;">
+              <input  type="button" id="add" value="Add New Row"  class="btn btn-success"  {% if user.op_create  %}{% else %} disabled {% endif%}  style="width: 150px;" onclick="getdata()" />
+        
+          </div>
+         </table>  
+
+         <div class="container"></div>
+<div class="row" > <div class="col-md-12" >   
+  <table  align="center" border="1" class="table table-striped" style="width:90%; text-align: center;" ">
+    <thead class="thead-dark"> 
+    <tr >
+    <th>S.NO </th>
+    <!-- <th>MONTH</th> -->
+    <th>SHIFT</th>
+    <th>IN DATE</th>
+    <th>IN TIME</th>
+    <th>OUT DATE</th> 
+    <th>OUT TIME</th>
+    <th>TOTAL TIME</th>
+    <th>Reasons for idle time</th>
+    <th>IDLE TIME</th>
+
+    </tr>
+  </thead>
+
+  
+    
+  <tbody id="inouttab"> 
+    {% for obj in obj1 %}
+  <tr>
+  <td>{{forloop.counter}}</td>
+  <!-- <td>{{obj.month}}</td> -->
+  <td>{{obj.shift}}</td>
+  <td>{{obj.in_date}}</td>
+  <td>{{obj.in1}}</td>
+  <td>{{obj.out_date}}</td>
+  <td>{{obj.out}}</td>
+  <td>{{obj.total_time}}</td>
+  <td>{{obj.reasons_for_idle_time}}</td>
+  <td>{{obj.idle_time}}</td>
+<td  ><a href="#" onclick="editModal('{{obj.id}}')">EDIT</a></td>
+             {% endfor %} 
+
+        </tr>
+</tbody>
+    </table> 
+  </div>  </div>
+
+  <center>
+    <input type="submit" value="PrintPDF" name="PrintPDF" class="btn btn-success" {% if user.op_read  %}{% else %} disabled {% endif%}  id="printPDF" style="height:50px; width:100px"/>
+  </center>
+
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header" >     
+      
+        <button type="button" class="close" onclick="popclose()"  >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body" id='printdata' >  
+        <div class="row"> 
+
+          <div class="col-md-4  "> 
+            <input type="hidden" name="id" id="id" > 
+            <label for="formGroupExampleInput2"><b>MONTH</b></label>
+            <input type="text"  name="month2"  id="month2" value="{{month}}" readonly>
+            
+          </div>
+              
+          <div class="col-md-4  "> 
+            <label for="formGroupExampleInput2"><b>SHIFT</b></label>
+          <select name="shift" id="shift"  onblur="myFunction(this.id);" >
+          <option value="">SELECT SHIFT TYPE</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="GD">GD</option>
+          <option value="GN">GN</option>
+          </select>
+        </div>
+      
+
+                      
+          <div class="col-md-4  "> 
+            
+            <label for="formGroupExampleInput2"><b>IN  DATE</b></label>
+            <input type="text" id="in_date"  class="myinp2"  name="in_date" onchange="mycheckDate(); linking(this.id); checkDate(this.id);" autocomplete="off"/>         
+            
+
+          </div>
+          <div class="col-md-4  "> 
+            <label for="formGroupExampleInput2"><b>IN TIME</b></label>
+            <input type="text" id="in1"  name="in1" min="06:27"  max="06:45" onblur="myfunAdd();" style="width:100px"  class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  />
+
+            
+          </div>
+                          
+          <div class="col-md-4  "> 
+            <label for="formGroupExampleInput2"><b>OUT DATE</b></label>
+          <input type="text" id="out_date"  class="myinp2" class="edatec" name="out_date"  style="width:150px" onchange="myfunDateAdd();" autocomplete="off"/>       
+          
+
+        </div>
+                      
+          <div class="col-md-4  "> 
+            <label for="formGroupExampleInput2"><b>OUT TIME</b></label>
+            <input type="text" id="out"   name="out" min="14:30" max="14:45" onblur="myfunAdd();" class="form-control edatec123" 
+            onchange="myfunTimeAdd();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);" 
+            maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" />
+            
+          </div>
+                      
+          <div class="col-md-4  "> 
+            <label for="formGroupExampleInput2"><b>TOTAL TIME</b></label>
+            <input type="text" id="total_time"   name="total_time"  readonly>
+            
+          </div>
+                      
+          <div class="col-md-4  "> 
+            <label for="formGroupExampleInput2"><b>DETAILS</b></label>
+            <select name="detail_no" id="detail_no" >
+                <option value="">SELECT REASON</option>
+                <option value="machine_repair">MACHINE REPAIR</option>
+                <option value="no_power">NO POWER</option>
+                <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>
+                <option value="lack_of_tools">LACK OF TOOLS</option>
+                <option value="waiting_for_work">WAITING FOR WORK</option>
+                <option value="failure_of_crane">FAILURE OF CRANE</option>
+                <option value="waiting_for_crane">WAITING FOR CRANE</option>
+                <option value="operator_absent">OPERATOR ABSENT</option>
+                <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>
+                <option value="lack_of_gas">LACK OF GAS OXY</option>
+                <option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>
+                <option value="lack_of_electrodes">LACK OF ELECTRODES</option>
+                <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
+                <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
+            </select>
+          </div>       
+          <div class="col-md-4  "> 
+            <label for="formGroupExampleInput2" ><b>IDLE TIME</b></label>
+            
+                <input type="text"  name="idle_time" id="idle_time" onchange="myfunITAdd()" style="width:100px" min="06:27"  max="06:45"   class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" >
+                
+            </div> 
+        </div>
+                    
+               
+            
+              <div class="modal-footer d-flex justify-content-center">
+                  <a class="btn btn-primary" class="btn btn-success" {% if user.op_create %}{% else %} disabled {% endif%}  onclick="submitform();">Submit</a>
+                </div>
+            </div>
+          </div>
+      </div>
+    </div>
+      
+    <br><br>
+<br><br>
+
+<div class="modal" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true" >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">     
+       
+         <button type="button" class="close" onclick="popclose()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">  
+          <div class="row">                
+                      
+            <div class="col-md-4  "> 
+              <input type="hidden" name="id1" id="id1" > 
+              <label for="formGroupExampleInput2"><b>MONTH</b></label>
+              <input type="text"  name="month3"  id="month3" readonly>
+              
+            </div>
+          
+
+                        
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>SHIFT</b></label>
+            <select name="shift1" id="shift1"   onblur="myFunctionEdit(this.id);">
+            <option value="">SELECT SHIFT TYPE</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="GD">GD</option>
+            <option value="GN">GN</option>
+            </select>
+          </div>
+        
+
+                        
+            <div class="col-md-4  "> 
+             
+              <label for="formGroupExampleInput2"><b>IN  DATE</b></label>
+              <input type="text" id="in_date1"   class="myinp2"  name="in_date1" readonly/>         
+              
+
+            </div>
+           
+          
+
+                        
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>IN TIME</b></label>
+              <input type="text" id="in11"     name="in11" min="06:27"  max="06:45" style="width:100px"  class="form-control edatec123" onchange="myfunEdit();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  />
+
+             
+            </div>
+                           
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>OUT DATE</b></label>
+            <input type="text" id="out_date1"   class="myinp2"  name="out_date1"  style="width:150px" onchange="myfunDateEdit();" autocomplete="off"/>       
+            
+
+          </div>
+                        
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>OUT TIME</b></label>
+              <input type="text" id="out1"     name="out1" min="14:30" max="14:45"  class="form-control edatec123"
+              onchange="myfunEdit(); myfunTimeEdit();" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);" 
+              maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" >
+              
+            </div>
+                       
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>TOTAL TIME</b></label>
+              <input type="text" id="total_time1" name="total_time1" onblur="myfun1()" readonly>
+              
+            </div>
+                       
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>DETAIL NO.</b></label>
+              <select name="detail_no1" id="detail_no1" >
+                  <option value="">SELECT REASON</option>
+                  <option value="machine_repair">MACHINE REPAIR</option>
+                  <option value="no_power">NO POWER</option>
+                  <option value="lack_of_mat">LACK OF MAT.INCDL.CONS.</option>
+                  <option value="lack_of_tools">LACK OF TOOLS</option>
+                  <option value="waiting_for_work">WAITING FOR WORK</option>
+                  <option value="failure_of_crane">FAILURE OF CRANE</option>
+                  <option value="waiting_for_crane">WAITING FOR CRANE</option>
+                  <option value="operator_absent">OPERATOR ABSENT</option>
+                  <option value="operator_wkg_elsewhere">OPERATOR WORKING ELSEWHERE</option>
+                  <option value="lack_of_gas">LACK OF GAS OXY</option>
+                  <option value="lack_of_grinding_wheel">LACK OF GRINDING WHEEL</option>
+                  <option value="lack_of_electrodes">LACK OF ELECTRODES</option>
+                  <option value="waiting_for_lifter">WAITING FOR F./LIFTER</option>
+                  <option value="drop_in_pressure">DROP IN Pn. PRESSURE</option>
+              </select>
+            </div>       
+            <div class="col-md-4  "> 
+              <label for="formGroupExampleInput2"><b>IDLE TIME</b></label>
+              
+                  <input type="text"  name="idle_time1" id="idle_time1"  style="width:100px" min="06:27"  max="06:45"  onchange="myfunITEdit()" class="form-control edatec123"  onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
+        </div> 
+          </div>
+      <div class="modal-footer d-flex justify-content-center">
+          <a class="btn btn-primary"  class="btn btn-success" {% if user.op_create  %}{% else %} disabled {% endif%}  onclick="updateform()"><b>Submit</b></a>
+        </div>
+    </div>
+  </div>
+</div>
+
+</div> 
+
+
+
+<!-- <center>
+    <input type="submit" name="proceed" value="submit" style="height:50px; width:100px">
+    <input type="button" onclick="printDiv()" value="print" style="height:50px; width:100px">
+   
+     <input  type="button" id="add" value="Add Operations" style="height:50px; width:100px"/> -->
+     <center>
+    
+</center>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- <input type="hidden" name="num" value="THE OUTPUT OF OPERATION FUNCTION" id="myvalue"/> -->
+       
+    
+
+</form>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- <div id="items">
+
+
+    </div> -->
+    {% endif %}
+
+<br>
+    <br><br><br>
+<br>
+</form>
+
+
+</body>
+</html>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> -->
+<script language="javascript">
+
+
+
+
+function mycheckDate() {
+
+var id = document.getElementById("in_date").value;
+var month = document.getElementById("fmonth").value;
+var mon=month.split(' ');
+var marr={January:"01",February:"02",March:"03",April:"04",May:"05",June:"06",July:"07",August:"08",September:"09",October:"10",November:"11",December:"12"};
+// alert("marr  :"+marr[mon[0]]+'-'+mon[1]);
+var res = id.split('-');
+//  alert("in date :  "+res[1]+'-'+res[2]);
+//  alert("Full date :  "+id);
+//  alert(month);
+if(res[1]+'-'+res[2]==marr[mon[0]]+'-'+mon[1])
+{
+$( "#in_date" ).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+}
+else
+{
+  alert("This month not valid?");
+  document.getElementById("in_date").value=" ";
+}
+}
+
+function myFunctionEdit(th) {
+
+var id = document.getElementById(th).value;
+
+console.log("kkk",id);
+
+if ( id=="A") {
+      var in11="in11";//String(k[1]);
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+     $('#in11').timepicker('option','minTime','06:27');
+     $('#in11').timepicker('option','maxTime','14:45');
+     var out1="out1";//+String(k[1]);
+     $('#out1').timepicker('option','minTime','06:27');
+     $('#out1').timepicker('option','maxTime','14:45');
+
+  }
+  if(id=="B")  {
+    var in11="in11";//+String(k[1]);
+    $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+    $('#in11').timepicker('option','minTime','14:27');
+    $('#in11').timepicker('option','maxTime','22:45');   //14:45
+     var out1="out1";//+String(k[1]);
+    $('#out1').timepicker('option','minTime','14:27');
+    $('#out1').timepicker('option','maxTime','22:45');
+
+
+  }
+  if(id=="GN")  {
+     
+
+      var in11="in11";//+String(k[1]);
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+
+    $('#in11').timepicker('option','minTime','22:27');
+    $('#in11').timepicker('option','maxTime','06:45');  //22:45
+     var out1="out1";//+String(k[1]);
+    $('#out1').timepicker('option','minTime','22:27');
+    $('#out1').timepicker('option','maxTime','06:45');
+
+
+  }
+  if(id=="GD")  {
+
+      var in11="in11";//+String(k[1]);
+
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+     $('#in11').timepicker('option','minTime','06:27');   //6:27
+     $('#in11').timepicker('option','maxTime','16:45');    //06:45
+      var out1="out1";//+String(k[1]);
+     $('#out1').timepicker('option','minTime','06:27');
+     $('#out1').timepicker('option','maxTime','16:45');
+  }
+  if(id=="C")  {
+
+      var in11="in11";//+String(k[1]);
+     $('#in_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date1').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+    //  $('#'+in_date).datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+    //  $('#'+out_date).datepicker({dateFormat:'dd-mm-yy',minDate: 0, maxDate: "+1D"});
+
+     $('#in11').timepicker('option','minTime','15:57');
+     $('#in11').timepicker('option','maxTime','01:45');
+      var out1="out1";//+String(k[1]);
+     $('#out1').timepicker('option','minTime','15:57');
+     $('#out1').timepicker('option','maxTime','01:45');
+
+  }
+  
+
+}
+
+function editModal(id){ 
+  //  alert(id);
+ var data = {id};
+$.ajax({
+type : 'GET',
+url : "{% url 'm12editdata' %}",
+dataType : 'json',
+data : data,
+success : function(response){
+console.log(response);
+var html="";
+
+$("#id1").val(response.data.obj1[0].id);
+$("#month3").val(response.data.obj1[0].month);
+$("#shift1").val(response.data.obj1[0].shift);
+$("#in_date1").val(response.data.obj1[0].in_date);
+$("#in11").val(response.data.obj1[0].in1);
+$("#out_date1").val(response.data.obj1[0].out_date);
+$("#out1").val(response.data.obj1[0].out);
+$("#total_time1").val(response.data.obj1[0].total_time);
+$("#detail_no1").val(response.data.obj1[0].reasons_for_idle_time);
+$("#idle_time1").val(response.data.obj1[0].idle_time);
+
+html=""; 
+    }
+                          
+     })
+
+
+    $('#editModal').css("display", "block"); 
+
+
+}
+
+function updateform(){ 
+  var shopsec = $("#shop1").val();
+  var staff_no = $("#staff1").val();
+  var ename = '{{empname}}';
+  var scat = '{{tcat}}';
+  var  id=$("#id1").val();
+  var  month=$("#month3").val();
+  var  shift=$("#shift1").val();
+  var  in_date=$("#in_date1").val();
+  var  in1=$("#in11").val(); 
+  var  out_date=$("#out_date1").val();
+  var  out=$("#out1").val();
+  var  total_time=$("#total_time1").val();
+  var  detail_no=$("#detail_no1").val();
+  var  idle_time=$("#idle_time1").val();
+    
+    $("#inouttab").empty()
+      var data = {id,shopsec,staff_no,scat,ename,month,shift,in_date,in1,out_date,out,total_time,detail_no,idle_time};
+      $.ajax({
+          type : 'GET',
+          url : "{% url 'm12updatedata' %}",
+          dataType : 'json',
+          data : data,
+          success : function(response){
+            console.log(response);
+            // alert("successfully changed the record");
+
+            // window.location.reload();
+          var html="";
+          // $("#sno1").val(response.data.wer)
+          var sno=1;
+          for (var i = 0; i < response.data.obj1.length; i++) {                          
+      
+            html=html+" <tr> <td> "+sno+++"</td> <td>"+response.data.obj1[i].shift+" </td> <td>"+response.data.obj1[i].in_date+"  </td>  <td>"+response.data.obj1[i].in1+" </td>  <td>"+response.data.obj1[i].out_date+" </td>  <td>"+response.data.obj1[i].out+" </td>  <td> "+response.data.obj1[i].total_time+" </td> <td> "+response.data.obj1[i].reasons_for_idle_time+" </td> <td> "+response.data.obj1[i].idle_time+" </td> <td><a href='#' onclick=editModal('"+response.data.obj1[i].id+"')>EDIT</a></td> </tr>";
+          
+              }
+            
+                $("#inouttab").html(html)
+                $('#editModal').css("display", "none");
+                // document.querySelector("#inouttab").insertAdjacentHTML('beforeend',html);
+                  html="";              
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+}
+function checkDate(th)
+  {
+        
+        var id = th;
+        var in_date = document.getElementById(id).value;
+        var staff_no = $("#staff1").val();
+        var shop_sec = $("#shop1").val();
+        var data = {in_date,staff_no,shop_sec};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm12indateCheck' %}", 
+            dataType : 'json',
+            data : data,
+            success : function(response){   
+              alert("In date already exists M11 database Try again ?");
+            
+            document.getElementById("in1").value="00:00"; 
+            document.getElementById('in_date').value=" "; 
+            document.getElementById('out_date').value=" "; 
+            document.getElementById('out').value="00:00";
+            document.getElementById('total_time').value="00:00"; 
+
+            // document.getElementById(in1add).readOnly = true;  
+            // document.getElementById(out_Date).readOnly = true; 
+            // document.getElementById(outadd).readOnly = true; 
+            // document.getElementById(total_time_takenadd).readOnly = true;
+            }
+            
+                
+      });
+
+  }
+
+function linking(th)
+  {
+        
+        var id = th;
+        var in_date = document.getElementById(id).value;
+        console.log("in_date",id);
+        var staff_no = $("#staff1").val();
+        var shop_sec = $("#shop1").val();
+        var data = {in_date,staff_no,shop_sec};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm12indatelink' %}", 
+            dataType : 'json',
+            data : data,
+            success : function(response){   
+              alert("Get data M21 card");
+            
+
+              $("#in1").val(response[0].in1);
+              $("#in_date").val(response[0].date);
+              $("#out_date").val(response[0].outdate);
+              $("#out").val(response[0].out);
+              $("#total_time").val(response[0].total_time);
+
+            // document.getElementById("in1").value=response[0].in1; 
+            // document.getElementById("in_date").value=response[0].date; 
+            // document.getElementById("out_Date").value=response[0].outdate; 
+            // document.getElementById("out").value=response[0].out; 
+            // document.getElementById("total_time").value=response[0].total_time; 
+
+            // document.getElementById("in1").readOnly = true;  
+            // document.getElementById("out_date").readOnly = true; 
+            // document.getElementById("out").readOnly = true; 
+            // document.getElementById("total_time").readOnly = true;
+            }
+            
+                
+              });
+
+  }
+
+function validateSD(){
+        var t1=document.getElementById("shift").value;
+        var t2=document.getElementById("in_date").value;
+        var t3=document.getElementById("out_date").value;
+        var t4=document.getElementById("detail_no").value;
+        var t5=document.getElementById("in1").value;
+        var t6=document.getElementById("out").value;
+        var t7=document.getElementById("idle_time").value;
+        if(t1=="") {
+                alert("Please select shift type");
+                document.getElementById("shift").focus();
+                  return false;
+            }
+            if(t2==""){
+                alert("Please  in date must be fill out");
+                document.getElementById("in_date").focus();
+                  return false;
+            }
+            if(t3==""){
+                alert("Please  out date must be fill out");
+                document.getElementById("out_date").focus();
+                  return false;
+            }
+            if(t4==""){
+                alert("Please select details");
+                document.getElementById("detail_no").focus();
+                  return false;
+            }
+            if(t5=="00:00"){
+                alert("Please select In time");
+                document.getElementById("in1").focus();
+                  return false;
+            }
+            if(t6=="00:00"){
+                alert("Please select Out time");
+                document.getElementById("out").focus();
+                  return false;
+            }
+            if(t7==""){
+                alert("Please select Idle time");
+                document.getElementById("idle_time").focus();
+                  return false;
+            }
+           return true;
+    }
+
+function submitform()
+  {
+    var vi=validateSD();
+    if(vi){
+    var shopsec = $("#shop1").val();
+    var staff_no = $("#staff1").val();
+    var ename = '{{empname}}';
+    var scat = '{{tcat}}';
+    var amt = '{{amt1}}';
+    var month=$('#month2').val();
+    var in_date=$('#in_date').val();
+    var out_date=$('#out_date').val();
+    var shift=$('#shift').val();
+    var in1=$('#in1').val();
+    var out=$('#out').val();
+    var total_time=$('#total_time').val();
+    var idle_time=$('#idle_time').val();
+    var detail_no=$('#detail_no').val();
+
+    $("#inouttab").empty()
+    var data = {shopsec,staff_no,ename,scat,in_date,out_date,shift,month,in1,out,total_time,idle_time,detail_no,amt};
+    $.ajax({
+        type : 'GET',
+        url : "{% url 'm12save' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){  
+          console.log(response);                             
+          // alert("successfully changed the record");
+          // window.location.reload();
+          // $("#divadd").empty();
+          var html="";
+          // $("#sno1").val(response.data.wer)
+          var sno=1;
+          for (var i = 0; i < response.data.obj1.length; i++) {                          
+                  //alert(response.data.obj1[i].sno)
+            html=html+" <tr> <td> "+sno+++"</td>  <td>"+response.data.obj1[i].shift+" </td> <td>"+response.data.obj1[i].in_date+"  </td>  <td>"+response.data.obj1[i].in1+" </td>  <td>"+response.data.obj1[i].out_date+" </td>  <td>"+response.data.obj1[i].out+" </td>  <td> "+response.data.obj1[i].total_time+" </td> <td> "+response.data.obj1[i].reasons_for_idle_time+" </td> <td> "+response.data.obj1[i].idle_time+" </td> <td><a href='#' onclick=editModal('"+response.data.obj1[i].id+"')>EDIT</a></td> </tr>";
+          
+              }
+            $('#exampleModal').css("display", "none");
+                $("#inouttab").html(html)
+                // document.querySelector("#inouttab").insertAdjacentHTML('beforeend',html);
+                  html="";  
+
+                    
+        },
+        error: function() {
+            alert("DESCRIPTION/LOCATION/CATEGORY/MAINT_AREA CAN'T BE EMPTY");
+            
+        },
+        
+        });
+      }
+}
+
+function validateHhMm(inputField) {
+        var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(inputField.value);		
+        if (isValid) {
+            inputField.style.backgroundColor = '#bfa';
+        } else {
+            inputField.style.backgroundColor = '#fba';			
+        }
+        return isValid;		
+        }
+    function validate1HhMm(inputField) {       	
+        if(inputField.value.length == 2){
+        inputField.value += ":";
+        }	
+        }
+
+    function isNumberKey(evt) {
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+        return true; 
+
+        }
+
+  function myfunITAdd(){
+      document.getElementById('total_time').value;
+      document.getElementById('idle_time').value;
+      if (document.getElementById('idle_time').value > document.getElementById('total_time').value) 
+            {
+                      alert("Idel time should be less or equal to in total time");
+                      document.getElementById("idle_time").value="00:00";
+                      $(this).val('');
+                    return false;
+            }
+       }
+
+       function myfunITEdit(){
+      document.getElementById('total_time1').value;
+      document.getElementById('idle_time1').value;
+      if (document.getElementById('idle_time1').value > document.getElementById('total_time1').value) 
+            {
+                      alert("Idel time should be less or equal to in total time");
+                      document.getElementById("idle_time1").value="00:00";
+                      $(this).val('');
+                    return false;
+            }
+       }
+
+function myfunTimeAdd()
+	      {
+        var t1=$('#in1').val().toString();
+        var t2=$('#out').val().toString();
+        var sf=$('#shift').val().toString();
+        if(sf=="A" || sf=="B" || sf=="GD"){
+          if (t1 > t2) 
+                {
+                      alert("In time should be less or equal to in Out time");
+                      document.getElementById("out").value="00:00";
+                      document.getElementById("in1").value="00:00";
+                      $(this).val('');
+                      return false;
+                }
+        }
+        if(sf=="C" || sf=="GN"){
+          if (t1 < t2) 
+                {
+                      alert("In time should be greater or equal to in Out time");
+                      document.getElementById("out").value="00:00";
+                      document.getElementById("in1").value="00:00";
+                      $(this).val('');
+                      return false;
+                }
+        } 
+          
+      }
+
+      function myfunTimeEdit()
+	      {
+        var t1=$('#in11').val().toString();
+        var t2=$('#out1').val().toString();
+        var sf=$('#shift1').val().toString();
+        if(sf=="A" || sf=="B" || sf=="GD"){
+          if (t1 > t2) 
+                {
+                      alert("In time should be less or equal to in Out time");
+                      document.getElementById("out1").value="00:00";
+                      document.getElementById("in11").value="00:00";
+                      $(this).val('');
+                      return false;
+                }
+        }
+        if(sf=="C" || sf=="GN"){
+          if (t1 < t2) 
+                {
+                      alert("In time should be greater or equal to in Out time");
+                      document.getElementById("out1").value="00:00";
+                      document.getElementById("in11").value="00:00";
+                      $(this).val('');
+                      return false;
+                }
+        } 
+          
+      }
+
+
+function myfunDateAdd()
+          {
+          sf=document.getElementById("shift").value;
+          var t2=document.getElementById("in_date").value;
+          var t3=document.getElementById("out_date").value;
+          if(sf=="A" || sf=="B" || sf=="GD"){
+            if (t3 > t2) 
+                  {
+                        alert("Out date should be equal to In date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+                  if (t3 < t2) 
+                  {
+                        alert("Out date should be equal to In date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+          }
+          if(sf=="C" || sf=="GN"){
+            if (t3 == t2) 
+                  {
+                        alert("Out date should be greater to In Date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+            if (t3 < t2) 
+            {
+                  alert("Out date should be greater to In Date");
+                  document.getElementById("out_date").value=" ";
+                  return false;
+            }
+            }
+          }
+
+          function myfunDateEdit()
+          {
+          sf=document.getElementById("shift").value;
+          var t2=document.getElementById("in_date").value;
+          var t3=document.getElementById("out_date").value;
+          if(sf=="A" || sf=="B" || sf=="GD"){
+            if (t3 > t2) 
+                  {
+                        alert("Out date should be equal to In date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+                  if (t3 < t2) 
+                  {
+                        alert("Out date should be equal to In date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+          }
+          if(sf=="C" || sf=="GN"){
+            if (t3 == t2) 
+                  {
+                        alert("Out date should be greater to In Date");
+                        document.getElementById("out_date").value=" ";
+                        return false;
+                  }
+            if (t3 < t2) 
+            {
+                  alert("Out date should be greater to In Date");
+                  document.getElementById("out_date").value=" ";
+                  return false;
+            }
+            }
+          }
+function myfunAdd(){
+    
+    var t1=$('#in1').val().toString();
+    var t2=$('#out').val().toString();
+    m1=parseInt(t1.substring(3,5));
+    m2=parseInt(t2.substring(3,5));
+    h1=parseInt(t1.substring(0,2));
+    h2=parseInt(t2.substring(0,2));
+    if(h1>h2)
+       {
+           h2=h2+24;
+       }
+  
+  
+    tm1=((h2*60)+m2)-((h1*60)+m1);
+    hrs=parseInt((tm1)/60);
+    min=(tm1)%60;
+    if (hrs < 10) {hrs = "0"+hrs;}
+    if (min < 10) {min = "0"+min;}
+    document.getElementById('total_time').value=hrs.toString()+":"+min.toString();
+    //document.getElementById('idle_time_add1').value=hrs.toString()+":"+min.toString();
+    
+       }
+function myfunEdit(){
+    
+    var t1=$('#in11').val().toString();
+    var t2=$('#out1').val().toString();
+    m1=parseInt(t1.substring(3,5));
+    m2=parseInt(t2.substring(3,5));
+    h1=parseInt(t1.substring(0,2));
+    h2=parseInt(t2.substring(0,2));
+    if(h1>h2)
+       {
+           h2=h2+24;
+       }
+  
+  
+    tm1=((h2*60)+m2)-((h1*60)+m1);
+    hrs=parseInt((tm1)/60);
+    min=(tm1)%60;
+    if (hrs < 10) {hrs = "0"+hrs;}
+    if (min < 10) {min = "0"+min;}
+    document.getElementById('total_time1').value=hrs.toString()+":"+min.toString();
+    //document.getElementById('idle_time_add1').value=hrs.toString()+":"+min.toString();
+    
+       }
+
+$('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+$('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+$('.edatec123').each(function(){
+  
+  $(this).addClass("form-control ll");
+  $(this).timepicker();  
+
+  });
+
+function getdata(){ 
+  $("#in_date").val("");
+  $('#out_date').val("");
+  $('#shift').val("");
+  $('#in1').val("");
+  $('#out').val("");
+  $('#total_time').val("");
+  $('#idle_time').val("");
+  $('#detail_no').val("");
+  
+ $('#exampleModal').css("display", "block");
+
+  }
+
+
+ function popclose(){
+  $('#exampleModal').css("display", "none");
+  $('#editModal').css("display", "none"); 
+}
+
+if(document.getElementById('fmonth')){
+var ab=document.getElementById('fmonth').value;
+console.log(ab);
+}
+$(document).ready(() => {
+    $("#month2").val(ab);
+});
+
+
+function myFunction(th) {
+var id = document.getElementById(th).value;
+console.log("kkk",id);
+if ( id=="A") {
+     
+      var in1="in1";
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+     $('#in1').timepicker('option','minTime','06:27');
+     $('#in1').timepicker('option','maxTime','14:45');
+     var out="out";
+     $('#out').timepicker('option','minTime','06:27');
+     $('#out').timepicker('option','maxTime','14:45');
+
+  }
+  if(id=="B")  {
+    var in1="in1";
+    $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+    $('#in1').timepicker('option','minTime','14:27');
+    $('#in1').timepicker('option','maxTime','22:45');   //14:45
+     var out="out";
+    $('#out').timepicker('option','minTime','14:27');
+    $('#out').timepicker('option','maxTime','22:45');
+
+
+  }
+  if(id=="GN")  {
+     
+
+      var in1="in1";
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+
+    $('#in1').timepicker('option','minTime','22:27');
+    $('#in1').timepicker('option','maxTime','06:45');  //22:45
+     var out="out";
+    $('#out').timepicker('option','minTime','22:27');
+    $('#out').timepicker('option','maxTime','06:45');
+
+
+  }
+  if(id=="GD")  {
+
+      var in1="in1";
+
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+
+     $('#in1').timepicker('option','minTime','06:27');   
+     $('#in1').timepicker('option','maxTime','16:45');    
+      var out="out";
+     $('#out').timepicker('option','minTime','06:27');
+     $('#out').timepicker('option','maxTime','16:45');
+  }
+  if(id=="C")  {
+
+      var in1="in1";
+     $('#in_date').datepicker({dateFormat:'dd-mm-yy',minDate: -45, maxDate: 0});
+     $('#out_date').datepicker({dateFormat:'dd-mm-yy',minDate: -44, maxDate: 1});
+    
+
+     $('#in1').timepicker('option','minTime','15:57');
+     $('#in1').timepicker('option','maxTime','01:45');
+      var out="out";//+String(k[1]);
+     $('#out').timepicker('option','minTime','15:57');
+     $('#out').timepicker('option','maxTime','01:45');
+
+  }
+  
+
+}
+
+
+function check(th)
+{
+  var did=th.id;
+  var val=document.getElementById(did).value;
+  var ck=document.getElementById('cmonth').value;
+  console.log(ck);
+  if (!isUpperCase(val))
+  {
+    alert('Month should be in uppercase only!!');
+  }
+  if(ck.length!=val.length)
+  {
+      alert('Month should be same as selected above !!');
+  }
+}
+function isUpperCase(str) { return str === str.toUpperCase(); }
+function assign(){
+        function operation()
+        {
+        console.log(j);
+        return j;
+        }
+       document.getElementById('myvalue').value =operation();
+    }
+  </script>
+
+
+
+ 
+    
+<script type="text/javaScript">
+
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                   // alert(shop_sec)
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm12getwono' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".newelewono");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  
+ 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.bo_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelewono">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+                document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    //console.log("hi");
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm12getstaff_no' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                         // console.log(response)
+                          var elementsadded = document.querySelectorAll(".newelestaff");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_emp").selected = true;   
+ 
+                              }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.staff_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="newelestaff">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })  
+                document.querySelector("#staff_no").addEventListener('change',(e)=>{
+
+document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M12 Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+       
+
+
+        win.print();
+        win.close();
+
+}
+function find2(th){
+
+
+var id = th.id;
+no=id.split("staff_noadd")
+// no1=id.split("ticket_noadd")
+
+var exam_type="staff_nameadd"+no[1];
+// var ticket_no="staff_nameadd"+no1[1];
+var two=document.getElementById(id).value;
+console.log(id+" "+two+" "+exam_type);
+
+var data = {two};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm12getempname' %}",
+                    
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                          console.log(response);
+                          // var w=document.getElementById('exam_type')
+                          // console.log("w",w)
+                       document.getElementById(exam_type).value= response.exam.exam_type;
+                       console.log(document.getElementById(exam_type).value)
+
+                     
+                       
+                      }
+                        })
+}
+
+// function myFunction(th) {
+//   var id = th.id;
+//   var x = document.getElementById(id).value;
+//   // alert("x : "+x)
+//   console.log("x",id);
+//   k=id.split("shiftadd");
+//   console.log("kkk",k)
+//   if ( document.getElementById(id).value=="A") {
+//        console.log(document.getElementById(id).value) ;
+//       //  alert("x1 : "+document.getElementById(id).value)
+//       //  document.getElementById("in1add"+k[1]).value = "07:27";
+//        document.getElementById("in1add"+k[1]).min = "06:27";
+//        document.getElementById("in1add"+k[1]).max = "06:45";
+
+
+//        document.getElementById("outadd"+k[1]).min = "14:30";
+//        document.getElementById("outadd"+k[1]).max = "14:45";
+
+
+//     }
+//     if(document.getElementById(id).value=="B")  {
+//        console.log(document.getElementById(id).value) ;
+//       //  alert("x1 : "+document.getElementById(id).value)
+//       //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+//        document.getElementById("in1add"+k[1]).min = "14:27";
+//        document.getElementById("in1add"+k[1]).max = "14:45";
+//       //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+//        document.getElementById("outadd"+k[1]).min = "22:30";
+//        document.getElementById("outadd"+k[1]).max = "22:45";
+
+
+//     }
+//     if(document.getElementById(id).value=="C")  {
+//        console.log(document.getElementById(id).value) ;
+//       //  alert("x1 : "+document.getElementById(id).value)
+//       //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+//        document.getElementById("in1add"+k[1]).min = "22:27";
+//        document.getElementById("in1add"+k[1]).max = "22:45";
+//       //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+//        document.getElementById("outadd"+k[1]).min = "06:30";
+//        document.getElementById("outadd"+k[1]).max = "06:45";
+
+
+//     }
+//     if(document.getElementById(id).value=="GD")  {
+//        console.log(document.getElementById(id).value) ;
+//       //  alert("x1 : "+document.getElementById(id).value)
+//       //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+//        document.getElementById("in1add"+k[1]).min = "06:27";
+//        document.getElementById("in1add"+k[1]).max = "06:45";
+//       //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+//        document.getElementById("outadd"+k[1]).min = "16:00";
+//        document.getElementById("outadd"+k[1]).max = "16:30";
+
+
+//     }
+//     if(document.getElementById(id).value=="GN")  {
+//        console.log(document.getElementById(id).value) ;
+//       //  alert("x1 : "+document.getElementById(id).value)
+//       //  document.getElementById("inadd"+k[1]).value = "14:27";
+
+//        document.getElementById("in1add"+k[1]).min = "15:57";
+//        document.getElementById("in1add"+k[1]).max = "16:15";
+//       //  document.getElementById("outadd"+k[1]).value = "22:30";
+
+//        document.getElementById("outadd"+k[1]).min = "01:30";
+//        document.getElementById("outadd"+k[1]).max = "01:45";
+
+
+//     }
+// }
+
+                        
+
+    
+ 
+             </script>   
+
+  
+{% endblock content %}

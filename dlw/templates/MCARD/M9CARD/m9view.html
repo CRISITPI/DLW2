@@ -1,0 +1,688 @@
+{% extends 'base.html' %} {% block content %}
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script> -->
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> 
+ -->
+ {% load static %}
+
+
+<style>
+
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font: 16px Arial;  
+  }
+  
+  /*the container must be positioned relative:*/
+  .autocomplete {
+    position: relative;
+    display: inline-block;
+  }
+  
+  input {
+    border: 1px solid transparent;
+    background-color: #f1f1f1;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  input[type=text] {
+    background-color: #f1f1f1;
+    width: 100%;
+  }
+  
+  input[type=submit] {
+    background-color: DodgerBlue;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+  }
+  
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff; 
+    border-bottom: 1px solid #d4d4d4; 
+  }
+  
+  /*when hovering an item:*/
+  .autocomplete-items div:hover {
+    background-color: #e9e9e9; 
+  }
+  
+  /*when navigating through the items using the arrow keys:*/
+  .autocomplete-active {
+    background-color: DodgerBlue !important; 
+    color: #ffffff; 
+  }
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+     
+</style>
+<br>
+<br>
+<h3 align="center">M9<br>Authority Slip</h3>
+<br>
+<center>
+  {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+      <font size="3">
+          <li>
+              {{message}}
+          </li>
+      </font>
+      {% endfor %}
+  </ul>
+  {% endif %}
+</center>
+<br>
+<form action="{% url 'm9view' %}" method="POST"> {%csrf_token%}
+  <div class="container">
+      <table class="table">
+          <tr>
+              <td>
+                  <label for="sno" style="width:200px"><b>SHOP SECTION NO</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+          <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+           
+          {% for role in roles %}
+          
+            <option>{{role.section_code}}</option>
+          {% endfor %}
+          
+      </select>
+              </td>
+              <td><b>SHOP NAME</b>&nbsp;&nbsp;
+                <input type="" id="sname" name="sname" readonly class="form-control" placeholder="Shop Name" style="width:200px; margin-top:15px;"/></td>
+              <td>
+                  <label for="partno"><b>PART NO</b></label>
+                  <div class="autocomplete" style="width:200px">
+                    <input id="part_nop" autocomplete="off" type="text" name="part_nop" placeholder="Part NO" maxlength="8">
+                </div>
+              </td>
+              <td>
+                <label for="opno" style="width:200px"><b>OPERATION NO</b></label>
+                <div class="autocomplete" style="width:200px">
+                  <input id="op_opno" autocomplete="off" type="text" name="op_opno" placeholder="Operation NO" maxlength="8">
+              </div>
+              </td>
+              <td>
+                <label for="wk_ord_no" style="width:200px"><b>WORK ORDER NO</b></label>
+                <select class="form-control" id="wo_no" name="wo_no" style="width:200px" required>
+                 <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+                    
+                </select>
+            </td>
+            
+          </tr>
+      </table>
+
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+
+
+    </div>
+    <div id="id1" style="display:none;">
+<div id="print" style="align:center" >
+<input type="hidden" name="len" value="{{len}}">
+<center><h4><u><B>AUTHORITY SLIP</B></u></h4></center>
+
+
+<br>
+<table>
+<tr>
+<td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IDLE TIME CARD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b></td><td><input type="radio" id="itc" name="itc" class="abc" checked value="man">MAN</td><td><input type="radio" name="itc" class="abc" value="mac">MACHINE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+
+<td colspan="8" style="margin-left: 200px;"><b>SEC</b></td><td><input type="text" style="padding:6px 1px;" name="sec" id="sec" value="{{shop_sec}}" readonly ></td> </tr>
+<tr><td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IDLE TIME</b></td><td><input type="radio" checked id="ittime" name="ittime" class="def" value="on">ON</td><td><input type="radio" class="def" name="ittime" value="off">OFF</td>
+<td colspan="8"><b>DATE-</b></td><td><input type="TEXTBOX" name="ddate" id="ddate" ></td></tr>
+
+</table>
+
+
+
+<br>
+<br>
+
+
+<table border="2" align="center" width="90%">
+<tr>
+<th ><h5 style="font-size: 17px;"><b>CHANGE OPTR</b> </h5></th>
+<th><h5 style="font-size: 17px;"><b>SUSPENDED JOB CARD.:</b> </h5></th>
+<th><h5 style="font-size: 17px;"><b>RESUME JOB CARD</b></h5></th>
+<th ><h5 style="font-size: 17px;"><b>AFFECTED C&D NO.: </b></b></h5></th>
+<th ><h5 style="font-size: 17px;"><b>CAT OF IDLE TIME: </b></b></h5></th>
+<th ><h5 style="font-size: 17px;"><b>AFFECTED OPRN NO.: </b></b></h5></th>
+
+</tr>
+
+
+<tr>
+<td ><input type="text" name ="cngoptr" id="opter" required></td>
+<td><input type="text" id="sbc" name="sbc" pattern="[0-9]+" title="Numeric Value"></td>
+<td><input type="text" id="rjc" name="rjc" pattern="[0-9]+" title="Numeric Value"></td>
+<td ><input type="text" name ="cdno" id="cdno" value="{{part_no}}" readonly required></td>
+<td ><input type="text" name ="cit"  id="cat" required></td>
+<td ><input type="text" name ="oprn" id="oprn" readonly required></td>
+</tr>
+
+
+
+
+
+<tr>
+<th  ><h5 style="font-size: 17px;"><b>MG9 NO.</b></b></h5></th>
+<td ><h5 style="font-size: 17px;"><b>AFFECTED W.O.NO </b></h5></td>
+<td><h5 style="font-size: 17px;"><b>M.W.NO:  </b></h5></td>
+<td ><h5 style="font-size: 17px;"><b>OPTER NO.</b></h5></td>
+<td ><h5 style="font-size: 17px;"><b>PREVIOUS OPTR. NO </b></h5> </td>
+<td ><h5 style="font-size: 17px;"><b>REMARKS</b></h5></td>
+
+
+</tr>
+<tr>
+<td><input type="text" name ="mw" required id="mw" title="numeric value"></td>
+<td><input type="text" name ="wono" id="wono" readonly required ></td>
+<td><input type="text" name ="mg9" id="mg9" onclick="fun1()" required readonly></td>
+<td><input type="text" name ="optno" id="optr" required></td>
+<td><input type="text" name ="prvopt" id="prev" required></td>
+<td><input type="text" name ="remarks" id="rem" required></td>
+
+
+
+</tr>
+
+
+
+
+
+
+
+
+
+</table>
+
+<table align="center" id="first" class="table table-striped table-bordered" style=" display: none;">
+  <thead style="background-color:ghostwhite; font-size:12px;">
+      <tr>
+          <th>IDLE TIME CARD</th>
+          <th>DATE</th>
+          <th>AFFECTED W.O.NO</th>
+          <th>AFFECTED C&D NO.:</th>
+          <th>SUSPENDED JOB CARD</th>
+          <th>RESUME JOB CARD</th>
+          <th>MG9 NO</th>
+          <th>M.W.NO</th>
+          <th>AFFECTED OPRN NO</th>
+          <th>OPTER NO</th>
+          <th>CHANGE OPTR</th>
+          <th>PREVIOUS OPTR. NO</th>
+          <th>CAT OF IDLE TIME</th>
+          <th>REMARKS</th>
+      </tr>
+  </thead>
+  <tbody style="font-size:11px; font-weight: 610;">
+</table>
+
+
+<center>
+    <input type="button" name="proceed" class="btn btn-success" {% if user.op_create %}{% else %} disabled {% endif%}  value="Save" onclick="save_db()">
+</center> 
+</div>
+</div>
+</form>
+<script>
+var countries = [' '];
+var countries1 = [' '];
+var countries2 = [' '];
+</script>
+<script type="text/javaScript">
+
+              document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                      e.preventDefault();
+                      var shop_sec = $("#shop_sec").val()
+                      var data = {shop_sec};
+                        $.ajax({
+                          type : 'GET',
+                          url : "{% url 'm9getpart_no' %}",
+                          dataType : 'json',
+                          data : data,
+                          success : function(response){
+                            if(response == ''){
+                               alert("Part no.Not Found for Shop Section:"+shop_sec);
+                               window.location='';
+                               }
+                               for(i=0;i<response.length;i++)
+                               {
+                                   countries.push((response[i].part_no).toString());
+                               }
+                          }
+                            })
+                  })
+
+                  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                    e.preventDefault();                        
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm9getshop_name' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){                                
+                        document.getElementById('sname').value=response[0].section_desc;                             
+                        $('#sname').attr('readonly', true);
+                        }
+                          })
+  
+                });
+  
+
+$("#part_nop").click(function(e){
+    e.preventDefault();
+    var part_nop = $("#part_nop").val();
+    var shop_sec = $("#shop_sec").val();
+    var data = {part_nop,shop_sec};
+      $.ajax({
+        type : 'GET',
+        url : "{% url 'm9getopno' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){
+          for(i=0;i<response.length;i++)
+          {
+              countries1.push((response[i].opn).toString());
+          }
+        }
+           })
+           }) 
+
+
+
+
+
+$("#op_opno").click(function(e){
+    e.preventDefault();
+    var part_nop = $("#part_nop").val();
+    var shop_sec = $("#shop_sec").val();
+    var data = {};
+
+      $.ajax({
+        type : 'GET',
+        url : "{% url 'm9getwono' %}",
+        dataType : 'json',
+        data : data,
+        success : function(response){
+          var elementsadded = document.querySelectorAll(".newelewo1");
+              if(elementsadded.length>0){
+                var elementsaddedarr = Array.from(elementsadded);
+              elementsaddedarr.forEach((el)=> el.remove());
+              document.querySelector("#op_wo").selected = true;
+             
+              
+    
+              
+              }
+              var brarr,mystr,html;
+              brarr = response.map((el)=>el.bo_no);
+              mystr = "";
+              brarr.forEach((el,index)=>{
+                html = `<option class="newelewo1">${brarr[index]}</option>`
+                mystr = html.concat(mystr);
+              });
+              html = "";
+              document.querySelector("#wo_no").insertAdjacentHTML('beforeend',mystr);
+              mystr="";
+        }
+           })
+           }) 
+
+
+
+
+           $("#mw").change(function(e){
+            e.preventDefault();
+            var  mw= $("#mw").val();
+            var data = {mw};
+            if(mw>3){
+              alert("mw no greater than 3 is not present");
+              document.getElementById('mw').value='';
+              document.getElementById('mg9').value='';
+            }
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'm9getmw' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){
+                  
+                  document.getElementById('mg9').value=response[0].mw_no; 
+            
+                      
+                      }
+                    
+                      
+                   })
+                  
+                   }) 
+        
+                   $("#sbc").change(function(e){
+                    e.preventDefault();
+                    var sbc = $("#sbc").val();
+                    var data = {sbc};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm9getsbc' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          if(response.length == 0){
+                            alert("please fill appropriate data for SUSPENDED JOB CARD");
+                            document.getElementById('sbc').value="";
+                                              }
+                             
+                        }
+                           })
+                          })
+
+
+                          $("#rjc").change(function(e){
+                            e.preventDefault();
+                            var rjc = $("#rjc").val();
+                            var data = {rjc};
+                              $.ajax({
+                                type : 'GET',
+                                url : "{% url 'm9getrjc' %}",
+                                dataType : 'json',
+                                data : data,
+                                success : function(response){
+                                  if(response.length == 0){
+                                    alert("please fill appropriate data for RESUME JOB CARD");
+                                    document.getElementById('rjc').value="";
+                                                      }
+                                     
+                                }
+                                   })
+                                  })
+        
+
+
+
+           $(document).ready(function () {
+            $('#ddate').datepicker({ dateFormat: 'dd-mm-yy', });
+        });
+
+        
+        var val,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15;
+
+
+        $("#ddate").on("change", function() { 
+          val1=$('#ddate').val();
+         
+
+        });
+        $(".abc").on("change", function() { 
+          val2=($(this).val());
+        });
+      
+        $(".def").on("change", function() { 
+          val14=($(this).val());
+        });
+      
+          
+        $("#sbc").on("change", function() { 
+          val4=$('#sbc').val();
+        });
+        $("#rjc").on("change", function() { 
+          val5=$('#rjc').val();
+        });
+        $("#mw").on("change", function() { 
+          val6=$('#mw').val();
+        });
+         
+         
+
+        $("#optr").on("change", function() { 
+          val9=$('#optr').val();
+        });
+        $("#opter").on("change", function() { 
+          val10=$('#opter').val();
+        });
+        $("#prev").on("change", function() { 
+          val11=$('#prev').val();
+        });
+        $("#cat").on("change", function() { 
+          val12=$('#cat').val();
+        });
+        $("#rem").on("change", function() { 
+          val13=$('#rem').val();
+        });
+
+        function save_db(){
+          if (val2==null)
+          {
+            val2=$('#itc').val();
+          }
+          if(val14==null)
+          {
+            val14=$('#ittime').val();
+          }
+          val15=$('#sec').val();
+          val7=$('#mg9').val();
+          val=$('#wono').val();
+          val3=$('#cdno').val();
+          val8=$('#oprn').val();
+          var temp = {val,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val15,val14};
+          var data = temp; 
+          var part;
+                       
+          $.ajax({
+                      type : 'GET',
+                      url : "{% url 'save_sm9' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response)
+                          {    
+                            
+                            alert("Data saved successfully"); 
+                            fun();
+                             
+                                                                                   
+                          }
+                          
+                      })
+      }
+
+        function fun()
+        {
+          if (val2==null)
+          {
+            val2=$('#itc').val();
+          }
+          if(val14==null)
+          {
+            val14=$('#ittime').val();
+          }
+          val15=$('#sec').val();
+          val7=$('#mg9').val();
+          val=$('#wono').val();
+          val3=$('#cdno').val();
+          val8=$('#oprn').val();
+           data={val,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val15,val14};
+           $.ajax({
+             type : 'GET',
+             url : "{% url 'get_value' %}",
+             dataType : 'json',
+             data:data,
+             success : function(response){
+               $("#first").show();
+                  var trHTML = '';
+                  $.each(response, function (i, item) {
+
+                      trHTML += '<tr><td>' + item.idle_time_man_mac + '</td><td>' +  item.date + '</td><td>' +  item.wo_no + '</td><td>' +  item.part_no + '</td><td>' +  item.sus_jbno + '</td><td>' +  item.res_jno + '</td><td>' +  item.mw_no + '</td><td>' +  item.mg9_no + '</td><td>' +  item.aff_opn + '</td><td>' +  item.empno + '</td><td>' +  item.empname + '</td><td>'  + item.prev_empno + '</td><td>' +  item.cat + '</td><td>' +  item.remark+ ' </td></tr>';
+                  });
+                  trHTML+='</tbody>'
+                  $('#first').append(trHTML);
+                  
+                 
+                  $(document).ready(function() {         
+                  $('#first').DataTable();  
+
+                 });
+               } 
+             
+             });
+            }
+
+document.querySelector("#wo_no").addEventListener('change',(e)=>{
+  $("#id1").show();
+  document.getElementById('sec').value=$('#shop_sec').val();
+  document.getElementById('cdno').value=$('#part_nop').val();
+  document.getElementById('oprn').value=$('#op_opno').val();
+  document.getElementById('wono').value=$('#wo_no').val();
+  
+
+//document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+
+
+}
+})
+function autocomplete(inp, arr) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+          b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+  });
+}
+/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+autocomplete(document.getElementById("part_nop"), countries);
+autocomplete(document.getElementById("op_opno"), countries1);
+autocomplete(document.getElementById("wo_no"), countries2);
+
+</script>    
+
+{% endblock content %}

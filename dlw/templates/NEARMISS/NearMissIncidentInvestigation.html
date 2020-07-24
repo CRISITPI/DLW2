@@ -1,0 +1,798 @@
+{% extends 'base.html' %} 
+{% block content %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+             
+        </style>
+    </head>
+    <body>
+        <form action="{% url 'NearMissIncidentInvestigation' %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <br><br>
+            <center>
+            <h3>NEAR MISS INCIDENT INVESTIGATION FORM</h3>
+            <h4>(To be filled by SSE/CDMS concern)</h4>
+            <br><br>
+            </center>
+            <!-- <p>S No. <input type="text">Date <input type="text"></p> -->
+
+            <div class="container">
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">S No. :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto" style="width:150px">                        
+
+                        <input type="text" class="form-control mb-2" id="sno_id" name="sno" value={{sno}} maxlength="10" required >
+                        
+                    </div>
+  
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Date :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="date_id" name="date" autocomplete="off" required>
+                        
+                    </div>
+
+                </div> 
+            </div>
+            <br><br>
+            <center>
+            <h5><b>Section-1 : Date Time & Location</b></h5>
+            </center>
+            <br>
+            <div class="container">
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Date of Incident :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="doi_id" name="doi" maxlength="8" autocomplete="off" required>
+                        
+                    </div>
+
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b>Time of Incident :</b></label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="toi_id" name="toi" maxlength="5" autocomplete="off" onkeypress="validate1HhMm(this);"  onchange="validateHhMm(this);"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 58' placeholder="00:00" required>
+                    </div>
+
+                </div>  
+               
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Location of Incident(i.e. LTS,LAS,Ward etc) :</b></label>
+                           
+                        </div>
+                
+                    </div>
+
+                    <div class="col-auto">                        
+                        <input type="text" class="form-control mb-2" id="loc_id" name="location" maxlength="30"style="width:200px" readonly value={{shopno}}>
+                    </div>
+                    
+                    
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Unit/Section :</b></label>
+                           
+                        </div>
+                
+                    </div>
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="unit" name="unit" maxlength="15" required>
+                    </div>
+                    
+                    
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Name and Designation of SSE/CDMS(Incharge) :</b></label>
+                           
+                        </div>
+                
+                    </div>
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="ssename" name="ssename" value="{{ssename}}" maxlength="50" readonly>
+                        
+                    </div>
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="ssedesig" name="ssedesig" value="{{ssedesig}}" maxlength="50" readonly>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Fire Explosion(if any) :</b></label>
+                           
+                        </div>
+                
+                    </div>
+
+                    <div class="col-auto">                        
+
+                        <textarea style="width:605px;"id="fire_exp" name="fire_exp" maxlength="200"></textarea>
+                    </div>
+                    
+                    
+                </div>
+            </div>            
+            <br>
+            <center>
+                <h5><b>Section-2 : Brief Description</b></h5>
+            </center>
+            <br>
+            <div class="container">
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Employee in involved in Incient :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="emp_involveid" name="emp_involve" placeholder="Enter Id" maxlength="20" required>
+                    </div>
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="emp_inname" name="emp_inname" maxlength="50" readonly>
+                    </div>
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="emp_indesig" name="emp_indesig" maxlength="50" readonly>
+                    </div>
+
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Others(Who involved in Incient) :</b></label>
+
+                        </div>
+                
+                    </div>
+
+                    <div class="col-auto">                        
+
+                        <textarea style="width:612px; " id="otherinvolve" name="otherinvolve" maxlength="50"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Brief Description of Incident :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+                         <textarea style="width:638px;" id="briefdes" name="briefdes" maxlength="200" required></textarea>
+                    </div>
+
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Details of damages to infrastructure :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+                         <textarea style="width:575px;" id="damage_detail" name="damage_detail" maxlength="500"></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+            <br>
+            <center>
+                <h5><b>Section-3 : Investigation/Site Appraisal</b></h5>
+            </center>
+            <br>
+            <div class="container">
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Site Skectch (if required enclosed layout/photograph) :</b></label>
+
+                        </div>
+                        <input type="hidden" id = "hide2" name = "hide2" value="0">
+                    </div>
+
+
+                    <div class="col-auto">                        
+                        <input type="file" class="form-control mb-2" id="site_sketch" name="site_sketch">
+                    </div>
+
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div style="margin-left: 600px;">
+                        <span id=test name="test"><a></a></span>
+                        <span id =test1></span>
+                        <input type="hidden" id="pic" name="pic">
+                        </div>
+                              
+                    </div>
+                </div>
+                <br>
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;"> Details of Observation at site/component /M&P:</b></label>
+
+                        </div>
+                       
+                           
+                    </div>
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Section Bay :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="sec_bay" name="sec_bay" maxlength="20" required>
+
+                    </div>
+
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: -25px;">Plant/Machine/Machinde Tools :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="machine" name="machine" maxlength="20" required>
+
+                    </div>
+
+
+                </div>
+
+               
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">General Condition of Work environment :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <textarea style="width:445px;" id="work_en" name="work_en" maxlength="200" required></textarea>
+                    </div>
+
+                </div>
+
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Other(Specify) :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <textarea style="width:630px;" id="otherwork_en" name="otherwork_en" maxlength="300"></textarea>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+            <br>
+            <center>
+                <h5><b>Section-4 </b></h5>
+            </center>
+            <div class="container">
+                <br>
+                <!-- <div class="form-row align-items-center">   
+
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Details of Analysis of failure/incident :</b></label>
+
+                        </div>
+                
+                    </div>
+                    <div class="col-auto">                        
+
+                        <textarea style="margin-left: 175px; width:500px;" id="fail_analysis" name="fail_analysis" maxlength="500" required></textarea>
+
+                    </div>
+                </div> -->
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Details of Analysis of failure/incident :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <textarea style="width:460px;" id="fail_analysis" name="fail_analysis" maxlength="500" required></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <br>
+
+            <center>
+                <h5><b>Section-5 </b></h5>
+            </center>
+            <div class="container">
+                <br>
+                
+                <div class="form-row align-items-center">   
+
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Responsibity :</b></label>
+
+                        </div>
+                
+                    </div>
+
+                    <div class="col-auto">                        
+
+                        <textarea style="width:640px ;" id="responsibility" name="responsibility" maxlength="500" required></textarea>
+
+                    </div>
+                </div>
+            </div>
+            
+            <br>
+
+            <center>
+                <h5><b>Section-6 </b></h5>
+            </center>
+            <div class="container">
+                <br>
+                <div class="form-row align-items-center">   
+
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Preventive and Corrective Action :</b></label>
+
+                        </div>
+                
+                    </div>
+                    <div class="col-auto">                        
+
+                        <textarea style="width: 490px;" id="corr_action" name="corr_action" maxlength="500" required></textarea>
+
+                    </div>
+                </div>
+            </div>
+
+            <br><br>
+            
+             
+            <!-- <div class="container">
+                <br>
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 170px;">Name Of SSE :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="partno_id" name="partno" maxlength="8">
+                        
+                    </div>
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 100px;">Date :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="partno_id" name="partno" maxlength="8">
+                        
+                    </div>
+                </div>
+            </div>
+            <br> -->
+            <div class="container">
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 165px;">Comments of AU Incharge :</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <!-- <input type="text" class="form-control mb-2" id="partno_id" name="partno" maxlength="8"> -->
+                        <textarea style="width:540px;" name="aucomment" id="aucomment" maxlength="200" required></textarea>
+                    </div>
+
+                </div>
+            </div>
+            <br><br>
+            <div class="container">
+                <div class="form-row align-items-center">   
+                    <div class="col-auto">
+
+                        <div class="form-check mb-2">
+
+                            <label class="form-check-label" ><b style="margin-left: 160px;">AU Incharge Name and Designation:</b></label>
+
+                        </div>
+                
+                    </div>
+
+
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="auinid" name="auinid" placeholder="Enter Id" maxlength="20" required>
+                    </div>
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="auinname" name="auinname" maxlength="50" readonly>
+                    </div>
+                    <div class="col-auto">                        
+
+                        <input type="text" class="form-control mb-2" id="auindesig" name="auindesig" maxlength="50" readonly>
+                    </div>
+
+                </div>
+            </div>
+            <br>
+                <center>
+                    <input type="button" id="clear" value="Clear"  class="btn btn-success"  onclick="window.location.reload();">
+                    <input type="submit" id="save" value="Save" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%} name="Save">
+                    <input type="button" id="lcno_id"  class="btn btn-success" name="lcnobtn" value="Back" onclick="window.history.back();">
+                </center>
+
+                
+                <div id="hide1" style="display: none;">
+                <center>
+                    <input type="submit" id="Update" class="btn btn-success" {% if usermaster.op_update %}{% else %} disabled {% endif%} value="Update" name="Update">
+                    <input type="submit" id="report" class="btn btn-success"   value="Report" name="Report">
+                </center>
+                </div>
+                <br>
+                <br> 
+                <br>
+                <br>
+        </form>
+    </body>
+    <script>
+        $(document).ready(function () {
+            $('#date_id').datepicker({ dateFormat: 'dd-mm-yy'}).datepicker("setDate", "0");
+            $('#doi_id').datepicker({ dateFormat: 'dd-mm-yy', }); 
+            
+        });
+        function validateHhMm(inputField) {
+            var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(inputField.value);
+            
+    
+            if (!(isValid)) {            
+               alert("Please Enter Correct Time");
+               document.getElementById('toi_id').value=""; 
+               document.getElementById("toi_id").focus();
+            }
+            return isValid;		
+        }
+        function validate1HhMm(inputField) {		
+            if(inputField.value.length == 2){
+                inputField.value += ":";
+    
+            }
+        }
+        
+        document.querySelector("#emp_involveid").addEventListener('change',(e)=>{
+                     
+            e.preventDefault();                        
+            var emp_involve = $("#emp_involveid").val()
+            var data = {emp_involve};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'NearMissIncidentInvestigationDetails' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){   
+                if(response.length == 0)
+                {
+                        document.getElementById('emp_indesig').value=""; 
+                        document.getElementById('emp_inname').value="";
+                        alert("Please Enter Correct Id");
+                        document.getElementById('emp_involveid').value="";  
+                        document.getElementById('emp_involveid').focus();                     
+                }
+                else 
+                {                            
+                    document.getElementById('emp_indesig').value=response[0].desig_longdesc; 
+                    document.getElementById('emp_inname').value=response[0].empname; 
+                }
+                }
+                  })
+
+        });
+
+        document.querySelector("#auinid").addEventListener('change',(e)=>{
+                     
+            e.preventDefault();                        
+            var emp_involve = $("#auinid").val()
+            var data = {emp_involve};
+              $.ajax({
+                type : 'GET',
+                url : "{% url 'NearMissIncidentInvestigationDetails' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){   
+                if(response.length == 0)
+                {
+                        document.getElementById('auindesig').value=""; 
+                        document.getElementById('auinname').value="";
+                        alert("Please Enter Correct Id");
+                        document.getElementById('auinid').value="";  
+                        document.getElementById('auinid').focus();
+
+                }
+                else
+                {
+                    document.getElementById('auindesig').value=response[0].desig_longdesc; 
+                    document.getElementById('auinname').value=response[0].empname; 
+                }                             
+               
+                }
+                  });
+
+        });
+
+        document.querySelector("#site_sketch").addEventListener('change',(e)=>{
+                     
+            e.preventDefault(); 
+            var s= $("#site_sketch").val();
+            if(s == "")
+            {
+            document.getElementById('hide2').value="0";
+            }
+            else
+            {
+                document.getElementById('hide2').value="1";
+            }
+        });
+
+        document.querySelector("#sno_id").addEventListener('change',(e)=>{
+            e.preventDefault();  
+            var sno = $('#sno_id').val();
+            var loc = $('#loc_id').val();
+            var data = {sno,loc};
+            $.ajax({
+                type : 'GET',
+                dataType : 'json',
+                url : "{% url 'NearMissInvestigationGetAllDetails' %}",
+                data : data,
+                success : function(response){
+                    if(response.length !=0)
+                    {
+                        alert("The record corresponding to this shop and sno is already present.");
+                        document.getElementById('sno_id').value=response[0].sno;
+                        document.getElementById('date_id').value=response[0].date;
+                        document.getElementById('doi_id').value=response[0].incident_date;
+                        document.getElementById('toi_id').value=response[0].incident_time;
+                        document.getElementById('loc_id').value=response[0].incident_location;
+                        document.getElementById('unit').value=response[0].unit_section;
+                        document.getElementById('ssename').value=response[0].sse_name;
+                        document.getElementById('ssedesig').value=response[0].sse_designation;
+                        document.getElementById('fire_exp').value=response[0].fire_explosion;
+                        document.getElementById('emp_involveid').value=response[0].employee_involve_id;
+                        document.getElementById('emp_inname').value=response[0].employee_involve_name;
+                        document.getElementById('emp_indesig').value=response[0].employee_involve_designation;
+                        document.getElementById('otherinvolve').value=response[0].otherinvolve;
+                        document.getElementById('briefdes').value=response[0].incident_description;
+                        document.getElementById('damage_detail').value=response[0].details_of_damages_to_infrastructure;
+                        var a =  response[0].site_sketch;
+                        
+                        var res = a.replace("investigationdoc/", "");
+                       
+                        if(a != "")
+                        {
+                        document.getElementById('test').innerHTML = '<a href="/media/'+a+'" download='+res+'>'+res+'</a>';
+                        document.getElementById('test1').innerHTML ="(Please download and attach as Annexure-I)";
+                        document.getElementById('pic').value= res;
+                        }
+                        document.getElementById('sec_bay').value=response[0].section_bay;
+                        document.getElementById('machine').value=response[0].plant_machine_tools;
+                        document.getElementById('work_en').value=response[0].condition_of_work_environment;
+                        document.getElementById('otherwork_en').value=response[0].others;
+                        document.getElementById('fail_analysis').value=response[0].details_of_analysis_of_incident;
+                        document.getElementById('responsibility').value=response[0].responsibility;
+                    
+                        document.getElementById('corr_action').value=response[0].prevention_and_corrective_action;
+                        document.getElementById('aucomment').value=response[0].comments_of_au_incharge;
+                        document.getElementById('auinid').value=response[0].au_incharge_id;
+                        document.getElementById('auinname').value=response[0].au_incharge_name;
+                        document.getElementById('auindesig').value=response[0].au_incharge_designation;
+                        $("#hide1").show();
+                        $("#save").hide();
+                    }
+                    else
+                    {
+                        document.getElementById('date_id').value="";
+                        document.getElementById('doi_id').value="";
+                        document.getElementById('toi_id').value="";
+                        document.getElementById('loc_id').value="";
+                        document.getElementById('unit').value="";
+                        document.getElementById('ssename').value="";
+                        document.getElementById('ssedesig').value="";
+                        document.getElementById('fire_exp').value="";
+                        document.getElementById('emp_involveid').value="";
+                        document.getElementById('emp_inname').value="";
+                        document.getElementById('emp_indesig').value="";
+                        document.getElementById('otherinvolve').value="";
+                        document.getElementById('briefdes').value="";
+                        document.getElementById('damage_detail').value="";
+                        document.getElementById('test').innerHTML = "";
+                        document.getElementById('test1').innerHTML ="";
+
+                        document.getElementById('sec_bay').value="";
+                        document.getElementById('machine').value="";
+                        document.getElementById('work_en').value="";
+                        document.getElementById('otherwork_en').value="";
+                        document.getElementById('fail_analysis').value="";
+                        document.getElementById('responsibility').value="";
+                    
+                        document.getElementById('corr_action').value="";
+                        document.getElementById('aucomment').value="";
+                        document.getElementById('auinid').value="";
+                        document.getElementById('auinname').value="";
+                        document.getElementById('auindesig').value="";
+                        $("#hide1").hide();
+                        $("#save").show();
+                    }
+                }
+            })
+        });  
+    </script>
+</html>
+{% endblock content%}

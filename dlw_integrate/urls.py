@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
@@ -47,7 +49,6 @@ urlpatterns = [
     path('update_permission_incharge/',update_permission_incharge,name='update_permission_incharge'),
     path('update_emp_shift/',update_emp_shift,name='update_emp_shift'),
     path('update_emp_shift_admin/',update_emp_shift_admin,name='update_emp_shift_admin'),
-    path('test/',test,name='test'),
     path('m2view/',m2view,name='m2view'),
     path('ajax/m2_view_shop/',m2_view_shop,name='m2_view_shop'),
     path('ajax/m2_process_sheet/',m2_process_sheet,name='m2_process_sheet'),
@@ -160,8 +161,6 @@ urlpatterns = [
     path('ajax/mg7getpartno/', mg7getpartno, name='mg7getpartno'),
     path('ajax/mg7getshop/', mg7getshop, name='mg7getshop'),
     path('ajax/mg7getjob/', mg7getjob, name='mg7getjob'),
-    path('m23view/',m23view,name='m23view'),
-    path('m23getempno/',m23getempno,name='m23getempno'),
     path('ajax/bogieassemb_addbo',bogieassemb_addbo,name="bogieassemb_addbo"),
     path('ajax/bogieassemb_editsno',bogieassemb_editsno,name="bogieassemb_editsno"),
     path('bogieassembly/',bogieassembly_section,name='bogieassembly'),
@@ -215,10 +214,11 @@ urlpatterns = [
     path('ajax/getpartdecription',getpartdecription,name='getpartdecription'),
     path('ajax/getsubgrp2',getsubgrp2,name='getsubgrp2'),
     path('ajax/getDiscription',getDiscription,name='getDiscription'),
-    
     path('ajax/GenerateNewPartNo',GenerateNewPartNo,name='GenerateNewPartNo'),
     path('examdetail/',exam_detail,name='examdetail'),
     path('m23view/',m23view,name='m23view'),
+    path('m23pdf/',m23pdf,name='m23pdf'),
+    path('m23edit',m23edit,name='m23edit'),
     path('m23report/',m23report,name='m23report'),
     path('m23getempno/',m23getempno,name='m23getempno'),
     path('ajax/getm23date',getm23date,name='getm23date'),
@@ -649,7 +649,45 @@ urlpatterns = [
     path('ajax/PpncDemvalidation3',PpncDemvalidation3,name='PpncDemvalidation3'),
     path('ajax/PpncDemlocofunc',PpncDemlocofunc,name='PpncDemlocofunc'),
     path('ajax/PpncDemlocofunc1',PpncDemlocofunc1,name='PpncDemlocofunc1'),
-    path('ajax/PpncDemlocofunc2',PpncDemlocofunc2,name='PpncDemlocofunc2')
+    path('ajax/PpncDemlocofunc2',PpncDemlocofunc2,name='PpncDemlocofunc2'),
+    path('batchorderupd/',batchorderupd,name='batchorderupd'),
+    path('ajax/v_bo/',v_bo,name='v_bo'),
+    path('ajax/vlft/',vlft,name='vlft'),
+    path('ajax/vwk/',vwk,name='vwk'),
+    path('ajax/vqt/',vqt,name='vqt'),
+    path('ajax/next/',next,name='next'),
+    path('ajax/Prev/',Prev,name='Prev'),
+    path('ajax/save/',save,name='save'),
+    path('ajax/key_f6/',key_f6,name='key_f6'),
+    path('ajax/Grid_part_RowCommand/',Grid_part_RowCommand,name='Grid_part_RowCommand'),
+    path('ajax/v_pt/',v_pt,name='v_pt'),
+    path('ajax/v_bt/',v_bt,name='v_bt'),
+    path('ajax/altdoc/',altdoc,name='altdoc'),
+    path('ajax/v_seq/',v_seq,name='v_seq'),
+    path('ajax/V_EP/',V_EP,name='V_EP'),
+    path('ajax/v_altpart/',v_altpart,name='v_altpart'),
+    path('ajax/v_alto/',v_alto,name='v_alto'),
+    path('ajax/Key_F9_F11/',Key_F9_F11,name='Key_F9_F11'),
+    path('ajax/key_F7_1/',key_F7_1,name='key_F7_1'),
+    path('ajax/key_F5_alt/',key_F5_alt,name='key_F5_alt'),
+    path('ajax/key_f1_alt/',key_f1_alt,name='key_f1_alt'),
+    path('ajax/key_f1/',key_f1,name='key_f1'),
+    path('ajax/key_f1_con/',key_f1_con,name='key_f1_con'),
+	path('addAddtionview/',addAddtionview,name='addAddtionview'),
+    path('ajax/addBatchwono/',addBatchwono,name='addBatchwono'),
+    path('ajax/getBatchAdditionno/',getBatchAdditionno,name='getBatchAdditionno'),
+    path('ajax/getepc/',getepc,name='getepc'),
+    path('ajax/getAsslyNo/',getAsslyNo,name='getAsslyNo'),
+    path('ajax/batchAdditionsave/',batchAdditionsave,name='batchAdditionsave'),
+    path('ajax/batchAddupdatedata/',batchAddupdatedata,name='batchAddupdatedata'),
+    path('ajax/repRWOReport/',repRWOReport,name='repRWOReport'),
+    path('ajax/BatchRelReport/',BatchRelReport,name='BatchRelReport'),
+    path('ajax/BatchTallyReport/',BatchTallyReport,name='BatchTallyReport'),
+    path('ajax/batchAddBrn_no/',batchAddBrn_no,name='batchAddBrn_no'),
+    path('NearMissIncidentInvestigation/',NearMissIncidentInvestigation,name='NearMissIncidentInvestigation'),
+    path('ajax/NearMissIncidentInvestigationDetails/',NearMissIncidentInvestigationDetails,name='NearMissIncidentInvestigationDetails'),
+    path('ajax/NearMissInvestigationGetAllDetails/',NearMissInvestigationGetAllDetails,name='NearMissInvestigationGetAllDetails'),
+    
 
 ]
 

@@ -1,0 +1,470 @@
+{% extends 'base.html' %} {% block content %}
+<br>
+<br>
+<h3 align="center">M13 Card<br>Inspection note-Insert</h3>
+<br>
+<center>
+  {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+      <font size="3">
+          <li>
+              <h3>{{message}}</h3>
+          </li>
+      </font>
+      {% endfor %}
+  </ul>
+  {% endif %}
+</center>
+<br>
+<form action="{% url 'm13insert' %}" method="POST" id="m13form"> {%csrf_token%}
+    <div class="container">
+        <table id="head" class="table">
+            <tr>
+                <td>
+                    <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label> 
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+            <option value="" id="op_shop" selected disabled hidden>Select Shop Section</option>
+              
+            {% for role in roles %}
+             <option>{{role.section_code}}</option>
+            {% endfor %}
+           
+        </select>
+                </td>
+                <td>
+                    <label for="wk_ord_no"><b>WORK ORDER NO:/कार्यादेश सं. :</b></label>
+                    <select class="form-control" id="wno" name="wo_no" required>
+        <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+        {% if lenm == 1 %}
+        {% for i in wo_no %}
+        <option>{{i.wo}}</option>
+        {% endfor %}
+        {% endif %}
+    </select>
+                </td>
+                <td>
+                    <label for="partno"><b>PART NO:/पार्ट सं.:</b></label>
+                    <select class="form-control" id="part_nop" name="part_nop" required>
+            <option id="op_part" selected disabled hidden>Select Part No</option>
+        </select>
+                </td>
+                <!-- <td>
+                    <label for="m13no"><b>M13 NO:</b></label>
+                    <select class="form-control" id="m13_no" name="m13_no" required>
+            <option id="op_m13no" selected disabled hidden>Select M13 No</option>
+        </select>
+                </td> -->
+            </tr>
+        </table>
+
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+
+
+    </div>
+ <br><br> 
+
+<div id="print"  style="display: none;">
+  <h5 style="float: left"><b>DLW</b><br><b>VARANASI</b></h5>
+  <center><h4><u><B>INSPECTION NOTE</B></u></h4></center>
+  <h5 style="float: right"><b>M-13 NO</b><input type="textbox" name="m13no" id="m13no"><br><b>M13 DATE-</b><input type="" name="date" id="date"></h5>
+<br>
+<br>
+<table border="2" align="center" width="100%">
+  <tr>
+  <th><h5><b>ORDER & BATCH NO: </b> </h5></th>
+  <th><h5><b>C&D NO.:</b> </h5></th>
+  <th><h5><b>DRAWING NO:</b></h5></th>
+  <th  ><h5><b>NAME OF PARTS: </b></b></h5></th>
+  <th  ><h5><b>SLno: </b></b></h5></th>
+  <th  ><h5><b>M13 sn: </b></b></h5></th>
+  <th  ><h5><b>EPC: </b></b></h5></th>
+  </tr>
+  <tr>
+    <td><input type="text" name ="order" id="order" readonly></td>
+    <td><input type="text" name ="cd_no" id="cd_no" readonly></td>
+    
+    <td><input type="text" name ="draw" id="draw" readonly></td>
+    <td><input type="text" name ="part_name" id="part_name" readonly></td>
+    
+    <td ><input type="text" name ="slno" id="slno" maxlength="4" readonly></td>
+    <!-- <input type="hidden" name="slno1"  > -->
+    <td ><input type="text" name ="m13_sn" id="m13_sn" maxlength="7"></td>
+    <td ><input type="text" name ="epc" id="epc" readonly></td>
+    </tr>
+    <tr>
+      <td><h5><b>QUANTITY TOTAL </b></h5></td>
+      <td><h5><b>QUANTITY INSPECTED </b></h5></td>
+      <td><h5><b>QUANTITY PASSED </b></h5></td>
+      <td><h5><b>QUANTITY REJECTED </b></h5> </td>
+      <td><h5><b>OPERATION OR STAGE NUMBER </b></h5></td>
+      <td><h5><b>SOURCE OF SUPPLY </b></h5></td>
+      <td><h5><b>JOB </b></h5></td>
+      
+      </tr>
+      <tr>
+        <td><input type="text" id="qty_tot" name ="qty_tot" readonly></td>
+        <td><input type="text" id="qty_ins"name ="qty_ins"></td>
+        <td><input type="text" id="qty_pas" name ="qty_pas" ></td>
+        <td><input type="text" id="qty_rej" name ="qty_rej" readonly></td>
+        <td><input type="text" name ="opn" id="opn"></td>
+        <td><input type="text" name ="vendor_cd" id="vendor_cd"></td>
+        <td><input type="text" name ="job_no" id="job_no"></td>
+        
+        
+        </tr>
+        <tr>
+          <td><h5><b>SCRAPPED IN SHOP </b></h5></td>
+          <td><h5><b>FAULT MADE BY </b></h5></td>
+          
+          <td><h5><b>Chargeable work order </b></h5></td>
+          <td><h5><b>M15 no </b></h5></td>
+          
+          <td><h5><b>rej_cat</b></h5></td>
+          <td colspan="2"><h5><b>REASON FOR REJECTION</b></h5></td>
+          
+          </tr>
+          <tr>
+            <td><input type="text" name="shop" id="shop" readonly></td>
+            
+            <td><select id="fault_cd" name="fault_cd"><option>Select</option><option value="TLG">TLG</option><option value="INM">INM</option><option value="DSG">DSG</option><option value="MAN">MAN</option><option value="MAT">MAT</option><option value="MIS">MIS</option><option value="MNP">MNP</option></select>
+              <input type="text" id="emp_id" name="emp_id" style="width:100px; display: none;" placeholder="STAFF_NO"></td>
+            <!-- <td><input type="text" name ="fault_cd" ></td> -->
+            
+            <td><input type="text" name ="wo_rep" id="wo_rep"></td>
+            <td><input type="text" name ="m15_no"></td>
+            <td><input type="text" name ="rej_cat" id="rej_cat"></td>
+            <td colspan="2"><input type="text" name ="reason" id="reason" style="width: 100%"></td>
+            
+            
+            </tr>
+  </table>
+  
+<h6 style="float: left">MATERIAL RETURNED VALUE</b><br><br><br>signature of inspector & date</b></h6>
+
+<center><h6>REJECT AND REPLACE/ RECTIFY<br><br><br>date<br>signature of foreman & date</h6></center>
+<h6 style="float: right">WORKS MANAGER</b></h6>
+
+<center>
+    <input type="button" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  name="proceed1" value="Save" onclick="fun()">
+    <input type="submit" name="proceed" id="proceed" value="Save" hidden>
+</center> 
+</div>  
+</div>
+
+</form>
+<script>
+  
+    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                      e.preventDefault();
+                      var shop_sec = $("#shop_sec").val()
+                      var data = {shop_sec};
+                        $.ajax({
+                          type : 'GET',
+                          url : "{% url 'm13getwono' %}",
+                          dataType : 'json',
+                          data : data,
+                          success : function(response){
+                            if(response == ''){
+                                   alert("work order NO Not Found for Shop Section:"+shop_sec);
+                                   window.location='';
+                                   }
+                            var elementsadded = document.querySelectorAll(".newelewono");
+                                if(elementsadded.length>0){
+                                    var elementsaddedarr = Array.from(elementsadded);
+                                    elementsaddedarr.forEach((el)=> el.remove());
+                                    document.querySelector("#op_wo").selected=true;
+                                    document.querySelector("#op_m13no").selected = true;
+                                    document.querySelector("#op_part").selected = true;
+                                    
+                                     
+                                 }
+                                var brarr,mystr,html;
+                                brarr = response.map((el)=>el.bo_no);
+                                mystr = "";
+                                brarr.forEach((el,index)=>{
+                                  html = `<option class="newelewono">${brarr[index]}</option>`
+                                  mystr = html.concat(mystr);
+                                });
+                                html = "";
+                                document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                                mystr=""; 
+                          }
+                            })
+                  })
+    
+    $("#wno").change(function(e){
+        e.preventDefault();
+        var wo_no = $(this).val();
+        var shop_sec = $("#shop_sec").val();
+        var data = {wo_no,shop_sec};
+          $.ajax({
+            type : 'GET',
+            url : "{% url 'm13getpano' %}",
+            dataType : 'json',
+            data : data,
+            success : function(response){
+              if(response == ''){
+                                   alert("Part NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no);}
+                  var elementsadded = document.querySelectorAll(".newelepart");
+                  if(elementsadded.length>0){
+                    var elementsaddedarr = Array.from(elementsadded);
+                  elementsaddedarr.forEach((el)=> el.remove());
+                  
+                  document.querySelector("#op_m13no").selected = true;
+                  document.querySelector("#op_part").selected = true;
+                  
+                  
+                  }
+                  var brarr,mystr,html;
+                  brarr = response.map((el)=>el.part_no);
+                  mystr = "";
+                  brarr.forEach((el,index)=>{
+                    html = `<option class="newelepart">${brarr[index]}</option>`
+                    mystr = html.concat(mystr);
+                  });
+                  html = "";
+                  document.querySelector("#part_nop").insertAdjacentHTML('beforeend',mystr);
+                  mystr="";
+            }
+               })
+               }) 
+               $("#part_nop").change(function(e){
+                e.preventDefault();
+                var wo_no = $('#wno').val();
+                var part_no=$(this).val();
+                
+                // var shop_sec = $("#shop_sec").val();
+                var data = {part_no,wo_no};
+                $.ajax({
+                  type : 'GET',
+                  url : "{% url 'm13get1' %}",
+                  dataType : 'json',
+                  data : data,
+                  success : function(response){
+                    if(response.length>0)
+                    {
+                      document.getElementById('draw').value=response[0].drgno;
+                      document.getElementById('part_name').value=response[0].des;
+                      document.getElementById('order').value=document.getElementById('wno').value;
+                      document.getElementById('cd_no').value=document.getElementById('part_nop').value;
+                      document.getElementById('shop').value=document.getElementById('shop_sec').value;
+                      document.getElementById('qty_tot').value=response[1][0].qty;
+                      if(response[2]=='')
+                      {
+                          document.getElementById('slno').value=1;
+                      }
+                      else{
+                        x=parseInt(response[2])
+                        x=x+1;
+                        document.getElementById('slno').value=x;
+                      }
+                        
+                      document.getElementById('epc').value=response[3][0].ep_type;
+                      var d = new Date();
+                      var day = ('0' + d.getDate()).slice(-2);
+   var month= ('0' + (d.getMonth()+1)).slice(-2);
+   var year = d.getFullYear(); 
+   var n = day + '/' + month + '/' + year ;
+  //  document.getElementById("datepicker2").defaultValue = n;
+                      document.getElementById('date').value=n;
+
+                      $('#print').show();
+                    }
+                  }
+                })
+
+
+
+})
+
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+
+
+}
+})
+$('#qty_rej').change(function(e)
+{
+    //alert("hsdfjds");
+    var qty_ins=document.getElementById('qty_ins').value;
+    var qty_pas=document.getElementById('qty_pas').value;
+    var qty_rej=document.getElementById('qty_rej').value;
+    var x=parseInt(qty_pas)+parseInt(qty_rej);
+    var y=parseInt(qty_ins);
+    if($.isNumeric(qty_rej))
+  {
+    if(x>y)
+    {
+      alert("Quantity inspected should be higher than sum of quantity rejected and quantity passed");
+      document.getElementById('qty_ins').value="";
+      document.getElementById('qty_pas').value="";
+      document.getElementById('qty_rej').value="";
+    }
+    }
+    else{
+    alert("Quantity inspected must be numeric value")
+}
+});
+$('#qty_pas').change(function(e)
+{
+    //alert("hsdfjds");
+    var qty_ins=document.getElementById('qty_ins').value;
+    var qty_pas=document.getElementById('qty_pas').value;
+    var qty_rej=document.getElementById('qty_rej').value;
+    var x=parseInt(qty_pas)+parseInt(qty_rej);
+    var y=parseInt(qty_ins);
+    if($.isNumeric(qty_pas))
+  {
+    if(x>y)
+    {
+      alert("Quantity inspected should be higher than sum of quantity rejected and quantity passed");
+      document.getElementById('qty_ins').value="";
+      document.getElementById('qty_pas').value="";
+      document.getElementById('qty_rej').value="";
+    }
+    else{
+      document.getElementById('qty_rej').value=parseInt(qty_ins)-parseInt(qty_pas);
+    }
+  }
+  else{
+    alert("Quantity inspected must be numeric value")
+  }
+});
+$('#qty_ins').change(function()
+{
+  var qty_ins=document.getElementById('qty_ins').value;
+  var qty_tot=document.getElementById('qty_tot').value;
+  var x=parseInt(qty_ins)
+  var y=parseInt(qty_tot)
+  if($.isNumeric(qty_ins))
+  {
+    if(x>y)
+    {
+      alert("Quantity inspected cannot be greater than total quantity")
+      document.getElementById('qty_ins').value="";
+      $('#qty_ins').focus();
+    }
+    
+  }
+  else{
+    alert("Quantity inspected must be numeric value")
+}
+  
+})
+$('#fault_cd').change(function()
+{
+  if($(this).val()=="MAN")
+  {
+    $('#emp_id').show();
+    document.getElementById('wo_rep').value='0111723';
+  }
+  else if($(this).val()=="MNP"){
+    $('#emp_id').hide();
+    document.getElementById('wo_rep').value='0116923';
+  }
+  else if($(this).val()=="TLG"){
+    $('#emp_id').hide();
+    document.getElementById('wo_rep').value='0117023';
+  }
+  else if($(this).val()=="MIS"){
+    $('#emp_id').hide();
+    document.getElementById('wo_rep').value='0111823';
+  }
+  else if($(this).val()=="MAT"){
+    $('#emp_id').hide();
+    document.getElementById('wo_rep').value='0211966';
+  }
+  else if($(this).val()=="DSG"){
+    $('#emp_id').hide();
+    document.getElementById('wo_rep').value='0217123';
+  }
+  else if($(this).val()=="INM"){
+    $('#emp_id').hide();
+    document.getElementById('wo_rep').value='0217223';
+  }
+  else{
+    document.getElementById('wo_rep').value='';
+  }
+})
+function fun()
+{
+  var m13_sn = document.getElementById('m13_sn').value;
+  var qty_ins = document.getElementById('qty_ins').value;
+  var qty_pas = document.getElementById('qty_pas').value;
+  var qty_rej = document.getElementById('qty_rej').value;
+  var opn = document.getElementById('opn').value;
+  var vendor_cd = document.getElementById('vendor_cd').value;
+  var job_no = document.getElementById('job_no').value;
+  var fault_cd = document.getElementById('fault_cd').value;
+  var wo_rep = document.getElementById('wo_rep').value;
+  var rej_cat = document.getElementById('rej_cat').value;
+  var reason = document.getElementById('reason').value;
+  var m13no = document.getElementById('m13no').value;
+  var date = document.getElementById('date').value;
+  if (m13no == "") {
+    alert("M13 NO must be filled");
+    document.getElementById('m13no').focus()
+    return false;
+  }
+  else if (date == "") {
+    alert("Date must be filled");
+    document.getElementById('date').focus()
+    return false;
+  }
+  else if (m13_sn == "") {
+    alert("M13 SN must be filled");
+    document.getElementById('m13_sn').focus()
+    return false;
+  }
+  else if (qty_ins == "") {
+    alert("Quantity inspected must be filled");
+    document.getElementById('qty_ins').focus()
+    return false;
+  }
+  else if (qty_pas == "") {
+    alert("Quantity passed must be filled");
+    document.getElementById('qty_pas').focus()
+    return false;
+  }
+  else if (qty_rej == "") {
+    alert("Qunatity rejected must be filled");
+    document.getElementById('qty_rej').focus()
+    return false;
+  }
+  else if (vendor_cd == "") {
+    alert("Source of supply must be filled");
+    document.getElementById('vendor_cd').focus()
+    return false;
+  }
+  else if (job_no == "") {
+    alert("Job must be filled");
+    document.getElementById('job_no').focus()
+    return false;
+  }
+  else if (fault_cd == "") {
+    alert("Fault_cd must be filled");
+    document.getElementById('fault_cd').focus()
+    return false;
+  }
+  else if (wo_rep == "") {
+    alert("Chargable work order must be filled");
+    document.getElementById('wo_rep').focus()
+    return false;
+  }
+  else if (reason == "") {
+    alert("Reason for rejection must be filled");
+    document.getElementById('reason').focus()
+    return false;
+  }
+  else
+  {
+     document.querySelector("#proceed").click();
+  }
+}
+$(function () {
+     $('#date').datepicker({ dateFormat: 'dd-mm-yy' });   
+});
+</script>    
+{% endblock %}

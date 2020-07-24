@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script> -->
+<script src="{% static '/js/materialize.min.js' %}"></script>
+
+
+
+<style>
+    input[type=text],input[type=number],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+   
+</style>
+<br>
+<br>
+
+<h3 align="center">Sanction Form</h3>
+<h6 align="left" style="margin-left: 100px;">??.??.?. - 9002/ I.S.O. - 9002 </h6>
+<h6 align="left" style="margin-left: 100px;">??? ??? ?? (???????? )/ D.L.W. (Varanasi)</h6> <br>
+
+<br><br>
+<form action="{% url 'sanction_formview' %}" method="POST"> 
+    {% csrf_token %}
+    <div class="container">
+
+            <label for="sno"><b>Shop Section NO/??? ???.:</b></label>
+            <select class="form-control" id="shop_sec" name="shop_sec" required>
+                <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+               
+                
+                {% for role in roles %}
+                <option>{{role}}</option>
+                {% endfor %}
+                 
+            </select>
+<br>
+            <center><label for="sanc"><b>Sanction :</b></label></center>
+            <center>
+           
+            <div id="items">
+                <!--  -->
+            </div>
+            </center>
+        <input type="hidden" name="totmebs" id="totmebs" value="0" >
+        <center><input type="button" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  id="add" name="add" value="Add Sanction" ></center>   
+        <center>
+            <br>
+            <input type="submit" name="proceed" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  value="submit" ></center>
+      
+                  
+</div>
+    
+
+</form>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script  type="text/javaScript"> 
+    /*
+    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+   console.log($("#shop_sec").val());
+    });
+    */
+    var j=0;
+    $("#add").click(function(e) {
+        console.log("add click");
+       
+        j++;
+        if(j<10)
+        {
+        var id="customers"+String(j);
+        var desig="desig1"+String(j);
+        var san_no="san_no"+String(j);
+
+        var htAppend='<div><table id='+id+'  align="center" border="1"><tr><th>S.N.</th><th>Designation</th><th>Sanction (AS PER LOCO ENG.)</th><th>Action</th></tr><tr>'+'<td>'+j+'</td>'+'<td><select name='+desig+' id='+desig+'  class="form-control ll" required ></select></td>'+'<td><input type="number" id="'+san_no+'" name="'+san_no+'" placeholder="sanction no"></td>';
+            htAppend=htAppend+'<td><a class="delete" Deletedata-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>'+'</tr></table>'+'</div>';
+            $('#items').append(htAppend);                                                  
+    
+            /////////
+            document.getElementById("totmebs").value=j;
+            ////////////////////
+            
+            $("#"+desig).append("<option value='SSE'>SSE</option>");
+            $("#"+desig).append("<option value='SE'>SE</option>");
+            $("#"+desig).append("<option value='JE-I'>JE-I</option>");
+            $("#"+desig).append("<option value='JE-II'>JE-II</option>");
+            $("#"+desig).append("<option value='P-MAN'>P/MAN</option>");
+            $("#"+desig).append("<option value='HELPER'>HELPER</option>");
+            $("#"+desig).append("<option value='OS'>OS</option>");
+            $("#"+desig).append("<option value='H-C'>H/C</option>");
+            $("#"+desig).append("<option value='CLERK'>CLERK</option>");
+            
+            if(j>1)
+            {   for(i=1;i<j;i++)
+                {
+                var des="desig1"+String(i);
+                var optionval = $('#'+des).val();
+                $("#"+desig+" option[value="+ optionval +"]").remove();
+                }
+            }
+        }
+        else{
+            window.alert("MAXIMUM LIMIT REACHED FOR DESIGNATION")
+        }
+
+            
+            
+            
+
+    });
+
+    
+$(document).on("click", ".delete", function(){
+    j--;
+    $(this).parents("table").remove();
+   
+   });
+</script> 
+{% endblock content %}
+<!-- javascript written inside script tag -->

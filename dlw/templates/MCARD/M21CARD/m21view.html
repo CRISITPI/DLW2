@@ -1,0 +1,2018 @@
+{% extends 'base.html' %} 
+{% block content %}
+{% load static %}
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script> -->
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
+
+<script src="{% static '/js/jquery-1.9.1.min.js' %}"></script>
+<script src="{% static '/js/jquery.min3.js' %}"></script>
+<script src="{% static '/js/jquery-ui.js' %}"></script>
+
+
+<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
+<!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
+<!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
+<style>
+  .ui-timepicker-wrapper {
+    overflow-y: auto;
+    max-height: 150px;
+    width: 6.5em;
+    background: #fff;
+    border: 1px solid #ddd;
+    -webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    outline: none;
+    z-index: 10052;
+    margin: 0;
+  }
+  
+  .ui-timepicker-wrapper.ui-timepicker-with-duration {
+    width: 13em;
+  }
+  
+  .ui-timepicker-wrapper.ui-timepicker-with-duration.ui-timepicker-step-30,
+  .ui-timepicker-wrapper.ui-timepicker-with-duration.ui-timepicker-step-60 {
+    width: 11em;
+  }
+  
+  .ui-timepicker-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .ui-timepicker-duration {
+    margin-left: 5px; color: #888;
+  }
+  
+  .ui-timepicker-list:hover .ui-timepicker-duration {
+    color: #888;
+  }
+  
+  .ui-timepicker-list li {
+    padding: 3px 0 3px 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #000;
+    list-style: none;
+    margin: 0;
+  }
+  
+  .ui-timepicker-list:hover .ui-timepicker-selected {
+    background: #fff; color: #000;
+  }
+  
+  li.ui-timepicker-selected,
+  .ui-timepicker-list li:hover,
+  .ui-timepicker-list .ui-timepicker-selected:hover {
+    background: #1980EC; color: #fff;
+  }
+  
+  li.ui-timepicker-selected .ui-timepicker-duration,
+  .ui-timepicker-list li:hover .ui-timepicker-duration {
+    color: #ccc;
+  }
+  
+  .ui-timepicker-list li.ui-timepicker-disabled,
+  .ui-timepicker-list li.ui-timepicker-disabled:hover,
+  .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+    color: #888;
+    cursor: default;
+  }
+  
+  .ui-timepicker-list li.ui-timepicker-disabled:hover,
+  .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+    background: #f2f2f2;
+  }
+  </style>
+  <style>
+      input[type=text],
+      select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: block;
+          border: 0.5px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+      }
+       
+  </style>
+  <br>
+  <br>
+  <h4 align="center">M21</h4>
+  <h2 align="center" >GATE ATTENDANCE CARD</h2>
+  <table class="table">
+  <tr>
+      <center>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <font size="3">
+                    <li>
+                        {{ message }}
+                    </li>
+                </font>
+                {% endfor %}
+            </ul>
+            {% endif %}
+    </center>
+  </tr>
+  </table>
+  <form action="{% url 'm21view' %}" method="POST"> {% csrf_token %}
+      <div class="container">
+          <table class="table">
+                  <tr>
+                      <td>
+                      <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>                 
+  
+                      <select class="form-control" id="shop_sec" name="shop_sec" required>
+              <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+              {% if lenm == 1 %}
+                  <option selected readonly>{% for role in roles %}{{role}}{% endfor %}</option>
+                  {{role}}
+              {% endif %}
+              {% if lenm > 1 %}
+              {% for role in roles %}
+              {{role}}
+                <option>{{role}}</option>
+              {% endfor %}
+              {% endif %}
+                      </select>
+                      </td>
+                      <td>
+                                  <label for="staff_no"><b>EMPLOYEE NO/क्रम सं.:</b></label>
+                                  <select class="form-control" id="staff_no" name="staff_no" required>
+                                      <option id="op_emp" selected disabled hidden>Select EMPLOYEE NO</option>                        
+                                  </select>
+                      </td>
+                      <td>
+                          <label for="yymm"><b>YEAR-MONTH:</b></label>
+                          <select class="form-control" id="yymm" name="yymm" required>
+                          <option id="op_yymm" selected disabled hidden>Select YEAR-MONTH</option>                        
+                          </select>
+                      </td>
+                  </tr>
+          </table>
+          <input type="hidden" name="inoutnum" id="inoutnum" value="0" />
+          <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+      </div>
+  <br><br> {% if sub == 1 %}
+  <div id="print" style="align:center" >
+  <input type="hidden" name="len" value="{{len}}">
+  <table align="center">  
+      <tr>
+          <th>SHOP SECTION/शाप विभाग:</th> 
+          <td><u>{{shop_sec}}</u></td>
+          <input type="hidden" name="shop_sec" value="{{shop_sec}}">        
+      </tr>
+      <tr>
+          <th>EMPLOYEE NO/क्रम सं.:</th> 
+          <td><u>{{staff_no}}</u></td>
+          <input type="hidden" name="staff_no" value="{{staff_no}}">
+      </tr>
+      <tr>        
+          <th>NAME/नाम:</th>
+          {% for i in obj %}
+          <td>
+              <u>{{i.name}}</u>
+              <input type="hidden" name="name" value="{{i.name}}">
+          </td>
+          {% endfor %}
+      </tr>
+      <tr>
+          <th>CAT/को.:</th>
+          {% for i in obj %}
+          <td>
+              <u>{{i.cat}}</u>
+              <input type="hidden" name="cat" value="{{i.cat}}">
+          </td>
+          {% endfor %}
+      </tr>
+      <tr>
+          <th>DESIGNATION/पद.:</th>
+          {% for i in obj %}
+          <td>
+              <u>{{i.desgn}}</u>
+              <input type="hidden" name="desgn" value="{{i.desgn}}">
+          </td>
+          {% endfor %}
+      </tr>
+  
+  </table>
+  <br><br>
+  <table border="1" align="center">
+      <tr>
+          <th>OVERTIME DATA FOR LAST WEEK/पिछले सप्ताह के ओवर टाइम के आकड़े</th>
+          <th><center>HOURS/घंटे</center></th>
+          <th><center>AMOUNT/राशि</center></th>
+      </tr>
+      <tr>
+          <th><center>1 HOUR TIME/१ घंटे तक का समय </center></th>
+          <th><input type="type" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true" class="form-control" name="lastWeekPerHour" id="lastWeekPerHour"  value="00:00"></th>
+          <th><input type="type" maxlength="9" class="form-control" name="lastWeekPerAmount" id="lastWeekPerAmount" onkeypress="return event.charCode >= 46 && event.charCode <= 57"  ></th>
+      </tr>
+      <tr>
+          <th>PAID OVERTIME AT BASE RATE/मूल दर पर भुगतान वाला ओवर टाइम</th>
+          <th><input type="type" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  class="form-control" name="baseRatePerHour" id="baseRatePerHour"  value="00:00"></th>
+          <th><input type="type" maxlength="9" onkeypress="return event.charCode >= 46 && event.charCode <= 57"  class="form-control" name="baseRatePerHourAmount" id="baseRatePerHourAmount" ></th>
+      </tr>
+  </table>
+  <table border="1" align="center">
+      <tr style="background-color:lightgray;">
+           <th colspan="4">WORK TIME</th>
+          <th colspan="2">OVER TIME WORK</th>
+          <th rowspan="2">TOTAL TIME</th>
+      </tr>
+      <tr style="background-color:lightgray;">
+          <th>IN</th>
+          <th>IN DATE</th>
+          <th>OUT</th>
+          <th>OUT DATE</th>
+          <th>IN</th>
+          <th>OUT</th>
+      </tr> 
+      <tr>    
+          <td>       
+              <input type="text" id="in1"  value="00:00" class="form-control"  name="in1" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"> 
+          </td> 
+          <td>       
+              <input type="text" id="date"    name="date" class="form-control"  autocomplete="off">
+          </td>    
+          <td>     
+            <input type="text" id="out"  value="00:00" class="form-control"  name="out" onkeypress="return isNumberKey(event)"  onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
+         </td>
+         <td>       
+          <input type="text" id="outdate"   name="outdate" class="form-control"  autocomplete="off">       
+          </td>
+             <td>        
+          <input type="text" id="in2"  value="00:00" class="form-control"  name="in2" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">       
+        </td> 
+        <td>       
+            <input type="text" id="out2"  value="00:00" class="form-control" name="out2" onblur="myfun()" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true">
+          </td>
+         <td>       
+              <input type="text" id="total_time" class="form-control"  name="total_time"  readonly>         
+          </td> 
+      </tr>
+  </table>
+  <div id="items">
+  
+  </div>
+  <center>
+  <input  type="button" id="add"  class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   value="Add More Row" style="width: 150px;"/>
+  <!-- <input type="button" onclick="myfun()" value="Calculate Total Time"> -->
+  </center>
+  <br>
+  <table border="1" align="center">
+  <tr>
+      <th></th>
+      <th>DAY</th>
+      <th>HOURS</th>
+  </tr>
+  <tr>
+      <th>Cut time/कटौती का समय</th>
+      <th><input type="text" name="cutTimeDay" id="cutTimeDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="cutTimeHours" id="cutTimeHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>Additional wages/अतिरिक्त मजदूरी</th>
+      <th><input type="text" name="additionalWagesDay" id="additionalWagesDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="additionalWagesHours" id="additionalWagesHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>Factory half O.T./फैक्ट्री आधि ओ.टी. </th>
+      <th><input type="text" name="factoryHalfDay" id="factoryHalfDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="factoryHalfHours" id="factoryHalfHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>General O.T./सामान्य  ओ.टी. </th>
+      <th><input type="text" name="generalOTDay" id="generalOTDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="generalOTHours" id="generalOTHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>Night allowance hours/रात्रि भत्ते के घंटे </th>
+      <th><input type="text" name="nightAllowanceDay" id="nightAllowanceDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="nightAllowanceHours" id="nightAllowanceHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>Half holiday/अर्द्ध औ.वे. की छुट्टी </th>
+      <th><input type="text" name="halfHolidayDay" id="halfHolidayDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="halfHolidayHours" id="halfHolidayHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>Pay off leave/औसन वेतन की छुट्टी  </th>
+      <th><input type="text" name="payOffLeaveDay" id="payOffLeaveDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="payOffLeaveHours" id="payOffLeaveHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>Number of unused holidays/उपयोग न हुई छुट्टियों की सं.</th>
+      <th><input type="text" name="unusedHolidaysDay" id="unusedHolidaysDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="unusedHolidaysHours" id="unusedHolidaysHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+  </tr>
+  <tr>
+      <th>Supplementary Holidays Given/दी गयी प्रति पूरक छुट्टियां</th>
+      <th><input type="text" name="supplementaryHolidaysDay" id="supplementaryHolidaysDay" maxlength="2" onkeypress="return isNumberKey(event)"  ></th>
+      <th><input type="text" name="supplementaryHolidaysHours" id="supplementaryHolidaysHours" value="00:00" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"  ></th>
+      
+  </tr>
+  </table>
+  <table align="center">
+  <tr>
+      <th >EMPLOYEE NO./संगड़क.</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th>EMPLOYEE NAME/जांचकर्ता.</th>
+  </tr>
+  </table>
+  <center>
+      <input type="submit" name="proceed"  class="btn btn-success" {% if usermaster.op_create %} {% else %} disabled {% endif%}  value="Submit">
+      <input type="button" onclick="printDiv()" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  value="Print">
+  </center> 
+  </div>
+  {% endif %}
+  </form>
+  
+  <script type="text/javaScript">
+  
+  function validateHhMm(inputField) {
+          var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(inputField.value);		
+          if (isValid) {
+        //document.getElementById('errormsg').innerHTML = '';
+              inputField.style.backgroundColor = '#bfa';
+          } else {
+      //document.getElementById('errormsg').innerHTML = 'invalid date';
+              inputField.style.backgroundColor = '#fba';			
+          }
+          return isValid;		
+      }
+    function validate1HhMm(inputField) {       	
+      if(inputField.value.length == 2){
+      inputField.value += ":";
+      }	
+      }
+  
+  function isNumberKey(evt) {
+  
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+      return true; 
+      
+      }
+  
+  
+  document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                    e.preventDefault();
+                    var shop_sec = $("#shop_sec").val()
+                    var data = {shop_sec};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm21getempno' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          var elementsadded = document.querySelectorAll(".neweleempno");
+                              if(elementsadded.length>0){
+                                  var elementsaddedarr = Array.from(elementsadded);
+                                  elementsaddedarr.forEach((el)=> el.remove());
+                                  document.querySelector("#op_emp").selected=true;
+                                  document.querySelector("#op_yymm").selected=true;                                 
+                               }
+                              var brarr,mystr,html;
+                              brarr = response.map((el)=>el.staff_no);
+                              mystr = "";
+                              brarr.forEach((el,index)=>{
+                                html = `<option class="neweleempno">${brarr[index]}</option>`
+                                mystr = html.concat(mystr);
+                              });
+                              html = "";
+                              document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                              mystr=""; 
+                        }
+                          })
+                })
+  document.querySelector("#staff_no").addEventListener('change',(e)=>{
+      e.preventDefault();
+         
+          var staff_no = $("#staff_no").val();
+          var shop_sec = $("#shop_sec").val()
+          var data = {shop_sec,staff_no};
+          $.ajax({
+                  type : 'GET',
+                  url : "{% url 'm21getyymm' %}",
+                  dataType : 'json',
+                  data : data,
+                  success : function(response){
+                  var elementsadded = document.querySelectorAll(".neweleyymm");
+                      if(elementsadded.length>0){
+                          var elementsaddedarr = Array.from(elementsadded);
+                          elementsaddedarr.forEach((el)=> el.remove());
+                          
+                          document.querySelector("#op_yymm").selected=true;
+                                      
+                  }
+                                  var brarr,mystr,html;
+                                  brarr = response.map((el)=>el.yymm);
+                                  mystr = "";
+                                  brarr.forEach((el,index)=>{
+                                    html = `<option class="neweleyymm">${brarr[index]}</option>`
+                                    mystr = html.concat(mystr);
+                                  });
+                                  html = "";
+                                  document.querySelector("#yymm").insertAdjacentHTML('beforeend',mystr);
+                                  mystr=""; 
+                            }
+                              })
+                    })
+  document.querySelector("#yymm").addEventListener('change',(e)=>{
+  document.querySelector("#myproceed").click();
+  })
+  document.addEventListener('keypress',(event)=>{
+  if(event.keyCode===13){
+      event.preventDefault();
+  }
+  })
+  
+  function printDiv() {
+       var printContents = document.getElementById("print").innerHTML;
+  
+         var style = "<style>";
+          style = style + "table {width: 100%;font: 17px Calibri;}";
+          style = style + "table, th, td {border: solid 0px #DDD; border-collapse: collapse;";
+          style = style + "padding: 2px 3px;text-align: left;}";
+          style = style + "</style>";
+        var win = window.open('', '', 'height=500,width=500');
+          win.document.write('<html><head>');
+          win.document.write('<title>M21 GATE ATTENDANCE CARD</title>');
+          win.document.write(style);
+          win.document.write('</head>');
+          win.document.write('<body>');
+          win.document.write(printContents);
+          win.document.write('</body></html>');
+          win.print();
+          win.close();
+  }
+  
+  $('#date').datepicker({ dateFormat: 'dd-mm-yy'}); 
+  $('#outdate').datepicker({ dateFormat: 'dd-mm-yy'}); 
+  
+  var j=0;
+  $("#add").click(function(e){
+          event.preventDefault()
+          j++;
+          console.log(j);    
+  
+          var in1="in1"+String(j);
+          var date="date"+String(j)    
+          var out="outA"+String(j);
+          var outdate="outdate"+String(j);
+          var in2="in2"+String(j);
+          var out2="out2"+String(j);               
+          var total_time="total_time"+String(j);            
+  
+          var htAppend='<div><table id="customers" border="1" align="center"><tr>'+'<td ><input type="text" value="00:00" id='+in1+' name='+in1+'  class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+date+' name='+date+' autocomplete="off" class="odatec, form-control ll"></td>'+'<td><input type="text" value="00:00" id='+out+' name='+out+' class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+outdate+' name='+outdate+' autocomplete="off" class="odatec, form-control ll"  ></td>'+'<td ><input type="text" id='+in2+' name='+in2+' value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td >'+'<td ><input type="text" id='+out2+' name='+out2+' onblur="myfun()" value="00:00" class="form-control" onkeypress="return isNumberKey(event)" onkeydown="validate1HhMm(this);"  onchange="validateHhMm(this);"  maxlength="5"  placeholder="00:00"   data-time-format="H:i" data-step="1" data-min-time="00:00" data-max-time="24:00" data-show-2400="true"></td>'+'<td ><input type="text" id='+total_time+' name='+total_time+' class="form-control" readonly></td>';
+          htAppend=htAppend+'</tr></table>'+'</div>';
+          $('#items').append(htAppend);
+  
+          $('#'+in1).timepicker(); 	
+          $('#'+out).timepicker();        	
+          $('#'+in2).timepicker(); 
+          $('#'+out2).timepicker(); 
+  
+          $('#date').datepicker({ dateFormat: 'dd-mm-yy'}); 
+          $('#outdate').datepicker({ dateFormat: 'dd-mm-yy'});         
+          $('#'+date).datepicker({ dateFormat: 'dd-mm-yy'}); 	
+          $('#'+outdate).datepicker({ dateFormat: 'dd-mm-yy'}); 	
+          
+        
+  
+          document.getElementById("inoutnum").value=j;  
+  });   
+  
+  /////////////////////
+  function myfun(){
+      
+       var t1=$('#in1').val().toString();
+       //alert(t1);
+       var t2=$('#out').val().toString();
+       var t3=$('#in2').val().toString();
+       var t4=$('#out2').val().toString();
+       m1=parseInt(t1.substring(3,5));
+       m2=parseInt(t2.substring(3,5));
+       m3=parseInt(t3.substring(3,5));
+       m4=parseInt(t4.substring(3,5));
+       h1=parseInt(t1.substring(0,2));
+       h2=parseInt(t2.substring(0,2));
+       h3=parseInt(t3.substring(0,2));
+       h4=parseInt(t4.substring(0,2));
+       if(h1>h2)
+          {
+              h2=h2+24;
+          }
+          if(h3>h4)
+          {h4=h4+24;}
+  
+  
+       tm1=((h2*60)+m2)-((h1*60)+m1);
+       tm2=((h4*60)+m4)-((h3*60)+m3);
+       hrs=parseInt((tm1+tm2)/60);
+       min=(tm1+tm2)%60;
+       //alert(hrs.toString()+"hrs"+" "+min.toString()+"min");
+       document.getElementById('total_time').value=hrs.toString()+":"+min.toString();
+       for(i=1;i<=j;i++) 
+          { 
+            
+  
+          var in1="in1"+String(i);
+          var out="outA"+String(i);
+          var in2="in2"+String(i);
+          var out2="out2"+String(i);               
+          var total_time="total_time"+String(i);         
+  
+          var t1=$('#'+in1).val().toString();
+          var t2=$('#'+out).val().toString();
+          var t3=$('#'+in2).val().toString();
+          var t4=$('#'+out2).val().toString(); 
+         
+  
+          m1=parseInt(t1.substring(3,5));
+          m2=parseInt(t2.substring(3,5));
+          m3=parseInt(t3.substring(3,5));
+          m4=parseInt(t4.substring(3,5));
+          h1=parseInt(t1.substring(0,2));
+          h2=parseInt(t2.substring(0,2));
+          h3=parseInt(t3.substring(0,2));
+          h4=parseInt(t4.substring(0,2));
+          if(h1>h2)
+          {
+              h2=h2+24;
+          }
+          if(h3>h4)
+          {h4=h4+24;}
+  
+          tm1=((h2*60)+m2)-((h1*60)+m1);
+          tm2=((h4*60)+m4)-((h3*60)+m3);
+          hrs=parseInt((tm1+tm2)/60);
+          min=(tm1+tm2)%60;
+          //alert(hrs.toString()+"hrs"+" "+min.toString()+"min");
+          document.getElementById(total_time).value=hrs.toString()+":"+min.toString();
+  
+          }
+          }
+  
+  
+      
+  
+  
+  
+          $(document).ready(function() {	
+              $('#supplementaryHolidaysHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#unusedHolidaysHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#payOffLeaveHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#halfHolidayHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#nightAllowanceHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#generalOTHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#factoryHalfHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#additionalWagesHours').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#cutTimeHours').timepicker(); 
+          });  
+  
+          $(document).ready(function() {	
+              $('#in1').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#out').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#in2').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#out2').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#lastWeekPerHour').timepicker(); 
+          });
+          $(document).ready(function() {	
+              $('#baseRatePerHour').timepicker(); 
+          });  
+  
+  </script> 
+  
+  
+  <script>
+  /*!
+   * jquery-timepicker v1.11.15 - A jQuery timepicker plugin inspired by Google Calendar. It supports both mouse and keyboard navigation.
+   * Copyright (c) 2015 Jon Thornton - http://jonthornton.github.com/jquery-timepicker/
+   * License: MIT
+   */
+  
+  (function(factory) {
+    if (
+      typeof exports === "object" &&
+      exports &&
+      typeof module === "object" &&
+      module &&
+      module.exports === exports
+    ) {
+      // Browserify. Attach to jQuery module.
+      factory(require("jquery"));
+    } else if (typeof define === "function" && define.amd) {
+      // AMD. Register as an anonymous module.
+      define(["jquery"], factory);
+    } else {
+      // Browser globals
+      factory(jQuery);
+    }
+  })(function($) {
+    var _ONE_DAY = 86400;
+    var _lang = {
+      am: "am",
+      pm: "pm",
+      AM: "AM",
+      PM: "PM",
+      decimal: ".",
+      mins: "mins",
+      hr: "hr",
+      hrs: "hrs"
+    };
+  
+    var _DEFAULTS = {
+      appendTo: "body",
+      className: null,
+      closeOnWindowScroll: false,
+      disableTextInput: false,
+      disableTimeRanges: [],
+      disableTouchKeyboard: false,
+      durationTime: null,
+      forceRoundTime: false,
+      maxTime: null,
+      minTime: null,
+      noneOption: false,
+      orientation: "l",
+      roundingFunction: function(seconds, settings) {
+        if (seconds === null) {
+          return null;
+        } else if (typeof settings.step !== "number") {
+          // TODO: nearest fit irregular steps
+          return seconds;
+        } else {
+          var offset = seconds % (settings.step * 60); // step is in minutes
+  
+          var start = settings.minTime || 0;
+  
+          // adjust offset by start mod step so that the offset is aligned not to 00:00 but to the start
+          offset -= start % (settings.step * 60);
+  
+          if (offset >= settings.step * 30) {
+            // if offset is larger than a half step, round up
+            seconds += settings.step * 60 - offset;
+          } else {
+            // round down
+            seconds -= offset;
+          }
+  
+          return _moduloSeconds(seconds, settings);
+        }
+      },
+      scrollDefault: null,
+      selectOnBlur: false,
+      show2400: false,
+      showDuration: false,
+      showOn: ["click", "focus"],
+      showOnFocus: true,
+      step: 30,
+      stopScrollPropagation: false,
+      timeFormat: "g:ia",
+      typeaheadHighlight: true,
+      useSelect: false,
+      wrapHours: true
+    };
+  
+    var methods = {
+      init: function(options) {
+        return this.each(function() {
+          var self = $(this);
+  
+          // pick up settings from data attributes
+          var attributeOptions = [];
+          for (var key in _DEFAULTS) {
+            if (self.data(key)) {
+              attributeOptions[key] = self.data(key);
+            }
+          }
+  
+          var settings = $.extend({}, _DEFAULTS, options, attributeOptions);
+  
+          if (settings.lang) {
+            _lang = $.extend(_lang, settings.lang);
+          }
+  
+          settings = _parseSettings(settings);
+          self.data("timepicker-settings", settings);
+          self.addClass("ui-timepicker-input");
+  
+          if (settings.useSelect) {
+            _render(self);
+          } else {
+            self.prop("autocomplete", "off");
+            if (settings.showOn) {
+              for (var i in settings.showOn) {
+                self.on(settings.showOn[i] + ".timepicker", methods.show);
+              }
+            }
+            self.on("change.timepicker", _formatValue);
+            self.on("keydown.timepicker", _keydownhandler);
+            self.on("keyup.timepicker", _keyuphandler);
+            if (settings.disableTextInput) {
+              self.on("keydown.timepicker", _disableTextInputHandler);
+            }
+            self.on("cut.timepicker", _keyuphandler);
+            self.on("paste.timepicker", _keyuphandler);
+  
+            _formatValue.call(self.get(0), null, "initial");
+          }
+        });
+      },
+  
+      show: function(e) {
+        var self = $(this);
+        var settings = self.data("timepicker-settings");
+  
+        if (e) {
+          e.preventDefault();
+        }
+  
+        if (settings.useSelect) {
+          self.data("timepicker-list").focus();
+          return;
+        }
+  
+        if (_hideKeyboard(self)) {
+          // block the keyboard on mobile devices
+          self.blur();
+        }
+  
+        var list = self.data("timepicker-list");
+  
+        // check if input is readonly
+        if (self.prop("readonly")) {
+          return;
+        }
+  
+        // check if list needs to be rendered
+        if (
+          !list ||
+          list.length === 0 ||
+          typeof settings.durationTime === "function"
+        ) {
+          _render(self);
+          list = self.data("timepicker-list");
+        }
+  
+        if (_isVisible(list)) {
+          return;
+        }
+  
+        self.data("ui-timepicker-value", self.val());
+        _setSelected(self, list);
+  
+        // make sure other pickers are hidden
+        methods.hide();
+  
+        // position the dropdown relative to the input
+        list.show();
+        var listOffset = {};
+  
+        if (settings.orientation.match(/r/)) {
+          // right-align the dropdown
+          listOffset.left =
+            self.offset().left +
+            self.outerWidth() -
+            list.outerWidth() +
+            parseInt(list.css("marginLeft").replace("px", ""), 10);
+        } else {
+          // left-align the dropdown
+          listOffset.left =
+            self.offset().left +
+            parseInt(list.css("marginLeft").replace("px", ""), 10);
+        }
+  
+        var verticalOrientation;
+        if (settings.orientation.match(/t/)) {
+          verticalOrientation = "t";
+        } else if (settings.orientation.match(/b/)) {
+          verticalOrientation = "b";
+        } else if (
+          self.offset().top + self.outerHeight(true) + list.outerHeight() >
+          $(window).height() + $(window).scrollTop()
+        ) {
+          verticalOrientation = "t";
+        } else {
+          verticalOrientation = "b";
+        }
+  
+        if (verticalOrientation == "t") {
+          // position the dropdown on top
+          list.addClass("ui-timepicker-positioned-top");
+          listOffset.top =
+            self.offset().top -
+            list.outerHeight() +
+            parseInt(list.css("marginTop").replace("px", ""), 10);
+        } else {
+          // put it under the input
+          list.removeClass("ui-timepicker-positioned-top");
+          listOffset.top =
+            self.offset().top +
+            self.outerHeight() +
+            parseInt(list.css("marginTop").replace("px", ""), 10);
+        }
+  
+        list.offset(listOffset);
+  
+        // position scrolling
+        var selected = list.find(".ui-timepicker-selected");
+  
+        if (!selected.length) {
+          var timeInt = _time2int(_getTimeValue(self));
+          if (timeInt !== null) {
+            selected = _findRow(self, list, timeInt);
+          } else if (settings.scrollDefault) {
+            selected = _findRow(self, list, settings.scrollDefault());
+          }
+        }
+  
+        // if not found or disabled, intelligently find first selectable element
+        if (!selected.length || selected.hasClass("ui-timepicker-disabled")) {
+          selected = list.find("li:not(.ui-timepicker-disabled):first");
+        }
+  
+        if (selected && selected.length) {
+          var topOffset =
+            list.scrollTop() + selected.position().top - selected.outerHeight();
+          list.scrollTop(topOffset);
+        } else {
+          list.scrollTop(0);
+        }
+  
+        // prevent scroll propagation
+        if (settings.stopScrollPropagation) {
+          $(
+            document
+          ).on("wheel.ui-timepicker", ".ui-timepicker-wrapper", function(e) {
+            e.preventDefault();
+            var currentScroll = $(this).scrollTop();
+            $(this).scrollTop(currentScroll + e.originalEvent.deltaY);
+          });
+        }
+  
+        // attach close handlers
+        $(document).on(
+          "touchstart.ui-timepicker mousedown.ui-timepicker",
+          _closeHandler
+        );
+        $(window).on("resize.ui-timepicker", _closeHandler);
+        if (settings.closeOnWindowScroll) {
+          $(document).on("scroll.ui-timepicker", _closeHandler);
+        }
+  
+        self.trigger("showTimepicker");
+  
+        return this;
+      },
+  
+      hide: function(e) {
+        var self = $(this);
+        var settings = self.data("timepicker-settings");
+  
+        if (settings && settings.useSelect) {
+          self.blur();
+        }
+  
+        $(".ui-timepicker-wrapper").each(function() {
+          var list = $(this);
+          if (!_isVisible(list)) {
+            return;
+          }
+  
+          var self = list.data("timepicker-input");
+          var settings = self.data("timepicker-settings");
+  
+          if (settings && settings.selectOnBlur) {
+            _selectValue(self);
+          }
+  
+          list.hide();
+          self.trigger("hideTimepicker");
+        });
+  
+        return this;
+      },
+  
+      option: function(key, value) {
+        if (typeof key == "string" && typeof value == "undefined") {
+          return $(this).data("timepicker-settings")[key];
+        }
+  
+        return this.each(function() {
+          var self = $(this);
+          var settings = self.data("timepicker-settings");
+          var list = self.data("timepicker-list");
+  
+          if (typeof key == "object") {
+            settings = $.extend(settings, key);
+          } else if (typeof key == "string") {
+            settings[key] = value;
+          }
+  
+          settings = _parseSettings(settings);
+  
+          self.data("timepicker-settings", settings);
+  
+          _formatValue.call(self.get(0), { type: "change" }, "initial");
+  
+          if (list) {
+            list.remove();
+            self.data("timepicker-list", false);
+          }
+  
+          if (settings.useSelect) {
+            _render(self);
+          }
+        });
+      },
+  
+      getSecondsFromMidnight: function() {
+        return _time2int(_getTimeValue(this));
+      },
+  
+      getTime: function(relative_date) {
+        var self = this;
+  
+        var time_string = _getTimeValue(self);
+        if (!time_string) {
+          return null;
+        }
+  
+        var offset = _time2int(time_string);
+        if (offset === null) {
+          return null;
+        }
+  
+        if (!relative_date) {
+          relative_date = new Date();
+        }
+  
+        // construct a Date from relative date, and offset's time
+        var time = new Date(relative_date);
+        time.setHours(offset / 3600);
+        time.setMinutes((offset % 3600) / 60);
+        time.setSeconds(offset % 60);
+        time.setMilliseconds(0);
+  
+        return time;
+      },
+  
+      isVisible: function() {
+        var self = this;
+        var list = self.data("timepicker-list");
+        return !!(list && _isVisible(list));
+      },
+  
+      setTime: function(value) {
+        var self = this;
+        var settings = self.data("timepicker-settings");
+  
+        if (settings.forceRoundTime) {
+          var prettyTime = _roundAndFormatTime(_time2int(value), settings);
+        } else {
+          var prettyTime = _int2time(_time2int(value), settings);
+        }
+  
+        if (value && prettyTime === null && settings.noneOption) {
+          prettyTime = value;
+        }
+  
+        _setTimeValue(self, prettyTime, "initial");
+        _formatValue.call(self.get(0), { type: "change" }, "initial");
+  
+        if (self.data("timepicker-list")) {
+          _setSelected(self, self.data("timepicker-list"));
+        }
+  
+        return this;
+      },
+  
+      remove: function() {
+        var self = this;
+  
+        // check if this element is a timepicker
+        if (!self.hasClass("ui-timepicker-input")) {
+          return;
+        }
+  
+        var settings = self.data("timepicker-settings");
+        self.removeAttr("autocomplete", "off");
+        self.removeClass("ui-timepicker-input");
+        self.removeData("timepicker-settings");
+        self.off(".timepicker");
+  
+        // timepicker-list won't be present unless the user has interacted with this timepicker
+        if (self.data("timepicker-list")) {
+          self.data("timepicker-list").remove();
+        }
+  
+        if (settings.useSelect) {
+          self.show();
+        }
+  
+        self.removeData("timepicker-list");
+  
+        return this;
+      }
+    };
+  
+    // private methods
+  
+    function _isVisible(elem) {
+      var el = elem[0];
+      return el.offsetWidth > 0 && el.offsetHeight > 0;
+    }
+  
+    function _parseSettings(settings) {
+      if (settings.minTime) {
+        settings.minTime = _time2int(settings.minTime);
+      }
+  
+      if (settings.maxTime) {
+        settings.maxTime = _time2int(settings.maxTime);
+      }
+  
+      if (settings.durationTime && typeof settings.durationTime !== "function") {
+        settings.durationTime = _time2int(settings.durationTime);
+      }
+  
+      if (settings.scrollDefault == "now") {
+        settings.scrollDefault = function() {
+          return settings.roundingFunction(_time2int(new Date()), settings);
+        };
+      } else if (
+        settings.scrollDefault &&
+        typeof settings.scrollDefault != "function"
+      ) {
+        var val = settings.scrollDefault;
+        settings.scrollDefault = function() {
+          return settings.roundingFunction(_time2int(val), settings);
+        };
+      } else if (settings.minTime) {
+        settings.scrollDefault = function() {
+          return settings.roundingFunction(settings.minTime, settings);
+        };
+      }
+  
+      if (
+        $.type(settings.timeFormat) === "string" &&
+        settings.timeFormat.match(/[gh]/)
+      ) {
+        settings._twelveHourTime = true;
+      }
+  
+      if (
+        settings.showOnFocus === false &&
+        settings.showOn.indexOf("focus") != -1
+      ) {
+        settings.showOn.splice(settings.showOn.indexOf("focus"), 1);
+      }
+  
+      if (settings.disableTimeRanges.length > 0) {
+        // convert string times to integers
+        for (var i in settings.disableTimeRanges) {
+          settings.disableTimeRanges[i] = [
+            _time2int(settings.disableTimeRanges[i][0]),
+            _time2int(settings.disableTimeRanges[i][1])
+          ];
+        }
+  
+        // sort by starting time
+        settings.disableTimeRanges = settings.disableTimeRanges.sort(function(
+          a,
+          b
+        ) {
+          return a[0] - b[0];
+        });
+  
+        // merge any overlapping ranges
+        for (var i = settings.disableTimeRanges.length - 1; i > 0; i--) {
+          if (
+            settings.disableTimeRanges[i][0] <=
+            settings.disableTimeRanges[i - 1][1]
+          ) {
+            settings.disableTimeRanges[i - 1] = [
+              Math.min(
+                settings.disableTimeRanges[i][0],
+                settings.disableTimeRanges[i - 1][0]
+              ),
+              Math.max(
+                settings.disableTimeRanges[i][1],
+                settings.disableTimeRanges[i - 1][1]
+              )
+            ];
+            settings.disableTimeRanges.splice(i, 1);
+          }
+        }
+      }
+  
+      return settings;
+    }
+  
+    function _render(self) {
+      var settings = self.data("timepicker-settings");
+      var list = self.data("timepicker-list");
+  
+      if (list && list.length) {
+        list.remove();
+        self.data("timepicker-list", false);
+      }
+  
+      if (settings.useSelect) {
+        list = $("<select />", { class: "ui-timepicker-select" });
+        if (self.attr('name')) {
+          list.attr('name', 'ui-timepicker-' + self.attr('name'));
+        }
+        var wrapped_list = list;
+      } else {
+        list = $("<ul />", { class: "ui-timepicker-list" });
+  
+        var wrapped_list = $("<div />", {
+          class: "ui-timepicker-wrapper",
+          tabindex: -1
+        });
+        wrapped_list.css({ display: "none", position: "absolute" }).append(list);
+      }
+  
+      if (settings.noneOption) {
+        if (settings.noneOption === true) {
+          settings.noneOption = settings.useSelect ? "Time..." : "None";
+        }
+  
+        if ($.isArray(settings.noneOption)) {
+          for (var i in settings.noneOption) {
+            if (parseInt(i, 10) == i) {
+              var noneElement = _generateNoneElement(
+                settings.noneOption[i],
+                settings.useSelect
+              );
+              list.append(noneElement);
+            }
+          }
+        } else {
+          var noneElement = _generateNoneElement(
+            settings.noneOption,
+            settings.useSelect
+          );
+          list.append(noneElement);
+        }
+      }
+  
+      if (settings.className) {
+        wrapped_list.addClass(settings.className);
+      }
+  
+      if (
+        (settings.minTime !== null || settings.durationTime !== null) &&
+        settings.showDuration
+      ) {
+        var stepval =
+          typeof settings.step == "function" ? "function" : settings.step;
+        wrapped_list.addClass("ui-timepicker-with-duration");
+        wrapped_list.addClass("ui-timepicker-step-" + settings.step);
+      }
+  
+      var durStart = settings.minTime;
+      if (typeof settings.durationTime === "function") {
+        durStart = _time2int(settings.durationTime());
+      } else if (settings.durationTime !== null) {
+        durStart = settings.durationTime;
+      }
+      var start = settings.minTime !== null ? settings.minTime : 0;
+      var end =
+        settings.maxTime !== null ? settings.maxTime : start + _ONE_DAY - 1;
+  
+      if (end < start) {
+        // make sure the end time is greater than start time, otherwise there will be no list to show
+        end += _ONE_DAY;
+      }
+  
+      if (
+        end === _ONE_DAY - 1 &&
+        $.type(settings.timeFormat) === "string" &&
+        settings.show2400
+      ) {
+        // show a 24:00 option when using military time
+        end = _ONE_DAY;
+      }
+  
+      var dr = settings.disableTimeRanges;
+      var drCur = 0;
+      var drLen = dr.length;
+  
+      var stepFunc = settings.step;
+      if (typeof stepFunc != "function") {
+        stepFunc = function() {
+          return settings.step;
+        };
+      }
+  
+      for (var i = start, j = 0; i <= end; j++, i += stepFunc(j) * 60) {
+        var timeInt = i;
+        var timeString = _int2time(timeInt, settings);
+  
+        if (settings.useSelect) {
+          var row = $("<option />", { value: timeString });
+          row.text(timeString);
+        } else {
+          var row = $("<li />");
+          row.addClass(
+            timeInt % _ONE_DAY < _ONE_DAY / 2
+              ? "ui-timepicker-am"
+              : "ui-timepicker-pm"
+          );
+          row.data("time", _moduloSeconds(timeInt, settings));
+          row.text(timeString);
+        }
+  
+        if (
+          (settings.minTime !== null || settings.durationTime !== null) &&
+          settings.showDuration
+        ) {
+          var durationString = _int2duration(i - durStart, settings.step);
+          if (settings.useSelect) {
+            row.text(row.text() + " (" + durationString + ")");
+          } else {
+            var duration = $("<span />", { class: "ui-timepicker-duration" });
+            duration.text(" (" + durationString + ")");
+            row.append(duration);
+          }
+        }
+  
+        if (drCur < drLen) {
+          if (timeInt >= dr[drCur][1]) {
+            drCur += 1;
+          }
+  
+          if (dr[drCur] && timeInt >= dr[drCur][0] && timeInt < dr[drCur][1]) {
+            if (settings.useSelect) {
+              row.prop("disabled", true);
+            } else {
+              row.addClass("ui-timepicker-disabled");
+            }
+          }
+        }
+  
+        list.append(row);
+      }
+  
+      wrapped_list.data("timepicker-input", self);
+      self.data("timepicker-list", wrapped_list);
+  
+      if (settings.useSelect) {
+        if (self.val()) {
+          list.val(_roundAndFormatTime(_time2int(self.val()), settings));
+        }
+  
+        list.on("focus", function() {
+          $(this)
+            .data("timepicker-input")
+            .trigger("showTimepicker");
+        });
+        list.on("blur", function() {
+          $(this)
+            .data("timepicker-input")
+            .trigger("hideTimepicker");
+        });
+        list.on("change", function() {
+          _setTimeValue(self, $(this).val(), "select");
+        });
+  
+        _setTimeValue(self, list.val(), "initial");
+        self.hide().after(list);
+      } else {
+        var appendTo = settings.appendTo;
+        if (typeof appendTo === "string") {
+          appendTo = $(appendTo);
+        } else if (typeof appendTo === "function") {
+          appendTo = appendTo(self);
+        }
+        appendTo.append(wrapped_list);
+        _setSelected(self, list);
+  
+        list.on("mousedown click", "li", function(e) {
+          // hack: temporarily disable the focus handler
+          // to deal with the fact that IE fires 'focus'
+          // events asynchronously
+          self.off("focus.timepicker");
+          self.on("focus.timepicker-ie-hack", function() {
+            self.off("focus.timepicker-ie-hack");
+            self.on("focus.timepicker", methods.show);
+          });
+  
+          if (!_hideKeyboard(self)) {
+            self[0].focus();
+          }
+  
+          // make sure only the clicked row is selected
+          list.find("li").removeClass("ui-timepicker-selected");
+          $(this).addClass("ui-timepicker-selected");
+  
+          if (_selectValue(self)) {
+            self.trigger("hideTimepicker");
+  
+            list.on("mouseup.timepicker click.timepicker", "li", function(e) {
+              list.off("mouseup.timepicker click.timepicker");
+              wrapped_list.hide();
+            });
+          }
+        });
+      }
+    }
+  
+    function _generateNoneElement(optionValue, useSelect) {
+      var label, className, value;
+  
+      if (typeof optionValue == "object") {
+        label = optionValue.label;
+        className = optionValue.className;
+        value = optionValue.value;
+      } else if (typeof optionValue == "string") {
+        label = optionValue;
+        value = '';
+      } else {
+        $.error("Invalid noneOption value");
+      }
+  
+      if (useSelect) {
+        return $("<option />", {
+          value: value,
+          class: className,
+          text: label
+        });
+      } else {
+        return $("<li />", {
+          class: className,
+          text: label
+        }).data("time", String(value));
+      }
+    }
+  
+    function _roundAndFormatTime(seconds, settings) {
+      seconds = settings.roundingFunction(seconds, settings);
+      if (seconds !== null) {
+        return _int2time(seconds, settings);
+      }
+    }
+  
+    // event handler to decide whether to close timepicker
+    function _closeHandler(e) {
+      if (e.target == window) {
+        // mobile Chrome fires focus events against window for some reason
+        return;
+      }
+  
+      var target = $(e.target);
+  
+      if (
+        target.closest(".ui-timepicker-input").length ||
+        target.closest(".ui-timepicker-wrapper").length
+      ) {
+        // active timepicker was focused. ignore
+        return;
+      }
+  
+      methods.hide();
+      $(document).unbind(".ui-timepicker");
+      $(window).unbind(".ui-timepicker");
+    }
+  
+    function _hideKeyboard(self) {
+      var settings = self.data("timepicker-settings");
+      return (
+        (window.navigator.msMaxTouchPoints || "ontouchstart" in document) &&
+        settings.disableTouchKeyboard
+      );
+    }
+  
+    function _findRow(self, list, value) {
+      if (!value && value !== 0) {
+        return false;
+      }
+  
+      var settings = self.data("timepicker-settings");
+      var out = false;
+      var value = settings.roundingFunction(value, settings);
+  
+      // loop through the menu items
+      list.find("li").each(function(i, obj) {
+        var jObj = $(obj);
+        if (typeof jObj.data("time") != "number") {
+          return;
+        }
+  
+        if (jObj.data("time") == value) {
+          out = jObj;
+          return false;
+        }
+      });
+  
+      return out;
+    }
+  
+    function _setSelected(self, list) {
+      list.find("li").removeClass("ui-timepicker-selected");
+  
+      var settings = self.data("timepicker-settings");
+      var timeValue = _time2int(_getTimeValue(self), settings);
+      if (timeValue === null) {
+        return;
+      }
+  
+      var selected = _findRow(self, list, timeValue);
+      if (selected) {
+        var topDelta = selected.offset().top - list.offset().top;
+  
+        if (
+          topDelta + selected.outerHeight() > list.outerHeight() ||
+          topDelta < 0
+        ) {
+          list.scrollTop(
+            list.scrollTop() + selected.position().top - selected.outerHeight()
+          );
+        }
+  
+        if (settings.forceRoundTime || selected.data("time") === timeValue) {
+          selected.addClass("ui-timepicker-selected");
+        }
+      }
+    }
+  
+    function _formatValue(e, origin) {
+      if (origin == "timepicker") {
+        return;
+      }
+  
+      var self = $(this);
+  
+      if (this.value === "") {
+        _setTimeValue(self, null, origin);
+        return;
+      }
+  
+      if (self.is(":focus") && (!e || e.type != "change")) {
+        return;
+      }
+  
+      var settings = self.data("timepicker-settings");
+      var seconds = _time2int(this.value, settings);
+  
+      if (seconds === null) {
+        self.trigger("timeFormatError");
+        return;
+      }
+  
+      var rangeError = false;
+      // check that the time in within bounds
+      if (
+        settings.minTime !== null &&
+        settings.maxTime !== null &&
+        (seconds < settings.minTime || seconds > settings.maxTime)
+      ) {
+        rangeError = true;
+      }
+  
+      // check that time isn't within disabled time ranges
+      $.each(settings.disableTimeRanges, function() {
+        if (seconds >= this[0] && seconds < this[1]) {
+          rangeError = true;
+          return false;
+        }
+      });
+  
+      if (settings.forceRoundTime) {
+        var roundSeconds = settings.roundingFunction(seconds, settings);
+        if (roundSeconds != seconds) {
+          seconds = roundSeconds;
+          origin = null;
+        }
+      }
+  
+      var prettyTime = _int2time(seconds, settings);
+  
+      if (rangeError) {
+        if (
+          _setTimeValue(self, prettyTime, "error") ||
+          (e && e.type == "change")
+        ) {
+          self.trigger("timeRangeError");
+        }
+      } else {
+        _setTimeValue(self, prettyTime, origin);
+      }
+    }
+  
+    function _getTimeValue(self) {
+      if (self.is("input")) {
+        return self.val();
+      } else {
+        // use the element's data attributes to store values
+        return self.data("ui-timepicker-value");
+      }
+    }
+  
+    function _setTimeValue(self, value, source) {
+      if (self.is("input")) {
+        self.val(value);
+  
+        var settings = self.data("timepicker-settings");
+        if (settings.useSelect && source != "select" && self.data("timepicker-list")) {
+          self
+            .data("timepicker-list")
+            .val(_roundAndFormatTime(_time2int(value), settings));
+        }
+      }
+  
+      if (self.data("ui-timepicker-value") != value) {
+        self.data("ui-timepicker-value", value);
+        if (source == "select") {
+          self
+            .trigger("selectTime")
+            .trigger("changeTime")
+            .trigger("change", "timepicker");
+        } else if (["error", "initial"].indexOf(source) == -1) {
+          self.trigger("changeTime");
+        }
+  
+        return true;
+      } else {
+        if (["error", "initial"].indexOf(source) == -1) {
+          self.trigger("selectTime");
+        }
+        return false;
+      }
+    }
+  
+    /*
+    *  Filter freeform input
+    */
+    function _disableTextInputHandler(e) {
+      switch (e.keyCode) {
+        case 13: // return
+        case 9: //tab
+          return;
+  
+        default:
+          e.preventDefault();
+      }
+    }
+  
+    /*
+    *  Keyboard navigation via arrow keys
+    */
+    function _keydownhandler(e) {
+      var self = $(this);
+      var list = self.data("timepicker-list");
+  
+      if (!list || !_isVisible(list)) {
+        if (e.keyCode == 40) {
+          // show the list!
+          methods.show.call(self.get(0));
+          list = self.data("timepicker-list");
+          if (!_hideKeyboard(self)) {
+            self.focus();
+          }
+        } else {
+          return true;
+        }
+      }
+  
+      switch (e.keyCode) {
+        case 13: // return
+          if (_selectValue(self)) {
+            _formatValue.call(self.get(0), { type: "change" });
+            methods.hide.apply(this);
+          }
+  
+          e.preventDefault();
+          return false;
+  
+        case 38: // up
+          var selected = list.find(".ui-timepicker-selected");
+  
+          if (!selected.length) {
+            list.find("li").each(function(i, obj) {
+              if ($(obj).position().top > 0) {
+                selected = $(obj);
+                return false;
+              }
+            });
+            selected.addClass("ui-timepicker-selected");
+          } else if (!selected.is(":first-child")) {
+            selected.removeClass("ui-timepicker-selected");
+            selected.prev().addClass("ui-timepicker-selected");
+  
+            if (selected.prev().position().top < selected.outerHeight()) {
+              list.scrollTop(list.scrollTop() - selected.outerHeight());
+            }
+          }
+  
+          return false;
+  
+        case 40: // down
+          selected = list.find(".ui-timepicker-selected");
+  
+          if (selected.length === 0) {
+            list.find("li").each(function(i, obj) {
+              if ($(obj).position().top > 0) {
+                selected = $(obj);
+                return false;
+              }
+            });
+  
+            selected.addClass("ui-timepicker-selected");
+          } else if (!selected.is(":last-child")) {
+            selected.removeClass("ui-timepicker-selected");
+            selected.next().addClass("ui-timepicker-selected");
+  
+            if (
+              selected.next().position().top + 2 * selected.outerHeight() >
+              list.outerHeight()
+            ) {
+              list.scrollTop(list.scrollTop() + selected.outerHeight());
+            }
+          }
+  
+          return false;
+  
+        case 27: // escape
+          list.find("li").removeClass("ui-timepicker-selected");
+          methods.hide();
+          break;
+  
+        case 9: //tab
+          methods.hide();
+          break;
+  
+        default:
+          return true;
+      }
+    }
+  
+    /*
+    *	Time typeahead
+    */
+    function _keyuphandler(e) {
+      var self = $(this);
+      var list = self.data("timepicker-list");
+      var settings = self.data("timepicker-settings");
+  
+      if (!list || !_isVisible(list) || settings.disableTextInput) {
+        return true;
+      }
+  
+      if (e.type === "paste" || e.type === "cut") {
+        setTimeout(function() {
+          if (settings.typeaheadHighlight) {
+            _setSelected(self, list);
+          } else {
+            list.hide();
+          }
+        }, 0);
+        return;
+      }
+  
+      switch (e.keyCode) {
+        case 96: // numpad numerals
+        case 97:
+        case 98:
+        case 99:
+        case 100:
+        case 101:
+        case 102:
+        case 103:
+        case 104:
+        case 105:
+        case 48: // numerals
+        case 49:
+        case 50:
+        case 51:
+        case 52:
+        case 53:
+        case 54:
+        case 55:
+        case 56:
+        case 57:
+        case 65: // a
+        case 77: // m
+        case 80: // p
+        case 186: // colon
+        case 8: // backspace
+        case 46: // delete
+          if (settings.typeaheadHighlight) {
+            _setSelected(self, list);
+          } else {
+            list.hide();
+          }
+          break;
+      }
+    }
+  
+    function _selectValue(self) {
+      var settings = self.data("timepicker-settings");
+      var list = self.data("timepicker-list");
+      var timeValue = null;
+  
+      var cursor = list.find(".ui-timepicker-selected");
+  
+      if (cursor.hasClass("ui-timepicker-disabled")) {
+        return false;
+      }
+  
+      if (cursor.length) {
+        // selected value found
+        timeValue = cursor.data("time");
+      }
+  
+      if (timeValue !== null) {
+        if (typeof timeValue != "string") {
+          timeValue = _int2time(timeValue, settings);
+        }
+  
+        _setTimeValue(self, timeValue, "select");
+      }
+  
+      return true;
+    }
+  
+    function _int2duration(seconds, step) {
+      seconds = Math.abs(seconds);
+      var minutes = Math.round(seconds / 60),
+        duration = [],
+        hours,
+        mins;
+  
+      if (minutes < 60) {
+        // Only show (x mins) under 1 hour
+        duration = [minutes, _lang.mins];
+      } else {
+        hours = Math.floor(minutes / 60);
+        mins = minutes % 60;
+  
+        // Show decimal notation (eg: 1.5 hrs) for 30 minute steps
+        if (step == 30 && mins == 30) {
+          hours += _lang.decimal + 5;
+        }
+  
+        duration.push(hours);
+        duration.push(hours == 1 ? _lang.hr : _lang.hrs);
+  
+        // Show remainder minutes notation (eg: 1 hr 15 mins) for non-30 minute steps
+        // and only if there are remainder minutes to show
+        if (step != 30 && mins) {
+          duration.push(mins);
+          duration.push(_lang.mins);
+        }
+      }
+  
+      return duration.join(" ");
+    }
+  
+    function _int2time(timeInt, settings) {
+      if (typeof timeInt != "number") {
+        return null;
+      }
+  
+      var seconds = parseInt(timeInt % 60),
+        minutes = parseInt((timeInt / 60) % 60),
+        hours = parseInt((timeInt / (60 * 60)) % 24);
+  
+      var time = new Date(1970, 0, 2, hours, minutes, seconds, 0);
+  
+      if (isNaN(time.getTime())) {
+        return null;
+      }
+  
+      if ($.type(settings.timeFormat) === "function") {
+        return settings.timeFormat(time);
+      }
+  
+      var output = "";
+      var hour, code;
+      for (var i = 0; i < settings.timeFormat.length; i++) {
+        code = settings.timeFormat.charAt(i);
+        switch (code) {
+          case "a":
+            output += time.getHours() > 11 ? _lang.pm : _lang.am;
+            break;
+  
+          case "A":
+            output += time.getHours() > 11 ? _lang.PM : _lang.AM;
+            break;
+  
+          case "g":
+            hour = time.getHours() % 12;
+            output += hour === 0 ? "12" : hour;
+            break;
+  
+          case "G":
+            hour = time.getHours();
+            if (timeInt === _ONE_DAY) hour = settings.show2400 ? 24 : 0;
+            output += hour;
+            break;
+  
+          case "h":
+            hour = time.getHours() % 12;
+  
+            if (hour !== 0 && hour < 10) {
+              hour = "0" + hour;
+            }
+  
+            output += hour === 0 ? "12" : hour;
+            break;
+  
+          case "H":
+            hour = time.getHours();
+            if (timeInt === _ONE_DAY) hour = settings.show2400 ? 24 : 0;
+            output += hour > 9 ? hour : "0" + hour;
+            break;
+  
+          case "i":
+            var minutes = time.getMinutes();
+            output += minutes > 9 ? minutes : "0" + minutes;
+            break;
+  
+          case "s":
+            seconds = time.getSeconds();
+            output += seconds > 9 ? seconds : "0" + seconds;
+            break;
+  
+          case "\\":
+            // escape character; add the next character and skip ahead
+            i++;
+            output += settings.timeFormat.charAt(i);
+            break;
+  
+          default:
+            output += code;
+        }
+      }
+  
+      return output;
+    }
+  
+    function _time2int(timeString, settings) {
+      if (timeString === "" || timeString === null) return null;
+      if (typeof timeString == "object") {
+        return (
+          timeString.getHours() * 3600 +
+          timeString.getMinutes() * 60 +
+          timeString.getSeconds()
+        );
+      }
+      if (typeof timeString != "string") {
+        return timeString;
+      }
+  
+      timeString = timeString.toLowerCase().replace(/[\s\.]/g, "");
+  
+      // if the last character is an "a" or "p", add the "m"
+      if (timeString.slice(-1) == "a" || timeString.slice(-1) == "p") {
+        timeString += "m";
+      }
+  
+      var ampmRegex =
+        "(" +
+        _lang.am.replace(".", "") +
+        "|" +
+        _lang.pm.replace(".", "") +
+        "|" +
+        _lang.AM.replace(".", "") +
+        "|" +
+        _lang.PM.replace(".", "") +
+        ")?";
+  
+      // try to parse time input
+      var pattern = new RegExp(
+        "^" +
+          ampmRegex +
+          "([0-9]?[0-9])\\W?([0-5][0-9])?\\W?([0-5][0-9])?" +
+          ampmRegex +
+          "$"
+      );
+  
+      var time = timeString.match(pattern);
+      if (!time) {
+        return null;
+      }
+  
+      var hour = parseInt(time[2] * 1, 10);
+      var ampm = time[1] || time[5];
+      var hours = hour;
+      var minutes = time[3] * 1 || 0;
+      var seconds = time[4] * 1 || 0;
+  
+      if (hour <= 12 && ampm) {
+        var isPm = ampm == _lang.pm || ampm == _lang.PM;
+  
+        if (hour == 12) {
+          hours = isPm ? 12 : 0;
+        } else {
+          hours = hour + (isPm ? 12 : 0);
+        }
+      } else if (settings) {
+        var t = hour * 3600 + minutes * 60 + seconds;
+        if (t >= _ONE_DAY + (settings.show2400 ? 1 : 0)) {
+          if (settings.wrapHours === false) {
+            return null;
+          }
+  
+          hours = hour % 24;
+        }
+      }
+  
+      var timeInt = hours * 3600 + minutes * 60 + seconds;
+  
+      // if no am/pm provided, intelligently guess based on the scrollDefault
+      if (
+        hour < 12 &&
+        !ampm &&
+        settings &&
+        settings._twelveHourTime &&
+        settings.scrollDefault
+      ) {
+        var delta = timeInt - settings.scrollDefault();
+        if (delta < 0 && delta >= _ONE_DAY / -2) {
+          timeInt = (timeInt + _ONE_DAY / 2) % _ONE_DAY;
+        }
+      }
+  
+      return timeInt;
+    }
+  
+    function _pad2(n) {
+      return ("0" + n).slice(-2);
+    }
+  
+    function _moduloSeconds(seconds, settings) {
+      if (seconds == _ONE_DAY && settings.show2400) {
+        return seconds;
+      }
+  
+      return seconds % _ONE_DAY;
+    }
+  
+    // Plugin entry
+    $.fn.timepicker = function(method) {
+      if (!this.length) return this;
+      if (methods[method]) {
+        // check if this element is a timepicker
+        if (!this.hasClass("ui-timepicker-input")) {
+          return this;
+        }
+        return methods[method].apply(
+          this,
+          Array.prototype.slice.call(arguments, 1)
+        );
+      } else if (typeof method === "object" || !method) {
+        return methods.init.apply(this, arguments);
+      } else {
+        $.error("Method " + method + " does not exist on jQuery.timepicker");
+      }
+    };
+  });
+  
+  
+  </script>
+  {% endblock content %} 

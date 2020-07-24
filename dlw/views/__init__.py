@@ -3,3 +3,12 @@ from .rp import *
 from .utils import *
 from .tmsviews import *
 from .globals import *
+from .mcards import *
+from .mgcards import *
+from .shopadmin import *
+from .pplanning import *
+from .misc import *
+from .manpower import *
+from .partallotment import *
+from .nearmiss import *
+from .cstr import *

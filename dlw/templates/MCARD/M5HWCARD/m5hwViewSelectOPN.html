@@ -1,0 +1,191 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+
+<style>
+table, td, th {  
+  text-align: left;
+}
+table {
+
+  border-collapse: collapse;
+  width: 90%;
+  border-radius: 13px;
+}
+th, td {
+  padding: 15px;
+}
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0px;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    
+</style>
+
+<br><h4 align="center">JOB CARDS (M5) DATA ENTRY</h4>
+<form action="{% url 'm5hwview' %}" method="POST"> {% csrf_token %}
+<br><center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{ message }}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </center><br>
+
+<div class="container" align="center">
+        <table style="background-color: whitesmoke; border-radius: 30px;">
+        <h6 align="left" style="margin-left: 55px;">Select OPN</h6>
+        <hr style="height:1px; border:none; color:red; background-color:red; width:90%; text-align:center; margin: 0 auto;"><br>
+                <tr>
+                    <td>
+                        <label for="br_no"><b>Part-No.:</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                        <input type="text" name="partNo" id="partNo" maxlength="8" class="form-control" onkeypress="return isNumberKey(event)" >
+                    </td>
+                    <td>
+                        <label for="sno"><b>Batch-No.:</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                        <input type="text" name="batchNo" id="batchNo" maxlength="8" onkeypress="return isNumberKey(event)" class="form-control" disabled>                        
+                    </td>
+                    <td>
+                        <label for="br_no"><b>Batch-Qty:</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                        <input type="text" name="batchQty" id="batchQty"  class="form-control" readonly>    
+                    </td>
+                </tr>
+                <tr>                
+                    <td>
+                        <label for="sno"><b>Loco-From:</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                        <input type="text" name="locoFrom" id="locoFrom"  class="form-control"  disabled>
+                    </td>
+                    <td>
+                        <label for="br_no"><b>Loco-To:</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                        <input type="text" name="locoTo" id="locoTo"  class="form-control" disabled>  
+                    </td>
+                </tr>
+                {% comment %} <tr> 
+                    <td>
+                        <label for="br_no"><b>M4-Reqd:</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                        <input type="radio" name="m4Req" id="yes" value="yes" disabled>:&nbsp;Yes
+                        <input type="radio" name="m4Req" id="no"  value="no" checked>:&nbsp;No
+                    </td>
+                    <td>
+                        <span><input type="radio" name="selectOPNForm" id="fromOPRN" value="fromOPRN" checked>:&nbsp;Select OPN from OPRN</span> 
+                    </td>
+                    <td>
+                        <span><input type="radio" name="selectOPNForm" id="fromHWM5" value="fromHWM5" disabled>:&nbsp;Select OPN from HWM5</span> 
+                    </td>
+                    <td></td>
+                </tr> {% endcomment %}
+        </table>
+        <input type="submit" name="proceed"  class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  id="proceed" value="Proceed" onclick="return validateForm()"/>&nbsp;
+        <input type="submit" name="backSelectOPN"  class="btn btn-success"  id="backSelectOPN" value="back"/>
+    </center> 
+</div>                
+</form>     
+<script>
+function validateForm(){
+
+        var partNo   = $("#partNo").val();
+        var batchNo  = $("#batchNo").val();
+        var batchQty = $("#batchQty").val();
+        var locoFrom = $("#locoFrom").val();
+        var locoTo   = $("#locoTo").val();
+
+            if(partNo == ""){
+                swal("Part No. can not be blank.");
+                return false;
+            }else if(batchNo == ""){
+                swal("Batch-No. can not be blank.");
+                return false;
+            }if(batchQty == ""){
+                swal("Batch-Qty can not be blank.");
+                return false;
+            }if(locoFrom == ""){
+                swal("Loco-From can not be blank.");
+                return false;
+            }if(locoTo == ""){
+                swal("Loco-To can not be blank.");
+                return false;
+            }
+}
+function isNumberKey(evt) {
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+        return true;   
+}
+
+                document.querySelector("#partNo").addEventListener('change',(e)=>{
+                    var partNo = $("#partNo").val()
+                        var data = {partNo};
+                        $.ajax({
+                            type : 'GET',
+                            url : "{% url 'm5hwGetbatchNo' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){ 
+                                if(response == "True"){
+                                    document.getElementById("batchNo").disabled = false;
+                                    document.getElementById("partNo").style.backgroundColor = '#bfa';
+                                }else{
+                                    document.getElementById("batchNo").disabled = true;
+                                    document.getElementById("batchQty").disabled = true;
+                                    document.getElementById("locoFrom").disabled = true;
+                                    document.getElementById("locoTo").disabled = true;
+                                    document.getElementById("batchNo").value = "";
+                                    document.getElementById("batchQty").value = "";
+                                    document.getElementById("locoFrom").value = "";
+                                    document.getElementById("locoTo").value = "";
+                                    document.getElementById("partNo").style.backgroundColor = '#fba';                                    
+                                    swal("This Part No. is not match in DataBase, Please fill correct PART NO.")
+                                }                                
+                            }   
+                        })
+                })
+                document.querySelector("#batchNo").addEventListener('change',(e)=>{
+                    var partNo = $("#partNo").val()
+                    var batchNo = $("#batchNo").val()
+                        var data = {partNo,batchNo};
+                        $.ajax({
+                            type : 'GET',
+                            url : "{% url 'm5hwGetbatchQtyDetails' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                
+                                if(response == ""){
+                                    document.getElementById("batchQty").disabled = true;
+                                    document.getElementById("locoFrom").disabled = true;
+                                    document.getElementById("locoTo").disabled = true;
+                                    document.getElementById("batchQty").value = "";
+                                    document.getElementById("locoFrom").value = "";
+                                    document.getElementById("locoTo").value = "";
+                                    //document.getElementById("batchNo").style.backgroundColor = '#fba';
+                                    swal("This Batch-No. is not match in DataBase, Please fill correct Batch-No")
+                                }else{
+                                    //document.getElementById("batchNo").style.backgroundColor = '#bfa';
+                                    document.getElementById("batchQty").value = response[2];
+                                    document.getElementById("locoFrom").value = response[0];
+                                    document.getElementById("locoTo").value = response[1];
+                                } 
+                              
+                            }   
+                        })
+                })
+
+</script>  
+{% endblock content %}

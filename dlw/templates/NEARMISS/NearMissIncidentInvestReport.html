@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head></head>
+        <title>Near Miss Incident Investigation</title>  
+        <style>
+            @page {
+                size: A4;
+                margin: 1cm;
+                
+                thead {display: table-header-group;}
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0cm;
+                    margin-left: 9cm;
+                    margin-right: 9cm;
+                    height: 1cm;
+                }
+               
+              }
+              td{
+                  font-size: 11px;
+              }
+              th{
+                  font-size: 12px;
+              }
+        </style>
+    <body>
+        <h4 ALIGN="CENTER"><b><br>DIESEL LOCOMOTIVE WORKS, VARANASI</b></h4>
+        <h4 ALIGN="CENTER"><b>NEAR MISS INCIDENT INVESTIGATION REPORT<br></b></h4>
+        <br>
+        <br>
+        <table width="70%" align="center" border=0>
+            
+            <tr>
+                <td>&nbsp;<b>S.No:&nbsp;&nbsp;</b> {{sno}}</td> 
+                <td></td>
+                <td><b>Date:</b>&nbsp;&nbsp;{{date}}</td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <table width="70%" align="center" border=0>
+            <tr><th colspan="2">Section-1 Date Time $ Location</th></tr>
+            <tr> 
+                <td valign="top" style="width: 65%;"><br>Date of Incident :</td><td><br>{{doi}}</td>
+            </tr>
+            <tr>
+                <td valign="top" style="width: 65%;"><br>Time of Incident :</td><td><br>{{toi}}</td>
+            </tr>
+            
+            <tr>
+                <td valign="top" style="width: 65%;"><br>Location of Incident(i.e. LTS,Ward etc) :</td>
+                <td><br>{{loc}}</td>
+            </tr>
+            <tr>
+                <td valign="top" style="width: 65%;"><br> Unit/Section :</td><td><br>{{unit}}</td>
+            </tr>
+            <tr>
+                <td valign="top" style="width: 65%;"><br>  Name of SSE/CDMS(Incharge) :</td><td><br>{{ssename}}</td> 
+            </tr>
+            <tr>
+                <td valign="top" style="width: 65%;"><br>Designation of SSE/CDMS(Incharge) :</td><td><br>{{ssedesig}}</td>
+            </tr>
+            <tr>
+                <td valign="top" style="width: 65%;"><br>Fire Explosion(if any) :</td>
+                <td><br>{{fire_exp}}</td>
+            </tr>
+        </table>
+        <br><br>
+        <table width="70%" align="center" border=0>
+            <tr><th colspan="2">Section-2 Brief Description<br></th></tr>
+            
+            <tr>
+                <td colspan="2"><br><u>Employee in involved in Incident</u> </td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Employee Id :</td>
+                <td>{{emp_inname}}</td>
+               
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Employee Name :</td>
+                <td>{{emp_involve}}</td>
+               
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Employee Designation:</td>
+                <td>{{emp_indesig}}</td>     
+            </tr>
+            
+            <tr>
+                <td valign="top" style="width: 65%;"><br>Others(Who involved in Incient)  :&nbsp;&nbsp;</td>
+                
+                <td><br>{{otherinvolve}}</td>  
+
+            </tr>
+        </table>
+        <br>
+        <table width="70%" align="center" border=0>
+            <tr>
+                <td valign="top" style="width: 65%;">Brief Description of Incident :</td>
+                <!-- <td><pre><textarea>{{briefdes}}</textarea></pre></td> -->
+                <td>{{briefdes}}</td>  
+            </tr>
+        </table><br>
+        <table width="70%" align="center" border=0>
+            <tr>
+                <td valign="top" style="width: 65%;">Details of damages to infrastructure :</td>
+                <!-- <td><pre><textarea>{{damage_detail}}</textarea></pre></td>   -->
+                <td>{{damage_detail}}</td> 
+            </tr>
+        </table>
+        <br><br>
+        <table width="70%" align="center" border=0>
+            <tr><th colspan="2">Section-3 Investigation/Site Appraisal<br></th></tr>
+            <tr>
+                <td style="width: 65%;"><br>Site Sketch:&nbsp;&nbsp;</td>
+                {% if attachment != "" %}
+                <td><br>{{attachment}} (Attached as Annexure-I)</td>
+                {% endif %}
+            </tr>
+        </table>
+        <table width="70%" align="center" border=0>
+            <tr>
+                <td colspan="2"><br><u>Details of Observation at site/component /M&P:</u>&nbsp;&nbsp;</td>
+            </tr>
+            <tr>
+                <td style="width: 65%;"><br>(a) Section Bay :</td>
+                <td><br>{{sec_bay}}</td>
+            </tr>
+            <tr>
+                <td valign="top" style="width: 65%;"><br>(b)Plant/Machine/Machinde Tools :</td>
+                <td><br>{{machine}}</td>
+            </tr>
+        </table>
+        <br>
+        <table width="70%" align="center" border=0>
+
+            <tr>
+                <td valign="top" style="width: 65%;">(c)General Condition of Work environment :</td>
+                <!-- <td><pre><textarea>{{work_en}}</textarea></pre></td>   -->
+                <td>{{work_en}}</td>   
+            </tr>
+        </table>
+        <br>
+        <table width="70%" align="center" border=0>
+            <tr>
+                <td valign="top" style="width: 65%;">(d)Other(Specify) :</td>
+                <!-- <td><pre><textarea>{{otherwork_en}}</textarea></pre></td>   -->
+                <td>{{otherwork_en}}</td>   
+            </tr>
+            
+        </table>
+        <br><br>
+        <table width="70%" align="center" border=0>
+            <tr><th colspan="2">Section-4 <br></th></tr>
+            
+            <tr>
+                <td valign="top" style="width: 65%;">Details of Analysis of failure/incident :</td>
+                <!-- <td><pre><textarea>{{fail_analysis}}</textarea></pre></td>  -->
+                <td>{{fail_analysis}}</td>    
+            </tr>
+        </table><br>
+        <table width="70%" align="center" border=0>
+            <tr><th colspan="2">Section-5 <br></th></tr>
+            
+            <tr>
+
+                <td valign="top" style="width: 65%;"><br>Responsibity :&nbsp;&nbsp;</td>
+                <!-- <td><pre><textarea>{{responsibility}}</textarea></pre></td> -->
+                <td><br>{{responsibility}}</td>            
+            </tr>
+        </table><br>
+        <table width="70%" align="center" border=0>
+            <tr><th colspan="2">Section-6 </th></tr>
+            <tr>
+                <td valign="top" style="width: 65%;"><br>Preventive and Corrective Action :&nbsp;&nbsp;</td>
+                <td><br>{{corr_action}}</td>
+            </tr>
+        </table>
+        <br><br>
+        <table width="70%" align="center" border=0>
+            <tr><td align="right">....................................</td></tr>
+            <tr><td align="right">Signature of SSE</td></tr>
+            <tr>
+                <td align="right">Name :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ssename}}</td>
+            </tr>
+            <tr>
+                <td align="right">Designation :&nbsp;&nbsp;{{ssedesig}}</td>
+            </tr>
+        </table>
+        <br>
+            <table width="70%" align="center" border=0>
+            <tr>
+                <td valign="top" style="width: 65%;"><br>Comments of AU Incharge :&nbsp;&nbsp;</td>
+                <td><br>{{aucomment}}</td>
+            </tr>
+        </table>  <br><br>
+        <table width="70%" align="center" border=0>
+            <tr><td align="right">............................................</td></tr>
+            <tr><td align="right">Signature of AU Incharge</td></tr>
+        </table>
+        <table width="70%" align="center" border=0>
+           
+            <!-- <tr>
+                <td style="margin-left: 250px;">Id :</td>
+                <td align="right">{{auinid}}</td>
+            </tr>
+            <tr>
+                <td style="margin-left: 250px;">Name :</td>
+                <td align="right">{{auinname}}</td>
+            </tr>
+            <tr>
+                <td style="margin-left: 250px;">Designation :</td>
+                <td align="right">{{auindesig}}</td>
+            </tr> -->
+            
+            <tr>
+                <td align="right"><br>Id :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{auinid}}</td>
+            </tr>
+            <tr>
+                <td align="right">Name :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{auinname}}</td>
+            </tr>
+            <tr>
+                <td align="right">Designation :&nbsp;&nbsp;{{auindesig}}</td>
+            </tr>
+
+        </table>
+        <div id="footerContent">
+            {%block page_foot%}
+                Page <pdf:pagenumber>
+            {%endblock%}
+        </div>  
+    </body>
+</html>

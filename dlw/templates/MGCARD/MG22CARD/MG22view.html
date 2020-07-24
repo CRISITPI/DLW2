@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %} 
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
+
+<script src="{% static '/js/bootstrap.min3.js' %}" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script>
+  $(document).ready(function () { $('#updt_date').datepicker({dateFormat: 'dd-mm-yy'}); });
+  $(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'dd-mm-yy'}); });
+  </script>
+
+<style>
+body{
+  font-size:larger;
+}
+table, td, th {  
+text-align: left;
+}
+table {
+border-collapse: collapse;
+width: 50%;
+}
+th, td {
+padding: 15px;
+}
+
+  input[type=text],
+  select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+   
+  .container input:checked ~ .checkmark:after {
+              display: inline;
+            }
+</style>
+<form action="{% url 'MG22view' %}" method="POST"> {% csrf_token %}
+  <div class="container">
+<table class="table">
+<tr>
+    <center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{ message }}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+</center>
+</tr>
+  <tr>
+  <h4 align="center">HURT ON DUTY - MG22 </h4>
+  <h4 align="center">REPORT</h4>
+
+<div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
+<div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> <h4 align="right" style="margin-right: 100px;">एम. जी. - 22/ M. G. - 22 </h4></div><br>
+
+      <td>
+          <label for="sno"><b>Date/ दिनांक </b></label>            
+        <input type="text" id="updt_date" style="width: 170px;" name="updt_date" value="{{lvdate}}" placeholder="mm-dd-yy" readonly required/>
+      </td> 
+
+      <td>
+          <label for="sno"><b>Shop Section NO/ शॉप अधी..:</b></label>
+        <select class="form-control ll" id="shop_sec" name="shop_sec" required style="width: 150px;" required>   
+            <option value="Select" required>Select</option>  
+       
+        {% if lenm == 1 %}
+          {% for role in roles %}
+            <option selected readonly>{{role}}</option>
+              {% endfor %}
+              {% endif %}
+              {% if lenm > 1 %}
+                {% for role in roles %}
+                  <option>{{role}}</option>
+                {% endfor %}
+              {% endif %}
+          </select>
+        </td>   
+
+        <td><input type="text" id="stffno" name="stffno" value="{{ticketno}}" style="display: none" /></td>     
+        <td><input type="text" id="shpsec" value="{{shopsec}}" style="display: none" /></td>     
+      </tr>
+      <tr>
+        <td><input type="submit" name="proceed" value="Add" id="proceed" style="display: none" /></td>
+      </tr>
+  </table>
+  <input type="hidden" id="sub" name="sub" value={{sub}}>
+
+{% if sub == 1 %}
+<datalist id="names">
+              {% for lc in names %}
+              <option value="{{lc}}"></option>
+              {% endfor %}
+          </datalist>
+
+<datalist id="empname">
+    {% for lj in empname %}
+    <option value="{{lj}}"></option>
+    {% endfor %}
+</datalist>
+  
+  <input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" />
+  <input type="hidden" name="totindb" value={{totindb}} id="totindb">
+
+<div id="printdata">
+      <h3 align="center"></h3>
+<input type="hidden" name="totmebs" id="totmebs" value="0">
+
+
+<table >
+<tr>
+    <th>Name नाम</th>
+    <th>Ticket No.  टिकट नंबर </th>
+    <th>Date of Accident दुर्घटना की तिथि </th>
+</tr>   
+<tr>
+    <td>
+        <select class="form-control ll" id="name1" name="name1" style="width: 150px;" required onchange="find(this);">
+              <option value="Select">Select Name</option> 
+                {% for lc in names %}
+                  <option value="{{lc}}">{{lc}}</option>
+                {% endfor %}
+        </select>
+    </td>
+    <td><input type="text" name="ticket" id="ticket" class="form-control"></td>
+    <td><input type="date" name="datename" id="datename" class="form-control"></td>
+</tr>
+</table>
+
+<div id="items"> </div>
+<div class="container" id="accident_info">
+      
+    
+      <label for="cause">What was the the accident due to ?</label>
+      <input id="cause" type="text" name="cause" placeholder="Cause of the accident.."  value="{{values.cause}}"><br>
+
+    
+      <label for="reason">Is it due to negligence, if yes, state reasons ?</label>
+      <label class="container">Yes
+              <input id="reason_y" type="radio"  name="reason_neg" value="yes" checked required>
+              <span class="checkmark"></span>
+            </label>
+
+            <label id="reason" class="container">No
+              <input id="reason_n" type="radio" name="reason_neg" value="no" required>
+              <span class="checkmark"></span>
+            </label>
+
+      <input type="text" name="reason_y_neg" placeholder="reason for negligence.."><br>
+
+
+      <label for="equip_check">Was the employee wearing the protective equipment he was entitled to ?</label>
+      <label class="container">Yes
+              <input type="radio" name="equip_check" value="yes" checked required>
+              <span class="checkmark"></span>
+            </label>
+
+            <label id="reason" class="container">No
+              <input type="radio" name="equip_check" value="no" required>
+              <span class="checkmark"></span>
+            </label>
+     
+            <br>  <br>
+      <label for="suggestion">Can you suggest any saftey devices to prevent similar accidents ? </label>
+      <input id="suggestion" type="text" id="cause" name="suggestion" placeholder="Suggest saftey devices" ><br>
+      
+      <label for="bgc">Is it the first accident of its nature to this employee ? </label>
+      
+      
+      <label class="container">Yes
+        <input type="radio" name="bgc" value="yes" checked required>
+        <span class="checkmark"></span>
+      </label>
+
+      <label class="container">No
+        <input type="radio" name="bgc" value="no" required>
+        <span class="checkmark"></span>
+      </label>
+    
+    
+            <br>
+    
+        <label for="bgc2">Any more information with regards to previous accident. If any, to the employee</label>
+        <input type="text" id="bgc2" name="bgc2" placeholder="Information regarding previous accident ..." ></textarea>
+    
+  
+       <label for="sno"><b> Name of section supervisor in whose shift the accident took place: Shop Section NO/??? ???.:</b></label><br>
+          
+       <table style="width: 100%;">
+         <tr>
+           <td>
+              <label for="sno"><b>Section supervisor</b></label>
+
+            <select class="form-control ll selectpicker" id="shop_sec" name="sec_sup" required style="width: 150px;" data-show-subtext="true" data-live-search="true">
+            <option id="op_shop" name="sec_sup" value="{{lj}}" selected disabled hidden>Section Supervisor</option> 
+            
+                {% for lj in empname %}
+                <option value="{{lj}}">{{lj}}</option>
+                {% endfor %}
+            </select>
+            
+           </td>
+
+           <td>
+
+              <label for="sno"><b>Chargeman</b></label>
+
+              <select class="form-control ll" id="shop_sec" name="Chargeman" style="width: 150px;" required>
+              <option id="op_shop" name="Chargeman" selected disabled hidden>Chargeman</option> 
+              {% for lc in names %}
+                <option value="{{lc}}">{{lc}}</option>
+                {% endfor %}
+                </select>
+           </td>
+
+           <td>
+
+              <label for="sno"><b>Mistry</b></label>
+
+              <select class="form-control ll" id="shop_sec" name="Mistry" style="width: 150px;" required>
+              <option id="op_shop" name="Mistry" selected disabled hidden>Mistry</option> 
+              {% for lc in names %}
+                <option value="{{lc}}">{{lc}}</option>
+                {% endfor %}
+                </select>
+
+           </td>
+              
+                </tr>
+                  </table>
+            </br>
+        
+    
+        <br><br>
+           
+          <label for="Certification">Certified that :- </label><br>
+
+        <ol> 
+          <li><input type="checkbox" name="c1" value="The accident arose out of and in the course of his employement">  The accident arose out of and in the course of his employement</li>
+          <li><input type="checkbox" name="c2" value="The work man was not under the influence of drink or drugs at the time time if accident">   The work man was not under the influence of drink or drugs at the time time if accident</li>
+          <li><input type="checkbox" name="c3" value="The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman">   The accident was not due to wilful, disobedience by the workman of an order expressly given or of a rule expressly framed for the purpose of securing the safety of workman</li>
+          <li><input type="checkbox" name="c4" value="The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman" >  The accident was not due to wilful removal or disregard by the workman of any saftey guard or other device which he knew to have been provided for the purpose of securing the saftey of workman</li>       
+        </ol>
+          <br>
+
+
+          <label for="Certification">ANNEXURE </label><b>
+        <ol> 
+            <li><input type="checkbox" name="a1" value="This is an eye injury" required>  This is an eye injury</li>
+            <li> The employee was <input type="radio" name="a2" value="yes" checked required> was not <input type="radio" name="a2" value="no" required>  provided with goggles </li>
+          <li> He was <input type="radio" name="a3" value="yes" checked required> was not <input type="radio" name="a3" value="no" required>  wearing them at the time of accident</li>
+        </ol>
+       
+        
+        <select class="form-control ll" id="ssfo" name="SSFO" style="width: 150px;float:right;" required>
+              <option  id="op_shop" name="Chargeman" selected disabled hidden >SS/ FO</option> 
+              {% for lc in empname %}
+                <option value="{{lc}}">{{lc}}</option>
+                {% endfor %}
+                </select><br>
+       
+    </div> 
+  </body>
+
+<center>
+<input id="submit" type="submit" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  name="proceed" value="Save" id="submitted"> 
+<input id="print" type="button" class="btn btn-success" {% if usermaster.op_read %}{% else %} disabled {% endif%}  onclick="printDiv()" value="Print"> 
+</center>
+{% endif %}
+</div>
+</div>
+</form>
+
+<script type="text/javaScript">
+
+$(document).ready(function () { $('#acc_date').datepicker({dateFormat: 'mm-dd-yy'}); });
+
+$( function() {
+            $( ".datepicker2" ).datepicker({
+              dateFormat:'mm-dd-yy',
+              changeMonth:true,
+              changeYear:true,
+              yearRange:"2009:2099"
+            }).val;
+          } );
+
+$( document ).ready(function() {
+  var shop_sec=document.getElementById('shpsec').value;
+  var sub=document.getElementById('sub').value;
+  var tt=0;
+  if (sub == 1)
+  {
+  var totindb=document.getElementById('totindb').value;
+
+    $("#shop_sec").val(shop_sec);
+    console.log("shop_sec",shop_sec);
+   
+  }
+
+});
+var j=0;
+
+function find(th)
+{
+var id = th.id;
+var two=id.split("name");
+var ticket="ticket"+two[1];
+var name=document.getElementById(id).value;
+var shop_sec=document.getElementById('shpsec').value; 
+
+var data = {shop_sec,name};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'm20getstaffno' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                          console.log(response);                            
+                       document.getElementById("ticket").value= response.cont.wono;
+                      }
+                        })
+}
+              document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                
+              var shop_sec_temp = $("#shop_sec").val()
+              var updt_date_temp = $("#updt_date").val()
+
+              if(updt_date_temp == "dd-mm-yy"){
+                alert("Please First select Date then Shop Section.")
+              return false;
+                }
+                document.querySelector("#proceed").click();
+            })
+    
+  function printDiv() {
+    var printContents = document.getElementById("printdata").innerHTML;
+
+      var style = "<style>";
+       style = style + "table {width: 100%;font: 17px Calibri;}";
+       style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+       style = style + "padding: 2px 3px;text-align: left;}";
+       style = style + "</style>";
+     var win = window.open('', '', 'height=500,width=500');
+
+       win.document.write('<html><head>');
+
+       win.document.write('<title>MG22(hurt on duty) Card</title>');
+       win.document.write(style);
+       win.document.write('</head>');
+       win.document.write('<body>');
+       win.document.write(printContents);
+       win.document.write('</body></html>');
+
+       win.print();
+       win.close();
+
+
+}
+
+</script>    
+{% endblock content %}

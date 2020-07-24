@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<!-- 
+
+    <script src= "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js">  </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+<style>
+    .bt1{
+       height: 38px;
+       border-right-width: 2px;
+       padding-right: 81px;
+       padding-left: 62px;
+       font-size: 18px;
+       background-color:green;
+    }
+   </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <h1 align="center">Labour Rate Updation</h1><br>
+    <form action=""  method="POST"> {% csrf_token %}
+    <table align="center">
+    <tr>
+     <td><label style="font-size:20px;">Shop:</label></td>
+     <td><input type="text" id="txtShop" name="shop" maxlength="2"></td>
+     <td><label style="font-size:20px;">Shop Description:</label></td>
+     <td><input type="text" id="shopdesc" name="updt"></td>
+    </tr>
+    <tr>
+     <td><label style="font-size:20px;">Mast C Man Rate:</label></td>
+     <td><input type="text" id="txtCat_02" name="rate"></td>
+     <td><label style="font-size:20px;">Last update date:</label></td>
+     <td><input type="text" id="txtUpdt_dt" name="updt"></td>
+    </tr>
+    <tr>
+     <td><label style="font-size:20px;">Labour Rate-1:</label></td>
+     <td><input type="text" id="txtLr1" name="rate1"></td>
+      <td><label style="font-size:20px;">Labour Rate-2:</label></td>
+      <td><input type="text" id="txtLr2" name="rate-2"></td>
+    </tr>
+    <tr>
+     <td><label style="font-size:20px;">Labour Rate-3:</label></td>
+     <td><input type="text" id="txtLr3" name="rate3"></td>
+      <td><label style="font-size:20px;">Labour Rate-4:</label></td>
+      <td><input type="text" id="txtLr4" name="rate-4"></td>
+    </tr>
+    <tr>
+     <td><label style="font-size:20px;">Show Over Hd:<label></td>
+     <td><input type="text" id="txtOvhd_perc" name="hd"></td>
+    </tr>
+    <tr></tr><tr></tr><tr></tr>
+    <tr>
+     <td></td>
+     <td><button type="button" id="BtnSave" name="save" class="btn btn-success"  {% if usermaster.op_create %} {% else %} disabled {% endif%} onclick="fetchfun();"><b>Save</b></button></td>
+     <td><button type="button" id="Btnclr" name="clear" class="bt1" onclick="window.location.reload();"><b>Clear</b></button></td>
+     </tr>
+    </table>
+   </form>
+    <script>
+        $(document).ready(function(){
+            $('#txtUpdt_dt').datepicker({dateformat:'dd-mm-yy'});
+        });
+
+        function fetchfun(){
+            var shop_val= $("#txtShop").val();
+            var up_dt= $("#txtUpdt_dt").val();
+            var cat_value= $("#txtCat_02").val();
+            var lr_1= $("#txtLr1").val();
+            var lr_2= $("#txtLr2").val();
+            var lr_3= $("#txtLr3").val();
+            var lr_4= $("#txtLr4").val();
+            var ovd_per= $("#txtOvhd_perc").val();
+            var data={shop_val,up_dt,cat_value,lr_1,lr_2,lr_3,lr_4,ovd_per};
+            $.ajax({
+                type:'GET',
+                url: "{% url 'updshsave' %}",
+                dataType:'json',
+                data: data,
+                success : function(response){
+                    alert('Successfully Updated The Record');
+                },
+                error: function() {
+                    alert("ERROR: PLEASE ENTER SHOP VALUE");
+                    $("#txtShop").focus();
+                },
+        
+            });
+        }
+        document.querySelector("#txtShop").addEventListener('change',(e)=>{  
+            e.preventDefault();                  
+            var Txt_shop = $("#txtShop").val();
+            var data = {Txt_shop};
+            $.ajax({
+                type : 'GET',
+                url : "{% url 'updsh1' %}",
+                dataType : 'json',
+                data : data,
+                success : function(response){                               
+                  alert("success fetched the shop list from table")
+                  document.getElementById('txtCat_02').value=response[0].cat_02; 
+                  document.getElementById('shopdesc').value=response[0].sh_desc;
+                  document.getElementById('txtLr1').value=response[0].lr1; 
+                  document.getElementById('txtLr2').value=response[0].lr2; 
+                  document.getElementById('txtLr3').value=response[0].lr3; 
+                  document.getElementById('txtLr4').value=response[0].lr4; 
+                  var a=response[0].updt_dt; 
+                  var str=a.split("-");
+                  var arr=str[2]+"-"+str[1]+"-"+str[0];
+                  document.getElementById('txtUpdt_dt').value=arr; 
+                  document.getElementById('txtOvhd_perc').value=response[0].ovhd_perc; 
+                },
+                error: function() {
+                    alert("NO SUCH PART");
+                },
+                
+                })
+            });   
+    </script>
+
+{% endblock content %} 

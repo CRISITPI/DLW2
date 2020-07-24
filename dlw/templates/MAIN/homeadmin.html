@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    @media screen and (max-width: 450px) {
+        .banner-text{
+            display: none;
+        }
+    }
+    .box{
+        /* height: fit-content; */
+        /* background: url() cover no-repeat; */
+        position: relative;
+        height: calc(100vh - 170.833px);
+        background: url({% static 'dlw/images/WAP72.jpg' %}) no-repeat center center;
+        /* background: url({% static 'dlw/images/home_screen.jpg' %}) no-repeat center center;  */
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        /* filter: blur(4px);
+  -webkit-filter: blur(4px); */
+  
+    }
+    /* #welcome{
+        position: absolute;
+        top: 0;
+        left: 0;
+    } */
+    .banner-text{
+        z-index: 1;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 45%;
+        padding: 40px 0;
+        text-align: center;
+        border-top-left-radius: 70px;
+        border-bottom-right-radius: 70px;
+        background-color: rgba(0, 0, 0, .6);
+        color: #fff;
+        font-weight: bold;
+        border: 10px inset #fff;
+        transition: all 1s linear;
+        /* transition-delay: 2s; */
+
+    }
+    #welcome_text{
+        /* position: absolute; */
+        white-space: nowrap;
+    }
+</style>
+<div class="banner-text">
+    <h2 id="welcome_text">Welcome {{usermaster.empname}}</h2>
+</div>
+<div class="box">
+</div>
+{% block jquery %}
+
+<script>
+    var endpoint='/api/chart/data/'
+        $.ajax({
+            method:"GET",
+            url:endpoint,
+            success:function(data){
+                console.log(data)
+                console.log(data.length)
+                var i=0
+                var label=new Array(data.length)
+                var targetone=new Array(data.length)
+                var targettwo=new Array(data.length)
+                for(i;i<data.length;i++){
+                    label[i]=data[i].subject
+                    targetone[i]=data[i].targetone
+                    targettwo[i]=data[i].targettwo
+                }
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart2 = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: label,
+                        datasets: [{
+                            label: '# target one',
+                            data: targetone,
+                            backgroundColor: [
+                                'rgba(0, 0, 0, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(0, 0, 0, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
+                            ],
+                            borderWidth: 1
+                        },{
+                            label: '# target two',
+                            data: targettwo,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+
+            },
+            error:function(error_data){
+                console.log("error")
+                console.log(data)
+            }
+        })
+        $(window).on('load', () => {
+            setTimeout(()=>{
+                document.querySelector(".banner-text").style.cssText = "border: none; padding: 10px; margin: 0; top: 0; left: 0; background-color: rgb(45, 57, 70); transform: none; width: 50px; z-index: 999; font-size: 15px";
+                // document.querySelector(".banner-text").style.cssText = "opacity: 0"
+            },3000)
+
+        })
+
+</script>
+{% endblock jquery %}
+{% endblock content %}
+

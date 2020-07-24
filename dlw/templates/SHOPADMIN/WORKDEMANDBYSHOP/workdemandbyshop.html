@@ -1,0 +1,591 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="{% static 'stylesheet/style.css' %}">
+<!-- <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>  -->
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font: 16px Arial;  
+    }
+    
+    /*the container must be positioned relative:*/
+    .autocomplete {
+      position: relative;
+      display: inline-block;
+    }
+    
+    input {
+      border: 1px solid transparent;    
+      background-color: #f1f1f1;
+      padding: 10px;
+      font-size: 16px;
+    }
+    
+    input[type=text] {
+      background-color: #f1f1f1;
+      width: 100%;
+    }
+     
+    table tr{
+      cursor: pointer;transition: all .25s ease-in-out;
+  }
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      /*position the autocomplete items to be the same width as the container:*/
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 400px;
+      overflow-y: scroll; 
+      overflow-x: hidden;
+    }
+    
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff; 
+      border-bottom: 1px solid #d4d4d4; 
+    }
+    
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9; 
+    }
+    
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+      background-color: DodgerBlue !important; 
+      color: #ffffff; 
+    }
+    </style>
+<br>
+<h3><center>Work Demand By Shop</center></h3>
+<center>
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO%}
+    <div class="alert alert-primary" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+    <div class="alert alert-success" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+    <div class="alert alert-danger" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING%}
+    <div class="alert alert-warning" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% endfor %}
+    {% endif %}
+    
+  
+
+</center>
+<br>
+<center>
+    <form method="POST">{%csrf_token%}
+    <div class="container"> 
+      <input id="desig" value="{{desg}}" hidden >
+      <input id="detailsdocno" name="detailsdocno" hidden >
+      <input id="main" value="{{main}}" hidden >
+
+
+        {% if desg == 'sse'%}   
+        {% if main == 's' %} 
+    <div id='sse'>       
+        <div class="form-row">            
+            <div class="form-group col-md-3">
+                <label for="locono">LOCO NO</label>
+                <div class="autocomplete" style="width:250px;">
+                    <input id="locono" autocomplete="off" type="text" name="locono" placeholder="LOCO NO"    maxlength="8" onkeypress="return isNumberKeyln(event)" >
+                    <br><span id="lblErrora" style="color: red"></span> 
+                </div></div>
+            <div class="form-group col-md-3">
+                <label for="batchno">WORK ORDER</label>
+                  <div class="autocomplete" style="width:250px;">
+                        <input id="workorder" autocomplete="off" type="text" name="workorder" placeholder="WORK ORDER"  maxlength="8" onkeypress="return isNumberKeywo(event)" >
+                        <br><span id="lblErrorb" style="color: red"></span> 
+                    </div></div>
+            <div class="form-group col-md-3">
+                <label for="date">RELEASE DATE &nbsp;&nbsp; &nbsp;&nbsp;  </label>
+                 <div class="autocomplete" style="width:250px;">
+                    <input id="date" autocomplete="off" type="text" name="date" placeholder="SELECT DATE" >
+                    <br><span id="lblErrorbr" style="color: red"></span> 
+                </div></div>
+                <div class="form-group col-md-3">
+                  <label for="date">TYPE OF WO &nbsp;&nbsp; &nbsp;&nbsp;  </label>
+                   <div class="autocomplete" style="width:250px;">
+                      <input id="code" autocomplete="off" type="text" name="code" placeholder="SELECT TYPE OF WO" onkeypress="return isNumberKeycode(event)">
+                      <br><span id="lblErrorcode" style="color: red"></span> 
+                  </div></div>
+        </div> 
+        <div class="form-row" >
+        <div class="form-group col-md-3"></div>
+        <input type="button" name="add_demand"  {% if usermaster.op_create %}{% else %} disabled {% endif%} value="Add Demand" class="btn btn-primary" onclick="funcheck();"></button>
+        &nbsp;&nbsp;&nbsp;
+        <input type="submit" name="View" {% if usermaster.op_read %}{% else %} disabled {% endif%}  value="View" class="btn btn-primary" ></button>
+        &nbsp;&nbsp;&nbsp;
+        <input type="button" name="Search"  {% if usermaster.op_create %}{% else %} disabled {% endif%} value="Search" class="btn btn-primary" data-toggle="modal" data-target="#search"></button>
+       </div>
+       <input type="submit" name="Add Demand" value="Add Demand" id="add" hidden></button>
+       <input type="submit" name="Details" value="Details" id="Details" hidden></button>
+       
+       
+       <div class="modal fade" id="search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <div class="autocomplete" style="width:300px;">
+                  <input type="text" autocomplete="off" aria-label="Search" class="form-control" name="searchdoc" id="searchdoc" placeholder="Enter Document No." onclick="funsearch1();">
+                  </div>&nbsp;&nbsp;&nbsp;
+                  <button type="submit" class="btn btn-primary" name='Search2' value="Search2" id="Search2" hidden>  </button>
+                  <button type="button" class="btn btn-primary" name='Search1' value="Search1" id="search1" onclick="funsearch();"> Search </button>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+    {% endif %}
+    {% if main == 'n'%}
+    <input type="button" name="Back"  value="Back" id="Back" class="btn btn-primary" onclick="back();"></button>
+
+    <input type="submit" name="Details" value="Details" id="Details" hidden></button>
+
+    {% endif %}
+    {% endif %}
+    
+    {% if desg == 'wmm'%} 
+    <div id="wmm">
+      <input type="submit" name="Details" value="Details" id="Details" hidden></button>
+
+        
+    </div>
+    {% endif %}
+    {% if desg == 'prm'%} 
+    <div id="prm">
+      <input type="submit" name="Details" value="Details" id="Details" hidden></button>
+
+        
+    </div>
+    {% endif %}
+    {% if desg == 'ne'%}    
+    <div id="ne">
+        <h1><label>You Are Not Allowed To Access This Page !!! </label></h1>
+    </div>
+    {% endif %}
+
+    <table id="demand" class="table table-striped table-bordered" >
+      <thead style="background-color:ghostwhite; font-size:12px;">
+          <tr>
+              <th>Document No.</th>
+              <th>Loco No.</th>
+              <th>Work Order No.</th>
+              <th>Release Date</th>
+              <th>Status</th>
+              <th>Remark</th>
+          </tr>
+      </thead>
+      <tbody style="font-size:11px; font-weight: 610;">
+        {% for i in lst%}
+        <tr>
+          <th>{{i.recordno}}</th>
+          <th> {{i.locono}}</th>
+          <th>{{i.workorder}}</th>
+          <th>{{i.dreleasedate}}</th>
+          <th>{{i.status}}</th>
+          <th>{{i.remarks}}</th>
+      </tr>
+      {% endfor%}
+      </tbody>
+    </table>
+    </div>
+</div>
+
+</form>
+</center>
+
+<script>
+  w_order=[' '];
+  var docno;
+    setTimeout(function(){
+        if ($('#msg').length > 0){
+            $('#msg').remove(); 
+        }
+    },5000)
+
+    var d;
+  $(document).ready(function() { 
+      d=document.getElementById('desig').value;
+      var main=$('#main').val();
+      if(d=='sse')
+      {
+        
+        $('#date').datepicker({dateFormat:'dd-mm-yy',
+           beforeShow: function(){    
+           $(".ui-datepicker").css('font-size', 14.8) 
+           }
+           });
+           var data = {};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'getworkorderno' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                            for(i=0;i<response.length;i++)
+                           {
+                             w_order.push((response[i].bo_no).toString());
+                           }
+
+                           }
+                     });
+                     var data = {};
+                     $.ajax(
+                       {
+                         type:'GET',
+                         data:'data',
+                         url:"{% url 'getdocumentno' %}",
+                         dataType:'json',
+                        success : function(response)
+                        {
+                          for(i=0;i<response.length;i++)
+                          {
+                            searchkey.push((response[i].recordno).toString())
+                          }
+                        }
+                       });
+                     if(main=='s')
+        {
+           var table=$('#demand').DataTable({
+              "language": {
+              "emptyTable": "No Record Found"}
+            });
+
+           
+              
+              $('#demand tbody').on( 'click', 'tr', function () {
+              if ( $(this).hasClass('selected') ) {
+              $(this).removeClass('selected');
+              // var data = table.row( this ).data();
+                        }
+              else {
+              table.$('tr.selected').removeClass('selected');
+              $(this).addClass('selected');
+              var data1 = String(table.row( this ).data());
+              docno=data1.split(",",1);
+              document.getElementById('detailsdocno').value=docno;
+              document.querySelector('#Details').click();
+              }
+            });
+          
+
+      }
+      if (main=='n')
+      {
+        
+        $('#Back').show();
+        var table=$('#demand').DataTable({
+          "language": {
+          "emptyTable": "No Record Found"}
+        });
+
+       
+          
+          $('#demand tbody').on( 'click', 'tr', function () {
+          if ( $(this).hasClass('selected') ) {
+          $(this).removeClass('selected');
+          // var data = table.row( this ).data();
+                    }
+          else {
+          table.$('tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+          var data1 = String(table.row( this ).data());
+          docno=data1.split(",",1);
+          document.getElementById('detailsdocno').value=docno;
+          document.querySelector('#Details').click();
+          }
+        });
+      
+
+      }
+    }  
+      if(d=='wmm')
+      {
+        $('#Back').show();
+        var table=$('#demand').DataTable({
+          "language": {
+          "emptyTable": "No Record Found"}
+        });
+
+       
+          
+          $('#demand tbody').on( 'click', 'tr', function () {
+          if ( $(this).hasClass('selected') ) {
+          $(this).removeClass('selected');
+          // var data = table.row( this ).data();
+                    }
+          else {
+          table.$('tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+          var data1 = String(table.row( this ).data());
+          docno=data1.split(",",1);
+          document.getElementById('detailsdocno').value=docno;
+          document.querySelector('#Details').click();
+          }
+        });
+      
+      }  
+      if(d=='prm')
+      {
+        $('#Back').show();
+        var table=$('#demand').DataTable({
+          "language": {
+          "emptyTable": "No Record Found"}
+        });
+        $('#demand tbody').on( 'click', 'tr', function () {
+          if ( $(this).hasClass('selected') ) {
+          $(this).removeClass('selected');
+          // var data = table.row( this ).data();
+                    }
+          else {
+          table.$('tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+          var data1 = String(table.row( this ).data());
+          docno=data1.split(",",1);
+          document.getElementById('detailsdocno').value=docno;
+          document.querySelector('#Details').click();
+          }
+        });
+
+      } 
+      if(d=='ne')
+      {
+        
+        $('#demand').hide();
+      }   
+  });
+  function back()
+{
+  location.href ="{% url 'workdemandbyshop' %}";
+}
+  function funcheck()
+  {
+    if($('#locono').val()=='')
+    {
+      alert("Please Enter Loco Number")
+      $('#locono').focus();
+    }
+    else
+    if(($('#locono').val()).length < 8)
+    {
+      alert("Loco Number Must Be 8 Character")
+      $('#locono').focus();
+    }
+    else
+    if(funwo())
+    {
+      alert("Work Order Number Must Be 8 Character")
+      $('#workorder').focus();
+    }
+    else
+    if($('#date').val()=='')
+    {
+      alert("Select Date");
+      $('#date').focus();
+    }
+    else
+    if($('#code').val()=='')
+    {
+      alert('Enter Type of Work Order');
+      $('#code').focus();
+    }
+    else
+    {
+      document.querySelector("#add").click();
+    }
+  }
+  var searchkey=[' ']
+  function funsearch1()
+  {
+
+     autocomplete(document.getElementById("searchdoc"), searchkey);
+  }
+  function funsearch()
+  {
+    var search=document.getElementById('searchdoc').value;
+     if(search=='')
+      alert('Enter Document No !!!');
+    else
+    if(search.length<6)
+      alert(' Document Number Must Be 10 Character !!!');
+    else
+      document.querySelector('#Search2').click();
+  }
+  function funwo()
+  {
+    if(($('#workorder').val())=='')
+      return false;
+    else
+    if(($('#workorder').val()).length < 8)
+      return true;
+    else
+      return false;
+  }
+  function isNumberKeyln(evt) {
+        var lblErrora = document.getElementById("lblErrora");
+        lblErrora.innerHTML = "";
+
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            {
+                lblErrora.innerHTML = "Only Numbers allowed.";
+                return false;
+            } 
+        return true;
+  }
+  function isNumberKeywo(evt) {
+    var lblErrorb = document.getElementById("lblErrorb");
+    lblErrorb.innerHTML = "";
+
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+        {
+            lblErrorb.innerHTML = "Only Numbers allowed.";
+            return false;
+        } 
+    return true;
+}
+function isNumberKeycode(evt) {
+  var lblErrorb = document.getElementById("lblErrorcode");
+  lblErrorb.innerHTML = "";
+
+  var charCode = (evt.which) ? evt.which : evt.keyCode;
+  if (charCode ==109 || charCode==77)
+      {
+        return true;
+          
+      } 
+      lblErrorb.innerHTML = "Only M4 Or M14 are allowed ";
+      return false;
+}
+
+  function autocomplete(inp, arr) {
+    /*the autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values:*/
+    var currentFocus;
+    /*execute a function when someone writes in the text field:*/
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+    });
+    /*execute a function presses a key on the keyboard:*/
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          /*If the arrow DOWN key is pressed,
+          increase the currentFocus variable:*/
+          currentFocus++;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          /*If the arrow UP key is pressed,
+          decrease the currentFocus variable:*/
+          currentFocus--;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          e.preventDefault();
+          if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+          }
+        }
+    });
+    function addActive(x) {
+      /*a function to classify an item as "active":*/
+      if (!x) return false;
+      /*start by removing the "active" class on all items:*/
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      /*add class "autocomplete-active":*/
+      x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+      /*a function to remove the "active" class from all autocomplete items:*/
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+    function closeAllLists(elmnt) {
+      /*close all autocomplete lists in the document,
+      except the one passed as an argument:*/
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+  }
+  /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+  autocomplete(document.getElementById("workorder"), w_order);
+  autocomplete(document.getElementById("code"), ['M4','M14']);
+
+  </script>
+
+
+{% endblock content %}

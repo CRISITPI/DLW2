@@ -1,0 +1,569 @@
+{% extends 'base.html' %} {% block content %}
+
+{% load static %}
+  <script> 
+    var holidays=[];
+    {% for v in hd %}
+        //alert("{{v.holiday_date|escapejs}}");
+        holidays.push("{{v.holiday_date|escapejs}}")
+    {% endfor %} 
+
+    function disableDates(date) {
+        var dt = $.datepicker.formatDate('dd-mm-yy', date);
+        var day = date.getDay();
+        return day>0 ?(!($.inArray(dt, holidays) < 0) ? [true] : [false]):[true];    
+    }
+
+    $(document).ready(function () { $('#lv_date').datepicker({
+                    dateFormat: 'dd-mm-yy', 
+                    minDate: 0,
+                    beforeShowDay: disableDates                  
+  }); });
+
+
+  </script>
+  <script>
+   // $(document).ready(function () { $('#alt_date').datepicker({dateFormat: 'dd-mm-yy', minDate: 0,}); });
+   // $(document).ready(function () { $('#datepicker2').datepicker({dateFormat: 'dd-mm-yy', minDate: 0,}); });
+  
+  </script>
+
+<style>
+
+#dateshop,#dateshopval {
+    display: none;
+}
+table, td, th {  
+  text-align: left;
+}
+table {
+  border-collapse: collapse;
+  width: 50%;
+}
+th, td {
+  padding: 15px;
+}
+input[type=text],
+    select {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+     
+</style>
+<form action="{% url 'M20view' %}" method="POST"> {% csrf_token %}
+<div class="container">
+
+<table class="table">
+  <tr>
+      <center>
+          {% if messages %}
+          <ul class="messages">
+              {% for message in messages %}
+              <font size="3">
+                  <li>
+                    <div class="alert alert-success"> <b> {{ message }} </b></div>
+                  </li>
+              </font>
+              {% endfor %}
+          </ul>
+          {% endif %}
+      </center>
+  </tr>
+  <br>
+  <tr>
+    
+        <h3 align="center">कर्मशाला कर्मचारियों की रविवार/छुट्टी की बुकिंग </h3>
+        <h4 align="center">SUNDAY/HOLIDAY BOOKING OF WORKSHOP STAFF</h4>
+        <td>
+          <label for="sno"><b>Sunday Working Date/ दिनांक.:</b></label>
+          </td><td>
+          <input type="text" id="lv_date" style="width: 150px;" name="lv_date" value={{lvdate}} placeholder="" required readonly onchange="shopdetails();"/>
+        </td> 
+          
+        <td>
+          <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label></td><td>
+          <select class="form-control ll" id="shop_sec" name="shop_sec" style="width: 150px;" required>   
+          <option id="op_shop" value="Select" selected disabled hidden>Shop Section</option>  
+         
+          {% if lenm == 1 %}
+            {% for role in roles %}
+              <option selected readonly>{{role}}</option>
+                {% endfor %}
+                {% endif %}
+                {% if lenm > 1 %}
+                  {% for role in roles %}
+                    <option>{{role}}</option>
+                  {% endfor %}
+                {% endif %}
+            </select>
+          </td>   
+
+          <h4 align="right" style="margin-right: 100px;">एम-20/M.-20 </h4>
+
+          <td><input type="text" id="stffno" name="stffno" value="{{ticketno}}" style="display: none" /></td>     
+          <td><input type="text" id="shpsec" value="{{shopsec}}" style="display: none" /></td>     
+        </tr>
+        <tr>
+          <td><input type="submit" name="proceed" value="Add" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  id="proceed" style="display: none" /></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+    </table>
+      
+    
+    <input type="hidden" id="sub" name="sub" value={{sub}}>
+  
+  {% if sub == 1 %}
+    <datalist id="names">
+                {% for lc in names %}
+                <option value="{{lc}}"></option>
+                {% endfor %}
+    </datalist>
+    <div>
+      <input type="button" id="add" value="Add Member"  class="btn btn-success" {% if usermaster.op_read  %}{% else %} disabled {% endif%}  />
+      <button id="RemoveList" name="RemoveList" value="Remove List"   {% if usermaster.op_delete  %}{% else %} disabled {% endif%}  class="btn btn-danger" style="display: none">Remove</button>
+    </div>
+    <div id="items"> </div>
+    
+    <div> <h6 align="left" style="margin-left: 100px;">आई.एस.ओ. - 9002/ I.S.O. - 9002 </h6> </div>
+    <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का (वाराणासी )/ D.L.W. (Varanasi)</h6> </div><br>
+
+    <input type="hidden" name="num" value="THE OUTPUT OF PRODUCT FUNCTION" id="myvalue" />
+    <input type="hidden" name="totindb" value={{totindb}} id="totindb">
+
+    <div id="printdata">
+    <h4 align="center">Particulars of Staff booked to work on Sunday/Holiday</h4>
+    <h4 align="center">रविवार/छुट्टी को काम करने के लिए बुक किये गए कर्मचारियों का विवरण </h4>
+
+{% if totindb %}
+
+<table border="2" align="center" width="100%" class="table table-bordered table-condensed">
+<tr>
+  <div id="dateshop" style="display: none;">
+    <th id="shpid" >Shop Section NO/शॉप अधी.</th>
+    <th id="dtid" >Date/ दिनांक.</th>
+    <th>Shift / पाली</th>
+  </div>
+  <th>Name / नाम</th>
+  <th>Ticket No. / टिकट स.</th>
+  <th>Date of leave to be given / बदले में दी जाने वाली छुट्टी की तारीख </th>
+</tr>
+
+{% for key, values in dictemper.items %}
+<tr>
+  <input type="hidden" name="namedb{{forloop.counter}}" id="namedb{{forloop.counter}}" value="{{values.name}}">
+  <input type="hidden" name="ticketnodb{{forloop.counter}}" id="ticketnodb{{forloop.counter}}" value="{{values.ticketno}}">
+  <div id="dateshopval" style="display: none;">
+    <td id="shpv" width="20%">{{shopsec}}</td>
+    <td id="datev">{{lvdate}}</td>
+    <td>{{values.shift}}</td>
+  </div>
+  <td width="20%">{{values.name}}</td>
+  <td >{{values.ticketno}}</td>
+  <input type="hidden" name="datehid{{forloop.counter}}" id="datehid{{forloop.counter}}" value='{{values.date}}'>
+  <td width="20%"><input type="text" id="datedb{{forloop.counter}}" class="datepicker2" style="width: 150px;"  name="datedb{{forloop.counter}}" placeholder="date" value="{{values.date}}" readonly/></td>
+</tr>
+ 
+{% endfor %}
+</table> 
+{% endif %}
+<input type="hidden" name="totmebs" id="totmebs" value="0">
+
+    </div>
+
+<center>
+  <input type="submit" name="proceed" value="Save"  class="btn btn-success" {% if usermaster.op_create  %}{% else %} disabled {% endif%}  id="submitted"> 
+  <input type="button" onclick="printDiv()"  class="btn btn-success" {% if usermaster.op_read  %}{% else %} disabled {% endif%}  value="Print"> 
+
+  <input type="submit" name="proceed"   class="btn btn-success" {% if usermaster.op_read  %}{% else %} disabled {% endif%}  value="Print pdf"  id="printpdf"> 
+</center>
+{% endif %}
+</div>
+</form>
+
+
+
+
+<script type="text/javaScript">
+//// function for the datepicker2 ...used while save the data
+$( function() {
+              $( ".datepicker2" ).datepicker({
+                dateFormat:'dd-mm-yy',
+                yearRange:"2009:2099",
+                minDate: document.getElementById("lv_date").value, 
+                beforeShowDay: function(date)
+                    {
+                      var day = date.getDay();
+                      return [day !=0, ''];
+                    }
+
+              }).val;
+});
+///////////
+
+$( function() {
+              $( ".datepicker3" ).datepicker({
+                dateFormat:'dd-mm-yy',
+                yearRange:"2009:2099",
+                minDate: document.getElementById("lv_date").value, 
+                beforeShowDay: function(date)
+                    {
+                      var day = date.getDay();
+                      return [day !=0, ''];
+                    }
+
+              }).val;
+});
+
+
+///////////////////////
+
+$( document ).ready(function() {
+    var shop_sec=document.getElementById('shpsec').value;
+    var sub=document.getElementById('sub').value;
+    var tt=0;
+    if (sub == 1)
+    {
+      var totindb=document.getElementById('totindb').value;
+      $("#shop_sec").val(shop_sec);
+      console.log("shop_sec",shop_sec);
+    }
+});
+
+///////////////
+
+  var j=0;
+  $("#add").click(function(e) {
+        
+        event.preventDefault()
+     //   console.log("j"+String(j));
+        $("#RemoveList").show();
+        j++;
+    
+        var nameoname="name"+String(j);
+        var ticketfname="ticket"+String(j);
+        var datename="date"+String(j);
+        var shift="shift"+String(j);
+        var customers="customers"+String(j);
+        var sno=j;
+        var totindb=document.getElementById('totindb').value;
+        
+        console.log("totindb - > " + totindb);
+/*
+      if(j==1 && totindb == 0)
+      {
+          var happ='<div><table id="customers">'+'<tr><th>Name नाम</th><th>Ticket No.  टिकट स.</th><th>Date of leave to be given बदले में दी जाने वाली छुट्टी की तारीख </th>';
+
+          happ=happ+'</tr></table></div>';
+          $('#items').append(happ);
+
+      }
+*/
+      var htAppend= '<div><table id='+customers+' class="table table-striped"><tr>'+
+                    '<tr><th>Name/नाम</th><th>Ticket No. /  टिकट स.</th><th>Shift / पाली</th><th>Date of leave to be given / बदले में दी जाने वाली छुट्टी की तारीख </th></tr><tr>'+
+                    '<td><select name='+nameoname+' id='+nameoname+' onchange="find(this);" class="form-control ll" required>'+
+                    '<option  value="Select">Select Name</option>  </select></td>'+
+                    '<td><input type="text" id="'+ticketfname+'" name="'+ticketfname+'" onclick="findworker(this);" readonly></td>'+
+                    '<td><select id='+shift+' name ='+shift+' class="form-control ll" readonly required><option value="select">Select Shift</option><option value="A">A</option><option value="B">B</option>'+
+                      '<option value="C">C</option><option value="GD">GD</option><option value="GN">GN</option></select></td>'+
+                    '<td><input type="text" id='+datename+' name='+datename+' readonly required onchange="chkdate(this);"></td>'+
+                    '';
+                                     
+                   // '<td><input type="text" id="alt_date" name='+datename+' required class="hasDatepicker"></td>';
+
+      htAppend=htAppend+'</tr></table>'+'</div>';
+
+     $('#items').append(htAppend);
+     document.getElementById("totmebs").value=j;
+
+     
+    //alert(holidays[0]);
+
+     $("#"+datename).datepicker({
+            dateFormat: 'dd-mm-yy', 
+            minDate: document.getElementById("lv_date").value, 
+                beforeShowDay: function(date)
+                    {
+                      var day = date.getDay();
+                      return [day !=0, ''];
+                   }
+            });
+        
+       
+     console.log(document.getElementById('totmebs').value);
+     var x=document.getElementById("names");
+     var pp=0;
+     for (pp = 0; pp < x.options.length; pp++) {
+      
+     $("#"+nameoname).append("<option value='"+x.options[pp].value+"'>"+x.options[pp].value+"</option>");
+     }
+
+});
+
+
+/////////////////////
+ $("#RemoveList").click(function(e) {
+        
+        event.preventDefault();
+        //alert("Remove" + j);
+        if(j>=1)
+        {
+          $("#customers"+j).remove();
+          j--;  
+          document.getElementById("totmebs").value=j;
+          if (j==0)  
+          {
+              $("#RemoveList").hide();
+          }
+        }    
+ });
+  
+
+
+
+//////For validation rules chk...
+$('#submitted').click(function(e){
+  //alert("validation chk" +j)
+  if (j==0)
+    return true;
+  else
+  {
+        var ticketarr=[];
+        for(i=1;i<=j;i++)
+        {
+            //alert("for loop");
+            var nameonname="name"+String(i);
+            var ticketfname="ticket"+String(i);
+            var datename="date"+String(i);
+            var shift="shift"+String(i);
+            //Shift will add
+            n=document.getElementById(nameonname).value;
+            t=document.getElementById(ticketfname).value;
+            d=document.getElementById(datename).value;
+            s=document.getElementById(shift).value;
+             //Shift will add
+           // ticketarr.push(t);
+            if(n=="Select" || n=="")
+            {
+                alert("Please select the name.");
+                document.getElementById(nameonname).focus();
+                return false;
+            }
+            else if(t=="")
+            {
+              document.getElementById(ticketfname).focus();
+              return false;
+            }
+            else if(d=="")
+            {
+              alert("Please select alternat date.");
+              document.getElementById(datename).focus();
+              return false;
+            }
+            
+            else if(s=="select" || s=="")
+            {
+              alert("Please select the shift.");
+              document.getElementById(shift).focus();
+              return false;
+            }
+                        
+        }
+  }
+    
+});
+
+function shopdetails()
+{
+  document.getElementById("shop_sec").value="Select";
+  document.getElementById("shop_sec").focus();
+}
+
+////////////////////// to check the date .... work on it for validation
+function chkdate(myid)
+{
+  
+  var id = myid.id;
+  var two=id.split("date");
+
+  var ticket="ticket"+two[1];
+  var name="name"+two[1];
+  var sdate="date"+two[1];
+  
+  var myt=document.getElementById(ticket).value;
+  
+  if(myt=="")
+    {
+        alert("Please select the staff name and ticket");
+        document.getElementById(sdate).value="";
+        document.getElementById(name).focus();
+    }
+    else
+    {
+          var myt=document.getElementById(ticket).value;
+          var myn=document.getElementById(name).value;
+          var myd=document.getElementById(sdate).value;
+          var shop_sec = document.getElementById("shop_sec").value;
+         // alert(myt + myn+myd);
+
+          var data = {shop_sec,myt,myd};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm20getroster' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                                    //alert(response.cont.wono);
+                                    rostertest=response.cont.wono;
+                                    if(rostertest=="A"||rostertest=="B"||rostertest=="C"||rostertest=="GD"||rostertest=="GN")
+                                    {
+                                        alert ("Already in the roster table");
+                                        document.getElementById(sdate).value="";
+                                        document.getElementById(sdate).focus();
+                                    }
+                        }
+                        })
+
+    }
+}
+
+//////// Find the data from the table and retrive it ////////// 
+function find(th)
+{
+  var id = th.id;
+  var two=id.split("name");
+  var ticket="ticket"+two[1];
+  var name=document.getElementById(id).value;
+  var shop_sec=document.getElementById('shpsec').value;
+
+  var data = {shop_sec,name};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm20getstaffno' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                          document.getElementById(ticket).value= response.cont.wono;
+                          document.getElementById(ticket).click();
+                        }
+                        })
+ 
+  
+}
+
+////////////////////
+/////////////////Find the data from the M20New data
+
+function findworker(th)
+{
+ // alert("find worker");
+  var id = th.id;
+  var two=id.split("ticket");
+  var ticket="ticket"+two[1];
+  var name="name"+two[1];
+  var ticketarr1=[];
+  var myt=document.getElementById(ticket).value;
+  if(myt=="")
+      alert("Select the name");
+  {% for key, values in dictemper.items %}
+     if({{values.ticketno}}==myt)
+     {
+        document.getElementById(ticket).value="";   
+        alert("already allocated the sunday");
+        document.getElementById(name).value="Select";
+        document.getElementById(name).focus;
+        return false;
+     }
+    
+  {% endfor %}
+  
+  if(j>=2){
+ 
+ // alert("sdff");
+      for(i=1;i<=j;i++)
+        {
+            //alert("for loop");
+            ticketfname="ticket"+String(i);
+            t=document.getElementById(ticketfname).value;
+            ticketarr1.push(t);
+           // alert("arr" +ticketarr1);
+        }
+        
+        arrlen=ticketarr1.length;
+        if(arrlen>1)
+        {
+           for(k=0;k<arrlen-1;k++)
+                {
+                  for(l=k+1;l<arrlen;l++)
+                  {
+                    if (ticketarr1[k]==ticketarr1[l])
+                    {
+                        alert("already in the list");
+                        document.getElementById("ticket"+(l+1)).value="";
+                        document.getElementById("name"+(l+1)).value="Select";
+                        document.getElementById("name"+(l+1)).focus();
+                        return false;
+                    }
+                  }
+                }
+
+        }
+  }
+ 
+  
+
+}
+
+//This is for the featch the data form the table and validation  :    Update By Mahesh 09-03-2020 
+
+document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+var shop_sec_temp = $("#shop_sec").val()
+var lv_date_temp = $("#lv_date").val()
+    if (j>0)
+    {
+          alert("Please refresh the page...")
+          return false;
+    }
+    if(lv_date_temp == "" || lv_date_temp == "dd-mm-yyyy"){
+          alert("Please First select Sunday Date then Shop Section No. ")
+         
+          $("#lv_date").focus();
+          return false;    
+      }
+    document.querySelector("#proceed").click();
+})
+
+/////
+
+///////////////////// Print the data.....
+      
+    function printDiv() {
+      var printContents = document.getElementById("printdata").innerHTML;
+ 
+         var style = "<style>";
+         style = style + "table {width: 100%;font: 17px Calibri;}";
+         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+         style = style + "padding: 5px 3px;text-align: left;}";
+         style = style + "</style>";
+         var win = window.open('', '', 'height=500,width=500');
+ 
+         win.document.write('<html><head>');
+ 
+         win.document.write('<title>M20(Sunday Booking) Card</title>');
+         win.document.write(style);
+         win.document.write('</head>');
+         win.document.write('<body>');
+         win.document.write(printContents);
+         win.document.write('</body></html>');
+         win.document.getElementById('dateshop').style.display = "block";
+         win.document.getElementById('dateshopval').style.display = "block";
+        
+         win.print();
+         win.close();
+ }
+</script>    
+{% endblock content %}

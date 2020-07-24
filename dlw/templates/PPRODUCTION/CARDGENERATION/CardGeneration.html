@@ -1,0 +1,823 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font: 16px Arial;  
+    }
+    
+    /*the container must be positioned relative:*/
+    .autocomplete {
+      position: relative;
+      display: inline-block;
+    }
+    
+    input {
+      border: 1px solid transparent;    
+      background-color: #f1f1f1;
+      padding: 10px;
+      font-size: 16px;
+    }
+    
+    input[type=text] {
+      background-color: #f1f1f1;
+      width: 100%;
+    }
+    
+    input[type=submit] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+    }
+    
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      /*position the autocomplete items to be the same width as the container:*/
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 400px;
+      overflow-y: scroll; 
+      overflow-x: hidden;
+    }
+    
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff; 
+      border-bottom: 1px solid #d4d4d4; 
+    }
+    
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9; 
+    }
+    
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+      background-color: DodgerBlue !important; 
+      color: #ffffff; 
+    }
+    </style>
+<br>
+<h3><center>Card Generation</center></h3>
+<center>
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO%}
+    <div class="alert alert-primary" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+    <div class="alert alert-success" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+    <div class="alert alert-danger" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING%}
+    <div class="alert alert-warning" id="msg" role="alert">{{ message }}</div>
+    {%endif%}
+    {% endfor %}
+    {% endif %}
+    
+  
+
+</center>
+<br>
+<center>
+    <form method="POST">{%csrf_token%}
+    <div class="container" id="div1">    
+            
+        <div class="form-row">            
+            <!-- <div class="form-group col-md-4">
+                <label for="cardno">Select Card to generate</label>
+                <div class="autocomplete" style="width:300px;">
+                <select class="form-control" name="cardno" id="cardno">
+                    <option  value="">Select Card</option> 
+                    <option value="M2">M2</option>
+                    <option value="M4">M4</option>
+                    <option value="M5">M5</option>
+                    <option value="M14">M14</option>
+                </select>
+            </div></div> -->
+            <div class="form-group col-md-4">
+                <label for="asslyno">ASSEMBLY NO.</label>
+                <div class="autocomplete" style="width:300px;">
+                    <input id="asslyno" autocomplete="off" type="text" name="asslyno" placeholder="ASSEMBLY NO"    maxlength="8" onkeypress="return isNumberKeya(event)" >
+                    <br><span id="lblErrora" style="color: red"></span> 
+                </div>
+
+            </div>
+            <div class="form-group col-md-4">
+                <label for="batchno">BATCH NO.</label>
+                  <div class="autocomplete" style="width:300px;">
+                        <input id="batchno" autocomplete="off" type="text" name="batchno" placeholder="BATCH NO" onclick="funbatch();"  maxlength="8" onkeypress="return isNumberKeyb(event)" >
+                        <br><span id="lblErrorb" style="color: red"></span> 
+                    </div>
+        
+            </div>
+            <div class="form-group col-md-4">
+                <label for="brn_no">BRN NO  :  </label>
+                 <div class="autocomplete" style="width:300px;">
+                    <input id="brn_no" autocomplete="off" type="text" name="brn_no" placeholder="BRN NO"  onclick="funbrn();" maxlength="5" onkeypress="return isNumberKeybr(event)" >
+                    <br><span id="lblErrorbr" style="color: red"></span> 
+                </div>
+            </div>
+        </div> 
+
+        <div class="form-row" id="id3">
+            <div class="form-group col-md-4">
+              <label for="ep_type">EP_TYPE</label>
+              <div class="autocomplete" style="width:300px;">
+              <input type="text" autocomplete="off" class="form-control" id="ep_type" name="ep_type" placeholder="EP_TYPE" onchange="myFunc4();" maxlength="2" style="text-transform: uppercase">
+              
+            </div></div>
+            <div class="form-group col-md-4">
+              <label for="loco_fr">LOCO FROM</label>
+              <div class="autocomplete" style="width:300px;">
+              
+              <input type="text" autocomplete="off" class="form-control" id="loco_fr" name="loco_fr" placeholder="LOCO FROM" onchange="myFunc5();" maxlength="4" onkeypress="return isNumberKeyl(event)" >
+              <br><span id="lblErrorl" style="color: red"></span> 
+            </div></div>
+            <div class="form-group col-md-4">
+                <label for="loco_to">LOCO TO</label>
+                <div class="autocomplete" style="width:300px;">
+                <input type="text" autocomplete="off" class="form-control" id="loco_to" name="loco_to" placeholder="LOCO TO" onchange="myFunc6();" maxlength="4" onkeypress="return isNumberKeylt(event)" >
+                <br><span id="lblErrorlt" style="color: red"></span>  
+            </div></div>
+          </div>
+          <div class="form-row" id="id4">
+            <div class="form-group col-md-4">
+              <label for="b_type">BATCH_TYPE</label>
+              <div class="autocomplete" style="width:300px;">
+              <input type="text" autocomplete="off" class="form-control" id="b_type" name="b_type" placeholder="BATCH_TYPE"  maxlength="1" onchange="myFunc7();" onkeypress="return Validate(event);" style="text-transform: uppercase">
+              <br><span id="lblError" style="color: red"></span>
+            </div></div>
+            <div class="form-group col-md-4">
+              <label for="b_qty">BATCH QTY</label>
+              <div class="autocomplete" style="width:300px;">
+              <input type="text" autocomplete="off" class="form-control" id="b_qty" name="b_qty" placeholder="BATCH QTY"  maxlength="5" onkeypress="return isNumberKeybq(event)" >
+              <br><span id="lblErrorbq" style="color: red"></span> 
+            </div></div>
+            <div class="form-group col-md-4">
+                <label for="wkf">UOT-WK-F</label>
+                <div class="autocomplete" style="width:300px;">
+                <input type="text" autocomplete="off" class="form-control" id="wkf" name="wkf" placeholder="UOT-WK-F" onchange="myFunc8();" maxlength="4" onkeypress="return isNumberKey(event)" >
+                <br><span id="lblError1" style="color: red"></span>  
+            </div></div>
+          </div>
+          <div class="form-row" >
+                <div class="form-group col-md-4">
+                    <label for="isalt" style=" margin-top: 31px;">Is Alternate  :   </label>
+                    <input type="radio" id="ralt" name="ralt" value="T" onclick="only1();" > True
+                    <input type="radio" id="ralt" name="ralt" value="F" onclick="only1();" checked="checked"> False
+                </div>
+            </div>
+
+          <input type="hidden" id="yn" name="yn" >
+        <br><center><input type="button" name="btncg"  value="Generate Cards" class="btn btn-primary" onclick="funcbtncg()"></button></center>
+        <button type="submit" name="cardbutton" id="cardbutton" value="Generate Cards" class="btn btn-primary" onclick="wait()" hidden></button>
+    </div>
+    <div id="div2">
+        <center><img src="{% static 'dlw/images/loading.gif' %}" style="width:20%;height:20%;"></center>
+    </div>
+                
+
+   
+    </form>
+</center>
+
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0){
+            $('#msg').remove(); 
+        }
+    },5000)
+var ch,b;
+var imp;
+var D=0;
+var countries = [' '];
+var countries1 = [' '];
+var countries2 = [' '];
+
+document.querySelector("#brn_no").addEventListener('focus',(e)=>{
+    e.preventDefault();
+    var batch=$('#batchno').val();
+    var assly=$('#asslyno').val();
+    myFunc2();
+    var data={batch,assly};
+    $.ajax({
+    type : 'GET',
+    url : "{% url 'm5cardgen_getbrn' %}",
+    dataType : 'json',
+    data : data,
+
+    success : function(response)
+    { 
+      if(response[0].check=='E')  
+      for(i=1;i<response.length;i++)
+      {
+        countries.push((response[i][0].brn_no).toString());
+      }
+      if (d==0 && b==1)
+       {
+              d=1;
+        if (response[0].check=='NE')
+      {
+        alert("Batch Does not exist in master.  CREATE NEW! ");
+        $('#id3').show();
+        $('#id4').show();
+        //$("#brn_no").focus();
+        imp=1;
+        $('#brn_no').val(response[0].brn);
+        $('#loco_to').val(response[0].l_to);
+        $('#loco_fr').val(response[0].l_fr);
+        $('#ep_type').val(response[0].epc);
+        $('#b_type').val(response[0].batch_type);
+        $('#b_qty').val(response[0].qty);
+        $('#wkf').val(response[0].week_no);
+         
+      }
+      if (response[0].check=='O')
+      {
+        ba=1;
+        alert('Batch Number is not Registered yet!!!');
+        $('#batchno').val('');
+        $("#batchno").focus();
+        $('#id3').hide();
+        $('#id4').hide();
+      }
+      
+    }}
+    
+    }); 
+                
+ })
+var ba=0;
+function funcbtncg()
+{
+   
+    //var d=$('#cardno option:selected').val();
+    if (imp==0)
+    {
+//         if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//     else
+    if($("#asslyno").val()=='')
+    {
+        alert('Please Enter Assly no. ');
+       $("#asslyno").focus();
+    }
+    else
+    if($("#batchno").val()=='')
+    {
+        alert('Please Enter Batch no. ');
+       $("#batchno").focus();
+    }
+    else
+    if($("#brn_no").val()=='')
+    {
+        alert('Please Enter Brn No. ');
+        $("#brn_no").focus();
+         
+    }
+    else
+    if(myFunc1());
+    else
+    {
+        document.querySelector("#cardbutton").click();
+    }
+    }
+    else
+    {
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//     else
+    if($("#asslyno").val()=='')
+    {
+        alert('Please Enter Assly no. ');
+       $("#asslyno").focus();
+    }
+    else
+    if($("#batchno").val()=='')
+    {
+        alert('Please Enter Batch no. ');
+       $("#batchno").focus();
+    }
+    else
+    if($("#ep_type").val()=='')
+    {
+        alert('Please Enter Ep_type ');
+       $("#ep_type").focus();
+    }
+    else
+    if($("#loco_fr").val()=='')
+    {
+        alert('Please Enter Loco From. ');
+       $("#loco_fr").focus();
+    }
+    else
+    if($("#loco_to").val()=='')
+    {
+        alert('Please Enter Loco To. ');
+       $("#loco_to").focus();
+    }
+    else
+    if($("#loco_fr").val() > $("#loco_to").val())
+    {
+        alert('Loco From Should not be Greater then Loco To ');
+       $("#loco_fr").focus();
+    }
+    else
+    if($("#b_type").val()=='')
+    {
+        alert('Please Enter Batch Type. ');
+       $("#b_type").focus();
+    }
+    else
+    if($("#b_qty").val()=='')
+    {
+        alert('Please Enter Batch Qty. ');
+       $("#b_qty").focus();
+    }
+    else
+    if($("#wkf").val()=='')
+    {
+        alert('Please Enter UOT-WK-F. ');
+       $("#wkf").focus();
+    }
+    else
+    if($("#brn_no").val()=='')
+    {
+        alert('Please Enter Brn No. ');
+       $("#brn_no").focus();
+       myFunc1();
+    }
+    else
+    if(myFunc1());
+      
+    else
+    {
+        document.querySelector("#cardbutton").click();
+    }}
+}
+
+window.onload=function()
+{
+    $('#div1').show();
+    $('#div2').hide();
+    //$( "#ralt" ).prop( "checked", true );
+    $('#id3').hide();
+    $('#id4').hide();
+    imp=0;
+    ch=0;
+    d=0;
+    
+                      var a=0;
+                      var data = {a};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'm5cardgen_getassembly' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                            
+                            for(i=0;i<response.length;i++)
+                           {
+                             countries2.push((response[i].part_no).toString());
+                           }
+                           }
+                           
+                     })
+                     
+}
+function only1()
+{
+    ch=1;
+}
+
+function myFunc1()
+{
+    var brn_no = $("#brn_no").val();
+    if(brn_no.length < '5')
+    {
+        //document.getElementById('brn_no').focus();
+        $("#brn_no").focus();
+        alert("BRN NO must be 5 character.");
+        return true;
+       
+    }
+    return false;
+    
+
+}
+function myFunc2(){
+    var brn_no1 = $("#batchno").val();
+    if(ba==0)
+    {
+    if(brn_no1.length < '8'){
+        //document.getElementById('brn_no').focus();
+        $("#batchno").focus();
+        alert("Batch NO must be 8 character.");
+        b=0;
+    }
+    else
+        b=1;
+  }
+  ba=0;
+}
+function myFunc3(){
+    var brn_no2 = $("#asslyno").val();
+    if(brn_no2.length < '8'){
+        //document.getElementById('brn_no').focus();
+        $("#asslyno").focus();
+        alert("Assly NO must be 8 character.");
+    }
+}
+
+function myFunc4(){
+    var brn_no = $("#ep_type").val();
+    if(brn_no.length < '2'){
+        //document.getElementById('brn_no').focus();
+        $("#ep_type").focus();
+        alert("Ep_Type must be 2 character.");
+    }
+}
+function myFunc5(){
+    var brn_no = $("#loco_fr").val();
+    if(brn_no.length < '4'){
+        //document.getElementById('brn_no').focus();
+        $("#loco_fr").focus();
+        alert("Loco From must be 4 character.");
+    }
+}
+function myFunc6(){
+    var brn_no = $("#loco_to").val();
+    if(brn_no.length < '4'){
+        //document.getElementById('brn_no').focus();
+        $("#loco_to").focus();
+        alert("Loco To must be 4 character.");
+    }
+}
+function myFunc7(){
+    var brn_no = $("#b_type").val();
+    if(brn_no.length < '1'){
+        //document.getElementById('brn_no').focus();
+        $("#b_type").focus();
+        alert("Batch_Type must be 1 character.");
+    }
+}
+
+function myFunc8(){
+    var brn_no = $("#wkf").val();
+    if(brn_no.length < '4'){
+        //document.getElementById('brn_no').focus();
+        $("#wkf").focus();
+        alert("Uot-Wk-F must be 4 character.");
+    }
+}
+function isNumberKeya(evt) {
+    var lblErrora = document.getElementById("lblErrora");
+        lblErrora.innerHTML = "";
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57))
+{
+    lblErrora.innerHTML = "Only Numbers allowed.";
+    return false;
+} 
+return true;
+}
+function isNumberKeyb(evt) {
+    var lblErrorb = document.getElementById("lblErrorb");
+        lblErrorb.innerHTML = "";
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57))
+{
+    lblErrorb.innerHTML = "Only Numbers allowed.";
+    return false;
+} 
+
+return true;
+
+}
+function isNumberKeybr(evt) {
+    var lblErrorbr = document.getElementById("lblErrorbr");
+        lblErrorbr.innerHTML = "";
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57))
+{
+    lblErrorbr.innerHTML = "Only Numbers allowed.";
+    return false;
+} 
+
+return true;
+
+}
+function isNumberKeybq(evt) {
+    var lblErrorbq = document.getElementById("lblErrorbq");
+        lblErrorbq.innerHTML = "";
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57))
+{
+    lblErrorbq.innerHTML = "Only Numbers allowed.";
+    return false;
+} 
+
+return true;
+
+}
+function isNumberKeyl(evt) {
+    var lblErrorl = document.getElementById("lblErrorl");
+        lblErrorl.innerHTML = "";
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57))
+{
+    lblErrorl.innerHTML = "Only Numbers allowed.";
+    return false;
+} 
+
+return true;
+
+
+}
+function isNumberKeylt(evt) {
+    var lblErrorlt = document.getElementById("lblErrorlt");
+        lblErrorlt.innerHTML = "";
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57))
+{
+    lblErrorlt.innerHTML = "Only Numbers allowed.";
+    return false;
+} 
+
+return true;
+
+
+}
+
+function isNumberKey(evt) {
+    var lblError1 = document.getElementById("lblError1");
+        lblError1.innerHTML = "";
+
+var charCode = (evt.which) ? evt.which : evt.keyCode;
+if (charCode > 31 && (charCode < 48 || charCode > 57))
+{
+    lblError1.innerHTML = "Only Numbers allowed.";
+    return false;
+} 
+
+return true;
+
+
+}
+
+
+    function Validate(e) {
+        var keyCode = e.keyCode || e.which;
+ 
+        var lblError = document.getElementById("lblError");
+        lblError.innerHTML = "";
+ 
+        //Regex for Valid Characters i.e. Alphabets.
+        var regex = /^[A-Za-z]+$/;
+ 
+        //Validate TextBox value against the Regex.
+        var isValid = regex.test(String.fromCharCode(keyCode));
+        if (!isValid) {
+            lblError.innerHTML = "Only Alphabets allowed.";
+        }
+ 
+        return isValid;
+    }
+
+
+// function isNumberKey1(evt) {
+
+// var charCode = (evt.which) ? evt.which : evt.keyCode;
+// if ((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <=122)) return true;
+// return False;
+
+// }
+
+
+// function funcg()
+// { 
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+// }
+function funbatch()
+{ 
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//    else
+   if(($("#asslyno").val()==''))
+   {
+      alert('Please Select Assembly First ');
+       $("#asslyno").focus();
+   }
+}
+
+function funbrn()
+{ 
+//     if ($("#cardno").val()=='')
+//    {
+//        alert('Please Select Card First ');
+//        $("#cardno").focus();
+//    }
+//    else
+   if(($("#asslyno").val()==''))
+   {
+      alert('Please Select Assembly No. First ');
+       $("#asslyno").focus();
+   }
+   else
+   if(($("#batchno").val()==''))
+   {
+      alert('Please Select Batch No. First ');
+       $("#batchno").focus();
+   }
+}
+document.querySelector("#batchno").addEventListener('focus',(e)=>{
+                    e.preventDefault();
+                    myFunc3();
+                    var mAsslyno = $("#asslyno").val();
+                                     d=0;
+                                     $("#brn_no").val('');
+                    var data = {mAsslyno};
+                      $.ajax({
+                        type : 'GET',
+                        url : "{% url 'cggetBatchNo' %}",
+                        dataType : 'json',
+                        data : data,
+                        success : function(response){
+                            for(i=0;i<response.length;i++)
+                           {
+                             countries1.push((response[i].bo_no).toString());
+                           }
+
+                           }
+                     })
+                });
+
+function wait()
+{
+    $('#div1').hide();
+    $('#div2').show();
+}
+// document.querySelector("#cardno").addEventListener('change',(e)=>{
+//                     e.preventDefault();
+//                     var d=$('#cardno option:selected').val();
+//                     if(d=='M4' || d=='M5')
+//                     {$('#alt').show();}
+                    
+// });
+  
+
+//var check1=0;
+//document.addEventListener("mouseover", myFunction);
+//function myFunction()
+//{
+ // var brn_no2 = $("#asslyno").val();
+ //   if(brn_no2.length == '8'){
+  //      if(check1==0)
+  //      {
+   //     alert("Assly NO must be 8 character."+brn_no2.length);
+     //   check1++;
+     //   }
+    //}
+//}
+
+
+    function autocomplete(inp, arr) {
+      /*the autocomplete function takes two arguments,
+      the text field element and an array of possible autocompleted values:*/
+      var currentFocus;
+      /*execute a function when someone writes in the text field:*/
+      inp.addEventListener("input", function(e) {
+          var a, b, i, val = this.value;
+          /*close any already open lists of autocompleted values*/
+          closeAllLists();
+          if (!val) { return false;}
+          currentFocus = -1;
+          /*create a DIV element that will contain the items (values):*/
+          a = document.createElement("DIV");
+          a.setAttribute("id", this.id + "autocomplete-list");
+          a.setAttribute("class", "autocomplete-items");
+          /*append the DIV element as a child of the autocomplete container:*/
+          this.parentNode.appendChild(a);
+          /*for each item in the array...*/
+          for (i = 0; i < arr.length; i++) {
+            /*check if the item starts with the same letters as the text field value:*/
+            if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+              /*create a DIV element for each matching element:*/
+              b = document.createElement("DIV");
+              /*make the matching letters bold:*/
+              b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+              b.innerHTML += arr[i].substr(val.length);
+              /*insert a input field that will hold the current array item's value:*/
+              b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+              /*execute a function when someone clicks on the item value (DIV element):*/
+              b.addEventListener("click", function(e) {
+                  /*insert the value for the autocomplete text field:*/
+                  inp.value = this.getElementsByTagName("input")[0].value;
+                  /*close the list of autocompleted values,
+                  (or any other open lists of autocompleted values:*/
+                  closeAllLists();
+              });
+              a.appendChild(b);
+            }
+          }
+      });
+      /*execute a function presses a key on the keyboard:*/
+      inp.addEventListener("keydown", function(e) {
+          var x = document.getElementById(this.id + "autocomplete-list");
+          if (x) x = x.getElementsByTagName("div");
+          if (e.keyCode == 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode == 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+              /*and simulate a click on the "active" item:*/
+              if (x) x[currentFocus].click();
+            }
+          }
+      });
+      function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+      function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+            x[i].parentNode.removeChild(x[i]);
+          }
+        }
+      }
+      /*execute a function when someone clicks in the document:*/
+      document.addEventListener("click", function (e) {
+          closeAllLists(e.target);
+          
+      });
+    }
+    
+    
+   
+    
+    /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+    autocomplete(document.getElementById("brn_no"), countries);
+    autocomplete(document.getElementById("batchno"), countries1);
+    autocomplete(document.getElementById("asslyno"), countries2);
+    </script>
+
+
+{% endblock content %}

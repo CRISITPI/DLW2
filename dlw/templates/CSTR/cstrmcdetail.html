@@ -1,0 +1,1331 @@
+{% extends 'base.html' %} {% block content %}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<style>
+    td {
+        padding: 0px 10px;
+      }
+    @media screen and (min-width: 768px) {
+        .modal-dialog {
+          width: 700px; /* New width for default modal */
+        }
+        .modal-sm {
+          width: 350px; /* New width for small modal */
+        }
+    }
+    @media screen and (min-width: 992px) {
+        .modal-lg {
+          width: 950px; /* New width for large modal */
+        }
+    }
+</style>
+
+<div class="container">
+    
+    <br>
+    <div>
+        <h4 align="center">सूचना विवरण बदलें</h4>
+        <h4 align="center">Change Notice Details </h4>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-lg-4" align="center"></div>
+        <div class="col-lg-2" align="right">
+           Change Indicator :<br>
+           Reg. No. :<br>
+           ppl_cn_no. :
+          </div>
+          <div class="col-lg-2" align="left">
+          <b>{{cnind}}</b><br>
+          <b>{{reg_no}}</b><br>
+          <b>{{pplno}}</b>
+        </div>
+        <div class="col-lg-2" align="center"></div>
+        <div class="col-lg-2" align="center">
+        {% if status == 'U' %}
+        <button type="button" class="form-control btn btn-primary" {% if usermaster.op_create %}{% else %} disabled {% endif%} data-toggle="modal" data-target="#addnew" onclick="funslno('{{cnind}}','{{reg_no}}','{{pplno}}')">
+            <span class="glyphicon glyphicon-plus"></span> Add New</button>
+        {% endif %}
+        </div>
+    </div>
+ <div class="row">
+        <div class="col-lg-12" align="center">
+         
+        </div> 
+    </div>
+    
+
+    <br>
+    <table class="table" id="cn-table">
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>ACD</th>
+            <th>Parent</th>
+            <th>Component</th>
+            <th>LOCO From</th>
+            <th>LOCO To</th>
+            <th>PTC</th>
+            <th>EPC</th>
+            <th>QTY</th>
+            <th>status</th>
+            <th>#</th>
+            <th>#</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cnlist in cnlists %}
+            <tr>
+              
+              <td>{{ cnlist.slno }}<input type="hidden" name="h_slno" value="{{ cnlist.slno }}">
+              <input type="hidden" id= "h_cn_no" name="h_cn_no" value="{{ cnlist.cn_no }}">
+              <input type="hidden" id="h_chg_ind" name="h_chg_ind" value="{{ cnlist.chg_ind }}">
+              <input type="hidden" id="h_reg_no" name="h_reg_no" value="{{ cnlist.reg_no }}"></td>
+              <td>{{ cnlist.acd }}</td>
+              <td>{{ cnlist.pp_part }}</td>
+              <td>{{ cnlist.cp_part }}</td>
+              <td>{{ cnlist.l_fr }}</td>
+              <td>{{ cnlist.l_to }}</td>
+              <td>{{ cnlist.ptc }}</td>
+              <td>{{ cnlist.epc  }}</td>
+              <td>{{ cnlist.qty }}</td>
+              <td>{{ cnlist.status }}</td>  
+              {% if status == 'U' %}
+              <td><button type="button" class="btn btn-info" {% if usermaster.op_update %}{% else %} disabled {% endif%} data-target="#modalupdate" id="" data-toggle="modal"  onclick="funget('{{ cnlist.slno }}','{{ cnlist.reg_no }}','{{ cnlist.chg_ind }}','{{ cnlist.cn_no }}')">Edit</button></td> 
+              <td><button type="button" class="btn btn-danger" {% if usermaster.op_delete %}{% else %} disabled {% endif%} onclick="fundel('{{ cnlist.slno }}','{{ cnlist.reg_no }}','{{ cnlist.chg_ind }}','{{ cnlist.cn_no }}')">Delete</button></td> 
+              {% else %}
+              <td>Edit</td>
+              <td>Delete</td> 
+              {% endif %}
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="12" class="text-center bg-warning">No Change Notice Record Found</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+</div>
+
+
+<!-- Modal box start for Add New -->
+
+<div class="modal fade" id="addnew" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header" style="padding:15px 50px;">
+                <h4><span class="glyphicon glyphicon-lock"></span> Add New Item </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding:20px 25px;">
+                <form role="form" action="#" method="post"> {% csrf_token %}
+                  <table class="tabel table-responsive table-odd">
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label>S.No.</label>
+                                <input type="text" class="form-control" id="slno" name="slno" readonly required>
+                            </div>                 
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <label>ACD</label>
+                                <select id="acd" name="acd" class="form-control">
+                                  <option value="Select">Select</option>
+                                  <option value ="A">A</option>
+                                  <option value ="C">C</option>
+                                  <option value ="D">D</option>
+                              </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <label>EPC</label>
+                                <input type="text" class="form-control" id="epc" name="epc" maxlength="2" onchange="getepc(this.id);">
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="form-group">
+                                <label>Parent</label>
+                                <input type="text" class="form-control" id="pp" name="pp" maxlength="8" onchange="AdjustKeyPress(this.id); getpartall(this.id)" onkeypress="return isNumberKey(event)">
+                            </div>
+                        </td>
+                    </tr>           
+                    <tr>
+                      <td colspan="2">
+                          <div class="form-group">
+                              <label>Component</label>
+                              <input type="text" class="form-control" id="compo" name="compo" maxlength="8" onchange="getcompo(this.id);" onkeypress="return isNumberKey(event)"  required>
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group">
+                              <label>QTY</label>
+                              <input type="text" class="form-control" id="qty" name="qty" maxlength="3"  required>
+                          </div>
+                      </td>
+                      
+                      <td>
+                          <div class="form-group">
+                              <label>PTC</label>
+                              <input type="text" class="form-control" id="ptc" name="ptc" maxlength="1">
+                          </div>
+                      </td>
+                    </tr>         
+                    <tr>
+                      <td colspan="4">
+                        <div class="form-group">
+                            <label>Component Description</label>
+                            <input type="text" class="form-control" id="des" name="des">
+                        </div>
+                    </td>
+                    </tr>   
+                    <tr>
+                      <td>
+                          <div class="form-group">
+                              <label>LOCO FROM</label>
+                              <input type="text" class="form-control" id="locofr" name="locofr" maxlength="4"  required>
+                          </div>                 
+                      </td>
+                      <td>
+                        <div class="form-group">
+                          <label>LOCO TO</label>
+                          <input type="text" class="form-control" id="locoto" name="locoto" maxlength="4" required>
+                      </div> 
+                      </td>
+                      <td>
+                          <div class="form-group">
+                            <label>Cutdia No.</label>
+                            <input type="text" class="form-control" id="cutno" name="cutno">
+                          </div>
+                      </td>
+                      
+                      <td>
+                          <div class="form-group">
+                             
+                          </div>
+                      </td>
+                  </tr>  
+                  
+
+                <tr>
+                  <td colspan="4" align="center" >
+                    <hr>
+                    <button type="button" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%} name="btnsave" value="Save" onclick="savedata('{{cnind}}','{{reg_no}}','{{pplno}}')">Save </button>
+                  <button type="button" class="btn btn-success" name="btnpost" value="selpart"  data-toggle="modal" data-target="#mselpart" onclick="cleartextSP();">Select Part </button>
+                  <button type="button" class="btn btn-success" name="btnpost" value="slExp" data-toggle="modal" data-target="#modalExplo" onclick="tableclear();">Single Level Explosion</button>                  
+                  <button type="button" class="btn btn-success" name="btnpost" value="slImp" data-toggle="modal" data-target="#modalImplo" onclick="tableclearImp();">Single Level Implosion</button>
+                    
+                
+                  </td>
+                </tr>
+                    </table>        
+                    
+                  
+                  </form>
+            </div> 
+        </div>
+    </div> 
+</div>           
+<!-- Modal box end  -->
+
+
+<!-- Modal box start for Update -->
+
+
+<div class="modal fade" id="modalupdate" role="dialog">
+  <div class="modal-dialog modal-lg">
+  
+    <!-- Modal content-->
+      <div class="modal-content">
+
+          <div class="modal-header" style="padding:15px 50px;">
+              <h4><span class="glyphicon glyphicon-lock"></span> Update Item </h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          
+          <div class="modal-body" style="padding:20px 25px;">
+              <form role="form" action="#" method="post"> {% csrf_token %}
+                <table class="tabel table-responsive table-odd">
+                  <tr>
+                      <td>
+                          <div class="form-group">
+                              <label>S.No.</label>
+                              <input type="text" class="form-control" id="uslno" name="uslno" readonly required>
+                          </div>                 
+                      </td>
+                      <td>
+                          <div class="form-group">
+                              <label>ACD</label>
+                              <select id="uacd" name="uacd" class="form-control">
+                                <option value="Select">Select</option>
+                                <option value ="A">A</option>
+                                <option value ="C">C</option>
+                                <option value ="D">D</option>
+                            </select>
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group">
+                              <label>EPC</label>
+                              <input type="text" class="form-control" id="uepc" name="uepc" maxlength="2" onchange="getepc(this.id);">
+                          </div>
+                      </td>
+                      
+                      <td>
+                          <div class="form-group">
+                              <label>Parent</label>
+                              <input type="text" class="form-control" id="upp" name="upp" maxlength="8" onchange="AdjustKeyPress(this.id); getpartall(this.id)" onkeypress="return isNumberKey(event)">
+                          </div>
+                      </td>
+                  </tr>           
+                  <tr>
+                    <td colspan="2">
+                        <div class="form-group">
+                            <label>Component</label>
+                            <input type="text" class="form-control" id="ucompo" name="ucompo" maxlength="8" onchange="getcompo(this.id);" onkeypress="return isNumberKey(event)"  required>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>QTY</label>
+                            <input type="text" class="form-control" id="uqty" name="uqty" maxlength="3"  required>
+                        </div>
+                    </td>
+                    
+                    <td>
+                        <div class="form-group">
+                            <label>PTC</label>
+                            <input type="text" class="form-control" id="uptc" name="uptc" maxlength="1">
+                        </div>
+                    </td>
+                  </tr>         
+                  <tr>
+                    <td colspan="4">
+                      <div class="form-group">
+                          <label>Component Description</label>
+                          <input type="text" class="form-control" id="udes" name="udes">
+                      </div>
+                  </td>
+                  </tr>   
+                  <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>LOCO FROM</label>
+                            <input type="text" class="form-control" id="ulocofr" name="ulocofr" maxlength="4"  required>
+                        </div>                 
+                    </td>
+                    <td>
+                      <div class="form-group">
+                        <label>LOCO TO</label>
+                        <input type="text" class="form-control" id="ulocoto" name="ulocoto" maxlength="4" required>
+                    </div> 
+                    </td>
+                    <td>
+                        <div class="form-group">
+                          <label>Cutdia No.</label>
+                          <input type="text" class="form-control" id="ucutno" name="ucutno">
+                        </div>
+                    </td>
+                    
+                    <td>
+                        <div class="form-group">
+                           
+                        </div>
+                    </td>
+                </tr>  
+                
+
+              <tr>
+                <td colspan="4" align="center" >
+                  <hr>
+                  <button type="button" class="btn btn-success" {% if usermaster.op_update %}{% else %} disabled {% endif%} name="btnsave" value="Update" onclick="editdata('{{cnind}}','{{reg_no}}','{{pplno}}')">Update </button>
+                <button type="button" class="btn btn-success" name="btnpost" value="selpart"  data-toggle="modal" data-target="#mselpart" onclick="cleartextSPu();">Select Part </button>
+                <button type="button" class="btn btn-success" name="btnpost" value="slExp" data-toggle="modal" data-target="#modalExplo" onclick="tableclearu();">Single Level Explosion</button>                  
+                <button type="button" class="btn btn-success" name="btnpost" value="slImp" data-toggle="modal" data-target="#modalImplo" onclick="tableclearImpu();">Single Level Implosion</button>   
+                </td>
+              </tr>
+                  </table>        
+                  
+                
+                </form>
+          </div> 
+      </div>
+  </div> 
+</div> 
+           
+<!-- Modal box end  -->
+
+
+<!-- Modal box start for Select part -->
+
+<div class="modal fade" id="mselpart" role="dialog">
+  <div class="modal-dialog modal-lg">
+  
+    <!-- Modal content-->
+      <div class="modal-content">
+
+          <div class="modal-header" style="padding:15px 50px;">
+              <h4><span class="glyphicon glyphicon-lock"></span> Select Part </h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+
+            <div class="modal-body" style="padding:20px 25px;">
+              <table class="tabel table-responsive table-odd">
+                <tr>
+                    <td colspan="2">
+                        <div class="form-group">
+                            <label>Part No.</label>
+                            <input type="text" class="form-control" id="spart" name="spart" maxlength="8" required onchange="AdjustKeyPress(this.id);" onkeypress="return isNumberKey(event)">
+                          </div> 
+                    </td>
+                    <td colspan="2" align="center">
+                        <div class="form-group">
+                          <label>.</label>
+                          <button type="button" class="btn btn-success" onclick="getpartno();">Search Part</button>
+                          
+                        </div>
+                    </td>                                                       
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="form-group">
+                        <label>M14-Split Code</label>
+                        <input type="text" class="form-control" id="sm14" name="sm14">
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group">
+                        <label>PART TYPE CODE</label>
+                        <input type="text" class="form-control" id="sptc" name="sptc" required>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group">
+                        
+                          <label>Drawing No.</label>
+                          <input type="text" class="form-control" id="sdrgno" name="sdrgno">
+                        
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group">
+                        <label>Shop Unit</label>
+                        <input type="text" class="form-control" id="sshop_ut" name="sshop_ut">
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" class="form-control" id="sdes" name="sdes" required>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group">
+                        <label>%age Allowance</label>
+                        <input type="text" class="form-control" id="salperc" name="salperc">
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+                <hr>
+                  <button type="button" id="btnpartsave" class="btn btn-primary" {% if usermaster.op_create %}{% else %} disabled {% endif%} onclick="savecpart('{{reg_no}}','{{pplno}}');">Save</button>
+                  <button type="button" class="btn btn-info" data-dismiss="modal" algin="Right">close</button>
+            </div>
+      </div>
+    </div>
+  </div>      
+<!-- Modal box end  -->
+
+<!-- Modal box start for Explosion -->
+
+<div class="modal fade" id="modalExplo" role="dialog">
+  <div class="modal-dialog modal-lg">
+  
+    <!-- Modal content-->
+      <div class="modal-content">
+
+          <div class="modal-header" style="padding:15px 50px;">
+              <h4><span class="glyphicon glyphicon-lock"></span> Single Level Explosion </h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+
+            <div class="modal-body" style="padding:20px 25px;">
+              <table class="tabel table-responsive table-odd">
+                <tr>
+                  <td colspan="2">
+                      <div class="form-group">
+                          <label>Part No. for Explosion</label>
+                          <select class="form-control" id="epart" name="epart"></select>
+                          
+                        </div> 
+                  </td>
+                  <td align="center">
+                      <div class="form-group">
+                        <label>.</label>
+                        <button type="button" class="btn btn-success" onclick="explo();">Explosion</button>
+                        
+                      </div>
+                  </td>                                                       
+                </tr>
+                  <tr>
+                    <table class="table" id="expl-table">
+                      <thead><tr>
+                        <th>Parent</th>
+                        <th>Component</th>
+                        <th>LOCO From</th>
+                        <th>LOCO To</th>
+                        <th>PTC</th>
+                        <th>EPC</th>
+                        <th>QTY</th>
+                        </tr></thead>
+                      <tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+                    </table>
+
+                  </tr>
+                </table>
+                <hr>
+                  <button type="button" class="btn btn-info" data-dismiss="modal">close</button>
+            </div>
+      </div>
+    </div>
+  </div>      
+<!-- Modal box end  -->
+
+<!-- Modal box start for Implosion -->
+
+
+<div class="modal fade" id="modalImplo" role="dialog">
+  <div class="modal-dialog modal-lg">
+  
+    <!-- Modal content-->
+      <div class="modal-content">
+
+          <div class="modal-header" style="padding:15px 50px;">
+              <h4><span class="glyphicon glyphicon-lock"></span> Single Level Implosion </h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+
+            <div class="modal-body" style="padding:20px 25px;">
+              <table class="tabel table-responsive table-odd">
+                <tr>
+                  <td colspan="2">
+                      <div class="form-group">
+                          <label>Part No. for Implosion</label>
+                          <select class="form-control" id="ipart" name="ipart"></select>
+                          
+                        </div> 
+                  </td>
+                  <td align="center">
+                      <div class="form-group">
+                        <label>.</label>
+                        <button type="button" class="btn btn-success" onclick="implo();">Implosion</button>
+                        
+                      </div>
+                  </td>                                                       
+                </tr>
+                  <tr>
+                    <table class="table" id="impl-table">
+                      <thead><tr>
+                        <th>Parent</th>
+                        <th>Component</th>
+                        <th>LOCO From</th>
+                        <th>LOCO To</th>
+                        <th>PTC</th>
+                        <th>EPC</th>
+                        <th>QTY</th>
+                        </tr></thead>
+                      <tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+                    </table>
+
+                  </tr>
+                </table>
+                <hr>
+                  <button type="button" class="btn btn-info" data-dismiss="modal">close</button>
+            </div>
+      </div>
+    </div>
+  </div>   <!-- Modal box end  -->
+
+
+<!-- JQuery and javascript code start   -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+
+  $(document).ready(function () {
+      $('#cn-table').DataTable();
+      $('#expl-table').DataTable();
+      $('#impl-table').DataTable();
+      $('#btnpartsave').hide();
+  });
+
+  function tableclear()
+  {
+    $("#epart").empty();
+
+    var x = document.getElementById("epart");
+    var option = document.createElement("option");
+    var option1 = document.createElement("option");
+    option.text = option.value=$("#pp").val()
+    x.add(option);
+    option1.text = option1.value=$("#compo").val()
+    x.add(option1)
+    
+
+    $('#expl-table').DataTable().clear();
+    $('#expl-table').DataTable().destroy();
+    $('#expl-table').DataTable();
+    
+  }
+
+  function tableclearu()
+  {
+    $("#epart").empty();
+
+    var x = document.getElementById("epart");
+    var option = document.createElement("option");
+    var option1 = document.createElement("option");
+    option.text = option.value=$("#upp").val()
+    x.add(option);
+    option1.text = option1.value=$("#ucompo").val()
+    x.add(option1)
+   
+
+    $('#expl-table').DataTable().clear();
+    $('#expl-table').DataTable().destroy();
+    $('#expl-table').DataTable();
+    
+  }
+
+  function tableclearImp()
+  {
+    
+    $("#ipart").empty();
+
+    var x = document.getElementById("ipart");
+    var option = document.createElement("option");
+    var option1 = document.createElement("option");
+    option.text = option.value=$("#pp").val()
+    x.add(option);
+    option1.text = option1.value=$("#compo").val()
+    x.add(option1)
+    
+
+    $('#impl-table').DataTable().clear();
+    $('#impl-table').DataTable().destroy();
+    $('#impl-table').DataTable();
+  }
+
+  function tableclearImpu()
+  {
+    
+    $("#ipart").empty();
+
+    var x = document.getElementById("ipart");
+    var option = document.createElement("option");
+    var option1 = document.createElement("option");
+    option.text = option.value=$("#upp").val()
+    x.add(option);
+    option1.text = option1.value=$("#ucompo").val()
+    x.add(option1)
+    
+
+    $('#impl-table').DataTable().clear();
+    $('#impl-table').DataTable().destroy();
+    $('#impl-table').DataTable();
+  }
+
+  function fundel(slno,regno,cnind,pplno)
+  {
+    var conf=confirm("Do you want to Delete this record ?");
+    if(conf)
+    {
+      var data={slno,regno,cnind,pplno};
+      $.ajax({
+        type:'GET',
+        url:"{% url 'cstrmc_deldata' %}",
+        dataType:'json',
+        data:data,
+        success:function(response){
+          alert("Deleted !!!");
+
+          $('#cn-table').DataTable().clear();
+          $('#cn-table').DataTable().destroy();
+                   
+            if(response.length<=0)
+            {
+                  mydata="<tr><td colspan='12' class='text-center bg-warning'>No Change Notice Record Found</td></tr>";
+                  $("#cn-table").append(mydata); 
+            }
+            for(i=0;i<response.length;i++)
+            {
+                mydata  =  "<tr><td>"+response[i].slno+"</td><td>" + 
+                                      response[i].acd+"</td><td>"+
+                                      response[i].pp_part+"</td><td>"+
+                                      response[i].cp_part+"</td><td>"+
+                                      response[i].l_fr+"</td><td>"+
+                                      response[i].l_to+"</td><td>"+
+                                      response[i].ptc+"</td><td>"+
+                                      response[i].epc+"</td><td>"+
+                                      response[i].qty+"</td><td>"+
+                                      response[i].status+"</td><td>"+
+                                      "<button id='' class='btn btn-info' {% if usermaster.op_update %}{% else %} disabled {% endif%} data-target='#modalupdate' data-toggle='modal' onclick=funget('"+myTrim(response[i].slno)+"','"+response[i].reg_no+"','"+response[i].chg_ind+"','"+response[i].cn_no+"');>Edit</button></td><td>"+
+                                      "<button  class='btn btn-danger' {% if usermaster.op_delete %}{% else %} disabled {% endif%} onclick=fundel('"+myTrim(response[i].slno)+"','"+response[i].reg_no+"','"+response[i].chg_ind+"','"+response[i].cn_no+"');>Delete</button></td></tr>";
+                                      $("#cn-table").append(mydata);  
+            }
+            mydata ="</tbody>";       
+            $("#cn-table").append(mydata);
+            $('#cn-table').DataTable();
+        
+
+        }
+      });
+    }
+  }
+
+  function myTrim(x) 
+			{
+			    return x.replace(/^\s+|\s+$/gm,'');
+      } 
+      
+  function funget(slno,regno,cnind,pplno)
+  {
+    $("#uslno").val('');
+    $("#uacd").val('');
+    $("#upp").val('');
+    $("#ucompo").val('');
+    $("#uqty").val('');
+    $("#ulocofr").val('');
+    $("#ulocoto").val('');
+    $("#uepc").val('');
+    $("#uptc").val('');
+    var data={slno,regno,cnind,pplno}
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_getdata' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        $("#uslno").val(response.data.cnlist[0].slno);
+        $("#uacd").val(response.data.cnlist[0].acd);
+        $("#upp").val(response.data.cnlist[0].pp_part);
+        $("#ucompo").val(response.data.cnlist[0].cp_part);
+        $("#uqty").val(response.data.cnlist[0].qty);
+        $("#ulocofr").val(response.data.cnlist[0].l_fr);
+        $("#ulocoto").val(response.data.cnlist[0].l_to);
+        $("#uepc").val(response.data.cnlist[0].epc);
+        $("#uptc").val(response.data.cnlist[0].ptc);
+        $("#udes").val(response.data.des);
+        }
+      
+    }); 
+  
+  }
+
+  function funslno(c,r,p)
+  {
+    blankmainall();
+    var data={c,r,p}
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_getslno' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        $("#slno").val(response.length+1);
+      }
+    });
+  }
+
+  function explo()
+  {
+    
+    $('#expl-table').DataTable().clear();
+    $('#expl-table').DataTable().destroy();
+    var epart=$("#epart").val();
+    var data={epart};
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_explo' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        
+        
+        for(i=0;i<response.length;i++)
+        {
+            mydata  =   "<tr><td>"+response[i].pp_part+"</td><td>"+
+                                  response[i].cp_part+"</td><td>"+
+                                  response[i].l_fr+"</td><td>"+
+                                  response[i].l_to+"</td><td>"+
+                                  response[i].ptc+"</td><td>"+
+                                  response[i].epc+"</td><td>"+
+                                  response[i].qty+"</td></tr>";
+
+                                  $("#expl-table").append(mydata);  
+        }
+            
+            $('#expl-table').DataTable();
+      }
+    });
+  }
+  
+  function implo()
+  {
+    $('#impl-table').DataTable().clear();
+    $('#impl-table').DataTable().destroy();
+    var ipart=$("#ipart").val();
+    var data={ipart};
+    
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_implo' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+    
+        for(i=0;i<response.length;i++)
+        {
+            mydata  =   "<tr><td>"+
+                                  response[i].pp_part+"</td><td>"+
+                                  response[i].cp_part+"</td><td>"+
+                                  response[i].l_fr+"</td><td>"+
+                                  response[i].l_to+"</td><td>"+
+                                  response[i].ptc+"</td><td>"+
+                                  response[i].epc+"</td><td>"+
+                                  response[i].qty+"</td></tr>";
+
+                                  $("#impl-table").append(mydata);  
+        }
+            
+            $('#impl-table').DataTable();
+      }
+
+    });
+  }
+
+
+  function blankmainall()
+  {
+    $("#acd").val('');
+    $("#epc").val('');
+    $("#pp").val('');
+    $("#compo").val('');
+    $("#qty").val('');
+    $("#ptc").val('');
+    $("#locofr").val('');
+    $("#locoto").val('');
+    //$("#unit").val('');
+    $("#cutno").val('');
+    $("#des").val('');
+  }
+
+  function savedata(c,r,p)
+  {
+    
+    var slno = $("#slno").val();
+    var acd =$("#acd").val();
+    if(acd=="" || acd=="Select")
+    {
+      alert("Please select ACD");
+      $("#acd").focus();
+      return false;
+    }
+    var epc =$("#epc").val();
+    if(epc=="" || epc==null)
+    {
+      alert("EPC can not be blank.");
+      
+      return false;
+    }
+    var pp =$("#pp").val();
+    if(pp=="" || pp==null || pp.length!=8)
+    {
+      alert("Parent can not be blank and length should be 8");
+      $("#pp").focus(); 
+      return false;
+    }
+    var compo =$("#compo").val();
+    if(compo=="" || compo==null || compo.length!=8)
+    {
+      alert("Component can not be blank and length should be 8");
+      return false;
+    }
+    var qty =$("#qty").val();
+    if(qty=="" || qty==null)
+    {
+      alert("QTY can not be blank.");
+      $("#qty").focus();
+      return false;
+    }
+    var ptc =$("#ptc").val();
+    if((ptc=="" || ptc==null) || (ptc!="M"&& ptc!="Z"&& ptc!="L"&& ptc!="B" && ptc!="P"&& ptc!="Q"&& ptc!="R"&& ptc!="C"&& ptc!="S"&& ptc!="X"))
+    {
+      alert("PTC can not be blank or enter only M/Z/L/B/P/Q/R/C/S/X");
+      $("#ptc").focus();
+      return false;
+    }
+    var locofr =$("#locofr").val();
+    if(locofr=="" || locofr==null)
+    {
+      alert("LOCO From can not be blank.");
+      $("#locofr").focus();
+      return false;
+    }
+    var locoto =$("#locoto").val();
+    if(locoto=="" || locoto==null)
+    {
+      alert("LOCO TO can not be blank.");
+      $("#locoto").focus();
+      return false;
+    }
+    
+    var cutno =$("#cutno").val();
+    var des =$("#des").val();
+    if(des=="" || des==null)
+    {
+      alert("Description can not be blank.");
+      $("#des").focus();
+      return false;
+    }
+    if(parseInt(locofr)>parseInt(locoto))
+    {
+      alert("LOCO from should be less then LOCO to.");
+      return false;
+    }
+    var data={c,r,p,slno,acd,epc,pp,compo,qty,ptc,locofr,locoto,cutno,des}
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_savedata' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        
+       $("#addnew .close").click()     // to close the modal box 
+        
+        $('#cn-table').DataTable().clear();
+        $('#cn-table').DataTable().destroy();
+                   
+            if(response.length<=0)
+            {
+                  mydata="<tr><td colspan='12' class='text-center bg-warning'>No Change Notice Record Found</td></tr>";
+                  $("#cn-table").append(mydata); 
+            }
+            for(i=0;i<response.length;i++)
+            {
+                mydata  =   "<tr><td>"+response[i].slno+"</td><td>" + 
+                                      response[i].acd+"</td><td>"+
+                                      response[i].pp_part+"</td><td>"+
+                                      response[i].cp_part+"</td><td>"+
+                                      response[i].l_fr+"</td><td>"+
+                                      response[i].l_to+"</td><td>"+
+                                      response[i].ptc+"</td><td>"+
+                                      response[i].epc+"</td><td>"+
+                                      response[i].qty+"</td><td>"+
+                                      response[i].status+"</td><td>"+
+                                      "<button id='' class='btn btn-info' {% if usermaster.op_update %}{% else %} disabled {% endif%} data-target='#modalupdate' data-toggle='modal' onclick=funget('"+myTrim(response[i].slno)+"','"+response[i].reg_no+"','"+response[i].chg_ind+"','"+response[i].cn_no+"');>Edit</button></td><td>"+
+                                      "<button  class='btn btn-danger' {% if usermaster.op_delete %}{% else %} disabled {% endif%}  onclick=fundel('"+myTrim(response[i].slno)+"','"+response[i].reg_no+"','"+response[i].chg_ind+"','"+response[i].cn_no+"');>Delete</button></td></tr>";
+                                      $("#cn-table").append(mydata);  
+            }
+            mydata ="</tbody>";
+            
+            $("#cn-table").append(mydata);
+            $('#cn-table').DataTable();
+            alert("New Record Save successfully.");
+            },
+            error: function() {
+                alert("This Record already exist or new part should be added first");
+                
+            }
+
+    });
+  }
+
+  function editdata(c,r,p)
+  {
+    
+    var slno = $("#uslno").val();
+    var acd =$("#uacd").val();
+    if(acd=="" || acd=="Select")
+    {
+      alert("Please select ACD");
+      $("#uacd").focus();
+      return false;
+    }
+    var epc =$("#uepc").val();
+    if(epc=="" || epc==null)
+    {
+      alert("EPC can not be blank.");
+      
+      return false;
+    }
+    var pp =$("#upp").val();
+    if(pp=="" || pp==null || pp.length!=8)
+    {
+      alert("Parent can not be blank and length should be 8");
+      $("#upp").focus(); 
+      return false;
+    }
+    var compo =$("#ucompo").val();
+    if(compo=="" || compo==null || compo.length!=8)
+    {
+      alert("Component can not be blank and length should be 8");
+      
+      return false;
+    }
+    var qty =$("#uqty").val();
+    if(qty=="" || qty==null)
+    {
+      alert("QTY can not be blank.");
+      $("#uqty").focus();
+      return false;
+    }
+    var ptc =$("#uptc").val();
+    if((ptc=="" || ptc==null) || (ptc!="M"&& ptc!="Z"&& ptc!="L"&& ptc!="B" && ptc!="P"&& ptc!="Q"&& ptc!="R"&& ptc!="C"&& ptc!="S"&& ptc!="X"))
+    {
+      alert("PTC can not be blank or enter only M/Z/L/B/P/Q/R/C/S/X");
+      $("#uptc").focus();
+      return false;
+    }
+    var locofr =$("#ulocofr").val();
+    if(locofr=="" || locofr==null)
+    {
+      alert("LOCO From can not be blank.");
+      $("#ulocofr").focus();
+      return false;
+    }
+    var locoto =$("#ulocoto").val();
+    if(locoto=="" || locoto==null)
+    {
+      alert("LOCO TO can not be blank.");
+      $("#ulocoto").focus();
+      return false;
+    }
+    
+    var cutno =$("#ucutno").val();
+    var des =$("#udes").val();
+    if(des=="" || des==null)
+    {
+      alert("Description can not be blank.");
+      $("#udes").focus();
+      return false;
+    }
+    if(parseInt(locofr)>parseInt(locoto))
+    {
+      alert("LOCO from should be less then LOCO to.");
+      return false;
+    }
+    var data={c,r,p,slno,acd,epc,pp,compo,qty,ptc,locofr,locoto,cutno,des}
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_editdata' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        
+       
+        $('#cn-table').DataTable().clear();
+        $('#cn-table').DataTable().destroy();
+                   
+            if(response.length<=0)
+            {
+                  mydata="<tr><td colspan='12' class='text-center bg-warning'>No Change Notice Record Found</td></tr>";
+                  $("#cn-table").append(mydata); 
+            }
+            for(i=0;i<response.length;i++)
+            {
+                mydata  =   "<tr><td>"+response[i].slno+"</td><td>" + 
+                                      response[i].acd+"</td><td>"+
+                                      response[i].pp_part+"</td><td>"+
+                                      response[i].cp_part+"</td><td>"+
+                                      response[i].l_fr+"</td><td>"+
+                                      response[i].l_to+"</td><td>"+
+                                      response[i].ptc+"</td><td>"+
+                                      response[i].epc+"</td><td>"+
+                                      response[i].qty+"</td><td>"+
+                                      response[i].status+"</td><td>"+
+                                      "<button id='' class='btn btn-info' {% if usermaster.op_update %}{% else %} disabled {% endif%} data-target='#modalupdate' data-toggle='modal' onclick=funget('"+myTrim(response[i].slno)+"','"+response[i].reg_no+"','"+response[i].chg_ind+"','"+response[i].cn_no+"');>Edit</button></td><td>"+
+                                      "<button  class='btn btn-danger' {% if usermaster.op_delete %}{% else %} disabled {% endif%}  onclick=fundel('"+myTrim(response[i].slno)+"','"+response[i].reg_no+"','"+response[i].chg_ind+"','"+response[i].cn_no+"');>Delete</button></td></tr>";
+                                      $("#cn-table").append(mydata);  
+            }
+            mydata ="</tbody>";
+            
+            $("#cn-table").append(mydata);
+            $('#cn-table').DataTable();
+            
+            alert("Update Record successfully.");
+            $("#modalupdate .close").click()     // to close the modal box 
+            },
+            error: function() {
+                alert("This Record already exist or new part should be added first");
+                
+            }
+
+    });
+  }
+
+
+  function getepc(id)
+  {
+    var epc=document.getElementById(id).value;
+    var data={epc};
+
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_getepc' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        
+        if(response.length<=0)
+        {
+            alert("EPC not Found. Please write the correct EPC.");
+        }
+        else
+        {
+          
+          alert("EPC code found in the list "+response[0].cd_type + "  "+response[0].alpha_1+ "  "+response[0].num_1 );
+        }
+        
+      }
+
+    });
+    
+  }
+
+  function getcompo(id)
+  {
+    var compo= document.getElementById(id).value;
+    var data={compo};
+    var p=8;
+    if(compo.length!=p)
+    {
+       alert("Part number must be 8 digit.");
+       document.getElementById(id).value='';
+       if(id=='compo')
+            {
+              $("#ptc").val('');
+              $("#des").val('');
+            }
+            else
+            {
+              $("#uptc").val('');
+              $("#udes").val('');
+            }
+       
+       return false;
+    }
+
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_getcompo' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        
+        if(response.length<=0)
+        {
+            alert("Part not Found in the PART Master. Please write the correct Part Number.");
+            if(id=='compo')
+            {
+              $("#ptc").val('');
+              $("#des").val('');
+            }
+            else
+            {
+              $("#uptc").val('');
+              $("#udes").val('');
+            }
+        }
+        else
+        {
+          
+          if(id=='compo')
+          {
+            $("#ptc").val(response[0].ptc);
+            $("#des").val(response[0].des);
+          }
+          else
+          {
+            $("#uptc").val(response[0].ptc);
+            $("#udes").val(response[0].des);
+          }
+
+        }
+        
+      }
+
+    });
+    
+  }
+
+  function cleartextSP()
+  {
+      $("#spart").val($("#compo").val());
+      $("#sptc").val('');
+      $("#sdes").val('');
+      $("#sshop_ut").val('');
+      $("#sdrgno").val('');
+      
+      
+  }
+  function cleartextSPu()
+  {
+      $("#spart").val($("#ucompo").val());
+      $("#sptc").val('');
+      $("#sdes").val('');
+      $("#sshop_ut").val('');
+      $("#sdrgno").val('');
+      
+      
+  }
+  function AdjustKeyPress(id){
+    var p=8;
+    var v=document.getElementById(id).value;
+    if(v.length!=p)
+    {
+        alert("Part number must be 8 digit.")
+        document.getElementById(id).focus();
+    }
+    
+  }
+
+  function isNumberKey(evt) {
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+    return true;        
+  }
+
+
+function selpart()
+  {
+    event.preventDefault();
+    var compo=$("#spart").val();
+    
+    var data={compo};
+
+    $.ajax({
+      type:'GET',
+      url:"{% url 'cstrmc_getcompo' %}",
+      dataType:'json',
+      data:data,
+      success:function(response){
+        
+        if(response.length<=0)
+        {
+            alert("Part number is not Found in the PART Master. Please Fill all details and save.");
+        }
+        else
+        {
+          $("#sptc").val(response[0].ptc);
+          $("#sdes").val(response[0].des);
+          $("#sshop_ut").val(response[0].shop_ut);
+          $("#sdrgno").val(response[0].drgno);
+          $("#sm14").val(response[0].m14splt_cd);
+          $("#salperc").val(response[0].allow_perc);
+        }
+      }
+
+    }); 
+  }
+
+  function getpartall(id)
+  {
+    event.preventDefault();                        
+    var partno_id = document.getElementById(id).value;
+    
+  }
+
+  function getpartno()
+  {      
+    event.preventDefault();   
+    $('#btnpartsave').hide();                     
+    var partno_id = $("#spart").val();
+    
+    var data = {partno_id};
+                $.ajax({
+                  type : 'GET',
+                  url : "{% url 'part_get' %}",
+                  dataType : 'json',
+                  data : data,
+                  success : function(response){                             
+                  a=response.length;
+                  
+                  if(partno_id[7]==response[a-1])
+                  { 
+                    
+                    selpart();
+                    $('#btnpartsave').show();
+                  }
+                  else
+                  {
+                    alert("last digit should be "+response[a-1]);
+                  }
+
+                }
+            })
+                  
+  }  
+
+  function savecpart(r,p)
+  {
+    event.preventDefault();
+    
+
+    var spart = $("#spart").val();
+    if(spart=='' ||spart==null)
+    {
+      alert("Part number can not be blank");
+      return false;
+    }
+    var sm14 = $("#sm14").val(); 
+    var sptc = $("#sptc").val();
+    if((sptc=="" || sptc==null) || (sptc!="M"&& sptc!="Z"&& sptc!="L"&& sptc!="B" && sptc!="P"&& sptc!="Q"&& sptc!="R"&& sptc!="C"&& sptc!="S"&& sptc!="X"))
+    {
+      alert("PTC can not be blank or enter only M/Z/L/B/P/Q/R/C/S/X");
+      return false;
+    }
+    var sdrgno = $("#sdrgno").val();
+    var sshop_ut = $("#sshop_ut").val();
+    var sdes = $("#sdes").val();
+    if(sdes=="" || sdes==null)
+    {
+      alert("Description can not blank");
+      return false;
+    }
+    var salperc = $("#salperc").val();
+    
+   
+    
+    var data = {spart,sm14,sptc,sdrgno,sshop_ut,sdes,salperc,p,r,csrfmiddlewaretoken: '{{ csrf_token }}'};
+                $.ajax({
+                  type : 'POST',
+                  url : "{% url 'cstrmc_savecpart' %}",
+                  dataType : 'json',
+                  data : data,
+                  success : function(response){   
+                      alert("Part save");
+                      $('#btnpartsave').hide();
+                  },
+                  error: function() {
+                      alert("This part already save in the cpart list");
+                  }
+
+                });
+
+       $("#mselpart .close").click()          
+  }
+</script>
+
+{% endblock %}

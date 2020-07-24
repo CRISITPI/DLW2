@@ -1,0 +1,525 @@
+{% extends 'base.html' %}{% block content %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style>
+    
+    input[type=text],input[type=number],
+  select {
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: block;
+      border: 0.5px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+   
+</style>
+<center>
+    <h3>Tools   and Machine Accessories Requirement</h3><br>
+    <h3>उपकरण और मशीन सामान की आवश्यकता</h3><hr>
+
+</center>
+<form action="{% url 'Tools' %}" method="POST" id="tool_form">{% csrf_token %} 
+
+<table width=90% align="center">
+    <tr>
+        <td width=20%>
+            <label><b>Shop No./ शॉप का नंबर</b></label><select id="sh_no" name="sh_no" class="form-control" required style="width:150px">
+                <option id="op_sh_no" selected disabled hidden>Select Shop Section</option>
+                {% for role in roles %}
+                {{role}}
+                <option>{{role}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td width=20%>
+            <label><b>Shop Section/दुकान अनुभाग</b></label><input type="text" id="s_sec" name="s_sec" class="form-control" style="width:150px">
+        </td>
+        <td width=20%>
+            <label><b>Date / दिनांक</b></label><input type="" id="date1" name="date1" class="form-control" style="width:150px" readonly>
+        </td>
+    </tr>
+</table>
+<hr>
+<div id="indenter" style="display: none;">
+    <label style="margin-left: 140px;"><b>Letter NO./पत्र संख्या</b></label><input type="text" id="l_no" name="l_no" class="form-control" style="width:150px; margin-left: 140px;" onkeyup="AdjustKeyPress(this.value);">
+    <table id="table1" align="center" border=1 style="margin-top: 50px;" width=60% class="table-striped">
+        <thead class="thread-dark" style="background-color:#343a40; border-color: #454d55; color: #ffff;">
+           <tr><th width=15%><center>S.No./क्र.सं.</center></th>
+            <th width=40%><center>Description/विवरण</center></th>
+            <th width=40%><center>Quantity/मात्रा</center></th>
+            <th width=5%> </th></tr>
+        </thead>
+        <tbody id="items">
+       
+    </tbody>
+    <tfoot>
+    
+    </tfoot>
+    </table>
+<center>
+   
+    <input type="button" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  id="add" name="add" value="add more items">
+</center>
+<hr>
+<table align="center" width=70% style="margin-top: 50px;">
+    <tr>
+        <td align="center" width=23%>
+            <label><b>New Requirement/<br>नई आवश्यकता</b></label>
+        </td>
+        <td align="center" width=33%>
+            <label><b>Modification in Existing Facility/<br>मौजूदा सुविधा में संशोधन</b></label>
+        </td>
+        <td align="center" width=43%>
+            <label><b>Additional Requirement of Existing Facility/<br>मौजूदा सुविधा की अतिरिक्त आवश्यकता</b></label>
+        </tdalign="center">
+        
+    </tr>
+    <tr>
+        <td align="center" width=20%>
+            <input type="radio" name="new_req" id="new_req"value="yes"><b>Yes/हाँ</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="radio" name="new_req" id="new_req" value="no"><b>No/नहीं</b>
+        </td>
+        <td align="center" width=30%>
+            <input type="radio" name="mod" id="mod" value="yes"><b>Yes/हाँ</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="radio" name="mod" id="mod" value="no"><b>No/नहीं</b>
+        </td>
+        <td align="center" width=40%>
+            <input type="radio" name="add_req" id="add_req" value="yes"><b>Yes/हाँ</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="radio" name="add_req" id="add_req" value="no"><b>No/नहीं</b>
+        </td>
+
+    </tr>
+</table>
+<hr>
+<table align="center" style="margin-top: 50px; " width=95% >
+    <tr>
+        <td width=30% style="margin-left: 5px;"> 
+            <label><b>Existing drawing no. of Jig & fixture if any/<br>मौजूदा ड्राइंग संख्या जिग और स्थिरता यदि कोई हो</b></label><input type="text" id="e_no" name="e_no" class="form-control" style="width:300px">
+        </td>
+        <td width=30% style="margin-left: 5px;" >
+            <label><b>Component Drawing No. for which required/<br>घटक ड्राइंग संख्या जिसके लिए आवश्यक है</b></label><input type="text" id="d_no" name="d_no" class="form-control" style="width:300px">
+
+        </td>
+        <td width=20%>
+            <label><b>Machine No./मशीन नंबर</b></label><input type="text" id="m_no" name="m_no" class="form-control" style="width:150px">
+        </td>
+        <td width=20%>
+            <label><b>Description/विवरण</b></label><input type="text" id="des1" name="des1" class="form-control" style="width:150px">
+
+        </td>
+       
+    </tr>
+    
+</table>
+<hr>
+<table align="center" width=80%>
+    <tr>
+        <td width=33%>
+            <label><b>Workshop Manager/Assistant Workshop Manager/<br>कार्यशाला प्रबंधक/सहायक कार्यशाला प्रबंधक</b></label><select id="wman" name="wman" class="form-control" required style="width:150px">
+                <option id="op_wman" selected disabled hidden>Select Shop Section</option>
+                {% for role in wm_shop %}
+                {{role}}
+                <option>{{role}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td width=33%>
+            <label><b>WM_NAME / कर्मचारी का नाम</b></label><br><input type="text" id="wm_name" name="wm_name" class="form-control" readonly style="width: 150px;">
+        </td>
+        <td width=33%>
+            <label><b>WM_Mobile number / मोबाइल नंबर</b></label><br><input type="text" id="wm_contact" name="wm_contact" class="form-control" style="width: 150px;" readonly>
+        </td>
+        
+
+    </tr>
+    <tr>
+        <td width=33%>
+            <label><b>Senior Section Engineer/वरिष्ठ अनुभाग अभियंता</b></label><select id="sse" name="sse" class="form-control" required style="width: 150px;">
+                <option id="op_sse" selected disabled hidden>Select Shop Section</option>
+                {% for role in shop %}
+                {{role}}
+                <option>{{role}}</option>
+                {% endfor %}
+            </select>        
+        </td>
+        <td width=33%>
+            <label><b>SSE_NAME / कर्मचारी का नाम</b></label><br><input type="text" id="sse_name" name="sse_name" class="form-control" style="width: 150px;" readonly>
+        </td>
+        <td width=33%>
+            <label><b>SSE_Mobile number / मोबाइल नंबर</b></label><br><input type="text" id="sse_contact" name="sse_contact" class="form-control" style="width: 150px;" readonly>
+        </td>
+     </tr>
+   
+    <tr>
+        <td>
+            <label><b>Name of supervisor</b></label><input type="text" id="sup_name" name="sup_name" class="form-control" style="width: 150px;">
+        </td>
+        <td>
+            <label><b>Designation of supervisor</b></label><input type="text" id="sup_des" name="sup_des" class="form-control" style="width: 150px;">
+        </td>
+        <td>
+            <label><b>Mobile Number / मोबाइल नंबर</b></label><input type="text" id="sup_mob" name="sup_mob" class="form-control" style="width: 150px;">
+        </td>
+    </tr>
+</table>
+<center>
+ 
+<input type="submit" id="submit"  class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   name="submit" value="submit">
+   
+</center>
+</div>
+<div id="tooling" style="display: none;">
+
+    <center>
+        <h4><b>Tooling / टूलींग</b></h4>
+    </center>
+    <hr>
+    <label style="margin-left: 140px;"><b>Letter NO./पत्र संख्या</b></label><input type="text" id="l_no1" name="l_no1" class="form-control" style="width:150px; margin-left: 140px;" onkeyup="AdjustKeyPress(this.value);">
+   <table align="center" width=90% style="margin-top: 50px;">
+       <tr>
+           <td>
+               <label><b>Name of Designer / डिजाइनर का नाम</b></label><input type="text" id="dname" class="form-control" name="dname" style="width: 250px">
+           </td>
+           <td>
+             <label><b>Date / दिनांक</b></label><input type="" id="d_date" name="d_date" class="form-control" readonly style="width: 250px">
+            </td>
+            <td>
+                <label><b>Name of Guide / मार्गदर्शक का नाम</b></label><input type="text" id="gname" class="form-control" name="gname" style="width: 250px">
+            </td>
+            <td>
+              <label><b>Date / दिनांक</b></label><input type="" id="g_date" name="g_date" class="form-control" readonly style="width: 250px">
+             </td>
+        </tr>
+   </table>
+   <hr>
+   <table align="center" width=90%>
+        <tr>
+            <td>
+                <label><b>Date of Completion/<br>समापन की तिथि</b></label><input type="" id="c_date" name="c_date" class="form-control" readonly style="width: 250px">
+            </td>
+            <td>
+                <label><b>Date of loading on Tool Room/<br>टूल रूम पर लोड करने की तिथि</b></label><input type="" id="l_date" name="l_date" class="form-control" readonly style="width: 250px">
+            </td>
+            <td>
+                <label><b>Sr No of reference of loading/<br>लोडिंग के संदर्भ की क्रमिक संख्या</b></label><input type="text" id="ref_date" name="ref_date" class="form-control" style="width: 250px">
+            </td>
+        </tr>
+   </table> 
+   <hr>
+   <table align="center" width=90%>
+    <tr>
+        <td width=50%> 
+            <label><b>Comments/टिप्पणियाँ</b></label>
+        
+         <textarea class="form-control" style="width: 400px;" id="comment1">  </textarea>
+        </td> 
+        <td width=500%> 
+         <label><b>Comments/टिप्पणियाँ</b></label>
+         <textarea class="form-control" style="width: 400px;" id="comment2">  </textarea>
+         </td> 
+    </tr>
+
+   </table>
+   <center>
+   <input type="button" id="submit1"name="submit1"  {% if usermaster.op_create %}{% else %} disabled {% endif%}  class="btn btn-primary" value="Submit_1" onclick="save_db()">
+   <input type="button" id="pdfbtn" value="Report"  {% if usermaster.op_read %}{% else %} disabled {% endif%}   onclick="pdf()">
+</center>
+</div>
+
+<input type="hidden" name="hidtext" id="hidtext" value="0">
+</form>
+
+<script>
+     var j=1;
+    $(function () {
+        $('#date1').datepicker({ dateFormat: 'dd-mm-yy' });
+        $('#c_date').datepicker({ dateFormat: 'dd-mm-yy',
+        onSelect: function () {
+                var ddate = $('#d_date').datepicker('getDate');
+                var gdate = $('#g_date').datepicker('getDate');
+                var cdate = $(this).datepicker('getDate');
+                if ((cdate  < ddate) || (cdate<gdate)) {
+                    alert("date of completion must be greater than date at which designer and guide is assigned");
+                    document.getElementById('c_date').value="";
+                    //$(this).datepicker('getDate')="";
+                    return false;
+                }}
+         });
+        $('#l_date').datepicker({ dateFormat: 'dd-mm-yy' ,
+            onSelect: function () {
+                var cdate = $('#c_date').datepicker('getDate');
+                var ldate = $(this).datepicker('getDate');
+                if (cdate  > ldate) {
+                    alert("date of completion must be smaller than date of loading");
+                    document.getElementById('l_date').value="";
+                    //$(this).datepicker('getDate')="";
+                    return false;
+                }}});
+        $('#d_date').datepicker({ dateFormat: 'dd-mm-yy' ,
+        onSelect: function () {
+                var date1 = $('#date1').datepicker('getDate');
+                var d_date = $(this).datepicker('getDate');
+                if (date1  > d_date) {
+                    alert("date of desginer must be greater than .....");
+                    document.getElementById('d_date').value="";
+                    //$(this).datepicker('getDate')="";
+                    return false;
+                }}});
+        $('#g_date').datepicker({ dateFormat: 'dd-mm-yy', 
+        onSelect: function () {
+                var date1 = $('#date1').datepicker('getDate');
+                var g_date = $(this).datepicker('getDate');
+                if (date1 > g_date) {
+                    alert("date of guide must be greater than ........");
+                    document.getElementById('g_date').value="";
+                    //$(this).datepicker('getDate')="";
+                    return false;
+                }}});
+        
+    });
+    function AdjustKeyPress(value){
+        var max_value=20;
+        if(value.length>max_value)
+        {
+            alert("Maximum Allowed Length is 20")
+        }
+    }
+    var x=0;
+    $('#add').click(function() 
+    {
+        console.log("click")
+        
+        j=j+1;
+        x=x+1;
+        var des="des"+String(j);        
+        var quant="quant"+String(j);  
+        var del="delete"+String(j);
+        var del1="delete1"+String(j);
+        var htAppend='<tr id='+del1+'><td><center>'+x+'<center></td><td width=35%><input type="text" id='+des+' name='+des+' class="form-control" style="width:150px"></td><td width=35%><input type="number" id="'+quant+'" name="'+quant+'" placeholder="unit" min="0" max="10000000000"class="form-control" style="width:150px"></td>';
+        htAppend=htAppend+'<td id='+del+'><a class="delete" Deletedata-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td></tr>'
+        //$('#table1').append(htAppend);
+        //document.getElementById("hidtext").value=j;
+        $('#items').append(htAppend);                                                    
+        document.getElementById("hidtext").value=j;
+        var del="delete"+String(j-1);
+        document.getElementById(del).remove();
+    });
+    $(document).on("click", ".delete", function(){
+        $(this).parents("tr").remove();
+        j=j-1;
+        var del="delete"+String(j);
+        var del1="delete1"+String(j); 
+        $('#'+del1).append('<td id='+del+'><a class="delete" Deletedata-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>')
+        document.getElementById("hidtext").value=j;
+    });
+    document.querySelector("#sh_no").addEventListener('change',(e)=>{
+                        
+                        //alert("test : "+$("#sh_no").val())
+                            e.preventDefault();                        
+                            var sh_no = $("#sh_no").val()
+                            var data = {sh_no};
+                              $.ajax({
+                                type : 'GET',
+                                url : "{% url 'shop_section_tool' %}",
+                                dataType : 'json',
+                                data : data,
+                                success : function(response){                             
+                                        document.getElementById('s_sec').value=response[0].sh_desc;
+                                        var eq=document.getElementById('s_sec').value;
+                                        //alert(eq);
+                                        if((eq.trim()=="TR"))
+                                        {
+                                            $('#tooling').show();
+                                            $('#indenter').hide(); 
+                                        }
+                                        else
+                                        {
+                                           $('#indenter').show();
+                                            $('#tooling').hide();
+                                        }                                
+                                }
+                                  })
+                        });
+                        document.querySelector("#wman").addEventListener('change',(e)=>{
+                        //alert("test : "+$("#wman").val())
+                            e.preventDefault();                        
+                            var wman = $("#wman").val()
+                            var data = {wman};
+                              $.ajax({
+                                type : 'GET',
+                                url : "{% url 'tools1' %}",
+                                dataType : 'json',
+                                data : data,
+                                success : function(response){                     
+                                        document.getElementById('wm_name').value=response[0].empname; 
+                                        document.getElementById('wm_contact').value=response[0].contactno;                               
+                                }
+                                  })
+                        });
+                        document.querySelector("#sse").addEventListener('change',(e)=>{
+                        //alert("test : "+$("#sse").val())
+                            e.preventDefault();                        
+                            var sse = $("#sse").val()
+                            var data = {sse};
+                              $.ajax({
+                                type : 'GET',
+                                url : "{% url 'tools2' %}",
+                                dataType : 'json',
+                                data : data,
+                                success : function(response){ 
+                                                                 
+                                        document.getElementById('sse_name').value=response[0].empname; 
+                                        document.getElementById('sse_contact').value=response[0].contactno;                                                            
+                                }
+                                  })
+                        });
+                        //document.querySelector("#l_no1").addEventListener('blur',(e)=>{
+                            //alert("test : "+$("#l_no1").val())
+                            //e.preventDefault();                        
+                           
+                        //});
+                        function save_db(){
+                            var temp = {l_no:$('#l_no1').val(),dname:$('#dname').val(),d_date:$('#d_date').val(),gname:$('#gname').val(),g_date:$('#g_date').val(),c_date:$('#c_date').val(),l_date:$('#l_date').val(),ref_date:$('#ref_date').val(),comment1:$('#comment1').val(),comment2:$('#comment2').val()};
+                            var data = temp; 
+                                     
+                            $.ajax({
+                                    type : 'GET',
+                                    url : "{% url 'tooling_submit' %}",
+                                    dataType : 'json',
+                                    data : data,
+                                    success : function(response)
+                                        {    
+                                            if(response.length !=0)
+                                            {
+                                                alert("Data saved successfully");
+                                            }
+                                            else{
+                                                alert("Please enter valid Letter number");
+                                            }
+                                            
+                                            
+                                           
+                                                                                                 
+                                        }
+                                        
+                                    })
+                    }
+                    document.querySelector("#l_no").addEventListener('change',(e)=>{
+                            //alert("test : "+$("#l_no").val())
+                            e.preventDefault();
+                            fetchfun();                        
+                            
+                        });
+    function fetchfun(){
+        var l_no= $("#l_no").val();
+        var data={l_no};
+        //alert("test : "+l_no);
+
+        $.ajax({
+            type:'GET',
+            url: "{% url 'fetchdetails_tools' %}",
+            dataType:'json',
+            data: data,
+            success : function(response){
+                //alert(response[1].length);
+                var eq=document.getElementById('s_sec').value;
+                //alert(eq);
+                //
+                if((eq.trim()=="TR"))
+                {
+                    $('#tooling').show();
+                    $('#indenter').hide(); 
+                }
+                else
+                {
+                    $('#indenter').show();
+                    $('#tooling').hide();
+                }         
+                document.getElementById('sh_no').value=response[0][0].shop_no; 
+                document.getElementById('s_sec').value=response[0][0].shop_desc; 
+                   
+                document.getElementById('date1').value=response[0][0].date; 
+                document.getElementById('new_req').value=response[0][0].new_requirement; 
+                document.getElementById('add_req').value=response[0][0].additional;
+                //alert("tset : "+response[0][0].modification)
+               // document.getElementById('checkDynamic').value  = response[0][0].modification;
+                document.getElementById('mod').value==response[0][0].modification;
+                // var x=document.getElementById('mod').value
+                // //alert(x); 
+                // if(test=="none"){                   
+                //         document.getElementById('mod').checked=false;                                          
+                // }else if(test=="yes"){                    
+                //         document.getElementById('mod').checked=true;                        
+                // }else if(test=="no"){
+                //     alert("no")
+                //         document.getElementById('mod').checked=true;                        
+                // }
+                    //
+                    var i=0;
+                    //var mod=response[0][0].modification; 
+                   // mod.checked=true; 
+                document.getElementById('e_no').value=response[0][0].existing_drawing; 
+                document.getElementById('d_no').value=response[0][0].component_drawing; 
+                document.getElementById('m_no').value=response[0][0].machine_no; 
+                document.getElementById('des1').value=response[0][0].machine_description; 
+                document.getElementById('wman').value=response[0][0].wsm_id; 
+                for(i=1;i<=response[1].length;i++)
+                {
+                    var des="des"+String(i);
+                    var quant="quant"+String(i);
+                    var htAppend='<tr><td><center>'+i+'<center></td><td width=35%><input type="text" id="'+des+'" name="'+des+'" class="form-control" style="width:150px"></td><td width=35%><input type="number" id="'+quant+'" name="'+quant+'" placeholder="unit" min="0" max="10000000000"class="form-control" style="width:150px"></td>';
+                    htAppend=htAppend+'<td><a class="delete" Deletedata-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td></tr>';
+                    $('#table1').append(htAppend); 
+                                                
+                    document.getElementById('des'+i).value=response[1][i-1].description; 
+                    document.getElementById('quant'+i).value=response[1][i-1].quantity;    
+                }
+                document.getElementById("hidtext").value=i;
+                $('#table1 tr').find('td:eq(3)').remove();
+                if(i>1){
+                    $('#add').hide();
+                }
+                var wman = $("#wman").val();
+                var data = {wman};
+                $.ajax({
+                    type : 'GET',
+                    url : "{% url 'tools1' %}",
+                    dataType : 'json',
+                    data : data,
+                    success : function(response){                     
+                        document.getElementById('wm_name').value=response[0].empname; 
+                        document.getElementById('wm_contact').value=response[0].contactno;                               
+                        }
+                    }) 
+                document.getElementById('sse').value=response[0][0].sse_id; 
+                var sse = $("#sse").val()
+                var data = {sse};
+                $.ajax({
+                    type : 'GET',
+                    url : "{% url 'tools2' %}",
+                    dataType : 'json',
+                    data : data,
+                    success : function(response){                         
+                        document.getElementById('sse_name').value=response[0].empname; 
+                        document.getElementById('sse_contact').value=response[0].contactno;                                                            
+                    }
+                }) 
+                document.getElementById('sup_name').value=response[0][0].name_supervisor;
+                document.getElementById('sup_des').value=response[0][0].desig_supervisor;
+                document.getElementById('sup_mob').value=response[0][0].mobile_supervisor; 
+                
+
+                
+                
+                    
+            }
+        })
+    }                    
+    function pdf(){
+
+       // window.location.href = "{% url 'toolPdf' %}"+"?l_no="+$('#l_no').val();
+        window.location.href = "{% url 'toolPdf' %}"+"?sh_no="+$('#sh_no').val()+"&s_sec="+$('#s_sec').val()+"&date1="+$('#date1').val()+"&l_no1="+$('#l_no1').val()+"&new_req="+$('#new_req').val()+"&mod="+$('#mod').val()+"&add_req="+$('#add_req').val()+"&e_no="+$('#e_no').val()+"&d_no="+$('#d_no').val()+"&m_no="+$('#m_no').val()+"&mdes="+$('#mdes').val()+"sname="+$('#sname').val()+"&sdes="+$('#sdes').val()+"&wman="+$('#wman').val()+"&sse="+$('#sse').val()+"&dname="+$('#dname').val()+"&d_date="+$('#d_date').val()+"&gname="+$('#gname').val()+"&g_date="+$('#g_date').val()+"&c_date="+$('#c_date').val()+"&l_date="+$('#l_date').val()+"&ref_date="+$('#ref_date').val()+"&comment1="+$('#comment1').val()+"&comment2="+$('#comment2').val();
+    }
+                        
+</script>
+{% endblock content %}

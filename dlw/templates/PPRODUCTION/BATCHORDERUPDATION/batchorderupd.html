@@ -1,0 +1,1906 @@
+{% extends 'base.html' %} 
+{% block content %}
+{% load static %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- <link href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>  -->
+
+<style>
+    table td{
+        text-align: right;
+    }
+    
+</style>
+
+
+<form action="{% url 'batchorderupd' %}" method="POST"> 
+    {% csrf_token %}
+    <center><h4 style="margin-left: 0px;"><b>BATCH ORDER UPDATION</b></h4></center><br>
+    <table width="250px" style="float: right" id="m_tbl" runat="server" style="display: none;">
+        <tr>
+            <td>
+                M2:
+            </td>
+            <td>
+                <label id="M2" text="Label" style="margin-bottom: 0px;"></label>
+            </td>
+            <td>
+                M5:
+            </td>
+            <td>
+                <label id="M5" text="Label" style="margin-bottom: 0px;"></label>
+            </td>
+            <td>
+                M4:
+            </td>
+            <td>
+                <label id="M4" text="Label" style="margin-bottom: 0px;"></label>
+            </td>
+            <td>
+                M14:
+            </td>
+            <td>
+                <label id="M14" text="Label" style="margin-bottom: 0px;"></label>
+            </td>
+            <td>
+                <label id="DEM_OTHERS" text="Label" style="margin-bottom: 0px;"></label>
+            </td>
+        </tr>
+    </table>
+    <div class="container" id="div2">
+      
+      <b>
+          <table>
+            <tr>
+              <td>BATCH NO:</td><td><input type="text" id="Txtbo_no" minlength="8" maxlength="8" pattern="[0-9]*" title="number" autofocus onchange="Txtbo_no_TextChanged()"></td>
+              <td>PART NO:</td><td><input type="text" id="Txtpart_no" minlength="8" maxlength="8" pattern="[0-9]*" title="number" onchange="Txtpart_no_TextChanged()"></td>
+              <td>PTC:</td><td><input type="text" id="Txtptc" readonly></td>
+              <td>SEQ:</td><td><input type="text" id="Txtseq" onchange="Txtseq_TextChanged()"></td>
+            </tr>
+            <tr>
+                <td>BRN:</td><td><input type="text" id="Txtbrn_no" readonly></td>
+                <td>EPC:</td><td colspan="3"><input type="text" id="Txtepc" style="width: 127.99306px;" maxlength="2" onchange="Txtepc_TextChanged()"><input type="text" id="Txtdes" style="width: 336.99306px;" readonly></td>
+                <td>VER:</td><td><input type="text" id="Txtversion" readonly><select id="drpver" hidden></select></td>
+            </tr>
+            <tr>
+                <td>LOCO FROM:</td><td><input type="text" id='Txtloco_fr' maxlength="4"></td>
+                <td>LOCO TO:</td><td><input type="text" id='Txtloco_to' maxlength="4" onchange="Txtloco_to_TextChanged()"></td>
+                <td>BATCH TYPE:</td><td><input type="text" id='Txtbatch_type' onchange="Txtbatch_type_TextChanged()"></td>
+                <td>BATCH QTY:</td><td><input type="text" id='Txtbatch_qty' onchange="Txtbatch_qty_TextChanged()"></td>
+            </tr>
+            <tr>
+                <td>EXPL_DATE:</td><td><input type="text" id='Txtb_expl_dt'></td>
+                <td>RELEASE DATE:</td><td><input type="text" id='Txtrel_date'></td>
+                <td>CLOSURE DATE:</td><td><input type="text" id='Txtb_close_dt'></td>
+                <td>DUE WEEK:</td><td><input type="text" id='Txtuot_wk_f' onchange="Txtuot_wk_f_TextChanged()"></td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <center>
+                        <br />
+                        <input type="button" value="CLEAR"  class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   onclick="Txtclr_Click()" id="Txtclr">
+                        <input type="button" value="PREVIOUS"  class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}  id="Txtnxt" onclick="Txtnxt_Click()">
+                        <input type="button" value="NEXT" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   id="Txtpvs" onclick="Txtpvs_Click()">
+                        <input type="button" name="proceed"  class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   value="Save" id="Btnsav" onclick="Btnsav_Click()">
+                        <label id="lblGridFlg" text="Label" hidden></label>
+                        <br />
+                        <input type="button" value="EXPLODE BATCH"  class="btn btn-success"  disabled style="width:158px;"   id="Btn_Expl">
+                        <input type="button" value="SELECT DEMAND" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   style="width:158px;" id="Btn_Seldem" onclick="Btn_Seldem_Click()">
+                        <br />
+                        <input type="button" value="M13DOC" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   id="Btnm13doc" onclick="Btnm13doc_Click()">
+                        <input type="button" value="REG_M14" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   id="BtnReg_m14" onclick="BtnReg_m14_Click();"  >
+                        <input type="button" value="REG_M4" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   id="BtnReg_M4" onclick="BtnReg_m4_Click();">
+                        <input type="button" value="ALTDOC" class="btn btn-success" {% if usermaster.op_create %}{% else %} disabled {% endif%}   id="BtnAlt" onclick="BtnAlt_Click()" >
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+        </table></b>
+
+<center>
+        <div id="div_lbl" style="border: thin groove #0000FF; height: auto; width: 785px; display: none;">
+                            <table>
+                                <tr>
+                                    <td style="padding-left: 33px;">
+                                        Dem No:
+                                        <label id="LblDem_regno" text="Label" visible="false" ></label>
+                                    </td>
+                                    <td style="padding-left: 32px;">
+                                        Sl No:
+                                        <label id="Lblslno" text="Label" visible="false" ></label>
+                                    </td>
+                                    <td style="padding-left: 41px;">
+                                        Batch No:
+                                        <label id="Lblbo_no" text="Label" visible="false" ></label>
+                                    </td>
+                                    <td style="padding-left: 28px;">
+                                        Part No:
+                                        <label id="Lblpartno" text="Label" visible="false" ></label>
+                                    </td>
+                                    <td >
+                                        Seq:
+                                        <label id="LblSeq" text="Label" visible="false"></label>
+                                    </td>
+                                    <td></td>
+                                    <!-- </td> -->
+                    
+                                </tr>
+                                <tr>
+                                    <td>EPC: <label id="Lblepc" text="Label" visible="false"></label>
+                                    </td>
+                                    <td>
+                                        Qty:
+                                        <label id="Lblqty" text="Label" visible="false"></label>
+                                    </td>
+                                    <td>Name:
+                                        <label id="NAME" visible="False" forecolor="Red"></label>
+                                    </td>
+                                    <td >
+                                        Batch Type:
+                                        <label id="Lblbatch_type" text="Label" visible="False" forecolor="Red"></label>
+                                    </td>
+                                    <td style="padding-left: 16px;">
+                                        Doc Type:
+                                        <label id="Lbldoc_type" text="Label" visible="False" forecolor="Red"></label>
+                                    </td>
+                                    
+                                </tr>
+                            </table>
+                        </div>
+    </div></center>
+    <div id="View_Demand" style="display: none;">
+        <br />
+                     <center>
+                                Select Demand To Edit</center>
+         <br />
+    <table id="third" align="center" class="table table-striped table-bordered" >
+        <thead style="background-color:ghostwhite; font-size:12px;">
+            <tr>
+              <th>DEMAND</th>
+              <th>SL NO</th>
+              <th>PART NO</th>
+              <th>EPC</th>
+              <th>QTY</th>
+              <th>WORK ORDER</th>
+              <th>TYPE</th>
+              <th>L_FR</th>
+              <th>L_TO</th>
+              <th>SEQ</th>
+              <th>DOC TYPE</th>
+              <th>STAFF NO</th>
+              <th>NAME</th>
+            </tr>
+        </thead>
+        <tbody style="font-size:11px; font-weight: 610;">
+      </table>
+      <center>
+        Total Demands:==><label id="totdem"></label>
+        <input type="button" id="Btngrdbk" value="Go Back" onclick="Btngrdbk_Click()" />
+    </center>
+    </div>
+
+      <div id="View1" style="display: none;">
+        <label id="MAIN" text="F"></label>
+        <label id="FB"></label>
+        <label id="EP_PART"></label>
+        <label id="STATUS"></label>
+        <label id="DIV"></label>
+        <label id="ROWID"></label>
+        <label id="B_UPDT_DT"></label>
+        <label id="REL_DT_BC"></label>
+        <br />
+        <label id="CLOS_DT_B"></label>
+        <label id="MUSR_CD"></label>
+        <label id="CLOS_DT_C"></label>
+        <label id="CLOSE_NO"></label>
+        <label id="MARK"></label>
+        <label id="ALT_PART"></label>
+        <label id="REMARK"></label>
+        <label id="IsAlt" Text="F"></label>
+        <label id="SCH"></label>
+        <br />
+        <label id="NASSLY"></label>
+       
+        <label id="BQTY" Text="0"></label>
+        <label id="DUE_WK"></label>
+        <label id="OUT_WK"></label>
+        <label id="B_ROWID"></label>
+        <label id="EP_TYPE"></label>
+        <label id="Lblstaffno"></label>
+        <label id="StartM2NoCD"></label>
+        <label id="StartM4M14NoCD"></label>
+       <label ID="nom2"></label>
+        <label ID="noM5Rej"></label>
+      </div>
+
+
+
+                    <div id="View_msummry" style="border: thin groove #0000FF; height: auto; width: 790px; display: none;">
+                        <center>
+                            DOCUMENTS GENERATED
+                        </center>
+                        <table class="style1">
+                            <tr>
+                                <td>
+                                    &nbsp;</td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Document Name</td>
+                                <td>
+                                    FROM
+                                </td>
+                                <td>
+                                    To
+                                </td>
+                                <td>
+                                    Total
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    M2:</td>
+                                <td>
+                                    <label id="m2fr" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m2to" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m2no" text="Label"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    M5:</td>
+                                <td>
+                                    <label id="m5fr" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m5to" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m5no" text="Label"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    M4:</td>
+                                <td>
+                                    <label id="m4fr" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m4to" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m4no" text="Label"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    M14:</td>
+                                <td>
+                                    <label id="m14fr" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m14to" text="Label"></label>
+                                </td>
+                                <td>
+                                    <label id="m14no" text="Label"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    &nbsp;</td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    &nbsp;</td>
+                                <td colspan="3">
+                                    Please press poceed button to complete your Explode process*
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    &nbsp;</td>
+                                <td colspan="3">
+                                    <center>
+                                        <input type="button" id="Btn_finalproceed"  onclick="Btn_finalproceed_Click()" value="Proceed" />
+                                    </center>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    &nbsp;</td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+
+                    <div id="View_GM" style="display: none;">
+                    <center>
+                        Want to allow for GM loco?
+                        <input type="button" id="BtngmY" value="Yes" onclick="BtngmY_Click()" />
+                        <input type="button" id="BtngmN" value="No" onclick="BtngmN_Click()" />
+                    </center>
+                    </div>
+
+
+                    <div id="View_addbatch" style="display: none;">
+                    <center>
+                        <label id="lblDIV" text="DIV: "></label>
+                        <input type="text" id="DIV1" visible="false" onchange="ValidDiv()" Width="40px"><br />
+                        Add Batch ? [Y/N]
+                        <input type="button" id="BtnaddBY" value="Add Batch" onclick="BtnaddBY_Click()" />
+                        <input type="button" id="BtnaddBN" value="Cancel" onclick="BtnaddBN_Click()" />
+                    </center>
+                    </div>
+
+
+                    <div id="View_sch" style="display: none;">
+                    <center>
+                        Select Schedule Class :
+                        <select id="Drpsch" >
+                            <option value="--SELECT--" selected>--SELECT--</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="M14">M14</option>
+                           
+                        </select>
+                        <input type="button" id="Btnschback" value="Return Back" onclick="Btnschback_Click()" />
+                    </center>
+                    </div>
+
+<center>
+                    <div id="view_alt" style="border: thin groove #0000FF; height: auto; width:1040px; display: none;" >
+                        <table>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <center>
+                                        DOCUMENTS FOR ALT-PARTS
+                                    </center>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    BATCH NO:<label id="L_bo_no" text="Label"></label>
+                                </td>
+                                
+                                <td>
+                                    PART NO:<label id="L_part_no" text="Label"></label>
+                                </td>
+                                
+                                <td>
+                                    PTC:<label id="L_ptc" text="Label"></label>
+                                </td>
+                                
+                                <td>
+                                    SEQ:<label id="L_seq" text="Label"></label>
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    BRN:<label id="L_brn_no" text="Label"></label>
+                                </td>
+                                
+                                <td>
+                                    EPC:<label id="L_epc" text="Label" ></label>
+                                    <label id="L_epcdes" text="Label"></label>
+                                </td>
+                                
+                                <td>
+                                    Ver:<label id="L_version" text="Label"></label>
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    LOCO FROM:<label id="L_lfr" text="Label" ></label>
+                                </td>
+                                
+                                <td>
+                                    LOCO TO:<label id="L_lto" text="Label"></label>
+                                </td>
+                                
+                                <td></td>
+                                <td></td>
+                                
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    BRN-NO:<input type="text" id="TxtAbrn_no" Width="80px" readonly>
+                                </td>
+                                
+                                <td>
+                                    LOCO FROM:<input type="text" id="Txtl_fr" Width="80px" maxlength="4"  >
+                                </td>
+                                
+                                <td>
+                                    LOCO TO:<input type="text" id="Txtl_to" Width="80px" maxlength="4" onchange="Txtl_to_TextChanged()">
+                                </td>
+                                
+                                <td>
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    PART NO:<input type="text" id="TxtApart_no" Width="80px" maxlength="8" onchange="TxtApart_no_TextChanged()">
+                                </td>
+                                
+                                <td>
+                                    <input type="text" id="Txtalt_des" Width="250px" readonly>
+                                </td>
+                                <td>
+                                    ALT-LINK:<input type="text" id="Txtalt_link" Width="50px" readonly>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <center>
+                                        <input type="button" id="Btn_A_clr" value="CLEAR" onclick="Btn_A_clr_Click()" />
+                                        <input type="button" id="Exit" value="EXIT" onclick="Exit_Click()" />
+                                        <input type="button" id="Btn_A_save" value="SAVE" onclick="Btn_A_save_Click()" />
+                                        <input type="button" id="Btn_A_expl" value="EXPLODE" onclick="Btn_A_expl_Click()" />
+                                    </center>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </center>
+
+</form>
+<script>
+
+
+    var val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,x=0,y=0,val17,val18,val19,val20,val21,val22,val23,val24,val25,val26,val27,val28,val29,val30,val31,val32,val33,val34,val35,val36;
+    function Txtclr_Click()
+    {
+
+        window.location.reload();
+        
+    }
+  
+    $(document).ready(function()
+{ 
+  $('#Txtb_expl_dt').datepicker({dateFormat:'dd-mm-yy'});
+});
+
+$(document).ready(function()
+{ 
+  $('#Txtrel_date').datepicker({dateFormat:'dd-mm-yy'});
+});
+
+$(document).ready(function()
+{ 
+    $('#m_tbl').hide();
+    document.getElementById('lblGridFlg').innerHTML = 'N';
+        document.getElementById('MAIN').innerHTML = 'F';
+  $('#Txtb_close_dt').datepicker({dateFormat:'dd-mm-yy'});
+});
+
+function Txtbo_no_TextChanged(){
+
+    document.getElementById('MAIN').innerHTML = 'T';
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'v_bo' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          alert(response);
+        if(response.length>0)
+        {
+            x=response[16];
+        }
+        if(response.length>1)
+        {
+            y=1
+        }
+        $("#Txtpart_no").focus();
+        $("#Txtbo_no").val(response[0]);
+        $("#Txtpart_no").val(response[1]);
+        $("#Txtepc").val(response[2]);
+        $("#Txtseq").val(response[3]);
+        $("#Txtbrn_no").val(response[4]);
+        $("#Txtversion").val(response[5]);
+        $("#Txtloco_fr").val(response[6]);
+        $("#Txtloco_to").val(response[7]);
+        $("#Txtbatch_type").val(response[8]);
+        $("#Txtbatch_qty").val(response[9]);
+        $("#Txtb_expl_dt").val(response[10]);
+        $("#Txtrel_date").val(response[11]);
+        $("#Txtb_close_dt").val(response[12]);
+        $("#Txtuot_wk_f").val(response[13]);
+        $("#Txtptc").val(response[14]);
+        $("#Txtdes").val(response[15]);
+      }
+    });
+    }
+
+
+
+function Txtpart_no_TextChanged(){
+    val1=$('#Txtbo_no').val();
+    val2=$('#Txtpart_no').val();
+    val3=$('#Txtepc').val();
+    val4=$('#Txtseq').val();
+    val5=$('#Txtbrn_no').val();
+    val6=$('#Txtversion').val();
+    val7=$('#Txtloco_fr').val();
+    val8=$('#Txtloco_to').val();
+    val9=$('#Txtbatch_type').val();
+    val10=$('#Txtbatch_qty').val();
+    val11=$('#Txtb_expl_dt').val();
+    val12=$('#Txtrel_date').val();
+    val13=$('#Txtb_close_dt').val();
+    val14=$('#Txtuot_wk_f').val();
+    val15=$('#Txtptc').val();
+    val16=$('#Txtdes').val();
+    val17=document.getElementById('FB').textContent
+    val18=document.getElementById('B_UPDT_DT').textContent
+    val19=document.getElementById('REL_DT_BC').textContent
+    val20=document.getElementById('CLOS_DT_B').textContent
+    val21=document.getElementById('CLOS_DT_C').textContent
+    val22=document.getElementById('CLOSE_NO').textContent
+    val23=document.getElementById('MARK').textContent
+    val24=document.getElementById('REMARK').textContent
+    data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val17,val18,val19,val20,val21,val22,val23,val24};
+$.ajax({
+    type : 'GET',
+    url : "{% url 'v_pt' %}",
+    dataType : 'json',
+    data:data,
+    success : function(response){
+        alert(response);
+    if(response.length>0)
+    {
+        x=response[16];
+    }
+    if(response.length>1)
+    {
+        y=1
+    }
+    $("#Txtpart_no").focus();
+    $("#Txtbo_no").val(response[0]);
+    $("#Txtpart_no").val(response[1]);
+    $("#Txtepc").val(response[2]);
+    $("#Txtseq").val(response[3]);
+    $("#Txtbrn_no").val(response[4]);
+    $("#Txtversion").val(response[5]);
+    $("#Txtloco_fr").val(response[6]);
+    $("#Txtloco_to").val(response[7]);
+    $("#Txtbatch_type").val(response[8]);
+    $("#Txtbatch_qty").val(response[9]);
+    $("#Txtb_expl_dt").val(response[10]);
+    $("#Txtrel_date").val(response[11]);
+    $("#Txtb_close_dt").val(response[12]);
+    $("#Txtuot_wk_f").val(response[13]);
+    $("#Txtptc").val(response[14]);
+    $("#Txtdes").val(response[15]);
+    document.getElementById('B_UPDT_DT').innerHTML = response[17];
+    document.getElementById('REL_DT_BC').innerHTML = response[18];
+    document.getElementById('CLOS_DT_B').innerHTML = response[19];
+    document.getElementById('CLOS_DT_C').innerHTML = response[20];
+    document.getElementById('CLOSE_NO').innerHTML = response[21];
+    document.getElementById('MARK').innerHTML = response[22];
+    document.getElementById('REMARK').innerHTML = response[23];
+      }
+    });
+}
+
+    function Txtseq_TextChanged(){
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val18=document.getElementById('B_UPDT_DT').textContent
+        val19=document.getElementById('REL_DT_BC').textContent
+        val20=document.getElementById('CLOS_DT_B').textContent
+        val21=document.getElementById('CLOS_DT_C').textContent
+        val22=document.getElementById('CLOSE_NO').textContent
+        val23=document.getElementById('MARK').textContent
+        val24=document.getElementById('REMARK').textContent
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val18,val19,val20,val21,val22,val23,val24};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'v_seq' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          alert(response);
+        if(response.length>0)
+        {
+            x=response[16];
+        }
+        if(response.length>1)
+        {
+            y=1
+        }
+        $("#Txtpart_no").focus();
+        $("#Txtbo_no").val(response[0]);
+        $("#Txtpart_no").val(response[1]);
+        $("#Txtepc").val(response[2]);
+        $("#Txtseq").val(response[3]);
+        $("#Txtbrn_no").val(response[4]);
+        $("#Txtversion").val(response[5]);
+        $("#Txtloco_fr").val(response[6]);
+        $("#Txtloco_to").val(response[7]);
+        $("#Txtbatch_type").val(response[8]);
+        $("#Txtbatch_qty").val(response[9]);
+        $("#Txtb_expl_dt").val(response[10]);
+        $("#Txtrel_date").val(response[11]);
+        $("#Txtb_close_dt").val(response[12]);
+        $("#Txtuot_wk_f").val(response[13]);
+        $("#Txtptc").val(response[14]);
+        $("#Txtdes").val(response[15]);
+        document.getElementById('B_UPDT_DT').innerHTML = response[17];
+        document.getElementById('REL_DT_BC').innerHTML = response[18];
+        document.getElementById('CLOS_DT_B').innerHTML = response[19];
+        document.getElementById('CLOS_DT_C').innerHTML = response[20];
+        document.getElementById('CLOSE_NO').innerHTML = response[21];
+        document.getElementById('MARK').innerHTML = response[22];
+        document.getElementById('REMARK').innerHTML = response[23];
+      }
+    });
+    }
+
+var vep;
+var vbt;
+var vlft;
+var vwk;
+var vqt;
+
+function Txtepc_TextChanged(){
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val6=$('#Txtversion').val();
+        data={val2,val3};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'V_EP' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          vep=response[0];
+          if(response[0]==false)
+          { 
+            alert(response[1]);          
+            $("#Txtepc").val('');
+            $("#Txtepc").focus();
+          }
+          else
+          {
+            document.getElementById('EP_PART').innerHTML = response[2];
+            document.getElementById('DIV').innerHTML = response[3];
+            $("#Txtversion").val(response[5]);
+          }
+
+      }
+    });
+    }
+
+
+
+
+    
+
+
+
+
+    function Txtpvs_Click()
+    {    
+        $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+        data={x};
+        $.ajax({
+      type : 'GET',
+      url : "{% url 'next' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+        if(response.length>0)
+        {
+            x=response[16];
+        }
+        if(response[17]==1)
+        {
+        $("#Txtpart_no").focus();
+        $("#Txtbo_no").val(response[0]);
+        $("#Txtpart_no").val(response[1]);
+        $("#Txtepc").val(response[2]);
+        $("#Txtseq").val(response[3]);
+        $("#Txtbrn_no").val(response[4]);
+        $("#Txtversion").val(response[5]);
+        $("#Txtloco_fr").val(response[6]);
+        $("#Txtloco_to").val(response[7]);
+        $("#Txtbatch_type").val(response[8]);
+        $("#Txtbatch_qty").val(response[9]);
+        $("#Txtb_expl_dt").val(response[10]);
+        $("#Txtrel_date").val(response[11]);
+        $("#Txtb_close_dt").val(response[12]);
+        $("#Txtuot_wk_f").val(response[13]);
+        $("#Txtptc").val(response[14]);
+        $("#Txtdes").val(response[15]);
+        }
+        else
+        {
+            alert("Next Batch is Not Present!");
+        }
+    }
+    });
+
+
+       
+    }
+
+
+    function Txtnxt_Click()
+    {  
+        $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();  
+        data={x};
+        $.ajax({
+      type : 'GET',
+      url : "{% url 'Prev' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+        if(response.length>0)
+        {
+            x=response[16];
+        }
+        if(response[17]==1)
+        {
+        $("#Txtpart_no").focus();
+        $("#Txtbo_no").val(response[0]);
+        $("#Txtpart_no").val(response[1]);
+        $("#Txtepc").val(response[2]);
+        $("#Txtseq").val(response[3]);
+        $("#Txtbrn_no").val(response[4]);
+        $("#Txtversion").val(response[5]);
+        $("#Txtloco_fr").val(response[6]);
+        $("#Txtloco_to").val(response[7]);
+        $("#Txtbatch_type").val(response[8]);
+        $("#Txtbatch_qty").val(response[9]);
+        $("#Txtb_expl_dt").val(response[10]);
+        $("#Txtrel_date").val(response[11]);
+        $("#Txtb_close_dt").val(response[12]);
+        $("#Txtuot_wk_f").val(response[13]);
+        $("#Txtptc").val(response[14]);
+        $("#Txtdes").val(response[15]);
+        }
+        else{
+            alert("Previous Batch is Not Present!");
+        }
+      }
+    });
+    }
+    function Btnsav_Click()
+    {    
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();   
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        lblDIV=$('#lblDIV').val();
+        DIV1=$('#DIV1').val();
+        MUSR_CD = document.getElementById('MUSR_CD').textContent;
+        lblGridFlg =document.getElementById('lblGridFlg').textContent;
+        B_UPDT_DT=document.getElementById('B_UPDT_DT').textContent;     
+        REL_DT_BC=document.getElementById('REL_DT_BC').textContent;
+        CLOS_DT_B=document.getElementById('CLOS_DT_B').textContent;
+        CLOS_DT_C=document.getElementById('CLOS_DT_C').textContent;
+        DIV=document.getElementById('DIV').textContent;
+        MARK=document.getElementById('MARK').textContent;
+        REMARK=document.getElementById('REMARK').textContent;
+        STATUS=document.getElementById('STATUS').textContent;
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,x,y,vep,vbt,vlft,vwk,vqt,MUSR_CD,lblGridFlg,B_UPDT_DT,REL_DT_BC,CLOS_DT_B,CLOS_DT_C,DIV,MARK,REMARK,STATUS,lblDIV,DIV1};
+        $.ajax({
+      type : 'GET',
+      url : "{% url 'key_f1' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response)
+        {
+            alert(response[1]);
+            if(response[7]=="Show Div")
+            {
+                    $("#View_addbatch").show();
+                    $('#div_lbl').hide();
+                    $('#View_Demand').hide();
+                    $('#View1').hide();
+                    $('#View_msummry').hide();
+                    $('#View_GM').hide();
+                    $('#div2').hide();
+                    $('#View_sch').hide();
+                    $('#view_alt').hide();
+
+            }  
+            if(response[3]=="true" && response[4]=="true") 
+            {
+                $("#DIV1").show();
+                $("#lblDIV").show();
+            }
+            if(response[4]=="false")
+            {
+                $("#lblDIV").hide();
+            }
+            r=response[6];
+            if (r=="U")
+        {
+            alert(response[1]);
+            document.getElementById('STATUS').innerHTML = response[2];
+            $('#DIV1').val(response[3]);
+            $('#lblDIV').val(response[4]);
+            $('#Txtseq').val(response[5]); 
+        }
+            
+        }
+    });
+}
+
+
+function Btn_Seldem_Click()
+{
+    val3=$('#Txtepc').val();
+    val15=$('#Txtptc').val();
+    val16=$('#Txtdes').val();
+    val27=document.getElementById('LblDem_regno').textContent
+    val28=document.getElementById('Lblslno').textContent
+    val29=document.getElementById('Lbldoc_type').textContent
+    data={val3,val15,val16,val27,val28,val29};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'key_f6' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+        $("#Txtuot_wk_f").focus();
+          if(response[0]==false)
+          {
+              alert(response[1]);
+          }
+          else{
+            document.getElementById('totdem').innerHTML=response[2];
+        
+                    var trHTML = '';
+                    $.each(response[3], function (i, item) {
+                        trHTML += '<tr><td>' + item.dem_regno + '</td><td>' + item.slno + '</td><td>' + item.part_no + '</td><td>' + item.epc + '</td><td>' + item.qty + '</td><td>' + item.bo_no + '</td><td>' + item.batch_type + '</td><td>' + item.l_fr + '</td><td>'+item.l_to+ '</td><td>' + item.seq + '</td><td>' + item.ddoc_type + '</td><td>' + item.staff_no + '</td><td>' + item.name + '</td></tr>';
+                    });
+                    trHTML+='</tbody>'
+                    $("#third").append(trHTML);
+                    $("#View_Demand").show();
+                    $("#div2").hide();
+                    $('#div_lbl').hide();
+                    $('#View1').hide();
+                    $('#View_msummry').hide();
+                    $('#View_GM').hide();
+                    $('#View_addbatch').hide();
+                    $('#View_sch').hide();
+                    $('#view_alt').hide();
+                    $(document).ready(function() {
+                        var table = $("#third").DataTable();
+                        $('#third tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            var data1 = table.row( this ).data();
+        }
+
+       
+
+        document.getElementById('lblGridFlg').innerHTML = "Y";
+        document.getElementById('LblDem_regno').innerHTML = data1[0];
+        document.getElementById('Lblslno').innerHTML = data1[1];
+        document.getElementById('Lblstaffno').innerHTML = data1[11];
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val27=document.getElementById('LblDem_regno').textContent
+        val28=document.getElementById('Lblslno').textContent
+        val30=document.getElementById('Lblstaffno').textContent
+        data2={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val27,val28,val30};
+        $.ajax({
+      type : 'GET',
+      url : "{% url 'Grid_part_RowCommand' %}",
+      dataType : 'json',
+      data:data2,
+      success : function(response){
+        $("#Txtbo_no").val(response[0]);
+        $("#Txtpart_no").val(response[1]);
+        $("#Txtepc").val(response[2]);
+        $("#Txtseq").val(response[3]);
+        $("#Txtbrn_no").val(response[4]);
+        $("#Txtversion").val(response[5]);
+        $("#Txtloco_fr").val(response[6]);
+        $("#Txtloco_to").val(response[7]);
+        $("#Txtbatch_type").val(response[8]);
+        $("#Txtbatch_qty").val(response[9]);
+        $("#Txtb_expl_dt").val(response[10]);
+        $("#Txtrel_date").val(response[11]);
+        $("#Txtb_close_dt").val(response[12]);
+        $("#Txtuot_wk_f").val(response[13]);
+        $("#Txtptc").val(response[14]);
+        $("#Txtdes").val(response[15]);
+        document.getElementById('NAME').innerHTML = response[16];
+        document.getElementById('Lblpartno').innerHTML = response[17];
+        document.getElementById('Lblbo_no').innerHTML = response[18];
+        document.getElementById('Lblepc').innerHTML = response[19];
+        document.getElementById('Lblqty').innerHTML = response[20];
+        document.getElementById('Lblbatch_type').innerHTML = response[21];
+        document.getElementById('LblSeq').innerHTML = response[22];
+        document.getElementById('Lblslno').innerHTML = response[23];
+        document.getElementById('LblDem_regno').innerHTML = response[24];
+        document.getElementById('Lbldoc_type').innerHTML = response[25];
+        document.getElementById('M2').innerHTML = response[26];
+        document.getElementById('M4').innerHTML = response[27];
+        document.getElementById('M5').innerHTML = response[28];
+        document.getElementById('M14').innerHTML = response[29];
+        document.getElementById('DEM_OTHERS').innerHTML = response[30];
+        document.getElementById('ALT_PART').innerHTML = response[31];
+        document.getElementById('STATUS').innerHTML = response[32];
+
+        
+
+      }
+      
+      });
+      
+        $("#View_Demand").hide();
+        $("#div_lbl").show();
+        $("#div2").show();
+        $("#m_tbl").show();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+    });
+    
+                    });
+        }}
+    }); 
+}
+
+
+
+
+ 
+function ValidDiv()
+{
+    if((document.getElementById('MUSR_CD').textContent)==='APM2')
+    {
+        document.getElementById('DIV1').innerHTML = (document.getElementById('DIV1').textContent).toUpperCase();
+        var div1_val=document.getElementById('DIV1').textContent
+        if((div1_val!='E') || (div1_val!='V') || (div1_val!='T'))
+        {
+            alert("Invalid DIV. Value should be in E/V/T");
+            document.getElementById('DIV1').innerHTML='';
+            $("#DIV1").focus();
+
+        }
+    }
+}
+
+function Txtbatch_type_TextChanged()
+    {
+        document.getElementById("Txtbatch_type").value = document.getElementById("Txtbatch_type").value.toUpperCase();
+        var lf = 0;
+        var lt = 0;
+        if ($('#Txtloco_fr').val() != "")
+        {
+             lf = parseInt($('#Txtloco_fr').val());
+        }
+        if ($('#Txtloco_to').val() != "")
+        {
+            lt = parseInt($('#Txtloco_to').val());
+        }
+        document.getElementById("Txtbatch_qty").value = (lt - lf + 1).toString();
+        
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val9=$('#Txtbatch_type').val();
+        val15=$('#Txtptc').val();
+        val25=document.getElementById('EP_PART').textContent
+        val26=document.getElementById('MUSR_CD').textContent
+        data={val1,val2,val3,val9,val15,val25,val26};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'v_bt' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          vbt=response[0];
+        if(response[0]==false)
+          { 
+            alert(response[1]);          
+            $("#Txtbatch_type").val('');
+            $("#Txtbatch_type").focus();
+          }
+          else
+          {
+            $("#Txtuot_wk_f").focus();
+          }
+
+          
+      }
+    });
+}
+
+ 
+
+
+function Txtloco_to_TextChanged()
+    {
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val15=$('#Txtptc').val();
+        val25=document.getElementById('EP_PART').textContent
+        val26=document.getElementById('MUSR_CD').textContent
+        data={val1,val2,val3,val7,val8,val15,val25,val26};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'vlft' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          vlft=response[0];
+          if(response[1]=='View_GM')
+          {
+            $("#View_GM").show();
+          }
+          if(response[0]==false)
+          { 
+            alert(response[1]);
+            if(response[1]=="Proper Loco-To Must be Entered")
+            {
+                $("#Txtloco_to").focus();
+            }
+            else if(response[1]=="Proper Loco-To Must be Entered..")
+            {
+                $("#Txtloco_fr").focus();
+            }
+            else if(response[1]==" Part Not in current structure for this End Product")
+            {
+                $("#Txtepc").focus();
+            }
+            else if(response[1]==" Part Not in current structure for this End Product..")
+            {
+                $("#Txtloco_to").val('');
+                $("#Txtloco_to").focus();
+            }
+            else if(response[1]==" Part Not Currently in this End Product")
+            {
+                $("#Txtloco_to").val('');
+                $("#Txtloco_to").focus();
+            }
+            else if(response[1]=="Not a Shop Manufactured Part")
+            {
+                $("#Txtloco_to").val('');
+                $("#Txtloco_to").focus();
+            }
+          }
+          else
+          {
+            $("#Txtbatch_type").focus();
+          }
+        
+      }
+    });
+}
+
+
+function Txtuot_wk_f_TextChanged()
+{
+    val14=$('#Txtuot_wk_f').val();
+    data={val14};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'vwk' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response)
+      {
+        vwk=response[0];
+        if(response[0]==false)
+          { 
+            alert(response[1]);
+            $("#Txtuot_wk_f").focus();
+          }
+    
+      }
+    });
+}
+
+
+function Txtbatch_qty_TextChanged()
+    {
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        data={val7,val8,val9,val10};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'vqt' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          vqt=response[0];
+        if(response[0]==false)
+          { 
+            alert(response[1]);
+            if(response[1]=="Batch Qty Must be Entered")
+            {
+                $("#Txtbatch_qty").focus();
+            }
+            if(response[1]=="BATCH-QTY WRONG")
+            {
+                $("#Txtbatch_type").focus();
+            }
+          }
+          
+      }
+    });
+        
+    }
+
+function BtngmN_Click()
+    {
+        alert("NOT A BAL.INPUT ITEM [B]");
+        $("#div2").show();
+        $("#Txtloco_to").focus();
+        $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+    }
+function BtngmY_Click()
+    {
+        document.getElementById('STATUS').innerHTML = "E";
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        document.getElementById("Txtb_expl_dt").value = date;
+        $("#div2").show();
+        $("#Txtbatch_qty").focus();
+        $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+    }
+
+
+
+function BtnAlt_Click()
+{
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val31=document.getElementById('ALT_PART').textContent
+        val32=document.getElementById('STATUS').textContent
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val31,val32};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'altdoc' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+        alert(response);
+        
+        if(response[0]==false)
+        {
+            alert(response[1]);
+            $("#div2").show();
+            $('#div_lbl').hide();
+            $('#View_Demand').hide();
+            $('#View1').hide();
+            $('#View_msummry').hide();
+            $('#View_GM').hide();
+            $('#View_addbatch').hide();
+            $('#View_sch').hide();
+            $('#view_alt').hide();
+        }
+        else
+        {
+            $('#Txtl_fr').val(response[2]);
+            $('#Txtl_to').val(response[3]); 
+            document.getElementById('IsAlt').innerHTML=response[5]
+            $('#TxtApart_no').val(response[6]); 
+            document.getElementById('L_bo_no').innerHTML = response[7]; 
+            document.getElementById('L_brn_no').innerHTML = response[8];
+            document.getElementById('L_part_no').innerHTML = response[9]; 
+            document.getElementById('L_ptc').innerHTML = response[10]; 
+            document.getElementById('L_seq').innerHTML = response[11]; 
+            $('#TxtAbrn_no').val(response[12]); 
+            document.getElementById('L_epc').innerHTML = response[13]; 
+            document.getElementById('L_epcdes').innerHTML = response[14]; 
+            document.getElementById('L_version').innerHTML = response[15];
+            document.getElementById('L_lfr').innerHTML = response[16]; 
+            document.getElementById('L_lto').innerHTML = response[17];  
+            $("#Txtl_fr").focus();
+            $("#view_alt").show();
+            $("#div2").hide();
+            $('#div_lbl').hide();
+            $('#View_Demand').hide();
+            $('#View1').hide();
+            $('#View_msummry').hide();
+            $('#View_GM').hide();
+            $('#View_addbatch').hide();
+            $('#View_sch').hide();
+        }
+      }
+    });
+}
+
+function TxtApart_no_TextChanged()
+{
+    val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val33=$('#TxtApart_no').val();
+        val34=$('#Txtl_to').val();
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val33,val34};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'v_altpart' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          alert(response);
+          if(response[0]==false)
+          {
+              alert(response[1]);
+          }
+         
+          else{
+            $('#Txtalt_des').val(response[2]);
+            $('#Txtalt_link').val(response[3]);
+            document.getElementById('EP_TYPE').innerHTML = response[4]; 
+
+          }
+        
+      }
+    }); 
+}
+
+
+function Txtl_to_TextChanged()
+{
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val35=$('#Txtl_fr').val();
+        val34=$('#Txtl_to').val();
+        val36=$('#Txtalt_link').val();
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val34,val35,val36};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'v_alto' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          
+          if(response[0]=='1')
+          {
+              alert(response[1]);
+              $('#Txtl_to').val(response[2]);
+              $('#Txtl_to').focus();
+          }
+          else{
+            
+          }
+        
+      }
+    }); 
+}
+function BtnReg_m4_Click()
+{
+    $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+        val5=$('#Txtbrn_no').val();
+        Rej_Type= "M4"
+        data={val5,Rej_Type};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'Key_F9_F11' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          if(response[0]=='1')
+          {
+              alert(response[1]);
+          }
+          else{
+            $('#Txtl_to').val(response[2]);
+          }
+        
+      }
+    }); 
+}
+
+function BtnReg_m14_Click()
+{
+    $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+        val5=$('#Txtbrn_no').val();
+        Rej_Type= "M14"
+        data={val5,Rej_Type};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'Key_F9_F11' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          if(response[0]=='1')
+          {
+              alert(response[1]);
+          }
+          else{
+            $('#Txtl_to').val(response[2]);
+          }
+        
+      }
+    }); 
+}
+function Btnm13doc_Click()
+{
+    $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val35=$('#Txtl_fr').val();
+        val34=$('#Txtl_to').val();
+        val36=$('#Txtalt_link').val();
+        M2=document.getElementById('M2').textContent
+        M4=document.getElementById('M4').textContent
+        M14=document.getElementById('M14').textContent
+        M5=document.getElementById('M5').textContent
+        SCH=document.getElementById('SCH').textContent
+        IsAlt=document.getElementById('IsAlt').textContent
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val34,val35,val36,M2,M4,M14,M5,IsAlt,SCH};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'key_F7_1' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          
+          if(response[0]=='1')
+          {
+              alert(response[1]);
+          }
+          else
+          {
+            $('#Txtbo_no').val(response[2]);
+            $('#Txtpart_no').val(response[3]);
+            $('#Txtbrn_no').val(response[4]);
+            $('#Txtbo_no').val(response[5]);
+            $('#Txtepc').val(response[6]);
+            $('#Txtbatch_type').val(response[7]);
+            $('#Txtversion').val(response[8]);
+            $('#Txtloco_fr').val(response[9]);
+            $('#Txtloco_to').val(response[10]);
+            $('#Txtseq').val(response[11]);
+            $('#Txtbatch_qty').val(response[12]);
+            $('#Txtuot_wk_f').val(response[13]);
+          }
+        
+      }
+    }); 
+}
+
+function Btn_A_save_Click()
+{
+        var rvalt;
+        var rvalto;
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val35=$('#Txtl_fr').val();
+        val34=$('#Txtl_to').val();        
+        val36=$('#Txtalt_link').val();
+
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val34,val35,val36};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'v_alto' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response){
+          rvalto=response[0]//1
+        
+      }
+    });
+    val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        val33=$('#TxtApart_no').val();
+        val34=$('#Txtl_to').val();
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,val33,val34};
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'v_altpart' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response)
+      {
+          rvalt=response[0]//true
+      }
+    });
+            Txtbrn_no=$('#Txtbrn_no').val();
+
+            Txtalt_link=$('#Txtalt_link').val();
+            TxtApart_no=$('#TxtApart_no').val();
+            Txtl_fr=$('#Txtl_fr').val();
+            Txtl_to=$('#Txtl_to').val();
+            
+    data={rvalt,rvalto,Txtbrn_no,Txtalt_link,TxtApart_no,Txtl_fr,Txtl_to}
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'key_f1_alt' %}",
+      dataType : 'json',
+      data:data,
+      success : function(response)
+      {
+            alert(response[1])
+      }
+    });
+
+
+}
+function Btn_A_expl_Click()
+{
+        LblDem_regno=document.getElementById('LblDem_regno').textContent
+        Lblslno=document.getElementById('Lblslno').textContent
+        Lblstaffno=document.getElementById('Lblstaffno').textContent
+        Txtbrn_no=$('#Txtbrn_no').val();
+            Txtalt_link=$('#Txtalt_link').val();
+            Txtloco_fr=$('#Txtloco_fr').val();
+            Txtloco_to=$('#Txtloco_to').val();
+            Txtepc=$('#Txtepc').val();
+            TxtApart_no=$('#TxtApart_no').val();
+            Txtl_fr=$('#Txtl_fr').val();
+            Txtl_to=$('#Txtl_to').val();
+            Txtseq=$('#Txtseq').val(); 
+            Txtpart_no=$('#Txtpart_no').val();
+            Txtbatch_type=$('#Txtbatch_type').val();
+            M2=document.getElementById('M2').textContent
+            M4=document.getElementById('M4').textContent
+            M14=document.getElementById('M14').textContent
+            M5=document.getElementById('M5').textContent
+            SCH=document.getElementById('SCH').textContent
+            IsAlt=document.getElementById('IsAlt').textContent
+
+       data={LblDem_regno,Lblslno,Lblstaffno,Txtalt_link,TxtApart_no,Txtl_fr,Txtl_to,Txtbrn_no,Txtpart_no,Txtseq,Txtbatch_type,M2,M4,M5,M14,IsAlt,SCH,Txtloco_fr,Txtloco_to,Txtepc}
+    $.ajax({
+      type : 'GET',
+      url : "{% url 'key_F5_alt' %}",
+      dataType : 'json',
+      data:data,        
+      success : function(response)
+      {
+            if (response[0]==1)
+                alert(response[1]);
+            else
+            {
+                $('#Txtpart_no').val(response[2]);
+                $('#Txtseq').val(response[3]);
+                $('#Txtloco_fr').val(response[4]);
+                $('#Txtloco_to').val(response[5]);
+                $('#Txtepc').val(response[6]);
+            }
+      }
+    });
+
+}
+function Btn_A_clr_Click()
+{
+    $('#TxtApart_no').val('');
+    $('#Txtalt_link').val('');
+    $('#Txtl_fr').val('');
+    $('#Txtl_to').val('');
+    $('#Txtalt_des').val('');
+    $("#Txtpart_no").focus();
+}
+
+function Exit_Click()
+{
+    $('#div2').show();
+     $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+    document.getElementById('IsAlt').innerHTML="F" ;
+}
+
+
+
+function BtnaddBN_Click()
+    {
+        $('#div2').show();
+        $('#div_lbl').hide();
+        $('#View_Demand').hide();
+        $('#View1').hide();
+        $('#View_msummry').hide();
+        $('#View_GM').hide();
+        $('#View_addbatch').hide();
+        $('#View_sch').hide();
+        $('#view_alt').hide();
+       
+
+    }
+function Btngrdbk_Click()
+    {
+        $("#View_Demand").hide();
+        $('#third tbody').empty();
+        $('#div2').show();
+    }
+
+function BtnaddBY_Click()
+{       check=$('#DIV1').val();
+        val1=$('#Txtbo_no').val();
+        val2=$('#Txtpart_no').val();
+        val3=$('#Txtepc').val();
+        val4=$('#Txtseq').val();
+        val5=$('#Txtbrn_no').val();
+        val6=$('#Txtversion').val();
+        val7=$('#Txtloco_fr').val();
+        val8=$('#Txtloco_to').val();
+        val9=$('#Txtbatch_type').val();   
+        val10=$('#Txtbatch_qty').val();
+        val11=$('#Txtb_expl_dt').val();
+        val12=$('#Txtrel_date').val();
+        val13=$('#Txtb_close_dt').val();
+        val14=$('#Txtuot_wk_f').val();
+        val15=$('#Txtptc').val();
+        val16=$('#Txtdes').val();
+        lblDIV=$('#lblDIV').val();
+        DIV1=$('#DIV1').val();
+        MUSR_CD = document.getElementById('MUSR_CD').textContent;
+        lblGridFlg =document.getElementById('lblGridFlg').textContent;
+        B_UPDT_DT=document.getElementById('B_UPDT_DT').textContent;     
+        REL_DT_BC=document.getElementById('REL_DT_BC').textContent;
+        CLOS_DT_B=document.getElementById('CLOS_DT_B').textContent;
+        CLOS_DT_C=document.getElementById('CLOS_DT_C').textContent;
+        DIV=document.getElementById('DIV').textContent;
+        MARK=document.getElementById('MARK').textContent;
+        REMARK=document.getElementById('REMARK').textContent;
+        STATUS=document.getElementById('STATUS').textContent;
+        data={val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14,val15,val16,x,y,vep,vbt,vlft,vwk,vqt,MUSR_CD,lblGridFlg,B_UPDT_DT,REL_DT_BC,CLOS_DT_B,CLOS_DT_C,DIV,MARK,REMARK,STATUS,lblDIV,DIV1};
+         if(check=='Y' || check=='y')
+         {
+         $.ajax({
+                        type : 'GET',
+                        url : "{% url 'key_f1_con' %}",
+                        dataType : 'json',
+                        data:data,
+                        success : function(response)
+                            {   
+                                if(response[0]==0)
+                                {
+                                    alert("Batch Added !!!")
+                                }
+                                else{
+                                    alert(" Some Error Occured !!!")
+                                }
+                                
+                            }
+                        });
+         }
+         else
+               {
+                            alert(" Batch Not Added !!! ");
+                }
+       
+            MUSR_CD=document.getElementById('MUSR_CD').textContent;
+            if (MUSR_CD == "APM2")
+            {
+                $("#DIV1").hide();
+                $("#lblDIV").hide();
+            }
+            $("#Txtbo_no").focus();
+            $('#div2').show();
+            $('#div_lbl').hide();
+            $('#View_Demand').hide();
+            $('#View1').hide();
+            $('#View_msummry').hide();
+            $('#View_GM').hide();
+            $('#View_addbatch').hide();
+            $('#View_sch').hide();
+            $('#view_alt').hide();
+    }
+
+</script>
+
+
+{% endblock content %}

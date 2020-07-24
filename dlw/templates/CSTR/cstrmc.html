@@ -1,0 +1,887 @@
+{% extends 'base.html' %} {% block content %}
+
+<style>
+    td {
+        padding: 0px 10px;
+      }
+    @media screen and (min-width: 768px) {
+        .modal-dialog {
+          width: 700px; /* New width for default modal */
+        }
+        .modal-sm {
+          width: 350px; /* New width for small modal */
+        }
+    }
+    @media screen and (min-width: 992px) {
+        .modal-lg {
+          width: 950px; /* New width for large modal */
+        }
+    }
+</style>
+
+<div class="container">
+    
+    <br>
+    <div>
+        <h4 align="center">सूचना पंजीकरण बदलें</h4>
+        <h4 align="center">Change Notice Registration (CSTRMC)</h4>
+    </div>
+    <hr>
+     <div class="row">
+        <div class="col-lg-12" align="center">
+
+        </div> 
+    </div>
+    <form method="POST" action="">{% csrf_token %}
+    <div class="row">
+        <div class="col-lg-2" align="center">
+        </div>
+        <div class="col-lg-3">
+            <label for="sno">Change Notice Indicator :</label>
+            <select id="cn_ind" name="cn_ind" class="form-control">
+                <option value="Select">Select</option>
+                <option value ="STM" selected>STM</option>
+                <option value ="STE">STE</option>
+            </select>
+            
+        </div>
+        
+        <div class="col-lg-3">
+            <label for="sno">Change Notice No. :</label><input class="form-control" type="text" name="ppl" id="ppl">
+        <br>
+        </div>
+        <div class="col-lg-2" align="center">
+            <label for="sno">&nbsp;</label>
+            <button type="submit" class="form-control btn btn-primary" name="btnpost" value="inputstr" onclick="return funval();">Input Structure</button>
+        </div>
+        <div class="col-lg-2" align="center">
+
+        </div>
+    </div>
+    </form>
+    <hr><br>
+    <div class="row">
+        <div class="col-lg-4" align="center"></div>
+        <div class="col-lg-4" align="center">
+            
+            <button type="button" class="form-control btn btn-primary"  {% if usermaster.op_create %}{% else %} disabled {% endif%} data-toggle="modal" data-target="#myModal" onclick="funReg();">
+            <span class="glyphicon glyphicon-plus"></span> New Registration</button>
+        </div>
+        
+        <div class="col-lg-4" align="center"></div>
+    </div>
+    <br>
+    <table class="table" id="cn-table">
+        <thead>
+          <tr>
+            <th>Chg_Ind</th>
+            <th>RegNo</th>
+            <th>RegDt</th>
+            <th>ppl_cn no</th>
+            <th>Ref1</th>
+            <th>Ref1 date</th>
+            <th>Ref2</th>
+            <th>Ref2 Date</th>
+            <th>Letter No.</th>
+            <th>#</th>
+            <th>#</th>
+            <th>#</th>
+            <th>#</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cnlist in cnlists %}
+            <tr>
+              <td>{{ cnlist.chg_ind }}<input type="hidden" name="h_chg_ind" value="{{ cnlist.chg_ind }}"></td>
+              <td>{{ cnlist.reg_no }}<input type="hidden" name="h_reg_no" value="{{ cnlist.reg_no }}"></td>
+              <td>{{ cnlist.reg_dt | date:'d-m-Y' }}</td>
+              <td>{{ cnlist.ppl_cn_no }}</td>
+              <td>{{ cnlist.ref_1 }}</td>
+              <td>{{ cnlist.ref_1_dt | date:'d-m-Y' }}</td>
+              <td>{{ cnlist.ref_2 }}</td>
+              <td>{{ cnlist.ref_2_dt | date:'d-m-Y' }}</td>
+              <td>{{ cnlist.lett_no }}</td>
+              <td><button type="submit" class="form-control btn btn-primary" {% if usermaster.op_read %}{% else %} disabled {% endif%} data-toggle="modal" data-target="#myModalDetail" >Detail</button></td>
+              <td><button type="submit" class="form-control btn btn-primary"  data-toggle="modal" data-target="#myModalReport" >Report</button></td>
+            {% if cnlist.status == "U" %}
+                <td><button type="submit" class="form-control btn btn-primary" {% if usermaster.op_create %}{% else %} disabled {% endif%} data-toggle="modal" data-target="#myModalProcess" >Process</button></td>
+                <td><button type="button" class="form-control btn btn-primary" {% if usermaster.op_update %}{% else %} disabled {% endif%} data-toggle="modal" data-target="#myModal1">Edit</button></td>
+            {% else %}
+                <td>Process</td>
+                <td>Edit</td>
+            {% endif %}
+
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="13" class="text-center bg-warning">No Change Notice Record Found</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+</div>
+
+<!-- Modal box start for Registration -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header" style="padding:15px 50px;">
+                <h4><span class="glyphicon glyphicon-lock"></span> Change Notice Registration </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding:20px 25px;">
+                <form role="form" action="" method="post"> {% csrf_token %}
+                    <table class="tabel table-responsive table-odd">
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Indicator</label>
+                                    <select id="cind" name="cind" class="form-control" onchange="getRegno();">
+                                        <option value="Select">Select</option>
+                                        <option value ="STM">STM</option>
+                                        <option value ="STE">STE</option>
+                                    </select>
+                                    
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Change Notice No.</label>
+                                    <input type="text" class="form-control" id="ppl_no" name="ppl_no" readonly required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Registration Date</label>
+                                    <input type="text" class="form-control datepicker" id="Reg_date" name="Reg_date" readonly required>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                <div class="form-group">
+                                    <label>Assembly No.</label>
+                                    <input type="text" class="form-control" id="assly_no" name="assly_no" maxlength="8" onchange="getAssemblyno(this.id);">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group">
+                                    <label>Assembly Description</label>
+                                    <input type="text" class="form-control" id="desc" name="desc" maxlength="40">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Letter No.</label>
+                                    <input type="text" class="form-control" id="lett_no" name="lett_no" maxlength="30">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Letter Date</label>
+                                    <input type="text" class="form-control datepicker" id="L_date" name="L_date" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Reference 1</label>
+                                    <input type="text" class="form-control" id="Ref1" name="Ref1" maxlength="40">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Ref. Date 1</label>
+                                    <input type="text" class="form-control datepicker" id="ref_date1" name="Ref_date1" readonly>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                <div class="form-group">
+                                    <label>Reference 2</label>
+                                    <input type="text" class="form-control" id="Ref2" name="Ref2" maxlength="40">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Ref. Date 2</label>
+                                    <input type="text" class="form-control datepicker" id="ref_date2" name="Ref_date2" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <div class="form-group">
+                                <label>From Designation</label>
+                                <input type="text" class="form-control" id="fd" name="fd" maxlength="10">
+                            </div>                 
+                        </td>
+                        <td>
+                            <div class="form-group">    
+                                <label>Send To Designation</label>
+                                <input type="text" class="form-control" id="std" name="std" maxlength="10">
+                            </div>
+                        </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" maxlength="20">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <input type="text" class="form-control" id="status" name="status" value="U" placeholder="U" readonly>
+                                    
+                                </div>
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Copy To 1</label>
+                                    <input type="text" class="form-control" id="copy1" name="copy1" maxlength="10">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Copy To 2</label>
+                                    <input type="text" class="form-control" id="copy2" name="copy2" maxlength="10">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Copy To 3</label>
+                                    <input type="text" class="form-control" id="copy3" name="copy3">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Enclosures</label>
+                                    <input type="text" class="form-control" id="encl" name="elcl" maxlength="10">
+                                </div>
+                            </td>
+                                
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div class="form-group">
+                                    <label>Matter</label>
+                                    <input type="text" class="form-control" id="matter" name="matter" maxlength="10">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" align="center">
+                                <button type="button" class="btn btn-success btn_save" name="btnpost" value="save" onclick="return chkdata();">Save</button>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal box end  -->
+
+<!-- Modal box start for Detail -->
+
+<div class="modal fade" id="myModalDetail" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header" style="padding:15px 50px;">
+                <h4><span class="glyphicon glyphicon-lock"></span> Change Notice Detail </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding:20px 25px;">
+                <form role="form" action="." method="post"> {% csrf_token %}
+                    <table class="tabel table-responsive table-odd">
+                        {% for cnlist in cnlists %}
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Indicator</label>
+                                    <input type="text" class="form-control" id="dcind" name="dcind" value="{{ cnlist.chg_ind }}" readonly>
+                                    <input type="text" id="dstatus" name="dstatus" value="{{ cnlist.status }}" hidden>
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Change Notice No.</label>
+                                    <input type="text" class="form-control" id="dreg_no" name="dreg_no" value="{{ cnlist.reg_no }}" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Registration Date</label>
+                                    <input type="text" class="form-control datepicker" id="dReg_date" name="dReg_date" value="{{ cnlist.reg_dt | date:'d-m-Y' }}" readonly>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                <div class="form-group">
+                                    <label>Ppl_cn_no</label>
+                                    <input type="text" class="form-control" id="dpplno" name="dpplno" value="{{ cnlist.ppl_cn_no}}" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            
+                            <td colspan="4" align="center">
+                                <br><hr><br>
+                                <button type="submit" class="btn btn-success btn_save" name="btnpost" value="detail">Detail </button>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    {% endfor %}
+
+                </form>
+            </div> 
+        </div>
+    </div> 
+</div>           
+<!-- Modal box end  -->
+<!-- Modal box start for Detail -->
+
+<div class="modal fade" id="myModalProcess" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header" style="padding:15px 50px;">
+                <h4><span class="glyphicon glyphicon-lock"></span> Change Notice Process </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding:20px 25px;">
+                <form role="form" action="." method="post"> {% csrf_token %}
+                    <table class="tabel table-responsive table-odd">
+                        {% for cnlist in cnlists %}
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Indicator</label>
+                                    <input type="text" class="form-control" id="pcind" name="pcind" value="{{ cnlist.chg_ind }}" readonly>
+                                    <input type="text" id="pstatus" name="pstatus" value="{{ cnlist.status }}" hidden>
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Change Notice No.</label>
+                                    <input type="text" class="form-control" id="preg_no" name="preg_no" value="{{ cnlist.reg_no }}" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Registration Date</label>
+                                    <input type="text" class="form-control datepicker" id="pReg_date" name="pReg_date" value="{{ cnlist.reg_dt | date:'d-m-Y' }}" readonly>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                <div class="form-group">
+                                    <label>Ppl_cn_no</label>
+                                    <input type="text" class="form-control" id="ppplno" name="ppplno" value="{{ cnlist.ppl_cn_no}}" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            
+                            <td colspan="4" align="center">
+                                <br><hr><br>
+                                <button type="submit" class="btn btn-success btn_save" name="btnpost" value="process" onclick="funpro();">Process </button>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    {% endfor %}
+
+                </form>
+            </div> 
+        </div>
+    </div> 
+</div>           
+<!-- Modal box end  -->
+
+<!-- Modal box start for Re-registration -->
+
+<div class="modal fade" id="myModal1" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header" style="padding:15px 50px;">
+                <h4><span class="glyphicon glyphicon-lock"></span> Change Notice Re-registration </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding:20px 25px;">
+                <form role="form" action="." method="post"> {% csrf_token %}
+                    <table class="tabel table-responsive table-odd">
+                        {% for cnlist in cnlists %}
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Indicator</label>
+                                    <input type="text" class="form-control" id="rcind" name="rcind" value="{{ cnlist.chg_ind }}" readonly>
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Change Notice No.</label>
+                                    <input type="text" class="form-control" id="rppl_no" name="rppl_no" value="{{ cnlist.reg_no }}" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Registration Date</label>
+                                    <input type="text" class="form-control datepicker" id="rReg_date" name="rReg_date" value="{{ cnlist.reg_dt | date:'d-m-Y' }}" readonly>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                <div class="form-group">
+                                    <label>Assembly No.</label>
+                                    <input type="text" class="form-control" id="rassly_no" name="rassly_no" value="{{ cnlist.assly_no}}" maxlength="8" onchange="getAssemblyno(this.id);">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group">
+                                    <label>Assembly Description</label>
+                                    <input type="text" class="form-control" id="rdesc" name="rdesc" value="{{ cnlist.assly_desc}}" maxlength="40">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Letter No.</label>
+                                    <input type="text" class="form-control" id="rletno" name="rletno" value="{{ cnlist.lett_no }}" maxlength="30">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Letter Date</label>
+                                    <input type="text" class="form-control datepicker" id="rletdt" name="rletdt" value="{{ cnlist.cn_dt | date:'d-m-Y' }}" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Reference 1</label>
+                                    <input type="text" class="form-control" id="rRef1" name="rRef1" value="{{ cnlist.ref_1}}" maxlength="40">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Ref. Date 1</label>
+                                    <input type="text" class="form-control datepicker" id="rref_date1" name="rref_date1" value="{{ cnlist.ref_1_dt | date:'d-m-Y' }}" readonly>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                <div class="form-group">
+                                    <label>Reference 2</label>
+                                    <input type="text" class="form-control" id="rRef2" name="rRef2" value="{{ cnlist.ref_2}}" maxlength="40">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Ref. Date 2</label>
+                                    <input type="text" class="form-control datepicker" id="rref_date2" name="rref_date2" value="{{ cnlist.ref_2_dt | date:'d-m-Y' }}"  readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <div class="form-group">
+                                <label>From Designation</label>
+                                <input type="text" class="form-control" id="rfd" name="rfd" value="{{ cnlist.from_desig}}" maxlength="10">
+                            </div>                 
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <label>Send To Designation</label>
+                                <input type="text" class="form-control" id="rstd" name="rstd" value="{{ cnlist.to_desig}}" maxlength="10">
+                            </div>
+                        </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" class="form-control" id="rnn" name="rnn" value="{{ cnlist.from_name}}" maxlength="20">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <input type="text" class="form-control" id="rstatus" name="rstatus" value="{{ cnlist.status }}" maxlength="1" readonly>
+                                </div>
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Copy To 1</label>
+                                    <input type="text" class="form-control" id="rcopy1" name="rcopy1" value="{{ cnlist.copyto_1}}" maxlength="10">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Copy To 2</label>
+                                    <input type="text" class="form-control" id="rcopy2" name="rcopy2" value="{{ cnlist.copyto_2}}" maxlength="10">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Copy To 3</label>
+                                    <input type="text" class="form-control" id="rcopy3" name="rcopy3" value="{{ cnlist.copyto_3}}" maxlength="10">
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Enclosures</label>
+                                    <input type="text" class="form-control" id="rencl" name="rencl" value="{{ cnlist.encl}}" maxlength="10">
+                                </div>
+                            </td>
+                                
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div class="form-group">
+                                    <label>Letter Matter</label>
+                                    <input type="text" class="form-control" id="rmatter" name="rmatter" value="{{ cnlist.lett_matt}}" maxlength="1000">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" align="center">
+                                <button type="submit" class="btn btn-success btn_save" {% if usermaster.op_update %}{% else %} disabled {% endif%} name="btnpost" value="update">Update</button>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal box end  -->
+
+
+<!-- Modal box start for Detail -->
+
+<div class="modal fade" id="myModalReport" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header" style="padding:15px 50px;">
+                <h4><span class="glyphicon glyphicon-lock"></span> Change Notice Report </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="padding:20px 25px;">
+                <form role="form" action="." method="post"> {% csrf_token %}
+                    <table class="tabel table-responsive table-odd">
+                        {% for cnlist in cnlists %}
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Indicator</label>
+                                    <input type="text" class="form-control" id="repcind" name="repcind" value="{{ cnlist.chg_ind }}" readonly>
+                                    <input type="text" id="repstatus" name="repstatus" value="{{ cnlist.status }}" hidden>
+                                </div>                 
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Change Notice No.</label>
+                                    <input type="text" class="form-control" id="repreg_no" name="repreg_no" value="{{ cnlist.reg_no }}" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>Registration Date</label>
+                                    <input type="text" class="form-control datepicker" id="repReg_date" name="repReg_date" value="{{ cnlist.reg_dt | date:'d-m-Y' }}" readonly>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                <div class="form-group">
+                                    <label>Ppl_cn_no</label>
+                                    <input type="text" class="form-control" id="reppplno" name="reppplno" value="{{ cnlist.ppl_cn_no}}" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            
+                            <td colspan="4" align="center">
+                                <br><hr><br>
+                                <button type="submit" class="btn btn-success btn_save" name="btnpost" value="RepPSE">Product Structure Edit </button>
+                                <button type="submit" class="btn btn-success btn_save" name="btnpost" value="RepPSI">Product Structure Input </button>
+                                <button type="submit" class="btn btn-success btn_save" name="btnpost" value="RepPME">Part Master Edit </button>
+                                <button type="submit" class="btn btn-success btn_save" name="btnpost" value="RepPMI">Part Master Input </button>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    {% endfor %}
+
+                </form>
+            </div> 
+        </div>
+    </div> 
+</div>           
+<!-- Modal box end  -->
+
+
+
+<!-- JQuery and javascript code start   -->
+<script>
+    $(function() {$(".datepicker").datepicker({
+        dateFormat:'dd-mm-yy',
+      });
+    });
+   
+    $(function () {
+        $(".btn_save").click(function () {
+           
+        });
+
+    });
+    
+    function funval(){
+        var cn=document.getElementById("cn_ind").value;
+        var pp=document.getElementById("ppl").value;
+        if (cn=="Select")
+        {
+            alert("Please Select the Indicator ....");
+            document.getElementById("cn_ind").focus();
+            return false;
+        }
+        if(!pp!=""){
+            alert("Please enter the Change Notice No ....");
+            document.getElementById("ppl").focus();
+            return false;
+        }
+        
+        
+        return true;
+
+    }
+
+
+    function chkdata()
+    {
+        cind=$("#cind").val();
+        if(cind=='' ||cind=='Select')
+        { 
+            alert("Please select the change indicator");
+            $("#cind").focus();
+            return false;
+        }
+        ppl_no=$("#ppl_no").val();
+        if(ppl_no=='')
+        {
+            alert("Change Notice No. can not be blank");
+            return false;
+        }
+        Reg_date=$("#Reg_date").val();
+        if(Reg_date=='')
+        {
+            alert("Registration Date can not be blank");
+            $("#Reg_date").focus();
+            return false;
+        }
+        assly_no=$("#assly_no").val();
+        if(assly_no=='')
+        {
+            alert("Assembly number can not be blank");
+            $("#assly_no").focus();
+            return false;
+        }
+        desc=$("#desc").val();
+        if(desc=='')
+        {
+            alert("Assembly Description can not be blank");
+            $("#desc").focus();
+            return false;
+        }
+        lett_no=$("#lett_no").val();
+        if(lett_no=='')
+        {
+            alert("Letter number can not be blank");
+            $("#desc").focus();
+            return false;
+        }
+        L_date=$("#L_date").val();
+        if(L_date=='')
+        {
+            alert("Letter date can not be blank");
+            $("#L_date").focus();
+            return false;
+        }
+        Ref1=$("#Ref1").val();
+        ref_date1=$("#ref_date1").val();
+        Ref2=$("#Ref2").val();
+        ref_date2=$("#ref_date2").val();
+        fd=$("#fd").val();
+        std=$("#std").val();
+        name=$("#name").val();
+        status=$("#status").val();
+        copy1=$("#copy1").val();
+        copy2=$("#copy2").val();
+        copy3=$("#copy3").val();
+        encl=$("#encl").val();
+        matter=$("#matter").val();
+        var data={cind,ppl_no,Reg_date,Ref1,ref_date1,Ref2,ref_date2,assly_no,desc,lett_no,L_date,fd,std,name,status,copy1,copy2,copy3,encl,matter,csrfmiddlewaretoken: '{{ csrf_token }}'}
+        $.ajax({
+        type:'POST',
+        url:"{% url 'cstrmc_savenewReg' %}",
+        dataType:'json',
+        data:data,
+        success:function(response){
+                $("#myModal .close").click() 
+                alert("Change Notice Registration Save successfully.");
+                }
+        });    
+    }
+     
+    function funReg()
+    {
+        
+        $("#cind").val('Select');
+        $("#ppl_no").val('');
+        $("#Reg_date").val('');
+        $("#assly_no").val('');
+        $("#desc").val('');
+        $("#lett_no").val('');
+        $("#L_date").val('');
+        $("#Ref1").val('');
+        $("#ref_date1").val('');
+        $("#Ref2").val('');
+        $("#fd").val('');
+        $("#std").val('');
+        $("#name").val('');
+        $("#status").val('');
+        $("#copy1").val('');
+        $("#copy2").val('');
+        $("#copy3").val('');
+        $("#encl").val('');
+        $("#matter").val('');
+        $("#copy3").val('');
+
+
+    }
+
+    function funRepPSE()
+    {
+        alert ("Report for Product Structure Edit");
+        var cind=$("#repcind").val();
+        var pplno=$("#reppplno").val();
+        var regno=$("#repreg_no").val();
+        var status=$("#repstatus").val();
+        
+        var data={cind,pplno,regno,status}
+        $.ajax({
+        type:'GET',
+        url:"{% url 'cstrmc_Rep_PSE' %}",
+        dataType:'json',
+        data:data,
+        success:function(response){
+        }
+        });
+
+    }
+    function funpro()
+    {
+        alert("Change Notice Process");
+    }
+    
+
+    function getRegno()
+    {
+        var c=$("#cind").val();
+        
+        var data={c}
+        $.ajax({
+        type:'GET',
+        url:"{% url 'cstrmc_getRegno' %}",
+        dataType:'json',
+        data:data,
+        success:function(response){
+            if(response.length>0)
+            {
+                $("#ppl_no").val(parseInt(response[0].ppl_cn_no)+1);
+            }
+        }
+        });        
+    }
+
+function getAssemblyno(id)
+    {
+        var c=document.getElementById(id).value;
+       
+        var data={c}
+        $.ajax({
+        type:'GET',
+        url:"{% url 'cstrmc_getAblyno' %}",
+        dataType:'json',
+        data:data,
+        success:function(response){
+            if(response.length>0)
+            {
+                 
+                if(id=="assly_no")
+                {
+                    $("#desc").val(response[0].des); 
+                } 
+                else
+                {
+                    $("#rdesc").val(response[0].des);  
+                }
+            }
+            else
+            {
+                alert("Assembly Number is not found. Please enter write Assembly Number");
+                document.getElementById(id).value="";
+                $("#desc").val('');
+                $("#rdesc").val('');  
+
+            }
+        }
+        });   
+        
+
+    }
+
+
+
+</script>
+
+
+{% endblock %}

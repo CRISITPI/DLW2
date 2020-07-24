@@ -1,0 +1,257 @@
+{% extends 'base.html' %} {% block content %}
+{% load static %}
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script> -->
+
+<style>
+    input[type=text],
+    select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+     
+</style>
+<br>
+<br>
+<h3 align="center">Accident In Workshop(MG-20) Card</h3>
+<br>
+<center>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <font size="3">
+                <li>
+                    {{message}}
+                </li>
+            </font>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </center>
+<br>
+<form action="{% url 'mg20view' %}" method="POST"> {% csrf_token %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td>
+                    <label for="sno"><b>Shop Section NO/शॉप अधी.:</b></label>
+                    <select class="form-control" id="shop_sec" name="shop_sec" required>
+            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+            {% if lenm == 1 %}
+            {% for role in roles %}
+                <option selected readonly>{{role}}</option>
+                {% endfor %}
+            {% endif %}
+            {% if lenm > 1 %}
+            {% for role in roles %}
+              <option>{{role}}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+                </td>
+                <td>
+                    <label for="staff_no"><b>STAFF NO/स्टाफ संख्या:</b></label>
+                    <select class="form-control" id="staff_no" name="staff_no" required>
+        <option id="op_staff" selected disabled hidden>Select Staff NO</option>
+        {% if lenm == 1 %}
+        {% for i in wo_nop %}
+          <option>{{i.staff_no}}</option>
+        {% endfor %}
+        {% endif %}
+    </select>
+                </td>
+            </tr>
+        </table>
+        
+        
+        <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>
+
+
+    </div>
+    <br><br> {% if sub == 1 %}
+     <div id="print" style="align:center" >
+
+        <center><b><h4>Indian Railways/भारतीय रेल</h4></b></center>
+
+        <center> <b><h4>Diesel Locomotive Works/डीजल रेल इंजन कारखाना</h4></b></center>
+
+         <center><b><h4>Varanasi/वाराणसी</h4></b></center></br>
+
+    <table border="2" align="center">
+        <tr>
+            <th>TODAY'S DATE</th>
+            <th>SHOPSEC</th>
+            <th>STAFF NO</th>
+            <th>NAME</th>
+        </tr>
+        <tr>
+            <td>{{date}}</td>
+            <td>{{shop_sec}}</td><input type="hidden" value="{{shop_sec}}" name="shop_sec1">
+            <td>{{staff_no}}</td><input type="hidden" value="{{staff_no}}" name="staff_no1">
+
+            {% for i in obj %}
+            <td>{{i.name}}</td><input type="hidden" value="{{i.name}}" name="name1">
+            {% endfor %}
+        </tr></table></br>
+         <table border="2" align="center">
+         <tr>
+            <th>DESIGNATION</th>
+            <th>CATEGORY</th>
+            <th>EMPLOYEMENT TYPE</th>
+        </tr>
+        <tr>
+            {% for i in obj %}
+            <td>{{i.desgn}}</td><input type="hidden" value="{{i.desgn}}" name="desgn1">
+            <td>{{i.cat}}</td><input type="hidden" value="{{i.cat}}" name="cat1">
+            <td>{{i.emp_type}}</td><input type="hidden" value="{{i.emp_type}}" name="emp_type1">
+            {% endfor %}
+        </tr>
+
+    </table>
+         </br></br>
+
+
+    <table border="2" align="center" width="90%">
+        <tr>
+            <th>No Of Days:</th>
+            <th>Nature And Extent Of Injury:</th>
+            <th>Approximate Date Of Joining:</th>
+
+        </tr>
+        {% for i in obj1 %}
+
+        <tr>
+
+            <td>
+            {% if i.no_of_days %}
+                <input type="number" id="no_of_days" class="form-control" value="{{i.no_of_days}}" name="no_of_days" min="0" max="365" title="Numeric Value" required>
+                {% else %}
+                <input type="number" id="no_of_days" class="form-control" value="0" name="no_of_days" min="0" max="365" title="Numeric Value" required>
+                {% endif %}
+            </td>
+            <td>
+            {% if i.nature %}
+                <input type="text" id="nature" class="form-control" value="{{i.nature}}" name="nature"  >
+                {% else %}
+                <input type="text" id="nature" class="form-control"  value="" name="nature"  >
+                {% endif %}
+            </td>
+            <td>
+            {% if i.appr_datej %}
+                <input type="date" id="appr_datej" class="form-control" value="{{i.appr_datej}}" name="appr_datej" max="2020-12-31" required>
+                {% else %}
+                <input type="date" id="appr_datej" class="form-control" value="0" name="appr_datej" max="2020-12-31" required>
+                {% endif %}
+            </td>
+
+
+
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    <br><br>
+    <center>
+        <input type="submit" name="proceed" value="Save" id="submitted">
+         <input type="button" onclick="printDiv()" value="Print">
+    </center>
+    <br><br> {% endif %}
+
+</form>
+
+
+<script type="text/javaScript">
+document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                  e.preventDefault();
+                  var shop_sec = $("#shop_sec").val()
+                  var data = {shop_sec};
+                    $.ajax({
+                      type : 'GET',
+                      url : "{% url 'mg20getstaff' %}",
+                      dataType : 'json',
+                      data : data,
+                      success : function(response){
+                        var elementsadded = document.querySelectorAll(".newelestaff");
+                            if(elementsadded.length>0){
+                                var elementsaddedarr = Array.from(elementsadded);
+                                elementsaddedarr.forEach((el)=> el.remove());
+                                document.querySelector("#op_shop").selected=true;
+                                document.querySelector("#op_staff").selected=true;
+
+                            }
+                            var brarr,mystr,html;
+                            brarr = response.map((el)=>el.staff_no);
+                            mystr = "";
+                            brarr.forEach((el,index)=>{
+                              html = `<option class="newelestaff">${brarr[index]}</option>`
+                              mystr = html.concat(mystr);
+                            });
+                            html = "";
+                            document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                            mystr="";
+                      }
+                        })
+              })
+
+
+document.querySelector("#staff_no").addEventListener('change',(e)=>{
+
+    document.querySelector("#myproceed").click();
+})
+document.addEventListener('keypress',(event)=>{
+    if(event.keyCode===13){
+        event.preventDefault();
+    }
+})
+
+
+
+
+
+function printDiv() {
+     var printContents = document.getElementById("print").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>MG20(ACCIDENT IN WORKSHOP CARD) Card</title>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        win.close();
+
+
+
+}
+
+
+
+
+
+  </script>
+
+
+
+
+
+
+
+
+
+{% endblock content %}
+

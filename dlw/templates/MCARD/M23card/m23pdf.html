@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Gate Pass Pdf</title>
+</head>
+<body>
+    {% for i in obj1 %}
+    <div class="container" style="max-width: 60%;">
+        <b><p align="center" style="font-size: 16px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            M23</p></b>
+        <center><p style="font-size: 22px;">Diesel Locomotive Works, VARANASI</p></center>
+       <center> <p style="font-size: 20px;">GATE PASS  </p></center>
+      <p style="font-size: 24px;" align="left"> S.no:-{{i.id}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         Date:-{{i.date}}</p>
+       
+    </div></div>
+    
+    <p style="font-size: 18px">
+        Pass Ticket No "{{staff_no}}" going on {{i.purpose}}  for {{i.date}} , {{i.from_time}} hrs to {{i.todate}}, {{i.to_time}} hrs of the remaining of the day. <br>
+Card punched out at {{i.from_time}} hrs by Staff No:&nbsp;{{staff_no}}, Name:&nbsp; {{i.emp_name}}  working in Shop Section: &nbsp;{{shop_sec}}
+    </p>
+    <br><br>
+    <table>
+        <tr>
+            <td></td>
+            <td></td>
+    <td><p align="left" style="font-size: 18px"> Signature of Supervisor<br>{{name}}</p></td>
+</tr>
+</table>
+    
+
+    
+    {% endfor %}
+</body>
+</html>

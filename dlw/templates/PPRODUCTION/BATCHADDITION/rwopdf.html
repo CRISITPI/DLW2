@@ -1,0 +1,106 @@
+<html>
+<head>
+<style>
+
+@page {
+    size: A4;
+    margin-top: 2.5cm;
+    margin-bottom:1cm;
+    margin-left: 1cm;
+    margin-right: 1cm;
+    thead {display: table-header-group;}
+    @frame footer {
+        -pdf-frame-content: footerContent;
+        bottom: 0cm;
+        margin-left: 9cm;
+        margin-right: 9cm;
+        height: 1cm;
+    }
+    @frame header {
+        -pdf-frame-content: headerContent;
+        top: 0cm;
+        margin-top: 1cm;
+        margin-bottom: 0.5cm;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        height: 5cm;
+        }
+    }
+
+</style>
+<style>
+th{
+    padding: 5px;
+}
+td{
+
+    padding-top: 5px;
+    padding-left: 5px;
+    
+}
+
+</style>
+</head>
+<body>
+
+<div align="center">
+
+    <div id="headerContent">
+            {%block page_header%}
+                <div><FONT face="Times New Roman"  size=14px><B>{{DivType1}}</B></FONT></div>
+                <div><FONT face="Times New Roman"  size=14px><B>{{DivType}}</B></FONT></div>
+                {%endblock%}
+                
+                </div>
+                
+<table  id="customers"  style="width: 100%;"  repeat="1" >
+<thead>
+    <tr>
+        <th style="width: 5%;">S.NO </th>
+        <th style="width: 10%;">TYPE OF <br>LOCO</th>
+        <th style="width: 10%;">WO NO</th>
+        <th style="width: 10%;">LOCO COVERAGE</th>
+        <th style="width: 13%;">DATE OF ISSUE</th> 
+        <th style="width: 13%;">PROD. DOC<br> (B+C)</th>
+        <th style="width: 13%;">COMPLETION<br>FROM  PROG-B</th>
+        <th style="width: 13%;">COMPLETION<br> FROM  PROG-C</th>
+        <th style="width: 9%;">BRN-NO</th>
+        <th style="text-align: left;">REMARK</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        {% for i in bo_nos %}
+            <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.ALPHA_1}}</td>
+            <td>{{i.BO_NO}}</td>
+            <td>{{i.LOCO_FR}}-{{i.LOCO_TO}}</td>
+            <td>{{i.REL_DATE | date:'d-m-Y' | default:"-" }}</td>
+            <td>{{i.REL_DT_BC | date:'d-m-Y'| default:"-" }}</td>
+            <td>{{i.CLOS_DT_B | date:'d-m-Y' | default:"-" }}</td>
+            <td>{{i.CLOS_DT_C | date:'d-m-Y' | default:"-"}}</td>
+            <td>{{i.BRN_NO}}</td>
+            <td style="width: 20%; text-align: left;">{{i.REMARK}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+</table>
+<br><br>
+
+</div>
+    <br>
+    <table width="100%">
+    <tr>
+        <td align="left">Date : ...................</td>
+        <td align="right">...................................<br>Shop Supdt.</td>
+    </tr>
+    </table> 
+    <div id="footerContent">
+            {%block page_foot%}
+                Page <pdf:pagenumber>
+            {%endblock%}
+        </div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<!-- 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+<style>
+  table, td, th {  
+    text-align: left;
+  }
+  table {
+    border-collapse: collapse;
+    width: 90%;
+  }
+  th, td {
+    padding: 15px;
+  }
+  </style>
+  <style>
+      input[type=text],
+      select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: block;
+          border: 0.5px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+      }
+       
+  </style><br><br>
+  
+  <h3 align="center">अपरोक्ष मजदूरों का समय पत्रक</h3>
+  <h4 align="center">Time Sheet of indirect Labour</h4>
+  <div> <h6 align="left" style="margin-left: 100px;">डी० रे० का/D.L.W.</h6> <h6 align="right" style="margin-right: 100px;">एम-26/M.-26 </h6></div><br>
+  <form action="{% url 'm26view' %}" method="POST"> {% csrf_token %}
+  <div class="container">
+          <table >
+              <tr>
+                   <td>
+                      <label for="br_no"><b>महीनो के लिय/For The Month Of</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                         <input type="text" name="date" id="date" readonly class="form-control" required>
+                  </td>
+                  <td>
+                      <label for="sno"><b>शाप/Shop</b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                        <select class="form-control" id="shop_sec" name="shop_sec" required>
+                            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                            {% if lenm == 1 %}
+                                <option selected readonly>{% for role in roles %}{{role.shopsec}}{% endfor %}</option>
+                            {% endif %}
+                            {% if lenm > 1 %}
+                            {% for role in roles %}
+                              <option>{{role}}</option>
+                            {% endfor %}
+                            {% endif %}
+                        </select>
+                  </td>
+                  <td>
+                      <label for="br_no"><b>कार्यादेश सँ/ Chargeable to W.O. NO. 01/003/ </b>&nbsp;&nbsp;<span style="color:red;">*</span></label>
+                      <select class="form-control" id="wno" name="wno" required>
+                                <option id="op_wo" selected disabled hidden>Select Work Order NO</option>
+                                {% if lenm == 1 %}
+                                {% for i in wo_nop %}
+                                  <option>{{i.batch_no}}</option>
+                                {% endfor %}
+                                {% endif %}
+                       </select>
+                  </td>
+               </tr>
+             </table>
+             <tabele>
+                <tr> 
+                    <td>
+                      <span>Note : Here data is filltaring on the selection of <b>Month</b> and <b>Shop</b>.</span> 
+                    </td>
+                </tr>
+             </table>
+  
+  </div>                
+  </h6>
+      <center>
+          {% if messages %}
+          <ul class="messages">
+              {% for message in messages %}
+              <font size="3">
+                  <li>
+                      {{ message }}
+                  </li>
+              </font>
+              {% endfor %}
+          </ul>
+          {% endif %}
+      </center>
+  <br>
+      <div >
+        <table class="table table-striped table-bordered table-hover table-condensed" style="width:80%; margin-right: 200px; margin-left: 100px;" align="center">
+          <thead>
+            <tr class="w3-light-grey">
+              <th>Staff No./कर्मचारी सं</th>
+              <th>Category/वर्ग सं</th>
+              <th>Total Hrs./कुल घंटे</th>      
+            </tr>
+          </thead>
+          <tbody id="projectData">
+          </tbody>
+        </table>                       
+      </div>   
+  </form>
+  <div>
+    <br><h6 align="right" style="margin-right: 100px;">....................................</h6>
+    <h6 align="right" style="margin-right: 100px;">समय पाल के हस्ताछर </h6>
+    <h6 align="right" style="margin-right: 100px;">Signature of Time Keepar</h6>
+  </div><br>
+  <center><input type="submit" name="proceed"   class="btn btn-success" {% if user.op_read %}{% else %} disabled {% endif%}   value="Print"  onclick="myFunction()"/></center>  
+  
+  <script>
+  function myFunction() {
+    window.print();
+  }
+  </script>
+     <script>
+     $(document).ready(function () {
+          $('#date').datepicker({ dateFormat: 'yy-mm', }); 
+     });
+       document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                      e.preventDefault();
+                      var shop_sec = $("#shop_sec").val()
+                      var data = {shop_sec};
+                        $.ajax({
+                          type : 'GET',
+                          url : "{% url 'm26getwono' %}",
+                          dataType : 'json',
+                          data : data,
+                          success : function(response){
+                            var elementsadded = document.querySelectorAll(".newelewono");
+                                if(elementsadded.length>0){
+                                    var elementsaddedarr = Array.from(elementsadded);
+                                    elementsaddedarr.forEach((el)=> el.remove());
+                                    document.querySelector("#op_wo").selected = true;   
+                                 }
+                                var brarr,mystr,html;
+                                brarr = response.map((el)=>el.batch_no);
+                                mystr = "";
+                                brarr.forEach((el,index)=>{
+                                  html = `<option class="newelewono">${brarr[index]}</option>`
+                                  mystr = html.concat(mystr);
+                                });
+                                html = "";
+                                document.querySelector("#wno").insertAdjacentHTML('beforeend',mystr);
+                                mystr=""; 
+                          }
+                      })
+                  });
+       
+  
+  
+                $("#wno").change(function(e){
+                      e.preventDefault();
+                      //var wo_no = $(this).val();
+                      var wno = $("#wno").val()
+                      var shop_sec = $("#shop_sec").val();
+                      var date = $("#date").val();
+                      var data = {wno,shop_sec,date};
+                      if (date == '') 
+                          {
+                            alert("Please select date.")
+                            return;
+                          }
+                        $.ajax({
+                          type : 'GET',
+                          url : "{% url 'm26getStaffCatWorkHrs' %}",
+                          dataType : 'json',
+                          data : data,
+                          success : function(response){                       
+                          if(response == ''){
+                                alert("Record Not Found.");
+                                }
+                             else if(response ==='No'){
+                                alert('Select all values');
+                            }
+                          else{
+                                var elementsadded = document.querySelectorAll(".newelebr");
+                                if(elementsadded.length>0){
+                                    var elementsaddedarr = Array.from(elementsadded);
+                                    elementsaddedarr.forEach((el)=> el.remove());
+                                    document.querySelector("#wno").selected = true;                             
+                                }
+                                var brarr,mystr,html,mstaff_no,mcat,mtoatlhrs,totdata;
+                                var  i=0
+                                $('#projectData').empty();
+                                for(i;i<response.length;i++){                                
+                                        mstaff_no = response[i].staff_no
+                                        mcat      = response[i].cat
+                                        mtoatlhrs = response[i].total_time_taken
+                                        totdata = '<tr><td>'+mstaff_no+'</td><td>'+mcat+'</td><td>'+mtoatlhrs+'</td></tr>'
+                                        console.log(totdata);
+                                        $(totdata).appendTo('#projectData');
+                                    }    
+                            }}
+                      })
+                  });
+     </script>          
+  {% endblock content %}

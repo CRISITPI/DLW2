@@ -1,13 +1,193 @@
 {% load static %}
 <style>
+*,html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,label,fieldset,input,p,blockquote,th,td {
+    margin: 0;
+    padding: 0;
+}
+
+article,aside,figure,footer,header,hgroup,nav,section {
+    display: block;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
 
 
+    /* preloader */
+    body {
+overflow: hidden;
+}
+
+
+/* Preloader */
+#preloader {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+display: flex;
+background-color: rgb(232, 234, 237);
+justify-content: center;
+align-items: center;
+z-index: 9999;
+}
+
+.loader {
+    width: 8em;
+    height: 10em;
+    font-size: 20px;
+}
+
+.train {
+    width: 6em;
+    height: 6em;
+    background: 
+        radial-gradient(circle at 20% 80%, currentColor 0.6em, transparent 0.6em),
+        radial-gradient(circle at 80% 80%, currentColor 0.6em, transparent 0.6em),
+        #bbb;
+    border-radius: 1em;
+    position: relative;
+    left: 1em;
+    color: #444;
+    animation: train-animate 1.5s infinite ease-in-out;
+}
+
+@keyframes train-animate {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+
+    25%, 75% {
+        transform: rotate(0.5deg);
+    }
+
+    50% {
+        transform: rotate(-0.5deg);
+    }
+}
+
+.train::before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 2.3em;
+    background-color: currentColor;
+    border-radius: 0.4em;
+    top: 1.2em;
+    left: 10%;
+}
+
+.train::after {
+    content: '';
+    position: absolute;
+    width: 25%;
+    height: 0.4em;
+    background-color: currentColor;
+    border-radius: 0.3em;
+    top: 0.4em;
+    left: calc((100% - 25%) / 2);
+}
+
+.track {
+    width: 8em;
+    position: relative;
+}
+
+.track::before,
+.track::after {
+    content: '';
+    position: absolute;
+    width: 0.3em;
+    height: 4em;
+    background-color: #bbb;
+    border-radius: 0.4em;
+    transform-origin: bottom;
+}
+
+.track::before {
+    left: 0;
+    transform: skewX(-27deg);
+}
+
+.track::after {
+    right: 0;
+    transform: skewX(27deg);
+}
+
+.track span {
+    width: inherit;
+    height: 0.3em;
+    background-color: #bbb;
+    position: absolute;
+    top: 4em;
+    animation: track-animate 1s linear infinite;
+}
+
+.track span:nth-child(2) {
+    animation-delay: -0.33s;
+}
+
+.track span:nth-child(3) {
+    animation-delay: -0.66s;
+}
+
+@keyframes track-animate {
+    0% {
+        transform: translateY(-0.5em) scaleX(0.9);
+        filter: opacity(0);
+    }
+
+    10%, 90% {
+        filter: opacity(1);
+    }
+
+    100% {
+        transform: translateY(-4em) scaleX(0.5);
+        filter: opacity(0);
+    }
+}
+/* ends */
+body{
+background-color: #ecf0f1;
+}
+/* Navbar CSS */
+nav, .page-header{
+font-family: 'Poppins', sans-serif !important;
+background-color: rgb(45, 57, 70) !important;
+padding-bottom: 10px;
+}
+.page-header h3{
+width: 100% !important;
+font-size: 5vh;
+letter-spacing: 3px;
+}
+.navbar-item{
+position: relative;
+}
+.dropdown .dropdown-menu {
+transition: opacity .5s ease;
+/* opacity: 0;
+visibility: hidden ; */
+}
+
+.dropdown:hover .dropdown-menu {
+visibility: visible;
+opacity: 1; 
+ }
+    .dropdown-toggle{
+        transition: all 0.5s;
+    }
     .submenu-scroll{
         max-height: 300px;
         overflow-y: auto;
     }
     .navbar-nav li:hover > ul.dropdown-menu {
         display: block;
+
     }
     .dropdown-submenu {
         position:relative;
@@ -65,164 +245,344 @@
     li:hover > ul {
         display:block;
     }
+     .nav > li {
+        transition: all 1s ease;
+        position: relative;
+        padding: 3px; !;
+        /* width: 100%; */
+    }
+    .nav>li>a:focus, .nav > li:hover{
+        background-color: rgb(32, 40, 48);
+        position: relative;
+        border-radius: 3px;
+    }
+    /* .nav > li > a span:hover{
+        bottom: 5px;
+    } */
+
+    /* Dark Mode CSS */
+.lightText{
+    color: rgb(232, 234, 237) !important;
+}
+.darkMode{
+    background-color: rgb(40, 41, 43) !important;
+}
+    /* Theme toggle button */
+.switch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+float: left;
+}
+
+.switch input { 
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+input:checked + .slider {
+background-color: #2196F3 !important;
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #2196F3 !important;
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(26px);
+-ms-transform: translateX(26px);
+transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+border-radius: 34px;
+}
+
+.slider.round:before {
+border-radius: 50%;
+}
+#welcome1{
+    display: none;
+}
+@media screen and (max-width: 450px) {
+    .navbar-item{
+        display: block !important;
+        width: 100% !important;
+    }
+    form{
+    overflow-x: scroll !important;
+}
+nav{
+    overflow: scroll;
+}
+#welcome{
+    display: none;
+}
+#welcome1{
+    display: block;
+}
+}
+/* Welcome text */
+#welcome{
+    position: absolute;
+    top 0;
+    left: 0;
+    padding: 10px;
+    font-size: 30px;
+    /* display: none; */
+}
+.op{
+    opacity: 0.8;
+}
     </style>
-<div class="page-header navbar-dark bg-dark">
-    <center><font color="white"><h3 style="margin:0 auto;">Diesel Locomotive Works, Varanasi</h3></font></center>
+</head>
+<body>
+{% load static %}
+
+  <!-- <div id="preloader">
+    <div class="loader"></div>
+  </div> -->
+  <div id="preloader">
+    <div id="loader">
+        <div class="train"></div>
+        <div class="track ">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </div>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top" id="main-nav">
-    
-    <button class="navbar-toggler" data-toggle="collapse" data-target="#collapse_target">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="collapse_target">
-    
-    <ul class="navbar nav" style="width:100%;">
-        <li class="navbar-item dropdown">
-            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
-            Prod. Planning
-            <span class="caret"></span>
-            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
-                {% for menu in nav %}
-            {% if menu.navmenu in "Prod. Planning" %}
-               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
-                {% if subnav.parentmenu in menu.navitem %}
-                <ul class="dropdown-menu">
-                    {% for obj in subnav %}
-                        {% if obj.parentmenu in menu.navitem %}
-                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            </li> 
-            {% endif %}
-            {% endfor %}
-            </ul>
-            </a>
-        </li>
+</div>
+<h4 id="welcome" class="wt" style="color: white;">Welcome {{usermaster.empname}}</h4>
+<div class="page-header navbar-dark " style="text-align: center;">
+
+<h3 style="color: white;">Diesel Locomotive Works, Varanasi</h3>
+<h4 id="welcome1" class="wt" style="color: white;">Welcome {{usermaster.empname}}</h4>
+</div>
+<nav class="navbar navbar-expand-md navbar-dark  sticky-top" id="main-nav">
+<div class="toggle-container" >
+    <h6 style="color: rgb(232, 234, 237) ;">Click to toggle dark theme</h6>
+<label class="switch">
+    <input type="checkbox" id="checkBox">
+    <span class="slider round"></span>
+</label>
+
+</div>
+<button class="navbar-toggler" data-toggle="collapse" data-target="#collapse_target">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="collapse_target">
+
+<ul class="navbar nav" style="width:100%;">
     <li class="navbar-item dropdown">
-            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
-            Report
-            <span class="caret"></span>
-            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
-                {% for menu in nav %}
-            {% if menu.navmenu in "Report" %}
-               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
-                {% if subnav.parentmenu in menu.navitem %}
-                <ul class="dropdown-menu">
-                    {% for obj in subnav %}
-                        {% if obj.parentmenu in menu.navitem %}
-                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            </li> 
-            {% endif %}
-            {% endfor %}
+        <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+        <span>Prod. Planning</span>
+        <span class="caret"></span>
+        <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+        {% if menu.navmenu in "Prod. Planning" %}
+           <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% if subnav.parentmenu in menu.navitem %}
+            <ul class="dropdown-menu">
+                {% for obj in subnav %}
+                    {% if obj.parentmenu in menu.navitem %}
+                        <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-            </a>
-        </li>
+        {% endif %}
+        </li> 
+        {% endif %}
+        {% endfor %}
+        </ul>
+        </a>
+    </li>
+<li class="navbar-item dropdown">
+        <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+        <span>Report</span>
+        <span class="caret"></span>
+        <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+        {% if menu.navmenu in "Report" %}
+           <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% if subnav.parentmenu in menu.navitem %}
+            <ul class="dropdown-menu">
+                {% for obj in subnav %}
+                    {% if obj.parentmenu in menu.navitem %}
+                        <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+        </li> 
+        {% endif %}
+        {% endfor %}
+        </ul>
+        </a>
+    </li>
 
 
 
 
-        <li class="navbar-item dropdown">
-            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
-            Dashboard
-            <span class="caret"></span>
-            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
-                {% for menu in nav %}
-            {% if menu.navmenu in "Dashboard" %}
-               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
-                {% if subnav.parentmenu in menu.navitem %}
-                <ul class="dropdown-menu">
-                    {% for obj in subnav %}
-                        {% if obj.parentmenu in menu.navitem %}
-                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            </li> 
-            {% endif %}
-            {% endfor %}
+    <li class="navbar-item dropdown">
+        <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+        <span>Dashboard</span>
+        <span class="caret"></span>
+        <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+        {% if menu.navmenu in "Dashboard" %}
+           <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% if subnav.parentmenu in menu.navitem %}
+            <ul class="dropdown-menu">
+                {% for obj in subnav %}
+                    {% if obj.parentmenu in menu.navitem %}
+                        <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-            </a>
-        </li>
-        <li class="navbar-item dropdown">
-            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
-            Production
-            <span class="caret"></span>
-            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
-                {% for menu in nav %}
-            {% if menu.navmenu in "Production" %}
-               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
-                <ul class="dropdown-menu submenu-scroll">
-                    {% for obj in subnav %}
-                        {% if obj.parentmenu in menu.navitem %}
-                            <li><a class="dropdown-item"  href="{{obj.link}}" >{{obj.childmenu}}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </li> 
-            {% endif %}
-            {% endfor %}
+        {% endif %}
+        </li> 
+        {% endif %}
+        {% endfor %}
+        </ul>
+        </a>
+    </li>
+    <li class="navbar-item dropdown">
+        <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+        <span>Production</span>
+        <span class="caret"></span>
+        <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+        {% if menu.navmenu in "Production" %}
+           <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            <ul class="dropdown-menu submenu-scroll">
+                {% for obj in subnav %}
+                    {% if obj.parentmenu in menu.navitem %}
+                        <li><a class="dropdown-item"  href="{{obj.link}}" >{{obj.childmenu}}</a></li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-            </a>
-        </li>
-        <li class="navbar-item dropdown">
-            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
-            Manpower
-            <span class="caret"></span>
-            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
-                {% for menu in nav %}
-            {% if menu.navmenu in "Manpower" %}
-               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
-                {% if subnav.parentmenu in menu.navitem %}
-                <ul class="dropdown-menu">
-                    {% for obj in subnav %}
-                        {% if obj.parentmenu in menu.navitem %}
-                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            </li> 
-            {% endif %}
-            {% endfor %}
+        </li> 
+        {% endif %}
+        {% endfor %}
+        </ul>
+        </a>
+    </li>
+    <li class="navbar-item dropdown">
+        <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+        <span>Manpower</span>
+        <span class="caret"></span>
+        <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+        {% if menu.navmenu in "Manpower" %}
+           <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% if subnav.parentmenu in menu.navitem %}
+            <ul class="dropdown-menu">
+                {% for obj in subnav %}
+                    {% if obj.parentmenu in menu.navitem %}
+                        <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-            </a>
-        </li>
-        <li class="navbar-item dropdown">
-            <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
-            Account
-            <span class="caret"></span>
-            <ul class="dropdown-menu" aria-labelledby="dropdown_target">
-                {% for menu in nav %}
-            {% if menu.navmenu in "Account" %}
-               <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
-                {% if subnav.parentmenu in menu.navitem %}
-                <ul class="dropdown-menu">
-                    {% for obj in subnav %}
-                        {% if obj.parentmenu in menu.navitem %}
-                            <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            </li> 
-            {% endif %}
-            {% endfor %}
+        {% endif %}
+        </li> 
+        {% endif %}
+        {% endfor %}
+        </ul>
+        </a>
+    </li>
+    <li class="navbar-item dropdown">
+        <a class="navbar-link dropdown-toggle" data-toggle="dropdown" data-target="dropdown_target" href="#" style="font-size:16px;color:#ffffff;">
+        <span>Account</span>
+        <span class="caret"></span>
+        <ul class="dropdown-menu" aria-labelledby="dropdown_target">
+            {% for menu in nav %}
+        {% if menu.navmenu in "Account" %}
+           <li class="dropdown-submenu"><a class="dropdown-item" href="{{menu.link}}">{{menu.navitem}}</a>
+            {% if subnav.parentmenu in menu.navitem %}
+            <ul class="dropdown-menu">
+                {% for obj in subnav %}
+                    {% if obj.parentmenu in menu.navitem %}
+                        <li><a class="dropdown-item" href="{{obj.link}}">{{obj.childmenu}}</a></li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-            </a>
-        </li>       
+        {% endif %}
+        </li> 
+        {% endif %}
+        {% endfor %}
+        </ul>
+        </a>
+    </li>       
 
-        <li>
-            <a class="btn" onclick="foo()"><i class="glyphicon glyphicon-log-in"></i>
-                <font color="#FFFFFF" size="4.5pt">Logout</font>
-            </a>
-        </li>
-    </ul>
+    <li>
+        <a class="btn" onclick="foo()">
+            <font color="#FFFFFF" size="4.5pt">Logout</font>
+        </a>
+    </li>
+</ul>
 </div>
 </nav>
+</body>
+<!-- Script for toggling features -->
+<script>
+    $(window).on('load', function() { // makes sure the whole site is loaded 
+// $('#loader').fadeOut(); // will first fade out the loading animation 
+$('#preloader').delay(350).fadeOut('slow'); // will fade out the white DIV that covers the website. 
+$('body').delay(350).css({'overflow':'visible'});
+})
+    var slider = document.querySelector(".slider");
+    var check= document.querySelector("#checkBox");
+    if($(":not(#form)").hasClass("darkMode") === false)  // resets toggler when page refreshes
+    {
+        check.checked = false
+    }
+    // Dark mode
+    $(document).ready(function(){           
+      $(".slider").click(function(){
+        var all = document.querySelectorAll("*");
+        $(":not(button, form,input)").toggleClass("darkMode");
+        $("body").toggleClass("op");
+        
+        all.forEach((x) => {
+        if(x.innerText)
+        {
+            x.classList.toggle("lightText");
+        }
+    })
+      });
+
+    });
+
+    if(window.location.href === "http://127.0.0.1:8000/homeadmin/")
+    {
+        document.querySelector(".wt").style.display = 'none'
+    }
+
+</script>

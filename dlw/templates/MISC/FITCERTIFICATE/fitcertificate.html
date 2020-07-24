@@ -1,0 +1,682 @@
+{% extends 'base.html' %} 
+{% block content %}
+<!-- <script src= "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js">  </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
+<style>
+    
+     
+    input[type=text]
+    {
+        padding: 5px 40px;
+        width:50%;
+        border:none;
+        outline: none;
+        font-weight: bold;
+    }
+    input[type=text1]{
+        border:none;
+    }
+   
+   
+    select {
+        width: 50%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: block;
+        border: 0.5px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    #space{
+       
+        padding-top: 30px;
+        border : none;
+    }
+    #space1{
+        padding-top: 100px;
+    }
+    #divHideShow
+    {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+</style>
+<br>
+<br> 
+
+<h2 align="center" >Fit Certificate</h2>
+<br><br>
+<form id="Fitform"action="{% url 'fitcertificate' %}" method="POST"> {% csrf_token %}
+    <div class="container" id=hide1>
+        <table class="table" >
+                <tr>
+                    
+                    <td>
+                        <label for="sno"><b>SHOP SECTION NO/शॉप अधी. :</b></label>
+                        <select class="form-control" id="shop_sec" name="shop_sec" required>
+                        <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                        {% for role in roles %}
+                        {{role}}
+                        <option>{{role}}</option>
+                        {% endfor %}
+                       
+                        </select>
+                    </td>
+                    <td colspan="3">
+                        <label for="staff_no"><b>EMPLOYEE NO/क्रम सं.:</b></label>
+                        <select class="form-control" id="staff_no" name="staff_no" required>
+                        <option id="op_staff_no" selected disabled hidden>Select EMPLOYEE No.</option>
+                        </select>        
+                    </td>
+                    
+                </tr>
+                
+        </table>
+<!--  <input type="submit" value="Proceed" name="proceed" id="myproceed" hidden/>  -->
+    </div>
+    
+    <br>
+    <br>
+
+    <div id="divHideShow" style="align:center; display:none">
+        <table align="center" width=50% border=0>
+            <tr>
+                <td colspan="2">Hospital</td>
+            
+                <td align="right">No</td>
+                <td><input type=" text" name="formno" id="formno" value="{{formid}}" required style="width: 60px;">
+                <input type=" text"  name="opdno" id="opdno" value="OPD" required  style="width: 60px;"/>
+                <input type=" text" name="wardno" id="wardno" value="1G" required  style="width: 60px ;"/></td>
+            </tr>
+            <tr>
+                <td colspan="4">Dispensary</td>
+            </tr>                  
+            </tr>
+                <td colspan="4" id="space">I hereby certify that i have examined-</td>
+            </tr>
+            <tr>
+                <td colspan="4">(Name)
+                <input type="text" id="namep" name="namep" required ></td>
+            </tr>
+
+            <tr>
+            <td colspan="4">(Designation)
+                <input type="text" id="desig" name="desig" required>
+            </td>
+            </tr>
+        
+            <tr>
+            <td colspan="4">(Branch of Department)
+                <input type="text" id="dept" name="dept" required>
+            </td>
+            </tr>
+        
+            <tr>  
+                <td colspan="4">(Station where employed)
+                <input type="text" id="station" name="station" required>
+            </td>
+            </tr>
+
+            <tr>
+                <td colspan="4">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;who was sick and under treatment from (date) &nbsp;&nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            
+                            <td><input type="text"name="date1" id="date1" readonly required style="width:200px;"></td>
+                            <td>to (date)</td>
+                            <td><input type="" id="date2" name="date2" readonly class="form-control" required style="width:120px;"/></td>
+                            <td> and on *leave</td>
+                        </tr>
+                    </table>
+                </td>
+                
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td>on medical recommendation from (date)</td>
+                            <td><input type="" id="date3" name="date3" readonly class="form-control" onclick=fun1() style="width:120px;" required/></td>
+                        </tr>
+                    </table>
+                </td>  
+            </tr>
+            
+             <tr>
+                <td colspan="4"> 
+                    <table>
+                        <tr>
+                            <td>to (date)</td>
+                            <td><input type="" id="date4" name="date4" readonly class="form-control" onclick=fun2()  style="width:120px;" required/></td>
+                            <td>is now fit to attend to his duties.</td>
+                        </tr>
+                    </table>
+                </td> 
+                
+            </tr> 
+
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td>He failed to avail of treatment from </td>
+                            <td><input type="" id="date5" name="date5" readonly class="form-control"  style="width:120px;" required/></td>
+                            <td>to</td>
+                            <td><input type="" id="date6" name="date6" readonly class="form-control" required style="width:120px;"/></td> 
+                        </tr>
+                    </table>             
+                </td> 
+            </tr>
+            <tr></tr>
+            <tr>
+            <td colspan="4" align="center">Fit for duty</td>
+            </tr>
+            <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td>DOCTOR ID &nbsp; &nbsp;</td>
+                        <td><select id="doctor_id" name="doctor_id" placeholder="Select DOCTOR ID" required style="width: 250px;">
+                        <option id="op_doctorid" selected disabled hidden ></option>
+                        {% for role in doctors %}
+
+                        <option>{{role}}</option>
+                        {% endfor %}
+                    </select>
+                    </td>
+                         
+                    </tr>
+                </table>
+            </td>
+            </tr>
+
+            <tr id="space">
+                <td><input type="text1" id="Sign" name="signature" value="......................................................"></td colspan="2">
+                <td colspan="3" style="text-align: left;"><input type="text1" id="Sign1" name="signature" value="............................................"></td>
+            </tr>
+
+            <tr>
+                
+                <td >Signature of Employee</td>
+                <td colspan="3" style="text-align: left;">Signature of Railway Doctor
+                    
+                </td>
+                
+            </tr>
+            <tr id="space1">
+                <td></td>
+                <td colspan="3" style="text-align:left;">
+                    Doctor Name: 
+                    <input type="text" id="named" name="named" width="300px"  readonly required>
+                </td>
+            <tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr>
+                        <td>Date</td>
+                        <td><input type="text" id="date7" name="date7" readonly required style="width:200px;"/></td>
+                        <td>Designation:</td>
+                        <td><input type="text" id="design" name="design" readonly required style="width:300px;"/></td>
+                        </tr>
+                    </table>
+                </td> 
+            </tr>
+            <tr>   
+                <td colspan="4">*Strike out if inapplicable</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                <hr color="BLACK">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">NOTE:</br> No recommendation contained in this Certificate</td>
+            </tr>
+            <tr>
+                <td colspan="4">shall be evidence of a claim to any leave not admissible</td>
+            </tr>
+            <tr>
+                <td colspan="4">to the railway servant under the terms of his contract or </td>
+            </tr>
+            <tr>   
+                <td colspan="4">to the rules to which he is subject.</td>
+            </tr>
+           
+        </table>
+
+      
+    <center>
+        <input type="button" {% if usermaster.op_create %}{% else %} disabled {% endif%}   name="Submit" value="Submit" id="Submit" class="btn btn-primary" onclick="validateFitInfo()">
+        <input type="button"{% if usermaster.op_create %}{% else %} disabled {% endif%}   name="Submit1" value="Print" id="Submit1" class="btn btn-primary" onclick="validateFitInfoforreport()">
+    </center>
+    </div> 
+</form>
+   <script>
+
+
+    document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+    
+                        e.preventDefault();
+                        var shop_sec = $("#shop_sec").val()
+                       
+                        var data = {shop_sec};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'fitCertificateGetEmp' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                
+                                for(i=0;i<response.length;i++){ 
+
+                                    var elementsadded = document.querySelectorAll(".newelepart1");
+                                    if(elementsadded.length>0){
+                                        var elementsaddedarr = Array.from(elementsadded);
+                                        elementsaddedarr.forEach((el)=> el.remove());       
+                                      
+                                     }
+                                    var brarr,mystr,html;
+                                    brarr = response.map((el)=>el.staff_no); 
+                                    mystr = "";
+                                    brarr.forEach((el,index)=>{
+                                      html = `<option class="newelepart1">${brarr[index]}</option>`
+                                      mystr = html.concat(mystr);
+                                    });
+                                    html = "";
+                                    document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                                    mystr=""; 
+                                    
+                                }                               
+                            }
+                              })
+                    });
+                    document.querySelector("#staff_no").addEventListener('change',(e)=>{
+                        
+                        $("#divHideShow").show();
+                        e.preventDefault();                        
+                        var staff_no = $("#staff_no").val();
+                        var shop_sec = $("#shop_sec").val();
+                       
+                        var data = {staff_no, shop_sec};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'fitCertificateGetEmpAllDetails' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                
+ 
+                            document.getElementById('namep').value=response[0].empname; 
+                            document.getElementById('desig').value=response[0].desig_longdesc; 
+                            document.getElementById('dept').value=response[0].dept_desc; 
+                            document.getElementById('station').value=response[0].station_des;                       
+                            $('#namep').attr('readonly', true);
+                            $('#desig').attr('readonly', true);
+                            }
+                              })
+
+                    });
+
+                    document.querySelector("#doctor_id").addEventListener('change',(e)=>{
+                     
+                        e.preventDefault();                        
+                        var doctor_id = $("#doctor_id").val()
+                        var data = {doctor_id};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'fitCertificateGetDoctor' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                
+                            document.getElementById('design').value=response[0].desig_longdesc; 
+                            document.getElementById('named').value=response[0].empname; 
+                            }
+                              })
+
+                    });
+                    document.querySelector("#staff_no").addEventListener('change',(e)=>{
+                        
+                        e.preventDefault();                        
+                        var staff_no = $("#staff_no").val()
+                        var data = {staff_no};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'FitcertificateGetDate' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                
+                               
+                            document.getElementById('date1').value=response; 
+                                func();
+
+                            }
+                              })
+
+                    });
+                   
+                    document.querySelector("#date2").addEventListener('click',(e)=>{
+                        e.preventDefault();
+                        
+                        document.getElementById('date3').value="";
+                        document.getElementById('date4').value="";
+
+                    });
+                    document.querySelector("#date4").addEventListener('click',(e)=>{
+                        e.preventDefault();
+                        $('#date4').focus();
+                        
+                    });
+                    
+                    document.querySelector("#date3").addEventListener('click',(e)=>{
+                        e.preventDefault();
+                        document.getElementById('date4').value=""; 
+                        $('#date3').focus();                    
+                       
+                    });
+                   
+                    function fun1()
+                    {
+                        var n=document.getElementById('date2').value;
+                        if (n.length < 1)
+                        {
+                            window.alert("Please first fill above date");
+                        }
+                        if(n.length>0)
+                        {   
+                            
+                            $('#date3').datepicker({ dateFormat: 'dd-mm-yy',
+                            minDate:$("#date1").val(),
+                            maxDate:$("#date2").val(),
+                            onSelect: function(date){            
+                                var date1 = $('#date3').datepicker('getDate');           
+                                                   
+                                $('#date4').datepicker("option","minDate",date1);            
+                            }
+                        });
+                        }
+          
+                    }
+                    function func()
+                    {
+                        $('#date2').datepicker({ dateFormat: 'dd-mm-yy',
+                        minDate:$("#date1").val(),
+                        onSelect: function(date2){            
+                            var date1 = $('#date2').datepicker('getDate');           
+                                               
+                            $('#date3').datepicker("option","maxDate",date1);
+                            $('#date4').datepicker("option","maxDate",date1);            
+                        }});
+                        
+                    }
+                    function fun2()
+                    {
+                        var n=document.getElementById('date2').value;
+                        var n1=document.getElementById('date3').value;
+                        if (n.length < 1 || n1.length <1)
+                        {
+                            window.alert("Please first fill above date");
+                        }
+                        else
+                        {   
+                            $('#date4').datepicker({ dateFormat: 'dd-mm-yy',minDate:$("#date3").val(),maxDate:$("#date2").val()});
+                        }
+                        
+                    }
+                    function fun6()
+                    {
+                        var n=document.getElementById('date5').value;
+                        if (n.length < 1)
+                        {
+                            window.alert("Please first fill above date");
+                        }
+                        if(n.length>0)
+                        {   
+                            
+                            $('#date6').datepicker({ dateFormat: 'dd-mm-yy',minDate:$("#date5").val()});
+                        }
+          
+                    }
+
+
+                    $(document).ready(function () {
+                       
+                        $('#date6').datepicker({
+                            dateFormat: "dd-mm-yy" 
+                        });
+                        
+                        $("#date5").datepicker({
+                            dateFormat: "dd-mm-yy", 
+                           
+                            onSelect: function(date){            
+                                var date1 = $('#date5').datepicker('getDate');           
+                                                 
+                                $('#date6').datepicker("option","minDate",date1);            
+                            }
+                        });
+    
+               
+                    });
+                   
+                    
+                    n = new Date();
+                    mm = n.getMonth()+1;
+                    dd = n.getDate();
+                    yy = n.getFullYear();
+                    if (dd < 10) { 
+                        dd = '0' + dd; 
+                    } 
+                    if (mm < 10) { 
+                        mm = '0' + mm; 
+                    } 
+                    document.getElementById('date7').value = dd + '-' + mm + '-' + yy;      
+                
+                    function setGetParameter1(){
+                        window.location.href = "{% url 'FitCertificatePdf' %}"+"?formno="+$('#formno').val()+"&opdno="+$('#opdno').val()+"&wardno="+$('#wardno').val()+"&namep="+$('#namep').val()+"&desig="+$('#desig').val()+"&dept="+$('#dept').val()+"&station="+$('#station').val()+"&date1="+$('#date1').val()+"&date2="+$('#date2').val()+"&date3="+$('#date3').val()+"&date4="+$('#date4').val()+"&date5="+$('#date5').val()+"&date6="+$('#date6').val()+"&date7="+$('#date7').val()+"&design="+$('#design').val()+"&named="+$('#named').val();
+                        
+                    }
+
+                    function save_info(){
+                        var temp = {form_no:$('#formno').val(),opd_no:$('#opdno').val(),ward_no:$('#wardno').val(),shop_section :$('#shop_sec').val(),staff_no:$('#staff_no').val(),date1:$('#date1').val(),date2:$('#date2').val(),date3:$('#date3').val(),date4:$('#date4').val(),date5:$('#date5').val(),date6:$('#date6').val(),doc_id:$('#doctor_id').val(),doc_name:$('#named').val(),desg_doc:$('#design').val(),date7:$('#date7').val()};
+                        var data = temp; 
+                        
+                                     
+                        $.ajax({
+                                    type : 'GET',
+                                    url : "{% url 'FitInfoSave' %}",
+                                    dataType : 'json',
+                                    data : data,
+                                    success : function(response)
+                                        {    
+                                            
+                                            alert("Data saved successfully");                                           
+                                                                                                 
+                                        }
+                                        
+                                    })
+                    }      
+                    function validateFitInfo(){
+
+                        var formno = document.forms["Fitform"]["formno"].value;
+                        var opdno = document.forms["Fitform"]["opdno"].value;
+                        var wardno = document.forms["Fitform"]["wardno"].value;
+
+                        var date2 = document.forms["Fitform"]["date2"].value;
+                        var date3 = document.forms["Fitform"]["date3"].value;
+                        var date4 = document.forms["Fitform"]["date4"].value;
+                        var date5 = document.forms["Fitform"]["date5"].value;
+                        var date6 = document.forms["Fitform"]["date6"].value;
+
+                        var doctor_id = document.forms["Fitform"]["doctor_id"].value;
+                      
+                        if (formno == "") 
+                        {
+                            alert("Please fill the Form No ");
+                            return false;
+                        }
+                        else if (opdno == "") 
+                        {
+                            alert("Please fill the Form No ");
+                            return false;
+                        }
+                        else if (date2 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date3 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date4 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date5 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date6 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (doctor_id == "") 
+                        {
+                            alert("Please choose Doctor Id");
+                            return false;
+                        }
+                        else
+                        {
+                            save_info();
+                        }
+                    } 
+
+                    function validateFitInfoforreport(){
+
+                        var formno = document.forms["Fitform"]["formno"].value;
+                        var opdno = document.forms["Fitform"]["opdno"].value;
+                        var wardno = document.forms["Fitform"]["wardno"].value;
+
+                        var date2 = document.forms["Fitform"]["date2"].value;
+                        var date3 = document.forms["Fitform"]["date3"].value;
+                        var date4 = document.forms["Fitform"]["date4"].value;
+                        var date5 = document.forms["Fitform"]["date5"].value;
+                        var date6 = document.forms["Fitform"]["date6"].value;
+
+                        var doctor_id = document.forms["Fitform"]["doctor_id"].value;
+                      
+                        if (formno == "") 
+                        {
+                            alert("Please fill the Form No ");
+                            return false;
+                        }
+                        else if (opdno == "") 
+                        {
+                            alert("Please fill the Form No ");
+                            return false;
+                        }
+                        else if (date2 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date3 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date4 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date5 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (date6 == "") 
+                        {
+                            alert("Please fill all the dates ");
+                            return false;
+                        }
+                        else if (doctor_id == "") 
+                        {
+                            alert("Please choose Doctor Id");
+                            return false;
+                        }
+                        else
+                        {
+                            setGetParameter1();
+                        }
+                    }
+                    function formfun()
+                    {
+                        var form_no = $("#formno").val();
+                        var opdno = $("#opdno").val();
+                        var wardno = $("#wardno").val(); 
+                        var formno=(form_no+"/"+opdno+"/"+wardno).toString();
+                        var data = {formno};
+                          $.ajax({
+                            type : 'GET',
+                            url : "{% url 'FitDetails' %}",
+                            dataType : 'json',
+                            data : data,
+                            success : function(response){                                
+                               
+                            document.getElementById('date1').value=response[0][0].treatement_start_date; 
+                            document.getElementById('date2').value=response[0][0].treatement_end_date; 
+                            document.getElementById('date3').value=response[0][0].leave_from; 
+                            document.getElementById('date4').value=response[0][0].leave_to; 
+                            document.getElementById('date5').value=response[0][0].fail_to_avail_from; 
+                            document.getElementById('date6').value=response[0][0].fail_to_avail_to; 
+                            
+                            document.getElementById('doctor_id').value=response[0][0].doc_employee_id;
+                            document.getElementById('named').value=response[0][0].doctor_name;
+                            document.getElementById('design').value=response[0][0].desg_doc;
+
+                            document.getElementById('namep').value=response[1][0].empname;
+                            document.getElementById('desig').value=response[1][0].desig_longdesc;
+                            document.getElementById('dept').value=response[1][0].dept_desc;
+                            document.getElementById('station').value=response[1][0].station_des;
+                           
+                            document.getElementById('hide1').style.visibility='hidden';
+                            }
+                              })
+
+                    } 
+
+                    document.querySelector("#formno").addEventListener('change',(e)=>{
+                        
+                        e.preventDefault();  
+                        formfun();            
+                       
+                    });  
+                    document.querySelector("#opdno").addEventListener('change',(e)=>{
+                        
+                        e.preventDefault();  
+                        formfun();            
+                       
+                    });   
+                    document.querySelector("#wardno").addEventListener('change',(e)=>{
+                        
+                        e.preventDefault();  
+                        formfun();            
+                       
+                    });  
+                           
+   </script>
+
+{% endblock content %} 

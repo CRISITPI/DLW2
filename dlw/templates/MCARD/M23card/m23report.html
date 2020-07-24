@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>  
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script> -->
+
+<style>
+    a.btn:hover {
+     -webkit-transform: scale(1.1);
+     -moz-transform: scale(1.1);
+     -o-transform: scale(1.1);
+ }
+ a.btn {
+     -webkit-transform: scale(0.8);
+     -moz-transform: scale(0.8);
+     -o-transform: scale(0.8);
+     -webkit-transition-duration: 0.5s;
+     -moz-transition-duration: 0.5s;
+     -o-transition-duration: 0.5s;
+ }
+    input[type=submit] {     
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 16px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc, table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>td.sorting {
+    padding-right: 0px !important;
+}
+</style>
+<br>
+<br>
+
+    
+
+<h2 align="center" >GATE PASS</h2>
+<br>
+<form action="{% url 'm23report' %}" method="POST"> {% csrf_token %}
+    <input type="text" name='test' id="test" hidden>
+    <input type="text" name='test1' id="test1" hidden>
+    <input type="text" name='test2' id="test2" hidden>
+    <input type="text" name='test3' id="test3" hidden>
+    <input type="text" name='test4' id="test4" hidden>
+    <input type="text" name='test5' id="test5" hidden>
+    <input type="text" name='test6' id="test6" hidden>
+    <input type="text" name='test7' id="test7" hidden>
+    <input type="text" name='test8' id="test8" hidden>
+    <input type="text" name='test9' id="test9" hidden>
+    
+    <div class="container">
+        <table class="table">
+                <tr>
+                        
+                        <td>
+                            <label for="sno"><b>SHOP SECTION :</b></label>
+                            <select class="form-control" id="shop_sec" name="shop_sec" required>
+                            <option id="op_shop" selected disabled hidden>Select Shop Section</option>
+                        {% if lenm == 1 %}
+                            <option selected readomly>{% for role in roles %}{{role}}{% endfor %}</option>
+                            {{role}}
+                        {% endif %}
+                        {% if lenm > 1 %}
+                        {% for role in roles %}
+                        {{role}}
+                            <option>{{role}}</option>
+                        {% endfor %}    
+                        {% endif %}
+                            </select>
+                        </td>
+                        
+                        <td>
+                                <label for="staff_no"><b>EMPLOYEE NO:</b></label>
+                                <select class="form-control" id="staff_no" name="staff_no" required>
+                        <option id="op_emp" >Select EMPLOYEE NO</option>
+                        
+                                </select>
+                        </td>
+                        <td>
+                            <label for="date"><b>DATE:</b></label>
+                            <input type="text"  class="form-control" id="ddate" name="ddate" min="2019-11-07"/ readonly>
+                            </td>
+                </tr>
+                
+        </table>
+        <input type="submit" value="proceed" name="proceed" id="myproceed"  hidden/>
+
+    
+    </div>
+        <div class="container">
+            <table id="example" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                        <td align="center">Sr.No</td>
+                        <td align="center">SHOP_SEC</td>
+                        <td align="center">Employee NAME</td>
+                        <td align="center">STAFFNO</td>
+                        <td align="center">From DATE</td>
+                        <td align="center">FROM TIME</td>
+                        <td align="center">TO DATE</td>
+                        <td align="center">TO TIME</td>
+                        <td align="center">PURPOSE</td>
+                        <td align="center">EDIT</td>
+                        <td align="center">Print</td>
+
+                </thead>
+
+                <tbody>
+                    {% for i in tabledata %}
+                    <tr>
+                        <td class="ids">{{i.id}}</td>
+                        <td class="shopsec">{{i.shop_no}}</td>
+                        <td class="name">{{i.emp_name}}</td>
+                        <td class="no">{{i.emp_no}}</td>
+                        <td class="date">{{i.date}}</td>
+                        <td class="ftime">{{i.from_time}}</td>
+                        <td class="tdate">{{i.todate}}</td>
+                        <td class="ttime">{{i.to_time}}</td>
+                        <td class="purpose">{{i.purpose}}</td>
+                        <td><button class="btn btn-primary a-btn-slide-text" {% if usermaster.op_update %}{% else %} disabled {% endif%}   name="edit" value="edit"> 
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            <span><strong>Edit</strong></span>            
+                        </button></td>
+                        <td><button class="btn btn-success a-btn-slide-text" {% if usermaster.op_read %}{% else %} disabled {% endif%}   value="print" name="print">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            <span><strong>Print</strong></span>            
+                        </button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
+                </table>
+                </div>
+
+ {% if sub == 1 %}
+<input type="hidden" name="len" value="{{len}}">
+<div id="print1" >
+    <input type="hidden" id="sub" name="sub" value={{sub}}>
+<table align="center" border="2" width="50%">  
+    <tr>
+        <th>SHOP SECTION</th>
+        <input type="text" value={{shop_sec}} name="shopsec" id="dshopsec" hidden /> 
+        <td>{{shop_sec}}</td>
+      
+    </tr>
+    <tr> 
+            <th>EMPLOYEE NO</th> 
+         
+        <input type="text" value={{staff_no}} name="staffno" id="dstaffno" hidden /> 
+        <td>{{staff_no}}</td>
+    </tr>
+    <tr>
+        <th>DATE</th>
+        <input type="hidden" value="{{ddate}}" name="dddate" />
+        
+        <td>{{date}}</td>
+    </tr>
+    {% for i in obj2 %}
+    <tr>
+        <th>EMPLOYEE NAME</th>
+        
+        <td>
+                {{i.emp_name}}
+        </td>
+        <input type="hidden" value="{{i.name}}" name="employeename" />
+    </tr>{% endfor %}
+   
+    
+{% for i in obj1 %}
+    <tr> 
+        <th>PURPOSE:</th> 
+     
+    <input type="text" value={{pur}} name="pur" id="pur" hidden /> 
+    <td>{{i.purpose}}</td>
+</tr>
+<tr> 
+    <th>FROM TIME:</th> 
+ 
+<input type="text" value={{from_time}} name="from_time" id="from_time" hidden /> 
+<td>{{i.from_time}}</td>
+</tr>
+<tr> 
+    <th>TO TIME:</th> 
+
+<input type="text" value={{to_time}} name="to_time" id="to_time" hidden /> 
+<td>{{i.to_time}}</td
+</tr>
+{% endfor %}
+
+
+
+</table>
+
+
+
+</div>
+</br>
+<center>  
+
+    
+   
+<input type="button" onclick="printDiv1()" value="Print" name="print1" id="print1"/> 
+                    
+
+</center> 
+{% endif %}
+<center><button class="btn btn-primary" name="back" id="back" value="back"> BACK</button></center>>
+
+</form> 
+
+
+<script>
+$(document).ready(function () {
+                        $('#ddate').datepicker({
+                            dateFormat: 'dd-mm-yy',
+                            minDate:0,
+                            yearRange: '2019:2025',
+                            onSelect: function(  ){
+                        document.querySelector("#myproceed").click();
+                        }
+                    });
+
+                    
+});
+
+$(document).ready(function () {
+   
+    document.getElementById("ftime").value = "00:00:01";
+    document.getElementById("ttime").value = "00:00:01";
+                    });
+
+$(document).ready(function(){
+ var  subb=document.getElementById("sub").value;
+
+  if(subb==1)
+  {
+      var pur=document.getElementById("purpose1").value;
+      console.log(pur);
+      document.getElementById("pur").value = pur;
+  }
+});
+        document.querySelector("#shop_sec").addEventListener('change',(e)=>{
+                          e.preventDefault();
+                          var shop_sec = $("#shop_sec").val()
+                          var data = {shop_sec};
+                            $.ajax({
+                              type : 'GET',
+                              url : "{% url 'm23getempno' %}",
+                              dataType : 'json',
+                              data : data,
+                              success : function(response){
+                                var elementsadded = document.querySelectorAll(".neweleempno");
+                                    if(elementsadded.length>0){
+                                        var elementsaddedarr = Array.from(elementsadded);
+                                        elementsaddedarr.forEach((el)=> el.remove());
+                                
+                                        document.querySelector("#op_emp").selected=true;
+                                       
+    
+                                        
+                                     }
+                                    var brarr,mystr,html;
+                                    brarr = response.map((el)=>el.staff_no);
+                                    mystr = "";
+                                    brarr.forEach((el,index)=>{
+                                      html = `<option class="neweleempno">${brarr[index]}</option>`
+                                      mystr = html.concat(mystr);
+                                    });
+                                    html = "";
+                                    document.querySelector("#staff_no").insertAdjacentHTML('beforeend',mystr);
+                                    mystr=""; 
+                              }
+                                })
+                      })
+// document.querySelector("#ddate").addEventListener('change',(e)=>{
+
+// document.querySelector("#myproceed").click();
+// })
+document.addEventListener('keypress',(event)=>{
+if(event.keyCode===13){
+    event.preventDefault();
+}
+})
+
+
+
+function printDiv1() {
+     var printContents = document.getElementById("print1").innerHTML;
+
+       var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: left;}";
+        style = style + "</style>";
+      var win = window.open('', '', 'height=500,width=500');
+
+        win.document.write('<html><head>');
+
+        win.document.write('<title>M23 Card (GATE PASS)</title>');
+        win.document.write('<h1>M23 Card (GATE PASS)</h1>');
+        win.document.write(style);
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(printContents);
+        win.document.write('</body></html>');
+
+        win.print();
+        
+}
+
+$(document).ready(function() {   
+    var table = $('#example').DataTable();      
+        $('#example tbody').on('click', 'tr', function () {
+            var data = table.row( this ).data();  
+            console.log(data);
+            console.log(data[1]);
+                                        
+            // $('#SubmitMultipleRowData').click( function () {
+            //     table.row('.selected').remove().draw( false );
+            // });                                       
+        });
+    });
+    $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+});
+$(function(){
+    $('button').on('click', function(){
+        var tr = $(this).closest('tr');
+        var id = tr.find('.ids').text();
+        var shopsec = tr.find('.shopsec').text();
+        var date = tr.find('.date').text();
+        var empno = tr.find('.no').text();
+        var empname = tr.find('.name').text();
+        var fdate = tr.find('.fdate').text();
+        var tdate = tr.find('.tdate').text();
+        var ftime = tr.find('.ftime').text();
+        var ttime = tr.find('.ttime').text();
+        var purpose = tr.find('.purpose').text();
+        console.log(id,shopsec,date,empno);
+        document.getElementById('test').value=id;
+        document.getElementById('test1').value=shopsec;
+        document.getElementById('test2').value=date; 
+        document.getElementById('test3').value=empno;
+        document.getElementById('test4').value=empname;
+        document.getElementById('test5').value=fdate;
+        document.getElementById('test6').value=tdate;
+        document.getElementById('test7').value=ftime;
+        document.getElementById('test8').value=ttime;
+        document.getElementById('test9').value=purpose;
+    });
+});
+
+</script>    
+
+    
+{% endblock content %}

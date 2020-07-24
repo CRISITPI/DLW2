@@ -1,0 +1,381 @@
+{% extends 'base.html' %} 
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+td { 
+    padding:10px;
+    padding-left:120px;
+    font-weight:bold;  
+}
+.container {
+      
+    background-color: #f2f2f2;
+    padding: 20px;
+  } 
+  input[type=text], select,textarea{
+    padding: 8px 10px;
+    width: 200px;
+  }
+  input[type=submit] {
+    width: 10%;
+    text-align: center;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+input[type=button] {
+    width: 10%;
+    text-align: center;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+<form action="{% url 'correctiveaction' %}" method="POST" >{% csrf_token %}
+    <br><br>
+    <center><h4><b>Diesel Locomotive Works,Varanasi</b></h4></center>
+    <br>
+    <center><h5><b>Corrective Action Form</b></h5></center>
+    <br>
+    <table style="width: 65%;" class="container" border=0>
+        <tr>
+            <td><br>S.No. <input type="text" name="sno" id="sno_id" value="{{sno}}" maxlength="15"><br></td>
+            <td><br>Date <input type="text" name="date_t" id="date_t" autocomplete="off"><br></td>
+        </tr>
+        <tr>
+            <td colspan="2"><br>1. Description Of Problem/Non Conformance</td>
+            
+        </tr>
+        <tr>
+            <td colspan="2"><br>PL No : <input type="text" name="plno" id="plno_id" style="margin-left: 77px;" maxlength="9">&nbsp;&nbsp;&nbsp;&nbsp;
+                Type of Engine/Loco :  <select id="engine_id" name="engine" placeholder="Select Type of Engine" required>
+                    <option id="op_engtype" selected disabled hidden ></option>
+                    {% for role in engtype %}
+
+                    <option>{{role}}</option>
+                    {% endfor %}<br>
+            </td>
+
+        </tr>
+        
+        <tr>
+            <td colspan="2">Name of Supplier <input type="text" name="supplier" id="suppliername_id" maxlength="50">
+                &nbsp;&nbsp;&nbsp;&nbsp; Current % rejection : <input type="text" name="perrejection" id="perrejection_id" onchange="Validateperrejection(this)" maxlength="7">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;Past Failure Details :
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                <textarea id="pastfailure_id" type ="text" name="pastfailure" style="width: 700px; margin: 8px; resize:none;" maxlength="200"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;For external customer complaints<br> <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                a. Name of Reporting Agency<br>
+                <textarea id="reportagencyname" type ="text" name="reportagencyname" style="width: 700px; margin: 8px; resize:none; margin-left:50px;" maxlength="150"></textarea>
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            b. Failure since last six months<br>
+                <textarea id="failure_id" type ="text" name="failure" style="width: 700px; margin: 8px; resize:none; margin-left:50px;" maxlength="200"></textarea>
+            
+             </td>
+        </tr>
+        <td colspan="2">2. Brief Comments on Probable Cause and Redemy
+            <textarea id="cause_id" type ="text" name="cause" style="width: 700px; resize:none; margin: 8px;" maxlength="200"></textarea>
+        </td>
+        <tr>
+            <td colspan="2">Employee ID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="employee_id" name="employee" maxlength="20" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="name_id" name="name1" readOnly ></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Designation <input type="text" id="desig_id" name="designation" readOnly  >
+        </td
+        </tr>
+        <tr>
+            <td colspan="2"><br>3. C.A. Registration Number <input type="text" id="caregisno_id" name="caregisno" maxlength="15">
+                Date <input type="text" id="date2" name="date2" autocomplete="off">(to be given by MR office)</td>
+        </tr>
+        <tr>
+            <td colspan="2">4. Follow up<br>
+            <textarea type ="text" name="followup" id="followup_id" style="width: 700px; resize:none; margin: 8px;" maxlength="200"></textarea>
+            </td>
+            
+        </tr>
+        <tr>
+            <td colspan="2">5. Decision of MR office<br>
+            <textarea id="decision_mr" type ="text" name="decision_mr" style="width: 700px; resize:none; margin: 8px;" maxlength="200"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" name=hidden1 id ="pastfa"style="display: none;">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <center>
+    <b>
+        NOTE : Corrective action is an action to eliminate the cause of an existing non conformity,defect or other
+         undesirable  <br>situation in order to prevent recurrence</br>
+    </center>
+    <br>
+    <br>
+    <center>
+        <input type="button" name="Submit" value="Save" id="Submit" class="btn btn-primary" onclick="Savecorrectiveaction()">
+        <input type="submit" name="Report" value="Report" id="report" class="btn btn-primary">
+        <input type="button" name="Clear" value="Clear" id="clear" class="btn btn-primary" onclick="window.location.reload();">
+    </center>
+    <br><br>
+    <div id=DivHideUpdate style="display: none;">
+        <p align="center"><b>Do You Want To Update : <input type=button value="YES" id="yes_id" onclick="CorrectionacupdateYes()" name="yes">
+            <input type=button value="NO" id="no_id" name="no" onclick="window.location.reload();"> </b></p>
+    </div>
+    <br><br>
+</form>
+<script>
+    $(document).ready(function () {
+                       
+        $('#date_t').datepicker({dateFormat: "dd-mm-yy"}).datepicker("setDate", "0");
+        $('#date2').datepicker({dateFormat:"dd-mm-yy"});  
+        });
+    function validatecorrectiveaction()
+    {
+        var sno=$("#sno_id").val();
+        var date_t=$("#date_t").val();
+        var plno=$("#plno_id").val();
+        var engine=$("#engine_id").val();
+        var suppliername=$("#suppliername_id").val();
+        var perrejection=$("#perrejection_id").val();
+        var pastfailure=$("#pastfailure_id").val();
+        var cause=$("#cause_id").val();
+        var employee=$("#employee_id").val();
+        if(sno == "")
+        {
+            alert("Please Fill The S.NO.");
+            return false;
+        }
+        else if(date_t == "")
+        {
+            alert("Please Fill The Date");
+            return false;
+        }
+        else if(plno == "")
+        {
+            alert("Please Fill The PL No");
+            return false;
+        }
+        else if(engine == null)
+        {
+            alert("Please Fill The Type of Engine/Loco ");
+            return false;
+        }
+        else if(suppliername == "")
+        {
+            alert("Please Fill The Name of Supplier");
+            return false;
+        }
+        else if(perrejection == "")
+        {
+            alert("Please Fill The Current % rejection");
+            return false;
+        }
+        else if(pastfailure == "")
+        {
+            alert("Please Fill The Past Failure Details");
+            return false;
+        }
+        else if(cause == "")
+        {
+            alert("Please Give Brief Comments on Probable Cause and Redemy");
+            return false;
+        }
+        else if(employee == "")
+        {
+            alert("Please Fill The Employee Id");
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    function Savecorrectiveaction()
+    {
+        var val=validatecorrectiveaction();
+        if(val == true)
+        {
+            var temp = {sno:$('#sno_id').val(),date:$('#date_t').val(),plno:$('#plno_id').val(),engine:$('#engine_id').val(),
+            suppliername:$('#suppliername_id').val(),perrejection:$('#perrejection_id').val(),
+            pastfailure:$('#pastfailure_id').val(),reportagencyname:$('#reportagencyname').val(),
+            failure:$('#failure_id').val(),cause:$('#cause_id').val(),employee:$('#employee_id').val(),caregisno:$('#caregisno_id').val(),
+            date2:$('#date2').val(),followup:$('#followup_id').val(),decision_mr:$('#decision_mr').val()};
+        
+            var data=temp;
+            $.ajax({
+                type : 'GET',
+                dataType : 'json',
+                url : "{% url 'CorrectionActionSave' %}",
+                data : data,
+                success : function(response){
+                    if(response.length==1)
+                    {
+                      $('#DivHideUpdate').show();
+                      document.getElementById("sno_id").readOnly = true;
+                    }
+                    else{
+                    alert("Data Saved Successfully");
+                    }
+                }
+
+            });
+        }
+    }
+    function CorrectionacupdateYes()
+    {
+        var val=validatecorrectiveaction();
+        if(val == true)
+        {
+            var temp = {sno:$('#sno_id').val(),date:$('#date_t').val(),plno:$('#plno_id').val(),engine:$('#engine_id').val(),
+            suppliername:$('#suppliername_id').val(),perrejection:$('#perrejection_id').val(),
+            pastfailure:$('#pastfailure_id').val(),reportagencyname:$('#reportagencyname').val(),
+            failure:$('#failure_id').val(),cause:$('#cause_id').val(),employee:$('#employee_id').val(),caregisno:$('#caregisno_id').val(),
+            date2:$('#date2').val(),followup:$('#followup_id').val(),decision_mr:$('#decision_mr').val()};
+        
+            var data=temp;
+            $.ajax({
+                type : 'GET',
+                dataType : 'json',
+                url : "{% url 'CorrectionActionUpdate' %}",
+                data : data,
+                success : function(response){
+                    alert("Data Updated Successfully");
+                    $('#DivHideUpdate').hide();
+                    var sno=$('#sno_id').val();
+                }
+
+            });
+        }
+    }
+    document.querySelector("#plno_id").addEventListener('change',(e)=>{
+        var plno = $('#plno_id').val();
+        var data = {plno};
+        $.ajax({
+            type : 'GET',
+            dataType : 'json',
+            url : "{% url 'CorrectiveActionValidatePlno' %}",
+            data :data,
+            success : function(response)
+            {
+                if(response.length==0)
+                {
+                    alert("Please Enter Correct PL NO")
+                    document.getElementById('plno_id').value="";
+                }
+            }
+        })
+    });
+    document.querySelector("#employee_id").addEventListener('change',(e)=>{
+        var employee = $('#employee_id').val();
+        var data = {employee};
+        $.ajax({
+            type : 'GET',
+            dataType : 'json',
+            url : "{% url 'CorrectiveActionValidateEid' %}",
+            data :data,
+            success : function(response)
+            {
+                if(response.length==0)
+                {
+                    alert("Please Enter Correct Employee Id")
+                    document.getElementById('employee_id').value="";
+                    document.getElementById('desig_id').value="";
+                    document.getElementById('name_id').value="";
+                }
+                else
+                {
+                    document.getElementById('desig_id').value=response[0].desig_longdesc;
+                    document.getElementById('name_id').value=response[0].empname;
+                }
+            }
+        })
+    });
+    function Validateperrejection(inputField)
+    {
+        var perrejection = parseFloat($('#perrejection_id').val());
+        if(perrejection<0.00 || perrejection>100.00)
+        {
+            alert("Please Enter Current % Rejection between 0 and 100");
+            document.getElementById('perrejection_id').value=""
+        }
+        var isValid= /^\d{0,3}(\.\d{1,2})?$/.test(inputField.value);
+        if (!isValid)
+        {
+            alert("You can enter only 2 digits after decimal");
+            document.getElementById('perrejection_id').value=""
+        }  
+    }
+    document.querySelector("#sno_id").addEventListener('change',(e)=>{
+        e.preventDefault();  
+        document.getElementById('date_t').value="";
+        document.getElementById('plno_id').value="";
+        document.getElementById('engine_id').value="";
+        document.getElementById('suppliername_id').value="";
+        document.getElementById('perrejection_id').value="";
+        document.getElementById('pastfailure_id').value="";
+        document.getElementById('reportagencyname').value="";
+        document.getElementById('failure_id').value="";
+        document.getElementById('cause_id').value="";
+        document.getElementById('employee_id').value="";
+        document.getElementById('caregisno_id').value="";
+        document.getElementById('date2').value="";
+        document.getElementById('followup_id').value="";
+        document.getElementById('decision_mr').value="";
+        document.getElementById('name_id').value="";
+        document.getElementById('desig_id').value="";
+        var sno = $('#sno_id').val();
+        var data = {sno};
+        $.ajax({
+            type : 'GET',
+            dataType : 'json',
+            url : "{% url 'CorrectiveActionGetAllDetails' %}",
+            data : data,
+            success : function(response){
+                if(response.length == 2)
+                {
+                    document.getElementById('date_t').value=response[0][0].date;
+                    document.getElementById('plno_id').value=response[0][0].pl_no;
+                    document.getElementById('engine_id').value=response[0][0].engine_loco_type;
+                    document.getElementById('suppliername_id').value=response[0][0].supplier_name;
+                    document.getElementById('perrejection_id').value=response[0][0].rejection_percentage;
+                    document.getElementById('pastfailure_id').value=response[0][0].past_failure_details;
+                    document.getElementById('reportagencyname').value=response[0][0].reporting_agency_name;
+                    document.getElementById('failure_id').value=response[0][0].failure_since_last_six_months;
+                    document.getElementById('cause_id').value=response[0][0].probable_cause_redemy;
+                    document.getElementById('employee_id').value=response[0][0].employee_id;
+                    document.getElementById('caregisno_id').value=response[0][0].ca_regis_no;
+                    document.getElementById('date2').value=response[0][0].date_by_mroffice;
+                    document.getElementById('followup_id').value=response[0][0].follow_up;
+                    document.getElementById('decision_mr').value=response[0][0].mr_office_decision;
+                    document.getElementById('name_id').value=response[1][0].empname;
+                    document.getElementById('desig_id').value=response[1][0].desig_longdesc;
+                }
+            }
+        })
+    });
+    
+</Script>
+</body>
+</html>
+{% endblock content %}

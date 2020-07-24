@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, td {
+  border: 1px solid black;
+}
+</style>
+</head>
+<link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}"
+integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static '/css/all.min.css' %}">
+<body>
+
+ 
+  
+  <h1 style="text-align:center;">REPORT</h1>
+  <br><br>
+  
+  <table id="myTable" style="margin-left:350px;width:800px;">
+    <tr>
+      <td><b>ASSLY-NO</b></td>  
+      <td><b>ASSLY-DESC</b></td>
+      <td><b>DRG-NO</b></td>
+      <td><b>EPC</b></td>
+      <td><b>QTY</b></td> 
+      <td><b>REMARK</b></td> 
+    </tr>
+  </table>
+  <br><br>
+  
+  
+  <table id="myTable1" style="width:800px;margin-left:350px;">
+    <tr>
+      <td><b>PART-NO</b></td>  
+      <td><b>DESCRIPTION</b></td>
+      <td><b>QTY</b></td> 
+      <td><b>PTC</b></td> 
+    </tr>
+  </table>
+  <br>
+  <script>
+      var val1={{val1|safe}};
+      var val2={{val2|safe}};
+      var val3={{val3|safe}};
+      var val4={{val4|safe}};
+      var val5={{val5|safe}};
+      var val6={{val6|safe}};
+      var count={{count|safe}};
+      var data={{d|safe}};
+      var data1={{d1|safe}};
+      var data2={{d2|safe}};
+      var data3={{d3|safe}};
+      var count1={{count1|safe}};
+  
+  
+  for(var i=0;i<count;i++){   
+    var table = document.getElementById("myTable");
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    var cell6 = row.insertCell(5);
+    cell1.innerHTML =val1[i];
+    cell2.innerHTML =val2[i];
+    cell3.innerHTML =val6[i];
+    cell4.innerHTML =val4[i];
+    cell5.innerHTML =val3[i];
+    cell6.innerHTML =val5[i];
+  }
+  
+  for(var j=0;j<count1;j++){   
+    var table = document.getElementById("myTable1");
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    cell1.innerHTML =data[j];
+    cell2.innerHTML =data1[j];
+    cell3.innerHTML =data2[j];
+    cell4.innerHTML =data3[j];
+  } 
+  </script>
+  
+  </body>
+  </html>
