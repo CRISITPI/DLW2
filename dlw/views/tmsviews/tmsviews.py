@@ -575,11 +575,12 @@ def axlewheelpressing_section(request):
                 day2 = s2[0]
                 year2 = s2[2]
                 newout_qty =  year2 + "-" + month2 + "-" + day2
-                if bo_no and bo_date and date and loco_type and pt_no and bo_qty and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
+                if bo_no and bo_date and date and pt_no and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
                     AxleWheelPressing.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,edit_date=date,loco_type=loco_type,axle_no=axle_no,in_qty=newin_qty,out_qty=newout_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make,pt_no=pt_no,bo_qty=bo_qty)
                     AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
                     WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True,dispatch_status=True)
                     WheelMachining.objects.filter(wheel_no=wheelno_nde).update(wheelfitting_status=True,dispatch_status=True)
+                    print('testttttttttttt')
                     messages.success(request, 'Successfully Edited!')
                 else:
                     messages.error(request,"Please Enter S.No.!")
@@ -699,7 +700,7 @@ def axlewheelpressing_section(request):
             else:
                 messages.error(request,"Please Enter S.No.!")
         
-        return HttpResponseRedirect("/axlewheelpressing_section/")
+        return render(request,"TMS/axlewheelpressing_section.html",my_context)
 
     return render(request,"TMS/axlewheelpressing_section.html",my_context)
 
@@ -3704,7 +3705,7 @@ def axlepress_editsno(request):
         myval=list(AxleWheelPressing.objects.filter(axle_no=mysno).values('bo_no','bo_date','loco_type','date','axle_no','wheelno_de','wheelno_nde','bullgear_no','bullgear_make','pt_no','bo_qty','in_qty','out_qty'))
         AxleMachining.objects.filter(axle_no=myval[0]['axle_no']).update(axlefitting_status=False)
         WheelMachining.objects.filter(wheel_no=myval[0]['wheelno_de']).update(wheelfitting_status=False)
-        print(myval)
+        WheelMachining.objects.filter(wheel_no=myval[0]['wheelno_nde']).update(wheelfitting_status=False)
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)  
 

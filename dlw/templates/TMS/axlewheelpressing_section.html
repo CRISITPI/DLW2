@@ -1753,8 +1753,13 @@
                     <div class="col-4">
                       <label for="">Wheel No(NDE)-(New)</label>
                                 <select name="editwheelno_nde" id="editwheelno_nde" class="form-control ll">
-                                        <option value="" hidden selected>Select Wheel No.</option>
-                              </select>
+                                  <datalist id="optionsdata1">     
+                                  <option value="" hidden selected>Select Wheel No.</option>
+                                        {% for c in mywheel1 %}
+                                  <option>{{c.wheel_no}}</option>
+                                  {% endfor %}
+                                </datalist> 
+                                      </select>
                       </div> 
                       <div class="col-4">
                         <label for="">Bull Gear No. -(Old)</label>
@@ -1977,6 +1982,7 @@
         </div>
       </div>
     </div>
+    <input type="text" id="bgm" hidden>
   </form>
 
   <script>
@@ -2081,15 +2087,18 @@
           $("#editpt_no").val(`${response[0].pt_no}`);
           $("#editbo_qty").val(`${response[0].bo_qty}`);
           $("#editdate").val(`${response[0].date}`);
-          //$("#editaxle_no").val(`${response[0].axle_no}`);
-          //$("#editwheelno_de").val(`${response[0].wheelno_de}`);
-          //$("#editwheelno_nde").val(`${response[0].wheelno_nde}`);
-          //$("#editbullgear_no").val(`${response[0].bullgear_no}`);
-          $("#axleno_old").val(`${response[0].axle_no}`);
+            $("#axleno_old").val(`${response[0].axle_no}`);
             $("#wheeldeno_old").val(`${response[0].wheelno_de}`);
             $("#wheelndeno_old").val(`${response[0].wheelno_nde}`);
             $("#bullgearno_old").val(`${response[0].bullgear_no}`);
-          $("#editbullgear_make").val(`${response[0].bullgear_make}`);
+          $("#editaxle_no").val($('#axleno_old').val());
+          $("#editwheelno_de").val($('#wheeldeno_old').val());
+          $("#editwheelno_nde").val($('#wheelndeno_old').val());
+          $("#editbullgear_no").val($('#bullgearno_old').val());
+          
+          $("#bgm").val(response[0].bullgear_make);
+          alert($('#bgm').val());
+          $("#editbullgear_make").val($('#bgm').val());
           $("#hide1").val(`${response[0].axle_no}`);
           $("#hide2").val(`${response[0].wheelno_de}`);
           $("#hide3").val(`${response[0].wheelno_nde}`);
@@ -2658,6 +2667,7 @@
       .querySelector("#editwheelno_de")
       .addEventListener("change", (e) => {
         e.preventDefault();
+
         var wheel_no = $("#editwheelno_de").val();
         var data = { wheel_no };
         $.ajax({
@@ -2667,6 +2677,9 @@
           data: data,
           success: function (response) {
             console.log(response);
+            $("#editwheelno_nde").empty();
+            
+          
             var elementsadded = document.querySelectorAll(".neweledoc");
             if (elementsadded.length > 0) {
               var elementsaddedarr = Array.from(elementsadded);
