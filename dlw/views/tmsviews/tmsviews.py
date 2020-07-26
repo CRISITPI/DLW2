@@ -410,6 +410,28 @@ def axlemachining_section(request):
 
     return render(request,"TMS/axlemachining_section.html",my_context)
 
+def aw_getaxleno(request):
+    obj=[]
+    if request.method == "GET" and request.is_ajax():
+        obj=list(AxleMachining.objects.filter(axlefitting_status=False,axleinspection_status=True).values('axle_no'))
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def aw_getwhenode(request):
+    obj=[]
+    if request.method == "GET" and request.is_ajax():
+        obj=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no'))
+        return JsonResponse(obj, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
+def aw_getwhenonde(request):
+    myval=[]
+    if request.method=="GET" and request.is_ajax():
+        mybo = request.GET.get('wde')  
+        myval = list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True).values('wheel_no').exclude(wheel_no=mybo))
+        return JsonResponse(myval, safe = False)
+    return JsonResponse({"success": False}, status=400)
+
 @login_required
 @role_required(urlpass='/axlewheelpressing_section/')
 def axlewheelpressing_section(request):
@@ -479,7 +501,7 @@ def axlewheelpressing_section(request):
        'mywheel':wheelde,
        'mywheel1':wheelnde,
        'myaxle':axle,
-        'mysno':mysno,
+       'mysno':mysno,
         'mysno0':mysno0,
         'mysno1':mysno1,
         'hhpmysno':hhpmysno,
@@ -505,6 +527,7 @@ def axlewheelpressing_section(request):
             wheelno_nde=request.POST.get('wheelno_nde')
             bullgear_no=request.POST.get('bullgear_no')
             bullgear_make=request.POST.get('bullgear_make')
+            chkinsp=request.POST.get('insp_supplier')
             s1 = indate.split('-')
             month1 = s1[1]
             day1 = s1[0]
@@ -532,6 +555,11 @@ def axlewheelpressing_section(request):
                obj.bullgear_make=bullgear_make
                obj.inspectinspection_status=False
                obj.hhpinspection_status=False
+               if chkinsp:
+                   dts=date[6:] + "-" + date[3:5] + "-" + date[:2]
+                   obj.inspectinspection_status=True
+                   obj.dispatch_to="Inspected"
+                   obj.inspect_date=dts                
                obj.save()
                messages.success(request, 'Successfully Added!')
                AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
@@ -575,12 +603,11 @@ def axlewheelpressing_section(request):
                 day2 = s2[0]
                 year2 = s2[2]
                 newout_qty =  year2 + "-" + month2 + "-" + day2
-                if bo_no and bo_date and date and pt_no and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
+                if bo_no and bo_date and date and pt_no and bo_qty and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
                     AxleWheelPressing.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,edit_date=date,loco_type=loco_type,axle_no=axle_no,in_qty=newin_qty,out_qty=newout_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make,pt_no=pt_no,bo_qty=bo_qty)
                     AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
                     WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True,dispatch_status=True)
                     WheelMachining.objects.filter(wheel_no=wheelno_nde).update(wheelfitting_status=True,dispatch_status=True)
-                    print('testttttttttttt')
                     messages.success(request, 'Successfully Edited!')
                 else:
                     messages.error(request,"Please Enter S.No.!")
@@ -700,7 +727,7 @@ def axlewheelpressing_section(request):
             else:
                 messages.error(request,"Please Enter S.No.!")
         
-        return render(request,"TMS/axlewheelpressing_section.html",my_context)
+        return HttpResponseRedirect("/axlewheelpressing_section/")
 
     return render(request,"TMS/axlewheelpressing_section.html",my_context)
 
@@ -984,7 +1011,7 @@ def bogieassembly_section(request):
        'mysno1':mysno1,
        'myaxle':myaxle,
        'mytm':mytm,
-        'mymsu':mymsu,
+       'mymsu':mymsu,
     }
 
     if request.method=="POST":
@@ -1011,6 +1038,7 @@ def bogieassembly_section(request):
             first_axle_location=request.POST.get('first_axle_location')
             second_axle_location=request.POST.get('second_axle_location')
             third_axle_location=request.POST.get('third_axle_location')
+            chkinsp=request.POST.get('insp_supplier')
             s1 = in_date.split('-')
             month1 = s1[1]
             day1 = s1[0]
@@ -1043,6 +1071,15 @@ def bogieassembly_section(request):
                obj.first_axle_location=first_axle_location
                obj.second_axle_location=second_axle_location
                obj.third_axle_location=third_axle_location
+               s = date.split('-')
+               month1 = s[1]
+               day1 = s[0]
+               year1 = s[2]
+               insp_date =  year1 + "-" + month1 + "-" + day1
+               if (chkinsp):
+                   obj.inspection_status=True
+                   obj.dispatch_to="Inspected"
+                   obj.inspect_date=insp_date
                obj.save()
                messages.success(request, 'Successfully Added!')
                PinionPressing.objects.filter(axle_no=first_axle).update(dispatch_status=True)
@@ -3202,6 +3239,25 @@ def FetchPressInspectDetail(request):
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+def chkaw(request):
+    if request.method=="GET" and request.is_ajax():
+        myax = request.GET.get('axle_no')
+        whl_de = request.GET.get('whlde')
+        whl_nde = request.GET.get('whlnde')
+        axle=list(AxleMachining.objects.filter(axlefitting_status=False,axleinspection_status=True,axle_no=myax).values('axle_no'))
+        whlde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True,wheel_no=whl_de).values('wheel_no'))
+        whlnde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True,wheel_no=whl_nde).values('wheel_no'))
+        if (len(axle)<1):
+            msg=["wrongaxle"]
+        elif (len(whlde)<1):
+            msg=["wrongwheelde"]
+        elif (len(whlnde)<1):
+            msg=["wrongwheelnde"]
+        else:
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
 def wheelpress_inspectsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
@@ -3233,14 +3289,36 @@ def FetchPinionInspectDetail(request):
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
 
+
+def FetchTmnoBogie(request):
+    if request.method=="GET" and request.is_ajax():
+        tm01=request.GET.get('f')
+        tm02=request.GET.get('s')
+        tm03=request.GET.get('t')
+        myval1=(PinionPressing.objects.filter(axle_no=tm01).values('tm_no'))
+        myval2=(PinionPressing.objects.filter(axle_no=tm02).values('tm_no'))
+        myval3=(PinionPressing.objects.filter(axle_no=tm03).values('tm_no'))
+        # myval=[{myval1},{myval2},{myval3}]
+        myval=[]
+        myval.append(myval1[0]["tm_no"])
+        myval.append(myval2[0]["tm_no"])
+        myval.append(myval3[0]["tm_no"])
+        if (len(myval)>0) :
+            msg=myval            
+        else :
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
 def FetchBogieInspectDetail(request):
     if request.method=="GET" and request.is_ajax():
         mysno = request.GET.get('sels_no')
-        myval2=list(BogieAssembly.objects.filter(frameserial_no=mysno,dispatch_to="Inspected").values('torque_support','first_axle','first_coilspring_make','first_gearcase_no','first_gearcase_make','first_back_lash','first_vertical_r','first_vertical_l','first_horizontal_r','first_horizontal_l','second_axle','second_coilspring_make','second_gearcase_no','second_gearcase_make','second_back_lash','second_vertical_r','second_vertical_l','second_horizontal_r','second_horizontal_l','third_axle','third_coilspring_make','third_gearcase_no','third_gearcase_make','third_back_lash','third_vertical_r','third_vertical_l','third_horizontal_r','third_horizontal_l','wheel_set_guide','gear_case_oil','break_rigging_make','sand_box_make','spheri_block_make','elastic_shop_make','horizontal_damper','inspect_date','motor_check','motor_date','lowering_check','lowering_date','dispatch_check','dispatch_check_date','loco_paper','locopaper_date','first_axle','second_axle','third_axle').distinct())
-        l1=len(myval2)
-        if l1>0 :
+        myval=list(BogieAssembly.objects.filter(frameserial_no=mysno,inspection_status=False).values('first_axle','second_axle','third_axle','loco_type').distinct())
+        myval2=list(BogieAssembly.objects.filter(frameserial_no=mysno,dispatch_to="Inspected",inspection_status=True).values('torque_support','break_cylinder_make','inspect_date','first_axle','first_coilspring_make','first_gearcase_no','first_gearcase_make','first_back_lash','first_vertical_r','first_vertical_l','first_horizontal_r','first_horizontal_l','second_axle','second_coilspring_make','second_gearcase_no','second_gearcase_make','second_back_lash','second_vertical_r','second_vertical_l','second_horizontal_r','second_horizontal_l','third_axle','third_coilspring_make','third_gearcase_no','third_gearcase_make','third_back_lash','third_vertical_r','third_vertical_l','third_horizontal_r','third_horizontal_l','wheel_set_guide','gear_case_oil','break_rigging_make','sand_box_make','spheri_block_make','elastic_shop_make','horizontal_damper','inspect_date','motor_check','motor_date','lowering_check','lowering_date','dispatch_check','dispatch_check_date','loco_paper','locopaper_date','first_axle','second_axle','third_axle','loco_type').distinct())
+        if (len(myval)>0) :
+            msg=myval
+        elif (len(myval2)>0) :
             msg=myval2
-            
         else :
             msg=["false"]
         return JsonResponse(msg, safe = False)
@@ -3741,7 +3819,7 @@ def bogieassemb_addbo(request):
 def bogieassemb_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
-        myval=list(BogieAssembly.objects.filter(sno=mysno).values('bo_no','bo_date','pt_no','bo_qty','loco_type','date','frameserial_no','frame_make','frame_type','in_date','out_qty'))
+        myval=list(BogieAssembly.objects.filter(frameserial_no=mysno).values('bo_no','bo_date','pt_no','bo_qty','loco_type','date','frameserial_no','frame_make','frame_type','in_date','out_qty','first_axle','second_axle','third_axle','first_axle_location','second_axle_location','third_axle_location'))
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
 def axlepress_addbo(request):
@@ -3750,8 +3828,6 @@ def axlepress_addbo(request):
         myval = list(Batch.objects.filter(bo_no=mybo).values('ep_type','rel_date','part_no','batch_qty'))
         return JsonResponse(myval, safe = False)
     return JsonResponse({"success":False}, status=400)
-
-
 
 def axle_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -3766,8 +3842,7 @@ def axle_editsno(request):
         myval=list(AxleMachining.objects.filter(axle_no=mysno).values('bo_no','bo_date','pt_no','bo_qty','in_qty','out_qty','date','axlep_no','loco_type','axle_no','axle_make','axle_heatcaseno'))
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)
-
-# 
+ 
 
 def whl_addbo(request):
     if request.method=="GET" and request.is_ajax():
@@ -3851,7 +3926,6 @@ def airboxreport(request):
             }
 
     return render(request,'TMS/airboxreport.html',context)
-
 
 @login_required
 @role_required(urlpass='/miscreport/')

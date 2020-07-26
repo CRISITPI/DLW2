@@ -687,7 +687,11 @@ urlpatterns = [
     path('NearMissIncidentInvestigation/',NearMissIncidentInvestigation,name='NearMissIncidentInvestigation'),
     path('ajax/NearMissIncidentInvestigationDetails/',NearMissIncidentInvestigationDetails,name='NearMissIncidentInvestigationDetails'),
     path('ajax/NearMissInvestigationGetAllDetails/',NearMissInvestigationGetAllDetails,name='NearMissInvestigationGetAllDetails'),
-    
+    path('ajax/FetchTmnoBogie/', FetchTmnoBogie, name='FetchTmnoBogie'),
+    path('ajax/aw_getaxleno',aw_getaxleno,name='aw_getaxleno'),
+    path('ajax/aw_getwhenode',aw_getwhenode,name='aw_getwhenode'),
+    path('ajax/aw_getwhenonde',aw_getwhenonde,name='aw_getwhenonde'),
+    path('ajax/chkaw',chkaw,name='chkaw'),
 
 ]
 

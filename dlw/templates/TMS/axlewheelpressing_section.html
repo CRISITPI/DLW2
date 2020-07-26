@@ -1,13 +1,71 @@
 {% extends 'base.html' %} {% block content %}
 <html lang="en">
   <head>
+    <style>
+      .autocomplete {
+        /*the container must be positioned relative:*/
+        position: relative;
+        display: inline-block;
+      }
+      input {
+        border: 1px solid transparent;
+        background-color: #f1f1f1;
+        padding: 10px;
+        font-size: 16px;
+      }
+      input[type="text"] {
+        background-color: #f1f1f1;
+        width: 100%;
+      }
+      input[type="submit"] {
+        background-color: DodgerBlue;
+        color: #fff;
+      }
+      .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+          0 6px 6px rgba(0, 0, 0, 0.23);
+        z-index: 99;
+        max-height: 180px;
+        overflow: hidden;
+        width: 89%;
+        overflow-y: scroll;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 100%;
+        left: 1;
+        right: 100;
+      }
+      .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+      }
+      .autocomplete-items div:hover {
+        /*when hovering an item:*/
+        background-color: #e9e9e9;
+      }
+      .autocomplete-active {
+        /*when navigating through the items using the arrow keys:*/
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+      }
+    </style>
     <script>
       $(document).ready(function () {
         $("#date").datepicker({
           dateFormat: "dd-mm-yy",
           maxDate: "0",
+          onSelect: function (selected) {
+            $("#out_qty").datepicker("option", "maxDate", selected);
+            $("#in_qty").datepicker("option", "maxDate", selected);
+          },
         });
       });
+     
     </script>
     <script>
       $(document).ready(function () {
@@ -22,6 +80,9 @@
         $("#in_qty").datepicker({
           dateFormat: "dd-mm-yy",
           maxDate: "0",
+          onSelect: function (selected) {
+            $("#out_qty").datepicker("option", "minDate", selected);
+          },
         });
       });
     </script>
@@ -30,6 +91,9 @@
         $("#out_qty").datepicker({
           dateFormat: "dd-mm-yy",
           maxDate: "0",
+          onSelect: function (selected) {
+            $("#in_qty").datepicker("option", "maxDate", selected);
+          },
         });
       });
     </script>
@@ -38,6 +102,9 @@
         $("#editin_qty").datepicker({
           dateFormat: "dd-mm-yy",
           maxDate: "0",
+          onSelect: function (selected) {
+            $("#editout_qty").datepicker("option", "minDate", selected);
+          },
         });
       });
     </script>
@@ -46,6 +113,9 @@
         $("#editout_qty").datepicker({
           dateFormat: "dd-mm-yy",
           maxDate: "0",
+          onSelect: function (selected) {
+            $("#editin_qty").datepicker("option", "maxDate", selected);
+          },
         });
       });
     </script>
@@ -210,6 +280,7 @@
                 margin-top: 2%;
                 margin-left: 2%;
               "
+              onclick="editref()"
             >
               <font color="white">EditRecord</font>
             </button>
@@ -251,42 +322,42 @@
             {% endif %}
           </center>
         </tr>
-        <tr>
-          <th>Serial No.</th>
-          <th>Batch Order No.</th>
-          <th>Part No. &nbsp;</th>
-          <th>Batch Qty</th>
-          <th>Batch Order Date &nbsp;</th>
-          <th>Loco Type&nbsp;&nbsp;</th>
-          <th>Date &nbsp;&nbsp;&nbsp;&nbsp;</th>
-          <th>Axle No. &nbsp;&nbsp;&nbsp;&nbsp;</th>
-          <th>Wheel No(DE) &nbsp;</th>
-          <th>Wheel No(NDE)</th>
-          <th>Bull Gear No. &nbsp;</th>
-          <th>Bull Gear Make</th>
-          <th>Machine In Date &nbsp;</th>
-          <th>Machine Out Date &nbsp;</th>
-          <th>Inspection Status</th>
-          <th>Inspection Date &nbsp;</th>
+         <tr class="container-fluid">
+          <th style="width: 60px; text-align: center;">Serial No.</th>
+          <th style="width: 100px; text-align: center; ">Batch Order No.</th>
+          <th style="width: 90px; text-align: center; ">Part No.</th>
+          <th style="width: 70px; text-align: center; ">Batch Qty</th>
+          <th style="width: 100px; text-align: center; ">Batch Order Date</th>
+          <th style="width: 60px; text-align: center; ">Loco Type</th>
+          <th style="width: 100px; text-align: center; ">Date</th>
+          <th style="width: 90px; text-align: center; ">Axle No.</th>
+          <th style="width: 80px; text-align: center; ">Wheel No(DE)</th>
+          <th style="width: 80px; text-align: center; ">Wheel No(NDE)</th>
+          <th style="width: 100px; text-align: center; ">Bull Gear No.</th>
+          <th style="width: 90px; text-align: center; ">Bull Gear Make</th>
+          <th style="width: 100px; text-align: center; ">Machine In Date</th>
+          <th style="width: 100px; text-align: center; ">Machine Out Date</th>
+          <th style="width: 100px; text-align: center;">Inspection Status</th>
+          <th style="width: 100px; text-align: center; ">Inspection Date</th>
         </tr>
         {% for objec in object %}
-        <tr>
-          <td>{{objec.sno}} <br /><br /></td>
-          <td>{{objec.bo_no}} <br /><br /></td>
-          <td>{{objec.pt_no}} <br /><br /></td>
-          <td>{{objec.bo_qty}} <br /><br /></td>
-          <td>{{objec.bo_date}} <br /><br /></td>
-          <td>{{objec.loco_type}} <br /><br /></td>
-          <td>{{objec.date}} <br /><br /></td>
-          <td>{{objec.axle_no}} <br /><br /></td>
-          <td>{{objec.wheelno_de}} <br /><br /></td>
-          <td>{{objec.wheelno_nde}} <br /><br /></td>
-          <td>{{objec.bullgear_no}} <br /><br /></td>
-          <td>{{objec.bullgear_make}} <br /><br /></td>
-          <td>{{objec.in_qty}} <br /><br /></td>
-          <td>{{objec.out_qty}} <br /><br /></td>
-          <td>{{objec.dispatch_to}} <br /><br /></td>
-          <td>{{objec.inspect_date}} <br /><br /></td>
+        <tr class="container-fluid">
+           <td style="width: 60px; text-align: center;">{{objec.sno}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.bo_no}}   <br><br></td>
+           <td style="width: 90px; text-align: center;">{{objec.pt_no}}   <br><br></td>
+           <td style="width: 70px; text-align: center;">{{objec.bo_qty}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.bo_date}}  <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.loco_type}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.date}}   <br><br></td>
+           <td style="width: 90px; text-align: center;">{{objec.axle_no}}   <br><br></td>
+           <td style="width: 80px; text-align: center;">{{objec.wheelno_de}}   <br><br></td>
+           <td style="width: 80px; text-align: center;">{{objec.wheelno_nde}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.bullgear_no}}   <br><br></td>
+           <td style="width: 90px; text-align: center;">{{objec.bullgear_make}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.in_qty}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.out_qty}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.dispatch_to}}   <br><br></td>
+           <td style="width: 100px; text-align: center;">{{objec.inspect_date}}   <br><br></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -400,49 +471,47 @@
               </div>
 
               <div class="row">
-                <div class="col-6">
+                <div class="autocomplete col-6" style="width: 100px;">
                   <label for="">Axle No.</label>
-                  <select
+                  <input
+                    type="text"
                     name="axle_no"
                     id="axle_no"
                     class="form-control ll"
+                    autocomplete="off"
+                    placeholder="Select Axle No."
                     required
-                  >
-                    <option value="" hidden selected>Select Axle No.</option>
-                    {% for d in myaxle %}
-                    <option>{{d.axle_no}}</option>
-                    {% endfor %}
-                  </select>
+                  />
                 </div>
-                <div class="col-6">
+
+                <div class="autocomplete col-6">
                   <label for="">Wheel No(DE)</label>
-                  <select
+                  <input
+                    type="text"
                     name="wheelno_de"
                     id="wheelno_de"
                     class="form-control ll"
+                    autocomplete="off"
+                    placeholder="Wheel No.(DE)"
                     required
-                  >
-                    <datalist id="optionsdata">
-                      <option value="" hidden selected>Select Wheel No.</option>
-                      {% for c in mywheel %}
-                      <option>{{c.wheel_no}}</option>
-                      {% endfor %}
-                    </datalist>
-                  </select>
+                  />
                 </div>
               </div>
 
               <div class="row">
-                <div class="col-6">
+                <div class="autocomplete col-6">
                   <label for="">Wheel No(NDE)</label>
-                  <select
+                  <input
+                    type="text"
                     name="wheelno_nde"
                     id="wheelno_nde"
                     class="form-control ll"
-                  >
-                    <option value="" hidden selected>Select Wheel No.</option>
-                  </select>
+                    autocomplete="off"
+                    placeholder="Wheel No.(NDE)"
+                    required
+                  />
                 </div>
+
                 <div class="col-6">
                   <label for="">Bull Gear No.</label>
                   <input
@@ -458,16 +527,16 @@
               <div class="row">
                 <div class="col-6">
                   <label for="">Bull Gear Make</label>
-                  <select
+                  <input
+                    type="text"
                     name="bullgear_make"
-                    id="bullgear_make"
                     class="form-control ll"
+                    placeholder="Select Bull Gear Make."
+                    list="bullgear_make"
                     required
-                  >
-                    <option value="" hidden selected
-                      >Select Bull Gear Make.</option
-                    >
-                    <option>GGAG</option>
+                  />
+                    <datalist id="bullgear_make">
+                    <option>GGAC</option>
                     <option>KPC</option>
                     <option>BHEL</option>
                     <option>TT</option>
@@ -475,7 +544,7 @@
                     <option>KIRLOSKAR</option>
                     <option>ELECON</option>
                     <option>SAN</option>
-                  </select>
+                  </datalist>
                 </div>
                 <div class="col-6">
                   <label for="">Machine In Date</label>
@@ -502,10 +571,23 @@
                     readonly
                   />
                 </div>
+                <div id="axeno" hidden>
+                  {% for d in myaxle %} {{d.axle_no}} {% endfor %}
+                </div>
               </div>
             </div>
 
             <div class="modal-footer">
+              <label class="mr-auto">
+                <input
+                  type="checkbox"
+                  name="insp_supplier"
+                  class="insp_supplier"
+                  value="inspected"
+                  id="insp_supplier"
+                />
+                Inspected By Supplier
+              </label>
               <button
                 type="button"
                 class="btn btn-secondary"
@@ -569,6 +651,7 @@
                       type="radio"
                       value="notinspected"
                       name="optradio"
+                      onclick="ref()"
                       checked
                     />
                     Not Inspected</label
@@ -576,7 +659,7 @@
                 </div>
                 <div class="col-3">
                   <label class="radio-inline"
-                    ><input type="radio" value="inspected" name="optradio" />
+                    ><input type="radio" value="inspected" name="optradio" onclick="ref()" />
                     Inspected</label
                   >
                 </div>
@@ -1054,7 +1137,7 @@
                 type="submit"
                 name="submit"
                 class="btn btn-primary"
-                id="savebtn"
+                id="inspectbtn"
                 value="Inspect"
               />
             </div>
@@ -1105,6 +1188,7 @@
                       type="radio"
                       value="notinspected"
                       name="optradiohhp"
+                      onclick="hhpref()"
                       checked
                     />
                     Not Inspected</label
@@ -1112,7 +1196,7 @@
                 </div>
                 <div class="col-3">
                   <label class="radio-inline"
-                    ><input type="radio" value="inspected" name="optradiohhp" />
+                    ><input type="radio" value="inspected" name="optradiohhp" onclick="hhpref()" />
                     Inspected</label
                   >
                 </div>
@@ -1641,7 +1725,7 @@
                 type="submit"
                 name="submit"
                 class="btn btn-primary"
-                id="savebtn"
+                id="hhpinspectbtn"
                 value="InspectHHP"
               />
             </div>
@@ -1678,134 +1762,261 @@
 
           <form method="POST" class="needs-validation">
             {% csrf_token %}
-            <div class="modal-body"> 
-                <div class="row">
-                    <div class="col-4">
-                        <label for="">AXLE No.</label>
-                        <select name="editsno" id="editsno" class="form-control ll" required>
-                            <option value="" hidden selected>Select AXLE No.</option>  
-                            {% for y in mysno %}
-                            <option>{{y.axle_no}}</option>
-                            {% endfor %}
-                    </select> 
-                    </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-4">
+                  <label for="">AXLE No.</label>
+                  <select
+                    name="editsno"
+                    id="editsno"
+                    class="form-control ll"
+                    required
+                  >
+                    <option value="" hidden selected>Select AXLE No.</option>
+                    {% for y in mysno %}
+                    <option>{{y.axle_no}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
 
-                    <div class="col-4">
-                        <h6><label for="">Batch Order No.</label></h6>
-                        <input type="text" class="form-control" name="editbo_no" id="editbo_no" required readonly>
-                    </div>
-                            <div class="col-4">
-                                <h6><label for="">Batch Order Date</label></h6>
-                                <input type="text" class="form-control" name="editbo_date" id="editbo_date" required readonly>
-                            </div>
-                          
-                                  <div class="col-4">
-                                          <h6><label>Part No.</label></h6>
-                                          <input type="text" class="form-control" name="editpt_no" id="editpt_no" required readonly>
-                                  </div>
-                                  <div class="col-4">
-                                          <h6><label>Batch Qty</label></h6>
-                                          <input type="text" class="form-control" name="editbo_qty" id="editbo_qty" required readonly>
-                                  </div>
-                              
-                             <div class="col-4">
-                                    <h6><label for="">Loco Type</label></h6>
-                                    <input type="text" class="form-control" name="editlocos" id="editlocos" required readonly>
-                                </div>
-                                <div class="col-4">
-                                        <label for="">Date</label>
-                                        <input type="text" name="editdate" id="editdate" class="form-control" placeholder="dd-mm-yyyy" required readonly>
-                                </div>
-                                <div class="col-4">
-                                  <label for="">Axle No. -(Old)</label>
-                                  <input type="text" class="form-control" name="axleno_old" id="axleno_old" maxlength="20" disabled>
+                <div class="col-4">
+                  <h6><label for="">Batch Order No.</label></h6>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editbo_no"
+                    id="editbo_no"
+                    required
+                    readonly
+                  />
+                </div>
+                <div class="col-4">
+                  <h6><label for="">Batch Order Date</label></h6>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editbo_date"
+                    id="editbo_date"
+                    required
+                    readonly
+                  />
+                </div>
 
-                                </div>
-                                <div class="col-4">
-                                  <label for="">Axle No.-(New)</label>
-                                  <select name="editaxle_no" id="editaxle_no" class="form-control ll" required>
-                                          <option value="" hidden selected>Select Axle No.</option>  
-                                          {% for d in myaxle %}
-                                          <option>{{d.axle_no}}</option>
-                                          {% endfor %}
-                                  </select> 
-                                </div>
-                                <div class="col-4">
-                                  <label for="">Wheel No(DE)-(Old)</label>
-                                  <input type="text" class="form-control" name="wheeldeno_old" id="wheeldeno_old" maxlength="20" disabled>
+                <div class="col-4">
+                  <h6><label>Part No.</label></h6>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editpt_no"
+                    id="editpt_no"
+                    required
+                    readonly
+                  />
+                </div>
+                <div class="col-4">
+                  <h6><label>Batch Qty</label></h6>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editbo_qty"
+                    id="editbo_qty"
+                    required
+                    readonly
+                  />
+                </div>
 
-                                </div>
-                        <div class="col-4">
-                          <label for="">Wheel No(DE)-(New)</label>
-                          <select name="editwheelno_de" id="editwheelno_de" class="form-control ll" required>
-                            <datalist id="optionsdata">
-                              <option value="" hidden selected>Select Wheel No.</option>  
-                                  {% for c in mywheel %}
-                                  <option>{{c.wheel_no}}</option>
-                                  {% endfor %}
-                           </datalist>
-                          </select> 
-                    </div>
-                    <div class="col-4">
-                      <label for="">Wheel No(NDE)-(Old)</label>
-                      <input type="text" class="form-control" name="wheelndeno_old" id="wheelndeno_old" maxlength="20" disabled>
-                    </div>
-                    <div class="col-4">
-                      <label for="">Wheel No(NDE)-(New)</label>
-                                <select name="editwheelno_nde" id="editwheelno_nde" class="form-control ll">
-                                  <datalist id="optionsdata1">     
-                                  <option value="" hidden selected>Select Wheel No.</option>
-                                        {% for c in mywheel1 %}
-                                  <option>{{c.wheel_no}}</option>
-                                  {% endfor %}
-                                </datalist> 
-                                      </select>
-                      </div> 
-                      <div class="col-4">
-                        <label for="">Bull Gear No. -(Old)</label>
-                        <input type="text" class="form-control" name="bullgearno_old" id="bullgearno_old" maxlength="20" disabled>
+                <div class="col-4">
+                  <h6><label for="">Loco Type</label></h6>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editlocos"
+                    id="editlocos"
+                    required
+                    readonly
+                  />
+                </div>
+                <div class="col-4">
+                  <label for="">Date</label>
+                  <input
+                    type="text"
+                    name="editdate"
+                    id="editdate"
+                    class="form-control"
+                    placeholder="dd-mm-yyyy"
+                    required
+                    readonly
+                  />
+                </div>
+                <div class="col-4">
+                  <label for="">Axle No. -(Old)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="axleno_old"
+                    id="axleno_old"
+                    maxlength="20"
+                    disabled
+                  />
+                </div>
+                <div class="autocomplete col-4">
+                  <label for="">Axle No.-(New)</label>
+                  <input
+                    type="text"
+                    name="editaxle_no"
+                    id="editaxle_no"
+                    class="form-control ll"
+                    autocomplete="off"
+                    placeholder="Select Axle No."
+                    required
+                  />
+                </div>
+                <div class="col-4">
+                  <label for="">Wheel No(DE)-(Old)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="wheeldeno_old"
+                    id="wheeldeno_old"
+                    maxlength="20"
+                    disabled
+                  />
+                </div>
+                <div class="autocomplete col-4">
+                  <label for="">Wheel No(DE)-(New)</label>
+                  <input
+                    type="text"
+                    name="editwheelno_de"
+                    id="editwheelno_de"
+                    class="form-control ll"
+                     autocomplete="off"
+                    placeholder="Wheel No.(DE)"
+                    required
+                  />
+                    
+                </div>
+                <div class="col-4">
+                  <label for="">Wheel No(NDE)-(Old)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="wheelndeno_old"
+                    id="wheelndeno_old"
+                    maxlength="20"
+                    disabled
+                  />
+                </div>
+                <div class="autocomplete col-4">
+                  <label for="">Wheel No(NDE)-(New)</label>
+                  <input
+                    type="text"
+                    name="editwheelno_nde"
+                    id="editwheelno_nde"
+                    class="form-control ll"
+                    autocomplete="off"
+                    placeholder="Wheel No.(NDE)"
+                  />
+                    
+                </div>
+                <div class="col-4">
+                  <label for="">Bull Gear No. -(Old)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="bullgearno_old"
+                    id="bullgearno_old"
+                    maxlength="20"
+                    disabled
+                  />
+                </div>
+                <div class="col-4">
+                  <label for="">Bull Gear No. -(New)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editbullgear_no"
+                    id="editbullgear_no"
+                    maxlength="20"
+                    required
+                  />
+                </div>
 
-                      </div>
-                        <div class="col-4">
-                                <label for="">Bull Gear No. -(New)</label>
-                                <input type="text" class="form-control" name="editbullgear_no" id="editbullgear_no" maxlength="20" required>
-                        </div> 
-
-                        <div class="col-4">
-                          <label for="">Bull Gear Make</label>
-                          <select name="editbullgear_make" id="editbullgear_make" class="form-control ll" required >
-                            <option value="" hidden selected>Select Bull Gear Make.</option>
-                              <option>GGAC</option>
-                              <option>KPC</option>
-                              <option>BHEL</option>
-                              <option>TT</option>
-                              <option>TRINA</option>
-                              <option>KIRLOSKAR</option>
-                              <option>ELECON</option>
-                              <option>SAN</option>
-                          </select>
-                  </div>
-                              <div class="col-4">
-                                  <label for="">Machine In Date</label>
-                                  <input type="text" class="form-control" name="editin_qty" id="editin_qty" placeholder="dd-mm-yyyy" readonly>
-                              </div>
-                              <div class="col-4">
-
-                                  <label for="">Machine Out Date</label>
-                                  <input type="text" class="form-control" name="editout_qty" id="editout_qty" placeholder="dd-mm-yyyy" readonly>
-                              </div>
-                              <div class="col-4">
-                                <input type="hidden" class="form-control" name="hide1" id="hide1" placeholder="" required>
-                            </div>
-                            <div class="col-4">
-                              <input type="hidden" class="form-control" name="hide2" id="hide2" placeholder="" required>
-                          </div>
-                          <div class="col-4">
-                            <input type="hidden" class="form-control" name="hide3" id="hide3" placeholder="" required>
-                        </div>
-
-        </div>  
-    </div> 
+                <div class="col-4">
+                  <label for="">Bull Gear Make</label>
+                  <input
+                    type="text"
+                    name="editbullgear_make"
+                    id="editbullgear_made"
+                    list="editbullgear_make"
+                    class="form-control ll"
+                    placeholder="Select Bull Gear Make."
+                    required
+                  >
+                    <datalist id="editbullgear_make">
+                    <option>GGAC</option>
+                    <option>KPC</option>
+                    <option>BHEL</option>
+                    <option>TT</option>
+                    <option>TRINA</option>
+                    <option>KIRLOSKAR</option>
+                    <option>ELECON</option>
+                    <option>SAN</option>
+                  </datalist>
+                </div>
+                <div class="col-4">
+                  <label for="">Machine In Date</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editin_qty"
+                    id="editin_qty"
+                    placeholder="dd-mm-yyyy"
+                    readonly
+                  />
+                </div>
+                <div class="col-4">
+                  <label for="">Machine Out Date</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="editout_qty"
+                    id="editout_qty"
+                    placeholder="dd-mm-yyyy"
+                    readonly
+                  />
+                </div>
+                <div class="col-4">
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    name="hide1"
+                    id="hide1"
+                    placeholder=""
+                    required
+                  />
+                </div>
+                <div class="col-4">
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    name="hide2"
+                    id="hide2"
+                    placeholder=""
+                    required
+                  />
+                </div>
+                <div class="col-4">
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    name="hide3"
+                    id="hide3"
+                    placeholder=""
+                    required
+                  />
+                </div>
+              </div>
+            </div>
             <div class="modal-footer">
               <button
                 type="button"
@@ -1982,7 +2193,7 @@
         </div>
       </div>
     </div>
-    <input type="text" id="bgm" hidden>
+<input type="text" id="bgm" hidden>
   </form>
 
   <script>
@@ -2050,6 +2261,28 @@
       });
     }
 
+    function editref() {
+      document.getElementById("editsno").value = "";
+      document.getElementById("editbo_no").value = "";
+      document.getElementById("editbo_date").value = "";
+      document.getElementById("editpt_no").value = "";
+      document.getElementById("editbo_qty").value = "";
+      document.getElementById("editlocos").value = "";
+      document.getElementById("editdate").value = "";
+      document.getElementById("editin_qty").value = "";
+      document.getElementById("editout_qty").value = "";
+      document.getElementById("axleno_old").value = "";
+      document.getElementById("editaxle_no").value = "";
+      document.getElementById("wheeldeno_old").value = "";
+      document.getElementById("editwheelno_de").value = "";
+      document.getElementById("wheelndeno_old").value = "";
+      document.getElementById("editwheelno_nde").value = "";
+      document.getElementById("bullgearno_old").value = "";
+      document.getElementById("editbullgearno_nde").value = "";
+      document.getElementById("editbullgear_made").value = "";
+     
+    }
+
     $("#editsno").change(function (e) {
       e.preventDefault();
       var sels_no = $(this).val();
@@ -2098,7 +2331,7 @@
           
           $("#bgm").val(response[0].bullgear_make);
           alert($('#bgm').val());
-          $("#editbullgear_make").val($('#bgm').val());
+          $("#editbullgear_made").val($('#bgm').val());
           $("#hide1").val(`${response[0].axle_no}`);
           $("#hide2").val(`${response[0].wheelno_de}`);
           $("#hide3").val(`${response[0].wheelno_nde}`);
@@ -2132,13 +2365,6 @@
         dataType: "json",
         data: data,
         success: function (response) {
-          console.log(response);
-          console.log(response[0].wheelno_de);
-          console.log(response[0].wheelno_nde);
-          console.log(response[0].bullgear_no);
-          console.log(response[0].bullgear_make);
-          console.log(response[0].axle_no);
-
           $("#inspectwheelno_de").val(`${response[0].wheelno_de}`);
           $("#inspectwheelno_nde").val(`${response[0].wheelno_nde}`);
           $("#inspectaxle_no").val(`${response[0].axle_no}`);
@@ -2237,6 +2463,102 @@
       });
     });
 
+    $("#in_qty").click(function (e) {
+      e.preventDefault();
+      var dt = $("#date").val();
+      if (dt.length == 0) {
+        $("#date").focus();
+        alert("Enter Date first");
+      }
+    });
+    $("#out_qty").click(function (e) {
+      e.preventDefault();
+      var dt = $("#in_qty").val();
+      var dt1 = $("#date").val();
+      if (dt1.length == 0) {
+        $("#date").focus();
+        alert("Enter Date first");
+      } else if (dt.length == 0) {
+        $("#in_qty").focus();
+        alert("Enter Machine In Date first");
+      }
+    });
+
+    document.querySelector("#bullgear_no").addEventListener("click", (e) => {
+      e.preventDefault();
+      $.ajax({
+        type: "GET",
+        url: "{% url 'chkaw' %}",
+        dataType: "json",
+        data: {
+          axle_no: $("#axle_no").val(),
+          whlde: $("#wheelno_de").val(),
+          whlnde: $("#wheelno_nde").val(),
+        },
+        success: function (response) {
+          if (response == "wrongaxle") {
+            alert(
+              "This Axle No. does not exist. Please Enter correct Axle Motor No."
+            );
+            document.getElementById("axle_no").value = "";
+            $("#axle_no").focus();
+          } else if (response == "wrongwheelde") {
+            alert(
+              "This Wheel No.(DE) does not exist. Please Enter correct Wheel No.(DE)"
+            );
+            document.getElementById("wheelno_de").value = "";
+            document.getElementById("wheelno_nde").value = "";
+            $("#wheelno_de").focus();
+          } else if (response == "wrongwheelnde") {
+            alert(
+              "This Wheel No.(NDE) does not exist. Please Enter correct Wheel No.(NDE)"
+            );
+            document.getElementById("wheelno_nde").value = "";
+            $("#wheelno_nde").focus();
+            
+          }
+          else ;
+          
+        },
+      });
+    });
+
+    document.querySelector("#editbullgear_no").addEventListener("click", (e) => {
+      e.preventDefault();
+      $.ajax({
+        type: "GET",
+        url: "{% url 'chkaw' %}",
+        dataType: "json",
+        data: {
+          axle_no: $("#editaxle_no").val(),
+          whlde: $("#editwheelno_de").val(),
+          whlnde: $("#editwheelno_nde").val(),
+        },
+        success: function (response) {
+          if (response == "wrongaxle") {
+            alert(
+              "This Axle No. does not exist. Please Enter correct Axle Motor No."
+            );
+            document.getElementById("axle_no").value = "";
+            $("#editaxle_no").focus();
+          } if (response == "wrongwheelde") {
+            alert(
+              "This Wheel No.(DE) does not exist. Please Enter correct Wheel No.(DE)"
+            );
+            document.getElementById("editwheelno_de").value = "";
+            document.getElementById("editwheelno_nde").value = "";
+            $("#editwheelno_de").focus();
+          } if (response == "wrongwheelnde") {
+            alert(
+              "This Wheel No.(NDE) does not exist. Please Enter correct Wheel No.(NDE)"
+            );
+            document.getElementById("editwheelno_nde").value = "";
+            $("#editwheelno_nde").focus();
+          }
+        },
+      });
+    });
+
     function funct() {
       if (
         document.getElementById("bullgear_make").value == "" ||
@@ -2253,6 +2575,221 @@
       }
     }
 
+    function autocomplete(inp, arr) {
+      var currentFocus;
+      inp.addEventListener("input", function (e) {
+        var a,
+          b,
+          i,
+          val = this.value;
+        closeAllLists();
+        if (!val) {
+          return false;
+        }
+        currentFocus = -1;
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        this.parentNode.appendChild(a);
+        for (i = 0; i < arr.length; i++) {
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            b = document.createElement("DIV");
+            b.innerHTML =
+              "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            b.addEventListener("click", function (e) {
+              inp.value = this.getElementsByTagName("input")[0].value;
+              closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+      });
+      inp.addEventListener("keydown", function (e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          currentFocus++;
+          addActive(x);
+        } else if (e.keyCode == 38) {
+          currentFocus--;
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          e.preventDefault();
+          if (currentFocus > -1) {
+            if (x) x[currentFocus].click();
+          }
+        }
+      });
+      function addActive(x) {
+        if (!x) return false;
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = x.length - 1;
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        for (var i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+      function closeAllLists(elmnt) {
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+            x[i].parentNode.removeChild(x[i]);
+          }
+        }
+      }
+
+      document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+      });
+    }
+
+    var axleno = [" "];
+    var axleno1 = [" "];
+    document.querySelector("#axle_no").addEventListener("change", (e) => {
+      e.preventDefault();
+      document.getElementById("bullgear_no").value ="";
+    });
+    document.querySelector("#axle_no").addEventListener("focus", (e) => {
+      e.preventDefault();
+      $.ajax({
+        type: "GET",
+        url: "{% url 'aw_getaxleno' %}",
+        dataType: "json",
+
+        success: function (response) {
+          for (i = 0; i < response.length; i++) {
+            axleno.push(response[i].axle_no.toString());
+          }
+        },
+      });
+    });
+
+    document.querySelector("#editaxle_no").addEventListener("change", (e) => {
+      e.preventDefault();
+      document.getElementById("editbullgear_no").value ="";
+    });
+    document.querySelector("#editaxle_no").addEventListener("focus", (e) => {
+      e.preventDefault();
+      $.ajax({
+        type: "GET",
+        url: "{% url 'aw_getaxleno' %}",
+        dataType: "json",
+
+        success: function (response) {
+          for (i = 0; i < response.length; i++) {
+            axleno1.push(response[i].axle_no.toString());
+          }
+        },
+      });
+    });
+
+    var whenode = [" "];
+    var whenode1 = [" "];
+    document.querySelector("#wheelno_de").addEventListener("change", (e) => {
+      e.preventDefault();
+      document.getElementById("wheelno_nde").value ="";
+    });
+    document.querySelector("#wheelno_de").addEventListener("focus", (e) => {
+      e.preventDefault();
+      $.ajax({
+        type: "GET",
+        url: "{% url 'aw_getwhenode' %}",
+        dataType: "json",
+        success: function (response) {
+          for (i = 0; i < response.length; i++) {
+            whenode.push(response[i].wheel_no.toString());
+          }
+        },
+      });
+    });
+
+    document.querySelector("#editwheelno_de").addEventListener("change", (e) => {
+      e.preventDefault();
+      document.getElementById("editwheelno_nde").value ="";
+    });
+    document.querySelector("#editwheelno_de").addEventListener("focus", (e) => {
+      e.preventDefault();
+      $.ajax({
+        type: "GET",
+        url: "{% url 'aw_getwhenode' %}",
+        dataType: "json",
+        success: function (response) {
+          for (i = 0; i < response.length; i++) {
+            whenode1.push(response[i].wheel_no.toString());
+          }
+        },
+      });
+    });
+
+   
+    $("#wheelno_nde").click(function (e) {
+      e.preventDefault();
+      var wd = $("#wheelno_de").val();
+      if (wd.length == 0) {
+        $("#wheelno_de").focus();
+        alert("Enter Wheel NO.(DE) first");
+      }
+    });
+
+    $("#editwheelno_nde").focus(function (e) {
+      e.preventDefault();
+      var wd = $("#editwheelno_de").val();
+      if (wd.length == 0) {
+        $("#editwheelno_de").focus();
+        alert("Enter Wheel NO.(DE) first");
+      }
+    });
+
+    var whenonde = [" "];
+    var whenonde1 = [" "];
+    document.querySelector("#wheelno_nde").addEventListener("focus", (e) => {
+    var wde= document.getElementById("wheelno_de").value;
+    e.preventDefault();
+    var data = { wde };
+    console.log(data);
+      $.ajax({
+        type: "GET",
+        url: "{% url 'aw_getwhenonde' %}",
+        data: data,
+        dataType: "json",
+        success: function (response) {
+          for (i = 0; i < response.length; i++) {
+            whenonde.push(response[i].wheel_no.toString());
+          }
+        },
+      });
+    });
+
+    document.querySelector("#editwheelno_nde").addEventListener("focus", (e) => {
+    var wde= document.getElementById("editwheelno_de").value;
+    e.preventDefault();
+    var data = { wde };
+    console.log(data);
+      $.ajax({
+        type: "GET",
+        url: "{% url 'aw_getwhenonde' %}",
+        data: data,
+        dataType: "json",
+        success: function (response) {
+          for (i = 0; i < response.length; i++) {
+            whenonde1.push(response[i].wheel_no.toString());
+          }
+        },
+      });
+    });
+
+    autocomplete(document.getElementById("axle_no"), axleno);
+    autocomplete(document.getElementById("editaxle_no"), axleno1);
+    autocomplete(document.getElementById("wheelno_de"), whenode);
+    autocomplete(document.getElementById("editwheelno_de"), whenode1);
+    autocomplete(document.getElementById("wheelno_nde"), whenonde);
+    autocomplete(document.getElementById("editwheelno_nde"), whenonde1);
+
     function editfunct() {
       if (
         document.getElementById("editbullgear_make").value == "" ||
@@ -2267,6 +2804,78 @@
         alert("Please enter all the fields.");
         return false;
       }
+    }
+
+    function ref() {
+      document.getElementById("wheelpress").value = "";
+      document.getElementById("inspectwheelno_de").value = "";
+      document.getElementById("inspectwheelno_nde").value = "";
+      document.getElementById("inspectaxle_no").value = "";
+      document.getElementById("inspectaxle_make").value = "";
+      document.getElementById("inspectbullgear_no").value = "";
+      document.getElementById("inspectbullgear_make").value = "";
+      document.getElementById("inspectwheel_de_make").value = "";
+      document.getElementById("inspectwheel_nde_make").value = "";
+      document.getElementById("inspectwheel_nde_pressure").value = "";
+      document.getElementById("inspectwheel_de_pressure").value = "";
+      document.getElementById("inspectbullgear_pressure").value = "";
+      document.getElementById("inspectmsu_unit_no").value = "";
+      document.getElementById("inspectmsu_unit_make").value = "";
+      document.getElementById("inspectaxle_box_node").value = "";
+      document.getElementById("inspectaxle_box_makede").value = "";
+      document.getElementById("inspectaxle_box_clearancede").value = "";
+      document.getElementById("inspectaxle_box_nonde").value = "";
+      document.getElementById("inspectaxle_box_makende").value = "";
+      document.getElementById("inspectaxle_box_clearancende").value = "";
+      document.getElementById("inspectmsu_bearing_de_make").value = "";
+      document.getElementById("inspectmsu_bearing_nde_make").value = "";
+      document.getElementById("inspectcru_bearing_no_de").value = "";
+      document.getElementById("inspectcru_bearing_make_de").value = "";
+      document.getElementById("inspectcru_bearing_pressure_de").value = "";
+      document.getElementById("inspectcru_bearing_no_nde").value = "";
+      document.getElementById("inspectcru_bearing_make_nde").value = "";
+      document.getElementById("inspectcru_bearing_pressure_nde").value = "";
+      document.getElementById("inspectdate").value = "";
+      document.getElementById("inspectinspector_name").value = "";
+      document.getElementById("inspectaxialplay_de").value = "";
+      document.getElementById("inspectaxialplay_nde").value = "";
+      document.getElementById("inspectwheel_distance").value = "";
+    }
+
+    function hhpref() {
+      document.getElementById("wheelpresshhp").value = "";
+      document.getElementById("hhpinspectwheelno_de").value = "";
+      document.getElementById("hhpinspectwheelno_nde").value = "";
+      document.getElementById("hhpinspectaxle_no").value = "";
+      document.getElementById("hhpinspectaxle_make").value = "";
+      document.getElementById("hhpinspectbullgear_no").value = "";
+      document.getElementById("hhpinspectbullgear_make").value = "";
+      document.getElementById("hhpinspectwheel_de_make").value = "";
+      document.getElementById("hhpinspectwheel_nde_make").value = "";
+      document.getElementById("hhpinspectwheel_nde_pressure").value = "";
+      document.getElementById("hhpinspectwheel_de_pressure").value = "";
+      document.getElementById("hhpinspectbullgear_pressure").value = "";
+      document.getElementById("hhpinspectmsu_unit_no").value = "";
+      document.getElementById("hhpinspectmsu_unit_make").value = "";
+      document.getElementById("hhpinspectaxle_box_node").value = "";
+      document.getElementById("hhpinspectaxle_box_makede").value = "";
+      document.getElementById("hhpinspectaxle_box_clearancede").value = "";
+      document.getElementById("hhpinspectaxle_box_nonde").value = "";
+      document.getElementById("hhpinspectaxle_box_makende").value = "";
+      document.getElementById("hhpinspectaxle_box_clearancende").value = "";
+      document.getElementById("hhpinspectmsu_bearing_de_make").value = "";
+      document.getElementById("hhpinspectmsu_bearing_nde_make").value = "";
+      document.getElementById("hhpinspectcru_bearing_no_de").value = "";
+      document.getElementById("hhpinspectcru_bearing_make_de").value = "";
+      document.getElementById("hhpinspectcru_bearing_pressure_de").value = "";
+      document.getElementById("hhpinspectcru_bearing_no_nde").value = "";
+      document.getElementById("hhpinspectcru_bearing_make_nde").value = "";
+      document.getElementById("hhpinspectcru_bearing_pressure_nde").value = "";
+      document.getElementById("hhpinspectdate").value = "";
+      document.getElementById("hhpinspectinspector_name").value = "";
+      document.getElementById("hhpinspectaxialplay_de").value = "";
+      document.getElementById("hhpinspectaxialplay_nde").value = "";
+      document.getElementById("hhpinspectwheel_distance").value = "";
     }
 
     $('input:radio[name="optradio"]').change(function () {
@@ -2630,77 +3239,74 @@
       document.getElementById(a).style.backgroundColor = "yellow";
     }
 
-    document.querySelector("#wheelno_de").addEventListener("change", (e) => {
-      e.preventDefault();
-      var wheel_no = $("#wheelno_de").val();
-      var data = { wheel_no };
-      $.ajax({
-        type: "GET",
-        url: "{% url 'wheelnde' %}",
-        dataType: "json",
-        data: data,
-        success: function (response) {
-          console.log(response);
-          var elementsadded = document.querySelectorAll(".neweledoc");
-          if (elementsadded.length > 0) {
-            var elementsaddedarr = Array.from(elementsadded);
-            elementsaddedarr.forEach((el) => el.remove());
-            document.querySelector("#wheelnonde").selected = true;
-          }
-          var brarr, mystr, html;
-          brarr = response.map((el) => el.wheel_no);
-          mystr = "";
-          brarr.forEach((el, index) => {
-            html = `<option class="neweledoc">${brarr[index]}</option>`;
-            mystr = html.concat(mystr);
-          });
-          html = "";
-          document
-            .querySelector("#wheelno_nde")
-            .insertAdjacentHTML("beforeend", mystr);
-          mystr = "";
-        },
-      });
-    });
-
-    document
-      .querySelector("#editwheelno_de")
-      .addEventListener("change", (e) => {
-        e.preventDefault();
-
-        var wheel_no = $("#editwheelno_de").val();
-        var data = { wheel_no };
-        $.ajax({
-          type: "GET",
-          url: "{% url 'wheelnde' %}",
-          dataType: "json",
-          data: data,
-          success: function (response) {
-            console.log(response);
-            $("#editwheelno_nde").empty();
-            
+    // document.querySelector("#wheelno_de").addEventListener("change", (e) => {
+    //   e.preventDefault();
+    //   var wheel_no = $("#wheelno_de").val();
+    //   var data = { wheel_no };
+    //   $.ajax({
+    //     type: "GET",
+    //     url: "{% url 'wheelnde' %}",
+    //     dataType: "json",
+    //     data: data,
+    //     success: function (response) {
           
-            var elementsadded = document.querySelectorAll(".neweledoc");
-            if (elementsadded.length > 0) {
-              var elementsaddedarr = Array.from(elementsadded);
-              elementsaddedarr.forEach((el) => el.remove());
-              document.querySelector("#editwheelnonde").selected = true;
-            }
-            var brarr, mystr, html;
-            brarr = response.map((el) => el.wheel_no);
-            mystr = "";
-            brarr.forEach((el, index) => {
-              html = `<option class="neweledoc">${brarr[index]}</option>`;
-              mystr = html.concat(mystr);
-            });
-            html = "";
-            document
-              .querySelector("#editwheelno_nde")
-              .insertAdjacentHTML("beforeend", mystr);
-            mystr = "";
-          },
-        });
-      });
+    // var elementsadded = document.querySelectorAll(".neweledoc");
+    // if (elementsadded.length > 0) {
+    //   var elementsaddedarr = Array.from(elementsadded);
+    //   elementsaddedarr.forEach((el) => el.remove());
+    //   document.querySelector("#wheelnonde").selected = true;
+    // }
+    // var brarr, mystr, html;
+    // brarr = response.map((el) => el.wheel_no);
+    // mystr = "";
+    // brarr.forEach((el, index) => {
+    //   html = `<option class="neweledoc">${brarr[index]}</option>`;
+    //   mystr = html.concat(mystr);
+    // });
+    // html = "";
+    // document
+    //   .querySelector("#wheelno_nde")
+    //   .insertAdjacentHTML("beforeend", mystr);
+    // mystr = "";
+    // console.log(response);
+    //     },
+    //   });
+    // });
+
+    // document
+    //   .querySelector("#editwheelno_de")
+    //   .addEventListener("change", (e) => {
+    //     e.preventDefault();
+    //     var wheel_no = $("#editwheelno_de").val();
+    //     var data = { wheel_no };
+    //     $.ajax({
+    //       type: "GET",
+    //       url: "{% url 'wheelnde' %}",
+    //       dataType: "json",
+    //       data: data,
+    //       success: function (response) {
+    //         console.log(response);
+    //         var elementsadded = document.querySelectorAll(".neweledoc");
+    //         if (elementsadded.length > 0) {
+    //           var elementsaddedarr = Array.from(elementsadded);
+    //           elementsaddedarr.forEach((el) => el.remove());
+    //           document.querySelector("#editwheelnonde").selected = true;
+    //         }
+    //         var brarr, mystr, html;
+    //         brarr = response.map((el) => el.wheel_no);
+    //         mystr = "";
+    //         brarr.forEach((el, index) => {
+    //           html = `<option class="neweledoc">${brarr[index]}</option>`;
+    //           mystr = html.concat(mystr);
+    //         });
+    //         html = "";
+    //         document
+    //           .querySelector("#editwheelno_nde")
+    //           .insertAdjacentHTML("beforeend", mystr);
+    //         mystr = "";
+    //       },
+    //     });
+    //   });
   </script>
 </html>
 {% endblock content %}
