@@ -593,6 +593,12 @@ def axlewheelpressing_section(request):
                 bullgear_make=request.POST.get('editbullgear_make')
                 in_qty=request.POST.get('editin_qty')
                 out_qty=request.POST.get('editout_qty')
+
+                axleno_old=request.POST.get('axleno_old')
+                wheeldeno_old=request.POST.get('wheeldeno_old')
+                wheelndeno_old=request.POST.get('wheelndeno_old')
+                bullgearno_old=request.POST.get('bullgearno_old')
+
                 s1 = in_qty.split('-')
                 month1 = s1[1]
                 day1 = s1[0]
@@ -604,6 +610,11 @@ def axlewheelpressing_section(request):
                 year2 = s2[2]
                 newout_qty =  year2 + "-" + month2 + "-" + day2
                 if bo_no and bo_date and date and pt_no and bo_qty and indate and outdate and axle_no and wheelno_de and wheelno_nde and bullgear_no and bullgear_make and in_qty and out_qty:
+                    
+                    AxleMachining.objects.filter(axle_no=axleno_old).update(axlefitting_status=False)
+                    WheelMachining.objects.filter(wheel_no=wheeldeno_old).update(wheelfitting_status=False)
+                    WheelMachining.objects.filter(wheel_no=wheelndeno_old).update(wheelfitting_status=False)
+                    
                     AxleWheelPressing.objects.filter(axle_no=sno).update(bo_no=bo_no,bo_date=bo_date,edit_date=date,loco_type=loco_type,axle_no=axle_no,in_qty=newin_qty,out_qty=newout_qty,wheelno_de=wheelno_de,wheelno_nde=wheelno_nde,bullgear_no=bullgear_no,bullgear_make=bullgear_make,pt_no=pt_no,bo_qty=bo_qty)
                     AxleMachining.objects.filter(axle_no=axle_no).update(axlefitting_status=True,dispatch_status=True)
                     WheelMachining.objects.filter(wheel_no=wheelno_de).update(wheelfitting_status=True,dispatch_status=True)
@@ -3781,9 +3792,7 @@ def axlepress_editsno(request):
     if request.method=="GET" and request.is_ajax():
         mysno=request.GET.get('sels_no')
         myval=list(AxleWheelPressing.objects.filter(axle_no=mysno).values('bo_no','bo_date','loco_type','date','axle_no','wheelno_de','wheelno_nde','bullgear_no','bullgear_make','pt_no','bo_qty','in_qty','out_qty'))
-        AxleMachining.objects.filter(axle_no=myval[0]['axle_no']).update(axlefitting_status=False)
-        WheelMachining.objects.filter(wheel_no=myval[0]['wheelno_de']).update(wheelfitting_status=False)
-        WheelMachining.objects.filter(wheel_no=myval[0]['wheelno_nde']).update(wheelfitting_status=False)
+        
         return JsonResponse(myval, safe=False)
     return JsonResponse({"success":False}, status=400)  
 
