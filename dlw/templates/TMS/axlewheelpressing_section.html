@@ -1856,7 +1856,7 @@
                     name="axleno_old"
                     id="axleno_old"
                     maxlength="20"
-                    disabled
+                    readonly
                   />
                 </div>
                 <div class="autocomplete col-4">
@@ -1879,7 +1879,7 @@
                     name="wheeldeno_old"
                     id="wheeldeno_old"
                     maxlength="20"
-                    disabled
+                    readonly
                   />
                 </div>
                 <div class="autocomplete col-4">
@@ -1903,7 +1903,7 @@
                     name="wheelndeno_old"
                     id="wheelndeno_old"
                     maxlength="20"
-                    disabled
+                    readonly
                   />
                 </div>
                 <div class="autocomplete col-4">
@@ -1926,7 +1926,7 @@
                     name="bullgearno_old"
                     id="bullgearno_old"
                     maxlength="20"
-                    disabled
+                    readonly
                   />
                 </div>
                 <div class="col-4">
@@ -2324,6 +2324,9 @@
             $("#wheeldeno_old").val(`${response[0].wheelno_de}`);
             $("#wheelndeno_old").val(`${response[0].wheelno_nde}`);
             $("#bullgearno_old").val(`${response[0].bullgear_no}`);
+            axleno1.push($('#axleno_old').val());
+            whenode1.push($('#wheeldeno_old').val());
+            whenonde1.push($('#wheelndeno_old').val());
           $("#editaxle_no").val($('#axleno_old').val());
           $("#editwheelno_de").val($('#wheeldeno_old').val());
           $("#editwheelno_nde").val($('#wheelndeno_old').val());
@@ -2783,6 +2786,7 @@
     });
 
     autocomplete(document.getElementById("axle_no"), axleno);
+
     autocomplete(document.getElementById("editaxle_no"), axleno1);
     autocomplete(document.getElementById("wheelno_de"), whenode);
     autocomplete(document.getElementById("editwheelno_de"), whenode1);
