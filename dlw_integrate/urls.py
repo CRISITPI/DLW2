@@ -692,6 +692,7 @@ urlpatterns = [
     path('ajax/aw_getwhenode',aw_getwhenode,name='aw_getwhenode'),
     path('ajax/aw_getwhenonde',aw_getwhenonde,name='aw_getwhenonde'),
     path('ajax/chkaw',chkaw,name='chkaw'),
+    path('ajax/uniquebullgear1',uniquebullgear1,name='uniquebullgear1'),
 
 ]
 

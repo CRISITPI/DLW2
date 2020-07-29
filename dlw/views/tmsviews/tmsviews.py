@@ -3478,6 +3478,22 @@ def uniquebullgear(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
+def uniquebullgear1(request):
+    if request.method=="GET" and request.is_ajax():
+        bullgear_no = request.GET.get('bullgear_no')
+        bullgearold = request.GET.get('bullgearold')
+        print(bullgear_no,bullgearold)
+        if bullgear_no!=bullgearold:
+            ob1=list(AxleWheelPressing.objects.filter(bullgear_no=bullgear_no).values('bo_no'))
+            l=len(ob1)
+            if l==0: 
+                msg=["true"]
+            else :
+                msg=["false"]
+        else:
+            msg=["true"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
 
 def uniquetm(request):
     if request.method=="GET" and request.is_ajax():

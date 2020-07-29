@@ -2448,10 +2448,11 @@
     $("#editbullgear_no").change(function (e) {
       e.preventDefault();
       var bullgear_no = $(this).val();
-      var data = { bullgear_no };
+      var bullgearold=$('#bullgearno_old').val();
+      var data = { bullgear_no, bullgearold };
       $.ajax({
         type: "GET",
-        url: "{% url 'uniquebullgear' %}",
+        url: "{% url 'uniquebullgear1' %}",
         dataType: "json",
         data: data,
         success: function (response) {
