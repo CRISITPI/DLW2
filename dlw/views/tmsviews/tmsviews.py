@@ -3268,6 +3268,46 @@ def chkaw(request):
             msg=["false"]
         return JsonResponse(msg, safe = False)
     return JsonResponse({"success":False}, status=400)
+def chkaw1(request):
+    if request.method=="GET" and request.is_ajax():
+        myax = request.GET.get('axle_no')
+        whl_de = request.GET.get('whlde')
+        whl_nde = request.GET.get('whlnde')
+        myaxold = request.GET.get('axle_noold')
+        whl_deold = request.GET.get('whldeold')
+        whl_ndeold = request.GET.get('whlndeold')
+        print('kkk',myaxold,whl_deold,whl_ndeold)
+        print('kkk',myax,whl_de,whl_nde)
+        check=''
+        if myax!=myaxold:
+            print('in1')
+            axle=list(AxleMachining.objects.filter(axlefitting_status=False,axleinspection_status=True,axle_no=myax).values('axle_no'))
+            if (len(axle)<1):
+                print('if1')
+                msg=["wrongaxle"]
+                check='A'
+        print('h1',check)
+        if whl_deold!=whl_de and check=='':
+            print('in2')
+            whlde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True,wheel_no=whl_de).values('wheel_no'))
+            if (len(whlde)<1):
+                print('if2')
+                msg=["wrongwheelde"]
+                check='B'
+        print('h2',check)
+        if whl_ndeold!=whl_nde and check=='':
+            print('in3')
+            whlnde=list(WheelMachining.objects.filter(wheelfitting_status=False,wheelinspection_status=True,wheel_no=whl_nde).values('wheel_no'))
+            if (len(whlnde)<1):
+                print('if3')
+                msg=["wrongwheelnde"]
+                check='C'
+        print('h3',check)
+        if check=='':
+            msg=["false"]
+        return JsonResponse(msg, safe = False)
+    return JsonResponse({"success":False}, status=400)
+
 
 def wheelpress_inspectsno(request):
     if request.method=="GET" and request.is_ajax():
@@ -3482,7 +3522,6 @@ def uniquebullgear1(request):
     if request.method=="GET" and request.is_ajax():
         bullgear_no = request.GET.get('bullgear_no')
         bullgearold = request.GET.get('bullgearold')
-        print(bullgear_no,bullgearold)
         if bullgear_no!=bullgearold:
             ob1=list(AxleWheelPressing.objects.filter(bullgear_no=bullgear_no).values('bo_no'))
             l=len(ob1)
