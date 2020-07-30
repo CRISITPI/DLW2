@@ -694,6 +694,8 @@ urlpatterns = [
     path('ajax/chkaw',chkaw,name='chkaw'),
     
     path('ajax/uniquebullgear1',uniquebullgear1,name='uniquebullgear1'),
+    path('ajax/chkaw1',chkaw1,name='chkaw1'),
+
 
 ]
 

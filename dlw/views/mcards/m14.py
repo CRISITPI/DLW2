@@ -31,12 +31,11 @@ def m14view(request):
             obj1 = Part.objects.filter(partno=part_no).values('des', 'drgno').distinct()
             obj2 = Part.objects.filter(partno=assembly_no).values('des').distinct()
             obj3 = Batch.objects.filter(bo_no=wo_no,brn_no=brn_no,part_no=assembly_no).values('batch_type')
-            obj4 =  M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('l_fr','l_to')
-            obj5 =  M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('opn_no','pm_no','due_wk')
-            obj = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('received_mat14', 'issued_qty14', 'received_qty14', 'laser_pst14', 'line14', 'closing_bal14', 'remarks14', 'posted_date14', 'wardkp_date14', 'shopsup_date14', 'posted1_date14')
+            obj4 =  M14M4new1.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('l_fr','l_to')
+            obj5 =  M14M4new1.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('opn_no','pm_no','due_wk')
+            obj = M14M4new1.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('received_mat14', 'issued_qty14', 'received_qty14', 'laser_pst14', 'line14', 'closing_bal14', 'remarks14', 'posted_date14', 'wardkp_date14', 'shopsup_date14', 'posted1_date14')
             obj6 = Part.objects.filter(partno=part_no).values('m14splt_cd').distinct()
-            code = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('unit').distinct()
-            
+            code = M14M4new1.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no,part_no=part_no).values('unit').distinct()
             obj7 = Code.objects.filter(cd_type='51',code=code[0]['unit']).values('alpha_1').distinct()
           
             if len(obj7)==0:
@@ -55,12 +54,11 @@ def m14view(request):
             if len(obj6) == 0:
                 obj6 = range(0, 1)
             
-            date = M14M4.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no).values('prtdt','qty').distinct()
+            date = M14M4new1.objects.filter(doc_no=doc_no,brn_no=brn_no,assly_no=assembly_no,bo_no=wo_no).values('prtdt','qty').distinct()
             leng = obj.count()
             lenm = obj4.count()
             lenn = obj5.count()
             datel= date.count()
-            
             context = {
                     'roles':tmp,
                     'lenm' :2,
@@ -106,7 +104,7 @@ def m14view(request):
             wardkp_date = request.POST.get('wardkp_date')
             shopsup_date = request.POST.get('shopsup_date')
             posted1_date = request.POST.get('posted1_date')
-            M14M4.objects.filter(part_no=part_no,doc_no=doc_no,brn_no=brn_no,bo_no=wo_no).update(received_mat14=str(received_mat), issued_qty14=str(issued_qty), received_qty14=str(received_qty), laser_pst14=str(laser_pst), line14=str(line), closing_bal14=str(closing_bal), remarks14=str(remarks), posted_date14=str(posted_date), wardkp_date14=str(wardkp_date), shopsup_date14=str(shopsup_date), posted1_date14=str(posted1_date))
+            M14M4new1.objects.filter(part_no=part_no,doc_no=doc_no,brn_no=brn_no,bo_no=wo_no).update(received_mat14=str(received_mat), issued_qty14=str(issued_qty), received_qty14=str(received_qty), laser_pst14=str(laser_pst), line14=str(line), closing_bal14=str(closing_bal), remarks14=str(remarks), posted_date14=str(posted_date), wardkp_date14=str(wardkp_date), shopsup_date14=str(shopsup_date), posted1_date14=str(posted1_date))
            
             messages.success(request, 'Successfully Updated!, Select new values to update')
     return render(request, "MCARD/M14CARD/m14view.html", context)
@@ -118,7 +116,8 @@ def m14getwono(request):
     if request.method == "GET" and request.is_ajax():
         shop_sec = request.GET.get('shop_sec')
         w1 = Oprn.objects.filter(shop_sec=shop_sec).values('part_no').distinct()
-        w2 = Batch.objects.filter(status='R').values('bo_no').exclude(bo_no__isnull=True).distinct()
+        w3=M14M4new1.objects.values('bo_no')
+        w2 = Batch.objects.filter(status='R',bo_no__in=w3).values('bo_no').exclude(bo_no__isnull=True).distinct()
         wono = list(w2)
         return JsonResponse(wono, safe = False)
     return JsonResponse({"success":False}, status=400)
@@ -126,7 +125,7 @@ def m14getwono(request):
 def m14getbr(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
-        br_no = list(M14M4.objects.filter(bo_no =wo_no).values('brn_no').exclude(brn_no__isnull=True).distinct())
+        br_no = list(M14M4new1.objects.filter(bo_no =wo_no).values('brn_no').exclude(brn_no__isnull=True).distinct())
         return JsonResponse(br_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -134,7 +133,7 @@ def m14getassly(request):
     if request.method == "GET" and request.is_ajax():
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
-        assm_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no).values('assly_no').exclude(assly_no__isnull=True).distinct())
+        assm_no = list(M14M4new1.objects.filter(bo_no =wo_no,brn_no=br_no).values('assly_no').exclude(assly_no__isnull=True).distinct())
         return JsonResponse(assm_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -145,7 +144,7 @@ def m14getpart_no(request):
         wo_no = request.GET.get('wo_no')
         br_no = request.GET.get('brn_no')
         assembly_no = request.GET.get('assm_no')
-        part_no = list(M14M4.objects.filter(brn_no=br_no,assly_no=assembly_no,bo_no=wo_no).values('part_no').exclude(part_no__isnull=True).distinct())
+        part_no = list(M14M4new1.objects.filter(brn_no=br_no,assly_no=assembly_no,bo_no=wo_no).values('part_no').exclude(part_no__isnull=True).distinct())
         return JsonResponse(part_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 
@@ -158,8 +157,7 @@ def m14getdoc_no1(request):
         shop_sec = request.GET.get('shop_sec')
         assembly_no = request.GET.get('assm_no')
         part_no = request.GET.get('part_no')
-        doc_no = list(M14M4.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
-
+        doc_no = list(M14M4new1.objects.filter(bo_no =wo_no,brn_no=br_no,assly_no=assembly_no,part_no=part_no).values('doc_no').exclude(doc_no__isnull=True).distinct())
         return JsonResponse(doc_no, safe = False)
     return JsonResponse({"success":False}, status=400)
 

@@ -2530,12 +2530,15 @@
       e.preventDefault();
       $.ajax({
         type: "GET",
-        url: "{% url 'chkaw' %}",
+        url: "{% url 'chkaw1' %}",
         dataType: "json",
         data: {
           axle_no: $("#editaxle_no").val(),
           whlde: $("#editwheelno_de").val(),
           whlnde: $("#editwheelno_nde").val(),
+          axle_noold: $('#axleno_old').val(),
+          whldeold: $('#wheeldeno_old').val(),
+          whlndeold: $('#wheelndeno_old').val()
         },
         success: function (response) {
           if (response == "wrongaxle") {

@@ -503,10 +503,11 @@ document.querySelector("#part_nop").addEventListener('change',(e)=>{
   var data = {wo_no,brn_no,shop_sec,assm_no,part_no};
         $.ajax({
               type : 'GET',
-              url : "{% url 'm14getdoc_no' %}",
+              url : "{% url 'm14getdoc_no1' %}",
               dataType : 'json',
               data : data,
               success : function(response){
+                alert(response[0]);
                 if(response == ''){
                        alert("Document NO Not Found for Shop Section:"+shop_sec+", Work Order NO:"+wo_no+", BRN NO:"+brn_no+", Assembly NO:"+assm_no+", Part NO:"+part_no);}
                         var elementsadded = document.querySelectorAll(".neweledoc");
